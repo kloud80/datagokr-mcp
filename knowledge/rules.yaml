@@ -1,0 +1,19 @@
+# 변환 규칙 목록 (KNOWLEDGE-SPEC §9-2). Edge on.transform이 id로 참조한다. 구현은 pds/rules/, 테스트는 tests/test_rules.py.
+- id: R-02
+  name: 시군구코드 = 법정동코드 앞 5자리
+  function: pds.rules.sgg_from_bjd
+  keys: [bjd_cd, sgg_cd]
+- id: R-07
+  name: PNU 조립 — 법정동코드(10) + 대장구분(1 토지·2 임야) + 본번(4) + 부번(4)
+  function: pds.rules.pnu_from_parts
+  keys: [bjd_cd, pnu]
+  note: 실거래(RTMS)는 sggCd+umdCd·landCd·bonbun·bubun을 준다 (R-07-rtms). 2026-09-30 부동산원 단지 식별정보의 필지고유번호와 대조해 검증
+- id: R-07-rtms
+  name: R-07을 실거래 행에 적용
+  function: pds.rules.pnu_from_rtms
+  keys: [rtms_apt_seq, pnu]
+- id: R-11
+  name: 도로명주소 비교 키 — 도로명+건물번호 (시도 표기 개편 무시)
+  function: pds.rules.road_key
+  keys: [address]
+  note: 전남광주통합특별시·강원/전북특별자치도처럼 시도 명칭이 기관마다 달라 시도는 쓰지 않는다

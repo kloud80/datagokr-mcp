@@ -103,7 +103,7 @@ def parse_legislation(text: str | None) -> list[dict]:
     out, seen = [], set()
     for chunk in re.split(r"[\n;/]|(?<=[.)」])\s*-|^-", text):
         for m in LAW_RE.finditer(chunk.replace("「", " ").replace("」", " ")):
-            name = re.sub(r"^\s*[-·\d.)]+\s*", "", m.group(1)).strip()
+            name = re.sub(r"^\s*(?:[-·]\s*|\d+[.)]\s*)+", "", m.group(1)).strip()  # 목록 기호만 ('5·18…'은 보존)
             name = re.sub(r"^(및|또는|등)\s+", "", name)
             if len(name) < 3 or name in seen or name.endswith(("사업법", "방법")) and len(name) < 5:
                 continue
@@ -111,6 +111,16 @@ def parse_legislation(text: str | None) -> list[dict]:
             arts = re.findall(r"제\s*(\d+)\s*조(?:의\s*(\d+))?", m.group(2) or "")
             out.append({"law": name, "articles": [a + (f"의{b}" if b else "") for a, b in arts], "source": "portal_meta:보유근거"})
     return out
+
+
+def _with_law_ids(items: list[dict]) -> list[dict]:
+    from pds.laws.fetch import ALIAS, index
+    idx = index()
+    for x in items:
+        lid = idx.get(x["law"]) or idx.get(ALIAS.get(x["law"], ""))
+        if lid:
+            x["law_id"] = lid
+    return items
 
 
 def _field_type(t: str | None) -> str:
@@ -269,7 +279,7 @@ def build(dsid: str) -> dict:
         "kind": KIND[t["kind"]], "channel": "external" if external else "portal", "portal_url": t["url"],
         "synonyms": list(dict.fromkeys(kw))[:10],
         "description_portal": (_v(m.description) or "").strip() or None,
-        "applicable_legislation": parse_legislation(_v(m.legal_basis)),
+        "applicable_legislation": _with_law_ids(parse_legislation(_v(m.legal_basis))),
         "legal_basis_portal": (_v(m.legal_basis) or "").strip() or None,
         "accrual_periodicity": _v(m.update_cycle),
         "team": {"dept": _v(m.dept)} if _v(m.dept) else None,

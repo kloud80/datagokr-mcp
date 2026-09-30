@@ -1,0 +1,532 @@
+# Dataset 15057332 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15057332'
+tier: verified
+title: 국토교통부_공동주택 단지 목록제공 서비스
+sector: 국토관리/주택/apartment-management
+domain: 국토관리/주택
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057332/openapi.do
+synonyms:
+  - 공동주택
+  - 공동주택 단지 목록
+  - K-APT
+description_portal: (공동주택 단지정보) 공동주택관리정보시스템에 가입한 단지의 목록을 시도/시군구/읍면/동리, 도로명주소등에 대한 자료 제공
+team:
+  dept: 주택건설운영과
+services:
+  - op: /getSidoAptList4
+    name: 국토교통부_시도 아파트 목록
+    endpoint: https://apis.data.go.kr/1613000/AptListService4/getSidoAptList4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: sidoCode
+        required: true
+        desc: 시도코드
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 목록 건수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getSigunguAptList4
+    name: 국토교통부_시군구 아파트 목록
+    endpoint: https://apis.data.go.kr/1613000/AptListService4/getSigunguAptList4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: sigunguCode
+        required: true
+        desc: 시군구코드
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getTotalAptList4
+    name: 국토교통부_전체 아파트 목록
+    endpoint: https://apis.data.go.kr/1613000/AptListService4/getTotalAptList4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 목록 건수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getLegaldongAptList4
+    name: 국토교통부_법정동 아파트 목록
+    endpoint: https://apis.data.go.kr/1613000/AptListService4/getLegaldongAptList4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: bjdCode
+        required: true
+        desc: 시군구코드+법정동코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getRoadnameAptList4
+    name: 국토교통부_도로명 아파트 목록
+    endpoint: https://apis.data.go.kr/1613000/AptListService4/getRoadnameAptList4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: roadCode
+        required: true
+        example: '263802006002'
+        desc: 시군구번호+도로명번호
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 목록 건수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: kaptCode
+      title: 단지코드
+      type: code
+      semantic_type: apt_complex_cd
+      null_rate: 0.0
+      sample_values:
+        - A10021295
+        - A10021652
+        - A11007001
+      op: /getSigunguAptList4
+      stats:
+        unique: 38
+    - name: kaptName
+      title: 단지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경희궁의아침4단지
+        - 경희궁파크팰리스
+        - 경희궁의아침3단지
+      op: /getSigunguAptList4
+      stats:
+        unique: 38
+    - name: bjdCode
+      title: 법정동코드 10자리
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1111018300'
+        - '1111018700'
+        - '1111011800'
+      op: /getSigunguAptList4
+      stats:
+        min: 1111011800
+        p50: 1111017500
+        max: 1111018700
+        unique: 18
+    - name: as1
+      title: 단지가 속한 시도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /getSigunguAptList4
+      stats:
+        unique: 1
+    - name: as2
+      title: 단지가 속한 시군구
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+      op: /getSigunguAptList4
+      stats:
+        unique: 1
+    - name: as3
+      title: 단지가 속한 읍면동
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 평창동
+        - 무악동
+        - 내수동
+      op: /getSigunguAptList4
+      stats:
+        unique: 18
+    - name: as4
+      title: 단지가 속한 리, 시도/시군구에 따라 존재하지 않을 수 있음
+      type: code
+      null_rate: 1.0
+      op: /getSigunguAptList4
+      stats:
+        unique: 0
+    - name: kaptCode
+      title: 단지코드
+      type: string
+      semantic_type: apt_complex_cd
+      null_rate: 0.0
+      sample_values:
+        - A10021295
+        - A10021652
+        - A11007001
+      op: /getTotalAptList4
+      stats:
+        unique: 1000
+    - name: kaptName
+      title: 단지명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 도봉중흥S클래스
+        - 경희궁의아침4단지
+        - 경희궁파크팰리스
+      op: /getTotalAptList4
+      stats:
+        unique: 999
+    - name: bjdCode
+      title: 법정동코드 10자리
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1121510500'
+        - '1132010700'
+        - '1126010100'
+      op: /getTotalAptList4
+      stats:
+        min: 1111011800
+        p50: 1123010800
+        max: 1135010200
+        unique: 127
+    - name: as1
+      title: 단지가 속한 시도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /getTotalAptList4
+      stats:
+        unique: 1
+    - name: as2
+      title: 단지가 속한 시군구
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 성북구
+        - 중랑구
+        - 동대문구
+      op: /getTotalAptList4
+      stats:
+        unique: 11
+    - name: as3
+      title: 단지가 속한 읍면동
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 자양동
+        - 창동
+        - 면목동
+      op: /getTotalAptList4
+      stats:
+        unique: 127
+    - name: as4
+      title: 단지가 속한 리, 시도/시군구에 따라 존재하지 않을 수 있음
+      type: code
+      null_rate: 1.0
+      op: /getTotalAptList4
+      stats:
+        unique: 0
+    - name: kaptCode
+      title: 단지코드
+      type: code
+      semantic_type: apt_complex_cd
+      null_rate: 0.0
+      sample_values:
+        - A10020434
+        - A10020442
+        - A10022407
+      op: /getRoadnameAptList4
+      stats:
+        unique: 10
+    - name: kaptName
+      title: 단지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 현대신델라맨션
+        - 대티역스마트W
+        - 경성스마트W2차
+      op: /getRoadnameAptList4
+      stats:
+        unique: 10
+    - name: doroJuso
+      title: 도로명주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 사하구 낙동대로 106
+        - 부산광역시 사하구 낙동대로 137
+        - 부산광역시 사하구 낙동대로 182
+      op: /getRoadnameAptList4
+      stats:
+        unique: 10
+  foreign_keys:
+    - fields:
+        - kaptCode
+      reference:
+        key: apt_complex_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+cycle: default
+classification:
+  subsector_name: 공동주택 관리 (K-apt 단지 기본정보·관리비·장기수선·입찰)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8434
+  rank_in_sector: 16
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 매핑 apt_complex_cd 전수 원천 — K-apt 공동주택 단지 목록(kaptCode)
+claims:
+  - id: c-15057332-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-09-30 실호출 성공 오퍼레이션 3/5
+    evidence:
+      - type: measured
+        source: probe/runs/15057332.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 3/5
+      - type: measured
+        source: probe/apply/15057332.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15057332-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057332-03
+    kind: key
+    value: '실측 조인 키: apt_complex_cd(kaptCode)'
+    evidence:
+      - type: measured
+        source: probe/stats/15057332.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 17개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057332-04
+    kind: coverage
+    value: API 전체 건수 22,318 · 검증 수신 1,048행 · 범위 전국 · 행정단위 필지·건물
+    evidence:
+      - type: measured
+        source: probe/runs/15057332.json
+        observed_at: '2026-09-30'
+        detail: total 22318, rows 1048
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057332-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15057332-06
+    kind: admin_note
+    value: "세부 부문 '공동주택 관리 (K-apt 단지 기본정보·관리비·장기수선·입찰)'의 가치: K-apt 단지코드 = 실거래 단지명·공시 동호·청약 단지를 잇는 매핑 마스터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#apartment-management
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057332-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057332-10
+    kind: pitfall
+    value: 필수 파라미터 bjdCode, sidoCode는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15057332.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057332-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /getSidoAptList4, /getLegaldongAptList4'
+    evidence:
+      - type: measured
+        source: probe/runs/15057332.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057332-12
+    kind: pitfall
+    value: 전수 22,318건 중 검증은 1,048행만 받음 — 전량 수집은 페이지 반복 23회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15057332.json
+        observed_at: '2026-09-30'
+        detail: total 22318 rows 1048
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1048
+  total_count: 22318
+  ops_ok: 3/5
+  latency_ms: 116
+  run: probe/runs/15057332.json
+  stats: probe/stats/15057332.json
+  data: probe/data/15057332/
+status: active

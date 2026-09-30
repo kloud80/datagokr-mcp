@@ -1,7 +1,8 @@
 """자동 claim — Phase 1 결정·Phase 2 실측을 근거 있는 진술로 (KNOWLEDGE-SPEC §3.5, §7-3).
 
 번호 규약 (id가 레시피·전략 응답의 인용 대상이라 재생성해도 바뀌지 않게 kind별 고정 슬롯):
-  01 access · 02 cadence · 03 key · 04 coverage · 05 legal_basis · 06~09 admin_note · 10~19 pitfall
+  01 access · 02 cadence · 03 key · 04 coverage · 05 legal_basis(보유근거) · 06~09 admin_note · 10~19 pitfall ·
+  20 legal_basis(부문 법 계층)
   50 이상은 사람이 쓰는 claim (생성기가 건드리지 않는다)
 생성한 claim에는 qualifiers.generated_by가 붙고, 재생성 때 이것만 교체된다.
 """
@@ -92,6 +93,44 @@ def _c(dsid: str, slot: int, kind: str, value: str, evidence: list[dict], rank: 
     return {"id": f"c-{dsid}-{slot:02d}", "kind": kind, "value": value, "evidence": evidence,
             "qualifiers": {"generated_by": GEN, **{k: v for k, v in qual.items() if v is not None}}, "rank": rank,
             **({"valid_until": valid_until} if valid_until else {})}
+
+
+@lru_cache
+def _laws() -> dict:
+    from pds.schema import store
+    return {d["law_id"]: d for d, _ in store.iter_raw("law")}
+
+
+def _law_articles(law_id: str | None, nos: list[str]) -> list[tuple[str, str | None]]:
+    """확보한 원문에 실제로 있는 조문만 [(번호, 제목)]."""
+    law = _laws().get(law_id or "")
+    if not law:
+        return []
+    have = {a["no"]: a.get("title") for a in law.get("articles") or []}
+    return [(n, have[n]) for n in nos if n in have]
+
+
+@lru_cache
+def _tree() -> dict:
+    return {d["id"]: d for d in yaml.safe_load((config.KNOWLEDGE / "sectors" / "sector_tree.yaml").read_text(encoding="utf-8")) or []}
+
+
+def _domain(did: str | None) -> dict | None:
+    return _tree().get(did or "")
+
+
+def _domain_laws(dom: dict) -> list[tuple[str, str]]:
+    from pds.laws.fetch import ALIAS, LAW_NAME, index
+    idx, out = index(), []
+    text = re.split(r"\s—\s", dom.get("law") or "")[0]
+    for part in re.split(r"[·,]", text):
+        m = LAW_NAME.search(part.strip())
+        if m:
+            name = m.group(1).strip()
+            lid = idx.get(name) or idx.get(ALIAS.get(name, ""))
+            if lid and lid not in [x[0] for x in out]:
+                out.append((lid, _laws()[lid]["name"]))
+    return out
 
 
 DATEISH = re.compile(r"^(19|20)\d{2}(\d{2}){0,2}$|^(19|20)\d{2}-\d{2}(-\d{2})?$")
@@ -190,13 +229,28 @@ def make(rec: dict, target: dict, run: dict, apply: dict | None, catalog_row) ->
                   [_ev_measured(run_src, observed, f"total {tot}, rows {rows}"),
                    {"type": "portal_meta", "source": "class:coverage,admin_unit"}], valid_until=until))
 
-    # 05 legal_basis — 포털 보유근거 (법제처 원문 확인 전이라 portal_meta)
+    # 05 legal_basis — 포털 보유근거 + 법제처 원문 조문 (원문을 확보한 법령만 law 근거)
     if rec.get("legal_basis_portal"):
         laws = rec.get("applicable_legislation") or []
         val = ("포털 보유근거: " + "; ".join(f"{x['law']}" + (f" 제{', '.join(x['articles'])}조" if x.get("articles") else "")
                                          for x in laws)) if laws else f"포털 보유근거(법령 아님): {rec['legal_basis_portal'][:120]}"
-        out.append(_c(dsid, 5, "legal_basis", val, [{"type": "portal_meta", "source": "catalog:legal_basis",
-                                                     "detail": rec["legal_basis_portal"][:200]}]))
+        ev = [{"type": "portal_meta", "source": "catalog:legal_basis", "detail": rec["legal_basis_portal"][:200]}]
+        for x in laws:
+            art = _law_articles(x.get("law_id"), x.get("articles") or ["1"])
+            ev += [{"type": "law", "source": f"law:{x['law_id']}#{no}", "detail": f"{x['law']} 제{no}조" + (f"({t})" if t else "")}
+                   for no, t in art]
+        out.append(_c(dsid, 5, "legal_basis", val, ev))
+
+    # 20 legal_basis — 부문이 속한 법 체계 층 (sector_tree.yaml, 구름 결정) — 데이터 개별 근거가 아니라 부문 수준
+    dom = _domain(rec.get("domain"))
+    if dom:
+        ev = [{"type": "admin_review", "source": f"knowledge/sectors/sector_tree.yaml#{dom['id']}", "by": dom.get("decided_by") or "구름",
+               "at": str(dom.get("decided_at")) if dom.get("decided_at") else None}]
+        for lid, name in _domain_laws(dom)[:6]:
+            ev += [{"type": "law", "source": f"law:{lid}#{no}", "detail": f"{name} 제{no}조" + (f"({t})" if t else "")}
+                   for no, t in _law_articles(lid, ["1"])]
+        out.append(_c(dsid, 20, "legal_basis", f"법 체계 층 '{dom['name']}': {dom.get('law', '')}",
+                      [{k: v for k, v in e.items() if v} for e in ev], scope="sector"))
 
     # 06~09 admin_note — 사람이 내린 결정 (검토 기록·세부 부문 정의·선정 이유·외부 라운드 메모)
     slot = 6

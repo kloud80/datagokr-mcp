@@ -1,0 +1,274 @@
+# Dataset 15142032 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15142032'
+tier: verified
+title: 국토교통부_버스정류장
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142032/openapi.do
+synonyms:
+  - 버스정류장정보
+  - 대중교통시스템
+  - 정류장위치
+  - 버스정류장위치정보
+  - 정류장시설현황
+description_portal: 버스정류장 정보는 대중교통 시스템에서 핵심적인 역할을 하는 데이터로, 정류장의 위치, 명칭, 식별 정보(ID, ARS 번호 등)를 제공하여 이용자들의 이동 편의성과 운영자들의 관리 효율성을 높이는 데 활용됩니다. 주요 항목에는 지역정보(시·도, 시·군·구, 읍·면·동), 정류장 ID, BIMS ID, 정류장명 등이 포함되며, 이를 통해 정류장별 이용 현황 분석, 노선 관리, 환승 편의성 향상, 교통 인프라 개선 등 다양한 목적에 효과적으로 활용할 수 있습니다. 정산사업자가 관리하는 정류장을 기준으로 제공하고 있습니다.
+team:
+  dept: 생활교통복지과
+services:
+  - op: /getBusStop
+    name: 버스정류장 조회
+    endpoint: https://apis.data.go.kr/1613000/BusStop/getBusStop
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: opr_ymd
+        required: true
+        example: '20250801'
+        desc: 운행일자
+      - name: sttn_id
+        required: false
+        example: '00000011'
+        desc: 정류장 ID
+      - name: ctpv_cd
+        required: true
+        example: '29'
+        desc: 시도코드
+      - name: sgg_cd
+        required: true
+        example: '29140'
+        desc: 시군구코드
+      - name: dataType
+        required: true
+        example: JSON
+        desc: 데이터타입(JSON/XML)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: opr_ymd
+      title: 운행일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250801'
+      stats:
+        min: 20250801
+        p50: 20250801
+        max: 20250801
+        unique: 1
+    - name: sttn_id
+      title: 정류장 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00000011'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: sttn_nm
+      title: 정류장 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 5.18기념문화센터
+      stats:
+        unique: 1
+    - name: sttn_ars_no
+      title: 정류장 ARS번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '~'
+      stats:
+        unique: 1
+    - name: ctpv_cd
+      title: 시도코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '29'
+      stats:
+        min: 29
+        p50: 29
+        max: 29
+        unique: 1
+    - name: sgg_cd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '29140'
+      stats:
+        min: 29140
+        p50: 29140
+        max: 29140
+        unique: 1
+    - name: emd_cd
+      title: 읍면동코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2914011800'
+      stats:
+        min: 2914011800
+        p50: 2914011800
+        max: 2914011800
+        unique: 1
+    - name: ctpv_nm
+      title: 시군명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: sgg_nm
+      title: 시군구명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: emd_nm
+      title: 읍면동명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - sgg_cd
+      reference:
+        key: sgg_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8941
+  rank_in_sector: 2
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 매핑 transit_node_cd 전수 원천 — 국토부 표준 버스정류장 전국
+claims:
+  - id: c-15142032-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142032.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142032.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15142032-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15142032-03
+    kind: key
+    value: '실측 조인 키: sgg_cd(sgg_cd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15142032.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15142032-04
+    kind: coverage
+    value: API 전체 건수 1 · 검증 수신 1행 · 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15142032.json
+        observed_at: '2026-09-30'
+        detail: total 1, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15142032-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142032-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  total_count: 1
+  ops_ok: 1/1
+  latency_ms: 521
+  run: probe/runs/15142032.json
+  stats: probe/stats/15142032.json
+  data: probe/data/15142032/
+status: active

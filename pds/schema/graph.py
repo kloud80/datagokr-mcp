@@ -247,7 +247,7 @@ class Target(Strict):
     prelim_score: float
     usage: int
     url: str
-    round: Literal["1", "2", "external"]
+    round: Literal["1", "2", "3", "external"]
     why: str
     status: Literal["pending", "verified", "failed"]
     probe: dict[str, Any] | None = None
