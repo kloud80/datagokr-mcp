@@ -1,0 +1,385 @@
+# Dataset 15125362 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15125362'
+tier: verified
+title: 창업진흥원_창업기업확인서발급기업정보_조회서비스
+sector: 산업고용/산업·중소기업일반/sme-certification
+agency:
+  id: B552735
+  name: 창업진흥원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125362/openapi.do
+synonyms:
+  - 창업기업
+  - 제품정보
+  - 진위확인
+  - 창업진흥원
+  - 기업확인서발급기입정보
+description_portal: 해당 정보는 「중소기업기본법」 및 「중소기업창업 지원법」에 따라 중소벤처기업부장관이 인증하는 ‘창업기업 확인서’를 온라인 심사 절차를 통해 발급받은 창업기업에 대한 리스트와, 이들 인증 완료 기업이 실제로 판매 중인 제품 정보를 함께 제공하는 서비스입니다. 이 데이터는 창업기업으로 공식 인정받은 중소기업의 명단과 해당 기업이 등록한 주요 제품의 명칭, 제품군, 특장점, 판매 경로 등을 포함하고 있어, 유망 창업기업의 시장 진입 현황과 인증 기반의 신뢰성 있는 창업기업 정보를 통합적으로 파악할 수 있도록 구성되어 있습니다. 이를 통해 소비자와 유통사는 신뢰 가능한 창업제품을 쉽게 탐색할 수 있으며, 창업기업 입장에서도 인증 기반 제품 홍보 및 판로 확대에 실질적인 지원 효과를 기대할 수 있습니다.
+team:
+  dept: 디지털AI실
+services:
+  - op: /getCorporateInformation01
+    name: 창업기업확인서 발급 기업 정보
+    endpoint: https://apis.data.go.kr/B552735/kisedCertService01/getCorporateInformation01
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: false
+        desc: 페이지
+      - name: perPage
+        required: false
+        desc: 한 페이지 결과 수
+      - name: cond[confmdoc_isu_no::EQ]
+        required: false
+        desc: 창업기업확인서 발급 번호
+      - name: cond[ntrp_type_nm::EQ]
+        required: false
+        desc: 기업 구분(개인기업,법인기업)
+      - name: cond[ntrp_nm::LIKE]
+        required: false
+        desc: 기업 명
+      - name: cond[brno::EQ]
+        required: false
+        desc: 사업자등록번호
+      - name: cond[crno::EQ]
+        required: false
+        desc: 법인등록번호
+      - name: returnType
+        required: false
+        desc: json/xml(default:xml)
+      - name: cond[confmdoc_isu_dt::GTE]
+        required: false
+        desc: 창업기업확인서 발급 일시 이상(yyyyMMdd)
+      - name: cond[confmdoc_expr_dt::LTE]
+        required: false
+        desc: 창업기업확인서 만료 일시 이하(yyyyMMdd)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getProductInformation01
+    name: 창업기업확인서 발급 기업 제품 정보
+    endpoint: https://apis.data.go.kr/B552735/kisedCertService01/getProductInformation01
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: perPage
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: false
+        example: json
+        desc: json/xml(default:xml)
+      - name: cond[ntrp_nm::LIKE]
+        required: false
+        desc: 기업명
+      - name: cond[confmdoc_isu_no::EQ]
+        required: false
+        desc: 창업기업확인서 발급 번호
+      - name: cond[brno::EQ]
+        required: false
+        desc: 사업자등록번호
+      - name: cond[manu_nm::LIKE]
+        required: false
+        desc: 제품명
+      - name: cond[confmdoc_isu_dt::GTE]
+        required: false
+        example: '20230101'
+        desc: 창업기업확인서 발급 일시 이상(yyyyMMdd)
+      - name: cond[confmdoc_expr_dt::LTE]
+        required: false
+        example: '20260101'
+        desc: 창업기업확인서 만료 일시 이하(yyyyMMdd)
+      - name: cond[manu_category::EQ]
+        required: false
+        example: 물품
+        desc: 제품 분류
+      - name: cond[manu_lclss::LIKE]
+        required: false
+        example: 전기
+        desc: 제품 대분류
+      - name: cond[manu_mclss::LIKE]
+        required: false
+        example: 전기시스템
+        desc: 제품 중분류
+      - name: cond[manu_sclss::LIKE]
+        required: false
+        example: 각종등및등부품
+        desc: 제품 소분류
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: brno
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '6858601615'
+        - '8551401202'
+        - '7868701837'
+      stats:
+        min: 1207400305
+        p50: 4678701585
+        max: 8986800353
+        unique: 100
+    - name: confmdoc_expr_dt
+      title: 창업기업확인서 만료 일시(yyyyMMdd)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261010'
+        - '20270216'
+        - '20270227'
+      stats:
+        min: 20261010
+        p50: 20270225
+        max: 20271120
+        unique: 90
+    - name: confmdoc_isu_dt
+      title: 창업기업확인서 발급 일시(yyyyMMdd)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20240229'
+        - '20240223'
+        - '20240216'
+      stats:
+        min: 20231010
+        p50: 20240505
+        max: 20260929
+        unique: 89
+    - name: confmdoc_isu_no
+      title: 창업기업확인서 발급 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202401204230033784'
+        - '202310143000030289'
+        - '202506612910065756'
+      stats:
+        min: 202310143000030304
+        p50: 202405237055041792
+        max: 202609259990094976
+        unique: 100
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.21
+      sample_values:
+        - '1101117443312'
+        - '1341110565769'
+        - '1201111061457'
+      stats:
+        min: 1101117289310
+        p50: 1401110084448
+        max: 2850110450358
+        unique: 79
+    - name: ntrp_nm
+      title: 기업 명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 주식회사 오투네이쳐
+        - 에이치
+        - 가제트코리아 주식회사
+      stats:
+        unique: 100
+    - name: ntrp_type_nm
+      title: 기업 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 법인기업
+        - 개인기업
+      stats:
+        unique: 2
+    - name: repr_nm
+      title: 대표자 명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 조*호
+        - 고*인
+        - 박*경
+      stats:
+        unique: 96
+    - name: unin_repr_nm
+      title: 공동 대표 명
+      type: code
+      null_rate: 0.96
+      sample_values:
+        - 성*수
+        - 황*식
+        - 박*원
+      stats:
+        unique: 4
+  foreign_keys:
+    - fields:
+        - brno
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+  temporal: 2023-10-10 ~ 2027-11-20
+cycle: default
+classification:
+  subsector_name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8381
+  rank_in_sector: 4
+  brm: 산업고용 - 산업·중소기업일반
+  why: 확인서·인증서 단위 원장, 사업자번호로 기업 축 연결
+claims:
+  - id: c-15125362-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15125362.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15125362.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15125362-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2027-11-20 (관측일 기준 -416일 전) — 미래 날짜(일정·계획형) 포함 — 검증 호출 조건(cond[confmdoc_isu_dt::GTE]=20230101, cond[confmdoc_expr_dt::LTE]=20260101) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15125362
+        observed_at: '2026-09-30'
+        detail: latest 2027-11-20, lag -416
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125362-03
+    kind: key
+    value: '실측 조인 키: bizno(brno), corp_rgst_no(crno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125362.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125362-04
+    kind: coverage
+    value: API 전체 건수 100 · 검증 수신 100행 · 범위 전국 · 행정단위 읍면동 · 기간 2023-10-10 ~ 2027-11-20
+    evidence:
+      - type: measured
+        source: probe/runs/15125362.json
+        observed_at: '2026-09-30'
+        detail: total 100, rows 100
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125362-06
+    kind: admin_note
+    value: "세부 부문 '기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)'의 가치: 확인서·인증서 단위 원장, 사업자번호로 기업 축 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#sme-certification
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125362-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125362-10
+    kind: pitfall
+    value: 날짜 컬럼에 미래 값(2027-11-20) — 최신성은 적재일 컬럼으로 판단해야 한다
+    evidence:
+      - type: measured
+        source: probe/synthesis#15125362
+        observed_at: '2026-09-30'
+        detail: lag -416
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125362-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getProductInformation01'
+    evidence:
+      - type: measured
+        source: probe/runs/15125362.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 100
+  total_count: 100
+  ops_ok: 1/2
+  latency_ms: 94
+  latest: '2027-11-20'
+  lag_days: -416
+  run: probe/runs/15125362.json
+  stats: probe/stats/15125362.json
+  data: probe/data/15125362/
+status: active

@@ -1,0 +1,242 @@
+# Dataset 15079264 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15079264'
+tier: verified
+title: 통일부_북한 인물 조회 서비스
+sector: 통일외교안보/통일/nk-people-orgs
+agency:
+  id: '1250000'
+  name: 통일부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15079264/openapi.do
+synonyms:
+  - 북한
+  - 인물
+  - 활동이력
+  - 배경
+  - 직책
+description_portal: 통일부에서 제공하는 ‘통일부_북한 인물 조회 서비스’는 북한 주요 인물 정보를 조회할 수 있는 공공데이터입니다.이 서비스는 인물의 이름, 한국식 이름, 직책, 성별, 생년월일, 출생지, 사망 여부, 사망일 등 다양한 정보를 포함하고 있어, 북한 인물에 대한 체계적인 정보를 손쉽게 확인하실 수 있습니다.이 데이터는 북한 인물 분석, 통일 및 외교 정책 연구, 언론 및 학술 자료 작성 등 다양한 분야에서 활용될 수 있습니다.특히, 북한 주요 인물의 배경 및 활동 이력을 파악하고, 남북 관계 및 통일 관련 연구에 기초 자료로 활용하실 수 있습니다.
+team:
+  dept: 정보화담당관
+services:
+  - op: /getPrsn
+    name: 북한 인물 조회
+    endpoint: https://apis.data.go.kr/1250000/prsn/getPrsn
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: sexdstn
+        required: true
+        example: '1'
+        desc: '1: 남성 2: 여성'
+      - name: nk_prsn_death_at
+        required: true
+        example: N
+        desc: 'Y: 사망 N: 생존'
+      - name: bgng_ymd
+        required: true
+        example: '19300101'
+        desc: 시작 출생일자
+      - name: end_ymd
+        required: true
+        example: '20201212'
+        desc: 종료 출생일자
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: korean_nm
+      title: 한국식이름
+      type: code
+      null_rate: 0.77
+      sample_values:
+        - 이철만
+        - 이용철
+        - 백룡천
+      stats:
+        unique: 14
+    - name: sexdstn
+      title: 성별
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: nk_prsn_death_at
+      title: 북한인물사망여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: nk_prsn_death_de
+      title: 북한인물사망일자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '연도미상    '
+      stats:
+        unique: 1
+    - name: nm
+      title: 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 리철만
+        - 박용팔
+        - 리용철
+      stats:
+        unique: 72
+    - name: rspofc
+      title: 직책
+      type: string
+      null_rate: 0.16
+      sample_values:
+        - ' 내각 부총리'
+        - ' 당 중앙위원회 후보위원'
+        - ' 당 중앙위원회 위원'
+      stats:
+        unique: 54
+    - name: brth
+      title: 생년월일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '19590000'
+        - '1959    '
+        - '19570000'
+      stats:
+        min: 1955
+        p50: 19565605
+        max: 19840108
+        unique: 66
+    - name: birthplace
+      title: 출생지
+      type: code
+      null_rate: 0.58
+      sample_values:
+        - 평양시
+        - '평양시    '
+        - 량강도
+      stats:
+        unique: 17
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 북한 인물·허가법인·협력사업 승인내역
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6826
+  rank_in_sector: 2
+  brm: 통일외교안보 - 통일
+  why: 북한 인물·허가법인·협력사업 승인내역
+claims:
+  - id: c-15079264-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15079264.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15079264.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15079264-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15079264-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15079264.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15079264-04
+    kind: coverage
+    value: API 전체 건수 100 · 검증 수신 100행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15079264.json
+        observed_at: '2026-09-30'
+        detail: total 100, rows 100
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15079264-06
+    kind: admin_note
+    value: '[통일외교안보 · 통일] 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만. 북한 개황·용어·도서·TV 편성표, 남북교역·개성공단·북한이탈주민 통계 배제 (`unification-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L699
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 100
+  total_count: 100
+  ops_ok: 1/1
+  latency_ms: 101
+  run: probe/runs/15079264.json
+  stats: probe/stats/15079264.json
+  data: probe/data/15079264/
+status: active

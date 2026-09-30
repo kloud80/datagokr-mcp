@@ -1,0 +1,236 @@
+# Dataset 15097938 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15097938'
+tier: verified
+title: 울산광역시_울산시_기업정보
+sector: 산업고용/산업·중소기업일반/local-company-registry
+agency:
+  id: '6310000'
+  name: 울산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15097938/openapi.do
+synonyms:
+  - 기업
+  - 중기업
+  - 중소기업
+description_portal: 분류, 회사명, 소재지, 연락처, 주요생산품목, 홈페이지 등의 울산광역시 기업정보 조회서비스
+team:
+  dept: 중소벤처기업과
+services:
+  - op: /getUlsanentrprsList
+    name: 울산시 기업정보 목록
+    endpoint: https://apis.data.go.kr/6310000/ulsanentrprs/getUlsanentrprsList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: srchEntrprsSe
+        required: false
+        example: 자동차
+        desc: 기업구분 검색
+      - name: srchLocplc
+        required: false
+        example: 울주군
+        desc: 소재지 검색
+      - name: srchEntrprsNm
+        required: false
+        example: 울산
+        desc: 기업명 검색
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: no
+      title: 고유번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '199'
+        - '198'
+        - '197'
+      stats:
+        min: 1
+        p50: 100
+        max: 199
+        unique: 199
+    - name: entrprsSe
+      title: 분류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 화학
+        - 자동차
+      stats:
+        unique: 4
+    - name: entrprsNm
+      title: 회사명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ㈜세진중공업
+        - ㈜디아이씨
+        - 한미실업㈜
+      stats:
+        unique: 196
+    - name: locplc
+      title: 소재지
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 울산광역시 울주군 온산읍 원봉로 15
+        - 울산광역시 울주군 온양읍 덕망로 275
+        - 울산광역시 울주군 온산읍 회학1길 53
+      stats:
+        unique: 182
+    - name: telno
+      title: 전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 231-8000
+        - 231-7300
+        - 255-0500
+      stats:
+        unique: 192
+    - name: mainProduct
+      title: 주요 생산품목
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 증류기, 열교환기 및 가스발생기 제조업
+        - 금속 조립구조재 제조업 (철구조물)
+        - 고강도하수관(PCF관)
+      stats:
+        unique: 195
+    - name: hmpg
+      title: 홈페이지주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - http://www.sejinheavy.com
+        - http://
+        - http://www.dkte.co.kr
+      stats:
+        unique: 190
+  foreign_keys:
+    - fields:
+        - locplc
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 지역 기업 현황 (시군구 관내 기업·입주업체·수출기업 목록)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7545
+  rank_in_sector: 16
+  brm: 산업고용 - 산업·중소기업일반
+  why: 지역 기업 현황 (시군구 관내 기업·입주업체·수출기업 목록)
+claims:
+  - id: c-15097938-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15097938.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15097938.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15097938-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097938-03
+    kind: key
+    value: '실측 조인 키: address(locplc)'
+    evidence:
+      - type: measured
+        source: probe/stats/15097938.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097938-04
+    kind: coverage
+    value: API 전체 건수 199 · 검증 수신 199행 · 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15097938.json
+        observed_at: '2026-09-30'
+        detail: total 199, rows 199
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097938-06
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 199
+  total_count: 199
+  ops_ok: 1/1
+  latency_ms: 112
+  run: probe/runs/15097938.json
+  stats: probe/stats/15097938.json
+  data: probe/data/15097938/
+status: active

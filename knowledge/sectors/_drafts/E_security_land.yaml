@@ -1,0 +1,455 @@
+sector_map:
+- id: military-to-veterans
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병무행정·전력유지에 등록된 호국전몰용사 공훈록·전사자 유해발굴·보훈 유공자·보훈단체 → 보훈 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match_any:
+  - sector:
+    - 통일외교안보 - 병무행정
+    - 통일외교안보 - 전력유지
+    title_regex: 공훈록|유해발굴|유공자|보훈
+  set_sector: 통일외교안보 - 보훈
+- id: veterans-scattered
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '일반행정에 흩어진 보훈단체·보훈시설·현충시설·국가유공자단체 → 보훈 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 공공행정 - 일반행정
+    title_regex: 보훈단체|보훈시설|현충시설|국가유공자단체
+  set_sector: 통일외교안보 - 보훈
+- id: military-pension-to-pension
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병무행정의 군인연금 급여 지급현황 → 공적연금 (직역연금 통계) (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 병무행정
+    title_regex: 군인연금
+  set_sector: 사회복지 - 공적연금
+- id: civil-defense-to-safety
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병무행정·방위력개선·전력유지에 등록된 민방위(대피시설·급수시설·경보시설) → 재난안전-안전관리. 통계연보 표는 그대로 두고 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector:
+    - 통일외교안보 - 병무행정
+    - 통일외교안보 - 방위력개선
+    - 통일외교안보 - 전력유지
+    title_regex: ^(?!.*통계연보).*민방위
+  set_sector: 재난안전 - 안전관리
+- id: military-procurement-to-defense
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병력운영·전력유지에 등록된 방위사업청 식재료 입찰·국방전자조달 사전의향서·국외조달 무기체계 가격정보 → 방위력개선 (군수 조달) (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector:
+    - 통일외교안보 - 병력운영
+    - 통일외교안보 - 전력유지
+    title_regex: 입찰|조달|사전의향서|가격정보
+  set_sector: 통일외교안보 - 방위력개선
+- id: defense-energy-to-energy
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '전력유지에 잘못 등록된 인천광역시 가스 공급량·발전현황·제조업 전력 사용량 → 에너지및자원개발 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 전력유지
+    title_regex: 가스 공급량|발전현황|전력 사용량
+  set_sector: 산업고용 - 에너지및자원개발
+- id: military-court-to-law
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '전력유지의 군사법원 재판결과 → 법제 (판결 원장) (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 전력유지
+    title_regex: 재판결과
+  set_sector: 공공행정 - 법제
+exclusions:
+- id: veterans-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '보훈: 보훈병원 내부 진료·검사·영양·EMR 자료, 지원제도 해설, 포상·이용 통계, 기록물·콘텐츠 운영 자료는 먼저 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 보훈
+    title_regex: 상병|진단|퇴원|진료과|예약|PACS|EMR|영양|식품교환|메뉴|탭|사용자설정|마감|결산|기록물|계약처|병리|투약|간호|검사|약품효능|열람|봉사활동|코로나|해설|삼행시|콘텐츠|구독|신문|모금|청구|이용인원|환자|통계|포상|이력|지원제도|도로명주소|다빈도|수술|진료건수|보철구|재활의학|인수일정|진료인원|약품|처방|물리치료|식단|의약|영상|포스터|이미지|자 수|창업자
+- id: veterans-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '보훈은 공훈·안장자 기록, 현충·보훈시설·보훈단체·보훈병원(병상·비급여), 보훈대상자 취업, 시군구 보훈대상자 인원만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 보훈
+  keep:
+    title_regex: 공훈|안장자|독립운동가|유공자(?!단체)|사료|인명사전|유해발굴|전몰|현충시설|보훈시설|보훈단체|유공자단체|병상정보|비급여|진료수가|위탁병원 ?(현황|목록|정보|지정)|취업|채용|(시군구|시도|지역)별.*(보훈대상자|인원)|보훈대상자 ?(인원|현황)
+- id: diplomacy-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '외교: 보도·연설·브리핑·업무계획·유튜브·발간·사료·협상사례, 국가별 정치·경제·관계 개황(모델이 아는 참고 텍스트), 코로나 입국조치(종료), 인식조사·통계·실적, 지자체 자매도시·국제교류 현황, 기관 운영은 먼저 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 외교
+    title_regex: 보도자료|보도사진|연설문|브리핑|업무계획|유튜브|발간|사료|협상사례|공지사항|자주묻는|코로나|인식조사|통계|동호회|한류|자매도시|우호협력|국제교류현황|국제회의체|정치현항|정치현황|경제현황|우리나라와의|북한과의|주요정세|주요인사|일반사항|종합환경|개황|편람|주요협정|외교일지|국제경제동향|안내서|길라잡이|질의응답|게시판|인사규정|지출내역|실적|수혜|국기 이미지|인구증감|진출현황|MOU|SMS 문구|휴일현황|간담회|유네스코|연구정보|수원상위표|공고문|공고
+      및|교수직|혁신스타트업|250대기업|체감도|월력표|생활정보|활동정보|한국발 입국자|해외입국자|재일한인|기후에너지협력센터|지원 실적|서식|보고서
+- id: diplomacy-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '외교는 해외안전·여행경보(실시간성), 재외공관·여권·국가코드, 국제기구 공석, ODA 사업·조달, 재외동포 단체 원장만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 외교
+  keep:
+    title_regex: 여행|안전|사건사고|입국허가|입국|현지연락처|의료환경|치안환경|파견지 통합|공관|여권|표준코드|구분코드|코드정보|기본정보|해외이주|재외동포현황|공석|인턴십|JPO|UNV|협력사업|사업정보|조달|발주|파견|봉사단|대외경제협력|개발협력|유무상연계|긴급구호|재외동포 ?단체|단체정보|한인회|NGO
+- id: military-service-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병무행정: 병역판정검사 신체 분포·Kdata 연구용 자료, 입영·사고·기피 통계, 군 코드·도서·교육과정·봉급표·보급기준, 육군 장병 개인 조회(확인·가족·휴가·급여명세 — 개인 서비스), 사관학교는 먼저 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 병무행정
+    title_regex: 통계|통계연보|분포|Kdata|자료 제공|연구|(?<!접수)현황|군관련코드|도서|교육과정|봉급표|보급기준|제복|신분증|장병 ?확인|장병가족|장병 가족|휴가 내역|급여명세|출장 내역|밀리패스|사관학교|측신|신체측정|채용시험|국가자격|자격증|사고|기피|국외여행허가|입영 귀가자|명문가 정보|행사 정보|전직지원|방산수출입|표준 목록|통지서배달|유병률|질환|기형|전역|할인 혜택
+- id: military-service-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병무행정은 모집병·사회복무요원·병역지정업체(전문연구·산업기능요원)·병역일터 채용·검사장/예우시설/군 복지시설 원장만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 병무행정
+  keep:
+    title_regex: 모집|특기|배점|구비서류|입영원|지원가능|접수현황|사회복무요원|복무기관|소집계획|공석|지정업체|인원배정|산업기능요원|전문연구요원|병역일터|채용공고|공중보건의사|병역판정검사장|검사장|나라사랑가게|예우시설|체력단련장|복지시설|복지단|TMO|관광지 정보|병역판정 신체검사 정보|병역의무자 기본|군사법원 연락처
+- id: unification-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '통일: 남북교역·개성공단 등 통계, 북한이탈주민 실태조사, 연구보고서·도서·간행물·교과서·TV 편성표·용어사전·개황(참고 자료), 교육·채용·보도·공지는 먼저 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 통일
+    title_regex: 통계|실태|조사|연구|교육|도서|대출|간행물|교과서|TV|편성표|용어|언어비교|약사|개황|정치사|채용|보도자료|공지|계획|여론|인식|설문|보조금|방문인원|체류인원|해설자료|기타자료|신착|북한이탈주민|항공기왕래|교류협력_현황|이북5도민|견학|소장자료|정착지원|지원협의회
+- id: unification-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '통일은 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인내역·남북회담·합의서만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 통일
+  keep:
+    title_regex: 동향|김정은|공개 활동|인물|인명록|허가법인|승인내역|회담|합의서|북한정보포털|통합검색
+- id: defense-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '방위력개선: 계약집행·기술변경 통계, 보도·용어·도서·학술, 정보화·PC 도입, 경영실태, 정책실명제, 양해각서, 전시회는 먼저 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 방위력개선
+    title_regex: 통계|(?<!지정)(?<!인증)현황|보도자료|용어|도서|학술|저널|구독|PC|경영실태|정책실명제|예산|양해각서|조약|전시회|정보화|민방위|기술변경|지식재산|측신|맞춤피복|자주묻는
+- id: defense-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '방위력개선은 군수품 조달(입찰공고·결과·조달계획·계약·해외입찰)과 방산업체 지정·국방 인증·국방규격/표준·민간이전 기술만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 방위력개선
+  keep:
+    title_regex: 입찰|낙찰|조달|계약|발주|사전의향서|가격정보|업체정보|방산업체|인증|국방규격|국방표준|표준|코드조회|민간이전|기술이전|군수품
+- id: force-ops-all
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '병력운영(부대 식단·신체측정·사관학교 등)은 조달성 원장을 방위력개선으로 옮긴 뒤 전부 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 병력운영
+- id: force-maintenance-all
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '전력유지(국방시설 표준도면·훈령 목록·군급분류집 등 참고 자료)는 조달·에너지·재판결과를 옮긴 뒤 전부 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector: 통일외교안보 - 전력유지
+- id: land-restructured-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '국토관리 재구성 8개 부문(국토·도시계획·토지이용규제·도시계획시설·공원녹지·도시개발·정비·지역발전·토지·지적·건축물·공간정보)에서 통계(도시계획현황 통계·지적통계·통계성지표·건축물통계), 지자체 지목별 면적 표, 현장 사진·이미지·경관기록, 생활SOC 입지분석·시각화, 연구문헌·보고서·용어·편람, 균형발전 포털의 교육·보도·행사·채용·뉴스레터, 기계설비 성능점검, 기관 운영은 우선 배제. 필지·건물·구역 원장(PNU), 결정조서·고시·실시계획·개발행위
+    등 계획 이벤트, 항공사진·정사영상·수치지도 같은 국가 기본 공간정보는 남긴다 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  match:
+    sector:
+    - 국토관리 - 국토·도시계획
+    - 국토관리 - 토지이용규제
+    - 국토관리 - 도시계획시설·공원녹지
+    - 국토관리 - 도시개발·정비
+    - 국토관리 - 지역발전
+    - 국토관리 - 토지·지적
+    - 국토관리 - 건축물
+    - 국토관리 - 공간정보
+    title_regex: 통계|(?<!항공)사진|이미지|동영상|홍보영상|교육영상|포스터|홈페이지|공지사항|채용|예산서|예산 ?편성|업무추진|교육(?!연구시설|시설|환경)|(?<!교육)연구|보고서|발간|홍보|민원|설문|매뉴얼|안내서|책자|사례집|용어|서지|문헌|이슈리포트|보도자료|정책보도|자주찾는|행사|뉴스레터|커버스토리|인포그래픽|큐레이터|포럼|편람|관계법령|도서안내|메타데이터|자료신청|시스템관리|시각화|입지분석|유인력|수요도|성능점검|기계설비|경관기록|지목별|지목현황|지목면적|지목및면적|객관지표|상점|배치색채|공사장
+      안내|명소
+subsectors:
+- sector: 통일외교안보 - 보훈
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/보훈.md
+  note: '국가보훈부·보훈복지의료공단·독립기념관. 공훈 기록(독립유공자·안장자)·보훈시설·보훈병원·취업만. 보훈병원 파일 대부분은 병원 내부 진료 통계라 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: veteran-merit-records
+    name: 공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)
+    depth: front
+    novelty: low
+    value_source: 개인 단위 공훈 원장 — 국립묘지 안장자 검색, 독립운동 인물
+    match:
+      title_regex: 공훈|안장자|독립운동가|유공자(?!단체)|사료|인명사전|유해발굴|전몰
+  - slug: veteran-facilities
+    name: 보훈시설·단체·병원 (현충시설·보훈단체 표준·보훈병원 병상/비급여/진료수가·위탁병원)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 현충시설·보훈단체 좌표 원장, 보훈병원은 의료기관 맥락과 연결
+    match:
+      title_regex: 현충시설|보훈시설|보훈단체|유공자단체|병상정보|비급여|진료수가|위탁병원 ?(현황|목록|정보|지정)
+  - slug: veteran-jobs
+    name: 보훈대상자 취업·제대군인 채용정보
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 취업|채용
+  - slug: veteran-regional
+    name: 시군구별 보훈대상자 인원 (지역 연계)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 외교
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/외교.md
+  note: '외교부·KOICA·재외동포협력센터. 해외안전·여행경보(실시간성), 재외공관·여권·국가코드, 국제기구 공석, ODA 사업·조달, 재외동포 단체만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: travel-safety
+    name: 해외안전·여행경보 (국가별 여행경보·특별여행주의보·안전공지·사건사고·입국허가요건·현지연락처·의료/치안환경)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 해외여행객 필수, 경보 조정은 모델이 모르는 시의성. 국가·지역 표준코드가 키
+    match:
+      title_regex: 여행|안전|사건사고|입국허가|입국|현지연락처|의료환경|치안환경|파견지 통합
+  - slug: missions-countries
+    name: 재외공관·주한공관·여권·국가 표준코드·국가 기본정보
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 국가·지역 표준코드 = 출입국·무역·관광 국적 데이터의 매핑 마스터
+    match:
+      title_regex: 공관|여권|표준코드|구분코드|코드정보|기본정보|해외이주|재외동포현황
+  - slug: intl-org-jobs
+    name: 국제기구 공석 (분야·기구별·JPO·UNV·인턴십)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 공석|인턴십|JPO|UNV
+  - slug: oda-projects
+    name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
+    depth: front
+    novelty: medium
+    value_source: 사업 단위 원장, KOICA 조달은 정부조달과 같은 개념
+    match:
+      title_regex: 협력사업|사업정보|조달|발주|파견|봉사단|대외경제협력|개발협력|유무상연계|긴급구호
+  - slug: overseas-korean-orgs
+    name: 재외동포 단체 (한인회·경제·한글학교·언론·NGO)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 병무행정
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/병무행정.md
+  note: '병무청·국방부. 모집병·사회복무요원·병역지정업체·검사장/예우시설/군 복지시설만. 장병 개인 조회 API는 개인 서비스라 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: alternative-service
+    name: 사회복무요원·병역지정업체 (복무기관·본인선택 공석·전문연구/산업기능요원 지정업체·인원배정·병역일터 채용)
+    depth: front
+    novelty: high
+    value_source: 병역지정업체 = 사업자 원장(기업 축), 사회복무 공석은 시의성
+    match:
+      title_regex: 사회복무요원|복무기관|소집계획|공석|지정업체|인원배정|산업기능요원|전문연구요원|병역일터|채용공고|공중보건의사
+  - slug: military-recruitment
+    name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 모집|특기|배점|구비서류|입영원|지원가능|접수현황
+  - slug: military-service-facilities
+    name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 통일
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/통일.md
+  note: '통일부. 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만 — 북한 참고 자료(개황·용어·도서)와 통계는 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: north-korea-trends
+    name: 북한 동향 (일일·월별 동향·김정은 공개 활동)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 동향|김정은|공개 활동
+  - slug: nk-people-orgs
+    name: 북한 인물·허가법인·협력사업 승인내역
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 인물|인명록|허가법인|승인내역
+  - slug: inter-korean
+    name: 남북회담·남북합의서·북한정보포털 검색
+    depth: front
+    novelty: low
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 방위력개선
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/방위력개선.md
+  note: '방위사업청·국방기술품질원·국방과학연구소. 군수품 조달 원장(입찰·결과·계획·계약·해외입찰)과 방산업체·국방 인증·규격만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: defense-procurement
+    name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 나라장터와 별도인 국방전자조달 — 정부조달과 같은 개념, 사업자번호로 기업 축
+    match:
+      title_regex: 입찰|낙찰|조달|계약|발주|사전의향서|가격정보|업체정보
+  - slug: defense-industry-standards
+    name: 방산업체·국방 인증·규격 (방산업체 지정·DQ마크·국방규격/표준·군수품 코드·민간이전 기술)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+keys:
+- id: country_cd
+  name: 국가·지역 표준코드 (외교부 국가·지역별 표준코드, ISO 3166)
+  format: ISO alpha-2/3 + 외교부 대륙 구분코드
+  scope: global
+  note: 여행경보·재외공관·출입국 국적·무역 국가별 데이터를 잇는 국가 마스터 (구름 기준 적용 2026-09-29, 외교). stay_status_cd의 국적코드와 같은 층
+- id: defense_item_cd
+  name: 군수품 코드·국가재고번호 (방위사업청 군수품조달정보 코드조회)
+  format: NSN 13자리 / 방사청 품목코드
+  scope: global
+  note: 국방전자조달 입찰·계약 원장의 품목 키. 조달청 물품분류번호(g2b_prdct_clsfc_no)와 매핑 여부 Phase 2 확인
+key_issuers: []
+contexts:
+  new:
+  - id: overseas-travel
+    name: 해외여행·출입국
+    dimension: life_context
+    question: 이 나라 가도 되나 — 여행경보·입국요건·항공편·출입국
+    note: 외교부 여행경보(실시간성)·입국허가요건, 항공 운항정보, 법무부 출입국 통계가 한 여행 준비에 걸린다. 국가 표준코드(country_cd)로 잇는다
+    members:
+    - sector: 통일외교안보 - 외교
+      subsector: travel-safety
+      role: 여행경보·안전
+    - sector: 통일외교안보 - 외교
+      subsector: missions-countries
+      role: 재외공관·국가코드
+    - sector: 교통물류 - 항공·공항
+      subsector: flight-operations
+      role: 항공편
+    - sector: 법률 - 법무및검찰
+      subsector: immigration-stay
+      role: 출입국
+  - id: veterans-care
+    name: 보훈 가족 돌봄
+    dimension: life_context
+    question: 국가유공자 부모님 진료·요양·예우
+    note: 보훈병원·보훈요양원(보훈복지의료공단)과 일반 요양기관·장기요양·노인복지시설을 함께 봐야 완성
+    members:
+    - sector: 통일외교안보 - 보훈
+      subsector: veteran-facilities
+      role: 보훈병원·요양원
+    - sector: 보건의료 - 건강보험
+      subsector: medical-institutions
+      role: 위탁·일반 요양기관
+    - sector: 보건의료 - 건강보험
+      subsector: long-term-care
+      role: 장기요양
+  - id: public-procurement
+    name: 공공조달 (나라장터·국방·ODA)
+    dimension: same_concept
+    question: 공공기관이 무엇을 사고 누가 따가나
+    note: 조달청 나라장터와 별도로 방위사업청 국방전자조달·KOICA ODA 조달이 있다. 입찰·계약 원장 구조가 같고 사업자번호로 기업 축과 이어진다
+    members:
+    - sector: 공공행정 - 정부조달
+      role: 나라장터
+    - sector: 통일외교안보 - 방위력개선
+      subsector: defense-procurement
+      role: 국방전자조달
+    - sector: 통일외교안보 - 외교
+      subsector: oda-projects
+      role: KOICA 조달
+  add_members:
+    enterprise-axis:
+    - sector: 통일외교안보 - 방위력개선
+      subsector: defense-procurement
+      role: 국방 조달 계약업체
+    - sector: 통일외교안보 - 병무행정
+      subsector: alternative-service
+      role: 병역지정업체
+    what-can-i-build:
+    - sector: 국토관리 - 국토·도시계획
+      subsector: district-unit-plan
+      role: 지구단위계획
+    regional-indicators:
+    - sector: 통일외교안보 - 보훈
+      subsector: veteran-regional
+      role: 보훈대상자
+review_log: '## 통일외교안보 (2026-09-29, Claude — 구름 기준 적용)
+
+
+  - **기준**: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제 (구름: "이제 남은건 니가 알아서 해봐").
+
+  - **보훈**: 공훈·안장자 기록, 현충시설·보훈단체·보훈병원(병상·비급여), 보훈대상자 취업, 시군구 보훈대상자 인원만. 보훈복지의료공단 파일 대부분(병원 내부 진료·검사·영양·EMR)은 배제 (`veterans-deferred`, `veterans-non-core`).
+
+  - **외교**: 해외안전·여행경보(실시간성), 재외공관·여권·국가 표준코드, 국제기구 공석, KOICA ODA 사업·조달, 재외동포 단체만. 국가별 정치·경제 개황은 모델이 아는 참고 텍스트, 코로나 입국조치는 종료 → 배제 (`diplomacy-*`).
+
+  - **병무행정**: 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).
+
+  - **통일**: 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만. 북한 개황·용어·도서·TV 편성표, 남북교역·개성공단·북한이탈주민 통계 배제 (`unification-*`).
+
+  - **방위력개선**: 군수품 조달(입찰공고·결과·계획·계약·해외입찰)과 방산업체 지정·DQ 인증·국방규격만 (`defense-*`). 국방전자조달은 나라장터와 별도 — context `public-procurement`.
+
+  - **병력운영·전력유지**: 조달성 원장(식재료 입찰·사전의향서·국외조달 가격정보)을 방위력개선으로 옮긴 뒤 전부 배제 (부대 식단·표준도면·훈령 목록).
+
+  - **이관**: 호국전몰용사 공훈록·유해발굴·보훈단체 → 보훈, 군인연금 → 공적연금, 민방위 시설 → 재난안전-안전관리, 인천 가스·발전 → 에너지, 군사법원 재판결과 → 법제, 일반행정의 보훈단체·현충시설 → 보훈.
+
+  - **전역 키**: `country_cd` (국가 표준코드), `defense_item_cd` (군수품 코드).
+
+  - **context**: `overseas-travel`(여행경보·항공·출입국), `veterans-care`(보훈병원·요양), `public-procurement`(나라장터·국방·ODA 조달), enterprise-axis에 국방 조달업체·병역지정업체 추가.
+
+
+  ## 국토관리 재구성 부문 정리 (2026-09-29, Claude — 구름 기준 적용)
+
+
+  - 재구성 때는 배제 없이 나눴던 8개 부문(국토·도시계획·토지이용규제·도시계획시설·공원녹지·도시개발·정비·지역발전·토지·지적·건축물·공간정보)에 같은 기준 적용 (`land-restructured-deferred`, 세부 부문은 그대로).
+
+  - **남김**: 필지·건물·구역 원장(PNU), UPIS 결정조서·고시·실시계획·개발행위 등 계획 이벤트, 정비·도시개발 구역, 건축 인허가·시가표준액, 항공사진·정사영상·수치지도 같은 국가 기본 공간정보.
+
+  - **배제**: 통계(도시계획현황·지적통계·통계성지표·건축물통계), 지자체 지목별 면적 표, 현장 사진·경관기록, 생활SOC 입지분석·시각화, 연구문헌·보고서·용어·편람, 균형발전 포털의 교육·보도·행사·채용·뉴스레터, 기계설비 성능점검, 기관 운영.
+
+  - **주의**: 지역명 ''예산군''이 ''예산''에 걸리지 않게 ''예산서|예산 편성''만, ''공공공지''(시설 유형)가 ''공지''에 걸리지 않게 ''공지사항''만, 교육연구시설은 살림.
+
+  '

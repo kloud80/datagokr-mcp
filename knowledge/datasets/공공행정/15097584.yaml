@@ -1,0 +1,249 @@
+# Dataset 15097584 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15097584'
+tier: verified
+title: 기획예산처_국고보조금 정보
+sector: 공공행정/지방행정·재정지원/subsidy
+agency:
+  id: '1052000'
+  name: 기획예산처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15097584/openapi.do
+synonyms:
+  - 국고보조금
+  - 보조금
+  - 보조사업
+description_portal: 국가가 특정 사업,사무를 장려하기 위해 지방자치단체와 민간에게 지원하는 재원(국고보조금)의 내역 그리고 그 재원을 활용한 보조사업 등의 정보
+team:
+  dept: 국고보조금부정수급관리단
+services:
+  - op: /T_OPD_PRMSCT_SBBGST
+    name: 분야부문별보조금예산현황
+    endpoint: https://apis.data.go.kr/1051000/MoefOpenAPI/T_OPD_PRMSCT_SBBGST
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식
+      - name: bsnsyear
+        required: true
+        example: '2021'
+        desc: 사업연도
+      - name: realm_nm
+        required: false
+        example: 일반·지방행정
+        desc: 분야명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: REALM_CODE
+      title: 분야코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '010'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: SECT_NM
+      title: 부문명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 입법및선거관리
+        - 국정운영
+        - 지방행정·재정지원
+      stats:
+        unique: 6
+    - name: BGAMT
+      title: 예산액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6852'
+        - '130'
+        - '213310'
+      stats:
+        min: 130
+        p50: 5401.5
+        max: 213310
+        unique: 6
+    - name: STDR_DE
+      title: 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260914'
+      stats:
+        min: 20260914
+        p50: 20260914
+        max: 20260914
+        unique: 1
+    - name: REALM_NM
+      title: 분야명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반·지방행정
+      stats:
+        unique: 1
+    - name: BSNSYEAR
+      title: 사업연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: SECT_CODE
+      title: 부문코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '011'
+        - '012'
+        - '013'
+      stats:
+        min: 11
+        p50: 13.5
+        max: 16
+        unique: 6
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2026-09-14 ~ 2026-09-14
+cycle: default
+classification:
+  subsector_name: 국고·지방보조금
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8288
+  rank_in_sector: 5
+  brm: 재정금융 - 재정·금융
+  sector_rule: subsidy-to-local
+  why: 보조사업 단위 원장 — "내가 받을 수 있는 보조금". 모델이 모르는 원장, 사업자번호로 국세청·공정거래·상권과 연결
+claims:
+  - id: c-15097584-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15097584.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15097584.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15097584-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-14 (관측일 기준 16일 전) — 검증 호출 조건(bsnsyear=2021) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15097584
+        observed_at: '2026-09-30'
+        detail: latest 2026-09-14, lag 16
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097584-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15097584.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097584-04
+    kind: coverage
+    value: API 전체 건수 6 · 검증 수신 6행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2026-09-14 ~ 2026-09-14
+    evidence:
+      - type: measured
+        source: probe/runs/15097584.json
+        observed_at: '2026-09-30'
+        detail: total 6, rows 6
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15097584-06
+    kind: admin_note
+    value: "세부 부문 '국고·지방보조금'의 가치: 보조사업 단위 원장 — \"내가 받을 수 있는 보조금\". 모델이 모르는 원장, 사업자번호로 국세청·공정거래·상권과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#subsidy
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15097584-07
+    kind: admin_note
+    value: '[지방행정·재정지원 · 결정] 지방재정 공시·국고/지방보조금·주민등록(집계여도 주요 데이터)만 대상. 나머지는 목록 정도(지방공기업·출자출연 명부·경영공시, 전국 표준데이터 목록)만 남기고 자잘한 것은 모두 제거 (`local-admin-minor`, 801건).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L418
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 6
+  total_count: 6
+  ops_ok: 1/1
+  latency_ms: 118
+  latest: '2026-09-14'
+  lag_days: 16
+  run: probe/runs/15097584.json
+  stats: probe/stats/15097584.json
+  data: probe/data/15097584/
+status: active

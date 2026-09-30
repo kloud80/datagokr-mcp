@@ -1,0 +1,258 @@
+# Dataset 15134229 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15134229'
+tier: verified
+title: 산림청_나무병원정보
+sector: 농축수산/임업·산촌/forest-inventory
+agency:
+  id: '1400000'
+  name: 산림청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15134229/openapi.do
+synonyms:
+  - 나무병원
+  - 병해충
+  - 등록
+  - 산림보호법
+  - 나무병원법인
+  - 나무병원등록
+  - 나무병원자
+description_portal: 산림보호법에 따라 관리되는 연도별 나무병원 등록 현황 자료는 각 법인의 운영 실태와 제도적 기반을 종합적으로 보여줍니다. 주요 항목에는 나무병원의 법인명과 대표자명, 수행하는 사업 종류가 포함되어 있으며, 이를 통해 사업의 성격과 목적을 확인할 수 있습니다. 또한 법인의 주소, 등록 시·도 정보가 기재되어 지역별 분포와 관리 현황을 파악할 수 있습니다. 아울러 영업 또는 폐업 여부가 함께 기록되어 있어 운영 지속성 및 행정적 관리의 투명성을 확보합니다. 이러한 자료는 산림병해충 방제, 수목 건강 관리, 전문 인력 배치 현황 등 정책적 의사결정과 국민 생활 환경 개선에 중요한 기초 자료로 활용됩니다.
+team:
+  dept: 산림보호국 산림재난통제관 산림병해충방제과
+services:
+  - op: /treeHospitalInfoList
+    name: 나무병원정보목록조회
+    endpoint: https://apis.data.go.kr/1400000/treeHospitalInfoService/treeHospitalInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: corpNm
+        required: false
+        example: (부)엘케이조경
+        desc: 법인명
+      - name: bsnssKindNm
+        required: false
+        example: 2종 나무병원
+        desc: 사업종류
+      - name: lctnAddr
+        required: false
+        desc: 주소
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bsnsskindnm
+      title: 사업종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2종 나무병원
+      stats:
+        unique: 1
+    - name: clsbiz
+      title: 영폐업상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업
+      stats:
+        unique: 1
+    - name: corpnm
+      title: 법인명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (부)엘케이조경
+      stats:
+        unique: 1
+    - name: ctpvnm
+      title: 시도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 광주광역시
+      stats:
+        unique: 1
+    - name: lctnaddr
+      title: 주소
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 광주광역시 광산구 하남산단1번로 43  2층 (하남동)
+      stats:
+        unique: 1
+    - name: lctndaddr
+      title: 상세주소
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 2층
+      stats:
+        unique: 1
+    - name: rprsvnm
+      title: 대표자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 박흥석
+      stats:
+        unique: 1
+    - name: sggnm
+      title: 시군구
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 광산구
+      stats:
+        unique: 1
+    - name: zip
+      title: 우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '62230'
+      stats:
+        min: 62230
+        p50: 62230
+        max: 62230
+        unique: 1
+  foreign_keys:
+    - fields:
+        - lctnaddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lctndaddr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.6225
+  rank_in_sector: 46
+  brm: 농축수산 - 임업·산촌
+  why: 임상도(대용량 공간 파일)·NFI 표본점 = 탄소·ESG 수요
+claims:
+  - id: c-15134229-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15134229.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15134229.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15134229-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15134229-03
+    kind: key
+    value: '실측 조인 키: address(lctnaddr), address(lctndaddr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15134229.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15134229-04
+    kind: coverage
+    value: API 전체 건수 1 · 검증 수신 1행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15134229.json
+        observed_at: '2026-09-30'
+        detail: total 1, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15134229-06
+    kind: admin_note
+    value: "세부 부문 '산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)'의 가치: 임상도(대용량 공간 파일)·NFI 표본점 = 탄소·ESG 수요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#forest-inventory
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15134229-07
+    kind: admin_note
+    value: '[농축수산 - 임업·산촌 · 결정] 산지 구분·산림 자원·산림 복지/휴양·임산물 품목까지만. 산불·산사태·병해충·임도·국유림·산촌·직불·임업인·산림항공·기관 운영 배제 (`forestry-deferred`, `forestry-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L553
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  total_count: 1
+  ops_ok: 1/1
+  latency_ms: 73
+  run: probe/runs/15134229.json
+  stats: probe/stats/15134229.json
+  data: probe/data/15134229/
+status: active

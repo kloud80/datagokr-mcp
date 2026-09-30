@@ -1,0 +1,514 @@
+# Dataset 15126468 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15126468'
+tier: verified
+title: 국토교통부_아파트 매매 실거래가 상세 자료
+sector: 국토관리/주택/real-transactions
+domain: 국토관리/주택
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15126468/openapi.do
+synonyms:
+  - 실거래가
+  - 매매
+  - 거래
+  - 아파트
+  - 주택
+description_portal: '「부동산 거래신고 등에 관한 법률」에 따라 신고된 자료로서 행정표준코드관리시스템(www.code.go.kr)의 법정동 코드 중 앞5자리(예시 : 서울 종로구 - 11110), 계약년월 6자리(예시 : 201801)로 해당 지역, 해당 기간의 아파트 매매 신고상세정보를 조회할 수 있습니다.API 설명 : 지역코드와 기간을 설정하여 해당지역, 해당기간의 아파트 매매 실거래가 자료를 제공하는 아파트 매매 실거래가 정보 조회. 세부사항 참고자료 참고.* 공개내용 중 개인정보보호를 위해 아파트의 층정보만 제공되며, 소유권 이전등기 완료된 건에 한하여 동정보가 추가적으로 공개됩니다'
+team:
+  dept: 부동산소비자보호기획단
+services:
+  - op: /getRTMSDataSvcAptTradeDev
+    name: 아파트 매매 실거래가 공개 자료(상세)
+    endpoint: https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: LAWD_CD
+        required: true
+        example: '11110'
+        desc: 지역코드, 각 지역별 코드 행정표준코드관리시스템(www.code.go.kr)의 법정동코드 10자리 중 앞 5자리
+      - name: DEAL_YMD
+        required: true
+        example: '201512'
+        desc: 계약월, 실거래 자료의 계약년월(6자리)
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: aptDong
+      title: 아파트 동명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: aptNm
+      title: 아파트명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로센트레빌
+        - 창신쌍용1
+        - 종로청계힐스테이트
+      stats:
+        unique: 29
+    - name: aptSeq
+      title: 단지 일련번호
+      type: code
+      semantic_type: apt_complex_cd
+      null_rate: 0.0
+      sample_values:
+        - 11110-2224
+        - 11110-37
+        - 11110-2234
+      stats:
+        unique: 29
+    - name: bonbun
+      title: 법정동본번코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0002'
+        - '0702'
+        - '0766'
+      stats:
+        min: 2
+        p50: 201
+        max: 1421
+        unique: 28
+    - name: bubun
+      title: 법정동부번코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0000'
+        - '0001'
+        - '0002'
+      stats:
+        min: 0
+        p50: 0
+        max: 816
+        unique: 8
+    - name: buildYear
+      title: 건축년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2008'
+        - '2014'
+        - '2009'
+      stats:
+        min: 1966
+        p50: 2004
+        max: 2015
+        unique: 17
+    - name: buyerGbn
+      title: 거래주체정보_매수자(개인/법인/공공기관/기타)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: cdealDay
+      title: 해제사유발생일
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: cdealType
+      title: 해제여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: dealAmount
+      title: 거래금액(만원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 42,500
+        - 17,000
+        - 41,000
+      stats:
+        min: 10000
+        p50: 42500
+        max: 164500
+        unique: 45
+    - name: dealDay
+      title: 계약일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '22'
+        - '14'
+        - '3'
+      stats:
+        min: 1
+        p50: 14
+        max: 31
+        unique: 24
+    - name: dealMonth
+      title: 계약월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+      stats:
+        min: 12
+        p50: 12
+        max: 12
+        unique: 1
+    - name: dealYear
+      title: 계약년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2015'
+      stats:
+        min: 2015
+        p50: 2015
+        max: 2015
+        unique: 1
+    - name: dealingGbn
+      title: 거래유형(중개 및 직거래 여부)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: estateAgentSggNm
+      title: 중개사소재지(시군구 단위)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: excluUseAr
+      title: 전용면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '79.87'
+        - '84.9'
+        - '84.92'
+      stats:
+        min: 12.01
+        p50: 79.87
+        max: 219.775
+        unique: 36
+    - name: floor
+      title: 층
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '10'
+        - '12'
+      stats:
+        min: 1
+        p50: 8
+        max: 19
+        unique: 17
+    - name: jibun
+      title: 지번
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2-1
+        - '702'
+        - '766'
+      stats:
+        unique: 29
+    - name: landCd
+      title: 법정동지번코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: landLeaseholdGbn
+      title: 토지임대부 아파트 여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: rgstDate
+      title: 등기일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: roadNm
+      title: 도로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 동망산길
+        - 난계로29가길
+        - 숭인동길
+      stats:
+        unique: 20
+    - name: roadNmBonbun
+      title: 도로명건물본번호코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00047'
+        - '00019'
+        - '00021'
+      stats:
+        min: 4
+        p50: 24
+        max: 265
+        unique: 24
+    - name: roadNmBubun
+      title: 도로명건물부번호코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00000'
+        - '00020'
+        - '00005'
+      stats:
+        min: 0
+        p50: 0
+        max: 20
+        unique: 4
+    - name: roadNmCd
+      title: 도로명코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4100065'
+        - '4100029'
+        - '4100204'
+      stats:
+        min: 3000008
+        p50: 4100065
+        max: 4100545
+        unique: 20
+    - name: roadNmSeq
+      title: 도로명일련번호코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '05'
+      stats:
+        min: 0
+        p50: 1
+        max: 7
+        unique: 7
+    - name: roadNmSggCd
+      title: 도로명시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11110'
+      stats:
+        min: 11110
+        p50: 11110
+        max: 11110
+        unique: 1
+    - name: roadNmbCd
+      title: 도로명지상지하코드
+      type: number
+      null_rate: 0.0204
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: sggCd
+      title: 법정동시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11110'
+      stats:
+        min: 11110
+        p50: 11110
+        max: 11110
+        unique: 1
+    - name: slerGbn
+      title: 거래주체정보_매도자(개인/법인/공공기관/기타)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: umdCd
+      title: 법정동읍면동코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '17500'
+        - '17400'
+        - '18700'
+      stats:
+        min: 11500
+        p50: 17500
+        max: 18700
+        unique: 11
+    - name: umdNm
+      title: 법정동
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 숭인동
+        - 창신동
+        - 무악동
+      stats:
+        unique: 11
+  foreign_keys:
+    - fields:
+        - aptSeq
+      reference:
+        key: apt_complex_cd
+      evidence: measured
+    - fields:
+        - roadNmSggCd
+      reference:
+        key: sgg_cd
+      evidence: measured
+    - fields:
+        - sggCd
+      reference:
+        key: sgg_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+cycle: default
+classification:
+  subsector_name: 실거래 (매매·전월세·분양권·상업업무용·토지·공장창고, 13종)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.9622
+  rank_in_sector: 1
+  brm: 공공행정 - 일반행정
+  sector_rule: land-restructure-주택
+  why: 공공데이터 전체 1위 수요. 계약 후 30일 신고·해제/정정 소급 — 도시에의 공개 시점 서술이 핵심. 13종을 도시에 하나로
+claims:
+  - id: c-15126468-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15126468.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15126468.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15126468-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15126468-03
+    kind: key
+    value: '실측 조인 키: apt_complex_cd(aptSeq), sgg_cd(roadNmSggCd), sgg_cd(sggCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15126468.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 32개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15126468-04
+    kind: coverage
+    value: API 전체 건수 49 · 검증 수신 49행 · 범위 전국 · 행정단위 필지·건물
+    evidence:
+      - type: measured
+        source: probe/runs/15126468.json
+        observed_at: '2026-09-30'
+        detail: total 49, rows 49
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15126468-06
+    kind: admin_note
+    value: "세부 부문 '실거래 (매매·전월세·분양권·상업업무용·토지·공장창고, 13종)'의 가치: 공공데이터 전체 1위 수요. 계약 후 30일 신고·해제/정정 소급 — 도시에의 공개 시점 서술이 핵심. 13종을 도시에 하나로"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#real-transactions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126468-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 49
+  total_count: 49
+  ops_ok: 1/1
+  latency_ms: 139
+  run: probe/runs/15126468.json
+  stats: probe/stats/15126468.json
+  data: probe/data/15126468/
+status: active

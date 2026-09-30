@@ -1,0 +1,494 @@
+sector_map:
+- id: finance-institutions-to-finance
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 재정·금융에 섞인 금융위·금감원·예보·예탁결제원·산은·기은·수출입은행·서민금융 데이터 → 재정금융-금융. 재정금융을 금융(자본시장·금융회사·금융상품)과 재정·금융(국가 예산·국유재산/공매·지역사랑상품권)으로 역할 분리 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 재정·금융
+    agency_regex: 금융위원회|금융감독원|예금보험공사|한국예탁결제원|한국수출입은행|한국산업은행|중소기업은행|서민금융진흥원|한국거래소|금융투자협회
+    title_regex: ^(?!.*(공매|국유재산|지역사랑|지역화폐)).*
+  set_sector: 재정금융 - 금융
+- id: finance-nts-to-tax
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 재정·금융·일반행정에 등록된 국세청 데이터(사업자등록 상태조회·국세 공매 등) → 세제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector:
+    - 재정금융 - 재정·금융
+    - 공공행정 - 일반행정
+    - 공공행정 - 국가통계
+    agency_name: 국세청
+    title_regex: 사업자|휴폐업|국세|세수|환급|공매|체납
+  set_sector: 재정금융 - 세제
+- id: finance-local-finance-to-local-admin
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 재정금융(재정·금융·기획재정·세제)에 등록된 행안부 지방재정365 → 지방행정·재정지원 local-finance (지방재정 공시는 거기서 확정) — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector:
+    - 재정금융 - 재정·금융
+    - 재정금융 - 기획재정
+    - 재정금융 - 세제
+    title_regex: 지방재정365
+  set_sector: 공공행정 - 지방행정·재정지원
+- id: finance-local-currency-gather
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업금융·일반행정에 흩어진 지역사랑상품권·지역화폐 가맹점(온통대전 등) → 재정·금융 local-currency. 가맹점 원장은 지역 상권의 사업장 목록 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match_any:
+  - sector:
+    - 재정금융 - 산업금융
+    - 재정금융 - 금융
+    title_regex: 온통대전|지역화폐|지역사랑상품권
+  - sector: &id001
+    - 공공행정 - 일반행정
+    - 공공행정 - 국가통계
+    title_regex: 지역화폐 ?가맹|지역사랑상품권 ?가맹|상품권 ?가맹점
+  set_sector: 재정금융 - 재정·금융
+- id: finance-public-auction-gather
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 일반행정에 흩어진 공매(주택도시보증공사 공매정보·공매차량·재산공매) → 재정·금융 public-assets — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: *id001
+    agency_regex: ^(?!국세청).*
+    title_regex: 공매
+  set_sector: 재정금융 - 재정·금융
+- id: finance-lender-gather
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 일반행정의 지자체 대부업 등록 현황 → 산업금융 lender-registry (대부업법 §3 시도 등록 원장) — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: *id001
+    title_regex: 대부업
+  set_sector: 재정금융 - 산업금융
+- id: finance-misfiled-out
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업금융에 잘못 등록된 산후조리원 현황 → 보건의료(의료기관 인허가), 도로안전시설물 → 도로 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 산업금융
+    title_regex: 산후조리원
+  set_sector: 보건의료 - 보건의료
+- id: finance-misfiled-road
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업금융에 잘못 등록된 도로안전시설물 → 도로 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 산업금융
+    title_regex: 도로안전시설
+  set_sector: 교통물류 - 도로
+exclusions:
+- id: finance-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '금융: 한국은행 거시 통계(국민계정·물가·경기조사 등 ECOS 재게시), 업권 통계·연차보고서, 주택금융공사·HUG(주택 금융은 주택 검토에서 배제), 우체국 금융, 교육·영상·용어·매뉴얼, 피해자·사고원인 통계는 먼저 배제. 금융통계XX정보(금융회사별 재무)는 금융회사 원장이라 남김. 재검토 후보: 한국은행 ECOS 거시지표(경제 분야 전략 응답의 배경값) — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은
+    우선 배제, 오분류는 이관)을 적용해 정함'
+  match:
+    sector: 재정금융 - 금융
+    title_regex: 한국은행|(?<!금융)통계|연차보고서|발간|용어|영상|슬기로운|매뉴얼|교육|채용|공지|홍보|사회공헌|수수료|연구|분석|영향|요약|피해자|사고원인|판매현황|영업활동|기업경기|경제심리|한국주택금융공사|주택도시보증공사|주택연금|우체국|순번대기|체감|채권관리|ESG ?(뉴스|경영|보고)|뉴스레터|상호변경이력|구조조정 특별계정|착오송금|기록물|예금보험공사_(임원|내부 감사)|MOU|국제기구|해외 ?예금보험|보도자료|민원|정보화|녹색제품|반려해변|SNS|기자단|법률상담|은닉재산|안내문|세미나|FAQ|해설서|예산
+      ?현황|부채|고유계정|기금 ?(운용|조성|채권)|상환기금|파산재단|자격검정|판례|가이드북|매물|연혁|카드 ?이용|매출액|판매점|가맹점|상품권|법인카드|신용보증기금|평가지표|차등|출자 주식|IT 해외|개최 현황|위원회 개최|이자율
+- id: finance-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 금융은 증권 시장(시세·발행·권리)·기업 공시/재무·금융회사 원장·금융상품·환율만 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 금융
+  keep:
+    title_regex: 대차|시세|상장종목|주식발행|주식배당|신주인수권|단기금융증권|채권발행|채권기본|채권권리|주식권리|주식등록|주식분포|주식대차|채권대차|REPO|국제거래|지수|파생결합|증권상품|일반상품|증권예탁|주식정보|채권정보|소매채권|모기지론|MBS|MBB|SLBS|사회적채권|국가자산|공시|정기보고서|사업보고서|주요사항보고|증권신고서|지분|기업 ?재무|기업기본정보|기업정보|지배구조|개인사업자|차입투자|자금조달|정보공개재산|금융회사|금융통계|부보|영업정지|파산|금융투자회사|금융투자협회|저축은행|투자자문사|자산운용사|크라우드펀딩|영업점|금융기관|예금자보호|보험사고|예금보험금|_[^_]*(상품|펀드|ISA|금리|서민금융|변액보험|실손보험|보험가입|침수차량)|환율
+- id: fiscal-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '재정·금융: 재정정보원 주요 재정통계·BRIEF(집계 시리즈), 통계연보, 주택금융·HUG, 우정 금융, 주민참여예산, 지역화폐 판매·결제 통계, 교육·영상·발간은 먼저 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함'
+  match:
+    sector: 재정금융 - 재정·금융
+    title_regex: 재정통계|BRIEF|추이|주요|통계|분야별|성질별|프로그램별|한국주택금융공사|주택도시보증공사|우체국|우정사업본부|주민참여|홍보|영상|교육|용어|매뉴얼|업무추진|월별|설문|판매 ?현황|결제금액|소비금액|업종별|업종구분|카셰어|연구|발간|발행 ?및|이용현황|발급월별|성인지|보고서|평가|복권|디브레인|동향|흐름도|구조|공모사업|수익률|수탁규모|성과|결산관련문서|수수료|업무전표|결제 ?(내역|정보)|이용금액|이용 ?현황|지수|발행현황|사용
+      및|판매정책|재고|압류현황
+- id: fiscal-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 재정·금융은 지역사랑상품권 가맹점·국유/공유재산·공매·국가 예산(세입·세출·기금·국채)만 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 재정·금융
+  keep_any:
+  - title_regex: 지역사랑상품권|지역화폐|온누리|온통대전|상품권 ?가맹|가맹점|공매|온비드|국유재산|공유재산|체납국세|관급자산|국가연|채권현재액|국가채권|압류
+  - agency_regex: 기획예산처|재정경제부|한국재정정보원
+    title_regex: 세입|세출|예산|결산|기금|부담금|국채|국고채|재정상태표|순자산
+- id: tax-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '세제: 종합소득세 숏폼 영상·신고 안내·주택임대소득 신고 자료는 먼저 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함'
+  match:
+    sector: 재정금융 - 세제
+    title_regex: 숏폼|영상|신고 ?안내|주택임대소득
+- id: tax-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 세제는 국세청 사업자등록 상태(휴폐업) 원장과 행안부 통계연보 지역별 지방세(시도·시군구 격자)만. 지자체별 지방세 과세·징수·체납 파일(900여 건, 지자체마다 형식·시점 불규칙), 국세 세수 통계, 종합소득세 숏폼 영상은 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 세제
+  keep:
+    title_regex: 사업자등록|휴폐업|사업자 ?상태|행정안전부_통계연보_지역별.*(지방세|세입|징수|과세|세목)|구군 지방세|구군 1인당
+- id: industrial-finance-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업금융은 신보·기보 보증 이용 기업 명세(기업 원장)와 대부업 등록 원장만. 보증 종류·업종·지역별 통계, 신보 고용지수, 보증료율·매뉴얼, 무역보험 인수 통계, 소상공인 설문, 키즈카페 등 오분류는 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 산업금융
+  keep:
+    title_regex: 기업 ?명세|이용기업|지원기업|투자기업|기업명세|대부업
+- id: trade-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '무역: KOTRA 해외시장 동향·뉴스·사례·국가정보(문서형 부수 자료), 글로벌ICT포털, UN Comtrade 재게시, 외국인직접투자 동향, 무역보험 인수 통계, 홈페이지·교육은 먼저 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함'
+  match:
+    sector: 재정금융 - 무역및투자유치
+    title_regex: ^(?!관세청_).*통계|동향|뉴스|사례|ESG|글로벌ICT|UNComtrade|APEC|홈페이지|공휴일|인수현황|단기수출보험|국가정보|해외시장|미국|중국|교육|홍보|연구|단신|소재부품|결제비중|신용위험지수|발급현황|운송비용
+- id: trade-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 무역은 관세청 수출입 실적(수출입 신고 원장에서 나온 품목·국가·시도·시군구 × 월 격자, 10일 속보)·무역 코드(선사·항공사·특송·주선업자 부호, 세관장확인 대상, 관세환율)·거래 상대 원장(바이어·거래업체·거래물품·수출예정·고비즈코리아)만 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 무역및투자유치
+  keep:
+    title_regex: 관세청_.*(수출입|물동량|10일)|부호|세관장확인|관세환율|국가목록|업종목록|업종등급|국별신용등급|국가별 신용|바이어 ?(검색|정보)|거래업체|거래물품|수출예정|내국거래|고비즈코리아 ?(거래처|수출대행|업체정보|상품 기본|공장정보)|바이코리아 ?등록상품|전략물자|수출결제정보|구매대행업자 ?등록|AEO 기업|보세판매장 특허|유류 보세창고
+- id: planning-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 기획재정은 국가 예산(세출·지출 세목 예산)·국채 발행 API만. 주민참여예산·지자체 예산 파일·통계연보·재정 매뉴얼은 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  match:
+    sector: 재정금융 - 기획재정
+  keep_any:
+  - list_type:
+    - API
+    - STD
+    title_regex: 세입|세출|예산|결산|기금|부담금|국채|국고채|재정상태표|순자산
+  - title_regex: 국채|국고채
+subsectors:
+- sector: 재정금융 - 금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/금융.md
+  note: 자본시장·금융회사·금융상품 영역. 금융위원회 금융공공데이터(시세·발행·공시·금융회사) API 시리즈가 몸통이고 금감원 공시(DART 재게시)가 기업 축과 잇는다. 재정·금융에 흩어진 금융기관 데이터를 모음 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: exchange-rates
+    name: 환율 (수출입은행·기업은행 환율)
+    depth: front
+    novelty: high
+    cycle: daily
+    match:
+      title_regex: 환율
+  - slug: corporate-disclosure
+    name: 기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)
+    depth: front
+    novelty: high
+    cycle: event
+    cross_cutting: true
+    value_source: 법인등록번호·사업자번호로 기업 축 전체와 연결. 주요사항보고서는 사건 단위 시의성(유상증자·합병·소송)
+    match:
+      title_regex: 공시|정기보고서|사업보고서|주요사항보고|증권신고서|지분|기업 ?재무|기업기본정보|기업정보|지배구조|개인사업자|차입투자|자금조달|정보공개재산
+  - slug: securities-market
+    name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+    depth: front
+    novelty: high
+    cycle: daily
+    cross_cutting: true
+    value_source: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인
+    match:
+      title_regex: 대차|시세|상장종목|주식발행|주식배당|신주인수권|단기금융증권|채권발행|채권기본|채권권리|주식권리|주식등록|주식분포|주식대차|채권대차|REPO|국제거래|지수|파생결합|증권상품|일반상품|증권예탁|주식정보|채권정보|소매채권|모기지론|MBS|MBB|SLBS|사회적채권|국가자산
+  - slug: financial-institutions
+    name: 금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자
+    match:
+      title_regex: 금융회사|금융통계|부보|영업정지|파산|금융투자회사|금융투자협회|저축은행|투자자문사|자산운용사|크라우드펀딩|영업점|금융기관|예금자보호|보험사고|예금보험금
+  - slug: financial-products
+    name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
+    depth: front
+    novelty: medium
+    value_source: 상품 단위 비교 원장
+    match:
+      title_regex: .
+  default: &id002
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 재정·금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/재정·금융.md
+  note: '재정 영역: 지역사랑상품권 가맹점·국유/공유재산·공매·국가 예산. 재정정보원 재정통계 시리즈는 집계라 우선 배제, 금융기관 데이터는 금융으로, 지방재정365는 지방행정으로 이관 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함'
+  subsectors:
+  - slug: local-currency
+    name: 지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 가맹점 = 지역 소상공인 사업장 목록(주소·업종), 지역 상권과 연결
+    match:
+      title_regex: 지역사랑상품권|지역화폐|온누리|온통대전|상품권 ?가맹|가맹점
+  - slug: public-assets
+    name: 국유·공유재산·공매 (공매자산·온비드·국유재산·체납국세 공매·관급자산·국가채권)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 공매 물건 단위 시의성 원장, 소재지로 토지·건물 원장과 연결
+    match:
+      title_regex: 공매|온비드|국유재산|공유재산|체납국세|관급자산|국가연|채권현재액|국가채권|압류
+  - slug: national-budget
+    name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
+    depth: front
+    novelty: low
+    cycle: annual
+    match:
+      title_regex: .
+  default: *id002
+- sector: 재정금융 - 세제
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/세제.md
+  note: 국세청 사업자등록 상태(휴폐업) 조회가 사업자번호 축의 상태 원장. 지방세는 행안부 지역별 통계만 지역 지표로 남김 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: business-registration
+    name: 사업자등록 상태 (국세청 사업자 상태·휴폐업 조회)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 사업자번호 → 계속/휴업/폐업·과세유형. 모든 기업 원장의 생존 여부 검증
+    match:
+      title_regex: 사업자등록|휴폐업|사업자 ?상태
+  - slug: regional-tax
+    name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+    depth: front
+    novelty: low
+    cycle: annual
+    cross_cutting: true
+    value_source: 시도·시군구 격자 — 지역 지표로 연결
+    match:
+      title_regex: .
+  default: *id002
+- sector: 재정금융 - 산업금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/산업금융.md
+  note: 신보·기보 보증 이용 기업 명세(기업 원장)와 대부업 등록 원장만 — 보증 통계·요율표는 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: lender-registry
+    name: 대부업 등록 (시도·시군구 등록 현황)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 대부업법 등록 원장, 사업자번호·주소
+    match:
+      title_regex: 대부업
+  - slug: guaranteed-firms
+    name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 보증·투자 받은 기업 목록 — 기업 축(사업자번호)
+    match:
+      title_regex: .
+  default: *id002
+- sector: 재정금융 - 무역및투자유치
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/무역및투자유치.md
+  note: 관세청 수출입 실적(신고 원장에서 나온 월 격자, 시군구별 포함)·무역 코드·거래 상대 원장만. KOTRA 문서형 해외시장 정보는 부수 자료라 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: trade-codes
+    name: 무역 코드 (선사·항공사·특송·화물운송주선업자 부호, 세관장확인 대상, 관세환율, 국가·업종 등급)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    match:
+      title_regex: 부호|세관장확인|관세환율|국가목록|업종목록|업종등급|국별신용등급|국가별 신용
+  - slug: trade-statistics
+    name: 수출입 실적 (관세청 품목·국가·성질·시도·시군구·세관 × 월, 10일 속보, 입출항 물동량)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 수출입 신고 원장에서 나온 HS 품목 × 국가 × 월 격자 — 시군구별은 지역 지표, 10일 속보는 시의성
+    match:
+      title_regex: 관세청_.*(수출입|물동량|10일)
+  - slug: trade-partners
+    name: 거래 상대 원장 (무역보험 바이어·전략물자 거래업체/물품·수출예정·고비즈코리아 상품·기업)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default: *id002
+- sector: 재정금융 - 기획재정
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/기획재정.md
+  note: 국가 예산(세출·지출 세목) API와 국채 발행만 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: national-budget-plan
+    name: 국가 예산·국채 (세출/지출 세목 예산, 국고채 발행·시장)
+    depth: front
+    novelty: low
+    cycle: annual
+    match:
+      title_regex: .
+  default: *id002
+keys:
+- id: stock_cd
+  name: 증권 종목코드 (ISIN 12자리·단축코드 6자리)
+  format: ^KR[0-9A-Z]{10}$ / ^\d{6}$
+  scope: global
+  note: 증권 시세·발행·권리·대차·공시를 잇는 키 (2026-09-29, 재정금융 — Claude가 구름 기준 적용). 법인등록번호로 기업 원장, 연기금 보유 내역(공적연금 pension-fund)과 조인
+- id: hs_cd
+  name: HS 품목분류코드 (관세청 HSK 10자리)
+  format: HS 6자리 / HSK 10자리
+  scope: global
+  note: 수출입 실적의 품목 키 (2026-09-29, 무역). 농산물 품목코드(agri_item_cd)·어종코드(fish_species_cd)와 농정원·해수부 HSK 매핑목록으로 연결
+key_issuers:
+- id: opendart.fss.or.kr
+  name: 전자공시시스템 OpenDART (금융감독원)
+  site: https://opendart.fss.or.kr
+  key_param: crtfc_key
+  env: {}
+  issuance: 회원가입 → 인증키 신청 → 즉시 발급 (.env 미등록). data.go.kr의 금감원 공시 API는 DART 재게시 — 원천은 OpenDART (2026-09-29, 금융)
+  match:
+    kind: API_LINK
+    title_regex: DART|전자공시
+- id: unipass.customs.go.kr
+  name: 관세청 UNI-PASS 오픈API
+  site: https://unipass.customs.go.kr
+  key_param: crkyCn
+  env: {}
+  issuance: 회원가입 → API별 인증키 신청 → 승인 (.env 미등록). 화물통관진행·수출입 신고 조회 (2026-09-29, 무역)
+  match:
+    kind: API_LINK
+    title_regex: UNI-PASS|유니패스
+contexts:
+  new:
+  - id: trade-logistics-chain
+    name: 수출입 물류 사슬
+    dimension: economic
+    question: 이 물건은 어떻게 들어오고 나가나 — 수출입 실적·통관·항만/공항 물동량·화물운송·물류창고
+    note: 관세청 수출입 실적(품목·국가)과 항만 물동량·항공 화물·화물운송업·물류시설·공장이 같은 흐름의 단계. 경제 차원 연결 — 테스트의 허용 차원 목록에 economic 추가 필요 (2026-09-29, Claude가 구름 기준 적용)
+    members:
+    - sector: 재정금융 - 무역및투자유치
+      subsector: trade-statistics
+      role: 수출입 실적
+    - sector: 재정금융 - 무역및투자유치
+      subsector: trade-codes
+      role: 선사·항공사·주선업자 부호
+    - sector: 교통물류 - 해운·항만
+      subsector: port-cargo
+      role: 항만 물동량
+    - sector: 교통물류 - 항공·공항
+      subsector: aviation-statistics
+      role: 항공 화물
+    - sector: 교통물류 - 물류등기타
+      subsector: freight-carriers
+      role: 화물운송·주선업
+    - sector: 교통물류 - 물류등기타
+      subsector: logistics-facilities
+      role: 물류창고
+    - sector: 국토관리 - 산업단지
+      subsector: factory-registry
+      role: 생산 공장
+  - id: local-merchants
+    name: 지역 소상공인 사업장
+    dimension: economic
+    question: 이 동네 가게들 — 지역화폐 가맹점·인허가 업소·사업자 상태
+    note: 지역사랑상품권 가맹점(재정)·지방행정 인허가 업소(체육·숙박·의료)·국세청 사업자 상태가 같은 사업장을 가리킨다. 주소·사업자번호로 매칭. 산업고용(소상공인·상권) 검토 때 멤버 추가
+    members:
+    - sector: 재정금융 - 재정·금융
+      subsector: local-currency
+      role: 지역화폐 가맹점
+    - sector: 재정금융 - 세제
+      subsector: business-registration
+      role: 사업자 상태
+    - sector: 문화관광 - 체육
+      subsector: sports-business-registry
+      role: 체육시설업
+    - sector: 문화관광 - 관광
+      subsector: lodging
+      role: 숙박업
+  - id: public-asset-parcels
+    name: 공매·국공유 재산의 필지
+    dimension: spatial_regulation
+    key: pnu
+    question: 이 공매 물건·국유지는 어떤 땅인가
+    note: 공매 물건·국유/공유재산 소재지를 PNU로 지적·공시지가·토지이용규제에 붙인다
+    members:
+    - sector: 재정금융 - 재정·금융
+      subsector: public-assets
+      role: 공매·국공유재산
+    - sector: 국토관리 - 토지·지적
+      subsector: cadastre
+      role: 필지
+    - sector: 국토관리 - 토지·지적
+      subsector: land-price
+      role: 공시지가
+    - sector: 국토관리 - 토지이용규제
+      subsector: land-use-plan-check
+      role: 규제
+  add_members:
+    enterprise-axis:
+    - sector: 재정금융 - 세제
+      subsector: business-registration
+      role: 사업자 상태(휴폐업)
+    - sector: 재정금융 - 금융
+      subsector: corporate-disclosure
+      role: 공시·재무
+    - sector: 재정금융 - 산업금융
+      subsector: guaranteed-firms
+      role: 보증 이용 기업
+    - sector: 재정금융 - 산업금융
+      subsector: lender-registry
+      role: 대부업
+    pension-fund-economy:
+    - sector: 재정금융 - 금융
+      subsector: securities-market
+      role: 종목 시세·발행
+    - sector: 재정금융 - 금융
+      subsector: corporate-disclosure
+      role: 투자 대상 공시
+    - sector: 재정금융 - 금융
+      subsector: financial-institutions
+      role: 퇴직연금 사업자·금융회사
+    - sector: 재정금융 - 금융
+      subsector: financial-products
+      role: 퇴직연금·펀드 상품
+    regional-indicators:
+    - sector: 재정금융 - 무역및투자유치
+      subsector: trade-statistics
+      role: 시군구 수출입
+    - sector: 재정금융 - 세제
+      subsector: regional-tax
+      role: 지방세
+review_log: '
+
+  ## 재정금융 (6개 영역) (2026-09-29, Claude — 구름 기준 적용)
+
+
+  - **기준**: 개별 객체 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제, 오분류는 이관 (구름 2026-09-29 "이제 남은건 니가 알아서").
+
+  - **역할 분리**: 재정·금융의 금융위·금감원·예보·예탁원·산은·기은·수출입은행 데이터 → **금융**(자본시장·금융회사·금융상품), 재정·금융은 **재정**(지역사랑상품권 가맹점·국유/공유재산·공매·국가 예산)만 (`finance-institutions-to-finance`).
+
+  - **금융**: 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.
+
+  - **재정·금융**: 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.
+
+  - **세제**: 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.
+
+  - **산업금융**: 신보 685건은 대부분 보증 통계·요율표 — 보증 이용 기업 명세(기업 원장)만 남김. 대부업 등록 원장을 일반행정에서 모음. 산후조리원 → 보건의료, 도로안전시설물 → 도로.
+
+  - **무역및투자유치**: 관세청 수출입 실적(신고 원장 → 품목·국가·시도·시군구 × 월, 10일 속보)·무역 코드(부호·세관장확인·관세환율)·거래 상대(바이어·전략물자 거래업체·고비즈코리아). KOTRA 해외시장 동향·국가정보·사례(문서형), 글로벌ICT포털, Comtrade 재게시, 투자 동향 배제.
+
+  - **기획재정**: 국가 예산 API·국채만.
+
+  - **키**: `stock_cd`(종목코드), `hs_cd`(HS 품목). 발급처 `opendart.fss.or.kr`, `unipass.customs.go.kr`.
+
+  - **맥락**: 새 `trade-logistics-chain`(economic — 수출입·항만·항공 화물·화물운송·물류창고·공장), `local-merchants`(economic — 지역화폐 가맹점·사업자 상태·인허가 업소), `public-asset-parcels`(공매 물건 ↔ 필지). enterprise-axis·pension-fund-economy·regional-indicators에 멤버 추가. **economic 차원은 새 값 —
+  테스트 허용 목록에 추가 필요.**
+
+  '

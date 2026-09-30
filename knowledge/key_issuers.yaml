@@ -1,0 +1,174 @@
+# 외부 키 발급처 레지스트리 — 데이터마다 어느 사이트에서 키를 받아야 하는지 (access.key_issuer).
+# 계정·비밀번호·키 값은 .env에만 있다. 여기에는 **변수 이름만** 적는다 (값을 파일·DB·로그에 남기지 않는다).
+# 적용: match 조건(pds/rank/exclude.py 문법)에 맞는 데이터셋에 key_issuer를 붙인다. 첫 번째로 맞는 발급처가 이긴다.
+# 로그인 자동화: BUILD-PLAN §2.2 원칙상 기본은 사람이 로그인(storage_state). 계정 값을 쓰는 자동 로그인은 Phase 2에서 구름 확인 후.
+# 작성 2026-09-28
+- id: open.law.go.kr
+  name: 국가법령정보 공동활용 (법제처)
+  site: https://open.law.go.kr
+  key_param: OC               # 요청 파라미터 이름 (이메일 ID 앞부분)
+  env: {id: OPEN_LAW_GO_KR_ID, password: OPEN_LAW_GO_KR_PW, api_key: OPEN_LAW_GO_KR_API_KEY}
+  issuance: 회원가입 → OPEN API 신청(서비스 URL·IP 등록) → 승인 후 OC 값으로 호출
+  match: {agency_name: 법제처, kind: API_LINK}
+- id: open.assembly.go.kr
+  name: 국회 열린국회정보
+  site: https://open.assembly.go.kr
+  key_param: KEY
+  env: {id: OPEN_ASSEMBLY_GO_KR_ID, password: OPEN_ASSEMBLY_GO_KR_PW}
+  issuance: 회원가입 → 인증키 신청 → 즉시 발급
+  match: {agency_name: [국회 국회사무처, 국회 국회도서관, 국회 국회입법조사처], kind: API_LINK}
+- id: vworld.kr
+  name: 브이월드 (공간정보 오픈플랫폼)
+  site: https://www.vworld.kr
+  key_param: key
+  env: {id: VWORLD_ID, password: VWORLD_PW}
+  issuance: 회원가입 → 오픈API 인증키 신청(서비스 URL 기재) → 즉시 발급
+  match_any:
+    - {title_regex: 'VWorld|브이월드|2D 지도|공간정보오픈플랫폼|연속지적도|지적도\(WMS|토지이용계획도|행정구역도|WMS/WFS'}
+- id: business.juso.go.kr
+  name: 주소기반산업지원서비스 (행안부 도로명주소 API)
+  site: https://business.juso.go.kr
+  key_param: confmKey
+  env: {}                      # .env 미등록 — 주소검색 API 승인키 필요 (API별 개별 발급)
+  issuance: 회원가입 → API 신청(검색·좌표·영문·상세주소 각각) → 승인키 발급(개발 90일 / 운영 신청)
+  match: {agency_name: 행정안전부, kind: API_LINK, title_regex: '실시간 (주소|영문주소|상세주소|주소별 좌표|지도제공)'}
+- id: plus.kipris.or.kr
+  name: KIPRIS Plus (특허정보)
+  site: https://plus.kipris.or.kr
+  key_param: ServiceKey (KIPRIS Plus 자체 발급)
+  env: {}
+  issuance: 회원가입 → 서비스 신청(유료/무료 구분) → 승인 후 키
+  match: {agency_name: 지식재산처, kind: API_LINK}
+- id: ntis.go.kr
+  name: NTIS 국가R&D 오픈API
+  site: https://www.ntis.go.kr
+  key_param: apprvKey
+  env: {}
+  issuance: 회원가입 → 오픈API 활용신청 → 승인키
+  match: {agency_name: 한국과학기술정보연구원, kind: API_LINK, title_regex: '국가R&D'}
+- id: scienceon.kisti.re.kr
+  name: KISTI ScienceON API
+  site: https://scienceon.kisti.re.kr
+  key_param: client_id / token
+  env: {}
+  issuance: ScienceON API Gateway 가입 → 클라이언트 등록 → 토큰 발급
+  match: {agency_name: 한국과학기술정보연구원, kind: API_LINK, title_regex: 'ScienceON|AIDA'}
+- id: open.neis.go.kr
+  name: 나이스 교육정보 개방 포털
+  site: https://open.neis.go.kr
+  key_param: KEY
+  env: {api_key: OPEN_NEIS_API_KEY}
+  issuance: SNS 로그인(구글·카카오·페이스북·네이버, 자체 가입 없음) → 인증키 신청 → 즉시 발급
+  match: {title_regex: '나이스|NEIS'}
+- id: data.seoul.go.kr
+  name: 서울 열린데이터광장
+  site: https://data.seoul.go.kr
+  key_param: KEY (URL 경로)
+  env: {}
+  issuance: 회원가입 → 인증키 신청 → 즉시 발급 (지하철 실시간은 별도 실시간 인증키)
+  match: {agency_name: 서울특별시, kind: API_LINK}
+- id: wamis.go.kr
+  name: 국가수자원관리종합정보시스템 (WAMIS)
+  site: http://www.wamis.go.kr
+  key_param: key
+  env: {}
+  issuance: 회원가입 → OpenAPI 인증키 신청 → 승인 후 발급 (.env 미등록). 홍수통제소 4곳 API는 data.go.kr 키로 호출 (구름 2026-09-29, 수자원)
+  match: {kind: API_LINK, title_regex: 'WAMIS|국가수자원관리종합정보'}
+- id: kamis.or.kr
+  name: 농산물유통정보 KAMIS (aT 한국농수산식품유통공사)
+  site: https://www.kamis.or.kr
+  key_param: p_cert_key (+ p_cert_id)
+  env: {}
+  issuance: 회원가입 → OpenAPI 이용 신청 → 인증키·ID 발급 (.env 미등록) (구름 2026-09-29, 농업·농촌 가격)
+  match: {kind: API_LINK, title_regex: 'KAMIS|농산물유통정보'}
+- id: khoa.go.kr
+  name: 바다누리 해양정보서비스 (국립해양조사원 KHOA)
+  site: https://www.khoa.go.kr/oceangrid
+  key_param: ServiceKey
+  env: {}
+  issuance: 회원가입 → OpenAPI 인증키 신청 → 발급 (.env 미등록) (구름 2026-09-29, 해양 관측)
+  match: {kind: API_LINK, title_regex: '바다누리|국립해양조사원|KHOA'}
+- id: kopis.or.kr
+  name: 공연예술통합전산망 KOPIS (예술경영지원센터)
+  site: https://www.kopis.or.kr
+  key_param: service
+  env: {}
+  issuance: 회원가입 → OpenAPI 서비스키 신청 → 발급 (.env 미등록) (구름 2026-09-29, 문화예술 공연)
+  match: {kind: API_LINK, title_regex: 'KOPIS|공연예술통합전산망'}
+- id: data4library.kr
+  name: 도서관 정보나루 (국립중앙도서관)
+  site: https://www.data4library.kr
+  key_param: authKey
+  env: {}
+  issuance: 회원가입 → 인증키 신청 → 승인 후 발급 (.env 미등록) (구름 2026-09-29, 문화예술 도서관)
+  match: {kind: API_LINK, title_regex: '도서관 ?정보나루|data4library'}
+- id: opendart.fss.or.kr
+  name: 전자공시시스템 OpenDART (금융감독원)
+  site: https://opendart.fss.or.kr
+  key_param: crtfc_key
+  env: {}
+  issuance: 회원가입 → 인증키 신청 → 즉시 발급 (.env 미등록). data.go.kr의 금감원 공시 API는 DART 재게시 — 원천은 OpenDART (2026-09-29, 금융)
+  match:
+    kind: API_LINK
+    title_regex: DART|전자공시
+- id: unipass.customs.go.kr
+  name: 관세청 UNI-PASS 오픈API
+  site: https://unipass.customs.go.kr
+  key_param: crkyCn
+  env: {}
+  issuance: 회원가입 → API별 인증키 신청 → 승인 (.env 미등록). 화물통관진행·수출입 신고 조회 (2026-09-29, 무역)
+  match:
+    kind: API_LINK
+    title_regex: UNI-PASS|유니패스
+- id: opinet.co.kr
+  name: 오피넷 (한국석유공사 유가정보)
+  site: https://www.opinet.co.kr
+  key_param: code
+  env: {}
+  issuance: 회원가입 → 무료 API 키 신청 → 발급 (.env 미등록) (Claude 2026-09-29, 에너지)
+  match:
+    kind: API_LINK
+    title_regex: 오피넷|주유소 ?(평균가격|최저가)|반경 내 주유소|주유소 상세
+- id: work24.go.kr
+  name: 고용24·워크넷 OPEN API (한국고용정보원)
+  site: https://www.work24.go.kr
+  key_param: authKey
+  env: {}
+  issuance: 회원가입 → OPEN-API 인증키 신청(서비스별) → 승인 후 발급 (.env 미등록) (Claude 2026-09-29, 고용노동)
+  match:
+    kind: API_LINK
+    title_regex: 워크넷|고용24|내일배움|직업훈련
+- id: foodsafetykorea.go.kr
+  name: 식품안전나라 (식약처 OpenAPI)
+  site: https://www.foodsafetykorea.go.kr/api
+  key_param: keyId (URL 경로)
+  env: {}
+  issuance: 회원가입 → 인증키 신청 → 즉시 발급 (.env 미등록) (Claude 2026-09-29, 식품)
+  match:
+    kind: API_LINK
+    title_regex: 식품안전나라|식품의약품안전처
+- id: safemap.go.kr
+  name: 생활안전지도 (행정안전부)
+  site: https://www.safemap.go.kr
+  key_param: serviceKey
+  env: {}
+  issuance: 회원가입 → OpenAPI 인증키 신청 → 발급 (.env 미등록) (Claude 2026-09-29, 안전관리·경찰)
+  match:
+    kind: API_LINK
+    title_regex: 생활안전지도|safemap
+- id: apihub.kma.go.kr
+  name: 기상청 API허브
+  site: https://apihub.kma.go.kr
+  key_param: authKey
+  env: {}
+  issuance: 회원가입 → API 활용신청 → 인증키 발급 (.env 미등록). data.go.kr 기상청 API와 병존, 레이더·위성·수치모델 원자료는 허브가 더 넓다
+  match:
+    kind: API_LINK
+    title_regex: 기상청API허브|API허브
+- id: data.go.kr
+  name: 공공데이터포털
+  site: https://www.data.go.kr
+  key_param: serviceKey
+  env: {id: DATA_GO_KR_ID, password: DATA_GO_KR_PW}
+  issuance: 로그인 → 데이터별 활용신청 → 자동승인이면 즉시, 심의면 대기 → 마이페이지에서 Encoding/Decoding 키
+  match: {kind: [REST, SOAP]}

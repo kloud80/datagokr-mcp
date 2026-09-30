@@ -1,0 +1,264 @@
+# Dataset 15076352 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15076352'
+tier: verified
+title: 한국환경공단_전기자동차 충전소 정보
+sector: 교통물류/도로/ev-fuel
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15076352/openapi.do
+synonyms:
+  - 전기자동차
+  - 전기자동차 충전기
+  - 전기자동차 충전시설
+  - 전기자동차 충전기 상태정보
+  - 전기자동차 충전기 위치정보
+description_portal: 전기자동차 충전소 정보(충전소 구분, 충전소 상세 구분, 충전소 ID, 충전기 ID, 충전기 타입, 주소, 상세주소, 위도, 경도, 이용 가능시간, 기관명, 운영기관명, 운영기관 연락처, 충전용량, 충전방식, 지역코드, 주차료무료여부, 이용자 제한 여부, 삭제여부, 편의제공 여부, 지상/지하 층수 관련 정보 등), 충전기 상태정보(상태갱신 기간, 충전기상태, 상태갱신일시, 마지막 충전시작일시, 마지막 충전 종료일시, 충전중 시작일시 등 충전기 상태정보 관련정보 등) 제공으로 전기자동차 이용자 편의 제공을 위한 데이터입니다.
+team:
+  dept: 친환경모빌리티처 녹색수송계획부
+services:
+  - op: /getChargerStatus
+    name: 전기자동차 충전소 상태
+    endpoint: https://apis.data.go.kr/B552584/EvCharger/getChargerStatus
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: period
+        required: false
+        example: '5'
+        desc: 상태갱신 기간
+      - name: zcode
+        required: false
+        example: '11'
+        desc: 지역구분 코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: busiId
+      title: 기관아이디
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ME
+      stats:
+        unique: 1
+    - name: statId
+      title: 충전소ID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ME181210
+        - ME174050
+        - ME183101
+      stats:
+        unique: 663
+    - name: chgerId
+      title: 충전기ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '11'
+      stats:
+        min: 1
+        p50: 1
+        max: 54
+        unique: 12
+    - name: stat
+      title: 충전기상태
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '5'
+      stats:
+        min: 2
+        p50: 2
+        max: 5
+        unique: 4
+    - name: statUpdDt
+      title: 상태갱신일시
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930114012'
+        - '20260930113824'
+        - '20260930114155'
+      stats:
+        min: 20260930113819
+        p50: 20260930114012
+        max: 20260930114210
+        unique: 229
+    - name: lastTsdt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930084754'
+        - '20260930094252'
+        - '20260930105256'
+      stats:
+        min: 20240206104939
+        p50: 20260929165882.5
+        max: 20260930113733
+        unique: 992
+    - name: lastTedt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930103512'
+        - '20260930113923'
+        - '20260930111609'
+      stats:
+        min: 20240206105205
+        p50: 20260929173428
+        max: 20260930114135
+        unique: 996
+    - name: nowTsdt
+      type: number
+      null_rate: 0.925
+      sample_values:
+        - '20260930111422'
+        - '20260930113053'
+        - '20260930110331'
+      stats:
+        min: 20260930110020
+        p50: 20260930112110
+        max: 20260930114200
+        unique: 74
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2024-02-06 ~ 2026-09-30
+cycle: default
+classification:
+  subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8732
+  rank_in_sector: 5
+  brm: 환경기상 - 대기
+  sector_rule: env-ev-to-road
+  why: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+claims:
+  - id: c-15076352-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15076352.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15076352.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15076352-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-30 (관측일 기준 0일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15076352
+        observed_at: '2026-09-30'
+        detail: latest 2026-09-30, lag 0
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15076352-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076352.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15076352-04
+    kind: coverage
+    value: API 전체 건수 9,038 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2024-02-06 ~ 2026-09-30
+    evidence:
+      - type: measured
+        source: probe/runs/15076352.json
+        observed_at: '2026-09-30'
+        detail: total 9038, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15076352-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076352-10
+    kind: pitfall
+    value: 전수 9,038건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 10회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15076352.json
+        observed_at: '2026-09-30'
+        detail: total 9038 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 9038
+  ops_ok: 1/1
+  latency_ms: 31
+  latest: '2026-09-30'
+  lag_days: 0
+  run: probe/runs/15076352.json
+  stats: probe/stats/15076352.json
+  data: probe/data/15076352/
+status: active

@@ -1,0 +1,328 @@
+# 전역 조인 키 원장 (Global Join Keys) — 부문·패밀리를 넘어 데이터를 잇는 식별자.
+# 패밀리 yaml의 keys는 패밀리 안의 별칭 묶음이고, 전역 키와는 knowledge graph 컴파일 시 same_as 엣지로 이어진다.
+# shape_names: pds/rank/shape.py 연계 키 판정 이름 → 이 전역 키로 매핑 (dataset --has_key--> key 엣지 생성)
+# master: 이 키를 정의·배포하는 원장 데이터셋 (정부자원관리/reference-codes 등)
+# 작성 2026-09-28
+- id: bizno
+  name: '사업자등록번호'
+  format: '^\d{10}$'
+  scope: global
+  shape_names: ['사업자번호']
+  note: '국세청 발급. 조달·공정거래·국민연금·상가정보 등 사업자 데이터의 공통 키. 국세청 진위확인 API로 상태 검증'
+- id: corp_rgst_no
+  name: '법인등록번호'
+  format: '^\d{13}$'
+  scope: global
+  note: '대법원 등기. 기업집단·가맹본부·DART 연결'
+- id: admin_area_code
+  name: '행정구역코드 (묶음)'
+  format: '법정동 10자리 / 행정동 10자리 / 시군구 5자리 / 시도 2자리'
+  scope: global
+  shape_names: ['행정구역코드']
+  children: [bjd_cd, adm_cd, sgg_cd]
+  master: ['15077871', '15092039']
+  note: '실거래·인구·상권·선거(읍면동 득표) 공간 결합의 첫 조인'
+- id: bjd_cd
+  name: '법정동코드'
+  format: '^\d{10}$'
+  scope: global
+  parent: admin_area_code
+  master: ['15077871', '15092039']
+- id: adm_cd
+  name: '행정동코드'
+  format: '^\d{10}$'
+  scope: global
+  parent: admin_area_code
+  master: ['15092039']
+- id: sgg_cd
+  name: '시군구코드'
+  format: '^\d{5}$ (법정동코드 앞 5자리)'
+  scope: global
+  parent: admin_area_code
+  master: ['15077871']
+- id: instt_cd
+  name: '행정표준기관코드'
+  format: '^\d{7}$ (조달청 등 일부 시스템은 없을 때 자체코드 Z…)'
+  scope: global
+  shape_names: ['기관코드']
+  master: ['15077870', '15092039']
+  note: '포털 목록개방현황의 제공기관코드와 같은 체계 — 데이터 제공기관과 업무 데이터의 기관을 잇는다'
+- id: pnu
+  name: '필지고유번호 (PNU)'
+  format: '^\d{19}$'
+  scope: global
+  shape_names: ['PNU']
+  note: '토지·건축물·공시가·실거래·온비드 국유재산을 잇는 부동산 축'
+- id: bldg_key
+  name: '건물관리번호·도로명코드'
+  format: '건물관리번호 25자리 / 도로명코드 12자리'
+  scope: global
+  shape_names: ['건물·도로명키']
+- id: classification_code
+  name: '표준 분류코드 (묶음: 조달 물품분류·업종·산업분류·질병 등)'
+  format: '분류 체계별 상이'
+  scope: global
+  shape_names: ['표준분류코드']
+  children: [g2b_prdct_clsfc_no]
+- id: g2b_prdct_clsfc_no
+  name: '조달청 물품분류번호'
+  format: '^\d{8}$ (세부품명번호 10자리의 앞 8자리)'
+  scope: global
+  parent: classification_code
+  master: ['15129417']
+- id: address
+  name: '주소 (도로명·지번 문자열)'
+  format: '문자열 — 정규화·지오코딩 후 bjd_cd·pnu·좌표로 변환해 조인'
+  scope: global
+  shape_names: ['주소']
+  note: '약한 키. 행안부 주소검색 API(15057017)로 정규화'
+- id: coord
+  name: '좌표 (위경도)'
+  format: 'WGS84 등 좌표계 확인 필요'
+  scope: global
+  shape_names: ['좌표']
+  note: '공간 조인(격자·반경)'
+- id: zip
+  name: '우편번호'
+  format: '^\d{5}$'
+  scope: global
+  shape_names: ['우편번호']
+- id: school_cd
+  name: '학교코드'
+  format: '체계 3종 — 대학알리미 학교ID, KEDI 교육통계 학교코드, 나이스·학교기본정보 표준코드(SD_SCHUL_CODE)'
+  scope: global
+  shape_names: ['학교코드']
+  note: '고등교육·초중등 공통. 교육일반/school-registry가 마스터, reference-codes에 school_cd 매핑표 필요 (Phase 3 선결)'
+- id: transit_node_cd
+  name: '교통 노드 코드 (역·정류장·노선)'
+  format: '체계 다수 — 코레일 역코드, 도시철도 역번호(기관별), 서울시 역ID, 교통카드 정류장ID, 국가철도공단 GIS 역ID, 버스 정류소ID'
+  scope: global
+  shape_names: ['교통노드코드']
+  note: '철도에서 출발해 도로·버스·항공까지 넓힐 통합 노드 키. 환승역은 호선별 별도 레코드 — reference-codes에 매핑표 (Phase 2 첫 검증)'
+- id: airport_cd
+  name: '공항코드 (IATA 3자리 / ICAO 4자리)'
+  format: '^[A-Z]{3}$ (IATA) / ^[A-Z]{4}$ (ICAO, 국내 RK**)'
+  scope: global
+  parent: transit_node_cd
+  master: ['15061950', '15100965', '15158948']
+  note: '운항·통계·노선의 조인 키. 한국공항공사·인천공항·TAGO·기상청 공항기상이 같은 코드를 쓰는지(IATA vs ICAO) Phase 2에서 확인'
+- id: road_link_id
+  name: '표준노드링크 링크ID·노드ID (도로 네트워크)'
+  format: '노드ID 10자리 / 링크ID 10자리 (앞 3자리 권역) — 국토부 ITS 센터 표준'
+  scope: global
+  parent: transit_node_cd
+  master: ['15025526']
+  note: >
+    교통 데이터 전체의 공간 기준 (구름 2026-09-29, 도로 검토). 마스터가 API가 아니라 SHP 파일로 주기 배포되고 개편 때 재부여 → 버전 관리 필요.
+    도로공사는 콘존ID, 지자체 ITS는 자체 링크 체계라 매핑표에 콘존ID 열이 필요
+- id: port_cd
+  name: '항만코드 (UN/LOCODE / 해수부 내부 항만코드)'
+  format: '^KR[A-Z]{3}$ (UN/LOCODE, 예 KRPUS) / 해수부 Port-MIS 항만코드 3자리'
+  scope: global
+  parent: transit_node_cd
+  master: ['15088273']
+  note: '입출항·물동량·항만시설을 잇는 키. UN/LOCODE와 해수부 코드가 병존해 매핑표 필요. 항만공사 코드정보 API(인천·여수광양)도 원장 후보'
+- id: vessel_id
+  name: '선박 식별번호 (IMO번호·MMSI·선박등록번호·호출부호)'
+  format: 'IMO ^\d{7}$ / MMSI ^\d{9}$ / 국내 선박번호'
+  scope: global
+  master: ['15133094', '15132996', '15055851']
+  note: '선박원부·입출항·AIS 위치를 잇는 키. 소유자 사업자번호로 기업 축과 연결. 입출항 API가 어느 번호를 쓰는지 Phase 2에서 확인'
+- id: parking_lot_id
+  name: '주차장관리번호 (전국주차장정보표준데이터)'
+  format: '표준데이터 주차장관리번호 (지자체코드 접두)'
+  scope: global
+  master: ['15012896']
+  note: '제공표준 원장 키. 지자체 실시간 주차 API는 비표준이라 자체 ID를 쓰는 경우가 많아 좌표·주소로 매칭해야 할 수 있음'
+- id: tz_cd
+  name: '교통존코드 (KTDB 국가교통DB)'
+  format: 'KTDB 조사 연도별 교통존 체계'
+  scope: global
+  note: '통계 집계구·행정동과 다른 교통 분석 공간 단위. 조사 연도마다 개편 → 버전·supersedes 관리. 원장은 ktdb.go.kr(외부, 승인형) — 포털 등록 확인 필요'
+- id: ind_complex_cd
+  name: '산업단지코드'
+  format: '표준데이터 산업단지코드 (산단공·국토부 산업입지정보시스템)'
+  scope: global
+  master: ['15100060', '3069733']
+  note: '단지 → 입주기업·공장·산단 통계를 잇는 키 (구름 2026-09-29). 지자체 입주기업 파일은 단지명만 있는 경우가 많아 이름 매칭 필요'
+- id: factory_rgst_no
+  name: '공장등록번호'
+  format: '팩토리온 공장관리번호'
+  scope: global
+  master: ['15087611', '15087615']
+  note: '공장 등록 원장 키. 사업자번호·PNU·KSIC를 같이 가져 기업 축과 토지 축을 동시에 잇는다. 시군구 파일은 팩토리온의 부분집합'
+- id: hydro_obs_cd
+  name: '수문 관측소코드 (WAMIS 표준, 수위·우량·유량)'
+  format: 'WAMIS 관측소코드 7자리'
+  scope: global
+  note: '수문 관측 시계열의 키 (구름 2026-09-29, 수자원). 기상청 AWS 관측소와 다른 체계라 병기. WAMIS는 자체 키(wamis.go.kr), 홍수통제소 4곳 API는 data.go.kr'
+- id: river_cd
+  name: '하천코드 (WAMIS 하천·유역 코드, 대·중·표준권역)'
+  format: 'WAMIS 하천코드 / 표준유역코드'
+  scope: global
+  note: '하천 목록·구역·시설·관측소를 잇는 공간 키. 국토부 대권역·중권역·표준권역 API가 유역 코드 원장 후보'
+- id: dam_cd
+  name: '댐코드 (K-water) / 저수지코드 (농어촌공사)'
+  format: '기관별 코드'
+  scope: global
+  note: '댐 운영·수위·방류 시계열과 저수율의 키. 두 체계가 달라 매핑 필요'
+- id: apt_complex_cd
+  name: 'K-apt 공동주택 단지코드'
+  format: 'K-apt 단지코드 (A + 8자리)'
+  scope: global
+  note: >
+    실거래(단지명 자유 텍스트)·공시가격(동·호)·청약(주택관리번호)·관리비를 잇는 매핑 마스터 (구름 2026-09-29, 주택). 실거래에는 거래 고유ID와
+    단지코드가 없어 이 매핑이 주택 영역의 선결 과제. 국토부 공동주택 단지 목록·기본정보 서비스, 부동산원 공동주택 단지 식별정보 조회가 원장 후보
+- id: zoning_cd
+  name: '용도지역·지구·구역 코드 (토지이용규제 UQ 코드)'
+  format: 'UQ + 3자리 (국토계획법) / 개별법 지역·지구 코드'
+  scope: global
+  note: '토지이용계획확인(필지별 규제)의 코드 체계 (구름 2026-09-29, 토지이용규제). 국토계획법 21종 + 개별법 수백 종 — 산지 구분(산지관리법)도 여기 레이어'
+- id: agri_item_cd
+  name: 농산물 표준 품목코드 (KAMIS·도매시장·표준품목)
+  format: 기관별 품목·품종·등급 코드 (농정원 표준품목 매핑 API가 KAMIS·HSK·GPC 매핑 제공)
+  scope: global
+  note: 농산물 가격 원장의 키 (구름 2026-09-29, 농업·농촌). KAMIS·도매시장·관세청 HS·KOSIS가 달라 농정원 표준품목·HSK·GPC 매핑목록이 매핑표 원장
+- id: farm_business_no
+  name: 농업경영체 등록번호
+  format: 농관원 경영체 등록번호
+  scope: global
+  note: 농업의 기업 축. 법인은 사업자번호로 기업 데이터와 연결, 개인은 비식별 집계만
+- id: fish_species_cd
+  name: 어종 표준코드 (수협·수산과학원·위판장)
+  format: 기관별 어종·규격 코드
+  scope: global
+  note: 수산물 가격 원장의 키 (구름 2026-09-29, 해양수산). 수협·수산과학원·KOSIS·관세청 HS가 달라 매핑 필요 — 농산물 품목코드(agri_item_cd)와 같은 층
+- id: ocean_obs_cd
+  name: 해양 관측소코드 (KHOA 조위관측소·부이)
+  format: KHOA 관측소 ID (DT_xxxx 등)
+  scope: global
+  note: 조석·수온·해수면 실시간 시계열의 키. 바다누리(KHOA) 자체 키, 기상청 해양 부이와 다른 체계
+- id: tour_content_id
+  name: TourAPI contentId / 지역코드(areaCode·sigunguCode)
+  format: contentId 정수, contentTypeId(12 관광지·14 문화시설·15 행사·25 코스·28 레포츠·32 숙박·38 쇼핑·39 음식점), areaCode·sigunguCode
+  scope: global
+  note: 관광 콘텐츠 원장의 키 (구름 2026-09-29, 관광). TourAPI 지역코드는 행정 시군구코드와 달라 매핑표 필요 — 관광 통계를 지역 데이터로 잇는 연결점
+- id: localdata_license_no
+  name: 지방행정 인허가 관리번호 (LOCALDATA)
+  format: 개방서비스ID(업종) + 관리번호
+  scope: global
+  note: 행안부 지방행정 인허가 데이터 — 체육시설업·숙박업·음식점·약국·노래방 등 수백 업종이 한 시스템 (구름 2026-09-29, 체육·관광에서 제기). 부문별로 쪼개지 말고 공통 원장 하나를 각 부문이 업종 필터로 참조하는 구조 후보. 사업자번호·좌표 보유
+- id: heritage_cd
+  name: 국가유산 종목코드+지정번호 (ccbaKdcd·ccbaAsno·ccbaCtcd)
+  format: 종목코드 2자리 + 지정번호 + 시도코드
+  scope: global
+  note: 유산 원장의 키 (구름 2026-09-29, 문화재). 보호구역·발굴·아카이브를 잇는다. 국가유산청 자체 API(heritage.go.kr) 병존
+- id: kopis_id
+  name: KOPIS 공연ID·공연장ID (mt20id·mt10id)
+  format: PF + 6자리 / FC + 6자리
+  scope: global
+  note: 공연 원장의 키 (구름 2026-09-29, 문화예술). KOPIS 자체 키
+- id: cultural_facility_cd
+  name: 문화기반시설 시설코드 (전국문화기반시설총람)
+  format: 총람 시설코드
+  scope: global
+  note: 박물관·미술관·도서관·문예회관·문화원 시설 원장의 키, 좌표 보유
+- id: stay_status_cd
+  name: 체류자격코드·국적코드 (출입국)
+  format: 체류자격 A-1~H-2, F-4 등 / 국적 ISO 코드
+  scope: global
+  note: 체류 외국인 격자 원장(시군구 × 체류자격 × 국적 × 월)의 키 (구름 2026-09-29, 법무)
+- id: medical_inst_cd
+  name: 의료기관 코드 3종 (심평원 ykiho·응급 hpid·LOCALDATA 인허가번호)
+  format: ykiho 암호화 문자열 / hpid A+7자리 / LOCALDATA 관리번호
+  scope: global
+  note: ykiho는 심평원 데이터끼리만 조인, 다른 체계와는 주소·명칭 매핑뿐 (구름 2026-09-29, 건강보험·보건의료). 의료기관 매핑표가 두 영역 공통 선결 과제
+- id: drug_cd
+  name: 약품코드·EDI 행위코드·KCD 질병분류
+  format: 주성분코드 9자리·제품코드 9자리 / EDI / KCD-8
+  scope: global
+  note: 급여 코드 마스터 — 진료·처방 통계와 식품건강 의약품 허가를 잇는다
+- id: welfare_facility_cd
+  name: 사회복지시설 시설코드 (사회보장정보원 사회복지시설 정보시스템)
+  format: 시설코드
+  scope: global
+  note: 노인·청소년·아동·장애인 시설 공통 마스터 (구름 2026-09-29, 노인·청소년). 장기요양기관(건보공단)만 다른 코드. 사회복지 분야 시설 원장 공통 도시에 후보
+- id: childcare_center_cd
+  name: 어린이집코드 (아이사랑·어린이집정보공개포털)
+  format: 어린이집 인가번호/코드
+  scope: global
+  note: 영유아 돌봄 시설 키 (구름 2026-09-29). 유치원(교육부 알리미 코드)·초등돌봄(교육청)·다함께돌봄(복지부)과 0~12세 돌봄 4개 체계 — 영유아·아동 시설 매핑표가 교육·사회복지 공통 선결 과제
+- id: nps_workplace_no
+  name: 국민연금 사업장관리번호
+  format: 사업장관리번호 + 사업자번호(마스킹 여부 확인)
+  scope: global
+  parent: bizno
+  note: 국민연금 가입 사업장 내역의 키 (구름 2026-09-29). 사업자번호로 기업 축 연결 — 마스킹 여부가 Phase 2 첫 검증 항목
+- id: stock_cd
+  name: 증권 종목코드 (ISIN 12자리·단축코드 6자리)
+  format: ^KR[0-9A-Z]{10}$ / ^\d{6}$
+  scope: global
+  note: 증권 시세·발행·권리·대차·공시를 잇는 키 (2026-09-29, 재정금융 — Claude가 구름 기준 적용). 법인등록번호로 기업 원장, 연기금 보유 내역(공적연금 pension-fund)과 조인
+- id: hs_cd
+  name: HS 품목분류코드 (관세청 HSK 10자리)
+  format: HS 6자리 / HSK 10자리
+  scope: global
+  note: 수출입 실적의 품목 키 (2026-09-29, 무역). 농산물 품목코드(agri_item_cd)·어종코드(fish_species_cd)와 농정원·해수부 HSK 매핑목록으로 연결
+- id: store_id
+  name: 소상공인 상가업소번호 (상가(상권)정보)
+  format: 상가업소번호 (MA0101... 형식)
+  scope: global
+  note: 상가업소 단위 원장의 키 — 상호·업종(표준산업분류·상권업종분류)·좌표·PNU/건물관리번호 보유. 상권 분석의 공간 기준 (Claude 2026-09-29, 산업고용)
+- id: fuel_station_id
+  name: 주유소 ID (오피넷 UNI_ID) / 충전소 ID (환경부·한전)
+  format: 오피넷 주유소코드 / 충전소ID+충전기ID
+  scope: global
+  note: 유가·충전 상태 실시간 조회의 키. 도로 ev-fuel(물류등기타에서 옮겨온 파일)과 같은 시설
+- id: power_plant_id
+  name: 발전소·발전기 식별 (전기사업허가번호·발전기ID)
+  format: 전기사업 허가번호 / 전력거래소 발전기 코드
+  scope: global
+  note: 태양광 발전사업 허가 표준·발전설비·발전기별 발전량을 잇는다. 허가 표준은 주소로 PNU 연결
+- id: job_code
+  name: 직업·직무 분류 (한국고용직업분류 KECO·NCS 코드)
+  format: KECO 4자리 / NCS 분류번호
+  scope: global
+  note: 채용 공고·훈련 과정·자격·직업사전을 잇는 코드 마스터 (워크넷 공통코드·심리검사 매핑코드가 원장)
+- id: elevator_no
+  name: 승강기 고유번호 (승강기안전종합정보망)
+  format: 승강기 고유번호 7자리
+  scope: global
+  note: 승강기 안전점검·검사 결과 원장의 키 (Claude 2026-09-29, 안전관리). 건물 주소로 건축물대장과 연결
+- id: food_product_cd
+  name: 식품 품목제조보고번호·유통바코드
+  format: 품목제조보고번호 / GTIN-13 바코드
+  scope: global
+  note: 식품 제품 DB·회수/판매중지·영양성분을 제품 단위로 잇는 키 (Claude 2026-09-29, 식품)
+- id: kma_station_cd
+  name: 기상 관측지점번호·예보 격자 (기상청 ASOS/AWS 지점, 단기예보 nx·ny, 예보구역코드)
+  format: 지점번호 3자리(ASOS)/AWS 번호, 격자 nx·ny(5km), 예보구역코드
+  scope: global
+  note: 기상 관측·예보의 키 (2026-09-29, 환경기상). 수문 관측소(WAMIS)·해양 관측소(KHOA)와 다른 체계 — 좌표로 매핑
+- id: air_station_cd
+  name: 대기오염 측정소 (에어코리아 측정소명·코드)
+  format: 측정소명(한글)·측정소코드 6자리
+  scope: global
+  note: 대기질 실시간 원장의 키. 지자체 측정망은 별도 코드
+- id: env_facility_no
+  name: 환경 배출시설 사업장 번호 (대기·폐수·소음진동 배출시설 인허가, TMS 굴뚝 코드)
+  format: 인허가 관리번호/굴뚝코드
+  scope: global
+  parent: bizno
+  note: 배출원 사업장 원장 — LOCALDATA 자원환경 인허가와 같은 원천 가능성, 사업자번호로 기업 축
+- id: country_cd
+  name: 국가·지역 표준코드 (외교부 국가·지역별 표준코드, ISO 3166)
+  format: ISO alpha-2/3 + 외교부 대륙 구분코드
+  scope: global
+  note: 여행경보·재외공관·출입국 국적·무역 국가별 데이터를 잇는 국가 마스터 (구름 기준 적용 2026-09-29, 외교). stay_status_cd의 국적코드와 같은 층
+- id: defense_item_cd
+  name: 군수품 코드·국가재고번호 (방위사업청 군수품조달정보 코드조회)
+  format: NSN 13자리 / 방사청 품목코드
+  scope: global
+  note: 국방전자조달 입찰·계약 원장의 품목 키. 조달청 물품분류번호(g2b_prdct_clsfc_no)와 매핑 여부 Phase 2 확인
+- id: neis_school_cd
+  name: 나이스 학교코드 (교육청코드 ATPT_OFCDC_SC_CODE 3자리 + 행정표준 학교코드 SD_SCHUL_CODE 7자리)
+  format: '^[A-Z]\d{2}$ + ^\d{7}$'
+  scope: global
+  master: ['15122331']
+  note: 나이스 급식·학사일정·시간표·학급 API의 필수 파라미터 — schoolInfo(전국 12,669교 전수)가 원장. 표준데이터 15021148의 학교ID(B000…10자리)와는 값이 겹치지 않음(0/12,011, 2026-09-30 실측) → 학교명+주소로 매핑 필요

@@ -1,0 +1,220 @@
+# Dataset 15095069 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15095069'
+tier: verified
+title: 인천국제공항공사_공항별 항공 통계 서비스
+sector: 교통물류/항공·공항/aviation-statistics
+agency:
+  id: B551177
+  name: 인천국제공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095069/openapi.do
+synonyms:
+  - 공항별
+  - 항공통계
+  - 항공
+  - 여객
+  - 화물
+  - 정기부정기
+  - 화물기여객기
+  - 국제선국내선
+description_portal: 인천국제공항 운항(항공편/여객/화물) 실적에 대한 공항별 통계 정보로 정기/부정기 (periodicity 정기=0,부정기=1),화물기/여객기(null= 전체, 여객기 =Y, 화물기 = N),국제선/국내선(null=전체,국제선=I,국내선=D)기준으로 공항,도착,출발,합계편수등을 제공합니다. 월별 데이터를 제공하며 개발 계정 일 1000 트래픽,운영 계정 신청 시 일 1000000 트래픽을 제공합니다. 개발 계정과 운영 계정 모두 자동 승인됩니다. *2024년 10월까지만의 데이터만 조회 가능합니다. 24년 11월부터 기관 관리대상 정보에서 제외되어, 전국 공항별 항공통계 정보는 한국공항공사 홈페이지의 항공통계에서 확인 가능하오니 참고하시기 바랍니다.
+team:
+  dept: 인프라DX팀
+services:
+  - op: /getTotalNumberOfFlight
+    name: 공항 별 항공통계-항공
+    endpoint: https://apis.data.go.kr/B551177/AviationStatsByAirport/getTotalNumberOfFlight
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: from_month
+        required: false
+        example: '201405'
+        desc: 조회기간(부터)
+      - name: to_month
+        required: false
+        example: '201405'
+        desc: 조회기간(까지)
+      - name: periodicity
+        required: false
+        example: '0'
+        desc: 정기/부정기
+      - name: pax_cargo
+        required: false
+        example: Y
+        desc: 화물기/여객기
+      - name: domestic_foreign
+        required: false
+        example: I
+        desc: 국제선/국내선
+      - name: type
+        required: false
+        example: xml
+        desc: 응답유형
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: airport
+      title: 공항
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 김포
+        - 김해
+        - 대구
+      stats:
+        unique: 8
+    - name: arrFlight
+      title: 도착
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '899'
+        - 1,450
+        - '35'
+      stats:
+        min: 9
+        p50: 331.5
+        max: 9879
+        unique: 8
+    - name: depFlight
+      title: 출발
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '899'
+        - 1,439
+        - '35'
+      stats:
+        min: 9
+        p50: 333
+        max: 9879
+        unique: 8
+    - name: flights
+      title: 합계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 1,798
+        - 2,889
+        - '70'
+      stats:
+        min: 18
+        p50: 664.5
+        max: 19758
+        unique: 8
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항공통계 (공항·노선·항공사별 여객·화물·운항 실적)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6578
+  rank_in_sector: 21
+  brm: 교통물류 - 항공·공항
+  why: 공항·노선별 여객 실적 = 지역 관광·출장 수요, 화물 실적 = 수출입 물류 신호
+claims:
+  - id: c-15095069-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095069.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15095069.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15095069-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095069-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095069.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095069-04
+    kind: coverage
+    value: 검증 수신 8행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095069.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 8
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095069-06
+    kind: admin_note
+    value: "세부 부문 '항공통계 (공항·노선·항공사별 여객·화물·운항 실적)'의 가치: 공항·노선별 여객 실적 = 지역 관광·출장 수요, 화물 실적 = 수출입 물류 신호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#aviation-statistics
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095069-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 8
+  ops_ok: 1/1
+  latency_ms: 115
+  run: probe/runs/15095069.json
+  stats: probe/stats/15095069.json
+  data: probe/data/15095069/
+status: active

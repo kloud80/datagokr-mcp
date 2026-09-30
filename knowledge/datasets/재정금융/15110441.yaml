@@ -1,0 +1,202 @@
+# Dataset 15110441 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15110441'
+tier: verified
+title: 대구광역시 동구_대부업
+sector: 재정금융/산업금융/lender-registry
+agency:
+  id: '3420000'
+  name: 대구광역시 동구
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15110441/openapi.do
+synonyms:
+  - 대부업
+  - 대출
+  - 비대면대출
+  - 금융관리
+  - 업체현황
+description_portal: 대부업 조회서비스 API는 지역 내 대부업체의 등록 현황과 기본 정보를 체계적으로 제공하는 데이터 서비스입니다. 이 API는 등록번호를 기준으로 등록번호, 관리 번호, 업체 명, 주소 등 주요 정보를 조회할 수 있어, 이용자는 신뢰할 수 있는 대부업체를 확인하고 위치와 연락처 정보를 손쉽게 확인할 수 있습니다. 행정기관은 대부업체의 등록 및 관리 현황을 파악하고, 금융 관련 규제 준수 여부 점검, 정책 수립, 민원 처리 등에 활용할 수 있습니다. 또한 연구자나 개발자는 데이터를 기반으로 대부업 지도, 금융 서비스 분석, 산업 통계 자료 구축 등 다양한 응용 프로그램을 개발할 수 있습니다. 대부업 정보 공개는 금융 거래 투명성 확보, 시민의 안전한 금융 이용 지원, 행정 관리 효율성 제고에 기여합니다.
+team:
+  dept: 홍보전산과
+services:
+  - op: /getLoanBusiness
+    name: 대구광역시 동구 대부업 데이터 조회
+    endpoint: https://apis.data.go.kr/3420000/loanBusinessService/getLoanBusiness
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: REG_NO
+        required: false
+        example: '1'
+        desc: 대부업의 등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: REG_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: MANAGE_NO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2022-대구동구-0086
+        - 2023-대구동구-0110
+      stats:
+        unique: 2
+    - name: ENTRPS_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 당근누구나대부중개
+        - 정대부
+      stats:
+        unique: 2
+    - name: ADRES
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 동구 동대구로
+        - 대구광역시 동구 지저동
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - ADRES
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 대부업 등록 (시도·시군구 등록 현황)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6219
+  rank_in_sector: 12
+  brm: 재정금융 - 산업금융
+  why: 대부업법 등록 원장, 사업자번호·주소
+claims:
+  - id: c-15110441-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15110441.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15110441.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15110441-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15110441-03
+    kind: key
+    value: '실측 조인 키: address(ADRES)'
+    evidence:
+      - type: measured
+        source: probe/stats/15110441.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15110441-04
+    kind: coverage
+    value: API 전체 건수 2 · 검증 수신 2행 · 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15110441.json
+        observed_at: '2026-09-30'
+        detail: total 2, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15110441-06
+    kind: admin_note
+    value: "세부 부문 '대부업 등록 (시도·시군구 등록 현황)'의 가치: 대부업법 등록 원장, 사업자번호·주소"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lender-registry
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15110441-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 산업금융] 신보 685건은 대부분 보증 통계·요율표 — 보증 이용 기업 명세(기업 원장)만 남김. 대부업 등록 원장을 일반행정에서 모음. 산후조리원 → 보건의료, 도로안전시설물 → 도로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L625
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  total_count: 2
+  ops_ok: 1/1
+  latency_ms: 745
+  run: probe/runs/15110441.json
+  stats: probe/stats/15110441.json
+  data: probe/data/15110441/
+status: active

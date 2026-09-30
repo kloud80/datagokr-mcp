@@ -1,0 +1,519 @@
+# 조달청 공공조달 API 패밀리 — 원본 그래프 (표준: ../README.md, 스키마: ../_schema.json)
+# status: documented = 조달청 OpenAPI 참고자료(docx)·포털 Swagger에 명시 / inferred = 필드명·샘플로 추론 (Phase 2 실호출로 확인 필요)
+family: pps-procurement
+title: 조달청 공공조달 API 패밀리 (나라장터·누리장터·쇼핑몰)
+version: 1
+updated: 2026-09-28
+summary: >
+  공공기관이 물품·용역·공사·외자를 사는 전 과정(발주계획 → 조달요청 → 사전규격 → 입찰공고 → 개찰·낙찰 → 계약 → 쇼핑몰 납품요구)을
+  조달청이 단계별 API 18종으로 나눠 제공한다. 단계 사이는 차세대 나라장터 통합번호(R+연도+단계코드+순번)로 이어지며,
+  계약과정통합공개서비스가 번호 하나로 전 과정을 이어주는 허브다. 업체·수요기관·물품분류·업종은 별도 마스터 API가 있다.
+sources:
+  - "doc: 조달청_OpenAPI참고자료_*.docx 18종 (포털 각 API 상세 '참고문서', 파싱본 data/ref/families/pps-procurement/reference_docs.json)"
+  - "swagger: 포털 openapi.do 내장 Swagger (data/ref/families/pps-procurement/swagger_ops.json)"
+  - "web: https://www.pps.go.kr/kor/content.do?key=00179 (조달청 업무처리절차)"
+  - "web: https://www.pps.go.kr/kor/content.do?key=00726 (총액계약·중앙조달)"
+scope:
+  included: 조달청 REST API 18종 (정부조달·일반행정·국가통계·정부자원관리 영역에 흩어져 있음)
+  excluded: >
+    정부조달 영역의 조달청 외 기관 데이터(대전광역시·발전사·공사 등 41건)는 구름 검토(2026-09-28)로 제외 — 개별 기관 계약현황 파일이라
+    나라장터 원천을 대체하지 못함. 조달청 파일데이터 143건(대부분 기관 사이트 링크)은 이 패밀리의 API로 대체 가능하므로 범위 밖.
+
+conventions:
+  base_url: "http://apis.data.go.kr/1230000/{group}/{Service}/{operation}  (group: ad=입찰, as=낙찰, ao=기타 대부분, at=쇼핑몰·통계)"
+  business_division:
+    Thng: 물품
+    Servc: 용역 (조달요청은 TechServc 기술용역 / GnrlServc 일반용역으로 더 나뉨)
+    Cnstwk: 공사
+    Frgcpt: 외자
+    Etc: 기타
+  operation_suffix:
+    PPSSrch: 나라장터 화면 검색조건과 같은 필터(기관·품명·지역·업종·금액 등)로 조회. 필터 없는 기본 오퍼레이션보다 무겁다
+    ChgHstry: 변경이력
+    DltHstry: 삭제이력 (계약) — 증분 적재 시 삭제 반영용
+    Detail: 세부(품목 단위) 조회
+    BsisAmount: 기초금액
+    PreparPcDetail: 복수예비가격 상세
+  inqry_div: "대부분 필수. 1=날짜범위, 2 이상=번호 조회. 값의 의미가 API·오퍼레이션마다 다르다 (operations.md의 각 오퍼레이션 설명을 볼 것)"
+  datetime: "조회 파라미터 YYYYMMDDHHMM (일부 YYYYMMDD). 응답은 'YYYY-MM-DD HH:MM' 문자열"
+  query_range_limit:
+    default: 1개월
+    개방표준.입찰공고일시: 1개월
+    개방표준.개찰일시: 1일
+    개방표준.계약체결일자: 1주 (부하로 1개월→1주 축소 운영 중)
+    물품목록.변경일시: 12개월 (일부 1개월)
+    쇼핑몰.등록일시: 1년 / 등록일자 12~36개월 / 납품요구접수일자 1개월
+  paging: "pageNo, numOfRows. 응답 body.totalCount"
+  format: "기본 XML, type=json이면 JSON"
+  nested_list_fields:
+    syntax: "[필드1^필드2^...],[...]  — 대괄호 묶음을 쉼표로 나열, 항목 안은 ^ 구분"
+    fields:
+      corpList: "계약 업체목록 [순번^업체구분^공동도급방식구분^업체명^대표자명^국적명^지분율^채권자명^담당자성명^사업자등록번호]"
+      dminsttList: "계약 수요기관목록 [순번^수요기관코드^수요기관명^소관구분^담당부서명^담당자성명^담당자전화번호]"
+      bidwinrInfoList: "계약과정통합 낙찰자정보 [순번^낙찰업체명^낙찰업체사업자번호^대표자명^낙찰금액^낙찰률^참가업체수^개찰일시]"
+      cntrctInfoList: "계약과정통합 계약정보 [순번^계약번호^계약명^계약기관명^계약수요기관명^계약체결방법명^계약금액^계약일자]"
+      indstrytyMfrcFldList: "입찰공고 면허제한 주력분야 [그룹순번^주력업종명1^주력업종명2^...]"
+      bidNtceNoList: "발주계획·사전규격의 관련 입찰공고번호 — 쉼표 구분 문자열 (대괄호 없음)"
+
+pitfalls:
+  - "업무구분(물품·용역·공사·외자)이 맞지 않는 오퍼레이션을 부르면 결과가 비어 온다. 공고의 업무구분부터 확인"
+  - "번호 체계가 2025-01-06 차세대 나라장터 개통으로 바뀌었다: 이전 11자리 숫자(YYYYMM+순번5) → 이후 13자리 R+YY+단계코드2+순번8. 두 체계가 섞여 있다"
+  - "공고차수(bidNtceOrd)는 정정·재공고마다 증가. 같은 공고번호에 여러 차수가 있으므로 최신 차수만 쓸지 전부 쓸지 먼저 정한다"
+  - "업체·수요기관 목록이 ^ 구분 중첩 문자열로 온다 → 파싱 후 행으로 풀어야 사업자번호·기관코드 조인이 된다"
+  - "수요기관코드는 행정표준기관코드(7자리)가 기본이나 없으면 조달청 자체코드(Z로 시작)"
+  - "조회기간 제한(대개 1개월, 개찰일시 1일)을 넘기면 오류 — 장기 적재는 기간을 쪼개 반복"
+  - "발주계획·사전규격이 없는 입찰도 많다 (소액·수의계약 등 법령상 생략). 체인이 끊겨도 정상"
+
+entities:
+  - {id: order_plan,      name: 발주계획,        stage: 1, keys: [order_plan_no],   note: "수요기관이 연간 조달 계획을 분기별로 게시. 사전규격·입찰공고의 선행 단계"}
+  - {id: procurement_req, name: 조달요청,        stage: 2, keys: [prcrmnt_req_no],  note: "수요기관이 조달청에 계약을 맡기는 요청(중앙조달). 자체조달 기관은 이 단계가 없다"}
+  - {id: pre_spec,        name: 사전규격,        stage: 3, keys: [bf_spec_rgst_no], note: "입찰 전에 규격서 초안을 공개하고 업체 의견을 받는 단계"}
+  - {id: bid_notice,      name: 입찰공고,        stage: 4, keys: [bid_ntce_no],     note: "최종 규격·입찰조건 공고. 기초금액·면허제한·참가가능지역 등 부속정보 포함"}
+  - {id: bid_result,      name: 개찰·낙찰,       stage: 5, keys: [bid_ntce_no],     note: "개찰결과(참가업체·순위·예비가격)와 최종낙찰자. 재입찰·유찰 포함"}
+  - {id: contract,        name: 계약,            stage: 6, keys: [unty_cntrct_no],  note: "낙찰 후 체결된 계약. 변경·삭제 이력 별도"}
+  - {id: shop_product,    name: 쇼핑몰 계약품목,  stage: null, keys: [prdct_idnt_no, shopng_cntrct_no], note: "단가계약(다수공급자·일반단가·제3자단가)으로 쇼핑몰에 등록된 상품"}
+  - {id: delivery_req,    name: 납품요구,        stage: 7, keys: [dlvr_req_no],     note: "수요기관이 쇼핑몰 단가계약 상품을 주문한 건"}
+  - {id: company,         name: 조달업체,        stage: null, keys: [bizno],        note: "나라장터 등록 업체. 업종·공급물품·부정당제재"}
+  - {id: institution,     name: 수요·공고·계약기관, stage: null, keys: [instt_cd],   note: "공공기관. 역할에 따라 수요기관/공고기관/발주기관/계약기관으로 필드명이 달라짐"}
+  - {id: product_class,   name: 물품분류,        stage: null, keys: [prdct_clsfc_no, dtil_prdct_clsfc_no, prdct_idnt_no], note: "UNSPSC 기반 4단계 8자리 + 세부품명 10자리 + 물품식별번호"}
+  - {id: industry,        name: 업종·근거법규,    stage: null, keys: [indstryty_cd], note: "입찰 참가자격(면허제한)의 기준"}
+
+keys:
+  - id: order_plan_no
+    name: 발주계획통합번호
+    format: {nextgen: "^R\\d{2}DD\\d{8}$", legacy: "업무구분(1)-업무유형(3)-발주년도(4)-기관코드(7)-순번(6)"}
+    companion: "orderPlanNo = 통합번호 + 발주차수(2). 계약과정통합 조회는 orderPlanNo 파라미터"
+    aliases:
+      - {dataset: "15129462", field: orderPlanUntyNo, io: both, status: documented}
+      - {dataset: "15129394", field: orderPlanUntyNo, io: out, status: documented}
+      - {dataset: "15129459", field: orderPlanUntyNo, io: out, status: documented}
+      - {dataset: "15129459", field: orderPlanNo, io: both, transform: "orderPlanUntyNo + 차수(2)", status: documented}
+  - id: prcrmnt_req_no
+    name: 조달요청번호
+    format: {nextgen: "^R\\d{2}DC\\d{8}$", legacy: "영숫자 8~9자리 (예 16GA0289, 209700700)"}
+    aliases:
+      - {dataset: "15129468", field: prcrmntReqNo, io: both, status: documented}
+      - {dataset: "15129459", field: prcrmntReqNo, io: both, status: documented}
+      - {dataset: "15129394", field: prcrmntReqNo, io: in, status: documented}
+      - {dataset: "15129397", field: prcrmntReqNo, io: in, status: documented}
+      - {dataset: "15129394", field: refNo, io: out, transform: "조달청 공고면 참조번호에 조달요청번호가 들어오는 경우가 있음(샘플 R25DC…)", status: inferred}
+      - {dataset: "15129427", field: reqNo, io: both, transform: "계약의 '요청번호'. 중앙조달이면 조달요청번호로 추정, 자체조달은 기관 문서번호(예 운영지원과-5980)", status: inferred}
+  - id: bf_spec_rgst_no
+    name: 사전규격등록번호
+    format: {nextgen: "^R\\d{2}BD\\d{8}$", legacy: "숫자 6자리 내외"}
+    aliases:
+      - {dataset: "15129437", field: bfSpecRgstNo, io: both, status: documented}
+      - {dataset: "15129394", field: bfSpecRgstNo, io: out, status: documented}
+      - {dataset: "15129459", field: bfSpecRgstNo, io: both, status: documented}
+  - id: bid_ntce_no
+    name: 입찰공고번호
+    format: {nextgen: "^R\\d{2}BK\\d{8}$", legacy: "^\\d{11}$ (YYYYMM+순번5)", other_systems: "자체 전자조달시스템은 기관별 형식"}
+    companion: "bid_ntce_ord 입찰공고차수(3자리 '000'). 정정·재공고마다 증가"
+    aliases:
+      - {dataset: "15129394", field: bidNtceNo, io: both, status: documented}
+      - {dataset: "15129397", field: bidNtceNo, io: both, status: documented}
+      - {dataset: "15129459", field: bidNtceNo, io: both, status: documented}
+      - {dataset: "15058815", field: bidNtceNo, io: out, status: documented}
+      - {dataset: "15129462", field: bidNtceNoList, io: out, transform: "쉼표 구분 목록 → 행으로 분해", status: documented}
+      - {dataset: "15129437", field: bidNtceNoList, io: out, transform: "쉼표 구분 목록 → 행으로 분해", status: documented}
+      - {dataset: "15129427", field: ntceNo, io: both, transform: "입찰공고번호(11)+차수(2) (구체계 문서 기준. 차세대 번호에서의 결합 형식은 미확인)", status: inferred}
+      - {dataset: "15129456", field: bidNtceNo, io: both, transform: "누리장터(민간) 공고번호 — 나라장터 공고와는 다른 모집단", status: documented}
+      - {dataset: "15129458", field: bidNtceNo, io: both, status: documented}
+      - {dataset: "15129469", field: ntceNo, io: in, status: documented}
+    pitfalls:
+      - "untyNtceNo(통합공고번호, R25BM…)는 여러 공고를 묶은 번호로 bidNtceNo와 다르다"
+      - "refNo(참조번호): 조달청 공고면 자체시스템 공고번호, 자체시스템 공고면 나라장터 공고번호 — 방향이 반대"
+  - id: unty_cntrct_no
+    name: 통합계약번호
+    format: {nextgen: "^R\\d{2}TA\\d{8}$", legacy: "^\\d{13}$"}
+    companion: "dcsnCntrctNo 확정계약번호(계약번호+수정차수), cntrctRefNo 계약참조번호 — 검색 파라미터로도 쓰임"
+    aliases:
+      - {dataset: "15129427", field: untyCntrctNo, io: both, status: documented}
+      - {dataset: "15129469", field: untyCntrctNo, io: both, status: documented}
+      - {dataset: "15058815", field: cntrctNo, io: out, transform: "개방표준의 계약번호 샘플이 R25TA… 형식 → 통합계약번호로 추정", status: inferred}
+      - {dataset: "15129459", field: cntrctInfoList, io: out, transform: "중첩 목록의 2번째 값(계약번호)", status: inferred}
+  - id: dlvr_req_no
+    name: 납품요구번호
+    format: {nextgen: "^R\\d{2}TB\\d{8}$"}
+    aliases:
+      - {dataset: "15129471", field: dlvrReqNo, io: both, status: documented}
+  - id: shopng_cntrct_no
+    name: 쇼핑(단가)계약번호
+    format: {nextgen: "^R\\d{2}TA\\d{8}\\d{2}$ (13자리+차수2)", legacy: "9자리+차수2"}
+    aliases:
+      - {dataset: "15129471", field: shopngCntrctNo, io: both, status: documented}
+      - {dataset: "15129471", field: cntrctNo, io: both, transform: "납품요구 응답의 계약번호 = 단가계약번호로 추정", status: inferred}
+    pitfalls: ["유일 키는 쇼핑계약번호 + 쇼핑계약순번 (문서 명시)"]
+  - id: bizno
+    global_key: bizno
+    name: 사업자등록번호
+    format: {any: "^\\d{10}$"}
+    aliases:
+      - {dataset: "15129466", field: bizno, io: both, status: documented}
+      - {dataset: "15129397", field: bidwinnrBizno, io: out, status: documented}
+      - {dataset: "15129397", field: prcbdrBizno, io: out, status: documented}
+      - {dataset: "15129397", field: bizno, io: in, status: documented}
+      - {dataset: "15129458", field: prcbdrBizno, io: out, status: documented}
+      - {dataset: "15058815", field: fnlSucsfCorpBizrno, io: out, status: documented}
+      - {dataset: "15129427", field: corpList, io: out, transform: "중첩 목록 마지막 값", status: documented}
+      - {dataset: "15129459", field: bidwinrInfoList, io: out, transform: "중첩 목록 3번째 값", status: documented}
+      - {dataset: "15129471", field: corpBizno, io: out, status: documented}
+      - {dataset: "15129471", field: bizno, io: in, status: documented}
+      - {dataset: "15129412", field: corpUntyNo, io: both, transform: "업체통합번호. 샘플이 사업자번호와 같은 10자리 → 동일로 추정", status: inferred}
+    pitfalls: ["하이픈 없는 10자리. 외국업체·공동수급은 형식이 다를 수 있음"]
+  - id: instt_cd
+    global_key: instt_cd
+    name: 기관코드 (수요·공고·발주·계약기관)
+    format: {mois: "^\\d{7}$ 행정표준기관코드", pps: "^Z\\d{6}$ 조달청 부여(행정표준코드 없는 기관)"}
+    aliases:
+      - {dataset: "15129466", field: dminsttCd, io: both, status: documented}
+      - {dataset: "15129394", field: dminsttCd, io: both, status: documented}
+      - {dataset: "15129394", field: ntceInsttCd, io: both, status: documented}
+      - {dataset: "15129397", field: dminsttCd, io: both, status: documented}
+      - {dataset: "15129462", field: orderInsttCd, io: both, status: documented}
+      - {dataset: "15129468", field: orderInsttCd, io: both, status: documented}
+      - {dataset: "15129427", field: cntrctInsttCd, io: out, status: documented}
+      - {dataset: "15129427", field: insttCd, io: in, status: documented}
+      - {dataset: "15129427", field: dminsttList, io: out, transform: "중첩 목록 2번째 값", status: documented}
+      - {dataset: "15129471", field: dminsttCd, io: both, status: documented}
+      - {dataset: "15129412", field: dminsttCd, io: both, status: documented}
+    pitfalls:
+      - "같은 코드라도 역할(수요/공고/발주/계약)이 다르다. 조달청이 대행하면 공고·계약기관=조달청, 수요기관=실제 기관"
+      - "행정표준기관코드는 다른 공공데이터(예: 목록개방현황의 제공기관코드)와 조인 가능"
+  - id: prdct_clsfc_no
+    global_key: g2b_prdct_clsfc_no
+    name: 물품분류번호 (8자리, UNSPSC 기반 대-중-소-세분류 각 2자리)
+    format: {any: "^\\d{8}$"}
+    aliases:
+      - {dataset: "15129417", field: prdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129470", field: prdctClsfcNo, io: out, status: documented}
+      - {dataset: "15129415", field: prdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129462", field: prdctClsfcNo, io: out, status: documented}
+      - {dataset: "15129468", field: prdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129427", field: prdctClsfcNo, io: out, status: documented}
+      - {dataset: "15129412", field: prdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129471", field: prdctClsfcNo, io: both, status: documented}
+  - id: dtil_prdct_clsfc_no
+    name: 세부품명번호 (10자리 = 물품분류번호8 + 식별번호 앞2)
+    format: {any: "^\\d{10}$"}
+    aliases:
+      - {dataset: "15129417", field: dtilPrdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129394", field: dtilPrdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129397", field: dtilPrdctClsfcNo, io: in, status: documented}
+      - {dataset: "15129437", field: dtilPrdctClsfcNo, io: in, status: documented}
+      - {dataset: "15129462", field: dtilPrdctClsfcNo, io: both, status: documented}
+      - {dataset: "15129466", field: dtilPrdctClsfcNo, io: out, status: documented}
+      - {dataset: "15129471", field: dtilPrdctClsfcNo, io: both, status: documented}
+    pitfalls: ["공사 업무는 세부품명번호로 검색 불가 (문서 명시)"]
+  - id: prdct_idnt_no
+    name: 물품식별번호 (8자리, 규격 단위 품목)
+    format: {any: "^\\d{8}$"}
+    aliases:
+      - {dataset: "15129417", field: prdctIdntNo, io: both, status: documented}
+      - {dataset: "15129415", field: prdctIdntNo, io: both, status: documented}
+      - {dataset: "15129471", field: prdctIdntNo, io: both, status: documented}
+      - {dataset: "15129468", field: rprsntPrdctidntno, io: out, status: documented}
+      - {dataset: "15129427", field: prdctIdntNo, io: out, status: documented}
+  - id: indstryty_cd
+    name: 업종코드 (4자리)
+    format: {any: "^\\d{4}$"}
+    aliases:
+      - {dataset: "15129467", field: indstrytyCd, io: both, status: documented}
+      - {dataset: "15129466", field: indstrytyCd, io: out, status: documented}
+      - {dataset: "15129394", field: indstrytyCd, io: in, status: documented}
+      - {dataset: "15129397", field: indstrytyCd, io: in, status: documented}
+      - {dataset: "15129394", field: lcnsLmtNm, io: out, transform: "'면허제한명/코드' 문자열에서 코드 분리", status: documented}
+
+datasets:
+  - id: "15129462"
+    short: 발주계획
+    title: 조달청_나라장터 발주계획현황서비스
+    role: stage
+    entity: order_plan
+    service: ao/OrderPlanSttusService
+    ops: 8
+    does: "수요기관이 당해 연도 조달할 물품·공사·용역·외자의 분기별 발주계획(예산액, 발주예정월, 조달방식, 계약방법, 담당자)"
+    op_groups: ["업무별 목록 ×4", "나라장터 검색조건 ×4"]
+    provides_keys: [order_plan_no, bid_ntce_no, instt_cd, prdct_clsfc_no, dtil_prdct_clsfc_no]
+    lookup_by: [order_plan_no, instt_cd, dtil_prdct_clsfc_no]
+    use_when: "앞으로 나올 사업을 미리 보고 싶을 때 (영업 파이프라인, 예산 흐름). bidNtceNoList로 실제 공고와 연결"
+  - id: "15129468"
+    short: 조달요청
+    title: 조달청_나라장터 조달요청서비스
+    role: stage
+    entity: procurement_req
+    service: ao/PrcrmntReqInfoService
+    ops: 12
+    does: "수요기관이 조달청에 계약을 요청한 건(중앙조달). 요청명, 대표품목·단가·수량, 예산, 접수 지방청"
+    op_groups: ["업무별 목록 (물품·외자·기술용역·일반용역·공사)", "나라장터 검색조건", "물품·외자 세부(품목)"]
+    provides_keys: [prcrmnt_req_no, instt_cd, prdct_clsfc_no, prdct_idnt_no]
+    lookup_by: [prcrmnt_req_no, instt_cd, prdct_clsfc_no]
+    use_when: "조달청이 대행하는 중앙조달 물량·품목을 볼 때. 자체조달 기관 건은 없음"
+  - id: "15129437"
+    short: 사전규격
+    title: 조달청_나라장터 사전규격정보서비스
+    role: stage
+    entity: pre_spec
+    service: ao/HrcspSsstndrdInfoService
+    ops: 20
+    does: "입찰 전 공개된 규격서 초안: 품명, 배정예산, 납품기한, 규격서 파일 URL, 업체 의견"
+    op_groups: ["업무별 목록 ×4", "검색조건 ×4", "기관별 ×4", "품목별 ×4", "규격서 의견 ×4"]
+    provides_keys: [bf_spec_rgst_no, bid_ntce_no]
+    lookup_by: [bf_spec_rgst_no, instt_cd, dtil_prdct_clsfc_no]
+    use_when: "공고 1~2주 전 선행 신호. 규격서 의견은 업계 반응"
+  - id: "15129394"
+    short: 입찰공고
+    title: 조달청_나라장터 입찰공고정보서비스
+    role: stage
+    entity: bid_notice
+    service: ad/BidPublicInfoService
+    ops: 25
+    does: "입찰공고 본문(공고·개찰 일시, 추정가격, 계약방법, 규격서 URL)과 부속정보(기초금액, 면허제한, 참가가능지역, 구매대상물품, 변경이력, 첨부파일)"
+    op_groups: ["업무별 목록 ×4 + 기타", "검색조건 ×4 + 기타", "기초금액 ×3", "변경이력 ×3", "구매대상물품 ×3", "면허제한", "참가가능지역", "평가대상 주력분야", "입찰가격산식A", "첨부파일(e발주·혁신장터)"]
+    provides_keys: [bid_ntce_no, bf_spec_rgst_no, order_plan_no, instt_cd, dtil_prdct_clsfc_no, indstryty_cd]
+    lookup_by: [bid_ntce_no, prcrmnt_req_no, instt_cd, dtil_prdct_clsfc_no, indstryty_cd]
+    use_when: "입찰 기회 탐색·알림, 공고 조건 분석의 중심. 활용신청 1위(12,481)"
+    caveats: ["부속정보는 공고번호로 다시 조회하는 별도 오퍼레이션"]
+  - id: "15129397"
+    short: 낙찰
+    title: 조달청_나라장터 낙찰정보서비스
+    role: stage
+    entity: bid_result
+    service: as/ScsbidInfoService
+    ops: 23
+    does: "개찰결과(참가업체수·개찰업체 순위), 최종낙찰자(사업자번호·금액·낙찰률), 복수예비가격 상세, 재입찰·유찰·개찰완료 목록"
+    op_groups: ["낙찰목록 ×4 + 검색조건 ×4", "개찰결과 ×4 + 검색조건 ×4", "예비가격상세 ×4", "재입찰·유찰·개찰완료"]
+    provides_keys: [bid_ntce_no, bizno, instt_cd]
+    lookup_by: [bid_ntce_no, bizno, instt_cd, prcrmnt_req_no]
+    use_when: "누가 얼마에 땄나(경쟁사·투찰률 분석), 예비가격 분포"
+  - id: "15129427"
+    short: 계약
+    title: 조달청_나라장터 계약정보서비스
+    role: stage
+    entity: contract
+    service: ao/CntrctInfoService
+    ops: 21
+    does: "체결 계약(금액·기간·계약방법·근거법률), 계약업체 목록(지분율), 수요기관 목록, 품목 세부, 변경·삭제 이력"
+    op_groups: ["업무별 목록 ×4", "검색조건 ×4", "변경이력 ×4", "삭제이력 ×4", "세부(물품·외자)", "서비스정보(기술용역·일반용역·공사)"]
+    provides_keys: [unty_cntrct_no, bid_ntce_no, prcrmnt_req_no, bizno, instt_cd, prdct_clsfc_no]
+    lookup_by: [unty_cntrct_no, bid_ntce_no, prcrmnt_req_no, instt_cd]
+    use_when: "실제 집행 금액·업체 실적. 증분 적재 시 변경·삭제 이력을 함께"
+    caveats: ["업체·수요기관이 중첩 문자열(corpList, dminsttList)", "공고번호 필드명이 ntceNo이고 차수가 붙어 있음"]
+  - id: "15129459"
+    short: 계약과정통합
+    title: 조달청_나라장터 계약과정통합공개서비스
+    role: hub
+    entity: [order_plan, pre_spec, procurement_req, bid_notice, bid_result, contract]
+    service: ao/CntrctProcssIntgOpenService
+    ops: 4
+    does: "입찰공고번호·사전규격등록번호·발주계획번호·조달요청번호 중 하나로 그 건의 발주계획→사전규격→입찰→낙찰자→계약목록을 한 행으로"
+    op_groups: ["업무별 ×4 (물품·용역·공사·외자)"]
+    provides_keys: [order_plan_no, bf_spec_rgst_no, prcrmnt_req_no, bid_ntce_no, bizno, unty_cntrct_no]
+    lookup_by: [bid_ntce_no, bf_spec_rgst_no, order_plan_no, prcrmnt_req_no]
+    use_when: "단계 간 연결의 정답지. 번호 하나를 알면 먼저 이것을 부른다. 목록 조회(날짜 범위)는 없다"
+    caveats: ["번호로만 조회 가능 — 전수 수집용이 아니다", "낙찰자·계약은 중첩 목록"]
+  - id: "15129471"
+    short: 쇼핑몰
+    title: 조달청_나라장터쇼핑몰 품목정보 서비스
+    role: stage
+    entity: [shop_product, delivery_req]
+    service: at/ShoppingMallPrdctInfoService
+    ops: 9
+    does: "단가계약 상품(다수공급자·일반단가·제3자단가) 가격·규격·원산지·인증, 납품요구(주문) 현황·상세, 벤처나라 주문, 특정품목 조달내역"
+    op_groups: ["계약유형별 품목 ×3", "쇼핑몰 품목 등록내역", "납품요구 현황·상세", "벤처나라 주문", "특정품목 조달내역·집계"]
+    provides_keys: [shopng_cntrct_no, dlvr_req_no, prdct_idnt_no, prdct_clsfc_no, dtil_prdct_clsfc_no, bizno, instt_cd]
+    lookup_by: [dlvr_req_no, shopng_cntrct_no, prdct_idnt_no, instt_cd, bizno]
+    use_when: "입찰 없이 쇼핑몰로 사는 물량(공공기관 구매의 큰 몫). 기관별 구매 품목·업체"
+  - id: "15129466"
+    short: 사용자
+    title: 조달청_나라장터 사용자정보 서비스
+    role: reference
+    entity: [company, institution]
+    service: ao/UsrInfoService02
+    ops: 5
+    does: "조달업체 기본정보·등록업종·공급물품, 부정당제재업체, 수요기관 정보(최상위기관·소관구분·주소)"
+    provides_keys: [bizno, instt_cd, indstryty_cd, dtil_prdct_clsfc_no]
+    lookup_by: [bizno, instt_cd]
+    use_when: "낙찰·계약의 사업자번호·기관코드를 이름·주소·업종으로 풀 때, 제재 여부 확인"
+  - id: "15129417"
+    short: 물품목록
+    title: 조달청_물품목록정보서비스
+    role: reference
+    entity: product_class
+    service: ao/ThngListInfoService02
+    ops: 13
+    does: "물품분류 2·4·6·8·10단위 내역, 품명·품목 목록, 분류·품목 변경이력, 품목 개별속성, 소재지"
+    provides_keys: [prdct_clsfc_no, dtil_prdct_clsfc_no, prdct_idnt_no]
+    lookup_by: [prdct_clsfc_no, dtil_prdct_clsfc_no, prdct_idnt_no]
+    use_when: "품목 코드를 사람이 읽는 이름·계층으로 풀 때"
+  - id: "15129470"
+    short: 물품관리
+    title: 조달청_물품관리정보서비스
+    role: reference
+    entity: product_class
+    service: ao/PrdctMngInfoService
+    ops: 1
+    does: "물품분류번호별 내용연수(조달청 고시)"
+    provides_keys: [prdct_clsfc_no]
+    lookup_by: [prdct_clsfc_no]
+    use_when: "교체 주기 추정(내용연수 도래 → 재구매 수요)"
+  - id: "15129467"
+    short: 업종법규
+    title: 조달청_나라장터 업종 및 근거법규서비스
+    role: reference
+    entity: industry
+    service: ao/IndstrytyBaseLawrgltInfoService
+    ops: 1
+    does: "업종코드·업종명·근거법령, 제한·허용 업종 관계"
+    provides_keys: [indstryty_cd]
+    lookup_by: [indstryty_cd]
+    use_when: "입찰 면허제한 코드를 업종·법령으로 풀 때, 우리 회사가 참가 가능한 공고 필터"
+  - id: "15129415"
+    short: 가격
+    title: 조달청_나라장터 가격정보현황서비스
+    role: reference
+    entity: product_class
+    service: ao/PriceInfoService
+    ops: 11
+    does: "시설공사 원가계산용 조사가격: 시설공통자재(토목·건축·기계·전기통신·종합), 시장시공가격, 표준시장단가, 공종분류, 자원분류"
+    provides_keys: [prdct_clsfc_no, prdct_idnt_no]
+    lookup_by: [prdct_clsfc_no, prdct_idnt_no]
+    use_when: "자재·공종 단가 참고(견적·원가). 실제 거래가가 아니라 조달청 조사 참고가격"
+  - id: "15129412"
+    short: 통계
+    title: 조달청_공공조달통계정보서비스
+    role: aggregate
+    entity: null
+    service: at/PubPrcrmntStatInfoService
+    ops: 14
+    does: "나라장터 포함 24개 전자조달시스템 + 비전자계약 실적 집계: 전체·계약방법별·지역제한·기관구분별·기업구분별·수요기관별·조달기업별·품목별"
+    provides_keys: [instt_cd, bizno, prdct_clsfc_no]
+    lookup_by: [instt_cd, bizno, prdct_clsfc_no]
+    use_when: "시장 규모·기관/기업 실적 추이. 건별 추적은 불가"
+  - id: "15058815"
+    short: 개방표준
+    title: 조달청_나라장터 공공데이터개방표준서비스
+    role: derived
+    entity: [bid_notice, bid_result, contract]
+    service: ao/PubDataOpnStdService
+    ops: 3
+    does: "입찰공고·낙찰·계약을 행안부 공공데이터 개방표준 스키마로 평탄화 (업무구분 통합, 기관 구분 필드 표준화)"
+    provides_keys: [bid_ntce_no, bizno, instt_cd, unty_cntrct_no]
+    lookup_by: []
+    use_when: "업무구분별 API를 따로 부르지 않고 한 번에 기간 수집할 때. 필드가 적고 조회기간 제한이 짧다(개찰 1일, 계약 1주)"
+  - id: "15129456"
+    short: 민간입찰
+    title: 조달청_누리장터 민간입찰공고서비스
+    role: mirror
+    entity: bid_notice
+    service: ao/PrvtBidNtceService
+    ops: 10
+    does: "누리장터(나라장터에 수요기관으로 등록할 수 없는 민간: 아파트 관리주체 등)의 입찰공고"
+    provides_keys: [bid_ntce_no, instt_cd]
+    lookup_by: [bid_ntce_no, instt_cd, indstryty_cd]
+    use_when: "민간 발주 시장(공동주택 관리 용역 등). 공공 입찰과 섞지 말 것"
+  - id: "15129458"
+    short: 민간낙찰
+    title: 조달청_누리장터 민간낙찰정보_서비스
+    role: mirror
+    entity: bid_result
+    service: ao/PrvtScsbidInfoService
+    ops: 7
+    does: "누리장터 개찰결과·낙찰"
+    provides_keys: [bid_ntce_no, bizno]
+    lookup_by: [bid_ntce_no]
+  - id: "15129469"
+    short: 민간계약
+    title: 조달청_누리장터 민간계약정보 서비스
+    role: mirror
+    entity: contract
+    service: ao/PrvtCntrctInfoService
+    ops: 4
+    does: "누리장터 계약현황·변경·삭제 이력"
+    provides_keys: [unty_cntrct_no]
+    lookup_by: [unty_cntrct_no, bid_ntce_no]
+
+edges:
+  # --- 업무 절차 (lifecycle)
+  - {type: lifecycle, from: order_plan, to: pre_spec, via: order_plan_no, condition: "발주계획이 있어야 사전규격·입찰공고 등록 가능(발주계획 대상 사업)", status: documented, evidence: ["doc:15129462#서비스설명"]}
+  - {type: lifecycle, from: order_plan, to: procurement_req, via: order_plan_no, condition: "중앙조달(조달청 대행)일 때만", status: inferred, evidence: ["web:https://www.pps.go.kr/kor/content.do?key=00179"]}
+  - {type: lifecycle, from: procurement_req, to: pre_spec, via: prcrmnt_req_no, condition: "중앙조달 + 사전규격 공개 대상", status: inferred, evidence: ["doc:15129459#getCntrctProcssIntgOpenThng"]}
+  - {type: lifecycle, from: pre_spec, to: bid_notice, via: bf_spec_rgst_no, condition: "사전규격 공개 대상(법령상 일정 금액 이상 등)", status: documented, evidence: ["doc:15129437#서비스설명", "doc:15129394#bfSpecRgstNo"]}
+  - {type: lifecycle, from: bid_notice, to: bid_result, via: bid_ntce_no, status: documented, evidence: ["doc:15129397#서비스설명"]}
+  - {type: lifecycle, from: bid_result, to: contract, via: bid_ntce_no, condition: "계약의 ntceNo로 연결", status: documented, evidence: ["doc:15129427#ntceNo"]}
+  - {type: lifecycle, from: shop_product, to: delivery_req, via: shopng_cntrct_no, condition: "단가계약 상품을 수요기관이 주문", status: documented, evidence: ["doc:15129471#dlvrReqNo"]}
+
+  # --- 실행 가능한 조회 체인 (lookup)
+  - {type: lookup, from: "15129462", to: "15129394", key: bid_ntce_no, from_field: bidNtceNoList, to_param: bidNtceNo, inqry_div: "2(입찰공고번호)", status: documented, evidence: ["doc:15129462#bidNtceNoList", "doc:15129394#inqryDiv"]}
+  - {type: lookup, from: "15129437", to: "15129394", key: bid_ntce_no, from_field: bidNtceNoList, to_param: bidNtceNo, inqry_div: "2", status: documented, evidence: ["doc:15129437#bidNtceNoList"]}
+  - {type: lookup, from: "15129394", to: "15129397", key: bid_ntce_no, from_field: bidNtceNo, to_param: bidNtceNo, inqry_div: "3 또는 4(입찰공고번호)", status: documented, evidence: ["doc:15129397#inqryDiv"]}
+  - {type: lookup, from: "15129394", to: "15129459", key: bid_ntce_no, from_field: bidNtceNo, to_param: bidNtceNo, inqry_div: "1", status: documented, evidence: ["doc:15129459#inqryDiv"]}
+  - {type: lookup, from: "15129437", to: "15129459", key: bf_spec_rgst_no, from_field: bfSpecRgstNo, to_param: bfSpecRgstNo, inqry_div: "2", status: documented, evidence: ["doc:15129459#inqryDiv"]}
+  - {type: lookup, from: "15129462", to: "15129459", key: order_plan_no, from_field: orderPlanUntyNo, to_param: orderPlanNo, inqry_div: "3", status: documented, evidence: ["doc:15129459#inqryDiv"]}
+  - {type: lookup, from: "15129468", to: "15129459", key: prcrmnt_req_no, from_field: prcrmntReqNo, to_param: prcrmntReqNo, inqry_div: "4", status: documented, evidence: ["doc:15129459#inqryDiv"]}
+  - {type: lookup, from: "15129468", to: "15129394", key: prcrmnt_req_no, from_field: prcrmntReqNo, to_param: prcrmntReqNo, inqry_div: "검색조건 오퍼레이션(PPSSrch)", status: documented, evidence: ["doc:15129394#prcrmntReqNo"]}
+  - {type: lookup, from: "15129394", to: "15129427", key: bid_ntce_no, from_field: "bidNtceNo+bidNtceOrd", to_param: ntceNo, inqry_div: "검색조건 오퍼레이션 조회구분 4(공고번호)", status: inferred, evidence: ["doc:15129427#ntceNo"]}
+  - {type: lookup, from: "15129397", to: "15129466", key: bizno, from_field: bidwinnrBizno, to_param: bizno, inqry_div: "사업자등록번호 기준", status: documented, evidence: ["doc:15129466#inqryDiv"]}
+  - {type: lookup, from: "15129466", to: "15129397", key: bizno, from_field: bizno, to_param: bizno, inqry_div: "검색조건 오퍼레이션", status: documented, evidence: ["doc:15129397#bizno"]}
+  - {type: lookup, from: "15129471", to: "15129471", key: dlvr_req_no, from_field: dlvrReqNo, to_param: dlvrReqNo, to_ops: [getDlvrReqDtlInfoList], inqry_div: "2(납품요구번호)", status: documented, evidence: ["doc:15129471#inqryDiv"]}
+
+  # --- 출력끼리 조인 (join)
+  - {type: join, from: "15129427", to: "15129394", left: ntceNo, right: "bidNtceNo || bidNtceOrd", transform: "구체계: 11+2자리 결합. 차세대 형식 미확인", status: inferred, evidence: ["doc:15129427#ntceNo"]}
+  - {type: join, from: "15129427", to: "15129468", left: reqNo, right: prcrmntReqNo, transform: "중앙조달 건만", status: inferred, evidence: ["doc:15129427#reqNo"]}
+  - {type: join, from: "15129427", to: "15129397", left: "corpList[사업자등록번호]", right: bidwinnrBizno, transform: "중첩 목록 분해 후 같은 공고의 낙찰자와 대조", status: inferred, evidence: ["doc:15129427#corpList"]}
+  - {type: join, from: "15129394", to: "15129437", left: bfSpecRgstNo, right: bfSpecRgstNo, status: documented, evidence: ["doc:15129394#bfSpecRgstNo"]}
+  - {type: join, from: "15129394", to: "15129462", left: orderPlanUntyNo, right: orderPlanUntyNo, status: documented, evidence: ["swagger:15129394#orderPlanUntyNo"]}
+
+  # --- 코드 마스터 (reference)
+  - {type: reference, from: "*.bizno", to: "15129466", key: bizno, master_op: getPrcrmntCorpBasicInfo02, status: documented, evidence: ["doc:15129466#getPrcrmntCorpBasicInfo02"]}
+  - {type: reference, from: "*.bizno", to: "15129466", key: bizno, master_op: getUnptRsttCorpInfo02, note: "부정당제재 여부", status: documented, evidence: ["doc:15129466#getUnptRsttCorpInfo02"]}
+  - {type: reference, from: "*.instt_cd", to: "15129466", key: instt_cd, master_op: getDminsttInfo02, status: documented, evidence: ["doc:15129466#getDminsttInfo02"]}
+  - {type: reference, from: "*.prdct_clsfc_no", to: "15129417", key: prdct_clsfc_no, master_op: getPrdctClsfcNoUnit8Info02, status: documented, evidence: ["doc:15129417#getPrdctClsfcNoUnit8Info02"]}
+  - {type: reference, from: "*.dtil_prdct_clsfc_no", to: "15129417", key: dtil_prdct_clsfc_no, master_op: getPrdctClsfcNoUnit10Info02, status: documented, evidence: ["doc:15129417#getPrdctClsfcNoUnit10Info02"]}
+  - {type: reference, from: "*.indstryty_cd", to: "15129467", key: indstryty_cd, master_op: getIndstrytyBaseLawrgltInfoList, status: documented, evidence: ["doc:15129467#getIndstrytyBaseLawrgltInfoList"]}
+  - {type: reference, from: "*.prdct_clsfc_no", to: "15129470", key: prdct_clsfc_no, master_op: getPrdctClsfcNoUslfsvc, note: "내용연수", status: documented, evidence: ["doc:15129470#getPrdctClsfcNoUslfsvc"]}
+
+  # --- 코드 계층 (hierarchy)
+  - {type: hierarchy, from: prdct_clsfc_no, to: dtil_prdct_clsfc_no, parent: prdct_clsfc_no, child: dtil_prdct_clsfc_no, rule: "세부품명번호[0:8] = 물품분류번호", status: documented, evidence: ["doc:15129394#dtilPrdctClsfcNo"]}
+  - {type: hierarchy, from: prdct_clsfc_no, to: prdct_clsfc_no, parent: "앞 2·4·6자리", child: "8자리", rule: "대(2)-중(4)-소(6)-세(8)", status: documented, evidence: ["doc:15129417#서비스설명"]}
+  - {type: hierarchy, from: instt_cd, to: instt_cd, parent: toplvlInsttCd, child: dminsttCd, rule: "사용자정보 수요기관의 최상위기관코드", status: documented, evidence: ["doc:15129466#getDminsttInfo02"]}
+
+  # --- 모집단·파생·집계
+  - {type: mirror, from: "15129456", to: "15129394", note: "같은 구조, 모집단은 누리장터 민간 발주", status: documented, evidence: ["doc:15129456#서비스설명"]}
+  - {type: mirror, from: "15129458", to: "15129397", note: "누리장터 낙찰", status: documented, evidence: ["doc:15129458#서비스설명"]}
+  - {type: mirror, from: "15129469", to: "15129427", note: "누리장터 계약", status: documented, evidence: ["doc:15129469#서비스설명"]}
+  - {type: derived, from: "15058815", to: ["15129394", "15129397", "15129427"], note: "행안부 개방표준 스키마로 평탄화한 부분 뷰", status: documented, evidence: ["doc:15058815#서비스설명"]}
+  - {type: aggregate, from: "15129412", to: "15129427", note: "나라장터 + 기타 전자조달 23개 + 비전자계약까지 집계 — 나라장터 계약 합계보다 크다", status: documented, evidence: ["doc:15129412#서비스설명"]}
+
+recipes:
+  - id: trace-one-procurement
+    goal: 번호 하나(공고·사전규격·발주계획·조달요청)로 한 건의 전 과정 추적
+    status: documented
+    steps:
+      - {dataset: "15129459", op: "getCntrctProcssIntgOpen{업무구분}", params: {inqryDiv: "1|2|3|4", bidNtceNo|bfSpecRgstNo|orderPlanNo|prcrmntReqNo: "<번호>"}, take: "각 단계 번호, bidwinrInfoList, cntrctInfoList"}
+      - {dataset: "15129394", op: "getBidPblancListInfo{업무구분}", params: {inqryDiv: 2, bidNtceNo: "<공고번호>"}, take: "공고 조건 상세"}
+      - {dataset: "15129397", op: "getOpengResultListInfo{업무구분}", params: {inqryDiv: 3, bidNtceNo: "<공고번호>"}, take: "개찰 순위·참가업체"}
+      - {dataset: "15129466", op: getPrcrmntCorpBasicInfo02, params: {inqryDiv: 1, bizno: "<낙찰자 사업자번호>"}, take: "낙찰업체 정보"}
+  - id: monthly-bid-to-award
+    goal: 월 단위로 입찰공고와 낙찰을 수집해 공고별 낙찰률 테이블 만들기
+    status: inferred
+    steps:
+      - {dataset: "15129394", op: "getBidPblancListInfo{업무구분}", params: {inqryDiv: 1, inqryBgnDt: "YYYYMM010000", inqryEndDt: "월말 2359"}, take: "bidNtceNo, bidNtceOrd, presmptPrce, dminsttCd"}
+      - {dataset: "15129397", op: "getScsbidListSttus{업무구분}", params: {inqryDiv: "2(개찰일시)", inqryBgnDt: "…", inqryEndDt: "…(1개월 이내)"}, take: "bidNtceNo, bidNtceOrd, bidwinnrBizno, sucsfbidAmt, sucsfbidRate"}
+      - {join: "bidNtceNo + bidNtceOrd", note: "개찰은 공고보다 늦으므로 낙찰 수집 기간을 공고 기간보다 1~2개월 뒤까지"}
+  - id: company-public-sales
+    goal: 특정 업체(사업자번호)의 공공 수주 실적
+    status: inferred
+    steps:
+      - {dataset: "15129466", op: getPrcrmntCorpBasicInfo02, params: {inqryDiv: 1, bizno: "<사업자번호>"}, take: "업체명·업종"}
+      - {dataset: "15129397", op: "getScsbidListSttus{업무구분}PPSSrch", params: {bizno: "<사업자번호>", inqryDiv: "…", inqryBgnDt: "…"}, take: "낙찰 건"}
+      - {dataset: "15129471", op: getDlvrReqInfoList, params: {inqryDiv: 1, bizno: "<사업자번호>"}, take: "쇼핑몰 납품 실적"}
+      - {dataset: "15129412", op: getPrcrmntEntrprsAccotCntrctMthdAccotArslt, params: {corpUntyNo: "<사업자번호>", srchBssYmBgn: "…"}, take: "계약방법별 연간 실적(검증용 합계)"}
+  - id: institution-purchasing
+    goal: 특정 기관(기관코드)이 무엇을 누구에게서 사는가
+    status: inferred
+    steps:
+      - {dataset: "15129466", op: getDminsttInfo02, params: {inqryDiv: "…", dminsttCd: "<기관코드>"}, take: "기관명·최상위기관"}
+      - {dataset: "15129462", op: "getOrderPlanSttusList{업무구분}PPSSrch", params: {orderInsttCd: "<기관코드>"}, take: "올해 발주계획"}
+      - {dataset: "15129427", op: "getCntrctInfoList{업무구분}PPSSrch", params: {insttCd: "<기관코드>"}, take: "체결 계약 + corpList"}
+      - {dataset: "15129471", op: getDlvrReqInfoList, params: {dminsttCd: "<기관코드>"}, take: "쇼핑몰 구매"}

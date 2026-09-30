@@ -1,0 +1,567 @@
+# Dataset 15154822 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15154822'
+tier: verified
+title: 행정안전부_건강_약국 조회서비스
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15154822/openapi.do
+synonyms:
+  - 약사
+  - 의약품
+  - 의료업
+  - 조제
+  - 판매
+description_portal: '건강_약국 데이터는 약사가 의약품을 조제 또는 판매를 주목적으로 하는 업소정보 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 약국 인허가 정보를 일괄 취합하여 전국 데이터로 제공 - 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의 - 해당 데이터 법령 소관기관 및 문의처 : 보건복지부 약무정책과 / 044-202-2495 * 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 건강_약국 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/pharmacies/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 도로명주소 을(를) 포함하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업자명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 건강_약국 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/pharmacies/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 메가타운약국
+        - 바다약국
+        - 튼튼약국
+      stats:
+        unique: 905
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.977
+      sample_values:
+        - '2026-09-16'
+        - '2026-09-17'
+        - '2026-08-09'
+      stats:
+        min: '2025-12-30'
+        max: '2026-09-17'
+        unique: 22
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.085
+      sample_values:
+        - '209720.290631496'
+        - '209393.076054654'
+        - '205541.211931615'
+      stats:
+        min: 130092.354863585
+        p50: 205541.211931615
+        max: 422889.148017613
+        unique: 882
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.085
+      sample_values:
+        - '446244.350393389'
+        - '446147.977949052'
+        - '455132.605075423'
+      stats:
+        min: -30310.4806549865
+        p50: 432145.750723036
+        max: 537279.872014073
+        unique: 882
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-07-14 11:38:15'
+        - '2026-05-08 22:03:27'
+        - '2026-05-03 23:05:24'
+      stats:
+        min: '2025-12-15'
+        max: '2026-09-29'
+        unique: 641
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - U
+      stats:
+        unique: 2
+    - name: DSGN_YMD
+      title: 지정일자
+      type: date
+      null_rate: 0.063
+      sample_values:
+        - '2026-08-31'
+        - '2026-05-15'
+        - '2026-02-09'
+      stats:
+        min: '2025-11-27'
+        max: '2026-10-01'
+        unique: 216
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '03'
+        - '02'
+      stats:
+        min: 2
+        p50: 13
+        max: 13
+        unique: 3
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업중
+        - 폐업
+        - 휴업
+      stats:
+        unique: 3
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-23 20:39:27'
+        - '2026-09-22 13:47:08'
+        - '2026-09-23 10:32:26'
+      stats:
+        min: '2025-11-17'
+        max: '2026-09-28'
+        unique: 1000
+    - name: LCPMT_RTRCN_YMD
+      title: 인허가취소일자(YYYYMMDD)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-08-31'
+        - '2026-05-15'
+        - '2026-07-24'
+      stats:
+        min: '2025-11-27'
+        max: '2026-10-01'
+        unique: 217
+    - name: LCTN_ZIP
+      title: 소재지우편번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LOTNO_ADDR
+      title: 지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.081
+      sample_values:
+        - 서울특별시 송파구 신천동 20-4
+        - 서울특별시 송파구 신천동 17-6
+        - 서울특별시 강동구 둔촌동 170-1 포레온스테이션5
+      stats:
+        unique: 894
+    - name: MNG_NO
+      title: 관리번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - PHMD120263390023084000005
+        - PHMD120133360024084000001
+        - PHMD120183360024084000010
+      stats:
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3010000'
+        - '3220000'
+        - '3740000'
+      stats:
+        min: 3000000
+        p50: 3730000
+        max: 6520000
+        unique: 160
+    - name: PMCY_SALS_AREA
+      title: 약국영업면적
+      type: number
+      null_rate: 0.064
+      sample_values:
+        - '50'
+        - '34'
+        - '33'
+      stats:
+        min: 10
+        p50: 59
+        max: 2608
+        unique: 275
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 경기도 의정부시 범골로 128, 1층 (의정부동)
+        - 제주특별자치도 서귀포시 안덕면 화순로 157
+        - 부산광역시 사상구 낙동대로 790, 신우프라자 1층 (엄궁동)
+      stats:
+        unique: 998
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.001
+      sample_values:
+        - '04536'
+        - '05508'
+        - '05509'
+      stats:
+        min: 1103
+        p50: 16972
+        max: 63585
+        unique: 863
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 3
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+        - 휴업
+      stats:
+        unique: 3
+    - name: TCBIZ_BGNG_YMD
+      title: 휴업시작일자(YYYYMMDD)
+      type: date
+      null_rate: 0.996
+      sample_values:
+        - '2026-08-10'
+        - '2026-04-02'
+        - '2026-09-01'
+      stats:
+        min: '2026-04-02'
+        max: '2026-09-01'
+        unique: 4
+    - name: TCBIZ_END_YMD
+      title: 휴업종료일자(YYYYMMDD)
+      type: date
+      null_rate: 0.996
+      sample_values:
+        - '2027-08-09'
+        - '2026-10-01'
+        - '2027-03-31'
+      stats:
+        min: '2026-10-01'
+        max: '2027-08-09'
+        unique: 4
+    - name: TELNO
+      title: 전화번호
+      type: string
+      null_rate: 0.276
+      sample_values:
+        - 02-000-0000
+        - 053-000-0000
+        - 061-900-9939
+      stats:
+        unique: 714
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2025-11-17 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.9075
+  rank_in_sector: 1
+  brm: 보건의료 - 보건의료
+  why: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천
+claims:
+  - id: c-15154822-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15154822.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15154822.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15154822-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 -1일 전) — 미래 날짜(일정·계획형) 포함
+    evidence:
+      - type: measured
+        source: probe/synthesis#15154822
+        observed_at: '2026-09-30'
+        detail: latest 2026-10-01, lag -1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15154822.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 24개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-04
+    kind: coverage
+    value: API 전체 건수 70,658 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2025-11-17 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15154822.json
+        observed_at: '2026-09-30'
+        detail: total 70658, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15154822-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15154822-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15154822.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-11
+    kind: pitfall
+    value: 날짜 컬럼에 미래 값(2026-10-01) — 최신성은 적재일 컬럼으로 판단해야 한다
+    evidence:
+      - type: measured
+        source: probe/synthesis#15154822
+        observed_at: '2026-09-30'
+        detail: lag -1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-12
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15154822.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15154822-13
+    kind: pitfall
+    value: 전수 70,658건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 71회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15154822.json
+        observed_at: '2026-09-30'
+        detail: total 70658 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 70658
+  ops_ok: 1/2
+  latency_ms: 9263
+  latest: '2026-10-01'
+  lag_days: -1
+  run: probe/runs/15154822.json
+  stats: probe/stats/15154822.json
+  data: probe/data/15154822/
+status: active

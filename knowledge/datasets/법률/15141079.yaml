@@ -1,0 +1,512 @@
+# Dataset 15141079 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15141079'
+tier: verified
+title: 헌법재판소_사건정보 조회 서비스
+sector: 법률/법무및검찰/crime-statistics
+agency:
+  id: '9750000'
+  name: 헌법재판소
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141079/openapi.do
+synonyms:
+  - 사건정보
+  - 심판대상법령
+  - 병합사건
+description_portal: 헌법재판소 사건정보 조회 서비스는 진행 중이거나 종료된 사건 검색, 심판대상 법령, 사건관계자, 병합사건 정보 및 종국사건 관련 심판대상조문 상세 정보를 제공하여 다양한 사건 데이터를 조회할 수 있는 API입니다.
+team:
+  dept: 정보화기획과
+services:
+  - op: /getIncidentInfoList
+    name: 사건정보 검색목록 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getIncidentInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: 응답결과 출력형식(xml,json) 기본값:xml
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력'
+      - name: eventNm
+        required: true
+        desc: 사건명에 포함된 키워드 검색
+      - name: endRsta
+        required: false
+        desc: 종료된 사건일 경우 최종적인 종국결과값 (위헌, 헌법불합치, 한정위헌, 한정합헌, 인용, 합헌, 기각, 각하, 취하, 기타)
+      - name: inqDate
+        required: false
+        desc: 사건이 접수된 년월일 (8자리)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getLawCaseList
+    name: 법령사건 검색 목록 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getLawCaseList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: '응답결과 출력형식(xml,json) 기본값:xml    '
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력'
+      - name: lawNm
+        required: true
+        desc: 심판대상 법령명에 포람된 키워드 검색 또는 전체 법령명
+      - name: provision
+        required: false
+        desc: 심판대상 법령명의 정확한 조(숫자만 입력)
+      - name: clause
+        required: false
+        desc: 심판대상 법령명의 정확한 항(숫자만 입력)
+      - name: reqLaw
+        required: false
+        desc: 위헌을 제청한 법원이 있는 경우 해당 법원명
+      - name: lawSuit
+        required: false
+        desc: 위헌법률심판이나 헌법소원심판에서 문제된 법률이나 조항이 적용되는 소송사건이 있는 경우 해당 사건번호
+      - name: endRsta
+        required: false
+        desc: 종료된 사건일 경우 최종적인 종국결과값 (위헌, 헌법불합치, 한정위헌, 한정합헌, 인용, 합헌, 기각, 각하, 취하, 기타)
+      - name: refreeePrvsn
+        required: false
+        desc: 심판대상조문
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getIncdntDetail
+    name: 사건정보 상세 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getIncdntDetail
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: 응답결과 출력형식(xml,json) 기본값:xml
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력    '
+      - name: eventNo
+        required: true
+        desc: 접수된 사건의 사건번호로 사건정보 검색목록 조회 또는 법령사건 검색 목록 조회를 통해 사건번호 확인
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getCaseRelatedParty
+    name: 사건관계자 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getCaseRelatedParty
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: '응답결과 출력형식(xml,json) 기본값:xml    '
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력    '
+      - name: eventNo
+        required: true
+        desc: 접수된 사건의 사건번호로 사건관계 및 관계자 성명 조회
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getMergedCase
+    name: 병합사건 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getMergedCase
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: '응답결과 출력형식(xml,json) 기본값:xml    '
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력    '
+      - name: eventNo
+        required: true
+        desc: 접수된 사건의 사건번호로 병합사건 정보 조회
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getFinalCaseAdjuClau
+    name: 종국사건 심판대상조문 조회
+    endpoint: https://apis.data.go.kr/9750000/IncidentInfoService/getFinalCaseAdjuClau
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답결과 출력형식(xml,json) 기본값:xml    '
+      - name: fields
+        required: false
+        desc: '응답에 노출할 필드명 콤마(,)로 구분해서 입력, 기본 : 모든필드 출력'
+      - name: eventNo
+        required: true
+        example: 2009헌바317
+        desc: 종국사건 번호 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: eventNo
+      title: 사건번호
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2009헌바317
+      stats:
+        min: '2009-03-17'
+        max: '2009-03-17'
+        unique: 1
+    - name: lawNm
+      title: 법령명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대한민국과 일본국 간의 재산 및 청구권에 관한 문제의 해결과 경제협력에 관한 협정
+        - 구 태평양전쟁 전후 국외 강제동원희생자 등 지원에 관한 법률
+        - 구 태평양전쟁 전후 국외 강제동원희생자 등 지원에 관한 법률 시행령
+      stats:
+        unique: 3
+    - name: provision
+      title: 조
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '5'
+        - '18'
+      stats:
+        min: 2
+        p50: 5
+        max: 18
+        unique: 4
+    - name: provision2
+      title: 의
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: clause
+      title: 항
+      type: number
+      null_rate: 0.2
+      sample_values:
+        - '1'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: item
+      title: 호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: subItem
+      title: 목
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: etc
+      title: 기타
+      type: code
+      null_rate: 0.6
+      sample_values:
+        - 국가는 미수금피해자 또는 그 유족에게 미수금피해자가 일본국 또는 일본 기업 등으로부터 지급받을 수 있었던 미수금을 당시의 일본국 통화 1엔에 대
+        - 구 태평양전쟁 전후 국외 강제동원희생자 등 지원에 관한 법률 시행령 제16조 및 별지 제13호 서식 제3항, 한일청구권협정 제2조 제1항, 제3
+      stats:
+        unique: 2
+    - name: endRsta
+      title: 종국결과
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 각하
+        - 합헌
+      stats:
+        unique: 2
+    - name: isUnanimous
+      title: 전원일치여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: numJustices
+      title: 참여재판관수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9'
+      stats:
+        min: 9
+        p50: 9
+        max: 9
+        unique: 1
+    - name: lawArtiClent
+      title: 결정주문
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1. 구‘태평양전쟁 전후 국외 강제동원희생자 등 지원에 관한 법률’(2007. 12. 10.법률 제8669호로 제정되고, 2010. 3. 22.
+      stats:
+        unique: 1
+    - name: otherOpinions
+      title: 기타의견
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - "7. 재판관 박한철, 재판관 이정미, 재판관 김이수의 반대의견\r\n우리는 다음과 같은 이유로 이 사건 법률조항이 헌법에 위배된다고 생각한다.\r\n국"
+      stats:
+        min: '7311-03-01'
+        max: '7311-03-01'
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 범죄·수사 통계 (대검 범죄분석·검찰 사건 처리·지자체 범죄 발생)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.61
+  rank_in_sector: 8
+  brm: 법률 - 법무및검찰
+  why: 시군구 × 죄명 × 월 = 지역 안전 지표, 지역 정보에 연결 (구름). 경찰청 발생 통계(재난안전)와 same_concept
+claims:
+  - id: c-15141079-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/6
+    evidence:
+      - type: measured
+        source: probe/runs/15141079.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/6
+      - type: measured
+        source: probe/apply/15141079.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15141079-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141079-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15141079.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 13개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141079-04
+    kind: coverage
+    value: API 전체 건수 5 · 검증 수신 5행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15141079.json
+        observed_at: '2026-09-30'
+        detail: total 5, rows 5
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141079-06
+    kind: admin_note
+    value: "세부 부문 '범죄·수사 통계 (대검 범죄분석·검찰 사건 처리·지자체 범죄 발생)'의 가치: 시군구 × 죄명 × 월 = 지역 안전 지표, 지역 정보에 연결 (구름). 경찰청 발생 통계(재난안전)와 same_concept"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#crime-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141079-07
+    kind: admin_note
+    value: '[법률 - 법무및검찰 · 결정] 출입국 관리가 중심. 출입국·체류, 변호사·법무사, 범죄·수사 통계만 (`law-deferred`, `law-non-core`). 체류 외국인·범죄 통계는 시군구 × 월 격자 원장으로 보고 지역 정보에 연결 (구름).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L595
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141079-10
+    kind: pitfall
+    value: 필수 파라미터 eventNm, eventNo, lawNm는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15141079.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141079-11
+    kind: pitfall
+    value: '오퍼레이션 5개는 최소 파라미터로 응답이 없었다: /getIncidentInfoList, /getLawCaseList, /getIncdntDetail, /getCaseRelatedParty'
+    evidence:
+      - type: measured
+        source: probe/runs/15141079.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 5
+  total_count: 5
+  ops_ok: 1/6
+  latency_ms: 41
+  run: probe/runs/15141079.json
+  stats: probe/stats/15141079.json
+  data: probe/data/15141079/
+status: active

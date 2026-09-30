@@ -1,0 +1,727 @@
+sector_map:
+- id: industry-misfiled-family
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 고용노동에 등록된 다문화가족지원센터·건강가정지원센터·성폭력/가정폭력 상담소·여성 일자리기관 → 보육·가족및여성 (배제하지 않고 해당 영역으로)
+  match:
+    sector: 산업고용 - 고용노동
+    title_regex: (_|^(?!.*_)).*(다문화 ?가족|건강 ?가정|성폭력|가정폭력|여성 ?(일자리|새일))
+  set_sector: 사회복지 - 보육·가족및여성
+- id: industry-misfiled-vulnerable
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 고용노동에 등록된 노숙인 쉼터·부랑인복지시설·지역자활센터 → 취약계층지원 (사회복지시설)
+  match:
+    sector: 산업고용 - 고용노동
+    title_regex: (_|^(?!.*_)).*(노숙인|부랑인|지역자활센터|자활센터)
+  set_sector: 사회복지 - 취약계층지원
+- id: industry-misfiled-food
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반·통상에 등록된 식품 인허가(축산가공·식육포장·식용란·우유류·축산물 유통/보관/운반·유통전문판매업)·안심식당·위생등급·우수식품 → 식품건강 (LOCALDATA 식품 업종, 식품건강에서 판단)
+  match:
+    sector:
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 통상
+    - 산업고용 - 산업진흥·고도화
+    title_regex: (_|^(?!.*_)).*(안심식당|축산가공|식육|식용란|우유류|축산물 ?(수입|유통|보관|운반|판매)|유통전문판매|위생등급|우수식품|식품)
+  set_sector: 식품건강 - 식품의약안전
+- id: industry-misfiled-tourism
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반에 등록된 제주 내국인·중국인 관광객 카드 사용 정보(월) → 관광 통계
+  match:
+    sector: 산업고용 - 산업·중소기업일반
+    title_regex: (_|^(?!.*_)).*(관광객 ?카드|관광객카드)
+  set_sector: 문화관광 - 관광
+- id: industry-misfiled-complex
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '산업고용에 흩어진 공장·제조업체 현황, 테크노밸리 입주업체, 지식산업센터, 국토부 산업입지도·단지경계·단지유치업종·단지시설용지, 스마트공장 구축 → 산업단지 (공장 등록·입주기업 원장). 주의: 산업단지 keep에 산업입지|단지경계|단지유치업종|단지시설용지|스마트공장 추가 필요'
+  match:
+    sector:
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 산업기술지원
+    - 산업고용 - 산업진흥·고도화
+    - 산업고용 - 통상
+    title_regex: (_|^(?!.*_)).*(공장|제조업체|제조업 ?현황|제조업현황|테크노벨리|테크노밸리|지식산업센터|산업입지|단지경계|단지유치업종|단지시설용지|창업보육센터 입주)
+  set_sector: 국토관리 - 산업단지
+- id: industry-misfiled-geo
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업기술지원에 등록된 국토부 웹지엘 3D 지도 API → 국토관리-공간정보
+  match:
+    sector: 산업고용 - 산업기술지원
+    title_regex: (_|^(?!.*_)).*(웹지엘|3D 지도|3D지도)
+  set_sector: 국토관리 - 공간정보
+- id: industry-misfiled-agri
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업기술지원에 등록된 스마트팜 혁신밸리 온실·식물공장(딸기·파프리카) 데이터 → 농업·농촌
+  match:
+    sector: 산업고용 - 산업기술지원
+    title_regex: (_|^(?!.*_)).*(혁신밸리|온실|식물공장|딸기|파프리카|스마트팜)
+  set_sector: 농축수산 - 농업·농촌
+- id: industry-misfiled-finance
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반의 신용보증기금(보증·기업 재무 조사)·기술보증기금 공매·예금보험공사 파산금융회사 매물 → 재정금융-산업금융 (정책금융은 재정금융에서 판단)
+  match_any:
+  - sector:
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 산업진흥·고도화
+    - 산업고용 - 산업기술지원
+    agency_regex: 신용보증기금|기술보증기금(?!.*기술)
+  - sector: 산업고용 - 산업·중소기업일반
+    title_regex: (_|^(?!.*_)).*(파산금융회사|공매)
+  set_sector: 재정금융 - 산업금융
+- id: industry-misfiled-trade
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 통상·산업·중소기업일반의 수출입 통관실적·수출실적·무역구제·FTA·무역특화지수(TSI·RCA·IMR·IIT)·관세율할당·수입규제 → 재정금융-무역및투자유치
+  match:
+    sector:
+    - 산업고용 - 통상
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 산업진흥·고도화
+    title_regex: (_|^(?!.*_)).*(수출입|통관|수출실적|수출액|수출통계|수입동향|무역구제|FTA|TSI|RCA|IMR|IIT|관세율할당|수입규제|진출전략|출장자료|자유무역)
+  set_sector: 재정금융 - 무역및투자유치
+- id: industry-misfiled-culture
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업고용에 등록된 출판사·인쇄사 현황 → 문화체육관광일반(언론·출판), 한국저작권위원회 공유저작물·오픈소스SW 라이선스 → 문화예술(저작권)
+  match_any:
+  - sector: &id001
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 에너지및자원개발
+    - 산업고용 - 고용노동
+    - 산업고용 - 산업진흥·고도화
+    - 산업고용 - 산업기술지원
+    - 산업고용 - 원자력기술
+    - 산업고용 - 통상
+    title_regex: (_|^(?!.*_)).*(출판사|인쇄사)
+  - sector: *id001
+    agency_name: 한국저작권위원회
+  set_sector: 문화관광 - 문화예술
+- id: industry-misfiled-building
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반의 기계설비 성능점검 대상 건축물 표준데이터 → 국토관리-건축물
+  match:
+    sector: 산업고용 - 산업·중소기업일반
+    title_regex: (_|^(?!.*_)).*(성능점검대상건축물|기계설비성능점검)
+  set_sector: 국토관리 - 건축물
+- id: industry-to-nuclear
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 에너지및자원개발의 원자력환경공단 방폐물·환경방사선·부지감시와 원전 가동·방사선 데이터 → 원자력기술 (같은 산업고용 안에서 모음)
+  match_any:
+  - sector: 산업고용 - 에너지및자원개발
+    agency_name: 한국원자력환경공단
+  - sector: 산업고용 - 에너지및자원개발
+    title_regex: (_|^(?!.*_)).*(방사성|방사선|방폐물|가동원전|원전 ?(가동|운영)|사용후핵연료)
+  set_sector: 산업고용 - 원자력기술
+- id: industry-to-energy
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반·산업진흥·산업기술지원·통상과 일반행정에 흩어진 발전소·태양광·전력거래·주유소·충전소·석유판매·고압가스·도시가스·토석채취·광업권 등 에너지·자원 원장 → 에너지및자원개발
+  match_any:
+  - sector:
+    - 산업고용 - 산업·중소기업일반
+    - 산업고용 - 산업진흥·고도화
+    - 산업고용 - 산업기술지원
+    - 산업고용 - 통상
+    title_regex: (_|^(?!.*_)).*(태양광|발전소|발전량|발전설비|화력발전|전력수급|전력거래|송발전단|석유판매|석유및석유대체|고압가스|액화석유|LPG|도시가스|가스사업자|전기사업|전력기술|주유소|충전소|에너지공급|석연탄|토석채취|채석|광업권|광구|바이오디젤)
+  - sector: 산업고용 - 산업진흥·고도화
+    agency_name: 한국전력거래소
+  - sector: 공공행정 - 일반행정
+    title_regex: (_|^(?!.*_)).*(태양광 ?발전|주유소|석유판매업|고압가스|도시가스|전기차 ?충전|수소충전|토석채취|채석|광업권)
+  set_sector: 산업고용 - 에너지및자원개발
+- id: industry-to-sme
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 통상·산업진흥·산업기술지원에 흩어진 상점·상권·대규모점포·전통시장·업종 인허가(담배·중고자동차매매·행정사 등)·창업보육센터·벤처 → 산업·중소기업일반, 일반행정·국가통계의 소상공인 상가업소·상권·벤처기업·창업보육센터·대규모점포·전통시장도 모음
+  match_any:
+  - sector:
+    - 산업고용 - 통상
+    - 산업고용 - 산업진흥·고도화
+    - 산업고용 - 산업기술지원
+    title_regex: (_|^(?!.*_)).*(담배|통신판매|방문판매|전화권유|다단계|대규모점포|준대규모점포|전통시장|상점|상가|상권|중고자동차매매|행정사|대부업|옥외광고|창업보육|벤처|이노비즈|지역화폐|상품권|사업공고|종교단체|세척제|화물 운송|안심택배|노점|거리가게)
+  - sector:
+    - 공공행정 - 일반행정
+    - 공공행정 - 국가통계
+    title_regex: (_|^(?!.*_)).*(상가업소|상권정보|상권 ?분석|상권분석|창업보육|벤처기업|대규모점포|전통시장)
+  set_sector: 산업고용 - 산업·중소기업일반
+- id: industry-to-labor
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: 산업·중소기업일반·일반행정의 노동조합·직업소개소·채용정보·일자리센터 → 고용노동
+  match_any:
+  - sector: 산업고용 - 산업·중소기업일반
+    title_regex: (_|^(?!.*_)).*(노동조합|직업소개소|채용정보|일자리센터|고용우수기업|일자리 우수기업|일자리우수기업|취업정보)
+  - sector: 공공행정 - 일반행정
+    title_regex: (_|^(?!.*_)).*(노동조합|직업소개소)
+  set_sector: 산업고용 - 고용노동
+exclusions:
+- id: sme-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '산업·중소기업일반: 통신판매·방문판매·전화권유·다단계(공정위 API가 전국 원장, ftc-non-core와 같은 판단), 착한가격업소·물가, 통계·조사·재무제표 요약, 내일채움공제·정책자금·보증 잔액, 홈쇼핑 매출·편성, 구매실적, 교육·보도·기관 운영, 상품권 가맹점 등은 업체·상가 등에 걸려 살아나지 않게 먼저 배제 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은
+    우선 배제)'
+  match:
+    sector: 산업고용 - 산업·중소기업일반
+    title_regex: 통신판매|방문판매|전화권유|다단계|후원방문|선불식|착한가격|물가|가격 ?정보|요금 ?정보|통계|조사|실태|종사자|요약|합성데이터|내일채움|공제|보도자료|법령|연구|교육|매출|편성|홈쇼핑|구매실적|구매율|ESG|임원|제증명|관할|채용|공지|홍보|예산|계약|이벤트|성공사례|조회수|카드뉴스|자금|대출|잔액|손실보상|온누리|상품권|가맹점|비즈패스파인더|애로|컨설팅|지급현황|학습 데이터|AI 학습|연도별|업력별|비중|지역별|업종별|메이크올|인기검색어|약관
+- id: sme-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '산업·중소기업일반은 상가·상권(소상공인 상가업소·전통시장·대규모점포)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증)·지원사업 공고·지역 기업 현황·업종 인허가(LOCALDATA) 원장만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 산업·중소기업일반
+  keep:
+    title_regex: 상가|상권|전통시장|상점가|대규모점포|준대규모점포|쇼핑몰|점포|나들가게|골목상권|벤처|이노비즈|메인비즈|창업기업|확인서|인증서|성능인증|상생협력|유망중소|우수기업|여성기업|장애인기업|수출인큐베이터|창업보육|보육센터|집적시설|창업공간|메이커스페이스|스마트공장공급기업|경영혁신형|공고|지원사업|사업소개|K-Startup|중소벤처24|기업마당|지원시책|주관기관|해외전시회|창업에듀|비즈니스지원단|기업현황|기업체 ?현황|기업 ?현황|기업정보|관내
+      기업|입주 ?업체|입주기업|기업 ?목록|기업명단|수출 ?기업|인허가|등록|지정|담배|행정사|대부업|옥외광고|광고업|건축사|세탁업|동물판매|사료제조|인쇄|중고자동차|승강기|계량기|전문건설|정보통신공사|건설업|지하수|국제회의|제재업|목재|세척제|청소업|소독업|정비업|세탁물|토양|정화업|배출가스|정비 ?사업자|급수공사|대행업|안전진단|전문기관|산림조합|업체 ?현황|사업자 ?현황|업 ?현황|업현황
+- id: energy-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '에너지및자원개발: 가스공사 규격표준·지역난방 플랜트관리·입찰/계약, 연도별·연간·국가별·전망 통계, 경영·출자회사·해외사업, 교육·홍보·용어, 기준서·절차서는 발전·가스 등에 걸려 살아나지 않게 먼저 배제 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 에너지및자원개발
+    title_regex: (_|^(?!.*_)).*(규격표준|플랜트관리|입찰(?!량)|계약정보|계약현황|전자계약|공고|채용|교육|e러닝|홈페이지|공지|홍보|보도|용어|약어|연구과제|연구보고|합성데이터|연도별|연간|연보|국가별|세계|전망|중기|개년|비중|(?<!연료)비용|경영|출자회사|해외사업|UAE|사업소별 ?(인원|직원)|PowerPartner|수요관리정보|지사별|복지할인|요금청구|정보공개|AI 학습|이미지|영상|전경|규정|매뉴얼|기준서|절차서|통계(?!-마이크로))
+- id: energy-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '에너지및자원개발은 전력 수급·시장(실시간·일별)·발전소/신재생 설비 원장·주유소/유가/충전소(실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출/주변 측정만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 에너지및자원개발
+  keep:
+    title_regex: (_|^(?!.*_)).*(전력수급|수급예보|전력거래|계통한계가격|SMP|REC|현물시장|발전량|발전실적|발전원별|수요반응|DR|계통운영|송발전단|연료원별|전력시장|발전기별|태양광 발전량|풍력 발전|연료소비|연료정보|소비탄|발전 ?실적|연료도입|연료비용|전력입찰량|이용률|열효율)|(_|^(?!.*_)).*(발전소|발전사업|전기사업허가|신재생|분산전원|발전설비|태양광|풍력|연료전지|수력|양수발전|RE100|설비용량|건설
+      인허가|인허가 현황)|(_|^(?!.*_)).*(주유소|유가|판매가격|평균가격|최저가|충전소|충전기|수소충전|전기차|LPG|자동차충전|지역코드 오픈)|(_|^(?!.*_)).*(전력사용량|사용량|전력사용|전기사용고객|열판매|열생산|공급량|판매량|에너지사용|온실가스배출량|냉난방도일|공통코드)|(_|^(?!.*_)).*(효율등급|소비효율|고효율|표시연비|에너지효율|인증제품|인증 ?제품|검사대상기기|K-RE100)|(_|^(?!.*_)).*(토석채취|채석|광업권|광구|광산|골재|광물|매장량|폐광)|(_|^(?!.*_)).*(석유판매|석유및석유대체|고압가스|액화석유|도시가스|가스사업자|일반도시가스|전력기술|전기공사|석연탄|에너지공급업체|가스용품|용기|전기사업|ESCO|에너지절약전문기업)|(_|^(?!.*_)).*(대기오염물질|배출|탈황|수질|폐기물|석탄
+      ?재활용|재 재활용|주변 ?기상|발전소 ?기상|주변 대기|대기정보|대기질)
+- id: labor-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '고용노동: 직업정보 동영상·안전보건 미디어/가이드·인식개선·성공수기·설명회·뉴스, 연구·실태조사·통계·집계·지급현황, 기관 자체 채용이력, 해외취업 부수 통계(정착지원금·귀국지원·퇴직자), 기능경기·응시 통계는 먼저 배제 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 고용노동
+    title_regex: (_|^(?!.*_)).*(동영상|미디어자료|가이드|길잡이|안내|마스터하기|알기쉬운|누구나|인식개선|성공수기|멘토|설명회|오리엔테이션|뉴스|What|카드뉴스|홍보|연구|보고서|실태조사|통계|집계|지급현황|실적|현황 ?조사|다운로드통계|수상|작품|공모전|대표홈페이지|홈페이지|채용이력|신입사원|사전조사|선정 통계|참가자|응시|취득소요|변천이력|국내복귀자|퇴직자|정착지원금|귀국지원|한국어능력|동포|편성기준|합성데이터|원시자료|교육
+      ?콘텐츠|역량진단|지사|건강보험|마이홈|푸드뱅크|자살|쉼터|상담 ?보호|생산 가능 인구)
+- id: labor-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '고용노동은 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(코드 마스터)·정부지원 일자리사업·산재/산업재해 사례·노동조합·고용 서비스 기관/인증 기업·지역 고용동향(시도×월)만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 고용노동
+  keep:
+    title_regex: (_|^(?!.*_)).*(채용정보|채용목록|채용 ?공고|공채|구인|모집공고|채용행사|잡아바|일자리 ?매칭|일자리매칭|공공부문 일자리|공공취업|취업정보|일자리 정보|지역 공공일자리|근로지원인 구인|_일자리$)|(_|^(?!.*_)).*(훈련과정|내일배움|일학습병행|사업주훈련|컨소시엄|NCS 훈련|NCS 교육과정|훈련직종|공통코드-훈련|교육일정|훈련기관)|(_|^(?!.*_)).*(직업사전|직업정보(?!동영상)|직업전망|직무데이터|직무기술서|학과정보|고용직업분류|직업분류|NCS|능력단위|직무정보|심리검사|직업능력평가|고용직무분류|공통코드)|(_|^(?!.*_)).*(정부지원일자리|일자리사업|청년정책|노인일자리|자립형일자리|노인사회활동|구직자취업역량|해외인턴|해외취업
+      ?(모집|우수일자리)|해외연수 과정|해외기업정보)|(_|^(?!.*_)).*(재해사례|사고사망|중대재해|산재|질병판정|심사결정|요양 ?신청|판결문|판례|가입·완납|진위)|(_|^(?!.*_)).*(노동조합)|(_|^(?!.*_)).*(고용복지플러스|일자리센터|직업소개소|표준사업장|강소기업|청년친화|일자리우수기업|고용우수기업|발달장애인훈련센터|보조공학센터|수행기관|청년취업인턴제운영기관|여성 ?일자리기관|일자리 ?우수기업|장애인고용공단 현황)|(_|^(?!.*_)).*(고용동향)
+- id: industry-tech-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '산업기술지원은 제품안전·인증(위해상품·인증제품)·기술이전/기술은행·소부장 전문/으뜸기업·녹색인증·건설업체(키스콘) 원장만. 시험접수·연구개발·통계·교육·홈페이지는 배제 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 산업기술지원
+  keep:
+    title_regex: (_|^(?!.*_)).*(제품안전|위해상품|인증제품|리콜|안전인증|KC|가스용품|어린이제품)|(_|^(?!.*_)).*(기술은행|도입희망기술|기술정보|수요기술|기부|나눔 기술|기술나눔|기술시장|미활용 특허|사업화 유망기술|기술이전)|(_|^(?!.*_)).*(소재부품장비 ?(전문기업|으뜸기업)|전문기업|으뜸기업|녹색인증|ESG 기반|스마트공장 ?구축)|(_|^(?!.*_)).*(키스콘|건설업체|건설공사대장|건설보고서|건설
+      기술|건설기술)
+- id: industry-promo-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '산업진흥·고도화는 대부분 보고서·통계·동향·공모전이라 배제. 원장 성격(창업보육센터·사업공고, 기술 나눔·인증)은 산업·중소기업일반·에너지 등으로 먼저 옮기고 여기서는 기술이전·인증 기업만 남김 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 산업진흥·고도화
+  keep:
+    title_regex: (_|^(?!.*_)).*(창업보육|사업공고)|(_|^(?!.*_)).*(기술은행|도입희망기술|기술정보|수요기술|기부|나눔 기술|기술나눔|기술시장|미활용 특허|사업화 유망기술|기술이전)|(_|^(?!.*_)).*(소재부품장비 ?(전문기업|으뜸기업)|전문기업|으뜸기업|녹색인증|ESG 기반|스마트공장 ?구축)
+- id: nuclear-deferred
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '원자력기술: 교육·용어·홍보 영상·자료실·연구개발비·지식재산/기술이전·절차서·성능기준·해외사업·수출입 통계는 먼저 배제 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 원자력기술
+    title_regex: (_|^(?!.*_)).*(교육|약어|용어|홍보|영상|이미지|자료실|공지|연구개발비|협력연구|지식재산|특허|기술이전|기술 허여|신기술|포스터|기법|인적원인|절차서|성능기준|UAE|OSS|해체 영상|수출현황|수입현황|수입액|국가별|설문|코드|오픈소스|저작권|연구정보|합성데이터)
+- id: nuclear-non-core
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '원자력기술은 원전 가동·사고고장·안전성능, 환경방사선(실시간)·부지 감시, 방사성폐기물 반입·처분·저장, 방사성동위원소 이용기관만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 원자력기술
+  keep:
+    title_regex: (_|^(?!.*_)).*(가동원전|원전 가동|운영현황|사고고장|사건등급|안전성능|원자력발전소|발전현황|운영변경허가)|(_|^(?!.*_)).*(방사선량|환경방사선|방사능|방사성물질|집적선량|부지감시|지진|부지주변|해수 방사능|개인선량|실시간)|(_|^(?!.*_)).*(방폐물|방사성 ?폐기물|처분|저장|폐기물 ?(반입|인수|발생량)|밀봉선원|개봉선원|불용선원|사용후핵연료)|(_|^(?!.*_)).*(방사성동위원소|이용기관|방사선발생장치|방사선작업종사자)
+- id: trade-all
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  reason: '통상은 무역특화지수·FTA 공지·영상·연구가 대부분이라 전체 배제. 수출입·통관·FTA 원장은 무역및투자유치로, 업종 인허가·상점은 산업·중소기업일반으로, 식품은 식품건강으로 먼저 옮겼다 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  match:
+    sector: 산업고용 - 통상
+subsectors:
+- sector: 산업고용 - 산업·중소기업일반
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업·중소기업일반.md
+  note: '중기부·소진공·창업진흥원·지자체 인허가가 섞인 BRM 잡동사니 영역. 상가·상권 원장(소상공인 상가업소 API — 상권 분석의 기준)과 기업 확인/인증·지원사업 공고·업종 인허가가 핵심 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: commercial-stores
+    name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 상가업소 단위(상호·업종·좌표) 전수 원장 = 상권 분석의 기준. 전국대규모및준대규모점포표준데이터 포함(물류등기타에서 재검토 후보였던 것)
+    match:
+      title_regex: 상가|상권|전통시장|상점가|대규모점포|준대규모점포|쇼핑몰|점포|나들가게|골목상권
+  - slug: sme-support-programs
+    name: 중소기업·창업 지원사업 공고 (K-Startup·중소벤처24·기업마당·지자체 지원시책)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 공고 단위 시의성 — 모델이 모르는 이번 달 공고
+    match:
+      title_regex: 공고|지원사업|사업소개|K-Startup|중소벤처24|기업마당|지원시책|주관기관|해외전시회|창업에듀|비즈니스지원단
+  - slug: sme-certification
+    name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 확인서·인증서 단위 원장, 사업자번호로 기업 축 연결
+    match:
+      title_regex: 벤처|이노비즈|메인비즈|창업기업|확인서|인증서|성능인증|상생협력|유망중소|우수기업|여성기업|장애인기업|수출인큐베이터|창업보육|보육센터|집적시설|창업공간|메이커스페이스|스마트공장공급기업|경영혁신형
+  - slug: local-company-registry
+    name: 지역 기업 현황 (시군구 관내 기업·입주업체·수출기업 목록)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: 기업현황|기업체 ?현황|기업 ?현황|기업정보|관내 기업|입주 ?업체|입주기업|기업 ?목록|기업명단|수출 ?기업
+  - slug: business-licenses
+    name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
+    depth: front
+    novelty: medium
+    value_source: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 에너지및자원개발
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/에너지및자원개발.md
+  note: '한전·전력거래소·발전 5사·가스공사·지역난방·석유공사·에너지공단·광해광업공단. 전력 수급·시장은 실시간, 발전소·주유소·충전소·광업은 시설/허가 원장 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: power-market-realtime
+    name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급
+    match:
+      title_regex: (_|^(?!.*_)).*(전력수급|수급예보|전력거래|계통한계가격|SMP|REC|현물시장|발전량|발전실적|발전원별|수요반응|DR|계통운영|송발전단|연료원별|전력시장|발전기별|태양광 발전량|풍력 발전|연료소비|연료정보|소비탄|발전 ?실적|연료도입|연료비용|전력입찰량|이용률|열효율)
+  - slug: fuel-charging
+    name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
+    depth: front
+    novelty: high
+    cycle: realtime
+    cross_cutting: true
+    value_source: 주유소 ID·충전소 ID·좌표, 유가·충전기 상태는 실시간
+    match:
+      title_regex: (_|^(?!.*_)).*(주유소|유가|판매가격|평균가격|최저가|충전소|충전기|수소충전|전기차|LPG|자동차충전|지역코드 오픈)
+  - slug: mining-aggregates
+    name: 광업·토석채취 (광업권·토석채취허가·채석단지·골재·폐광산)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 허가 원장(필지·구역) — 국토 공간 규제와 겹침
+    match:
+      title_regex: (_|^(?!.*_)).*(토석채취|채석|광업권|광구|광산|골재|광물|매장량|폐광)
+  - slug: energy-business-licenses
+    name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
+    depth: front
+    novelty: medium
+    value_source: LOCALDATA 에너지 업종 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(석유판매|석유및석유대체|고압가스|액화석유|도시가스|가스사업자|일반도시가스|전력기술|전기공사|석연탄|에너지공급업체|가스용품|용기|전기사업|ESCO|에너지절약전문기업)
+  - slug: energy-efficiency
+    name: 효율등급·인증 제품 (에너지소비효율·고효율기자재·자동차 연비·건축물 에너지효율등급·K-RE100)
+    depth: front
+    novelty: medium
+    value_source: 모델명·제품 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(효율등급|소비효율|고효율|표시연비|에너지효율|인증제품|인증 ?제품|검사대상기기|K-RE100)
+  - slug: plant-emissions
+    name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
+    depth: front
+    novelty: medium
+    cycle: daily
+    value_source: 발전소 단위 측정 — 환경기상과 cross-sector
+    match:
+      title_regex: (_|^(?!.*_)).*(대기오염물질|배출|탈황|수질|폐기물|석탄 ?재활용|재 재활용|주변 ?기상|발전소 ?기상|주변 대기|대기정보|대기질)
+  - slug: power-plants
+    name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 전국태양광발전소전기사업허가정보표준데이터(활용 37,617) — 발전소 단위, 주소·용량
+    match:
+      title_regex: (_|^(?!.*_)).*(발전소|발전사업|전기사업허가|신재생|분산전원|발전설비|태양광|풍력|연료전지|수력|양수발전|RE100|설비용량|건설 인허가|인허가 현황)
+  - slug: energy-usage
+    name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    value_source: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 고용노동
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/고용노동.md
+  note: '고용정보원(워크넷·고용24)·산업인력공단·장애인고용공단·근로복지공단·산업안전보건공단. 채용 공고·훈련 과정·직업/직무 사전·일자리사업·산재 사례·노동조합이 핵심 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: job-postings
+    name: 채용 공고 (워크넷 채용·공채속보·공공기관 채용·장애인 구인 실시간·해외취업 모집·지자체 일자리)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 공고 단위 — 구직 수요 최대, 워크넷(고용24) 자체 키 여부 확인
+    match:
+      title_regex: (_|^(?!.*_)).*(채용정보|채용목록|채용 ?공고|공채|구인|모집공고|채용행사|잡아바|일자리 ?매칭|일자리매칭|공공부문 일자리|공공취업|취업정보|일자리 정보|지역 공공일자리|근로지원인 구인|_일자리$)
+  - slug: vocational-training
+    name: 직업훈련 과정 (국민내일배움카드·사업주·컨소시엄·일학습병행·NCS 훈련)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: (_|^(?!.*_)).*(훈련과정|내일배움|일학습병행|사업주훈련|컨소시엄|NCS 훈련|NCS 교육과정|훈련직종|공통코드-훈련|교육일정|훈련기관)
+  - slug: government-job-programs
+    name: 정부지원 일자리사업·청년정책 (사업정보·참여자 모집·노인일자리·해외인턴)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: (_|^(?!.*_)).*(정부지원일자리|일자리사업|청년정책|노인일자리|자립형일자리|노인사회활동|구직자취업역량|해외인턴|해외취업 ?(모집|우수일자리)|해외연수 과정|해외기업정보)
+  - slug: industrial-accidents
+    name: 산업재해·산재보험 (국내재해사례·사고사망·건설업 일별 중대재해·산재 판례/질병판정/심사결정·요양 승인)
+    depth: front
+    novelty: high
+    cycle: daily
+    match:
+      title_regex: (_|^(?!.*_)).*(재해사례|사고사망|중대재해|산재|질병판정|심사결정|요양 ?신청|판결문|판례|가입·완납|진위)
+  - slug: labor-unions
+    name: 노동조합 (전국노동조합표준데이터·지자체 노동조합)
+    depth: front
+    novelty: medium
+    value_source: 전국노동조합표준데이터(활용 25,609) — 조합 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(노동조합)
+  - slug: employment-institutions
+    name: 고용 서비스 기관·인증 기업 (고용복지플러스센터·일자리센터·직업소개소·표준사업장·강소기업·일자리우수기업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: (_|^(?!.*_)).*(고용복지플러스|일자리센터|직업소개소|표준사업장|강소기업|청년친화|일자리우수기업|고용우수기업|발달장애인훈련센터|보조공학센터|수행기관|청년취업인턴제운영기관|여성 ?일자리기관|일자리 ?우수기업|장애인고용공단 현황)
+  - slug: regional-employment
+    name: 지역 고용동향 (시도 × 월 취업자·실업률·고용률)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 시도 × 월 격자 — 지역 정보에 연결
+    match:
+      title_regex: (_|^(?!.*_)).*(고용동향)
+  - slug: job-dictionary
+    name: 직업·직무 사전 (직업사전·직업정보·직업전망·직무데이터·NCS·고용직업분류·학과정보)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 코드 마스터 — 채용·훈련·자격을 잇는 직업분류 키
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 산업기술지원
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업기술지원.md
+  note: '국가기술표준원·산업기술시험원·산업기술진흥원·기술보증기금·국토부 키스콘. 제품안전(리콜·인증)·기술이전·인증 기업·건설업체 원장만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: product-safety
+    name: 제품안전·인증 (위해상품·안전인증 제품·리콜)
+    depth: front
+    novelty: high
+    value_source: 제품안전정보센터 — 제품 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(제품안전|위해상품|인증제품|리콜|안전인증|KC|가스용품|어린이제품)
+  - slug: tech-transfer
+    name: 기술이전·기술은행 (도입희망기술·기술정보 DB·수요기술·기술 나눔)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(기술은행|도입희망기술|기술정보|수요기술|기부|나눔 기술|기술나눔|기술시장|미활용 특허|사업화 유망기술|기술이전)
+  - slug: construction-firms
+    name: 건설업체·건설공사 (키스콘 건설업체정보·건설공사대장·건설 기술사례)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 건설업체 등록 원장, 사업자번호
+    match:
+      title_regex: (_|^(?!.*_)).*(키스콘|건설업체|건설공사대장|건설보고서|건설 기술|건설기술)
+  - slug: certified-tech-companies
+    name: 소부장 전문·으뜸기업·녹색인증·ESG 기업
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 산업진흥·고도화
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업진흥·고도화.md
+  note: '보고서·동향·공모전 위주라 대부분 배제. 기술 나눔·인증 기업만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: promotion-registries
+    name: 창업보육·사업공고·기술 나눔·인증 기업
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 원자력기술
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/원자력기술.md
+  note: '한수원·원자력안전기술원·원자력환경공단·원자력안전재단. 원전 가동·사고고장, 환경방사선(실시간), 방폐물, 방사성동위원소 이용기관 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: radiation-monitoring
+    name: 환경방사선·부지 감시 (실시간 방사선량·환경방사능·부지 지진)
+    depth: front
+    novelty: high
+    cycle: realtime
+    cross_cutting: true
+    value_source: 실시간 측정 — 환경기상과 cross-sector
+    match:
+      title_regex: (_|^(?!.*_)).*(방사선량|환경방사선|방사능|방사성물질|집적선량|부지감시|지진|부지주변|해수 방사능|개인선량|실시간)
+  - slug: radioactive-waste
+    name: 방사성폐기물 (반입·인수·처분·저장 현황)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(방폐물|방사성 ?폐기물|처분|저장|폐기물 ?(반입|인수|발생량)|밀봉선원|개봉선원|불용선원|사용후핵연료)
+  - slug: radioisotope-users
+    name: 방사성동위원소 이용기관·방사선 작업
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(방사성동위원소|이용기관|방사선발생장치|방사선작업종사자)
+  - slug: nuclear-operations
+    name: 원전 가동·사고고장·안전성능
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+keys:
+- id: store_id
+  name: 소상공인 상가업소번호 (상가(상권)정보)
+  format: 상가업소번호 (MA0101... 형식)
+  scope: global
+  note: 상가업소 단위 원장의 키 — 상호·업종(표준산업분류·상권업종분류)·좌표·PNU/건물관리번호 보유. 상권 분석의 공간 기준 (Claude 2026-09-29, 산업고용)
+- id: fuel_station_id
+  name: 주유소 ID (오피넷 UNI_ID) / 충전소 ID (환경부·한전)
+  format: 오피넷 주유소코드 / 충전소ID+충전기ID
+  scope: global
+  note: 유가·충전 상태 실시간 조회의 키. 도로 ev-fuel(물류등기타에서 옮겨온 파일)과 같은 시설
+- id: power_plant_id
+  name: 발전소·발전기 식별 (전기사업허가번호·발전기ID)
+  format: 전기사업 허가번호 / 전력거래소 발전기 코드
+  scope: global
+  note: 태양광 발전사업 허가 표준·발전설비·발전기별 발전량을 잇는다. 허가 표준은 주소로 PNU 연결
+- id: job_code
+  name: 직업·직무 분류 (한국고용직업분류 KECO·NCS 코드)
+  format: KECO 4자리 / NCS 분류번호
+  scope: global
+  note: 채용 공고·훈련 과정·자격·직업사전을 잇는 코드 마스터 (워크넷 공통코드·심리검사 매핑코드가 원장)
+key_issuers:
+- id: opinet.co.kr
+  name: 오피넷 (한국석유공사 유가정보)
+  site: https://www.opinet.co.kr
+  key_param: code
+  env: {}
+  issuance: 회원가입 → 무료 API 키 신청 → 발급 (.env 미등록) (Claude 2026-09-29, 에너지)
+  match:
+    kind: API_LINK
+    title_regex: 오피넷|주유소 ?(평균가격|최저가)|반경 내 주유소|주유소 상세
+- id: work24.go.kr
+  name: 고용24·워크넷 OPEN API (한국고용정보원)
+  site: https://www.work24.go.kr
+  key_param: authKey
+  env: {}
+  issuance: 회원가입 → OPEN-API 인증키 신청(서비스별) → 승인 후 발급 (.env 미등록) (Claude 2026-09-29, 고용노동)
+  match:
+    kind: API_LINK
+    title_regex: 워크넷|고용24|내일배움|직업훈련
+contexts:
+  new:
+  - id: local-commerce
+    name: 동네 상권
+    dimension: life_context
+    question: 이 동네에 어떤 가게가 있고 장사가 되나 — 상가·인허가·유동·카드매출
+    note: '소상공인 상가업소(산업고용)가 상권의 기준 원장이고, 업종 인허가(LOCALDATA: 음식점·숙박·체육·의료)와 관광 카드 소비·지역 통계가 같은 공간에 겹친다. 상가업소는 좌표·건물관리번호로 건축물 원장과도 이어진다'
+    members:
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: commercial-stores
+      role: 상가업소 원장
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: business-licenses
+      role: 업종 인허가
+    - sector: 문화관광 - 관광
+      subsector: lodging
+      role: 숙박업
+    - sector: 문화관광 - 체육
+      subsector: sports-business-registry
+      role: 체육시설업
+    - sector: 보건의료 - 보건의료
+      subsector: medical-facility-licensing
+      role: 병의원
+    - sector: 국토관리 - 건축물
+      subsector: building-registry
+      role: 건물
+  - id: energy-grid-realtime
+    name: 오늘의 에너지
+    dimension: life_context
+    question: 지금 전력 수급·유가·충전소 상태
+    note: 전력거래소 실시간 수급·SMP와 오피넷 유가·충전소 상태가 실시간 에너지 질문에 함께 답한다. 발전소 원장·배출 측정·환경방사선과 이어진다
+    members:
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: power-market-realtime
+      role: 전력 수급·시장
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: fuel-charging
+      role: 유가·충전
+    - sector: 교통물류 - 도로
+      subsector: ev-fuel
+      role: 충전소·주유소(지자체 파일)
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: power-plants
+      role: 발전소 원장
+  - id: plant-environment
+    name: 발전·원자력 시설 주변 환경
+    dimension: spatial_regulation
+    question: 우리 동네 발전소·원전이 내뿜는 것
+    note: 발전소 대기오염물질·수질 배출과 원전 부지 환경방사선이 시설 좌표로 환경기상(대기·수질) 측정망과 겹친다 — 환경기상 검토 때 상대 부문 추가
+    members:
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: plant-emissions
+      role: 발전소 배출
+    - sector: 산업고용 - 원자력기술
+      subsector: radiation-monitoring
+      role: 환경방사선
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: power-plants
+      role: 발전소 위치
+  - id: job-search
+    name: 일자리 찾기
+    dimension: life_context
+    question: 어디서 뽑고, 어떤 훈련을 받고, 그 회사는 어떤 곳인가
+    note: 채용 공고·훈련 과정·정부 일자리사업이 구직 질문에 함께 답하고, 회사 실사는 기업 축(국민연금 사업장 규모·강소기업·벤처 인증)으로 이어진다. 직업분류(KECO·NCS)가 공고·훈련·자격을 잇는 키
+    members:
+    - sector: 산업고용 - 고용노동
+      subsector: job-postings
+      role: 채용 공고
+    - sector: 산업고용 - 고용노동
+      subsector: vocational-training
+      role: 직업훈련
+    - sector: 산업고용 - 고용노동
+      subsector: government-job-programs
+      role: 정부 일자리사업
+    - sector: 산업고용 - 고용노동
+      subsector: employment-institutions
+      role: 강소기업·고용센터
+    - sector: 사회복지 - 공적연금
+      subsector: pension-workplaces
+      role: 회사 규모
+    - sector: 교육 - 평생·직업교육
+      role: 국가자격
+  - id: regulated-land-use-extraction
+    name: 광업·토석채취와 토지 규제
+    dimension: spatial_regulation
+    key: pnu
+    note: 광업권·토석채취 허가 구역은 산지 구분·농지·용도지역과 같은 필지에 겹친다
+    members:
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: mining-aggregates
+      role: 광업·채석 허가
+    - sector: 농축수산 - 임업·산촌
+      subsector: forest-land-regulation
+      role: 산지 구분
+    - sector: 국토관리 - 토지이용규제
+      subsector: land-use-plan-check
+      role: 필지 규제
+  add_members:
+    enterprise-axis:
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: sme-certification
+      role: 벤처·이노비즈·창업기업 확인
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: local-company-registry
+      role: 지역 기업 목록
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: business-licenses
+      role: 업종 인허가
+    - sector: 산업고용 - 고용노동
+      subsector: employment-institutions
+      role: 강소기업·표준사업장
+    - sector: 산업고용 - 고용노동
+      subsector: labor-unions
+      role: 노동조합
+    - sector: 산업고용 - 산업기술지원
+      subsector: construction-firms
+      role: 건설업체
+    - sector: 산업고용 - 산업기술지원
+      subsector: certified-tech-companies
+      role: 소부장 전문기업
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: power-plants
+      role: 발전사업자
+    localdata-licenses:
+    - sector: 산업고용 - 산업·중소기업일반
+      subsector: business-licenses
+      role: 산업 업종 인허가
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: energy-business-licenses
+      role: 에너지 업종 인허가
+    regional-indicators:
+    - sector: 산업고용 - 고용노동
+      subsector: regional-employment
+      role: 고용
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: energy-usage
+      role: 전력 사용
+    what-can-i-build:
+    - sector: 산업고용 - 에너지및자원개발
+      subsector: mining-aggregates
+      role: 광업·채석 구역
+review_log: "\n## 산업고용 (2026-09-29, 구름의 기준을 Claude가 적용)\n\n기준: 객체 단위 원장·실시간은 살리고, 통계·보고서·부수·불규칙·기관 운영은 우선 배제. 잘못 등록된 데이터는 제외하지 않고 원래 부문으로 옮김.\n\n- **산업·중소기업일반**: 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매\
+  \ 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).\n  통신판매·방문판매·다단계는 공정위 API가 전국 원장이라 배제(ftc-non-core와 같은 판단). 내일채움공제·정책자금·재무제표 조사·홈쇼핑 매출·착한가격업소·물가 배제.\n  **대규모점포**: 물류등기타에서 재검토 후보였던 전국대규모및준대규모점포표준데이터는 여기 commercial-stores로 살아 있음.\n\
+  - **에너지및자원개발**: 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).\n  가스공사 규격표준 73건·지역난방 플랜트관리/전자계약·연도별/국가별/전망 통계·경영·해외사업\
+  \ 배제.\n- **고용노동**: 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(KECO·NCS 코드 마스터)·정부지원 일자리사업·산업재해(중대재해 일별·재해사례·산재 판례/판정)·노동조합(표준데이터 활용 25,609)·고용 서비스 기관/강소기업·지역 고용동향(시도×월) (`labor-deferred`, `labor-non-core`).\n  직업정보 동영상·안전보건 미디어·가이드·통계·기관 자체 채용이력·해외취업\
+  \ 부수 통계 배제.\n- **산업기술지원**: 제품안전·인증·기술이전/기술은행·소부장 전문/으뜸기업·건설업체(키스콘)만 (`industry-tech-non-core`).\n- **산업진흥·고도화**: 보고서·동향·공모전 위주라 대부분 배제 (`industry-promo-non-core`). 전력거래소 파일 → 에너지.\n- **원자력기술**: 원전 가동·사고고장·안전성능, 환경방사선(실시간)·부지 감시, 방사성폐기물, 방사성동위원소 이용기관\
+  \ (`nuclear-deferred`, `nuclear-non-core`). 에너지의 원자력환경공단 데이터를 여기로 모음.\n- **통상**: 무역특화지수(TSI·RCA)·FTA 공지·영상이 대부분이라 전체 배제 (`trade-all`). 수출입·통관·FTA → 무역및투자유치, 업종 인허가·상점 → 산업·중소기업일반.\n- **이관 (배제하지 않고 원래 부문으로)**: 식품 인허가·안심식당 → 식품건강, 공장·제조업체·테크노밸리·지식산업센터·산업입지도\
+  \ → 산업단지, 신용보증기금·기술보증기금·파산금융 매물 → 재정금융-산업금융, 수출입/FTA → 무역및투자유치, 다문화·건강가정·성폭력 상담 → 보육·가족, 노숙인·자활센터 → 취약계층, 3D 지도 → 공간정보, 스마트팜 혁신밸리 → 농업, 제주 관광객 카드 → 관광.\n- **병합 때 확인 필요**: 산업단지 keep 정규식에 `산업입지|단지경계|단지유치업종|단지시설용지|스마트공장`이 없어 국토부 산업입지 레이어가 옮겨간 뒤 배제될 수 있음.\n\
+  - **전역 키**: `store_id`(상가업소번호), `fuel_station_id`, `power_plant_id`, `job_code`(KECO·NCS). 키 발급처 `opinet.co.kr`, `work24.go.kr`.\n- **맥락(context)**: 새로 local-commerce(동네 상권), energy-grid-realtime(오늘의 에너지), plant-environment(발전·원전 주변 환경), job-search(일자리\
+  \ 찾기), regulated-land-use-extraction(광업·채석과 토지 규제). enterprise-axis·localdata-licenses·regional-indicators·what-can-i-build에 멤버 추가.\n"

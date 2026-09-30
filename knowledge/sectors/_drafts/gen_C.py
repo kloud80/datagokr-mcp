@@ -1,0 +1,314 @@
+"""초안 C 생성: 재난안전(안전관리·경찰·해경) + 식품건강(식품의약안전). 공유 파일은 건드리지 않고 C_safety_food.yaml만 쓴다."""
+import yaml
+
+SAFE = '재난안전 - 안전관리'
+POL = '재난안전 - 경찰'
+CG = '재난안전 - 해경'
+FOOD = '식품건강 - 식품의약안전'
+GEN = ['공공행정 - 일반행정', '공공행정 - 국가통계']
+D = {'decided_at': '2026-09-29', 'decided_by': '구름'}
+BY = ' (Claude가 구름 기준 적용: 개별 객체·원장·실시간은 남기고 통계·부수·불규칙은 우선 배제)'
+REGION = '지자체별|시군구|구별|동별|읍면동|소방서별|지역별|시도별|경찰서별|관서별|시도청별|장소별|해역별|지점'
+
+# ---------------- 안전관리
+S_HAZ = ('재난문자|긴급재난|특보|방재정보|재해위험|위험지구|위험지역|인명피해우려|취약지역|급경사지|붕괴|침수|상습결빙|복합재난|위험시설|재난위험|해일|'
+         '지진 ?(감시|관측)|방사능|방사선|비상계획구역|화학사고|유해화학|위험물|재난 ?정보|재난안전 ?정보|재해 ?정보')
+S_SHEL = '대피|민방위|무더위쉼터|한파쉼터|이재민|임시주거|수용 ?(시설|공간)|비상급수|급수시설|그늘막|구호|쉼터'
+S_FIRE = '구조활동|소방|화재|119|구급|구조대|소화전|소방용수|비상소화|의용소방|특정소방대상물|안전센터'
+S_FAC = ('승강기|시설물|시설안전등급|안전점검 ?결과|안전등급|기계설비|성능점검|전기|가스|자율안전확인|위험기계|보호구|진위확인|사방시설|'
+         '지반정보|소규모공공시설|다중이용업소|안전검사|지하안전|싱크홀|사고사례')
+S_CRIME = 'CCTV|안심|비상벨|생활안전지도|CPTED|지킴이집|방범|보안등|가로등'
+S_ACC = '교통사고|사고다발|사고 ?다발|무단횡단사고|해양사고|물놀이 ?사고|안전사고|사고 ?발생'
+S_PRE = ('_.*(설문|미디어자료|교안|매뉴얼|행동요령|교육|홍보|영상|통계연보|과태료|채용|공지|예산|계약|업무추진|연구|ONE ?PAGE|OPS|번역|'
+         '산업중분류|업종별|규모별|가입률|조직|구호기금|훈련|리콜|생활인구|제설|결빙방지|간행물|포럼|보도자료|안전문화|만족도|청사방호|보유현황|'
+         '장비현황|항공기)')
+STAT_NOREG = f'^(?!.*({REGION}|다발|위치|지점)).*(통계|추세|연도별|월별|추이|연보)'
+
+# ---------------- 경찰
+P_FAC = '경찰서|지구대|파출소|치안센터|경찰관서|관서 ?(위치|주소)'
+P_LOST = '실종경보|분실물|습득물|유실물|핸드폰 찾기|습득'
+P_MAP = '지킴이집|생활안전지도|WMS|위험도|범죄 ?주의|CCTV|안심|지하철성범죄위험도'
+P_CRIME = (f'(({REGION}|지역).*(범죄|발생|검거))|((범죄|발생|검거).*({REGION}|지역))|5대범죄|대범죄')
+P_ACC = f'사상자 현황|(교통사고|사상자).*({REGION}|다발|지점|위치|지역)|({REGION}|지역).*교통사고'
+P_PRE = ('_.*(운전면허|치안고객만족도|경찰병원|홍보|영상|동영상|채용|경찰공무원|교육|집회|가출인|실종(?!경보)|민원|성별|연령별|행정처분|'
+         '보이스피싱 ?예방|개최|승진|계급)')
+
+# ---------------- 해경
+C_ZONE = '수상레저금지구역|금지구역|보호구역|주조업지|항로|위험구역|조업지'
+C_FAC = '파출소|출장소|인명구조함|구조함|구조장비|추락위치|경찰서 ?위치|관서 ?위치|위치정보'
+C_ACC = f'(조난|연안사고|해양사고|사고).*({REGION}|위치|상세|지점|발생현황)|({REGION}).*(조난|사고)'
+C_PRE = ('_.*(승진|의경|계급별|홍보|영상|이미지|전경|교육|안전수칙|검거|불법조업|외국어선|수상구조사|조종면허|척수|어종현황|위탁|체험활동|'
+         '계절별|원인별|유형별|연도별)')
+
+# ---------------- 식품
+F_DESIG = '위생등급|모범음식점|안심식당|안심업소|HACCP|위생 ?등급|식품안심|우수업소|지정 ?현황'
+F_ALERT = '안전성검사|회수|판매중지|행정처분|부적합|위해|방사능|잔류농약|검사 ?결과|이물|식중독|위반'
+F_IMP = '수입식품|수입신고|해외제조|수입업|수입 ?(판매|수산물|축산물|농산물)'
+F_HYG = '공중위생|목욕장|미용|이용업|세탁|위생관리용역|위생용품|숙박업'
+F_LIC = ('인허가|업소|음식점|제과점|집단급식소|제조가공|즉석판매|식품판매|소분|운반업|유흥|단란|위탁급식|식육|축산물 ?(가공|판매|운반|포장|보관)|'
+         '식용얼음|자동판매기|건강기능식품 ?(판매|유통|일반)|영업|카페|폐업|식품접객|급식소|제조업|유통전문|판매업|레스토랑')
+F_PROD = ('품목|제품|바코드|영양성분|영양DB|영양 ?DB|원재료|첨가물|기준 ?규격|공전|기능성|개별인정|레시피|식품코드|유형코드|원료|'
+          '건강기능식품|농약잔류|잔류허용')
+F_PRE = ('_.*(연구관리|번역|차트|섭취빈도|통계|교육|홍보|영상|채용|공지|예산|계약|설문|업소이미지|먹거리골목|조사결과|포럼|발간|보도자료|'
+         '계획 및 실적|실적|만족도|정책|용어|FAQ|질의응답|화장품|실험동물|법령코드|APEC|가축 전염병|약수터|지하수)')
+
+sector_map = [
+    {'id': 'safety-misfiled-out', **D,
+     'reason': ('재난안전-안전관리에 잘못 등록된 것 → 제자리로: 불법주정차·주정차단속·어린이/노인보호구역 → 도로(규제·단속), 자동차 리콜 → 도로(자동차), '
+                '교통안전공단 주차정보 → 물류등기타(주차장)' + BY),
+     'match_any': [{'sector': SAFE, 'title_regex': '_.*(불법주정차|주정차|어린이보호구역|노인보호구역|자동차 리콜)'}],
+     'set_sector': '교통물류 - 도로'},
+    {'id': 'safety-police-traffic-out', **D,
+     'reason': ('경찰·안전관리에 등록된 도로 교통 운영 데이터(교차로 기반/계획·교통소통·교통돌발·도로위험상황예보·도로위험지수·지정체·주요 도로 구간·TCS 공사) '
+                '→ 도로 (실시간 소통·규제는 도로에서 확정)' + BY),
+     'match_any': [{'sector': POL, 'title_regex': '_.*(교차로|교통소통|교통돌발|도로위험|TCS|신호|CCTV 영상)'},
+                   {'sector': SAFE, 'title_regex': '_.*(도로위험지수|돌발|지정체|주요 ?도로|도로별 구간|교통 관련|소통 ?정보)'}],
+     'set_sector': '교통물류 - 도로'},
+    {'id': 'food-medical-out', **D, 'reason': '식품의약안전에 등록된 의료기관 현황 → 보건의료 의료기관 인허가' + BY,
+     'match': {'sector': FOOD, 'title_regex': '_.*의료기관'}, 'set_sector': '보건의료 - 보건의료'},
+    {'id': 'safety-parking-out', **D, 'reason': '안전관리의 한국교통안전공단 주차정보 API → 물류등기타 주차장' + BY,
+     'match': {'sector': SAFE, 'title_regex': '_.*주차정보'}, 'set_sector': '교통물류 - 물류등기타'},
+    {'id': 'safety-welfare-out', **D, 'reason': '안전관리에 등록된 사회복지시설 목록 → 취약계층지원 사회복지시설' + BY,
+     'match': {'sector': SAFE, 'title_regex': '_.*사회복지시설'}, 'set_sector': '사회복지 - 취약계층지원'},
+    {'id': 'food-pharmacy-out', **D,
+     'reason': '식품의약안전에 등록된 약국 인허가·현황 → 보건의료(의료기관 인허가, LOCALDATA). 의약품은 이미 drugs-to-health로 이동' + BY,
+     'match': {'sector': FOOD, 'title_regex': '_(?!.*식품).*약국'}, 'set_sector': '보건의료 - 보건의료'},
+    {'id': 'food-lodging-out', **D, 'reason': '식품의약안전(공중위생업소)에 등록된 숙박업 → 관광 숙박업 (공중위생법 신고, LOCALDATA)' + BY,
+     'match': {'sector': FOOD, 'title_regex': '_.*숙박'}, 'set_sector': '문화관광 - 관광'},
+    {'id': 'safety-scattered-in', **D,
+     'reason': ('일반행정·국가통계에 흩어진 재난안전 원장(민방위 대피·급수시설, 무더위/한파쉼터, 지진 대피, 소방용수·비상소화장치, 안전비상벨, '
+                '방범 CCTV, 승강기, 재해위험지구·급경사지) → 안전관리' + BY),
+     'match': {'sector': GEN,
+               'title_regex': ('_(?!.*(주정차|어린이보호|교통)).*(민방위|대피소|대피시설|무더위쉼터|한파쉼터|지진 ?대피|소방용수|비상소화|소화전|'
+                               '안전비상벨|안심 ?비상벨|방범 ?CCTV|승강기|재해위험|급경사지|위험지구)')},
+     'set_sector': SAFE},
+    {'id': 'police-scattered-in', **D, 'reason': '일반행정·국가통계의 경찰서·지구대·파출소 위치 → 경찰' + BY,
+     'match': {'sector': GEN, 'title_regex': '_.*(경찰서|지구대|파출소)'}, 'set_sector': POL},
+    {'id': 'food-scattered-in', **D,
+     'reason': ('일반행정·국가통계에 흩어진 식품·공중위생 인허가 업소(일반/휴게음식점·제과점·집단급식소·식품제조가공·즉석판매·모범음식점·위생등급·'
+                '목욕장·미용·세탁) → 식품의약안전 (LOCALDATA 공통 원천)' + BY),
+     'match': {'sector': GEN,
+               'title_regex': ('_.*(일반음식점|휴게음식점|식품위생업소|식품접객|제과점|집단급식소|모범음식점|위생등급|식품제조가공|즉석판매|'
+                               '공중위생업소|목욕장업|미용업|세탁업)')},
+     'set_sector': FOOD},
+]
+
+exclusions = [
+    {'id': 'safety-deferred', **D,
+     'reason': ('안전관리: 설문조사(어린이교통안전 온라인설문 114건)·안전보건 미디어/교안·매뉴얼·행동요령·교육·홍보·통계연보·산업중분류 재해 통계·'
+                '가입률·조직·훈련·생활인구·제설·보유 장비·기관 운영은 먼저 배제' + BY),
+     'match': {'sector': SAFE, 'title_regex': S_PRE}},
+    {'id': 'safety-stats-nonregional', **D,
+     'reason': '안전관리 통계 중 지역(시군구·소방서별 등)·지점 단위가 아닌 연도별·월별 추세·통계는 우선 배제 — 지역 격자 통계만 남긴다' + BY,
+     'match': {'sector': SAFE, 'title_regex': STAT_NOREG}},
+    {'id': 'safety-non-core', **D,
+     'reason': ('안전관리는 재난 특보·위험지역, 대피시설, 소방, 시설 안전 원장, 방범·생활안전 인프라, 사고 다발지역만 — 나머지(산업재해 통계·전기/가스 '
+                '통계 외 부수 자료 등) 배제' + BY),
+     'match': {'sector': SAFE}, 'keep': {'title_regex': '|'.join([S_HAZ, S_SHEL, S_FIRE, S_FAC, S_CRIME, S_ACC])}},
+    {'id': 'police-deferred', **D,
+     'reason': ('경찰: 운전면허 통계·치안고객만족도·경찰병원·홍보 영상·경찰공무원 인력·집회·가출인/실종(제한)·민원·성별/연령별 통계·행정처분 등 '
+                '먼저 배제' + BY),
+     'match': {'sector': POL, 'title_regex': P_PRE}},
+    {'id': 'police-non-core', **D,
+     'reason': ('경찰은 경찰관서 위치·생활안전지도(범죄 위험도)·지역 단위 범죄 발생/검거(경찰서·시도청·시군구 × 기간 격자)·지역/지점 교통사고만 — '
+                '전국 연도별 범죄 통계는 배제 (대검 처리 통계는 법무 crime-statistics)' + BY),
+     'match': {'sector': POL}, 'keep': {'title_regex': '|'.join([P_FAC, P_MAP, P_CRIME, P_ACC, P_LOST, '112신고|범죄통계'])}},
+    {'id': 'coastguard-deferred', **D,
+     'reason': '해경: 승진·의경·계급·홍보 영상/이미지·교육·안전수칙·검거·불법조업·조종면허·척수·연도별/원인별/유형별 사고 통계는 먼저 배제' + BY,
+     'match': {'sector': CG, 'title_regex': C_PRE}},
+    {'id': 'coastguard-non-core', **D,
+     'reason': '해경은 수상레저 금지구역·주조업지/항로 등 수역 규제 공간 원장, 파출소·인명구조함 위치, 위치·해역 단위 해양사고만' + BY,
+     'match': {'sector': CG}, 'keep': {'title_regex': '|'.join([C_ZONE, C_FAC, C_ACC])}},
+    {'id': 'food-deferred', **D,
+     'reason': ('식품의약안전: 평가원 연구관리(66)·번역·차트·섭취빈도율·통계·교육·홍보·설문·업소 이미지·먹거리골목·수거검사 계획/실적·정책 안내는 '
+                '먼저 배제 (식약처·보건환경연구원 기관명에 걸리지 않게 밑줄 뒤 본문으로 판정)' + BY),
+     'match': {'sector': FOOD, 'title_regex': F_PRE}},
+    {'id': 'food-non-core', **D,
+     'reason': ('식품은 인허가 업소 원장(LOCALDATA·식약처)·위생등급/모범음식점/HACCP 지정·회수/판매중지/행정처분/부적합(시의성)·수입식품·'
+                '제품/품목/영양성분/바코드 DB·공중위생업소만' + BY),
+     'match': {'sector': FOOD},
+     'keep': {'title_regex': '|'.join([F_DESIG, F_ALERT, F_IMP, F_HYG, F_LIC, F_PROD])}},
+]
+
+
+def sub(slug, name, rx, novelty='medium', cycle=None, cc=False, vs=None):
+    d = {'slug': slug, 'name': name, 'depth': 'front', 'novelty': novelty}
+    if cycle:
+        d['cycle'] = cycle
+    if cc:
+        d['cross_cutting'] = True
+    if vs:
+        d['value_source'] = vs
+    d['match'] = {'title_regex': rx}
+    return d
+
+
+OTHER = {'slug': 'excluded-rest', 'name': '제외 대상', 'depth': 'back'}
+subsectors = [
+    {'sector': SAFE, **D, 'doc': 'knowledge/sectors/재난안전/안전관리.md',
+     'note': ('행안부·소방청·국토안전관리원·전기/가스안전공사·지자체. 재난 특보·위험지역, 대피시설, 소방, 시설 안전 원장, 방범 인프라, 사고 다발지역만 '
+              '(Claude가 구름 기준 적용 2026-09-29). 표준데이터(지진옥외대피장소·민방위대피시설·교통사고다발지역·안전비상벨·안심지킴이집)가 많아 '
+              '지자체 파일은 표준 하나로 접힌다. 행안부 생활안전지도(safemap)는 자체 키'),
+     'subsectors': [
+         sub('disaster-hazards', '재난 특보·위험지역 (재난문자·방재정보·재해위험지구·급경사지·인명피해우려지역·방사능 방재·화학사고·위험물)',
+             S_HAZ, novelty='high', cycle='event', cc=True, vs='재난 시 즉시성 최상, 위험지구 폴리곤은 토지 규제 레이어와 겹침'),
+         sub('evacuation-shelters', '대피·구호시설 (민방위 대피시설·지진/해일 대피장소·무더위/한파쉼터·비상급수시설·임시주거)', S_SHEL, cc=True,
+             vs='표준데이터 다수, 좌표 원장 — 재난 시 어디로 가나'),
+         sub('fire-rescue', '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)', S_FIRE, novelty='high',
+             vs='화재 발생 건별·소방용수 위치 원장, 소방서별 격자'),
+         sub('facility-safety', '시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)',
+             S_FAC, vs='승강기 고유번호·시설물 번호 단위 원장'),
+         sub('crime-prevention', '방범·생활안전 인프라 (CCTV·안전비상벨·안심지킴이집·CPTED·보안등·생활안전지도)', S_CRIME, cc=True),
+         sub('accident-hotspots', '사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)', S_ACC, cc=True,
+             vs='교통사고다발지역 표준데이터 — 도로·경찰 교통사고와 same_concept')],
+     'default': OTHER},
+    {'sector': POL, **D, 'doc': 'knowledge/sectors/재난안전/경찰.md',
+     'note': ('경찰청·지방경찰청. 경찰관서 위치·생활안전지도·지역 단위 범죄/교통사고만 (Claude가 구름 기준 적용 2026-09-29). '
+              '범죄는 경찰청(발생 기준)과 대검(처리 기준)이 다른 값 — 법무 crime-statistics와 same_concept, 시군구 지역 지표로 연결'),
+     'subsectors': [
+         sub('lost-found', '분실물·습득물 (경찰청 유실물 통합포털 — 건별 실시간)', P_LOST, novelty='high', cycle='daily',
+             vs='물건 하나 단위 실시간 원장 — 분실자 직접 수요'),
+         sub('police-traffic-accidents', '교통사고 (지역·지점·다발지역·사상자)', P_ACC),
+         sub('crime-occurrence', '범죄 발생·검거·112신고 (경찰서·시도청·지역 단위, 범죄통계 조회)', P_CRIME + '|112신고|범죄통계', cycle='monthly',
+             cc=True, vs='경찰서·시군구 격자 — 지역 치안 지표 (대검 처리 통계와 기준 차이)'),
+         sub('police-safety-map', '생활안전지도·범죄 위험도 (WMS 레이어·지하철 성범죄 위험도)', P_MAP, cc=True),
+         sub('police-facilities', '경찰관서 (경찰서·지구대·파출소·치안센터 위치)', '.', cc=True)],
+     'default': OTHER},
+    {'sector': CG, **D, 'doc': 'knowledge/sectors/재난안전/해경.md',
+     'note': ('해양경찰청 단일. 수상레저 금지구역(해수면·내수면 180여 건)·주조업지/항로 등 수역 규제 공간, 파출소·인명구조함 위치, 위치 단위 해양사고만 '
+              '(Claude가 구름 기준 적용 2026-09-29). 금지구역은 관서별 파일이 많아 하나의 공간 도시에로 접는다'),
+     'subsectors': [
+         sub('water-restriction-zones', '수역 이용 규제 (수상레저 금지구역·상수원보호구역·낚시어선 주조업지·항로)', C_ZONE, cc=True,
+             vs='해양·내수면 활동 제한 폴리곤 — 해양공간 용도구역·어장과 겹치는 공간 규제'),
+         sub('coast-guard-facilities', '해경 시설 (파출소·출장소·인명구조함 위치)', C_FAC),
+         sub('maritime-accidents', '해양·연안 사고 (조난·연안사고 위치·해역별)', '.', novelty='medium')],
+     'default': OTHER},
+    {'sector': FOOD, **D, 'doc': 'knowledge/sectors/식품건강/식품의약안전.md',
+     'note': ('식약처·식품안전정보원·지자체 위생과. 식품 인허가 업소·위생 지정·회수/행정처분·수입식품·제품/영양 DB·공중위생업소만 '
+              '(Claude가 구름 기준 적용 2026-09-29). 의약품·의료기기·DUR은 보건의료로, 약국은 보건의료로, 숙박업은 관광으로 이동. '
+              '식품·공중위생 인허가는 행안부 LOCALDATA와 같은 원천(업종 필터) — 식약처 식품안전나라는 자체 키'),
+     'subsectors': [
+         sub('hygiene-designations', '위생 지정 (음식점 위생등급·모범음식점·안심식당·HACCP 적용업소)', F_DESIG,
+             vs='외식 선택 근거, 업소 인허가번호로 인허가 원장과 조인'),
+         sub('food-safety-alerts', '회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독', F_ALERT, novelty='high', cycle='event',
+             vs='회수·판매중지는 실시간 소비자 안전, 행정처분은 업소 건별 이력'),
+         sub('imported-food', '수입식품 (수입신고·해외제조업소·수입업체)', F_IMP, novelty='medium'),
+         sub('public-hygiene-businesses', '공중위생업소 (목욕장·이미용·세탁·위생관리용역·위생용품, LOCALDATA)', F_HYG, cc=True),
+         sub('food-business-licenses', '식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)',
+             F_LIC, cc=True, vs='전국 음식점·식품업소 전수에 가까운 원장 — 상권 분석의 기본, 인허가번호·사업자번호·좌표'),
+         sub('food-product-db', '식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)', '.',
+             novelty='low', cc=True, vs='품목제조보고번호·바코드로 제품 단위 조인')],
+     'default': OTHER},
+]
+
+keys = [
+    {'id': 'elevator_no', 'name': '승강기 고유번호 (승강기안전종합정보망)', 'format': '승강기 고유번호 7자리', 'scope': 'global',
+     'note': '승강기 안전점검·검사 결과 원장의 키 (Claude 2026-09-29, 안전관리). 건물 주소로 건축물대장과 연결'},
+    {'id': 'food_product_cd', 'name': '식품 품목제조보고번호·유통바코드', 'format': '품목제조보고번호 / GTIN-13 바코드', 'scope': 'global',
+     'note': '식품 제품 DB·회수/판매중지·영양성분을 제품 단위로 잇는 키 (Claude 2026-09-29, 식품)'},
+]
+
+key_issuers = [
+    {'id': 'foodsafetykorea.go.kr', 'name': '식품안전나라 (식약처 OpenAPI)', 'site': 'https://www.foodsafetykorea.go.kr/api',
+     'key_param': 'keyId (URL 경로)', 'env': {},
+     'issuance': '회원가입 → 인증키 신청 → 즉시 발급 (.env 미등록) (Claude 2026-09-29, 식품)',
+     'match': {'kind': 'API_LINK', 'title_regex': '식품안전나라|식품의약품안전처'}},
+    {'id': 'safemap.go.kr', 'name': '생활안전지도 (행정안전부)', 'site': 'https://www.safemap.go.kr', 'key_param': 'serviceKey', 'env': {},
+     'issuance': '회원가입 → OpenAPI 인증키 신청 → 발급 (.env 미등록) (Claude 2026-09-29, 안전관리·경찰)',
+     'match': {'kind': 'API_LINK', 'title_regex': '생활안전지도|safemap'}},
+]
+
+contexts = {
+    'new': [
+        {'id': 'disaster-evacuation', 'name': '재난 시 대피', 'dimension': 'life_context',
+         'question': '지금 위험한가, 어디로 대피하나 — 특보·위험지역·대피소·쉼터',
+         'note': ('재난 특보·위험지역(안전관리), 홍수 예보/경보(수자원), 대피시설·쉼터(안전관리)가 한 상황에 걸린다. 무더위쉼터는 경로당(노인복지시설)이 '
+                  '다수 지정된다'),
+         'members': [
+             {'sector': SAFE, 'subsector': 'disaster-hazards', 'role': '특보·위험지역'},
+             {'sector': SAFE, 'subsector': 'evacuation-shelters', 'role': '대피·쉼터'},
+             {'sector': '국토관리 - 수자원', 'subsector': 'flood-warning', 'role': '홍수 특보'},
+             {'sector': '사회복지 - 노인·청소년', 'subsector': 'elderly-facilities', 'role': '경로당(무더위쉼터 지정)'}]},
+        {'id': 'neighborhood-safety', 'name': '우리 동네 안전', 'dimension': 'life_context',
+         'question': '이 동네 안전한가 — 범죄·CCTV·비상벨·경찰서·사고 다발',
+         'note': '방범 인프라(안전관리)·생활안전지도/경찰관서(경찰)·지역 범죄(경찰·대검)·교통 규제(도로)가 같은 질문에 답한다',
+         'members': [
+             {'sector': SAFE, 'subsector': 'crime-prevention', 'role': 'CCTV·비상벨·보안등'},
+             {'sector': POL, 'subsector': 'police-safety-map', 'role': '범죄 위험도'},
+             {'sector': POL, 'subsector': 'police-facilities', 'role': '경찰관서'},
+             {'sector': POL, 'subsector': 'crime-occurrence', 'role': '범죄 발생(경찰)'},
+             {'sector': '법률 - 법무및검찰', 'subsector': 'crime-statistics', 'role': '범죄 처리(대검)'},
+             {'sector': SAFE, 'subsector': 'accident-hotspots', 'role': '사고 다발'},
+             {'sector': '교통물류 - 도로', 'subsector': 'road-regulations', 'role': '보호구역·단속카메라'}]},
+        {'id': 'crime-statistics-bases', 'name': '범죄 통계 두 기준', 'dimension': 'same_concept',
+         'note': '경찰청(발생·검거 기준)과 대검(검찰 접수·처리 기준)이 다른 범죄 수치를 낸다 — 도시에에 기준 차이 병기, 지역 치안 대표는 경찰청 발생',
+         'members': [
+             {'sector': POL, 'subsector': 'crime-occurrence', 'role': '발생(경찰청)'},
+             {'sector': '법률 - 법무및검찰', 'subsector': 'crime-statistics', 'role': '처리(대검)'}]},
+        {'id': 'traffic-accidents', 'name': '교통사고 3중 등록', 'dimension': 'same_concept',
+         'note': '교통사고 다발지역(행안부 표준)·경찰청 교통사고·도로교통공단(TAAS) 사고가 같은 사건을 다른 집계로 낸다 — 대표는 TAAS 다발지역',
+         'members': [
+             {'sector': SAFE, 'subsector': 'accident-hotspots', 'role': '다발지역 표준'},
+             {'sector': POL, 'subsector': 'police-traffic-accidents', 'role': '경찰청'},
+             {'sector': '교통물류 - 도로', 'subsector': 'traffic-accidents', 'role': '도로교통공단'}]},
+        {'id': 'eating-out', 'name': '외식·먹거리 신뢰', 'dimension': 'life_context',
+         'question': '어디서 먹을까, 믿을 만한가 — 음식점·위생등급·행정처분·회수',
+         'note': '식품 인허가 업소(LOCALDATA)·위생등급/모범음식점·행정처분·관광 음식점(TourAPI)이 같은 업소를 가리킨다 — 인허가번호·주소로 조인',
+         'members': [
+             {'sector': FOOD, 'subsector': 'food-business-licenses', 'role': '음식점 원장'},
+             {'sector': FOOD, 'subsector': 'hygiene-designations', 'role': '위생등급·모범음식점'},
+             {'sector': FOOD, 'subsector': 'food-safety-alerts', 'role': '행정처분·회수'},
+             {'sector': '문화관광 - 관광', 'subsector': 'tour-contents', 'role': '관광 음식점(TourAPI)'}]},
+        {'id': 'food-product-trace', 'name': '식품 제품 추적', 'dimension': 'shared_key', 'key': 'food_product_cd',
+         'note': '품목제조보고번호·바코드로 제품 DB·회수/판매중지·수입식품을 잇는다',
+         'members': [
+             {'sector': FOOD, 'subsector': 'food-product-db', 'role': '제품·영양'},
+             {'sector': FOOD, 'subsector': 'food-safety-alerts', 'role': '회수·판매중지'},
+             {'sector': FOOD, 'subsector': 'imported-food', 'role': '수입식품'}]},
+        {'id': 'coastal-water-use', 'name': '바다·물가 이용 규제', 'dimension': 'spatial_regulation',
+         'question': '여기서 수상레저·낚시·어업을 해도 되나',
+         'note': '해경 수상레저 금지구역·주조업지, 해양공간 용도구역, 어장(면허·허가)이 같은 수면에 겹친다',
+         'members': [
+             {'sector': CG, 'subsector': 'water-restriction-zones', 'role': '수상레저 금지구역'},
+             {'sector': '농축수산 - 해양수산·어촌', 'subsector': 'marine-spatial', 'role': '해양 용도구역'},
+             {'sector': '농축수산 - 해양수산·어촌', 'subsector': 'fishery-licenses', 'role': '어장'}]},
+    ],
+    'add_members': {
+        'regional-indicators': [{'sector': POL, 'subsector': 'crime-occurrence', 'role': '범죄 발생(경찰)'},
+                                {'sector': SAFE, 'subsector': 'fire-rescue', 'role': '화재(소방서별)'}],
+        'localdata-licenses': [{'sector': FOOD, 'subsector': 'food-business-licenses', 'role': '식품접객·제조 업소'},
+                               {'sector': FOOD, 'subsector': 'public-hygiene-businesses', 'role': '공중위생업소'}],
+    },
+}
+
+review_log = """
+## 재난안전 - 안전관리 · 경찰 · 해경 (2026-09-29, Claude — 구름 기준 적용)
+
+- **기준**: 개별 객체·원장·실시간은 남기고 통계·부수·불규칙은 우선 배제 (구름 2026-09-29 "이제 남은건 니가 알아서"). 통계는 지역 격자(시군구·소방서별·경찰서별)만.
+- **안전관리**: 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),
+  방범 인프라(`crime-prevention`), 사고 다발지역(`accident-hotspots`)만. 제주 어린이교통안전 온라인설문 114건·안전보건 미디어/교안·산업중분류 재해 통계·통계연보·
+  비지역 추세 통계 배제 (`safety-deferred`, `safety-stats-nonregional`, `safety-non-core`).
+  이관: 불법주정차·보호구역·자동차 리콜 → 도로, 교통안전공단 주차정보 → 물류등기타, 사회복지시설 → 취약계층. 일반행정·국가통계의 대피시설·소방용수·비상벨·승강기 등 → 여기.
+- **경찰**: 분실물·습득물(건별 실시간), 경찰관서 위치, 생활안전지도(범죄 위험도), 지역 단위 범죄 발생·검거·112신고, 지역·지점 교통사고만. 교차로·교통소통·돌발·도로위험예보·TCS → 도로. 운전면허 통계·만족도·경찰병원·실종/가출(제한)·성별/연령별 통계 배제.
+  범죄는 경찰청(발생)·대검(처리) 두 기준 → context `crime-statistics-bases`.
+- **해경**: 수상레저 금지구역(해수면·내수면 관서별 파일 180여 건)·주조업지/항로, 파출소·인명구조함 위치, 위치/해역 단위 해양사고만. 승진·의경·홍보·검거·연도별 사고 통계 배제.
+- **전역 키**: `elevator_no` (승강기 고유번호). 키 발급처 `safemap.go.kr`(생활안전지도).
+- **context**: `disaster-evacuation`, `neighborhood-safety`, `crime-statistics-bases`, `traffic-accidents`, `coastal-water-use`; regional-indicators에 경찰 범죄·소방 화재 추가.
+- **재검토 후보**: 산업안전보건공단 사업장 재해 원장(있다면 사업장 단위), 소방 통계연보 중 시도별 표.
+
+## 식품건강 - 식품의약안전 (2026-09-29, Claude — 구름 기준 적용)
+
+- **결정**: 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·
+  공중위생업소(`public-hygiene-businesses`)·제품/품목/영양 DB(`food-product-db`)만. 평가원 연구관리·번역·차트·섭취빈도율·통계·업소 이미지·먹거리골목·수거검사 계획/실적 배제.
+  식약처·보건환경연구원 기관명에 걸리지 않게 배제 판정은 밑줄 뒤 본문으로.
+- **이관**: 약국 → 보건의료(의료기관 인허가), 숙박업 → 관광 숙박업. 일반행정·국가통계의 음식점·제과점·집단급식소·공중위생업소 인허가 → 여기. (의약품·의료기기·DUR은 앞서 drugs-to-health로 보건의료)
+- **구조**: 식품·공중위생 인허가는 행안부 LOCALDATA와 같은 원천 → localdata-licenses context에 추가.
+- **전역 키**: `food_product_cd` (품목제조보고번호·바코드). 키 발급처 `foodsafetykorea.go.kr`.
+- **context**: `eating-out`, `food-product-trace`.
+"""
+
+out = {'sector_map': sector_map, 'exclusions': exclusions, 'subsectors': subsectors, 'keys': keys, 'key_issuers': key_issuers,
+       'contexts': contexts, 'review_log': review_log}
+open('knowledge/sectors/_drafts/C_safety_food.yaml', 'w', encoding='utf-8').write(
+    yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=250))
+print('ok')

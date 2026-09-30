@@ -1,0 +1,170 @@
+# Dataset 15073967 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15073967'
+tier: verified
+title: 식품의약품안전처_수입식품 해외제조업소 정보
+sector: 식품건강/식품의약안전/imported-food
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15073967/openapi.do
+synonyms:
+  - 수입식품
+  - 해외제조업소
+  - 인증기관
+  - 식품유통
+  - 식품안전
+description_portal: '-해외제조업소의 식품 수출입 관리 및 안전성 확보를 위해 필요한 다양한 정보를 포함하고 있습니다.-제공 데이터는 각 해외제조업소의 고유 코드, 명칭, 주소, 영업 구분(예: 제조, 가공, 보관 등)과 같은 기본 정보는 물론, 업소가 속한 국가와 지역 정보도 기록됩니다. 식품 안전과 관련해서는 해당 업소의 식품안전관리시스템 인증 여부 및 인증명, 인증기관과 인증·만료일시 등 인증 관련 기록이 포함되어, 제조업소의 신뢰성과 안전성을 객관적으로 확인할 수 있도록 합니다. 추가로, 업소의 영업 취소나 취하 이력(취하여부, 취하일시, 취소중단 등)과 같은 변동 이력도 제공됩니다.'
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getIprtFoodOvseaMnftBsshInfoInq02
+    name: 수입식품 해외제조업소정보조회
+    endpoint: https://apis.data.go.kr/1471000/IprtFoodOvseaMnftBsshInfoService02/getIprtFoodOvseaMnftBsshInfoInq02
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '3'
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: OCTR_MNFT_BSSH_NM
+        required: false
+        example: AHMAD TEA FZ LLC
+        desc: 해외제조업소명
+      - name: FOOD_SE_NM
+        required: false
+        example: 가공식품
+        desc: 식품구분명
+      - name: NATN_NM
+        required: false
+        example: 아랍에미리트 연합
+        desc: 국가명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: item
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "{'OCTR_MNFT_BSSH_CD': 'AE000000002', 'OCTR_MNFT_BSSH_NM': 'AHMAD TEA FZ LLC', 'O"
+        - "{'OCTR_MNFT_BSSH_CD': 'AE000000135', 'OCTR_MNFT_BSSH_NM': 'AHMAD TEA FZ LLC', 'O"
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 수입식품 (수입신고·해외제조업소·수입업체)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8361
+  rank_in_sector: 7
+  brm: 식품건강 - 식품의약안전
+  why: 수입식품 (수입신고·해외제조업소·수입업체)
+claims:
+  - id: c-15073967-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15073967.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15073967.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15073967-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15073967-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15073967.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15073967-04
+    kind: coverage
+    value: API 전체 건수 2 · 검증 수신 2행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15073967.json
+        observed_at: '2026-09-30'
+        detail: total 2, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15073967-06
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  total_count: 2
+  ops_ok: 1/1
+  latency_ms: 990
+  run: probe/runs/15073967.json
+  stats: probe/stats/15073967.json
+  data: probe/data/15073967/
+status: active

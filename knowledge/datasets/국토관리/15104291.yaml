@@ -1,0 +1,580 @@
+# Dataset 15104291 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15104291'
+tier: verified
+title: 한국농어촌공사_농산어촌지역개발 농촌마을현황
+sector: 국토관리/지역발전/regional-designation
+domain: 국토관리/개발사업
+agency:
+  id: B552149
+  name: 한국농어촌공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15104291/openapi.do
+synonyms:
+  - 농촌마을
+  - 농촌마을 기본정보
+  - 농촌마을 자원정보
+  - 마을인구
+  - 마을주민 직업 비율
+  - 토지이용 현황
+description_portal: '요약 : 농산어촌 지역개발사업중 전국 또는 시도, 시군구 법정동코드를 기준으로 지역별 농촌마을 기본정보와 마을아이디를 기준으로 각 농촌마을의 자원정보를 제공하는 서비스 1. 전국 농촌마을 유례, 인구, 주택수 등의 기본정보 조회 - 연령별 인구수, 성별 인구수 - 빈집, 슬레이트 주택 수 - 마을 유례 및 마을 명 2. 마을아이디를 기준으로 전국 농촌마을 자원정보 조회 2.1. 마을의 자연자원 - 기후 토양 자원, 광물자원, 수자원, 동물식물자원, 자영경관 자원 2.2. 마을의 경제자원 - 농림축수산물, 음식 및 식품, 특산물자원, 농업관련시설, 관광 및 휴양시설, 산업시설'
+team:
+  dept: 지역개발지원단
+services:
+  - op: /resourceVill
+    name: 농촌마을 자원정보
+    endpoint: https://apis.data.go.kr/B552149/raiseRuralVill/resourceVill
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataType
+        required: false
+        desc: 결과 형식 (json, xml)
+      - name: villId
+        required: true
+        desc: 마을아이디
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /infoVill
+    name: 농촌마을 기본정보현황
+    endpoint: https://apis.data.go.kr/B552149/raiseRuralVill/infoVill
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: xml
+        desc: 결과 형식 (json, xml)
+      - name: sidoCode
+        required: false
+        example: '36'
+        desc: 시도코드(법정동)
+      - name: sggCode
+        required: false
+        example: '36110'
+        desc: 시군구코드(법정동)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: emdNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금남면
+        - 부강면
+        - 조치원읍
+      stats:
+        unique: 9
+    - name: legalCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3611033021'
+        - '3611025029'
+        - '3611034021'
+      stats:
+        min: 3611025021
+        p50: 3611034031
+        max: 3611039024
+        unique: 103
+    - name: sggNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 세종시
+      stats:
+        unique: 1
+    - name: sidoNm
+      type: code
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - 세종특별자치시
+      stats:
+        unique: 1
+    - name: villDescription
+      type: string
+      null_rate: 0.1767
+      sample_values:
+        - 백제 때는 소비포현에 속했으며 고려 때부터 공주군에 속했다가 조선말엽에는 공주군 양야리면에 속했었다. 「구렁목과 「잉여바위」밑으로 흐르는 금강의
+        - 내판리는 연동면을 대표하는 가장 큰 마을이며 연동면의 중심부에 위치하고 있으며 내판을 '너더리'라고 하는데 '너더리'는 '널다리'로서 널로 만든
+        - 매바위 마을의 뒷산에 매같이 생긴 바위가 있기 때문이며 1914년 행정구역 개편때 여러마을을 병합해서 응암이 됨.
+      stats:
+        unique: 136
+    - name: villFemaleAge_0Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+        - '4'
+        - '3'
+      stats:
+        min: 0
+        p50: 5
+        max: 710
+        unique: 52
+    - name: villFemaleAge_10Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 0
+        p50: 3
+        max: 211
+        unique: 38
+    - name: villFemaleAge_20Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '11'
+        - '7'
+      stats:
+        min: 0
+        p50: 9
+        max: 453
+        unique: 54
+    - name: villFemaleAge_30Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '6'
+        - '4'
+      stats:
+        min: 0
+        p50: 7
+        max: 658
+        unique: 54
+    - name: villFemaleAge_40Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7'
+        - '10'
+        - '4'
+      stats:
+        min: 0
+        p50: 10
+        max: 552
+        unique: 60
+    - name: villFemaleAge_50Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '12'
+        - '8'
+      stats:
+        min: 0
+        p50: 17
+        max: 493
+        unique: 70
+    - name: villFemaleAge_60Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '8'
+        - '3'
+      stats:
+        min: 0
+        p50: 7
+        max: 165
+        unique: 39
+    - name: villFemaleAge_65Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '28'
+        - '22'
+        - '25'
+      stats:
+        min: 0
+        p50: 28
+        max: 383
+        unique: 76
+    - name: villHouseEmpty
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 50
+        unique: 12
+    - name: villHouseOneCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '25'
+        - '43'
+      stats:
+        min: 0
+        p50: 0
+        max: 408
+        unique: 51
+    - name: villHouseSlate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 41
+        unique: 23
+    - name: villHouseTotCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '67'
+        - '55'
+      stats:
+        min: 0
+        p50: 84
+        max: 2481
+        unique: 136
+    - name: villHouseYear_10Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '3'
+        - '1'
+      stats:
+        min: 0
+        p50: 2
+        max: 914
+        unique: 66
+    - name: villHouseYear_20Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '31'
+        - '29'
+      stats:
+        min: 0
+        p50: 0
+        max: 450
+        unique: 41
+    - name: villHouseYear_30Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '11'
+        - '4'
+      stats:
+        min: 0
+        p50: 0
+        max: 198
+        unique: 46
+    - name: villHouseYear_5Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 153
+        unique: 15
+    - name: villHouseYear_9Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 92
+        unique: 19
+    - name: villId
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '361102502101'
+        - '361102502102'
+        - '361102502201'
+      stats:
+        min: 361102502101
+        p50: 361103403102
+        max: 361103902402
+        unique: 215
+    - name: villMaleAge_0Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '4'
+        - '3'
+      stats:
+        min: 0
+        p50: 6
+        max: 756
+        unique: 55
+    - name: villMaleAge_10Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '0'
+      stats:
+        min: 0
+        p50: 4
+        max: 239
+        unique: 42
+    - name: villMaleAge_20Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '12'
+        - '10'
+      stats:
+        min: 0
+        p50: 12
+        max: 494
+        unique: 61
+    - name: villMaleAge_30Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '9'
+        - '6'
+      stats:
+        min: 0
+        p50: 11
+        max: 659
+        unique: 63
+    - name: villMaleAge_40Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9'
+        - '7'
+        - '14'
+      stats:
+        min: 0
+        p50: 15
+        max: 608
+        unique: 65
+    - name: villMaleAge_50Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14'
+        - '13'
+        - '15'
+      stats:
+        min: 0
+        p50: 19
+        max: 487
+        unique: 70
+    - name: villMaleAge_60Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '6'
+        - '8'
+      stats:
+        min: 0
+        p50: 7
+        max: 153
+        unique: 36
+    - name: villMaleAge_65Cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '21'
+        - '14'
+      stats:
+        min: 0
+        p50: 20
+        max: 310
+        unique: 67
+    - name: villNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 원1리
+        - 원2리
+        - 상1리
+      stats:
+        unique: 215
+  foreign_keys:
+    - fields:
+        - sidoNm
+      reference:
+        key: admin_area_code
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 지역 지정 (인구감소·특구·성장촉진·균형발전)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7041
+  rank_in_sector: 1
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-지역발전
+  why: 지역 지정 (인구감소·특구·성장촉진·균형발전)
+claims:
+  - id: c-15104291-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15104291.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15104291.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15104291-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15104291-03
+    kind: key
+    value: '실측 조인 키: admin_area_code(sidoNm)'
+    evidence:
+      - type: measured
+        source: probe/stats/15104291.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 32개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15104291-04
+    kind: coverage
+    value: API 전체 건수 215 · 검증 수신 215행 · 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15104291.json
+        observed_at: '2026-09-30'
+        detail: total 215, rows 215
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15104291-06
+    kind: admin_note
+    value: '[국토관리 재구성 — 국토기본법 계층 · 결정] BRM 지역및도시·주택을 법 체계에 따라 다시 나눔. 부문 위에 계층(domain)을 새로 둠 — `sector_tree.yaml`, KG `domain` 노드·`in_domain`/`domain_of`/`related_sector` 엣지 (스키마 변경 없음, ARCHITECTURE §2 표에 추가).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L527
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15104291-10
+    kind: pitfall
+    value: 필수 파라미터 villId는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15104291.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15104291-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /resourceVill'
+    evidence:
+      - type: measured
+        source: probe/runs/15104291.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 215
+  total_count: 215
+  ops_ok: 1/2
+  latency_ms: 262
+  run: probe/runs/15104291.json
+  stats: probe/stats/15104291.json
+  data: probe/data/15104291/
+status: active

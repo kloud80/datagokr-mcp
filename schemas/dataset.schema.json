@@ -1,0 +1,1476 @@
+{
+  "$defs": {
+    "AgencyRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AgencyRef",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "c-{dataset id}-{두 자리 이상 번호}",
+          "pattern": "^c-[\\w:.-]+-\\d{2,}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "cadence",
+            "publish_lag",
+            "legal_basis",
+            "key",
+            "coverage",
+            "health",
+            "pitfall",
+            "join_verified",
+            "admin_note",
+            "access"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "qualifiers": {
+          "additionalProperties": true,
+          "title": "Qualifiers",
+          "type": "object"
+        },
+        "rank": {
+          "default": "normal",
+          "enum": [
+            "preferred",
+            "normal",
+            "deprecated"
+          ],
+          "title": "Rank",
+          "type": "string"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "value",
+        "evidence"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Classification": {
+      "additionalProperties": false,
+      "description": "Phase 1 분류·점수 (파생값의 스냅샷 — 원본은 class/score parquet).",
+      "properties": {
+        "subsector_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsector Name"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "enum": [
+                "front",
+                "back",
+                "hold",
+                "system"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Depth"
+        },
+        "novelty": {
+          "anyOf": [
+            {
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Novelty"
+        },
+        "cross_cutting": {
+          "default": false,
+          "title": "Cross Cutting",
+          "type": "boolean"
+        },
+        "prelim_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prelim Score"
+        },
+        "rank_in_sector": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank In Sector"
+        },
+        "brm": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "포털 원래 BRM (재배치 전)",
+          "title": "Brm"
+        },
+        "sector_rule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "재배치 규칙 id",
+          "title": "Sector Rule"
+        },
+        "why": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phase 1 선정 이유 (targets.json)",
+          "title": "Why"
+        }
+      },
+      "title": "Classification",
+      "type": "object"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "spatial": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spatial"
+        },
+        "admin_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Admin Unit"
+        },
+        "temporal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temporal"
+        }
+      },
+      "title": "Coverage",
+      "type": "object"
+    },
+    "Distribution": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "updated": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "title": "Distribution",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "measured",
+            "law",
+            "portal_meta",
+            "admin_review",
+            "inferred",
+            "user"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "source": {
+          "description": "근거 위치: 파일 경로#앵커, law:{id}#{조}, 포털 URL 등",
+          "title": "Source",
+          "type": "string"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "측정·관측일 (measured)",
+          "title": "Observed At"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "결정·검토한 사람 (admin_review·user)",
+          "title": "By"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "결정·검토일",
+          "title": "At"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        }
+      },
+      "required": [
+        "type",
+        "source"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FieldStats": {
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "default": null,
+          "title": "Min"
+        },
+        "p50": {
+          "default": null,
+          "title": "P50"
+        },
+        "max": {
+          "default": null,
+          "title": "Max"
+        },
+        "unique": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unique"
+        }
+      },
+      "title": "FieldStats",
+      "type": "object"
+    },
+    "ForeignKey": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        },
+        "reference": {
+          "$ref": "#/$defs/ForeignKeyRef"
+        },
+        "evidence": {
+          "default": "measured",
+          "enum": [
+            "measured",
+            "portal_meta",
+            "documented"
+          ],
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields",
+        "reference"
+      ],
+      "title": "ForeignKey",
+      "type": "object"
+    },
+    "ForeignKeyRef": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "ForeignKeyRef",
+      "type": "object"
+    },
+    "Legislation": {
+      "additionalProperties": false,
+      "properties": {
+        "law": {
+          "description": "법령명 (약칭 가능)",
+          "title": "Law",
+          "type": "string"
+        },
+        "law_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "법제처 법령ID — knowledge/laws/{law_id}.yaml",
+          "title": "Law Id"
+        },
+        "articles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Articles",
+          "type": "array"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "어디서 이 근거를 읽었나 (portal_meta: 보유근거 등)",
+          "title": "Source"
+        }
+      },
+      "required": [
+        "law"
+      ],
+      "title": "Legislation",
+      "type": "object"
+    },
+    "Paging": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "max_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Size"
+        }
+      },
+      "title": "Paging",
+      "type": "object"
+    },
+    "Param": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "semantic_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key id — 이 값을 다른 데이터에서 받아와야 하면 lookup Edge 후보",
+          "title": "Semantic Type"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "example": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Example"
+        },
+        "desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Desc"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Param",
+      "type": "object"
+    },
+    "Security": {
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "default": "apiKey",
+          "enum": [
+            "apiKey",
+            "none",
+            "oauth2",
+            "session"
+          ],
+          "title": "Scheme",
+          "type": "string"
+        },
+        "in": {
+          "default": "query",
+          "enum": [
+            "query",
+            "header",
+            "path"
+          ],
+          "title": "In",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "issuer": {
+          "description": "key_issuers.yaml id 또는 data.go.kr",
+          "title": "Issuer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issuer"
+      ],
+      "title": "Security",
+      "type": "object"
+    },
+    "Service": {
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "title": "Op",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "endpoint": {
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "security": {
+          "$ref": "#/$defs/Security"
+        },
+        "params": {
+          "items": {
+            "$ref": "#/$defs/Param"
+          },
+          "title": "Params",
+          "type": "array"
+        },
+        "paging": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Paging"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "approval": {
+          "default": "unknown",
+          "enum": [
+            "auto",
+            "review",
+            "external",
+            "unknown"
+          ],
+          "title": "Approval",
+          "type": "string"
+        },
+        "traffic": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Traffic",
+          "type": "object"
+        },
+        "format": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Format",
+          "type": "array"
+        },
+        "error_style": {
+          "default": "unknown",
+          "enum": [
+            "http200_body_code",
+            "http_status",
+            "unknown"
+          ],
+          "title": "Error Style",
+          "type": "string"
+        },
+        "verified_ok": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phase 2 실호출 성공 여부",
+          "title": "Verified Ok"
+        }
+      },
+      "required": [
+        "op",
+        "endpoint",
+        "security"
+      ],
+      "title": "Service",
+      "type": "object"
+    },
+    "Sla": {
+      "additionalProperties": false,
+      "properties": {
+        "frequency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frequency"
+        },
+        "latency_days": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency Days"
+        },
+        "time_of_availability": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Of Availability"
+        }
+      },
+      "title": "Sla",
+      "type": "object"
+    },
+    "TableField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "명세상 의미",
+          "title": "Title"
+        },
+        "type": {
+          "default": "any",
+          "enum": [
+            "string",
+            "integer",
+            "number",
+            "date",
+            "datetime",
+            "boolean",
+            "code",
+            "geo",
+            "any"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "semantic_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key id",
+          "title": "Semantic Type"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "null_rate": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Null Rate"
+        },
+        "sample_values": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sample Values",
+          "type": "array"
+        },
+        "stats": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FieldStats"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "op": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "여러 오퍼레이션이면 어느 응답의 컬럼인가",
+          "title": "Op"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TableField",
+      "type": "object"
+    },
+    "TableSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "primary_key": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Key"
+        },
+        "dedupe_rule": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dedupe Rule"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/TableField"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "foreign_keys": {
+          "items": {
+            "$ref": "#/$defs/ForeignKey"
+          },
+          "title": "Foreign Keys",
+          "type": "array"
+        }
+      },
+      "title": "TableSchema",
+      "type": "object"
+    },
+    "Team": {
+      "additionalProperties": false,
+      "properties": {
+        "dept": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dept"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "title": "Team",
+      "type": "object"
+    },
+    "Verification": {
+      "additionalProperties": false,
+      "properties": {
+        "verdict": {
+          "title": "Verdict",
+          "type": "string"
+        },
+        "probed_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Probed At"
+        },
+        "channel": {
+          "default": "portal",
+          "enum": [
+            "portal",
+            "external"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rows"
+        },
+        "total_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Count"
+        },
+        "ops_ok": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "성공 오퍼레이션/전체",
+          "title": "Ops Ok"
+        },
+        "latency_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency Ms"
+        },
+        "latest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latest"
+        },
+        "lag_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lag Days"
+        },
+        "run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run"
+        },
+        "stats": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stats"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "Verification",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^([a-z0-9.\\-]+:)?[\\w.-]+$",
+      "title": "Id",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "verified",
+        "candidate"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Family"
+    },
+    "sector": {
+      "description": "정책분야/부문/세부 부문 slug",
+      "pattern": "^[^/]+/[^/]+/[^/]+$",
+      "title": "Sector",
+      "type": "string"
+    },
+    "domain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "sector_tree.yaml domain id",
+      "title": "Domain"
+    },
+    "agency": {
+      "$ref": "#/$defs/AgencyRef"
+    },
+    "kind": {
+      "enum": [
+        "API",
+        "FILE",
+        "STD",
+        "EXTERNAL_API",
+        "EXTERNAL_FILE"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "channel": {
+      "enum": [
+        "portal",
+        "external"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "portal_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Portal Url"
+    },
+    "synonyms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Synonyms",
+      "type": "array"
+    },
+    "summary_user": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Summary User"
+    },
+    "description_portal": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "포털 등록 설명 원문 (LLM 재작성 전)",
+      "title": "Description Portal"
+    },
+    "applicable_legislation": {
+      "items": {
+        "$ref": "#/$defs/Legislation"
+      },
+      "title": "Applicable Legislation",
+      "type": "array"
+    },
+    "accrual_periodicity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accrual Periodicity"
+    },
+    "sla": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sla"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "team": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Team"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "services": {
+      "items": {
+        "$ref": "#/$defs/Service"
+      },
+      "title": "Services",
+      "type": "array"
+    },
+    "distributions": {
+      "items": {
+        "$ref": "#/$defs/Distribution"
+      },
+      "title": "Distributions",
+      "type": "array"
+    },
+    "schema": {
+      "$ref": "#/$defs/TableSchema"
+    },
+    "facets": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Facets",
+      "type": "object"
+    },
+    "coverage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Coverage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "cycle": {
+      "default": "default",
+      "enum": [
+        "default",
+        "event",
+        "annual-batch",
+        "realtime",
+        "ended"
+      ],
+      "title": "Cycle",
+      "type": "string"
+    },
+    "classification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Classification"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "edges_hint": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Edges Hint",
+      "type": "array"
+    },
+    "verification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Verification"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "limits": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Limits"
+    },
+    "status": {
+      "default": "active",
+      "enum": [
+        "active",
+        "suspect_dead",
+        "hidden",
+        "ended"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "tier",
+    "title",
+    "sector",
+    "agency",
+    "kind",
+    "channel"
+  ],
+  "title": "Dataset",
+  "type": "object",
+  "$id": "https://pds.local/schemas/dataset.schema.json"
+}

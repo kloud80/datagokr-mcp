@@ -1,0 +1,219 @@
+# Dataset 15141808 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15141808'
+tier: verified
+title: 한국농수산식품유통공사_전국 공영도매시장 실시간 경매정보
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B552845
+  name: 한국농수산식품유통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141808/openapi.do
+synonyms:
+  - 도매시장
+  - 실시간
+  - 경매정보
+  - 공영 도매시장
+  - 경매
+  - 낙찰
+description_portal: '전국 도매시장법인과 공판장(전국 공영도매시장)에서 실시간으로 거래되는 경매정보는 농수산물의 품목, 거래량, 가격, 정산일자 등의 경매정보를 실시간으로 제공해 시장 동향을 파악하는 데 활용할 수 있습니다. 도매시장 통합 홈페이지를 통해 제공하는 데이터입니다.★ API 명세서가 첨부되어있습니다. API 활용에 참고하실 수 있습니다.* 도매시장 통합 홈페이지전국 32개 공영 도매시장의 다양한 정보를 한곳에 통합 제공하는 종합 플랫폼실시간 경매 현황부터 통계, 출하자 시스템, 지원 정책 등 광범위한 기능을 갖추고 있어, 농수산물 유통과 수급관리에 필수적인 디지털 인프라 역할 수행코드 정보는 한국농수산식품유통공사_농축수산물 표준코드 API를 조회 후 확인바랍니다. (https://www.data.go.kr/data/15141818/openapi.do)코드 종류 : whsl_mrkt_cd : 도매시장 코드corp_cd : 법인 코드unit_cd : 단위 코드sz_cd : 크기 코드plor_cd : 산지 코드pkg_cd : 포장 코드grd_cd : 등급 코드gds_lclsf_cd : 품목 코드 (대분류)gds_mclsf_cd : 품목 코드 (중분류)gds_sclsf_cd : 품목 코드 (소분류)* 일자관련 요청파라미터는 YYYY-MM-DD 형식으로 입력해야 정상적으로 처리됩니다.'
+team:
+  dept: 도매시장부
+services:
+  - op: /trades2
+    name: 전국 공영도매시장 실시간 경매정보 조회
+    endpoint: https://apis.data.go.kr/B552845/katRealTime2/trades2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: false
+        example: json
+        desc: '응답의 데이터 타입을 선택 json 또는 xml (기본값: json)'
+      - name: cond[whsl_mrkt_cd::EQ]
+        required: false
+        example: '110001'
+        desc: 도매시장코드가 검색값과 일치하는 데이터를 검색
+      - name: cond[corp_cd::EQ]
+        required: false
+        example: '11000101'
+        desc: 법인코드가 검색값과 일치하는 데이터를 검색
+      - name: cond[gds_lclsf_cd::EQ]
+        required: false
+        example: '06'
+        desc: 상품대분류코드가 검색값과 일치하는 데이터를 검색
+      - name: cond[gds_mclsf_cd::EQ]
+        required: false
+        example: '12'
+        desc: 상품중분류코드가 검색값과 일치하는 데이터를 검색
+      - name: cond[gds_sclsf_cd::EQ]
+        required: false
+        example: '98'
+        desc: 상품소분류코드가 검색값과 일치하는 데이터를 검색
+      - name: selectable
+        required: false
+        example: corp_cd
+        desc: 응답으로 받고 싶은 컬럼명을 선택하여 검색(구분자','로 다중선택)
+      - name: cond[trd_clcln_ymd::EQ]
+        required: true
+        example: '2025-11-19'
+        desc: 거래정산일자가 검색값과 일치하는 데이터를 검색
+      - name: cond[scsbd_dt::LIKE]
+        required: false
+        example: '2025-11-19'
+        desc: 경매일시가 검색값을 포함하는 데이터를 검색
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: corp_cd
+      title: 법인코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37040101'
+        - '24000103'
+        - '32010102'
+      stats:
+        min: 11000803
+        p50: 37040101
+        max: 37040101
+        unique: 4
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8459
+  rank_in_sector: 1
+  brm: 농축수산 - 농업·농촌
+  why: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요
+claims:
+  - id: c-15141808-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15141808.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15141808.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15141808-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141808-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15141808.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141808-04
+    kind: coverage
+    value: API 전체 건수 120,015 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15141808.json
+        observed_at: '2026-09-30'
+        detail: total 120015, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15141808-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141808-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141808-10
+    kind: pitfall
+    value: 전수 120,015건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 121회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15141808.json
+        observed_at: '2026-09-30'
+        detail: total 120015 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 120015
+  ops_ok: 1/1
+  latency_ms: 52
+  run: probe/runs/15141808.json
+  stats: probe/stats/15141808.json
+  data: probe/data/15141808/
+status: active

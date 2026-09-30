@@ -1,0 +1,244 @@
+# Dataset 15059991 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15059991'
+tier: verified
+title: 서울에너지공사_열판매량
+sector: 산업고용/에너지및자원개발/energy-usage
+agency:
+  id: B553734
+  name: 서울에너지공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059991/openapi.do
+synonyms:
+  - 지역난방
+  - 열판매
+  - 사용량
+  - 열에너지
+  - 판매실적
+  - 요금단가
+  - 지사정보
+  - 수요특성
+description_portal: 서울에너지공사의 월별 열 판매량 정보를 제공하는 공공데이터이다. 본 자료는 지역난방 열원의 상업적 공급 실적을 기반으로 하며, 열에너지의 실제 판매량과 관련된 정보를 포함한다. 주요 항목은 판매월, 지사명, 공급대상, 판매량(Gcal), 열단가, 총판매금액 등으로 구성된다. 열판매량은 각 지사별로 사용자에게 유상으로 공급된 열에너지의 양을 의미하며, 지사별 수익 구조, 지역별 수요 특성, 계절적 변동 요인 등을 분석하는 데 활용된다. 본 데이터는 공공기관의 에너지 판매 실적 분석, 열요금 책정 기준 검토, 지역별 판매 전략 수립 등의 실무적인 참고자료로 활용 가능하다. 또한 열에너지의 효율적 운영과 정책 수립을 위한 기초자료로서 활용도가 높다.
+team:
+  dept: 디지털관리부
+services:
+  - op: /getHeatSales
+    name: 월별 열판매량 조회
+    endpoint: https://apis.data.go.kr/B553734/iseheatsales/getHeatSales
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: returnType
+        required: false
+        example: xml/json
+        desc: 리턴타입
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: startDate
+        required: false
+        example: 2016-01
+        desc: 검색 시작 년월
+      - name: endDate
+        required: false
+        example: 2019-12
+        desc: 검색 종료 년월
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: businessCd
+      title: 업종코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '2'
+        - '1'
+      stats:
+        min: 1
+        p50: 2
+        max: 3
+        unique: 3
+    - name: heatsalesAmt
+      title: 난방 판매량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10400.9'
+        - '6342.0'
+        - '2032.4'
+      stats:
+        min: 507.5
+        p50: 11930.2
+        max: 403956.4
+        unique: 111
+    - name: business
+      title: 업종
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 공공용
+        - 업무용
+        - 주택용
+      stats:
+        unique: 3
+    - name: sumsalesAmt
+      title: 총 판매량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10400.9'
+        - '6383.7'
+        - '3050.5'
+      stats:
+        min: 1424.3
+        p50: 19101.1
+        max: 403956.4
+        unique: 111
+    - name: coldsalesAmt
+      title: 냉방 판매량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '0.1'
+        - '41.7'
+      stats:
+        min: 0
+        p50: 9.8
+        max: 34873.9
+        unique: 59
+    - name: dates
+      title: 년월
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2019-12
+        - 2019-11
+        - 2019-10
+      stats:
+        unique: 37
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6481
+  rank_in_sector: 189
+  brm: 산업고용 - 에너지및자원개발
+  why: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결
+claims:
+  - id: c-15059991-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059991.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059991.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15059991-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059991-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059991.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059991-04
+    kind: coverage
+    value: API 전체 건수 111 · 검증 수신 111행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059991.json
+        observed_at: '2026-09-30'
+        detail: total 111, rows 111
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059991-06
+    kind: admin_note
+    value: "세부 부문 '에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)'의 가치: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-usage
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059991-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 111
+  total_count: 111
+  ops_ok: 1/1
+  latency_ms: 119
+  run: probe/runs/15059991.json
+  stats: probe/stats/15059991.json
+  data: probe/data/15059991/
+status: active

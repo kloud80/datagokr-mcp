@@ -1,0 +1,244 @@
+# Dataset 15121954 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15121954'
+tier: verified
+title: 법무부_마을변호사  지역별 현황
+sector: 법률/법무및검찰/lawyers
+agency:
+  id: '1270000'
+  name: 법무부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121954/openapi.do
+synonyms:
+  - 마을변호사
+  - 무변촌
+  - 재능기부
+  - 지방소도시
+  - 읍면동
+description_portal: 법무부, 대한변호사협회, 행정안전부가 운영하는 마을변호사 제도는 변호사가 개업하지 않은 무변촌, 도서산간 지역 및 지방소도시 읍면동을 중심으로 운영됩니다. 이에 현재 서울특별시, 대전광역시, 광주광역시에는 마을변호사를 위촉하고 있지 않으며, 대구광역시, 부산광역시, 울산광역시, 인천광역시에는 법률서비스 접근성이 취약한 읍면동 단위의 마을에 한정하여 마을변호사를 위촉하고 있습니다. 마을변호사는 읍면동 단위로 마을을 담당하게 됩니다. 담당할 수 있는 마을의 개수에는 특별한 제한이 없으므로, 마을변호사 1명이 여러 개의 마을을 담당할 수 있으며, 반대로 1개의 마을에 여러 명의 마을변호사가 위촉될 수도 있습니다.
+team:
+  dept: 정보화데이터담당관
+services:
+  - op: /mabyun
+    name: 마을변호사 지역별 현황
+    endpoint: https://apis.data.go.kr/1270000/mojmabyun/mabyun
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '20'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: State
+      title: 도/시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기
+        - 경남
+        - 강원
+      stats:
+        unique: 3
+    - name: City
+      title: 시/군/구
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 화성시
+        - 광주시
+        - 양평군
+      stats:
+        unique: 55
+    - name: Village
+      title: 읍/면/동
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 오포읍
+        - 중앙동
+        - 초월읍
+      stats:
+        unique: 441
+    - name: AreaNote
+      title: 지역비고
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CityPublicServant
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 민경선
+        - 이지혜
+        - 김은지
+      stats:
+        unique: 56
+    - name: CityServDuty
+      title: 시군구직책
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주무관
+      stats:
+        unique: 1
+    - name: VillagePublicServant
+      title: 읍면동담당공무원
+      type: string
+      null_rate: 0.044
+      sample_values:
+        - 송란
+        - 윤별이
+        - 정지영
+      stats:
+        unique: 436
+    - name: VillageServDuty
+      title: 읍면동직책
+      type: code
+      null_rate: 0.044
+      sample_values:
+        - 주무관
+      stats:
+        unique: 1
+    - name: Attorney
+      title: 마을변호사
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 김영진
+        - 김학모
+        - 염성준
+      stats:
+        unique: 483
+    - name: AttorneyNote
+      title: 마을변호사비고
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 변호사·법무사·법무법인·외국법자문사
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5399
+  rank_in_sector: 70
+  brm: 법률 - 법무및검찰
+  why: 법률 시장 명부, 협회 원장은 포털 밖이라 법무부 현황·법무법인 주소가 대부분
+claims:
+  - id: c-15121954-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121954.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121954.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15121954-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15121954-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121954.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15121954-04
+    kind: coverage
+    value: API 전체 건수 3,008 · 검증 수신 1,000행 · 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15121954.json
+        observed_at: '2026-09-30'
+        detail: total 3008, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15121954-06
+    kind: admin_note
+    value: "세부 부문 '변호사·법무사·법무법인·외국법자문사'의 가치: 법률 시장 명부, 협회 원장은 포털 밖이라 법무부 현황·법무법인 주소가 대부분"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lawyers
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121954-07
+    kind: admin_note
+    value: '[법률 - 법무및검찰 · 결정] 출입국 관리가 중심. 출입국·체류, 변호사·법무사, 범죄·수사 통계만 (`law-deferred`, `law-non-core`). 체류 외국인·범죄 통계는 시군구 × 월 격자 원장으로 보고 지역 정보에 연결 (구름).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L595
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 3008
+  ops_ok: 1/1
+  latency_ms: 37
+  run: probe/runs/15121954.json
+  stats: probe/stats/15121954.json
+  data: probe/data/15121954/
+status: active

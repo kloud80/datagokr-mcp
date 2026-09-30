@@ -1,0 +1,708 @@
+# Dataset 15155124 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15155124'
+tier: verified
+title: 행정안전부_문화_숙박업 조회서비스
+sector: 문화관광/관광/lodging
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155124/openapi.do
+synonyms:
+  - 호텔
+  - 여관
+  - 숙박시설
+  - 여인숙
+  - 숙박
+description_portal: '문화_숙박업 데이터는 여관, 여인숙, 호텔 등 잠을 자고 머물수 있도록 시설 및 설비 등의 서비스를 제공하는 업소 정보 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 숙박업 인허가 정보를 일괄 취합하여 전국 데이터로 제공 - 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의- 해당 데이터 법령 소관기관 및 문의처 : 보건복지부 생활보건팀 / 044-202-2856 * 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 문화_숙박업 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/lodgings/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[KSRM_CNT::GTE]
+        required: false
+        desc: 한실수 이상의 값
+      - name: cond[WSRM_CNT::GTE]
+        required: false
+        desc: 양실수 이상의 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업자명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 문화_숙박업 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/lodgings/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BLDG_GRND_FLR_CNT
+      title: 건물지상층수
+      type: number
+      null_rate: 0.082
+      sample_values:
+        - '0'
+        - '2'
+        - '4'
+      stats:
+        min: 0
+        p50: 2
+        max: 234
+        unique: 29
+    - name: BLDG_PSN_SE_NM
+      title: 건물소유구분명
+      type: code
+      null_rate: 0.673
+      sample_values:
+        - 자가
+        - 임대
+      stats:
+        unique: 2
+    - name: BLDG_UDGD_FLR_CNT
+      title: 건물지하층수
+      type: number
+      null_rate: 0.099
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 13
+        unique: 9
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 해운대 오션스테이
+        - 스테이 디어문
+        - 황리단온도
+      stats:
+        unique: 989
+    - name: BZSTAT_SE_NM
+      title: 업태구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 숙박업(생활)
+        - 숙박업 기타
+        - 일반호텔
+      stats:
+        unique: 7
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.993
+      sample_values:
+        - '2026-06-08'
+        - '2026-09-09'
+        - '2026-09-11'
+      stats:
+        min: '2026-03-18'
+        max: '2026-09-11'
+        unique: 6
+    - name: CNDNAL_PRMSN_BGNG_YMD
+      title: 조건부허가시작일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CNDNAL_PRMSN_DCLR_RSN
+      title: 조건부허가신고사유
+      type: code
+      null_rate: 0.999
+      sample_values:
+        - 총7개호에서 숙박업 영업 가능
+      stats:
+        unique: 1
+    - name: CNDNAL_PRMSN_END_YMD
+      title: 조건부허가종료일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.054
+      sample_values:
+        - '397334.933024101'
+        - '343323.397621593'
+        - '396808.391755452'
+      stats:
+        min: 124621.184242356
+        p50: 230584.2175838545
+        max: 545527.842924526
+        unique: 847
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.054
+      sample_values:
+        - '186789.909588542'
+        - '513686.855260363'
+        - '186926.718703622'
+      stats:
+        min: -28556.0010995813
+        p50: 415470.87842051
+        max: 532497.550617553
+        unique: 847
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-07-14 11:38:15'
+        - '2026-05-02 22:39:55'
+        - '2026-09-12 22:09:00'
+      stats:
+        min: '2025-12-15'
+        max: '2026-09-29'
+        unique: 545
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - U
+      stats:
+        unique: 2
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업
+        - 폐업
+      stats:
+        unique: 2
+    - name: FML_PRCTR_CNT
+      title: 여성종사자수
+      type: number
+      null_rate: 0.259
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 3
+        unique: 4
+    - name: KSRM_CNT
+      title: 한실수
+      type: number
+      null_rate: 0.125
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 559
+        unique: 34
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-28 11:13:36'
+        - '2026-09-28 13:53:13'
+        - '2026-09-28 10:23:08'
+      stats:
+        min: '2025-12-11'
+        max: '2026-09-28'
+        unique: 1000
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-11'
+        - '2026-07-31'
+        - '2026-07-23'
+      stats:
+        min: '2025-12-09'
+        max: '2026-09-28'
+        unique: 190
+    - name: LCTN_AREA
+      title: 소재지면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '.00'
+        - '26.05'
+        - '95.62'
+      stats:
+        min: 0
+        p50: 242.79000000000002
+        max: 46677.69
+        unique: 931
+    - name: LCTN_ZIP
+      title: 소재지우편번호
+      type: string
+      null_rate: 0.204
+      sample_values:
+        - 612-847
+        - 110-111
+        - 613-828
+      stats:
+        unique: 425
+    - name: LOTNO_ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 해운대구 중동 1124-8 영무 파라드 호텔
+        - 강원특별자치도 양양군 양양읍 조산리 440-7
+        - 부산광역시 해운대구 중동 1381-5
+      stats:
+        unique: 906
+    - name: MLT_UTZTN_BSNSSP_YN
+      title: 다중이용업소여부
+      type: code
+      null_rate: 0.002
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: ML_PRCTR_CNT
+      title: 남성종사자수
+      type: number
+      null_rate: 0.259
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      stats:
+        min: 0
+        p50: 0
+        max: 37
+        unique: 5
+    - name: MNG_NO
+      title: 관리번호
+      type: string
+      semantic_type: pnu
+      null_rate: 0.0
+      sample_values:
+        - 5050000-201-2026-00014
+        - 4351000-214-2026-00027
+        - 3580000-214-2026-00010
+      stats:
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3000000'
+        - '3010000'
+        - '3330000'
+      stats:
+        min: 3000000
+        p50: 3640000
+        max: 6520000
+        unique: 159
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.003
+      sample_values:
+        - 인천광역시 영종구 신도시남로142번길 6, 메가스타 영종 3~10층 일부호 (운서동)
+        - 서울특별시 서초구 반포대로16길 30 (서초동)
+        - 강원특별자치도 양양군 현남면 동산큰길 21, 오션스테이 양양
+      stats:
+        unique: 984
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.042
+      sample_values:
+        - '48099'
+        - '03189'
+        - '18142'
+      stats:
+        min: 1114
+        p50: 25408
+        max: 63619
+        unique: 574
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+      stats:
+        unique: 2
+    - name: SNTTN_BZSTAT_NM
+      title: 위생업태명
+      type: code
+      null_rate: 0.002
+      sample_values:
+        - 숙박업(생활)
+        - 숙박업 기타
+        - 일반호텔
+      stats:
+        unique: 7
+    - name: TELNO
+      type: string
+      null_rate: 0.901
+      sample_values:
+        - 02-2222-5042
+        - 061-540-1164
+        - 032-752-1819
+      stats:
+        unique: 94
+    - name: USE_BGNG_GRND_FLR
+      title: 사용시작지상층
+      type: number
+      null_rate: 0.174
+      sample_values:
+        - '1'
+        - '2'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 34
+        unique: 18
+    - name: USE_BGNG_UDGD_FLR
+      title: 사용시작지하층
+      type: number
+      null_rate: 0.502
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 3
+        unique: 4
+    - name: USE_ED_GRND_FLR
+      title: 사용끝지상층
+      type: number
+      null_rate: 0.193
+      sample_values:
+        - '2'
+        - '0'
+        - '3'
+      stats:
+        min: 0
+        p50: 3
+        max: 59
+        unique: 28
+    - name: USE_ED_UDGD_FLR
+      title: 사용끝지하층
+      type: number
+      null_rate: 0.508
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 5
+        unique: 5
+    - name: WSRM_CNT
+      title: 양실수
+      type: number
+      null_rate: 0.004
+      sample_values:
+        - '2'
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 4
+        max: 529
+        unique: 88
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - MNG_NO
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2025-12-09 ~ 2026-09-29
+cycle: default
+classification:
+  subsector_name: 숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8033
+  rank_in_sector: 17
+  brm: 문화관광 - 관광
+  why: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천
+claims:
+  - id: c-15155124-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155124.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155124.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15155124-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-29 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15155124
+        observed_at: '2026-09-30'
+        detail: latest 2026-09-29, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155124-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15155124.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 37개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155124-04
+    kind: coverage
+    value: API 전체 건수 58,815 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2025-12-09 ~ 2026-09-29
+    evidence:
+      - type: measured
+        source: probe/runs/15155124.json
+        observed_at: '2026-09-30'
+        detail: total 58815, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155124-06
+    kind: admin_note
+    value: "세부 부문 '숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)'의 가치: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lodging
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155124-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155124-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155124.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155124-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15155124.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155124-12
+    kind: pitfall
+    value: 전수 58,815건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 59회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15155124.json
+        observed_at: '2026-09-30'
+        detail: total 58815 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 58815
+  ops_ok: 1/2
+  latency_ms: 141
+  latest: '2026-09-29'
+  lag_days: 1
+  run: probe/runs/15155124.json
+  stats: probe/stats/15155124.json
+  data: probe/data/15155124/
+status: active

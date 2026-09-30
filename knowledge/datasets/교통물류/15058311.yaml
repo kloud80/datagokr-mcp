@@ -1,0 +1,429 @@
+# Dataset 15058311 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15058311'
+tier: verified
+title: 한국도로교통공단_어린이보호구역내 어린이 교통사고 다발지역
+sector: 교통물류/도로/road-network
+agency:
+  id: B555234
+  name: 한국도로교통공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15058311/openapi.do
+synonyms:
+  - 어린이보호구역
+  - 스쿨존
+  - 어린이
+  - 교통사고
+  - 다발지역
+description_portal: '어린이보호구역에서 발생한 12세 이하 어린이 교통사고에 대한 사고다발지역 정보 - 대상사고 : 1년간 스쿨존 내에서 발생한 12세 이하 어린이 교통사고(어린이는 보행자, 자전거 승차자 또는 개인형이동수단(PM)승차자) - 다발지역 선정조건 : 반경 300m 내 대상사고 2건이상 발생지점 또는 사망 교통사고 발생지점- WMS 형태의 API 정보는 교통사고정보개방시스템(https://opendata.koroad.or.kr/api/sample.do)을 통해 확인하실 수 있습니다.*교통사고분석시스템(https://taas.koroad.or.kr)의 데이터를 기반으로 함'
+team:
+  dept: AI데이터전략처
+services:
+  - op: /getRestSchoolzoneChild
+    name: 스쿨존어린이사고다발지역정보 Rest 조회
+    endpoint: https://apis.data.go.kr/B552061/schoolzoneChild/getRestSchoolzoneChild
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchYearCd
+        required: true
+        example: '2021'
+        desc: 조회하고자 하는 연도값 입력(값 없을 시 공백리턴)
+      - name: siDo
+        required: true
+        example: '11'
+        desc: 코드종류 코드값전체 공백시 전체 선택서울특별시 11부산광역시 26대구광역시 27인천광역시 28광주광역시 29대전광역시 30울산광역시 31세종특별자치시 36경기도 41강원도 42충청북도 43충청남도 44전라북도 45전라남도 46경상북도 47경상남도 48제주특별자치도 50
+      - name: guGun
+        required: true
+        example: '320'
+        desc: '시도 코드종류 코드값서울특별시 강남구 680 강동구 740 강북구 305 강서구 500 관악구 620 광진구 215 구로구 530 금천구 545 노원구 350 도봉구 320 동대문구 230 동작구 590 마포구 440 서대문구 410 서초구 650 성동구 200 성북구 290 송파구 710 양천구 470 영등포구 560 용산구 170 은평구 380 종로구 '
+      - name: type
+        required: false
+        example: xml
+        desc: 결과형식(xml/json)
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 검색건수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getWMSSchoolzoneChild
+    name: 스쿨존어린이사고다발지역정보 WMS 조회
+    endpoint: https://apis.data.go.kr/B552061/schoolzoneChild/getWMSSchoolzoneChild
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: layers
+        required: true
+        desc: 레이어를 결정 freschoolzone 고정값 사용
+      - name: format
+        required: true
+        desc: 이미지 포맷을 결정 image/png 고정값 사용
+      - name: transparent
+        required: true
+        desc: 이미지의 투영성을 결정 TRUE 고정값 사용
+      - name: service
+        required: true
+        desc: 서비스 형태를 결정 WMS 고정값 사용
+      - name: version
+        required: true
+        desc: 서비스 버전을 결정 1.1.1 고정값 사용
+      - name: request
+        required: true
+        desc: 요청 형태를 결정 GetMap 고정값 사용
+      - name: srs
+        required: true
+        desc: 좌표계를 결정 EPSG:4326 고정값 사용
+      - name: bbox
+        required: true
+        desc: '바운더리박스로 대각선의 좌표를 결정 기본값(전국) : 126.0,33.0,132.0,38.5'
+      - name: width
+        required: true
+        desc: '결과 이미지의 가로 크기를 결정, 기본값 : 512'
+      - name: height
+        required: true
+        desc: '결과 이미지의 세로 크기를 결정, 기본값 : 469'
+      - name: searchYearCd
+        required: true
+        desc: 조회하고자 하는 연도값 입력
+      - name: siDo
+        required: true
+        desc: 법정동 시도 코드
+      - name: guGun
+        required: true
+        desc: 법정동 시군구 코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: afos_fid
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7283809'
+        - '7283795'
+      stats:
+        min: 7283795
+        p50: 7283802
+        max: 7283809
+        unique: 2
+    - name: afos_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026076'
+      stats:
+        min: 2026076
+        p50: 2026076
+        max: 2026076
+        unique: 1
+    - name: bjd_cd
+      type: number
+      semantic_type: bjd_cd
+      null_rate: 0.0
+      sample_values:
+        - '1132010700'
+      stats:
+        min: 1132010700
+        p50: 1132010700
+        max: 1132010700
+        unique: 1
+    - name: spot_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11320001'
+        - '11320002'
+      stats:
+        min: 11320001
+        p50: 11320001.5
+        max: 11320002
+        unique: 2
+    - name: sido_sgg_nm
+      type: code
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - 서울 도봉구1
+        - 서울 도봉구2
+      stats:
+        unique: 2
+    - name: spot_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울 도봉구 창동(서울자운초등학교 부근)
+        - 서울 도봉구 창동(창림초교교차로 부근)
+      stats:
+        unique: 2
+    - name: occrrnc_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
+    - name: caslt_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
+    - name: dth_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: se_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: sl_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
+    - name: wnd_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: geom_json
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '{"type":"Polygon","coordinates":[[[127.04544135,37.65494858],[127.04538956,37.65'
+        - '{"type":"Polygon","coordinates":[[[127.04190406,37.64305084],[127.04185228,37.64'
+      stats:
+        unique: 2
+    - name: lo_crd
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '127.042746400030'
+        - '127.039209114741'
+      stats:
+        min: 127.039209114741
+        p50: 127.04097775738549
+        max: 127.04274640003
+        unique: 2
+    - name: la_crd
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.655180461094'
+        - '37.643282576804'
+      stats:
+        min: 37.643282576804
+        p50: 37.649231518948994
+        max: 37.655180461094
+        unique: 2
+  foreign_keys:
+    - fields:
+        - bjd_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - sido_sgg_nm
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - lo_crd
+      reference:
+        key: coord
+      evidence: measured
+    - fields:
+        - la_crd
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.8255
+  rank_in_sector: 29
+  brm: 재난안전 - 안전관리
+  sector_rule: safety-misfiled-out
+  why: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)
+claims:
+  - id: c-15058311-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15058311.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15058311.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15058311-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058311-03
+    kind: key
+    value: '실측 조인 키: bjd_cd(bjd_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15058311.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058311-04
+    kind: coverage
+    value: API 전체 건수 2 · 검증 수신 2행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15058311.json
+        observed_at: '2026-09-30'
+        detail: total 2, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058311-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058311-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058311-10
+    kind: pitfall
+    value: 필수 파라미터 bbox, format, guGun, height, layers, request, searchYearCd, service, siDo, srs, transparent, version, width는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15058311.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058311-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getWMSSchoolzoneChild'
+    evidence:
+      - type: measured
+        source: probe/runs/15058311.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  total_count: 2
+  ops_ok: 1/2
+  latency_ms: 76
+  run: probe/runs/15058311.json
+  stats: probe/stats/15058311.json
+  data: probe/data/15058311/
+status: active

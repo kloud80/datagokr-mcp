@@ -1,0 +1,234 @@
+# Dataset 15062787 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15062787'
+tier: verified
+title: 경상남도_시군별경지면적
+sector: 농축수산/농업·농촌/farmland
+agency:
+  id: '6480000'
+  name: 경상남도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15062787/openapi.do
+synonyms:
+  - 시군별
+  - 경지
+  - 면적
+description_portal: 경상남도 시군, 경지 종류별 면적 조회 서비스
+team:
+  dept: 정보통신담당관
+services:
+  - op: /gyeongnamsigunplowarealist
+    name: 경상남도 시군별경지면적 정보
+    endpoint: https://apis.data.go.kr/6480000/gyeongnamsigunplowarea/gyeongnamsigunplowarealist
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: json
+        desc: JSON방식 호출
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: signguNm
+      title: 행정구역(시군)별(1)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 창원시
+        - 진주시
+        - 통영시
+      stats:
+        unique: 18
+    - name: nonAr
+      title: 논면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 5,427
+        - 6,050
+        - '482'
+      stats:
+        min: 482
+        p50: 4820.5
+        max: 8024
+        unique: 18
+    - name: batAr
+      title: 밭면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 4,107
+        - 6,907
+        - 2,274
+      stats:
+        min: 1217
+        p50: 3116
+        max: 6907
+        unique: 18
+    - name: totperAr
+      title: 가구당 경지면적(합)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.84'
+        - '0.91'
+        - '0.72'
+      stats:
+        min: 0.72
+        p50: 1.1949999999999998
+        max: 1.63
+        unique: 18
+    - name: nonperAr
+      title: 가구당 경지면적(논)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.67'
+        - '1.04'
+        - '1.08'
+      stats:
+        min: 0.13
+        p50: 0.67
+        max: 1.08
+        unique: 15
+    - name: batperAr
+      title: 가구당 경지면적(밭)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.44'
+        - '0.49'
+        - '0.39'
+      stats:
+        min: 0.36
+        p50: 0.48
+        max: 0.78
+        unique: 14
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 농지 필지 정보 (농업진흥지역·농지전용·팜맵 필지·농지은행·경지)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.637
+  rank_in_sector: 41
+  brm: 농축수산 - 농업·농촌
+  why: 농업진흥지역 여부·전용 가능성 = 농지 거래의 첫 질문, PNU·팜맵 폴리곤ID. 팜맵은 연 1회 대용량 공간 파일(file-periodic)
+claims:
+  - id: c-15062787-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15062787.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15062787.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15062787-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15062787-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15062787.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15062787-04
+    kind: coverage
+    value: API 전체 건수 18 · 검증 수신 18행 · 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15062787.json
+        observed_at: '2026-09-30'
+        detail: total 18, rows 18
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15062787-06
+    kind: admin_note
+    value: "세부 부문 '농지 필지 정보 (농업진흥지역·농지전용·팜맵 필지·농지은행·경지)'의 가치: 농업진흥지역 여부·전용 가능성 = 농지 거래의 첫 질문, PNU·팜맵 폴리곤ID. 팜맵은 연 1회 대용량 공간 파일(file-periodic)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#farmland
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15062787-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 18
+  total_count: 18
+  ops_ok: 1/1
+  latency_ms: 586
+  run: probe/runs/15062787.json
+  stats: probe/stats/15062787.json
+  data: probe/data/15062787/
+status: active

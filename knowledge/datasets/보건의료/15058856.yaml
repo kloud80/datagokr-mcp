@@ -1,0 +1,207 @@
+# Dataset 15058856 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15058856'
+tier: verified
+title: 국민건강보험공단_장기요양기관 시설별 상세조회 서비스
+sector: 보건의료/건강보험/long-term-care
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15058856/openapi.do
+synonyms:
+  - 장기요양기관
+  - 입소시설
+  - 재가기관
+  - 오픈API
+  - API
+  - 상세조회
+  - 서비스
+description_portal: 국민건강보험공단에서는 장기요양기관별 기본 현황과 세부 정보를 국민 여러분께 보다 투명하고 편리하게 제공하기 위하여 오픈API(Open Application Programming Interface) 서비스를 운영하고 있습니다. 본 서비스를 이용하면 장기요양기관의 명칭, 소재지, 운영 현황 등 주요 정보를 체계적으로 확인할 수 있으며, 이를 다른 응용 프로그램이나 시스템과 연계하여 다양하게 활용할 수 있습니다. 특히 연구자, 기업, 일반 국민 누구나 접근할 수 있어 공공데이터 활용도를 높이고 장기요양 서비스 이용 과정에서 신뢰할 수 있는 정보를 얻는 데 기여합니다. 보다 구체적인 활용 방법과 기술적 연계 절차, 제공되는 데이터 항목 및 유의사항 등은 공단에서 제공하는 오픈API 활용가이드 문서를 참고하여 주시기 바랍니다.
+team:
+  dept: 빅데이터운영실
+services:
+  - op: /getConvInsttDetailInfoList02
+    name: 협약기관 현황 상세 정보조회
+    endpoint: https://apis.data.go.kr/B550928/getLtcInsttDetailInfoService02/getConvInsttDetailInfoList02
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: longTermAdminSym
+        required: false
+        example: '14139000308'
+        desc: 장기요양기관코드
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '1'
+        desc: 행개수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: adptFrDt
+      title: 협약기간_시작날짜
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160101'
+        - '20150601'
+      stats:
+        min: 20150601
+        p50: 20155351
+        max: 20160101
+        unique: 2
+    - name: adptToDt
+      title: 협약기간_끝날짜
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '99991231'
+      stats:
+        min: 99991231
+        p50: 99991231
+        max: 99991231
+        unique: 1
+    - name: longTermAdminSym
+      title: 장기요양기관코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14139000308'
+      stats:
+        min: 14139000308
+        p50: 14139000308
+        max: 14139000308
+        unique: 1
+    - name: yoyangNm
+      title: 협약기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의료법인석경의료재단센트럴병원
+        - 더베스트내과의원
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 장기요양기관 (시설·재가 기관 검색·상세·등급 인정)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8587
+  rank_in_sector: 4
+  brm: 사회복지 - 노인·청소년
+  sector_rule: health-insurance-scattered
+  why: 고령 가구 수요 급증, 장기요양기관코드·좌표
+claims:
+  - id: c-15058856-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15058856.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15058856.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15058856-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058856-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058856.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058856-04
+    kind: coverage
+    value: API 전체 건수 2 · 검증 수신 2행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15058856.json
+        observed_at: '2026-09-30'
+        detail: total 2, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058856-06
+    kind: admin_note
+    value: "세부 부문 '장기요양기관 (시설·재가 기관 검색·상세·등급 인정)'의 가치: 고령 가구 수요 급증, 장기요양기관코드·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#long-term-care
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058856-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  total_count: 2
+  ops_ok: 1/1
+  latency_ms: 83
+  run: probe/runs/15058856.json
+  stats: probe/stats/15058856.json
+  data: probe/data/15058856/
+status: active

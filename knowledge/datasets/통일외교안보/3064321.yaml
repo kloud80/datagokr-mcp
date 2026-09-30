@@ -1,0 +1,271 @@
+# Dataset 3064321 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '3064321'
+tier: verified
+title: 병무청 병역판정 신체검사 정보
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1300000'
+  name: 병무청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3064321/openapi.do
+synonyms:
+  - 병역판정검사
+  - 신체검사
+  - 병역판정검사 신체검사
+  - 신장
+  - 체중
+  - BMI
+  - 검사 결과
+  - 병역
+description_portal: 병역판정검사 최초수검시 신장, 체중 등 신체검사 결과 정보(※BMI가 저체중 이거나 고도비만인 데이터는 표시되지 않습니다)* 현재 BMI 기준 18.5 이상 부터 35 이하 까지 표시 됩니다. (BMI 공개 기준은 병역판정검사과에서 검토 중)* 병역법 제11조에 따라 병역의무자는 19세가 되는 해에 병역을 감당할 수 있는지를 판정받기 위하여 지방병무청장이 지정하는 일시(日時)ㆍ장소에서 병역판정검사를 받아야 하며 병역판정검사를 받아야 하는데 받지 아니한 사람과 병역판정검사가 연기(延期)된 후 그 연기사유가 소멸된 사람은 그 해 또는 그 다음 해에 병역판정검사를 받아야 합니다.
+team:
+  dept: 병무청 병역판정검사과
+services:
+  - op: /getlist
+    name: 징병검사 수검자의 신장, 체중 등 신체정보 조회
+    endpoint: https://apis.data.go.kr/1300000/jBGSSCJeongBo2/getlist
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: birth
+      title: 생년
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2007'
+      stats:
+        min: 2007
+        p50: 2007
+        max: 2007
+        unique: 1
+    - name: bmi
+      title: BMI(체질량지수)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '23.7'
+        - '22.1'
+        - '21.8'
+      stats:
+        min: 18.5
+        p50: 23.5
+        max: 34.9
+        unique: 155
+    - name: geomsaDt
+      title: 신체검사년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026'
+      stats:
+        min: 2026
+        p50: 2026
+        max: 2026
+        unique: 1
+    - name: height
+      title: 신장
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '175.8'
+        - '174.9'
+        - '177.8'
+      stats:
+        min: 154.5
+        p50: 174.3
+        max: 194.9
+        unique: 252
+    - name: jbceong
+      title: 지방청
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경남
+        - 부산.울산
+        - 대구.경북
+      stats:
+        unique: 11
+    - name: leftSight
+      title: 왼쪽시력
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.1'
+        - '1.2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0.4
+        max: 2
+        unique: 14
+    - name: rightSight
+      title: 오른쪽시력
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.1'
+        - '1.2'
+        - '0.3'
+      stats:
+        min: 0
+        p50: 0.4
+        max: 2
+        unique: 14
+    - name: rnum
+      title: ROW NUMBER
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: weight
+      title: 체중
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '72.1'
+        - '67.2'
+        - '70.8'
+      stats:
+        min: 44.8
+        p50: 72
+        max: 130.5
+        unique: 417
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6686
+  rank_in_sector: 15
+  brm: 통일외교안보 - 병무행정
+  why: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+claims:
+  - id: c-3064321-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/3064321.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/3064321.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-3064321-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3064321-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3064321.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3064321-04
+    kind: coverage
+    value: API 전체 건수 160,595 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/3064321.json
+        observed_at: '2026-09-30'
+        detail: total 160595, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3064321-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3064321-10
+    kind: pitfall
+    value: 전수 160,595건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 161회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/3064321.json
+        observed_at: '2026-09-30'
+        detail: total 160595 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 160595
+  ops_ok: 1/1
+  latency_ms: 475
+  run: probe/runs/3064321.json
+  stats: probe/stats/3064321.json
+  data: probe/data/3064321/
+status: active

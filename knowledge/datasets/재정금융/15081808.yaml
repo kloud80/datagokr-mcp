@@ -1,0 +1,309 @@
+# Dataset 15081808 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15081808'
+tier: verified
+title: 국세청_사업자등록정보 진위확인 및 상태조회 서비스
+sector: 재정금융/세제/business-registration
+agency:
+  id: '1210000'
+  name: 국세청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15081808/openapi.do
+synonyms:
+  - 사업자정보
+  - 진위확인
+  - 상태조회
+  - 오픈API
+  - 휴폐업
+description_portal: 국세청에서 제공하는 사업자등록정보 진위확인 및 사업자등록 상태조회 API 서비스입니다.(진위확인) 사업자등록번호, 개업일자, 대표자명 등의 정보를 입력하여 국세청의 사업자정보와 일치하는지 진위여부 확인(상태조회) 사업자등록번호만으로 해당 번호의 사업자 운영상태(휴업, 폐업), 과세유형(일반, 과세, 면세), 폐업일자 정보 조회 (호출허용건수) 1회 100건, 1일 100만건 제한(테스트) 공공데이터포털 → 정보공유 → 공지사항 → "[국세청]사업자등록정보 진위확인 및 상태조회 서비스 오픈API 개방 안내" → 오픈API 테스트 링크※ 국세청에 등록된 사업자등록정보와 30분 주기로 업데이트 됨(신규 개업자는 1~2일 소요)
+team:
+  dept: 국세청 기획조정관실 국세데이터담당관실
+services:
+  - op: /validate
+    name: '입력한 사업자 정보에 대한 일치여부 제공. <br/>1회 호출 시 최대 100개 에 해당하는 사업자 상태정보 요청 가능.  <br/> 일치할경우, valid: 01 및 해당하는 사업자 정보 return. <br/>일치하지 않을 경우, valid: 02, valid_msg: 확인할 수 없습니다 return.'
+    endpoint: https://api.odcloud.kr/api/nts-businessman/v1/validate
+    method: POST
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: body
+        required: true
+    approval: unknown
+    traffic:
+      dev: 1000000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /status
+    name: 사업자 상태조회 정보 제공.<br/>1회 호출 시 최대 100개 에 해당하는 사업자 상태정보 요청 가능.
+    endpoint: https://api.odcloud.kr/api/nts-businessman/v1/status
+    method: POST
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: body
+        required: true
+        desc: 사업자 번호 Array 입력
+    approval: unknown
+    traffic:
+      dev: 1000000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: b_no
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1248100998'
+      op: /validate
+      stats:
+        min: 1248100998
+        p50: 1248100998
+        max: 1248100998
+        unique: 1
+    - name: valid
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '02'
+      op: /validate
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
+    - name: valid_msg
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 확인할 수 없습니다.
+      op: /validate
+      stats:
+        unique: 1
+    - name: request_param
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - "{'b_no': '1248100998', 'start_dt': '19690113', 'p_nm': '이재용'}"
+      op: /validate
+      stats:
+        min: '1248-10-09'
+        max: '1248-10-09'
+        unique: 1
+    - name: b_no
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1248100998'
+      op: /status
+      stats:
+        min: 1248100998
+        p50: 1248100998
+        max: 1248100998
+        unique: 1
+    - name: b_stt
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 계속사업자
+      op: /status
+      stats:
+        unique: 1
+    - name: b_stt_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      op: /status
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: tax_type
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부가가치세 일반과세자
+      op: /status
+      stats:
+        unique: 1
+    - name: tax_type_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      op: /status
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: end_dt
+      type: code
+      null_rate: 1.0
+      op: /status
+      stats:
+        unique: 0
+    - name: utcc_yn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      op: /status
+      stats:
+        unique: 1
+    - name: tax_type_change_dt
+      type: code
+      null_rate: 1.0
+      op: /status
+      stats:
+        unique: 0
+    - name: invoice_apply_dt
+      type: code
+      null_rate: 1.0
+      op: /status
+      stats:
+        unique: 0
+    - name: rbf_tax_type
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 해당없음
+      op: /status
+      stats:
+        unique: 1
+    - name: rbf_tax_type_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '99'
+      op: /status
+      stats:
+        min: 99
+        p50: 99
+        max: 99
+        unique: 1
+  foreign_keys:
+    - fields:
+        - b_no
+      reference:
+        key: bizno
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사업자등록 상태 (국세청 사업자 상태·휴폐업 조회)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.708
+  rank_in_sector: 1
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-nts-to-tax
+  why: 사업자번호 → 계속/휴업/폐업·과세유형. 모든 기업 원장의 생존 여부 검증
+claims:
+  - id: c-15081808-01
+    kind: access
+    value: 포털 활용신청 승인유형 미기록, serviceKey(query), 개발계정 일 1,000,000회. 2026-09-30 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15081808.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15081808.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 None
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15081808-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15081808-03
+    kind: key
+    value: '실측 조인 키: bizno(b_no)'
+    evidence:
+      - type: measured
+        source: probe/stats/15081808.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15081808-04
+    kind: coverage
+    value: 검증 수신 2행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15081808.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15081808-06
+    kind: admin_note
+    value: "세부 부문 '사업자등록 상태 (국세청 사업자 상태·휴폐업 조회)'의 가치: 사업자번호 → 계속/휴업/폐업·과세유형. 모든 기업 원장의 생존 여부 검증"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#business-registration
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15081808-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  ops_ok: 2/2
+  latency_ms: 64
+  run: probe/runs/15081808.json
+  stats: probe/stats/15081808.json
+  data: probe/data/15081808/
+status: active

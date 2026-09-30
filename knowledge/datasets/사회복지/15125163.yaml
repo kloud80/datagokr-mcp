@@ -1,0 +1,276 @@
+# Dataset 15125163 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15125163'
+tier: verified
+title: 성평등가족부_청소년 복지시설 관심 지점 정보 서비스
+sector: 사회복지/노인·청소년/youth-facilities-programs
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125163/openapi.do
+synonyms:
+  - 청소년
+  - 복지시설
+  - 관심정보
+  - 시설
+  - 위치
+  - 연락처
+description_portal: 청소년을 보호하는 청소년 복지 및 보호시설의 시설 정보를 제공하는 오픈 API형 데이터입니다.  해당 개방데이터는 청소년 복지 및 보호시설의 POI정보(도로명주소, 지번주소, 위도, 경도), 전화번호, 시설명, 시설 유형 등을 확인할 수 있습니다.  청소년 복지 및 보호시설의 분포와 유형을 파악할 수 있어, 위기 청소년 지원 정책 수립과 지역별 복지 자원 배치에 기초 자료로 활용됩니다. 또한 시설 접근성 분석, 서비스 연계 체계 구축, 청소년 보호 환경 개선 등 다양한 공공 행정 및 연구 분야에 활용될 수 있습니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getYouthLvgFcltPoiList
+    name: 청소년 복지시설 정보 조회
+    endpoint: https://apis.data.go.kr/1383000/yhis/YouthLvgFcltPoiService/getYouthLvgFcltPoiList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 결과타입
+      - name: fcltNm
+        required: true
+        example: 서울시립
+        desc: 시설명
+      - name: ctpvNm
+        required: true
+        example: 서울특별시
+        desc: 시도명
+      - name: sggNm
+        required: true
+        example: 종로구
+        desc: 시군구명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: fcltClsfNm
+      title: 시설분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 청소년쉼터
+      stats:
+        unique: 1
+    - name: fcltTypeNm
+      title: 시설종류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 복지시설
+      stats:
+        unique: 1
+    - name: fcltNm
+      title: 시설명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울시립일시청소년쉼터(이동형, 서북)
+        - 서울시립일시청소년쉼터(이동형, 서남)
+      stats:
+        unique: 2
+    - name: ctpvNm
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      stats:
+        unique: 1
+    - name: sggNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+      stats:
+        unique: 1
+    - name: daddr
+      title: 상세주소
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구 종로11길 11 YMCA 별관 3층 (인사동)
+      stats:
+        unique: 1
+    - name: lat
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.57091'
+      stats:
+        min: 37.57091
+        p50: 37.57091
+        max: 37.57091
+        unique: 1
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.9854441'
+      stats:
+        min: 126.9854441
+        p50: 126.9854441
+        max: 126.9854441
+        unique: 1
+    - name: zip
+      title: 우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03164'
+      stats:
+        min: 3164
+        p50: 3164
+        max: 3164
+        unique: 1
+    - name: rprsTelno
+      title: 대표전화번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '027221318'
+      stats:
+        min: 27221318
+        p50: 27221318
+        max: 27221318
+        unique: 1
+    - name: fcltExpln
+      title: 시설설명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - daddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.829
+  rank_in_sector: 1
+  brm: 사회복지 - 노인·청소년
+  why: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
+claims:
+  - id: c-15125163-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125163.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125163.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15125163-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125163-03
+    kind: key
+    value: '실측 조인 키: address(daddr), coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125163.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125163-04
+    kind: coverage
+    value: API 전체 건수 2 · 검증 수신 2행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15125163.json
+        observed_at: '2026-09-30'
+        detail: total 2, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15125163-06
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2
+  total_count: 2
+  ops_ok: 1/1
+  latency_ms: 807
+  run: probe/runs/15125163.json
+  stats: probe/stats/15125163.json
+  data: probe/data/15125163/
+status: active

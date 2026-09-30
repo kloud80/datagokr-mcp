@@ -1,0 +1,183 @@
+# Dataset 15047817 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15047817'
+tier: verified
+title: 중소기업은행_월평균&연평균 환율 정보
+sector: 재정금융/금융/exchange-rates
+agency:
+  id: B190021
+  name: 중소기업은행
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15047817/openapi.do
+synonyms:
+  - 환율
+  - 월평균
+  - 연평균
+description_portal: 중소기업은행에서 취급하는 국가별 통화의 월평균&연평균 환율정보 제공
+team:
+  dept: 데이터혁신부
+services:
+  - op: /getmmavXrtInfoInq
+    name: 중소기업은행 월평균 연평균 환율 정보
+    endpoint: https://apis.data.go.kr/B190021/mmavXrtInfoInq/getmmavXrtInfoInq
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: inqYm
+        required: true
+        example: '202307'
+        desc: 조회년월
+      - name: cocuCd
+        required: true
+        example: KRW
+        desc: 상대통화코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: baseCrcd
+      title: 기준통화코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - USD
+        - JPY
+        - EUR
+      stats:
+        unique: 58
+    - name: cocuCd
+      title: 상대통화코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+      stats:
+        unique: 1
+    - name: spcfMmavBltnXrt
+      title: 특정월평균고시환율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '963.32'
+        - '178.6'
+        - '1286.3'
+      stats:
+        min: 0.11
+        p50: 142.35500000000002
+        max: 4191.06
+        unique: 56
+    - name: spcfYavrBltnXrt
+      title: 특정년평균고시환율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '972.16'
+        - '184.22'
+        - '1305.41'
+      stats:
+        min: 0.11
+        p50: 142.73000000000002
+        max: 4246.97
+        unique: 56
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 환율 (수출입은행·기업은행 환율)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6851
+  rank_in_sector: 118
+  brm: 재정금융 - 금융
+  why: 환율 (수출입은행·기업은행 환율)
+claims:
+  - id: c-15047817-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15047817.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15047817.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15047817-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15047817-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15047817.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15047817-04
+    kind: coverage
+    value: 검증 수신 58행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15047817.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 58
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15047817-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 58
+  ops_ok: 1/1
+  latency_ms: 487
+  run: probe/runs/15047817.json
+  stats: probe/stats/15047817.json
+  data: probe/data/15047817/
+status: active

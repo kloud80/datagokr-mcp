@@ -1,0 +1,344 @@
+# Dataset 15124856 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15124856'
+tier: verified
+title: 국토교통부_사고누적구간 조회 서비스
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124856/openapi.do
+synonyms:
+  - 원인조사
+  - 사고지점
+  - 도시지역
+  - 사망사고
+  - 중상사고
+description_portal: '기준년도, 광역지자체명, 기초지자체명, 구간명을 기준으로 교통사고원인조사 대상 사고누적구간 정보 및 구간별 교통사고 상세 현황 정보 조회 서비스입니다. 교통사고원인조사 대상 지점을 선정합니다. 선정기준 : 과거 3년간(기준년도 포함)도시지역의 경우에는 600m,도시지역외의 경우에는 1,000m의 도로구간,사망사고 3건 이상이거나, 중상이상사고 10건 이상 발생한 지자체 내의 모든구간 주요제공정보 : 교통사고원인조사 대상 사고누적구간 정보(광역지자체명,구간명,발생건수 등)등'
+team:
+  dept: 교통안전정책과
+services:
+  - op: /T_OD_ACDNT_CMSCT_ACDNT_INFO
+    name: 사고누적구간_사고정보
+    endpoint: https://apis.data.go.kr/1613000/openapi/mng/service/ACDNT_CMSCT/T_OD_ACDNT_CMSCT_ACDNT_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        example: '2021'
+        desc: 교통사고원인조사 기준년도 * 기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: mtrpl_lcgv_nm
+        required: true
+        example: 서울
+        desc: 교통사고 발생 구간 법정동 시도에 해당하는 주소  예) 서울, 세종, 경북, 전북, 제주(O) 서울특별시(X), 제주도(X), 세종특별자치시(X)
+      - name: basic_lcgv_nm
+        required: true
+        example: 구로구
+        desc: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소  예) 서울특별시중구(X), 중구(O) *  단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로 표시
+      - name: seg_nm
+        required: true
+        example: 남부순환로(매봉초%20동쪽%20도로)
+        desc: '해당 사고가 발생한 교통사고 원인조사 대상 사고누적구간명 * 교통사고원인조사 대상 사고누적구간 : 도시지역의 경우 600m, 도시지역의 경우 1km의 도로구간 내에서 사망사고가 3건 이상이거나, 중상 이상의 사고가 10건 이상 발생한 구간'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /T_OD_ACDNT_CMSCT_SEG_INFO
+    name: 사고누적구간_구간정보
+    endpoint: https://apis.data.go.kr/1613000/openapi/mng/service/ACDNT_CMSCT/T_OD_ACDNT_CMSCT_SEG_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        desc: 교통사고원인조사 기준년도 -기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: mtrpl_lcgv_nm
+        required: true
+        desc: '교통사고 발생 구간 법정동 시도에 해당하는 주소  예)서울, 세종, 경북, 전북, 제주 '
+      - name: basic_lcgv_nm
+        required: false
+        desc: '교통사고 발생 구간 법정동 시도에 해당하는 주소  예)서울, 세종, 경북, 전북, 제주 '
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: acdnt_pnt_x
+      title: EPGS Code 5181 * 중심원점(GRS80)-false Y:50000
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '192506'
+        - '205092'
+        - '205681'
+      stats:
+        min: 184079
+        p50: 198053
+        max: 215666
+        unique: 57
+    - name: cnsld_index
+      title: 교통안전지표중 하나로, 다발도 및 심각도를 함께 고려하는 교통사고 통합지표(다발도 * 0.4 + 심각도*0.6)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3.65'
+        - '2.75'
+        - '2.87'
+      stats:
+        min: 2.45
+        p50: 3.29
+        max: 5.99
+        unique: 47
+    - name: acdnt_pnt_y
+      title: EPGS Code 5181 * 중심원점(GRS80)-false Y:50000
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '443598'
+        - '445288'
+        - '443031'
+      stats:
+        min: 439406
+        p50: 446341.5
+        max: 462005
+        unique: 58
+    - name: crtr_yr
+      title: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023'
+      stats:
+        min: 2023
+        p50: 2023
+        max: 2023
+        unique: 1
+    - name: mtrpl_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      stats:
+        unique: 1
+    - name: seg_nm
+      title: '해당 사고가 발생한 교통사고 원인조사 대상 사고누적구간명 * 교통사고원인조사 대상 사고누적구간 : 도시지역의 경우 600m, 도시지역의 경우 1km의 도로구간 내에서 사망사고가 3건 이상이거나, 중상 이상의 사고가 '
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 남부순환로(도곡역2번출구 앞 도로)
+        - 영동대로(삼성역3번출구 앞 도로)
+        - 광평로(신동아 708동 앞 도로)
+      stats:
+        unique: 58
+    - name: dth_nocs
+      title: 해당 구간에서 발생한 사망사고 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 4
+        unique: 4
+    - name: basic_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 관악구
+        - 송파구
+        - 동작구
+      stats:
+        unique: 23
+    - name: ocrn_nocs
+      title: 해당 구간에서 발생한 사고 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '10'
+        - '12'
+      stats:
+        min: 10
+        p50: 11
+        max: 23
+        unique: 12
+    - name: row_num
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 29.5
+        max: 58
+        unique: 58
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.713
+  rank_in_sector: 348
+  brm: 교통물류 - 도로
+  why: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침
+claims:
+  - id: c-15124856-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15124856.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15124856.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15124856-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15124856-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124856.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15124856-04
+    kind: coverage
+    value: API 전체 건수 58 · 검증 수신 58행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15124856.json
+        observed_at: '2026-09-30'
+        detail: total 58, rows 58
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15124856-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124856-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124856-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /T_OD_ACDNT_CMSCT_ACDNT_INFO'
+    evidence:
+      - type: measured
+        source: probe/runs/15124856.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 58
+  total_count: 58
+  ops_ok: 1/2
+  latency_ms: 79
+  run: probe/runs/15124856.json
+  stats: probe/stats/15124856.json
+  data: probe/data/15124856/
+status: active

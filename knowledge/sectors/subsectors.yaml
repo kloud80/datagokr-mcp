@@ -1,0 +1,2926 @@
+# 세부 부문: BRM 정책영역 하나에 행정 프로세스가 여럿 섞인 경우 정책영역 아래로 나눈다.
+# 원칙: 행정 프로세스 1개 = 근거법 1개+ = 개별 코드 1종. 정책영역 하나가 곧 부문이면(정부조달·공정거래) 세부 없이 둔다.
+# 규칙은 위에서부터, 첫 번째로 맞는 세부 부문이 이긴다. default는 아무것도 안 맞을 때.
+# depth: front = 심층(도시에) 대상 / back = 뒤로. cycle: event = 선거처럼 이벤트 때만 생성·확정 후 불변 (freshness 예외)
+- sector: 공공행정 - 국정운영
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/국정운영.md
+  subsectors:
+    - slug: election
+      name: 선거
+      novelty: high
+      depth: front
+      cycle: event
+      last_event: 2026-06-03      # 제9회 전국동시지방선거
+      match: {agency_name: 중앙선거관리위원회}
+    - slug: presidential-records
+      name: 대통령 기록
+      novelty: low
+      depth: back
+      match: {agency_name: 행정안전부 대통령기록관}
+    - slug: gazette-notice
+      name: 관보·고시공고
+      novelty: high
+      depth: back
+      match: {title_regex: "관보|입법예고|고시공고"}
+    - slug: local-council
+      name: 지방의회
+      novelty: medium
+      depth: back
+      match: {title_regex: "의회|의안|의원|5분발언|군정질문|회기"}
+    - slug: participation
+      name: 국민참여·제안
+      novelty: medium
+      depth: back
+      match: {agency_name: 국민권익위원회}
+    - slug: research-docs
+      name: 정책연구·세미나 자료
+      novelty: low
+      depth: back
+      match_any:
+        - {agency_name: 국토연구원}
+        - {agency_name: 경제인문사회연구회}
+    - slug: policy-pledge
+      name: 정책·공약·국정성과
+      novelty: low
+      depth: back
+      match: {title_regex: "공약|정책|구정현황|국회지적|만족|국정과제"}
+  default: {slug: misc, name: 기타(성격 불명·오분류), depth: back}
+
+- sector: 공공행정 - 정부자원관리
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/정부자원관리.md
+  note: >
+    정부가 가진 자원(조직·인력·재산·물품·정보)을 관리하는 내부 업무. 국민 대상 서비스는 적지만 전체 시스템의 조인 키 원장(행정표준코드)과
+    PNU 체인(국유·공유재산)이 있어 다른 목적의 수요에서 연계 가능성이 높다 → 목록 전체를 보관하고 세부 부문을 촘촘히 나눈다.
+  subsectors:
+    - slug: reference-codes
+      name: 행정표준코드·정부조직
+      novelty: low
+      depth: front
+      cross_cutting: true
+      match_any:
+        - {title_regex: "행정표준코드"}
+        - {title_regex: "정부조직|공공기관현황|공공기관 현황|공공기관 시설정보"}
+    - slug: portal-meta
+      name: 공공데이터포털 메타 (시스템 자체 문서)
+      novelty: low
+      depth: system
+      match_any:
+        - {id: ["15062804", "15121937", "15156444"]}
+        - {title_regex: "공공데이터 (목록|파일|활용|제공기관|미제공)|개방 공공데이터"}
+    - slug: state-property
+      name: 국유·공유재산
+      novelty: high
+      depth: front
+      match_any:
+        - {agency_name: 한국자산관리공사}
+        - {title_regex: "공유재산|국유|국공유|시유재산|구유|일반재산|폐교재산|공유지|자산관리 현황|고정자산|공공건축물"}
+    - slug: civil-service
+      name: 공무원·인사
+      novelty: low
+      depth: hold
+      match_any:
+        - {agency_name: 인사혁신처}
+        - {title_regex: "채용|장차관|인재DB|인재 ?데이터베이스"}
+    - slug: it-resources
+      name: 정보자원
+      novelty: low
+      depth: back
+      match: {title_regex: "정보자원|정보시스템|EA|소프트웨어|SW|전산|OA|PC|데이터센터|웹사이트|홈페이지|그룹웨어|SMS|게시판|네트워크|본인확인"}
+    - slug: open-facilities
+      name: 공공자원 개방·대관 (공유누리)
+      novelty: medium
+      depth: hold
+      match: {title_regex: "공공개방자원|공유서비스|공유누리|개방자원|개방시설|시설개방|시설대관|대관|회의실|공구대여|나눔장터|공공시설 이용요금"}
+    - slug: records-facilities
+      name: 기록·청사·차량
+      novelty: low
+      depth: back
+      match: {title_regex: "기록물|기록원|청사|공용차량|관용차량|차량 현황|차량정보|차량현황|운영시설|시설현황|현수막|게시대|게시시설|벽보"}
+  default: {slug: misfiled, name: 오분류(타 부문 성격), depth: back}
+
+- sector: 공공행정 - 공정거래
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/공정거래.md
+  note: 공정위의 등록·지정·공시 4개 체인. 근거법·개별 코드가 체인마다 달라 세부 부문으로 나누고, 모두 사업자등록번호로 묶인다.
+  subsectors:
+    - slug: business-group
+      name: 기업집단
+      novelty: medium
+      depth: front
+      match: {title_regex: "기업집단포털"}
+    - slug: franchise
+      name: 가맹사업
+      novelty: medium
+      depth: front
+      match: {title_regex: "가맹|페어데이터"}
+    - slug: special-sales
+      name: 전자상거래·특수판매
+      novelty: high
+      depth: front
+      match: {title_regex: "통신판매|다단계|방문판매|후원방문|전화권유"}
+    - slug: prepaid-installment
+      name: 상조(선불식 할부거래)
+      novelty: medium
+      depth: front
+      match: {title_regex: "선불식할부|할부거래"}
+  default: {slug: excluded-rest, name: 제외 대상(4개 체인 밖), depth: back}
+
+- sector: 공공행정 - 법제
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/법제.md
+  note: >
+    국회(open.assembly.go.kr)·법제처(open.law.go.kr) 외부 API가 거의 전부. 가치 기준은 "LLM이 이미 아는가" — 법령 본문·규칙은 이미
+    학습·공개돼 부가가치가 낮고, 어제 발의된 의안·지난주 선고된 판례·오늘 표결처럼 빨리 올라오는 세부 원장이 가치 (구름 2026-09-28).
+  subsectors:
+    - slug: api-catalog
+      name: 국회 OPEN API 카탈로그 (시스템 자체 문서)
+      depth: system
+      novelty: low
+      match: {id: ["15125891"]}
+    - slug: docs-guides
+      name: 조약·영문·생활법령·용어·해설서
+      depth: back
+      novelty: low
+      match: {title_regex: '^\(영문\)|편람|매뉴얼|길잡이|길라잡이|사례집|백서|해설|입안심사 기준|정비기준|교재|지침|주석서|법제한류|법제실무|경제 투자 법령|번역|중문|영문|조약|생활법령|백문백답|용어|세계법제|국가코드|해석 연구보고서|한글변환|헌법과|청소년법제관|법제업무'}
+    - slug: bill
+      name: 의안·입법 (국회 의안 + 정부입법)
+      depth: front
+      novelty: high
+      value_source: 시의성 — 발의·심사·처리가 당일 단위로 바뀜. 모델이 모름
+      match: {title_regex: '의안|법률안|입법예고|입법계획|입법현황|정부입법|행정예고|계류|처리안건|제안설명서|제안이유|개정대상|서면질의답변|예결산|입법예고관련'}
+    - slug: case-law
+      name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
+      depth: front
+      novelty: high
+      value_source: 시의성 + 희소성 — 판례·결정례·해석례는 등록 시점 이후만 가치
+      match: {title_regex: '판례|헌재결정|법령해석|행정심판|재결례|결정문|의견제시사례'}
+    - slug: assembly-activity
+      name: 의정 활동 (의원·표결·회의·청원·감사)
+      depth: front
+      novelty: high
+      value_source: 시의성 — 표결·회의 즉시. 의안과 결합해 "누가 무엇을"
+      match: {agency_name: 국회 국회사무처, title_regex: '의원|표결|회의록|일정|청원|청문회|국정감사|국정조사|위원회|교섭단체|회기|의정활동|의사중계|정치일정|정당|시정조치|시정 및 처리|연구단체|퇴직 공직자|회의별|회의록별|영상|시청각'}
+    - slug: local-ordinance
+      name: 자치법규·행정규칙
+      depth: front
+      novelty: medium
+      value_source: 지자체 단위 희소성 — 모델이 잘 모르고, 도시에 "행정 처리 흐름"의 근거
+      match: {title_regex: '자치법규|행정규칙|학칙|우수조례|조례'}
+    - slug: statute
+      name: 법령 원장 (연결·변경 감지용 마스터)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 내용이 아니라 연결과 변경 감지 — 모든 도시에의 법적 근거를 법령ID로 묶고, 시행일·개정 이력으로 무엇이 바뀌었나를 잡는다
+      match_any:
+        - {title_regex: '법령|조문|시행일|신구법|3단 비교|위임|체계도|연혁|변경이력|별표|서식|공포|관보|약칭|편장절관|한눈보기|지식베이스|규제관련|삭제 데이터'}
+        - {agency_name: 법제처}
+    - slug: legislative-research
+      name: 입법·정책 연구 간행물
+      depth: back
+      novelty: low
+      match: {agency_name: [국회 국회사무처, 국회 국회도서관, 국회 국회입법조사처]}
+  default: {slug: misc, name: 기타(타 기관), depth: back}
+
+- sector: 공공행정 - 정부조달
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/정부조달.md
+  novelty: high
+  note: 세부 부문 없음(행정 프로세스 하나). 오늘 올라온 공고·낙찰·계약은 모델이 모름 → 시의성 높음
+  subsectors: []
+
+- sector: 공공행정 - 지방행정·재정지원
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/지방행정·재정지원.md
+  note: >
+    대상은 지방재정 공시·국고/지방보조금·주민등록 셋. 나머지는 목록(지방공기업·출자출연 명부와 경영공시, 전국 표준데이터 목록)만 남기고 제거.
+    PK가 자치단체코드·행정동코드라 행정표준코드(reference-codes)와 바로 붙는다.
+  subsectors:
+    - slug: subsidy
+      name: 국고·지방보조금
+      depth: front
+      novelty: high
+      value_source: 보조사업 단위 원장 — "내가 받을 수 있는 보조금". 모델이 모르는 원장, 사업자번호로 국세청·공정거래·상권과 연결
+      match_any:
+        - {agency_name: 기획예산처}
+        - {title_regex: '지방보조금_|지방보조금통합관리시스템'}
+    - slug: population-registry
+      name: 주민등록 인구·세대
+      depth: front
+      novelty: medium
+      granularity_floor: 1.0
+      value_source: 행정동·법정동·통반 × 월 시계열. 집계지만 공간 결합의 기본 축 (구름 "집계여도 주요 데이터")
+      match: {agency_name: 행정안전부, title_regex: '주민등록|읍면동 하부행정기관|외국인 주민'}
+    - slug: local-finance
+      name: 지방재정 공시 (지방재정365)
+      depth: front
+      novelty: medium
+      value_source: 지표(재정자립도 등)는 모델이 알지만 세출 세부사업 단위 원장("우리 구가 어디에 얼마 썼나")은 모름
+      match: {agency_name: 행정안전부, title_regex: '지방재정|지방세|교부세|재정자립|재정자주|통합재정|시가표준액|순세계잉여금'}
+    - slug: local-public-institutions
+      name: 지방공기업·출자출연기관 (목록·경영공시)
+      depth: back
+      novelty: low
+      match_any:
+        - {agency_name: 행정안전부 한국지역정보개발원}
+        - {title_regex: '지방공기업|공기업|출자출연|지방공공기관'}
+    - slug: national-standard-lists
+      name: 전국 표준데이터 목록
+      depth: back
+      novelty: low
+      match: {list_type: STD}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 공공행정 - 국민권익·인권
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/국민권익·인권.md
+  note: 민원 분석 하나만 대상. 민원빅데이터 분석정보 API는 연도별로 따로 등록된 같은 스키마(2022~2025) — 한 도시에로 묶고 연도는 series(continues)로
+  subsectors:
+    - slug: civil-complaints
+      name: 민원 분석 (민원빅데이터)
+      depth: front
+      novelty: high
+      value_source: 지역(행정구역) × 기관 × 키워드 × 월 민원 신호 — 지역 이슈의 가장 빠른 신호, 모델이 모름. 행정구역코드로 인구·실거래·상가와 결합
+      match: {agency_name: 국민권익위원회, title_regex: '민원빅데이터'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 과학기술 - 우정
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/과학기술/우정.md
+  note: 우편번호·배달·주소만 대상. 행안부 도로명주소(주소검색 API·주소DB)는 행정표준코드와 같은 조인 키 원장 성격이라 cross-cutting 마스터로
+  subsectors:
+    - slug: address-master
+      name: 도로명주소 마스터 (주소검색 API·주소DB)
+      depth: front
+      novelty: medium
+      cross_cutting: true
+      value_source: 주소 문자열 → 도로명코드·건물관리번호·법정동코드·좌표 정규화. 모든 주소 컬럼 데이터의 조인 입구 (정부자원관리 gap address-master 해소)
+      match: {agency_name: 행정안전부, title_regex: '주소|도로명|기초구역|지도제공'}
+    - slug: postal-delivery
+      name: 우편번호·배달
+      depth: front
+      novelty: medium
+      value_source: 우편번호(기초구역) 단위 택배·배달 물량, 소포 종적 — 지역 소비·물류 신호
+      match: {title_regex: '우편번호|배달|종적'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 과학기술 - 과학기술연구
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/과학기술/과학기술.md
+  note: 과학기술진흥·연구를 하나로. 대상은 국가R&D·지식재산·학술문헌 + 연구개발특구·과기정통부 기관 목록. 사업자번호가 다른 부문(조달·공정거래·보조금)과의 연결 고리
+  subsectors:
+    - slug: intellectual-property
+      name: 지식재산 (특허·상표·디자인, KIPRIS)
+      depth: front
+      novelty: high
+      value_source: 출원·공개·등록이 공개 즉시 — 경쟁사 출원 동향, 기술 탐색. 출원인 법인·사업자로 기업 데이터와 연결
+      match: {agency_name: [지식재산처, 한국특허전략개발원]}
+    - slug: national-rnd
+      name: 국가R&D 과제·성과 (NTIS)
+      depth: front
+      novelty: medium
+      value_source: 과제·참여기관·성과 원장 — 사업자번호 기준 기업 R&D 프로필. 갱신은 연차 보고 시점에 몰림(annual-batch)
+      match: {title_regex: '국가R&D|국가연구개발|NTIS|과학기술표준분류|연구개발 RND|R&D'}
+    - slug: rnd-special-zone
+      name: 연구개발특구
+      depth: front
+      novelty: medium
+      value_source: 특구 입주기관·연구소기업·사업화 공개기술·협약과제 — 특구 단위 기업·기술 원장
+      match: {agency_name: (재)연구개발특구진흥재단}
+    - slug: scientific-literature
+      name: 학술문헌 (KCI·ScienceON)
+      depth: front
+      novelty: low
+      value_source: 모델이 대부분 아는 영역 — 최신 국내 논문·인용·연구자 정보만 가치
+      match: {title_regex: 'KCI|ScienceON|AIDA'}
+    - slug: msit-org-lists
+      name: 과기정통부 기관·사업자 목록
+      depth: back
+      novelty: low
+      match: {agency_name: 과학기술정보통신부}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 과학기술 - 방송통신
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/과학기술/방송통신.md
+  note: 주소나 사업자번호가 있는 원장만 남기고 통계는 배제
+  subsectors:
+    - slug: public-wifi
+      name: 공공와이파이
+      depth: front
+      novelty: low
+      match: {title_regex: '와이파이|WIFI|Wi-Fi|무선인터넷'}
+    - slug: radio-stations
+      name: 무선국·기지국
+      depth: front
+      novelty: medium
+      value_source: 기지국·무선국 위치 — 건물 옥상 임대·전자파 입지 신호 (좌표 공개 수준은 Phase 2 확인)
+      match: {title_regex: '무선국|기지국|전파|전자파'}
+    - slug: telecom-business-registry
+      name: 방송통신 사업자·업체 원장
+      depth: front
+      novelty: medium
+      value_source: 정보통신공사업·기간통신·알뜰폰·방송사업자·광고회사 등 사업자 원장 — 사업자번호·주소로 상권·기업 데이터와 결합
+      match: {title_regex: '사업자|공사업|판매업|업체|광고회사|방송사업|기간통신|알뜰폰|책임자|감청|시험기관|감리원|유지보수|언론매체'}
+  default: {slug: other-address, name: 기타 주소 원장, depth: back}
+
+- sector: 교육 - 고등교육
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교육/고등교육.md
+  note: >
+    개별화되고 확보 가능한 데이터 대부분을 살린다(수요가 많다). 학교코드 PK의 연 단위 공시가 중심이고, 대학은 배후 수요(학생 수·기숙사·유학생)의
+    원천이라 대학가 주거·상권 분석과 직결. 학교코드가 대학알리미·KEDI·나이스 세 체계라 매핑이 선결 과제
+  subsectors:
+    - slug: admissions
+      name: 입시
+      depth: front
+      novelty: high
+      value_source: 전형·모집인원·경쟁률·입시 결과는 매년 바뀌고 대학별로 흩어짐 — 한 곳 비교 가치
+      match: {title_regex: '입시|입학|전형|신입생 모집|모집정보'}
+    - slug: international-students
+      name: 유학생
+      depth: front
+      novelty: medium
+      value_source: 대학별 외국인 유학생·정부초청장학생 — 대학가 특정 주거 수요
+      match: {agency_name: 교육부 국립국제교육원}
+    - slug: scholarship-loans
+      name: 장학·학자금
+      depth: front
+      novelty: medium
+      match: {title_regex: '장학|학자금|대출|등록금 납부|근로|학비감면|이자면제|분할상환|연합생활관'}
+    - slug: higher-ed-funding
+      name: 재정지원·융자·폐교
+      depth: front
+      novelty: low
+      match: {title_regex: '재정지원|사학진흥기금|융자|행복기숙사|폐교'}
+    - slug: lecture-curriculum
+      name: 강의·교육과정
+      depth: back
+      novelty: low
+      match: {title_regex: 'KOCW|강의|교육과정|커리큘럼|교과목'}
+    - slug: academic-info
+      name: 학술정보 (RISS 등)
+      depth: back
+      novelty: low
+      match: {title_regex: 'RISS|학술|논문'}
+    - slug: university-disclosure
+      name: 대학 공시·현황 (대학알리미·대학재정)
+      depth: front
+      novelty: medium
+      value_source: 학교 위치·학생·교원·기숙사·등록금·재정 — 재학생 수 − 기숙사 수용 = 원룸 수요, 충원율 하락 = 대학가 상권 쇠퇴 신호
+      match_any:
+        - {agency_name: [한국대학교육협의회, 한국사학진흥재단, 교육부, 한국교육개발원, 한국전문대학교육협의회, 한국장학재단, 한국교육학술정보원]}
+        - {list_type: STD}
+        - {title_regex: '대학'}
+  default: {slug: other, name: 기타, depth: back}
+
+- sector: 교육 - 교육일반
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교육/교육일반.md
+  note: >
+    대상은 학교 기본정보·학구도/통학·학원/교습소·교육시설/환경 네 가지. 교원·학생 통계와 교육 행정·재정은 학교 기본정보 소속으로 연계 가능한 것만.
+    부동산 관점에서 학구·학원·학교 신설이 주택 수요를 가장 직접 설명한다
+  subsectors:
+    - slug: school-districts
+      name: 학구도·통학구역·학군
+      depth: front
+      novelty: medium
+      value_source: '이 아파트는 어느 학교 배정인가 — 주택 선택 1순위. 학구 경계가 가격 차이. 연 1회 조정. 폴리곤인지 주소 범위 텍스트인지 Phase 2 확인'
+      match: {title_regex: '학구|통학구역|학군|학교군'}
+    - slug: private-academies
+      name: 학원·교습소
+      depth: front
+      novelty: medium
+      value_source: 학원가 밀집도 = 학원 상권이자 주택 수요 신호. 교육청별 파일·API가 섞여 제목 패턴으로 군집
+      match: {title_regex: '(?<!대)학원|교습소|개인과외'}
+    - slug: school-facilities-env
+      name: 교육시설·환경 (신설·통폐합·보호구역)
+      depth: front
+      novelty: medium
+      value_source: 신설 예정 학교 = 신도시 수요, 통폐합·폐교 = 구도심 쇠퇴, 교육환경보호구역 = 개발 규제
+      match: {title_regex: '교육환경보호|보호구역|신설학교|신설예정|개교예정|통폐합|학교시설|시설물정보|폐교'}
+    - slug: school-registry
+      name: 학교 기본정보 (+연계 가능한 통계·재정)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 표준 학교코드 마스터 — 고등교육의 세 학교코드 체계를 묶는 기준. 교원·학생·학급 통계, 교육청·학교 재정은 학교/기관 키로 붙는 것만
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 교육 - 평생·직업교육
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교육/평생·직업교육.md
+  note: 국가자격만 먼저 본다. 나머지(평생교육 강좌·학점은행·직업훈련 과정 등)는 우선 배제
+  subsectors:
+    - slug: national-qualifications
+      name: 국가자격 (국가기술자격·국가전문자격)
+      depth: front
+      novelty: medium
+      value_source: 종목·시험 일정·합격률·자격 보유 — 채용·창업 요건, 업종 인허가(면허제한)와 연결
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 교육 - 유아및초·중등교육
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교육/유아및초·중등교육.md
+  note: >
+    국민 접점이 교육 분야에서 가장 넓은 영역. 개별 기관·학생·학교 단위 데이터는 대부분 살리고 표준 학교코드(나이스 SD_SCHUL_CODE + 교육청코드 복합키)
+    중심으로 정리. 지역별 통계는 배제. 유치원코드(알리미)·어린이집 코드와의 매핑이 선결 과제
+  subsectors:
+    - slug: school-daily
+      name: 나이스 일상 정보 (급식·학사일정·시간표·학급)
+      depth: front
+      novelty: high
+      cycle: daily
+      value_source: 급식 식단(알레르기 포함)·학사일정은 매일·매주 갱신 — 학부모 수요 최상위, 모델은 모름
+      match: {title_regex: '나이스|NEIS|급식|식단|학사일정|시간표|학급정보|학급 정보'}
+    - slug: kindergarten
+      name: 유치원 (알리미·처음학교로)
+      depth: front
+      novelty: medium
+      value_source: 유치원 위치·원아 수 = 젊은 가구의 공간 분포 — 주거 수요 선행 지표. 어린이집(사회복지)과 짝
+      match: {title_regex: '유치원|처음학교로|유아'}
+    - slug: after-school-care
+      name: 돌봄·늘봄·방과후
+      depth: front
+      novelty: medium
+      match: {title_regex: '돌봄|늘봄|방과후'}
+    - slug: high-school-admissions
+      name: 고입·전형·배정
+      depth: front
+      novelty: high
+      cycle: event
+      match: {title_regex: '고입|입학|전형|배정|모집'}
+    - slug: special-education
+      name: 특수·대안·다문화
+      depth: front
+      novelty: low
+      match: {title_regex: '특수|대안|다문화|외국인학교'}
+    - slug: school-disclosure
+      name: 학교알리미 공시·학교 단위 원장
+      depth: front
+      novelty: medium
+      value_source: 학교별 학생·학급·교원·전출입·시설·예결산 — 학구 단위 인구 이동의 가장 빠른 신호 (교육일반 학구도와 결합)
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 교통물류 - 철도
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교통물류/철도.md
+  note: >
+    대부분 살린다. 역세권(역 좌표·출입구)·신설 노선 계획·승하차 인원은 주거·상가 가치의 세 축. 역 코드가 기관마다 달라(코레일·도시철도 6곳·서울시·교통카드
+    정류장ID·국가철도공단 GIS) 통합(transit_node_cd)이 이 영역의 핵심 과제
+  subsectors:
+    - slug: rail-plans
+      name: 철도 건설 계획 (국가철도망·광역철도·GTX)
+      depth: front
+      novelty: high
+      cycle: event
+      value_source: 계획 단계 변경·개통 예정은 가격 선행 신호. 계획 단계 역은 행정동 수준 위치만(좌표 없음)
+      match: {title_regex: '국가철도망|구축계획|건설|GTX|광역철도|개통|철도사업|철도건설'}
+    - slug: metro-ridership
+      name: 승하차·혼잡·통행
+      depth: front
+      novelty: medium
+      value_source: 역별 시간대별 승하차 = 유동인구의 가장 정직한 대체 지표, 교통카드 OD = 상권 배후지
+      match: {title_regex: '승하차|하차|혼잡|이용인원|이용객|환승인원|수송|OD|통행|이동유형|발권'}
+    - slug: rail-realtime
+      name: 실시간 도착·시간표·운임 (조회 도구)
+      depth: front
+      novelty: high
+      value_source: 분석용이 아니라 서비스용 조회 — 전략 응답에서 access.mode realtime-query로 표시
+      match: {title_regex: '실시간|도착|시간표|시각표|운행정보|운임|요금|첫차|막차|좌석|열차 ?정보|TAGO|진위'}
+    - slug: rail-network
+      name: 철도망·역·출입구·시설
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 역 좌표·출입구·환승 — 역세권 판정의 기준. transit_node_cd 매핑 마스터
+      match: {title_regex: '역|노선|출입구|좌표|환승|선로|GIS|승강장|주소데이터|엘리베이터|에스컬레이터|편의시설|주차'}
+    - slug: rail-safety
+      name: 철도 안전·사고
+      depth: back
+      novelty: low
+      match: {title_regex: '사고|안전|운행장애|점검|내진|소화기'}
+    - slug: rail-freight
+      name: 철도 물류·화물
+      depth: back
+      novelty: low
+      match: {title_regex: '화물|물류|컨테이너|CY'}
+  default: {slug: rail-other, name: 철도 기타 (운영·안내·유실물 등), depth: back}
+
+- sector: 교통물류 - 항공·공항
+  decided_at: 2026-09-28
+  decided_by: 구름
+  doc: knowledge/sectors/교통물류/항공·공항.md
+  note: >
+    운항정보·항공통계·항공운송사업·항공기 등록·드론·공항코드까지만. 공항코드(IATA/ICAO)가 운항·통계·노선을 잇는 키이고,
+    공항 운영기관이 둘(한국공항공사 14개 공항 / 인천국제공항공사)로 나뉘어 같은 운항 정보가 두 체계로 나온다
+  subsectors:
+    - slug: drone
+      name: 드론·초경량비행장치 (신고·비행승인·조종자격·비행금지/제한구역)
+      depth: front
+      novelty: high
+      value_source: 신고 기체·비행승인·조종자격 = 드론 산업 규모와 분포, 비행금지/제한구역은 드론 서비스 입지의 제약 조건
+      match: {title_regex: '드론|초경량|무인비행|무인멀티콥터|비행금지구역|비행제한구역'}
+    - slug: aircraft-registry
+      name: 항공기 등록·도입·말소
+      depth: front
+      novelty: medium
+      value_source: 업체별·정치장별 등록 현황 = 항공사·운송사업자 보유 기단, 등록원부(항공기등록관리정보)가 원장
+      match: {title_regex: '항공기 ?등록|항공기 등록|말소|도입|항공기 보유|정치장'}
+    - slug: airport-codes
+      name: 공항·항공사 코드 (IATA/ICAO 마스터)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 운항·통계·노선 데이터를 잇는 조인 키 마스터 (세계공항·세계항공사 코드, 국내 공항 위치)
+      match: {title_regex: '코드|세계공항_정보|공항정보$|_공항 위치정보|_비행장$'}
+    - slug: flight-operations
+      name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: 편 단위 실시간 운항·결항·지연 — 모델이 절대 모르는 오늘의 사실. 공항공사·인천공항 두 체계
+      match: {title_regex: '운항|스케줄|출도착|항공편|결항|지연|ACDM|주기장|기종 및 등록'}
+    - slug: air-transport-business
+      name: 항공운송사업 (항공사·취항·사업자)
+      depth: front
+      novelty: medium
+      match: {title_regex: '세계항공사_정보|취항|항공통계_항공사|사업자|사업체|기관및업체'}
+    - slug: aviation-statistics
+      name: 항공통계 (공항·노선·항공사별 여객·화물·운항 실적)
+      depth: front
+      novelty: medium
+      cycle: monthly
+      value_source: 공항·노선별 여객 실적 = 지역 관광·출장 수요, 화물 실적 = 수출입 물류 신호
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 교통물류 - 물류등기타
+  decided_at: 2026-09-29
+  decided_by: 구름
+  doc: knowledge/sectors/교통물류/물류등기타.md
+  note: >
+    물류시설·화물운송·생활물류·주차장만 남긴 영역. BRM의 '기타' 모음이라 도로 성격(버스·자동차·충전·자전거·교통안전)은 도로로 옮겼다.
+    네 영역 모두 등록·허가 원장이 중심이고 사업자번호로 기업 데이터와 이어진다. 원장은 국토부 전국 API 하나 + 지자체 파일 다수 구조라
+    지자체 파일은 전국 원장의 부분집합(instance)으로 접어 본다
+  subsectors:
+    - slug: parking
+      name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
+      depth: front
+      novelty: medium
+      value_source: >
+        전국주차장정보표준데이터(주차장관리번호·좌표·요금·면수)가 원장이고, 실시간 주차 가능 대수는 지자체·공단별 비표준 API.
+        두 층(표준 원장 / 지자체 실시간)을 도시에에서 따로 적어야 한다
+      match: {title_regex: '주차'}
+    - slug: logistics-facilities
+      name: 물류시설 (물류창고업 등록·물류단지·물류터미널·물류센터)
+      depth: front
+      novelty: medium
+      value_source: 물류창고업 등록 원장(소재지·면적·보관 종류 상온·냉장·위험물) = 지역 물류 인프라 입지, 사업자번호로 기업과 연결
+      match: {title_regex: '물류창고|창고업|물류단지|물류터미널|물류센터|물류부지|물류시설'}
+    - slug: parcel-delivery
+      name: 생활물류 (택배·EMS·우편물 종적·무인택배함)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: 우정사업본부 택배·EMS 신청/행방·국내우편물 종적 = 송장 단위 조회 도구, 무인택배함은 위치 원장
+      match: {title_regex: '택배|소화물|배달대행|EMS|우편물|등기통상'}
+    - slug: freight-carriers
+      name: 화물운송업 (운송·주선·가맹·이사·용달·국제물류주선, 화물통관)
+      depth: front
+      novelty: medium
+      value_source: 화물자동차 운송·주선사업 허가 원장 = "허가받은 운송사·주선사인가", 전국화물자동차운송사업자표준데이터가 기준
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 교통물류 - 도로
+  decided_at: 2026-09-29
+  decided_by: 구름
+  doc: knowledge/sectors/교통물류/도로.md
+  note: >
+    교통물류에서 가장 크고 기관이 가장 흩어진 영역(국토부·도로공사·국토관리청·지자체·도로교통공단·경찰청·ITS). 유지관리와 유료도로 통행료만 빼고
+    대부분 살린다 (구름 2026-09-29). 물류등기타에서 옮겨온 대중교통·자동차·충전·자전거·교통안전도 여기서 세부 부문으로 나눈다.
+    핵심 과제는 표준노드링크(link_id·node_id)에 모든 데이터를 붙이는 것 — 도로공사는 콘존ID, 지자체 ITS는 자체 링크 체계라 매핑표가 필요
+  subsectors:
+    - slug: bus-transit
+      name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+      depth: front
+      novelty: high
+      value_source: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다
+      match: {title_regex: '버스|BUS|BIS|BMS|정류장|정류소|대중교통|TAGO|교통카드|환승|택시|여객터미널|터미널 ?정보|터미널 ?현황|_터미널$|여객운수|여객자동차|기후동행|승용차요일제|나눔카|노선정보|노선마스터|승강장|재차인원|혼잡도|정산사업자|이용자유형|교통수단|수단/목적|최빈교통|평균통행거리|노선별|광역 교통|지하철|도시철도'}
+    - slug: bike-pm
+      name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
+      depth: front
+      novelty: medium
+      value_source: 공공자전거 대여소·실시간 잔여(지자체별 비표준), 자전거도로 노선 GIS
+      match: {title_regex: '자전거|킥보드|개인형|이동장치|따릉|누비자|타랑께|페달로|어울링|타슈'}
+    - slug: ev-fuel
+      name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+      depth: front
+      novelty: medium
+      match: {title_regex: '충전|전기차|전기자동차|수소|주유소|요소수|세차장|휴게소|졸음쉼터'}
+    - slug: vehicles
+      name: 자동차 등록·검사·정비·렌터카·운전면허
+      depth: front
+      novelty: medium
+      value_source: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호
+      match: {title_regex: '자동차|차량|이륜차|건설기계|정비업|렌터카|폐차|운전면허|면허'}
+    - slug: road-network
+      name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)
+      match: {title_regex: '노드|링크|도로명|노선번호|도로중심선|도로망|도로현황|도로 현황|도로대장|도로구간|연결구간|도로 ?정보|도보 네트워크|군도|국도|지방도|노선구간|도로\(현황\)|관리영역|고가교|지하도로'}
+    - slug: traffic-realtime
+      name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)
+      match: {title_regex: '실시간|소통|돌발|통행시간|VMS|가변전광|CCTV|UTIS|ITS|속도|교통정보|RSE|ARTR|V2X|주의운전|교통예측|패턴정보|서비스수준|교통 ?흐름|지정체|교통지수|교통 ?이슈|교통시설정보|DTG|위험 ?구간|도로_위험'}
+    - slug: traffic-volume
+      name: 교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)
+      depth: front
+      novelty: medium
+      value_source: 조사지점·영업소 단위 교통량 = 상권·입지 분석의 표준 입력
+      match: {title_regex: '교통량|통행량|교통조사|교통 조사|TCS|영업소|교통존|기종점|OD|통행실태|교통영향평가'}
+    - slug: road-regulations
+      name: 규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)
+      depth: front
+      novelty: medium
+      value_source: 무인교통단속카메라·어린이보호구역은 제공표준(전국 통일 형식), 내비 기본 데이터
+      match: {title_regex: '단속|제한속도|보호구역|옐로카펫|주정차|신호|횡단보도|과속|무인|교차로|노면|차선|방향표시|잔여시간|일방통행|보행자|전용차로|적색표면|우회전|울타리|무단횡단|장애물'}
+    - slug: traffic-accidents
+      name: 교통사고 (사고 다발지역·지역별 사고)
+      depth: front
+      novelty: medium
+      value_source: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침
+      match: {title_regex: '사고'}
+    - slug: road-facilities
+      name: 도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)
+      depth: front
+      novelty: low
+      value_source: 터널·교량·지하차도는 제공표준 — 지자체 파일 수백 건이 표준 하나로 접힌다
+      match: {title_regex: '터널|교량|지하차도|지하보도|톨게이트|IC|JC|나들목|분기점|표지|가로등|보안등|육교|옹벽|방음|낙석|중앙분리대|방호|미끄럼방지|교차시설|시설물|도로시설|반사경|과속방지턱|볼라드'}
+    - slug: road-construction
+      name: 도로 건설·계획·점용 (사업 단계·개통 예정·점용/굴착 허가·용지 보상)
+      depth: front
+      novelty: high
+      cycle: event
+      value_source: 도로 개통 계획 = 지역 접근성 변화의 선행 지표, 점용·굴착 허가는 공사 이벤트
+      match: {title_regex: '건설|공사|점용|굴착|계획|개통|확포장|확장|설계|용지|보상|취득실적|국유재산|도로사용허가|기성|공정|품질검사|사후평가|교통개선사업|덧씌우기'}
+    - slug: traffic-safety
+      name: 교통안전 (안전지수·교통문화·안전시설·교육)
+      depth: front
+      novelty: low
+      match: {title_regex: '안전|교통문화'}
+  default: {slug: road-other, name: 도로 기타, depth: back}
+
+- sector: 교통물류 - 해운·항만
+  decided_at: 2026-09-29
+  decided_by: 구름
+  doc: knowledge/sectors/교통물류/해운·항만.md
+  note: >
+    해수부 단일 소관이라 기관 분산이 적고(해수부·항만공사 4곳·해양교통안전공단·해경), 항공처럼 국제 표준 코드(IMO·MMSI·UN/LOCODE)가 있다.
+    선박 등록·항만 시설·입출항·해상 여객·항만 물류 다섯 축만 남김 (구름 2026-09-29). 항공과 구조가 닮아(등록·운항·통계·시설) 상위 그룹 후보
+  subsectors:
+    - slug: coastal-passenger
+      name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance
+      match: {title_regex: '여객|카페리|결항|운항상태|운항예보|기항지|운항 ?스케줄|운항노선|권역 정보|크루즈|선착장|면허항로|운항항로'}
+    - slug: vessel-registry
+      name: 선박 등록 원장 (선박원부·국제선박 등록·제원·검사·어선)
+      depth: front
+      novelty: medium
+      value_source: 선박원부(선명·톤수·선종·선적항·소유자) = 선박은 등기 자산, IMO·MMSI·선박등록번호가 키
+      match: {title_regex: '선박 ?등록|선박원부|제원|선박 ?정보|선박정보|선박 ?검사|선박검사|어선정보|선박마스터|선박국가코드|계선선박|IMO|MMSI|등록선박|국제선박|무단이탈'}
+    - slug: vessel-movements
+      name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: Port-MIS 입출항 신고와 AIS 위치는 선박 추적의 원천. 항만공사 4곳 API는 Port-MIS 아래 instance
+      match: {title_regex: '입출항|입항|출항|AIS|V-Pass|위치정보|항로|통항|통행량|도선|예선|예도선|운항정보|선박운항|관제|정박|접안|선석 이용|실시간 교통정보'}
+    - slug: port-cargo
+      name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
+      depth: front
+      novelty: medium
+      cycle: monthly
+      value_source: 항만별 월간 물동량 = 해운 시황 지표, 반출입은 화물 건 단위
+      match: {title_regex: '물동량|화물|컨테이너|하역|해운업|선사|항만운송|수출입|환적|TEU|반출입|위험물|운송비용|화물료|운임|수송|혼잡도|항만운영 통계|기항 현황|해운항만물류'}
+    - slug: port-facilities
+      name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 항만코드(UN/LOCODE·해수부 내부 코드 병존, 매핑표 필요)가 입출항·물류를 잇는 키
+      match: {title_regex: '항만시설|부두|선석|안벽|크레인|항만정보|항만 ?현황|항만현황|배후단지|마리나|항구|무역항|연안항|하역능력|항만코드|코드 정보|터미널 정보|임대|갑문 정보|시설사용|방파제|코드정보|시설 운영'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 국토관리 - 산업단지
+  decided_at: 2026-09-29
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/산업단지.md
+  note: >
+    단지 → 입주기업·공장의 층 구조. 산업단지·입주기업·공장 등록·지식산업센터·산단 통계만 남김 (구름 2026-09-29, 용지·분양·개발은 배제).
+    국가산단은 산단공(팩토리온) API가 있고 지방산단은 지자체 파일뿐이라 깊이 차이가 크다. 공장 등록 원장은 사업자번호(기업 축)와 PNU(토지 축)를
+    동시에 잇는 몇 안 되는 원장이고, 산단 통계는 산업단지코드로 단지 원장에 붙인다
+  subsectors:
+    - slug: knowledge-industry-center
+      name: 지식산업센터 (승인·준공·위치·입주)
+      depth: front
+      novelty: medium
+      value_source: 산단 안팎의 도시형 공장 집적 건물, 시군구 파일 다수 — 건물관리번호로 건축물대장과 연결
+      match: {title_regex: '지식산업센터'}
+    - slug: complex-stats
+      name: 산단 통계 (생산·수출·고용·가동률·공장등록 통계·산업동향)
+      depth: front
+      novelty: medium
+      cycle: monthly
+      value_source: 산단공 산업동향조사(월)·공장등록현황통계 = 지역 제조업 경기 지표. 산업단지코드·시도로 단지 원장에 연결 (구름 "산단 통계까지 연결")
+      match: {title_regex: '^(?!.*팩토리온).*(통계|생산실적|생산현황|동향|고용|가동|수출|규모별|업종별)'}
+    - slug: factory-registry
+      name: 공장 등록 (팩토리온 공장등록·필지·생산정보, 시군구 공장등록 현황)
+      depth: front
+      novelty: medium
+      value_source: 공장등록 원부 = 국내 제조업 전수 명부에 가까움. 사업자번호·KSIC·PNU가 모두 있어 기업·토지·상권과 연결. 팩토리온(산단공) API가 대표
+      match: {title_regex: '^(?!.*산업단지및공장정보표준).*(팩토리온|공장|제조업체|제조업)'}
+    - slug: complex-tenants
+      name: 입주기업 (산단·농공단지·테크노밸리 입주업체)
+      depth: front
+      novelty: medium
+      value_source: 단지별 입주기업 명단(업체명·업종·고용) = 구직·영업 수요, 사업자번호로 공장 등록과 겹쳐 검증
+      match: {title_regex: '입주|입지업체|업체 명단|기업정보|기업 등록'}
+    - slug: industrial-complex
+      name: 산업단지 현황 (전국 산업단지 표준·단지 정보·경계·위치 도면)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 전국산업단지및공장정보표준데이터·국토부 산업단지 일반현황·경계도면 = 산업단지코드 원장
+      match: {title_regex: '.'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 국토관리 - 수자원
+  decided_at: 2026-09-29
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/수자원.md
+  note: >
+    물관리 일원화 이후 실제 소관은 기후에너지환경부·K-water·홍수통제소 4곳·농어촌공사·지자체. BRM 국토관리-수자원 + 환경기상-상하수도·수질의
+    상하수도·하천·홍수를 합쳐 여섯 영역(수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수)만 남김 (구름 2026-09-29).
+    관측(실시간 시계열)과 시설·구역(공간 원장)으로 갈리고, 도시에에 관측 주기·결측률·지연이 필수 항목
+  subsectors:
+    - slug: flood-warning
+      name: 홍수 예보·경보 (특보·예보 지점·댐 방류 예고·도시 침수 예보)
+      depth: front
+      novelty: high
+      cycle: event
+      value_source: 장마·태풍철 트래픽 폭증 재난 정보. 홍수통제소 4곳 + 환경부, 방송·앱이 그대로 쓰는 시의성 최상 원장
+      match: {title_regex: '홍수|특보|예보|경보|방류 ?예고|침수 ?예보'}
+    - slug: dam-reservoir
+      name: 댐·저수지 (댐 제원·운영·수위·방류, 농업용 저수지 저수율)
+      depth: front
+      novelty: high
+      cycle: daily
+      value_source: 댐 운영(K-water)·농업용 저수지 저수율(농어촌공사) = 가뭄·홍수철 필수, 댐코드·저수지코드
+      match: {title_regex: '댐|저수지|저수율|저수량|다기능보|하굿둑|보 운영'}
+    - slug: hydro-observation
+      name: 수문 관측 (수위·유량·강수 관측소, 10분·시·일 자료)
+      depth: front
+      novelty: high
+      cycle: realtime
+      value_source: 관측소코드(WAMIS 표준) 기준 실시간 시계열 — 이 영역의 몸통. 홍수통제소 4곳 API는 instance, WAMIS가 전국 통합(자체 키)
+      match: {title_regex: '수위|유량|강수|강우|우량|수문조사|수문관측|관측|WAMIS|방류|유입량|조사시설|측정망제원'}
+    - slug: river-registry
+      name: 하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)
+      depth: front
+      novelty: low
+      cross_cutting: true
+      value_source: 하천코드(WAMIS)·유역 권역 = 공간 규제 원장(하천구역 안팎은 건축 규제), 국가공간정보포털과 중복
+      match: {title_regex: '하천|제방|배수문|수문|소하천|친수|점용|배수펌프|펌프장|유수지|유역|권역|수자원관리도'}
+    - slug: water-supply
+      name: 상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)
+      depth: front
+      novelty: medium
+      cycle: monthly
+      value_source: 정수장별 월 수질검사 = 시민 상시 수요, 정수장코드·지자체 상수도사업본부 다수
+      match: {title_regex: '상수|정수장|정수시설|취수장|급수|수돗물|배수지|수도|스마트워터|원격검침|계량기|저수조|물공급|누수|요금|가압장|취수량|유수율|양수장'}
+    - slug: sewerage
+      name: 하수도 (하수처리장·처리구역·방류수·분뇨·정화조)
+      depth: front
+      novelty: low
+      value_source: 하수처리장·처리구역 원장과 방류수 수질(TMS), 지자체·환경공단
+      match: {title_regex: '하수|오수|분뇨|처리장|처리시설|정화조|방류수|재이용|TMS|환경기초시설'}
+  default: {slug: excluded-rest, name: 제외 대상, depth: back}
+
+- sector: 국토관리 - 국토·도시계획
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/국토·도시계획.md
+  note: '국토계획법의 계획 층: 국토종합계획 → 광역·도시·군기본계획 → 도시·군관리계획 결정(고시·결정조서) → 지구단위계획 → 개발행위허가. 국토부 API는 지구단위계획·개발행위허가·국토계획구역 정도이고 관리계획 결정은 지자체 UPIS 파일이 대부분 (커버 편차 큼)'
+  subsectors:
+  - slug: basic-plan
+    name: 국토종합계획·도시·군기본계획
+    depth: front
+    novelty: low
+    match:
+      title_regex: 국토종합계획|기본계획|국토계획구역
+  - slug: development-permit
+    name: 개발행위허가 (허가·제한지역)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 개발행위
+  - slug: district-unit-plan
+    name: 지구단위계획 (구역·결정조서·획지)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 지구단위|획지
+  - slug: management-plan
+    name: 도시·군관리계획 결정·고시 (UPIS 결정조서·고시·입안·도시계획위원회)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 관리계획 결정 고시 = 개발 가능성의 선행 지표. 국정홍보에서 뺀 고시·공고 중 도시계획 결정만 여기서 다룬다
+    match:
+      title_regex: 관리계획|결정|고시|입안|위원회|UPIS|도시계획정보
+  - slug: planning-stats
+    name: 도시계획현황 통계
+    depth: front
+    novelty: low
+    match:
+      title_regex: 현황|통계
+  default:
+    slug: plan-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 토지이용규제
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/토지이용규제.md
+  note: 필지마다 걸린 규제를 PNU 기준으로 원장화한 국토관리 전체의 규제 마스터. 국토계획법 용도지역 21종 + 개별법 지구·구역 수백 종이라 레이어 목록 자체가 도시에. 토지이음·브이월드·국가공간정보포털 중복 게시
+  subsectors:
+  - slug: land-use-plan-check
+    name: 토지이용계획확인·토지이용규제정보 (필지별 규제·행위제한·법령)
+    depth: front
+    novelty: medium
+    value_source: 이 땅에 뭘 지을 수 있나 — 부동산 거래·건축의 첫 질문, PNU로 공시지가·건축물대장·실거래와 바로 연결
+    match:
+      title_regex: 토지이용계획|토지이용규제|규제정보|규제법령|행위제한
+  - slug: zoning
+    name: 용도지역 (도시·관리·농림·자연환경보전)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 용도지역|도시지역|관리지역|농림지역|자연환경보전
+  - slug: zones
+    name: 용도구역 (개발제한구역·시가화조정·입지규제최소)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 용도구역|개발제한구역|그린벨트|시가화조정|입지규제
+  - slug: districts
+    name: 용도지구 (경관·고도·방재·취락·개발진흥·보호 등)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 용도지구|지구|경관|고도|특별건축|건축선
+  default:
+    slug: regulation-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 도시계획시설·공원녹지
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/도시계획시설·공원녹지.md
+  note: 국토계획법 §43 도시·군계획시설(도로·공간·교통·공공문화체육·방재·보건위생·유통공급·환경기초)과 공원녹지법 도시공원·녹지. 장기미집행 시설·공원 일몰이 시의성 포인트
+  subsectors:
+  - slug: parks-green
+    name: 도시공원·녹지 (공원 현황·유원지·광장·일몰)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 공원|녹지|유원지|광장
+  - slug: urban-facilities
+    name: 도시·군계획시설 (결정·집행·장기미집행)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: facility-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 도시개발·정비
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/도시개발·정비.md
+  note: '개별 개발사업법의 구역·사업 원장: 정비사업(재개발·재건축, 단계가 곧 가격)·도시개발구역·택지/공공주택지구/신도시·도시재생·보상. 정비사업은 지자체 시스템이 달라 전국 표준 없음. 산업단지(산업입지법)·농업생산기반(농어촌정비법)과 같은 개발사업 층'
+  subsectors:
+  - slug: redevelopment
+    name: 정비사업 (재개발·재건축·주거환경개선·재정비촉진)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 추진위→조합→사업시행→관리처분→준공 단계가 곧 가격, 모델이 모르는 시의성
+    match:
+      title_regex: 정비|재개발|재건축|주거환경개선|가로주택|뉴타운|재정비촉진
+  - slug: housing-sites
+    name: 택지·공공주택지구·신도시·혁신/기업도시
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 택지|공공주택지구|신도시|보금자리|혁신도시|기업도시|행정중심|행복도시
+  - slug: urban-development
+    name: 도시개발구역·환지·역세권 개발
+    depth: front
+    novelty: medium
+    cycle: event
+    match:
+      title_regex: 도시개발|환지|역세권|개발구역|경제자유구역
+  - slug: regeneration
+    name: 도시재생 (활성화지역·뉴딜)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 도시재생|뉴딜
+  - slug: compensation
+    name: 토지 보상
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 보상
+  default:
+    slug: development-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 지역발전
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/지역발전.md
+  note: 균형발전·특구·인구감소지역·성장촉진지역 등 지정 목록. 시군구코드로 다른 데이터의 맥락이 된다
+  subsectors:
+  - slug: regional-designation
+    name: 지역 지정 (인구감소·특구·성장촉진·균형발전)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: regional-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 토지·지적
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/토지·지적.md
+  note: 공간정보관리법 지적(토지·임야대장·연속지적도)과 부동산공시법 공시지가(개별·표준지). PNU 원장 — 토지 축의 마스터
+  subsectors:
+  - slug: cadastre
+    name: 지적 (토지·임야대장·연속지적도·지적도근점·지번)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: PNU 원장 — 모든 필지 단위 데이터의 공간 기준
+    match:
+      title_regex: 지적|토지대장|임야대장|지번|필지|토지 ?이동|부동산종합
+  - slug: land-price
+    name: 공시지가 (개별·표준지·지가변동)
+    depth: front
+    novelty: medium
+    cycle: annual
+    match:
+      title_regex: 공시지가|표준지|지가
+  - slug: land-attributes
+    name: 토지 특성·소유·이용현황·지목
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: land-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 건축물
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/건축물.md
+  note: 건축법 건축물대장·건축 인허가(착공·사용승인)와 기준시가·시가표준액. 건축HUB가 원천, 건물 단위(건축물대장 PK) — 필지(PNU)와 주택(동·호)을 잇는 중간층
+  subsectors:
+  - slug: building-registry
+    name: 건축물대장 (표제부·총괄·전유·폐쇄말소, GIS건물통합)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    match:
+      title_regex: 대장|건물통합|건물 ?정보|건축물 ?정보|건물에너지|유지점검|건축물 ?현황
+  - slug: building-permits
+    name: 건축 인허가 (허가·착공·사용승인)
+    depth: front
+    novelty: high
+    cycle: monthly
+    value_source: 인허가·착공 = 지역 개발 흐름의 선행 지표
+    match:
+      title_regex: 인허가|허가|착공|사용승인|신고
+  - slug: standard-price
+    name: 기준시가·시가표준액
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 기준시가|시가표준
+  default:
+    slug: building-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 공간정보
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/공간정보.md
+  note: 국가공간정보기본법·공간정보관리법(측량). 국토지리정보원 수치지도·항공사진·연속주제도, 행정구역 경계. 다른 모든 공간 데이터의 바탕
+  subsectors:
+  - slug: base-maps
+    name: 수치지도·지형·항공사진·정사영상
+    depth: front
+    novelty: low
+    match:
+      title_regex: 수치|지형|DEM|정사영상|항공사진|위성|지도
+  - slug: thematic-maps
+    name: 연속주제도·국가공간정보 레이어 (WMS/WFS)
+    depth: front
+    novelty: low
+    match:
+      title_regex: 연속주제|주제도|WMS|WFS|국가공간정보|공간정보
+  - slug: survey-boundary
+    name: 측량기준점·행정구역 경계·지명
+    depth: front
+    novelty: low
+    cross_cutting: true
+    match:
+      title_regex: 측량|기준점|행정구역|경계|지명|좌표
+  default:
+    slug: geo-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 주택
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/주택.md
+  note: '국토관리에서 완전히 분리한 부동산 시장 영역 (구름 2026-09-29): 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세. 일반행정에 잘못 들어간 국토부 실거래 13종을 여기로. 실거래는 거래 고유ID가 없고 단지명이 자유 텍스트라 K-apt 단지코드 매핑이 선결 과제'
+  subsectors:
+  - slug: real-transactions
+    name: 실거래 (매매·전월세·분양권·상업업무용·토지·공장창고, 13종)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 공공데이터 전체 1위 수요. 계약 후 30일 신고·해제/정정 소급 — 도시에의 공개 시점 서술이 핵심. 13종을 도시에 하나로
+    match:
+      title_regex: 실거래
+  - slug: price-disclosure
+    name: 주택 공시가격 (공동·개별단독·표준단독)
+    depth: front
+    novelty: medium
+    cycle: annual
+    value_source: 보유세·건보료·복지 기준, PNU+동·호. 호 단위 조회형이라 벌크 제한
+    match:
+      title_regex: 공동주택 ?공시|공동주택가격|개별주택가격|표준주택|주택 ?공시|공시가격
+  - slug: price-index
+    name: 가격 동향·지수·시세·분양가격
+    depth: front
+    novelty: medium
+    value_source: 부동산원 R-ONE(자체 키)·HUG 분양가격. 모델은 대략 알지만 최신 주간 값은 모름
+    match:
+      title_regex: 가격지수|가격동향|지수|시세|분양가격|㎡당|매매가격
+  - slug: housing-supply
+    name: 공급·인허가·착공·준공·미분양·주택 현황
+    depth: front
+    novelty: medium
+    cycle: monthly
+    match:
+      title_regex: 미분양|인허가|착공|준공|주택건설|사업계획|공급|입주 ?예정|보급률|주택 ?현황|주택현황
+  - slug: subscription
+    name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보
+    match:
+      title_regex: 청약|분양|입주자|모집|공고|경쟁률|당첨|예비입주
+  - slug: rental
+    name: 임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)
+    depth: front
+    novelty: medium
+    value_source: 전세 사기 이후 수요 급증. 전월세 실거래와 병합 관계
+    match:
+      title_regex: 임대|확정일자|임차|전세|월세|보증금
+  - slug: apartment-management
+    name: 공동주택 관리 (K-apt 단지 기본정보·관리비·장기수선·입찰)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: K-apt 단지코드 = 실거래 단지명·공시 동호·청약 단지를 잇는 매핑 마스터
+    match:
+      title_regex: 공동주택|아파트|단지|관리비|장기수선|관리|입찰|수의계약
+  default:
+    slug: housing-other
+    name: 기타 (재검토)
+    depth: back
+- sector: 국토관리 - 지역및도시
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/국토관리/지역및도시.md
+  note: '재구성 후 남은 미분류 (구름 2026-09-29): 규제·계획·시설·개발·지역발전·토지·건축물·주택·공간정보·산단·수자원으로 옮기고 남은 건설업 등록·공사장·유동인구·지역화폐·상권 등 잘못 등록된 기타. 해당 분야 검토 때 다시 본다'
+  subsectors: []
+  default:
+    slug: unclassified
+    name: 미분류 (재구성 후 잔여)
+    depth: back
+
+- sector: 농축수산 - 임업·산촌
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/농축수산/임업·산촌.md
+  note: 산림청 단일 소관(산림청·국립산림과학원·산림복지진흥원·수목원정원관리원·임업진흥원). 산지 구분·산림 자원·산림 복지/휴양·임산물 품목만 남김 (구름 2026-09-29). 국토의 63%가 산지라 산지 구분은 토지이용규제의 개별법 레이어(PNU 축)
+  subsectors:
+  - slug: forest-land-regulation
+    name: 산지 구분·규제 (보전·준보전산지, 산림보호구역, 산지전용)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 산지 여부·보전/준보전 구분 = 개발 가능성을 결정하는 규제, 국토관리-토지이용규제와 같은 PNU 축. FGIS·브이월드 중복 시 산림청 원천 대표
+    match:
+      title_regex: 산지 ?구분|보전산지|준보전|산림보호구역|보호구역|산지전용|일시사용|산지 ?정보|산지관리|산지(?!유통|공판|위판|코드|목록|경락)
+  - slug: forest-recreation
+    name: 산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)
+    depth: front
+    novelty: medium
+    value_source: 등산·휴양 인구 수요, 시설코드·등산로ID·좌표
+    match:
+      title_regex: 휴양림|치유|수목원|정원|산림욕|숲길|등산|둘레길|명산|트레킹|숲나들|야영|캠핑|유아숲|산림복지|숲체원|봉우리|산 ?정보|산림교육|숲해설|백두대간
+  - slug: forest-products
+    name: 임산물 품목 (임산물·목재·버섯·밤·잣·산나물·가격·생산)
+    depth: front
+    novelty: medium
+    value_source: 임산물 품목·가격·생산 = 생산자·유통 수요, 가격은 시의성
+    match:
+      title_regex: 임산물|목재|버섯|밤(?!하늘)|잣|표고|산나물|약초|산양삼|수실|가격|품목|생산
+  - slug: forest-inventory
+    name: 산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)
+    depth: front
+    novelty: low
+    value_source: 임상도(대용량 공간 파일)·NFI 표본점 = 탄소·ESG 수요
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 농축수산 - 농업·농촌
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/농축수산/농업·농촌.md
+  note: 농축수산에서 가장 크고 기관이 가장 많은 영역(농식품부·농진청·농어촌공사·농관원·aT·농정원·지자체). 농지 필지·농업경영체·농산물 유통 가격만 우선 (구름 2026-09-29). 농지는 토지이용규제의 개별법 레이어(PNU 축), 경영체는 기업 축, 가격은 시의성 원장. 임업·산촌에 잘못 등록돼 있던 농업 데이터도 여기로 모았다
+  subsectors:
+  - slug: farmland
+    name: 농지 필지 정보 (농업진흥지역·농지전용·팜맵 필지·농지은행·경지)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 농업진흥지역 여부·전용 가능성 = 농지 거래의 첫 질문, PNU·팜맵 폴리곤ID. 팜맵은 연 1회 대용량 공간 파일(file-periodic)
+    match:
+      title_regex: 농지|팜맵|농업진흥|진흥지역|진흥구역|농경지|필지|농지은행|농지원부|농지대장|영농여건|경지
+  - slug: farm-business
+    name: 농업경영체 (등록 정보·농업법인·영농조합·후계농)
+    depth: front
+    novelty: medium
+    value_source: 경영체 등록 = 농업의 기업 축, 법인은 사업자번호. 개인정보라 API는 집계·비식별로 제한
+    match:
+      title_regex: 경영체|농업법인|영농조합|농업회사법인|농업인 ?(정보|현황|등록)|후계농|청년농|농가 ?정보|농업인 ?명부
+  - slug: agri-prices
+    name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 농축수산 - 해양수산·어촌
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/농축수산/해양수산·어촌.md
+  note: 해운·항만이 배와 항구라면 여기는 바다와 물고기. 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (구름 2026-09-29). 농업·농촌과 평행 구조(어장↔농지, 수산물 가격↔농산물 가격). 어선 등록(어선법)은 여기가 대표, 상선(선박법)은 해운·항만
+  subsectors:
+  - slug: marine-spatial
+    name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 해양공간계획 용도구역 = 해상풍력 등 입지 규제, 토지이용규제의 해양 대응물
+    match:
+      title_regex: 해양공간|용도구역|해양보호구역|보호구역|해안선|연안|갯벌|영해|EEZ|배타적|공유수면|해역|해저|해도|수심|해양영토|무인도서|특정도서|특성평가격자|습지|보전지역
+  - slug: fishery-licenses
+    name: 어업 허가·면허·어장·어선 등록
+    depth: front
+    novelty: medium
+    value_source: 면허·허가번호·어장코드·어선번호 원장, 어업인 사업자번호로 기업 축. 해운·항만 선박 등록과 어선에서만 겹침
+    match:
+      title_regex: 어업 ?허가|어업 ?면허|면허어업|허가어업|어업권|양식장|어장|어선|양식업|어업 ?현황|마을어업|정치망|어업 ?종류
+  - slug: ocean-observation
+    name: 해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 물때·파고는 낚시·레저 안전 필수, 고수온·적조 특보는 양식 피해 직결. KHOA(바다누리) 자체 키, 관측소코드
+    match:
+      title_regex: 조석|조류|조위|수온|염분|해수면|파고|파랑|해양 ?관측|관측소|부이|예보|특보|적조|고수온|저수온|해양 ?기상|물때|해류|정선해양|해양 ?기후|실시간|해상풍|해수유동
+  - slug: seafood-prices
+    name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 위판장 경락 가격 = 농산물 KAMIS와 같은 물가 수요, 어종코드(수협·수산과학원·HS 상이)
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 문화관광 - 체육
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/문화관광/체육.md
+  note: 문체부 소관, 실행은 국민체육진흥공단·대한체육회·지자체·시군구(체육시설업 등록). 공공 체육시설·체육시설업·생활체육 프로그램·전문체육만 (구름 2026-09-29). 체육시설업 등록은 행안부 지방행정 인허가(LOCALDATA)의 체육 업종 — 음식점·약국·숙박업과 같은 원천이라 공통 인허가 도시에를 참조하는 구조로 둘 것
+  subsectors:
+  - slug: sports-business-registry
+    name: 체육시설업 등록·신고 (골프·헬스·당구·체육도장·스키 등, LOCALDATA)
+    depth: front
+    novelty: medium
+    value_source: 민간 체육시설 명부 = 상권 데이터와 같은 축, 인허가번호·사업자번호. 헬스장 개폐업은 상권 신호
+    match:
+      title_regex: 체육시설업|골프|헬스|당구|스키|썰매|빙상|무도|체력단련|요트|승마|체육도장|인허가
+  - slug: sports-programs
+    name: 생활체육 프로그램 (강좌·국민체력100·스포츠강좌이용권)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 강좌|교실|프로그램|국민체력|체력인증|체력측정|스포츠강좌이용권|이용권|바우처|생활체육
+  - slug: sports-competitions
+    name: 전문체육 (선수·지도자·대회 결과·경기단체)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 선수|대회|전국체전|소년체전|체전|국가대표|경기단체|종목|기록|메달|지도자|심판|올림픽|체육회
+  - slug: sports-facilities
+    name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 근처 수영장·테니스장·예약 — 생활체육 인구 상시 수요. 문체부 전국체육시설 DB 대표, 예약은 광역 단위만
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 문화관광 - 관광
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/문화관광/관광.md
+  note: 몸통은 한국관광공사 TourAPI(관광지·숙박·음식·행사 콘텐츠 원장) — 문화관광에서 유일한 전국 표준 API. 관광 콘텐츠·관광 산업·숙박업·관광 통계·축제/행사만 (구름 2026-09-29). 관광 통계는 지역(시군구·관광지점) 단위라 TourAPI 지역코드↔시군구코드로 다른 지역 데이터와 연결한다. 숙박업 신고(공중위생법, LOCALDATA)와 관광숙박업 등록(관광진흥법)은 다른 원장이고 호텔은 양쪽에 있다
+  subsectors:
+  - slug: festivals-events
+    name: 축제·행사 (문화관광축제·지역 축제·공연 일정)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 주말·계절 수요, TourAPI 행사와 same_dataset 처리 후 남는 것
+    match:
+      title_regex: 축제|행사|공연|이벤트
+  - slug: tourism-business
+    name: 관광 산업 (여행업·관광숙박업·유원시설·관광편의시설 등록, 호텔 등급, 야영장, 관광종사원)
+    depth: front
+    novelty: medium
+    value_source: 관광진흥법 등록 원장, 등록번호·사업자번호
+    match:
+      title_regex: 관광사업|여행업|관광숙박|유원시설|관광편의|호텔 ?등급|관광종사원|관광사업체|관광 ?기업|관광 ?산업|야영장|외국인관광|관광식당|관광업|캠핑장|오토캠핑
+  - slug: lodging
+    name: 숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)
+    depth: front
+    novelty: medium
+    value_source: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천
+    match:
+      title_regex: 숙박|호텔|펜션|민박|게스트하우스|모텔|콘도|한옥체험
+  - slug: tourism-statistics
+    name: 관광 통계 (관광지점 입장객·출입국·관광 소비·방문객)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: '관광지점·시군구 × 월 — 지역 정보로 연결 (구름: 지역 정보라 연결). 관광지점코드·시군구코드가 키'
+    match:
+      title_regex: 입장객|방문객|관광객|출입국|관광 ?소비|통계|이용객|빅데이터|방문자|카드
+  - slug: tour-contents
+    name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 국내 여행 앱 대부분이 쓰는 원장, contentId·TourAPI 지역코드. 지자체 관광지 파일은 instance로 접고 TourAPI 대표
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 문화관광 - 문화예술
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/문화관광/문화예술.md
+  note: 몸통은 공연 원장(KOPIS)과 문화시설 원장(전국문화기반시설총람). 공연·문화시설·전시/행사·도서관·저작권/콘텐츠만 (구름 2026-09-29). KOPIS·도서관정보나루는 자체 키. 행사는 TourAPI·문화포털·KOPIS·지자체에 4중 등록이라 대표 결정 필요
+  subsectors:
+  - slug: performances
+    name: 공연 (KOPIS 공연 목록·공연장·예매/매출)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 관객 수요 최대, 공연ID(mt20id)·공연장ID(mt10id). KOPIS 자체 키
+    match:
+      title_regex: 공연|KOPIS|연극|뮤지컬|콘서트|예매|티켓|클래식|전통예술|국악
+  - slug: library
+    name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
+    depth: front
+    novelty: medium
+    value_source: 도서관코드·ISBN, 도서관정보나루 자체 키
+    match:
+      title_regex: 도서관|대출|서지|ISBN|독서|장서|도서(?!지역)
+  - slug: copyright-contents
+    name: 저작권·콘텐츠 (저작권 등록·공유마당·게임 등급·영화·음악·웹툰)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 저작권|공유마당|저작물|콘텐츠|게임|등급분류|영화|음악|웹툰|애니|만화|음반|비디오|대중문화예술
+  - slug: cultural-facilities
+    name: 문화시설 (문화기반시설총람·박물관·미술관·문예회관·문화원·공연장 등록)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 시설코드(총람)·좌표 — 상권·지역 문화 분포
+    match:
+      title_regex: 박물관|미술관|문화예술회관|문예회관|문화원|문화시설|문화기반시설|문화의집|전시관|기념관|아트센터|복합문화|문화공간|공연장
+  - slug: cultural-events
+    name: 전시·행사 (문화포털 전국 행사·국립박물관 전시·소장품·강좌)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 문화관광 - 문화재
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/문화관광/문화재.md
+  note: 2024 국가유산청 출범으로 문화유산·자연유산·무형유산 체계. 유산 지정·등록·보호구역·발굴조사·박물관 소장/아카이브·전통/무형만 (구름 2026-09-29). 보호구역·역사문화환경 보존지역은 토지이용규제의 개별법 레이어(현상변경 허가 없이는 건축 불가) — 국토부 연속주제도에 흩어진 것도 모음
+  subsectors:
+  - slug: heritage-protection-zones
+    name: 보호구역·역사문화환경 보존지역·매장유산 유존지역
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 토지·건축의 개발 규제 — 이 영역에서 가장 무거운 수요, 구역코드·PNU
+    match:
+      title_regex: 보호구역|보호도|문화재보호|문화유산보호|역사문화환경|현상변경|유존지역|매장|보존지역|보호지구
+  - slug: excavations
+    name: 발굴조사 (발굴 허가·지표조사·발굴 보고서)
+    depth: front
+    novelty: medium
+    cycle: event
+    match:
+      title_regex: 발굴|지표조사|출토
+  - slug: intangible-heritage
+    name: 전통·무형유산 (보유자·전승·공예·국악·체험)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 무형|전승|보유자|전통|공예|국악|민요|탈춤|궁중|예능|체험
+  - slug: archives
+    name: 박물관 소장·아카이브 (e뮤지엄·3D·이미지·유물·동북아역사재단·독립기념관)
+    depth: front
+    novelty: low
+    match_any:
+    - title_regex: 소장품|e뮤지엄|아카이브|3D|디지털|이미지|유물|박물관|사진|영상|벽화|암각|암면|기록물|자료
+    - agency_regex: 동북아역사재단|독립기념관
+  - slug: heritage-registry
+    name: 유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 종목코드+지정번호(ccbaKdcd·ccbaAsno·ccbaCtcd), 소재지 PNU. 국가유산청 자체 API 병존
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 문화관광 - 문화체육관광일반
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/문화관광/문화체육관광일반.md
+  note: 문체부 공통 행정과 어디에도 안 들어간 나머지. 언론·출판·간행물 등록만 남김 (구름 2026-09-29). 빅카인즈는 언론진흥재단 자체 서비스
+  subsectors:
+  - slug: media-publishers
+    name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
+    depth: front
+    novelty: medium
+    value_source: 등록번호·사업자번호 원장
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 법률 - 법무및검찰
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/법률/법무및검찰.md
+  note: 개인정보·수사 정보라 개방이 구조적으로 제한된 분야, 출입국 관리가 중심 (구름 2026-09-29). 출입국·체류, 변호사·법무사, 범죄·수사 통계만. 체류 외국인(시군구 × 체류자격 × 월)과 범죄 통계(시군구 × 죄명 × 월)는 집계지만 시군구 격자 원장으로 보고 지역 정보에 연결한다 (주민등록 인구와 같은 축). 범죄 통계는 대검(검찰 접수·처리 기준)과 경찰청(발생 기준, 재난안전)이 다른 값
+  subsectors:
+  - slug: immigration-stay
+    name: 출입국·체류 (체류 외국인·등록외국인·출입국자·무사증·불법체류·비자)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 지역별 외국인 거주 = 다문화·노동·주거·상권 분석의 기초, 시군구 × 체류자격 × 월 — 지방행정 주민등록 인구와 related
+    match:
+      title_regex: 출입국|체류|외국인|입국|출국|비자|사증|난민|귀화|국적|이민|사회통합|전자여행허가|무사증|불법체류
+  - slug: lawyers
+    name: 변호사·법무사·법무법인·외국법자문사
+    depth: front
+    novelty: medium
+    value_source: 법률 시장 명부, 협회 원장은 포털 밖이라 법무부 현황·법무법인 주소가 대부분
+    match:
+      title_regex: 변호사(?!시험)|법무사|법무법인|외국법자문|합작법무법인
+  - slug: crime-statistics
+    name: 범죄·수사 통계 (대검 범죄분석·검찰 사건 처리·지자체 범죄 발생)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 시군구 × 죄명 × 월 = 지역 안전 지표, 지역 정보에 연결 (구름). 경찰청 발생 통계(재난안전)와 same_concept
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 보건의료 - 건강보험
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/보건의료/건강보험.md
+  note: 건보공단·심평원이 몸통. 요양기관·비급여·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만 (구름 2026-09-29). 요양기관 원장과 급여 코드 마스터가 보건의료 분야 전체의 기준 두 축. 심평원 ykiho는 암호화 키라 LOCALDATA 인허가·응급 hpid와는 주소·명칭 매핑만 가능 — 의료기관 3코드 매핑이 선결 과제
+  subsectors:
+  - slug: long-term-care
+    name: 장기요양기관 (시설·재가 기관 검색·상세·등급 인정)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 고령 가구 수요 급증, 장기요양기관코드·좌표
+    match:
+      title_regex: 장기요양|요양원|재가|주간보호|방문요양|요양시설|등급|의사소견서
+  - slug: nonpayment-fees
+    name: 비급여 진료비 (기관별 항목별 가격)
+    depth: front
+    novelty: high
+    cycle: annual
+    value_source: 도수치료·MRI 가격 차이, 요양기관기호 × 비급여코드
+    match:
+      title_regex: 비급여
+  - slug: medical-institutions
+    name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 보건의료 최다 트래픽, 전국 의료기관 전수. 심평원 API 6~8개가 ykiho 하나로 묶이는 체인
+    match:
+      title_regex: 의료장비|의료인력|병상|병원|의원|약국|요양기관|의료기관|진료시간|전문병원|상급종합|치과|한의원|보건소|응급
+  - slug: insurance-codes
+    name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to
+    match:
+      title_regex: 약가|급여 ?목록|급여목록|약제|의약품|성분|EDI|행위|수가|치료재료|질병분류|KCD|코드|상한|기준|참조표준
+  - slug: insurance-eligibility
+    name: 보험 자격·부과 (가입자·적용인구·보험료, 지역별)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 자격|가입자|보험료|부과|징수|피부양|직장|지역가입|적용인구|직역|재외국민|외국인
+  - slug: medical-utilization
+    name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    value_source: 시군구 × KCD × 월 격자 원장. 심평원(청구 기준)과 공단(자격 기준)이 다른 값
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 보건의료 - 보건의료
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/보건의료/보건의료.md
+  note: 국립암센터 시리즈와 지자체 보건소 파일이 부풀린 영역. 응급의료·의료기관 인허가·공공보건(보건소)만 (구름 2026-09-29). 의료기관 코드가 셋(심평원 ykiho·응급 hpid·LOCALDATA 인허가번호) — 건강보험과 공통 매핑표
+  subsectors:
+  - slug: drugs-devices
+    name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 식약처 품목기준코드·의약품 표준코드로 심평원 약가·급여 목록(건강보험)과 연결. DUR 병용·연령금기는 처방 안전
+    match:
+      title_regex: _(?!.*(건강기능|식품|화장품|위생용품)).*(의약품|의료기기|마약류|DUR|낱알|e약은요|의약외품|약효|임상시험|의약품안전)
+  - slug: emergency-medical
+    name: 응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 즉시성 수요의 정점, hpid·좌표. E-Gen 실시간은 트래픽 제한 가능
+    match:
+      title_regex: 실시간 병상|병상정보|응급|AED|자동심장|제세동|외상센터|달빛|야간 ?진료|휴일 ?진료|심야|E-Gen|중앙응급
+  - slug: public-health-centers
+    name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 지역사회 건강조사 = 시군구 건강지표 표준, 보건소코드·시군구코드
+    match:
+      title_regex: 보건소|보건지소|보건진료소|지역사회 ?건강|건강조사|방문건강|금연|모자보건|건강증진|치매안심
+  - slug: medical-facility-licensing
+    name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+    depth: front
+    novelty: medium
+    value_source: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 사회복지 - 노인·청소년
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/사회복지/노인·청소년.md
+  note: 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지 + 지역 연계 통계 (구름 2026-09-29). 장기요양기관은 건강보험. 노인·청소년·아동·장애인 시설은 모두 사회복지시설 정보시스템(사회보장정보원)이 원천이라 시설 마스터 공통 도시에 후보(LOCALDATA와 같은 논리)
+  subsectors:
+  - slug: age-friendly-housing
+    name: 고령친화·노인 주거 (양로·공동생활가정·고령자복지주택·고령친화 제품/기업)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 고령친화|고령자|노인 ?주거|노인주택|공동생활가정|고령자복지주택|노인친화기업|양로
+  - slug: youth-support-centers
+    name: 청소년 보호·복지 (상담복지센터·쉼터·꿈드림·자립지원관)
+    depth: front
+    novelty: medium
+    value_source: 위기 청소년 즉시성 수요, 센터코드·좌표
+    match:
+      title_regex: 상담복지|쉼터|꿈드림|학교 ?밖|자립지원|위기 ?청소년|청소년 ?상담|청소년 ?보호|유해
+  - slug: elderly-facilities
+    name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 고령화로 가장 빠르게 커지는 생활 수요, 건강보험 장기요양기관과 related. 사회복지시설 시설코드
+    match:
+      title_regex: 경로당|노인복지|노인교실|노인정|요양|재가|주야간|주간보호|단기보호|노인일자리|시니어클럽|치매|노인 ?(여가|의료)|복지관|실버|노인대학|경로식당|마을회관|취업연계|노인생활시설|의료복지 ?시설|맞춤돌봄|노인사회활동|사회활동지원|복지센터
+  - slug: youth-facilities-programs
+    name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
+    depth: front
+    novelty: medium
+    cycle: event
+    match:
+      title_regex: 청소년|수련관|수련원|유스호스텔|문화의집
+  - slug: regional-statistics
+    name: 지역 연계 통계 (시군구 노인인구·독거노인·기초연금 수급·지역별 현황)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: '시군구·시도 단위로 인구·시설 데이터에 연결 (구름: 지역 연계 가능한 통계만)'
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 사회복지 - 보육·가족및여성
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/사회복지/보육·가족및여성.md
+  note: 어린이집·복지시설·출산/임신 지원만 우선 (구름 2026-09-29). 어린이집(복지부)과 유치원(교육부)은 부처가 달라 다른 부문이지만 국민 입장에서는 같은 영유아 돌봄 — contexts.yaml의 early-childhood-care로 연결
+  subsectors:
+  - slug: childcare-centers
+    name: 어린이집 (기본정보·평가·보육료/특별활동비 공시·입소 대기·육아종합지원센터)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 출산 후 가장 큰 생활 수요, 어린이집코드·좌표. 유치원코드와 영유아 시설 매핑
+    match:
+      title_regex: 어린이집|보육시설|보육정보|아이사랑|보육료|보육 ?교사|육아종합지원센터|공동육아
+  - slug: birth-support
+    name: 출산·임신 지원 (출산장려금·바우처·난임·산모신생아·다자녀)
+    depth: front
+    novelty: high
+    value_source: 지자체마다 다른 지원금 — 비교 수요 크고 데이터 흩어짐, 시군구코드
+    match:
+      title_regex: 출산|임신|출생|산모|신생아|난임|산후|다자녀|육아용품|장려금|첫만남
+  - slug: child-family-facilities
+    name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: '사회복지시설 공통 마스터 참조. 여성 폭력 피해 보호시설은 법적으로 위치 비공개(access: partial-location)'
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 사회복지 - 취약계층지원
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/사회복지/취약계층지원.md
+  note: 기초생활보장 통계·장애인 등록/급여 통계·장애인 시설/서비스·편의/이동권·사회복지시설 + 지역 연계 통계 (구름 2026-09-29). 개인정보 제한이 가장 강한 영역 — 통계는 시군구 이하 세분화 불가. 사회복지시설 통합 현황이 노인·아동·장애인·노숙인 시설 공통 마스터
+  subsectors:
+  - slug: accessibility
+    name: 장애인 편의·이동권 (편의시설·장애인 화장실/주차·특별교통수단·저상버스·BF 인증)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 건물 단위 원장(건물관리번호·PNU) — 일상 접근성 수요
+    match:
+      title_regex: 편의시설|경사로|장애인 ?(화장실|주차|콜|택시)|특별교통|저상버스|교통약자|무장애|BF|배리어|이동지원|휠체어|장애물 ?없는|전동보장구|주차구역|하모니콜|보행상 장애
+  - slug: disability-registry
+    name: 장애인 등록·급여 통계 (유형·정도·시군구, 장애인연금·수당·활동지원)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    match:
+      title_regex: 장애인 ?(등록|현황|수|인구|연금)|등록 ?장애인|장애수당|장애인연금|장애 ?(유형|정도)|활동지원 ?(이용|급여)
+  - slug: disability-services
+    name: 장애인 시설·서비스 (장애인복지시설·활동지원기관·발달장애인센터·보조기기·일자리)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 장애인 ?(복지|시설|복지관|보호|재활|거주|주간|직업|일자리|체육)|활동지원기관|발달장애|보조기기|점자|수어
+  - slug: basic-livelihood
+    name: 기초생활보장 통계 (수급자·가구·급여별, 차상위·긴급복지, 기준 중위소득)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    value_source: 시군구 × 급여 × 월 격자 원장, 지역 정책·시설 배치의 기초
+    match:
+      title_regex: 기초생활|수급자|수급 ?가구|생계급여|의료급여|주거급여|교육급여|차상위|긴급복지|중위소득
+  - slug: welfare-facilities-master
+    name: 사회복지시설 (통합 현황·사회복지관·사회복지법인·노숙인 시설·지역자활센터·시설 평가)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 사회복지시설코드 — 노인·아동·장애인·노숙인 시설 전체의 공통 마스터
+    match:
+      title_regex: 사회복지시설|사회복지관|복지관|사회복지법인|노숙|쪽방|지역자활센터|자활센터|시설 ?평가
+  - slug: regional-statistics
+    name: 지역 연계 통계 (시군구·시도 단위 취약계층 현황)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 지역에 연계 가능한 통계만 (구름)
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 사회복지 - 공적연금
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/사회복지/공적연금.md
+  note: 개인 단위 원장은 개인정보라 전부 제한. 국민연금 사업장(기업 축 원장)·가입/급여 통계(원본이 있는 통계라 지역에 연결)·기금 운용(경제로 연결)·직역연금 통계·퇴직연금만 (구름 2026-09-29). 퇴직연금은 금융위 퇴직연금기본정보 API·산업은행 원리금보장상품 금리 API·근로복지공단 가입/사업장 운용/수익률·고용부 도입 현황·SGIS 통계까지 — 금감원 통합연금포털 사업자별 수익률·수수료 공시는 포털 밖(자체)
+  subsectors:
+  - slug: retirement-pension
+    name: 퇴직연금 (퇴직연금 기본정보·상품 금리·가입/도입 현황·사업장 운용·수익률·IRP·연금저축)
+    depth: front
+    novelty: medium
+    value_source: 사업자별 수익률·수수료는 IRP·DC 선택 근거. 포털에는 금융위·산업은행 API와 근로복지공단·고용부 파일
+    match:
+      title_regex: ^(?!.*(공무원연금|사립학교|사학연금|군인연금)).*(퇴직연금|퇴직급여|IRP|개인형퇴직|연금저축|확정급여|확정기여)
+  - slug: pension-fund
+    name: 연금 기금 운용 (국민연금·사학·군인연금 기금 운용 현황·성과·국내외 투자·위탁운용사·거래증권사)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: '경제로 연결 (구름): 국내 주식 보유·위탁운용사·거래증권사는 종목코드·금융회사로 재정금융 주식·금융 데이터와 조인'
+    match:
+      title_regex: 투자|운용|위탁운용|증권사|주식|채권|대체투자|의결권|기금
+  - slug: occupational-pension-stats
+    name: 직역연금 통계 (공무원·사학·군인연금 가입·재직·퇴직·수급·재해보상)
+    depth: front
+    novelty: low
+    value_source: 직역연금 4공단은 통계만 내고 API가 거의 없음 — 파일 도시에 1개로 묶음, 지역별 수급자 표는 지역에 연결
+    match:
+      title_regex: 공무원연금|사립학교교직원|사학연금|군인연금|별정우체국
+  - slug: pension-workplaces
+    name: 국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    cycle: monthly
+    value_source: '사업장별 가입자 수·월 납부액 = 기업 규모·급여 수준을 추정하는 거의 유일한 공개 원장 (구름: 사업장 단위라 필수). 사업자번호로 기업 축(국세청·공정위·R&D·조달) 전체와 연결'
+    match:
+      title_regex: 사업장
+  - slug: pension-statistics
+    name: 국민연금 가입·급여 통계 (가입현황·수급현황·지역가입자·급여 실적)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 통계지만 원본(가입·수급 원장)에서 나온 시군구 × 월 격자 — 지역에 연결 (구름)
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 사회복지 - 사회복지일반
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/사회복지/사회복지일반.md
+  note: 사회복지의 나머지 영역. 사회적기업·협동조합·마을기업(사회적경제)만 (구름 2026-09-29). 인증번호·사업자번호 기업 원장 — 공공구매 우선 대상 확인
+  subsectors:
+  - slug: social-economy
+    name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 인증번호·사업자번호 — 기업 축과 연결
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+
+- sector: 재정금융 - 금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/금융.md
+  note: 자본시장·금융회사·금융상품 영역. 금융위원회 금융공공데이터(시세·발행·공시·금융회사) API 시리즈가 몸통이고 금감원 공시(DART 재게시)가 기업 축과 잇는다. 재정·금융에 흩어진 금융기관 데이터를 모음 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: exchange-rates
+    name: 환율 (수출입은행·기업은행 환율)
+    depth: front
+    novelty: high
+    cycle: daily
+    match:
+      title_regex: 환율
+  - slug: corporate-disclosure
+    name: 기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)
+    depth: front
+    novelty: high
+    cycle: event
+    cross_cutting: true
+    value_source: 법인등록번호·사업자번호로 기업 축 전체와 연결. 주요사항보고서는 사건 단위 시의성(유상증자·합병·소송)
+    match:
+      title_regex: 공시|정기보고서|사업보고서|주요사항보고|증권신고서|지분|기업 ?재무|기업기본정보|기업정보|지배구조|개인사업자|차입투자|자금조달|정보공개재산
+  - slug: securities-market
+    name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+    depth: front
+    novelty: high
+    cycle: daily
+    cross_cutting: true
+    value_source: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인
+    match:
+      title_regex: 대차|시세|상장종목|주식발행|주식배당|신주인수권|단기금융증권|채권발행|채권기본|채권권리|주식권리|주식등록|주식분포|주식대차|채권대차|REPO|국제거래|지수|파생결합|증권상품|일반상품|증권예탁|주식정보|채권정보|소매채권|모기지론|MBS|MBB|SLBS|사회적채권|국가자산
+  - slug: financial-institutions
+    name: 금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자
+    match:
+      title_regex: 금융회사|금융통계|부보|영업정지|파산|금융투자회사|금융투자협회|저축은행|투자자문사|자산운용사|크라우드펀딩|영업점|금융기관|예금자보호|보험사고|예금보험금
+  - slug: financial-products
+    name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
+    depth: front
+    novelty: medium
+    value_source: 상품 단위 비교 원장
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 재정·금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/재정·금융.md
+  note: '재정 영역: 지역사랑상품권 가맹점·국유/공유재산·공매·국가 예산. 재정정보원 재정통계 시리즈는 집계라 우선 배제, 금융기관 데이터는 금융으로, 지방재정365는 지방행정으로 이관 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함'
+  subsectors:
+  - slug: local-currency
+    name: 지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 가맹점 = 지역 소상공인 사업장 목록(주소·업종), 지역 상권과 연결
+    match:
+      title_regex: 지역사랑상품권|지역화폐|온누리|온통대전|상품권 ?가맹|가맹점
+  - slug: public-assets
+    name: 국유·공유재산·공매 (공매자산·온비드·국유재산·체납국세 공매·관급자산·국가채권)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 공매 물건 단위 시의성 원장, 소재지로 토지·건물 원장과 연결
+    match:
+      title_regex: 공매|온비드|국유재산|공유재산|체납국세|관급자산|국가연|채권현재액|국가채권|압류
+  - slug: national-budget
+    name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
+    depth: front
+    novelty: low
+    cycle: annual
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 세제
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/세제.md
+  note: 국세청 사업자등록 상태(휴폐업) 조회가 사업자번호 축의 상태 원장. 지방세는 행안부 지역별 통계만 지역 지표로 남김 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: business-registration
+    name: 사업자등록 상태 (국세청 사업자 상태·휴폐업 조회)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 사업자번호 → 계속/휴업/폐업·과세유형. 모든 기업 원장의 생존 여부 검증
+    match:
+      title_regex: 사업자등록|휴폐업|사업자 ?상태
+  - slug: regional-tax
+    name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+    depth: front
+    novelty: low
+    cycle: annual
+    cross_cutting: true
+    value_source: 시도·시군구 격자 — 지역 지표로 연결
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 산업금융
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/산업금융.md
+  note: 신보·기보 보증 이용 기업 명세(기업 원장)와 대부업 등록 원장만 — 보증 통계·요율표는 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: lender-registry
+    name: 대부업 등록 (시도·시군구 등록 현황)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 대부업법 등록 원장, 사업자번호·주소
+    match:
+      title_regex: 대부업
+  - slug: guaranteed-firms
+    name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 보증·투자 받은 기업 목록 — 기업 축(사업자번호)
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 무역및투자유치
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/무역및투자유치.md
+  note: 관세청 수출입 실적(신고 원장에서 나온 월 격자, 시군구별 포함)·무역 코드·거래 상대 원장만. KOTRA 문서형 해외시장 정보는 부수 자료라 배제 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: trade-codes
+    name: 무역 코드 (선사·항공사·특송·화물운송주선업자 부호, 세관장확인 대상, 관세환율, 국가·업종 등급)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    match:
+      title_regex: 부호|세관장확인|관세환율|국가목록|업종목록|업종등급|국별신용등급|국가별 신용
+  - slug: trade-statistics
+    name: 수출입 실적 (관세청 품목·국가·성질·시도·시군구·세관 × 월, 10일 속보, 입출항 물동량)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 수출입 신고 원장에서 나온 HS 품목 × 국가 × 월 격자 — 시군구별은 지역 지표, 10일 속보는 시의성
+    match:
+      title_regex: 관세청_.*(수출입|물동량|10일)
+  - slug: trade-partners
+    name: 거래 상대 원장 (무역보험 바이어·전략물자 거래업체/물품·수출예정·고비즈코리아 상품·기업)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재정금융 - 기획재정
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재정금융/기획재정.md
+  note: 국가 예산(세출·지출 세목) API와 국채 발행만 — Claude가 구름의 기준(개별 객체 원장·실시간은 살리고, 통계·부수·불규칙은 우선 배제, 오분류는 이관)을 적용해 정함
+  subsectors:
+  - slug: national-budget-plan
+    name: 국가 예산·국채 (세출/지출 세목 예산, 국고채 발행·시장)
+    depth: front
+    novelty: low
+    cycle: annual
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 산업·중소기업일반
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업·중소기업일반.md
+  note: '중기부·소진공·창업진흥원·지자체 인허가가 섞인 BRM 잡동사니 영역. 상가·상권 원장(소상공인 상가업소 API — 상권 분석의 기준)과 기업 확인/인증·지원사업 공고·업종 인허가가 핵심 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: commercial-stores
+    name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 상가업소 단위(상호·업종·좌표) 전수 원장 = 상권 분석의 기준. 전국대규모및준대규모점포표준데이터 포함(물류등기타에서 재검토 후보였던 것)
+    match:
+      title_regex: 상가|상권|전통시장|상점가|대규모점포|준대규모점포|쇼핑몰|점포|나들가게|골목상권
+  - slug: sme-support-programs
+    name: 중소기업·창업 지원사업 공고 (K-Startup·중소벤처24·기업마당·지자체 지원시책)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 공고 단위 시의성 — 모델이 모르는 이번 달 공고
+    match:
+      title_regex: 공고|지원사업|사업소개|K-Startup|중소벤처24|기업마당|지원시책|주관기관|해외전시회|창업에듀|비즈니스지원단
+  - slug: sme-certification
+    name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 확인서·인증서 단위 원장, 사업자번호로 기업 축 연결
+    match:
+      title_regex: 벤처|이노비즈|메인비즈|창업기업|확인서|인증서|성능인증|상생협력|유망중소|우수기업|여성기업|장애인기업|수출인큐베이터|창업보육|보육센터|집적시설|창업공간|메이커스페이스|스마트공장공급기업|경영혁신형
+  - slug: local-company-registry
+    name: 지역 기업 현황 (시군구 관내 기업·입주업체·수출기업 목록)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: 기업현황|기업체 ?현황|기업 ?현황|기업정보|관내 기업|입주 ?업체|입주기업|기업 ?목록|기업명단|수출 ?기업
+  - slug: business-licenses
+    name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
+    depth: front
+    novelty: medium
+    value_source: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 에너지및자원개발
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/에너지및자원개발.md
+  note: '한전·전력거래소·발전 5사·가스공사·지역난방·석유공사·에너지공단·광해광업공단. 전력 수급·시장은 실시간, 발전소·주유소·충전소·광업은 시설/허가 원장 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: power-market-realtime
+    name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급
+    match:
+      title_regex: (_|^(?!.*_)).*(전력수급|수급예보|전력거래|계통한계가격|SMP|REC|현물시장|발전량|발전실적|발전원별|수요반응|DR|계통운영|송발전단|연료원별|전력시장|발전기별|태양광 발전량|풍력 발전|연료소비|연료정보|소비탄|발전 ?실적|연료도입|연료비용|전력입찰량|이용률|열효율)
+  - slug: fuel-charging
+    name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
+    depth: front
+    novelty: high
+    cycle: realtime
+    cross_cutting: true
+    value_source: 주유소 ID·충전소 ID·좌표, 유가·충전기 상태는 실시간
+    match:
+      title_regex: (_|^(?!.*_)).*(주유소|유가|판매가격|평균가격|최저가|충전소|충전기|수소충전|전기차|LPG|자동차충전|지역코드 오픈)
+  - slug: mining-aggregates
+    name: 광업·토석채취 (광업권·토석채취허가·채석단지·골재·폐광산)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 허가 원장(필지·구역) — 국토 공간 규제와 겹침
+    match:
+      title_regex: (_|^(?!.*_)).*(토석채취|채석|광업권|광구|광산|골재|광물|매장량|폐광)
+  - slug: energy-business-licenses
+    name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
+    depth: front
+    novelty: medium
+    value_source: LOCALDATA 에너지 업종 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(석유판매|석유및석유대체|고압가스|액화석유|도시가스|가스사업자|일반도시가스|전력기술|전기공사|석연탄|에너지공급업체|가스용품|용기|전기사업|ESCO|에너지절약전문기업)
+  - slug: energy-efficiency
+    name: 효율등급·인증 제품 (에너지소비효율·고효율기자재·자동차 연비·건축물 에너지효율등급·K-RE100)
+    depth: front
+    novelty: medium
+    value_source: 모델명·제품 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(효율등급|소비효율|고효율|표시연비|에너지효율|인증제품|인증 ?제품|검사대상기기|K-RE100)
+  - slug: plant-emissions
+    name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
+    depth: front
+    novelty: medium
+    cycle: daily
+    value_source: 발전소 단위 측정 — 환경기상과 cross-sector
+    match:
+      title_regex: (_|^(?!.*_)).*(대기오염물질|배출|탈황|수질|폐기물|석탄 ?재활용|재 재활용|주변 ?기상|발전소 ?기상|주변 대기|대기정보|대기질)
+  - slug: power-plants
+    name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 전국태양광발전소전기사업허가정보표준데이터(활용 37,617) — 발전소 단위, 주소·용량
+    match:
+      title_regex: (_|^(?!.*_)).*(발전소|발전사업|전기사업허가|신재생|분산전원|발전설비|태양광|풍력|연료전지|수력|양수발전|RE100|설비용량|건설 인허가|인허가 현황)
+  - slug: energy-usage
+    name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    value_source: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 고용노동
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/고용노동.md
+  note: '고용정보원(워크넷·고용24)·산업인력공단·장애인고용공단·근로복지공단·산업안전보건공단. 채용 공고·훈련 과정·직업/직무 사전·일자리사업·산재 사례·노동조합이 핵심 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: job-postings
+    name: 채용 공고 (워크넷 채용·공채속보·공공기관 채용·장애인 구인 실시간·해외취업 모집·지자체 일자리)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 공고 단위 — 구직 수요 최대, 워크넷(고용24) 자체 키 여부 확인
+    match:
+      title_regex: (_|^(?!.*_)).*(채용정보|채용목록|채용 ?공고|공채|구인|모집공고|채용행사|잡아바|일자리 ?매칭|일자리매칭|공공부문 일자리|공공취업|취업정보|일자리 정보|지역 공공일자리|근로지원인 구인|_일자리$)
+  - slug: vocational-training
+    name: 직업훈련 과정 (국민내일배움카드·사업주·컨소시엄·일학습병행·NCS 훈련)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: (_|^(?!.*_)).*(훈련과정|내일배움|일학습병행|사업주훈련|컨소시엄|NCS 훈련|NCS 교육과정|훈련직종|공통코드-훈련|교육일정|훈련기관)
+  - slug: government-job-programs
+    name: 정부지원 일자리사업·청년정책 (사업정보·참여자 모집·노인일자리·해외인턴)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: (_|^(?!.*_)).*(정부지원일자리|일자리사업|청년정책|노인일자리|자립형일자리|노인사회활동|구직자취업역량|해외인턴|해외취업 ?(모집|우수일자리)|해외연수 과정|해외기업정보)
+  - slug: industrial-accidents
+    name: 산업재해·산재보험 (국내재해사례·사고사망·건설업 일별 중대재해·산재 판례/질병판정/심사결정·요양 승인)
+    depth: front
+    novelty: high
+    cycle: daily
+    match:
+      title_regex: (_|^(?!.*_)).*(재해사례|사고사망|중대재해|산재|질병판정|심사결정|요양 ?신청|판결문|판례|가입·완납|진위)
+  - slug: labor-unions
+    name: 노동조합 (전국노동조합표준데이터·지자체 노동조합)
+    depth: front
+    novelty: medium
+    value_source: 전국노동조합표준데이터(활용 25,609) — 조합 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(노동조합)
+  - slug: employment-institutions
+    name: 고용 서비스 기관·인증 기업 (고용복지플러스센터·일자리센터·직업소개소·표준사업장·강소기업·일자리우수기업)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: (_|^(?!.*_)).*(고용복지플러스|일자리센터|직업소개소|표준사업장|강소기업|청년친화|일자리우수기업|고용우수기업|발달장애인훈련센터|보조공학센터|수행기관|청년취업인턴제운영기관|여성 ?일자리기관|일자리 ?우수기업|장애인고용공단 현황)
+  - slug: regional-employment
+    name: 지역 고용동향 (시도 × 월 취업자·실업률·고용률)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 시도 × 월 격자 — 지역 정보에 연결
+    match:
+      title_regex: (_|^(?!.*_)).*(고용동향)
+  - slug: job-dictionary
+    name: 직업·직무 사전 (직업사전·직업정보·직업전망·직무데이터·NCS·고용직업분류·학과정보)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 코드 마스터 — 채용·훈련·자격을 잇는 직업분류 키
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 산업기술지원
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업기술지원.md
+  note: '국가기술표준원·산업기술시험원·산업기술진흥원·기술보증기금·국토부 키스콘. 제품안전(리콜·인증)·기술이전·인증 기업·건설업체 원장만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: product-safety
+    name: 제품안전·인증 (위해상품·안전인증 제품·리콜)
+    depth: front
+    novelty: high
+    value_source: 제품안전정보센터 — 제품 단위 원장
+    match:
+      title_regex: (_|^(?!.*_)).*(제품안전|위해상품|인증제품|리콜|안전인증|KC|가스용품|어린이제품)
+  - slug: tech-transfer
+    name: 기술이전·기술은행 (도입희망기술·기술정보 DB·수요기술·기술 나눔)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(기술은행|도입희망기술|기술정보|수요기술|기부|나눔 기술|기술나눔|기술시장|미활용 특허|사업화 유망기술|기술이전)
+  - slug: construction-firms
+    name: 건설업체·건설공사 (키스콘 건설업체정보·건설공사대장·건설 기술사례)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 건설업체 등록 원장, 사업자번호
+    match:
+      title_regex: (_|^(?!.*_)).*(키스콘|건설업체|건설공사대장|건설보고서|건설 기술|건설기술)
+  - slug: certified-tech-companies
+    name: 소부장 전문·으뜸기업·녹색인증·ESG 기업
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 산업진흥·고도화
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/산업진흥·고도화.md
+  note: '보고서·동향·공모전 위주라 대부분 배제. 기술 나눔·인증 기업만 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: promotion-registries
+    name: 창업보육·사업공고·기술 나눔·인증 기업
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 산업고용 - 원자력기술
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/산업고용/원자력기술.md
+  note: '한수원·원자력안전기술원·원자력환경공단·원자력안전재단. 원전 가동·사고고장, 환경방사선(실시간), 방폐물, 방사성동위원소 이용기관 (구름의 기준을 Claude가 적용 2026-09-29: 객체 단위 원장·실시간은 살리고 통계·부수·불규칙은 우선 배제)'
+  subsectors:
+  - slug: radiation-monitoring
+    name: 환경방사선·부지 감시 (실시간 방사선량·환경방사능·부지 지진)
+    depth: front
+    novelty: high
+    cycle: realtime
+    cross_cutting: true
+    value_source: 실시간 측정 — 환경기상과 cross-sector
+    match:
+      title_regex: (_|^(?!.*_)).*(방사선량|환경방사선|방사능|방사성물질|집적선량|부지감시|지진|부지주변|해수 방사능|개인선량|실시간)
+  - slug: radioactive-waste
+    name: 방사성폐기물 (반입·인수·처분·저장 현황)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(방폐물|방사성 ?폐기물|처분|저장|폐기물 ?(반입|인수|발생량)|밀봉선원|개봉선원|불용선원|사용후핵연료)
+  - slug: radioisotope-users
+    name: 방사성동위원소 이용기관·방사선 작업
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_|^(?!.*_)).*(방사성동위원소|이용기관|방사선발생장치|방사선작업종사자)
+  - slug: nuclear-operations
+    name: 원전 가동·사고고장·안전성능
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재난안전 - 안전관리
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재난안전/안전관리.md
+  note: 행안부·소방청·국토안전관리원·전기/가스안전공사·지자체. 재난 특보·위험지역, 대피시설, 소방, 시설 안전 원장, 방범 인프라, 사고 다발지역만 (Claude가 구름 기준 적용 2026-09-29). 표준데이터(지진옥외대피장소·민방위대피시설·교통사고다발지역·안전비상벨·안심지킴이집)가 많아 지자체 파일은 표준 하나로 접힌다. 행안부 생활안전지도(safemap)는 자체 키
+  subsectors:
+  - slug: disaster-hazards
+    name: 재난 특보·위험지역 (재난문자·방재정보·재해위험지구·급경사지·인명피해우려지역·방사능 방재·화학사고·위험물)
+    depth: front
+    novelty: high
+    cycle: event
+    cross_cutting: true
+    value_source: 재난 시 즉시성 최상, 위험지구 폴리곤은 토지 규제 레이어와 겹침
+    match:
+      title_regex: 재난문자|긴급재난|특보|방재정보|재해위험|위험지구|위험지역|인명피해우려|취약지역|급경사지|붕괴|침수|상습결빙|복합재난|위험시설|재난위험|해일|지진 ?(감시|관측)|방사능|방사선|비상계획구역|화학사고|유해화학|위험물|재난 ?정보|재난안전 ?정보|재해 ?정보
+  - slug: evacuation-shelters
+    name: 대피·구호시설 (민방위 대피시설·지진/해일 대피장소·무더위/한파쉼터·비상급수시설·임시주거)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 표준데이터 다수, 좌표 원장 — 재난 시 어디로 가나
+    match:
+      title_regex: 대피|민방위|무더위쉼터|한파쉼터|이재민|임시주거|수용 ?(시설|공간)|비상급수|급수시설|그늘막|구호|쉼터
+  - slug: fire-rescue
+    name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+    depth: front
+    novelty: high
+    value_source: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자
+    match:
+      title_regex: 구조활동|소방|화재|119|구급|구조대|소화전|소방용수|비상소화|의용소방|특정소방대상물|안전센터
+  - slug: facility-safety
+    name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
+    depth: front
+    novelty: medium
+    value_source: 승강기 고유번호·시설물 번호 단위 원장
+    match:
+      title_regex: 승강기|시설물|시설안전등급|안전점검 ?결과|안전등급|기계설비|성능점검|전기|가스|자율안전확인|위험기계|보호구|진위확인|사방시설|지반정보|소규모공공시설|다중이용업소|안전검사|지하안전|싱크홀|사고사례
+  - slug: crime-prevention
+    name: 방범·생활안전 인프라 (CCTV·안전비상벨·안심지킴이집·CPTED·보안등·생활안전지도)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: CCTV|안심|비상벨|생활안전지도|CPTED|지킴이집|방범|보안등|가로등
+  - slug: accident-hotspots
+    name: 사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 교통사고다발지역 표준데이터 — 도로·경찰 교통사고와 same_concept
+    match:
+      title_regex: 교통사고|사고다발|사고 ?다발|무단횡단사고|해양사고|물놀이 ?사고|안전사고|사고 ?발생
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재난안전 - 경찰
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재난안전/경찰.md
+  note: 경찰청·지방경찰청. 경찰관서 위치·생활안전지도·지역 단위 범죄/교통사고만 (Claude가 구름 기준 적용 2026-09-29). 범죄는 경찰청(발생 기준)과 대검(처리 기준)이 다른 값 — 법무 crime-statistics와 same_concept, 시군구 지역 지표로 연결
+  subsectors:
+  - slug: lost-found
+    name: 분실물·습득물 (경찰청 유실물 통합포털 — 건별 실시간)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 물건 하나 단위 실시간 원장 — 분실자 직접 수요
+    match:
+      title_regex: 실종경보|분실물|습득물|유실물|핸드폰 찾기|습득
+  - slug: police-traffic-accidents
+    name: 교통사고 (지역·지점·다발지역·사상자)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 사상자 현황|(교통사고|사상자).*(지자체별|시군구|구별|동별|읍면동|소방서별|지역별|시도별|경찰서별|관서별|시도청별|장소별|해역별|지점|다발|지점|위치|지역)|(지자체별|시군구|구별|동별|읍면동|소방서별|지역별|시도별|경찰서별|관서별|시도청별|장소별|해역별|지점|지역).*교통사고
+  - slug: crime-occurrence
+    name: 범죄 발생·검거·112신고 (경찰서·시도청·지역 단위, 범죄통계 조회)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    value_source: 경찰서·시군구 격자 — 지역 치안 지표 (대검 처리 통계와 기준 차이)
+    match:
+      title_regex: ((지자체별|시군구|구별|동별|읍면동|소방서별|지역별|시도별|경찰서별|관서별|시도청별|장소별|해역별|지점|지역).*(범죄|발생|검거))|((범죄|발생|검거).*(지자체별|시군구|구별|동별|읍면동|소방서별|지역별|시도별|경찰서별|관서별|시도청별|장소별|해역별|지점|지역))|5대범죄|대범죄|112신고|범죄통계
+  - slug: police-safety-map
+    name: 생활안전지도·범죄 위험도 (WMS 레이어·지하철 성범죄 위험도)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: 지킴이집|생활안전지도|WMS|위험도|범죄 ?주의|CCTV|안심|지하철성범죄위험도
+  - slug: police-facilities
+    name: 경찰관서 (경찰서·지구대·파출소·치안센터 위치)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 재난안전 - 해경
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/재난안전/해경.md
+  note: 해양경찰청 단일. 수상레저 금지구역(해수면·내수면 180여 건)·주조업지/항로 등 수역 규제 공간, 파출소·인명구조함 위치, 위치 단위 해양사고만 (Claude가 구름 기준 적용 2026-09-29). 금지구역은 관서별 파일이 많아 하나의 공간 도시에로 접는다
+  subsectors:
+  - slug: water-restriction-zones
+    name: 수역 이용 규제 (수상레저 금지구역·상수원보호구역·낚시어선 주조업지·항로)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 해양·내수면 활동 제한 폴리곤 — 해양공간 용도구역·어장과 겹치는 공간 규제
+    match:
+      title_regex: 수상레저금지구역|금지구역|보호구역|주조업지|항로|위험구역|조업지
+  - slug: coast-guard-facilities
+    name: 해경 시설 (파출소·출장소·인명구조함 위치)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 파출소|출장소|인명구조함|구조함|구조장비|추락위치|경찰서 ?위치|관서 ?위치|위치정보
+  - slug: maritime-accidents
+    name: 해양·연안 사고 (조난·연안사고 위치·해역별)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 식품건강 - 식품의약안전
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/식품건강/식품의약안전.md
+  note: 식약처·식품안전정보원·지자체 위생과. 식품 인허가 업소·위생 지정·회수/행정처분·수입식품·제품/영양 DB·공중위생업소만 (Claude가 구름 기준 적용 2026-09-29). 의약품·의료기기·DUR은 보건의료로, 약국은 보건의료로, 숙박업은 관광으로 이동. 식품·공중위생 인허가는 행안부 LOCALDATA와 같은 원천(업종 필터) — 식약처 식품안전나라는 자체 키
+  subsectors:
+  - slug: hygiene-designations
+    name: 위생 지정 (음식점 위생등급·모범음식점·안심식당·HACCP 적용업소)
+    depth: front
+    novelty: medium
+    value_source: 외식 선택 근거, 업소 인허가번호로 인허가 원장과 조인
+    match:
+      title_regex: 위생등급|모범음식점|안심식당|안심업소|HACCP|위생 ?등급|식품안심|우수업소|지정 ?현황
+  - slug: food-safety-alerts
+    name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 회수·판매중지는 실시간 소비자 안전, 행정처분은 업소 건별 이력
+    match:
+      title_regex: 안전성검사|회수|판매중지|행정처분|부적합|위해|방사능|잔류농약|검사 ?결과|이물|식중독|위반
+  - slug: imported-food
+    name: 수입식품 (수입신고·해외제조업소·수입업체)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 수입식품|수입신고|해외제조|수입업|수입 ?(판매|수산물|축산물|농산물)
+  - slug: public-hygiene-businesses
+    name: 공중위생업소 (목욕장·이미용·세탁·위생관리용역·위생용품, LOCALDATA)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: 공중위생|목욕장|미용|이용업|세탁|위생관리용역|위생용품|숙박업
+  - slug: food-business-licenses
+    name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 전국 음식점·식품업소 전수에 가까운 원장 — 상권 분석의 기본, 인허가번호·사업자번호·좌표
+    match:
+      title_regex: 인허가|업소|음식점|제과점|집단급식소|제조가공|즉석판매|식품판매|소분|운반업|유흥|단란|위탁급식|식육|축산물 ?(가공|판매|운반|포장|보관)|식용얼음|자동판매기|건강기능식품 ?(판매|유통|일반)|영업|카페|폐업|식품접객|급식소|제조업|유통전문|판매업|레스토랑
+  - slug: food-product-db
+    name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 품목제조보고번호·바코드로 제품 단위 조인
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 대기
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/대기.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 기상 예보·특보, 대기질 실시간, 실내공기질, 기상 관측, 대기 배출원·자동차 환경'
+  subsectors:
+  - slug: weather-forecast
+    name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키
+    match:
+      title_regex: (_.*(예보|특보|태풍|지진|생활기상|꽃가루|도로위험|도로날씨|산악|날씨|통보문|일기도|수치예|예측|기상지수|자외선지수|황사정보|낙뢰분포|서리|기상1호|전력기상)|^[^_]*(예보|특보|태풍|지진|생활기상|꽃가루|도로위험|도로날씨|산악|날씨|통보문|일기도|수치예|예측|기상지수|자외선지수|황사정보|낙뢰분포|서리|기상1호|전력기상)[^_]*$)
+  - slug: air-quality
+    name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상
+    match:
+      title_regex: (_.*(에어코리아|대기질|대기오염(?!물질 ?배출)|미세먼지|초미세|오존|황사|측정소|공기질|CAI|대기환경|중금속|재비산|악취|대기정보|측정망|라돈|전광판|주의보|경보|대기 ?환경)|^[^_]*(에어코리아|대기질|대기오염(?!물질 ?배출)|미세먼지|초미세|오존|황사|측정소|공기질|CAI|대기환경|중금속|재비산|악취|대기정보|측정망|라돈|전광판|주의보|경보|대기 ?환경)[^_]*$)
+  - slug: indoor-air
+    name: 실내공기질 (다중이용시설·지하역사 자동측정망)
+    depth: front
+    novelty: medium
+    cycle: realtime
+    match:
+      title_regex: (_.*(실내공기질|실내 공기질|다중이용시설|지하역사|역사내)|^[^_]*(실내공기질|실내 공기질|다중이용시설|지하역사|역사내)[^_]*$)
+  - slug: weather-observation
+    name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천
+    match:
+      title_regex: (_.*(관측|ASOS|AWS|종관|레이더|위성|천리안|히마와리|부이|레윈존데|윈드프로파일러|적설|낙뢰|풍향풍속|기상센서|기상정보|AMOS|AMDAR|항공기상|지점정보|기상 ?현황|기상관측|GTS|세계기상|저고도|기상 ?정보|일별 기상|강수량|기온)|^[^_]*(관측|ASOS|AWS|종관|레이더|위성|천리안|히마와리|부이|레윈존데|윈드프로파일러|적설|낙뢰|풍향풍속|기상센서|기상정보|AMOS|AMDAR|항공기상|지점정보|기상
+        ?현황|기상관측|GTS|세계기상|저고도|기상 ?정보|일별 기상|강수량|기온)[^_]*$)
+  - slug: emission-sources
+    name: 대기 배출원·자동차 환경 (배출시설 사업장·굴뚝 TMS·비산먼지·석면·온실가스 배출·자동차 배출가스/환경인증)
+    depth: front
+    novelty: medium
+    value_source: 사업장 단위 배출원 원장(인허가·TMS 실시간) — 사업자번호로 기업 축
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 환경일반
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/환경일반.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 환경영향평가, 환경 공간 규제·주제도, 환경 측정 실시간, 오염원·화학물질 사업장, 환경 업체·인증, 공중화장실'
+  subsectors:
+  - slug: eia
+    name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결
+    match:
+      title_regex: (_.*(환경영향평가|전략환경|소규모 ?협의|사전 ?협의|협의현황|초안 ?공람|영향평가|사전환경성|해역이용)|^[^_]*(환경영향평가|전략환경|소규모 ?협의|사전 ?협의|협의현황|초안 ?공람|영향평가|사전환경성|해역이용)[^_]*$)
+  - slug: env-spatial
+    name: 환경 공간 규제·주제도 (상수원보호구역·생태자연도·토지피복·특정토양오염·환경주제도)
+    depth: front
+    novelty: low
+    value_source: 필지·공간에 걸리는 환경 규제 레이어 — what-can-i-build
+    match:
+      title_regex: (_.*(환경공간정보|환경주제도|토지피복|생태자연도|상수원 ?보호|상수원보호|녹지자연도|환경성평가|지형평가|습지평가|식생평가|철새도래지|보호구역|보호수|특정토양|토양오염)|^[^_]*(환경공간정보|환경주제도|토지피복|생태자연도|상수원 ?보호|상수원보호|녹지자연도|환경성평가|지형평가|습지평가|식생평가|철새도래지|보호구역|보호수|특정토양|토양오염)[^_]*$)
+  - slug: env-monitoring
+    name: 환경 측정 실시간 (환경방사선·소음·악취·라돈·S-DoT 센서·중금속)
+    depth: front
+    novelty: high
+    cycle: realtime
+    match:
+      title_regex: (_.*(실시간|환경방사선|방사선|소음|진동|측정망|악취|라돈|S_DoT|센서|중금속|환경위성|측정결과|측정 정보|VOCs)|^[^_]*(실시간|환경방사선|방사선|소음|진동|측정망|악취|라돈|S_DoT|센서|중금속|환경위성|측정결과|측정 정보|VOCs)[^_]*$)
+  - slug: pollution-sources
+    name: 오염원·화학물질 사업장 (배출시설·가축분뇨·소음진동·석면·유해화학물질 취급·PRTR)
+    depth: front
+    novelty: medium
+    value_source: 인허가 사업장 원장 — 사업자번호·좌표
+    match:
+      title_regex: (_.*(배출시설|배출업소|환경오염물질|오염물질|가축분뇨|소음진동|석면|화학물질|유해화학|유독물|취급시설|화학사고|비산먼지|굴뚝|TMS|측정기기|인허가|환경위반|오염신고|배출 및 이동|자율점검|공회전|액비|분뇨)|^[^_]*(배출시설|배출업소|환경오염물질|오염물질|가축분뇨|소음진동|석면|화학물질|유해화학|유독물|취급시설|화학사고|비산먼지|굴뚝|TMS|측정기기|인허가|환경위반|오염신고|배출 및 이동|자율점검|공회전|액비|분뇨)[^_]*$)
+  - slug: env-business
+    name: 환경 업체·인증 (환경전문공사·측정대행·컨설팅·녹색기업·환경표지·환경정보공개)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_.*(환경전문공사|측정대행|환경관리 ?대행|환경컨설팅|대행기관|환경시험검사|검증기관|영향조사기관|토양관련전문기관|정비사업자|시공업체|설계시공|녹색기업|환경표지|녹색제품|우수환경기업|환경정보공개|재활용시스템|업체)|^[^_]*(환경전문공사|측정대행|환경관리 ?대행|환경컨설팅|대행기관|환경시험검사|검증기관|영향조사기관|토양관련전문기관|정비사업자|시공업체|설계시공|녹색기업|환경표지|녹색제품|우수환경기업|환경정보공개|재활용시스템|업체)[^_]*$)
+  - slug: public-toilets
+    name: 공중화장실 (전국 표준·개방화장실)
+    depth: front
+    novelty: low
+    value_source: 생활 편의 시설 원장, 좌표
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 폐기물
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/폐기물.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 생활폐기물 배출·수거 지점, 폐기물 처리업·배출자'
+  subsectors:
+  - slug: waste-collection-points
+    name: 생활폐기물 배출·수거 지점 (대형폐기물 품목·수거함·종량제 판매소·음식물·재활용 정거장)
+    depth: front
+    novelty: medium
+    value_source: 주민 생활 수요 — 지자체별 파일 다수
+    match:
+      title_regex: (_.*(대형폐기물|수거함|의류수거|폐건전지|폐형광등|폐의약품|종량제|판매소|분리수거|재활용품|쓰레기통|수거|배출 ?(요일|장소|시간)|음식물|PP마대|클린하우스|재활용 ?정거장|배출위치|생활쓰레기|재활용도움센터|클린지킴이|쓰레기)|^[^_]*(대형폐기물|수거함|의류수거|폐건전지|폐형광등|폐의약품|종량제|판매소|분리수거|재활용품|쓰레기통|수거|배출 ?(요일|장소|시간)|음식물|PP마대|클린하우스|재활용 ?정거장|배출위치|생활쓰레기|재활용도움센터|클린지킴이|쓰레기)[^_]*$)
+  - slug: waste-business
+    name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+    depth: front
+    novelty: medium
+    value_source: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 자연
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/자연.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 자연·환경 보전 공간 레이어, 국립공원 탐방, 토양 측정, 생물종·야생동물'
+  subsectors:
+  - slug: env-spatial-layers
+    name: 자연·환경 보전 공간 레이어 (국토환경성평가 60여 레이어·국립공원 용도지구·습지/생태경관/야생생물 보호구역·무인도서)
+    depth: front
+    novelty: low
+    value_source: 필지에 겹치는 환경·자연 규제 레이어 — 토지이용규제의 개별법 레이어 (what-can-i-build)
+    match:
+      title_regex: (_.*(국토환경성평가|국립공원|도립공원|군립공원|자연공원|보호구역|보호지역|습지|생태경관|야생생물보호|백두대간|천연보호|자연휴식|생태자연도|경관자원|보전지역|보전해역|관리해역|무인도서|특정도서|자연유보|구역|지구$|녹지지역|보전산지|가축사육제한|법제적 평가|환경생태적 평가)|^[^_]*(국토환경성평가|국립공원|도립공원|군립공원|자연공원|보호구역|보호지역|습지|생태경관|야생생물보호|백두대간|천연보호|자연휴식|생태자연도|경관자원|보전지역|보전해역|관리해역|무인도서|특정도서|자연유보|구역|지구$|녹지지역|보전산지|가축사육제한|법제적
+        평가|환경생태적 평가)[^_]*$)
+  - slug: national-parks
+    name: 국립공원 탐방 (탐방로·대피소·야영장·예약)
+    depth: front
+    novelty: medium
+    cycle: event
+    match:
+      title_regex: (_.*(탐방|대피소|야영장|예약|탐방로|탐방객|공원시설|국립공원)|^[^_]*(탐방|대피소|야영장|예약|탐방로|탐방객|공원시설|국립공원)[^_]*$)
+  - slug: soil
+    name: 토양 측정 (토양측정망·토양오염)
+    depth: front
+    novelty: low
+    match:
+      title_regex: (_.*(토양측정망|토양오염|농약사용량)|^[^_]*(토양측정망|토양오염|농약사용량)[^_]*$)
+  - slug: biodiversity
+    name: 생물종·야생동물 (전국자연환경조사 종 분포 점·야생동물 구조·철새·보호수)
+    depth: front
+    novelty: medium
+    value_source: 종 관찰 지점 원장(5년 주기 전국자연환경조사) — 정밀조사는 불규칙이라 배제
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 상하수도·수질
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/상하수도·수질.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 지하수, 수질 오염원, 수질 측정'
+  subsectors:
+  - slug: groundwater
+    name: 지하수 (관정·지하수 수위/수질·먹는샘물·약수터 수질검사)
+    depth: front
+    novelty: medium
+    value_source: 관정·관측정 단위 원장
+    match:
+      title_regex: (_.*(지하수|관정|먹는샘물|약수터|먹는물)|^[^_]*(지하수|관정|먹는샘물|약수터|먹는물)[^_]*$)
+  - slug: water-pollution-sources
+    name: 수질 오염원 (폐수배출시설·비점오염·공공폐수처리시설)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: (_.*(폐수배출|폐수|수질오염원|배출시설|비점오염|공공폐수|환경기초시설|오염원)|^[^_]*(폐수배출|폐수|수질오염원|배출시설|비점오염|공공폐수|환경기초시설|오염원)[^_]*$)
+  - slug: water-quality
+    name: 수질 측정 (수질측정망·자동측정 실시간·조류경보·수질검사)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 측정소 단위 수질 시계열 — 수자원(하천·댐)과 같은 물 맥락
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 환경기상 - 해양환경
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/환경기상/해양환경.md
+  note: 'Claude가 구름 기준(핵심·개별 객체·실시간 유지, 통계·부수·불규칙 배제, 잘못 등록은 이관) 적용. 핵심: 해양 오염사고·쓰레기, 해양 보호구역·생태, 해양 수질 측정'
+  subsectors:
+  - slug: marine-incidents
+    name: 해양 오염사고·쓰레기 (해양오염사고·방제·해양쓰레기 모니터링)
+    depth: front
+    novelty: medium
+    cycle: event
+    match:
+      title_regex: (_.*(오염사고|방제|유류|유출|해양오염|해양쓰레기|해안쓰레기|침적|부유)|^[^_]*(오염사고|방제|유류|유출|해양오염|해양쓰레기|해안쓰레기|침적|부유)[^_]*$)
+  - slug: marine-protected
+    name: 해양 보호구역·생태 (해양보호구역·환경보전해역·해양보호생물·갯벌)
+    depth: front
+    novelty: low
+    value_source: 해양공간 규제 레이어 — 해양수산 marine-spatial과 같은 층
+    match:
+      title_regex: (_.*(해양보호구역|보호구역|환경보전해역|특별관리해역|습지|갯벌|해안선|해양생태계|해양생물|보호생물|해양공간)|^[^_]*(해양보호구역|보호구역|환경보전해역|특별관리해역|습지|갯벌|해안선|해양생태계|해양생물|보호생물|해양공간)[^_]*$)
+  - slug: marine-quality
+    name: 해양 수질 측정 (해양수질자동측정망·해양환경측정망 실시간)
+    depth: front
+    novelty: high
+    cycle: realtime
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 보훈
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/보훈.md
+  note: '국가보훈부·보훈복지의료공단·독립기념관. 공훈 기록(독립유공자·안장자)·보훈시설·보훈병원·취업만. 보훈병원 파일 대부분은 병원 내부 진료 통계라 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: veteran-merit-records
+    name: 공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)
+    depth: front
+    novelty: low
+    value_source: 개인 단위 공훈 원장 — 국립묘지 안장자 검색, 독립운동 인물
+    match:
+      title_regex: 공훈|안장자|독립운동가|유공자(?!단체)|사료|인명사전|유해발굴|전몰
+  - slug: veteran-facilities
+    name: 보훈시설·단체·병원 (현충시설·보훈단체 표준·보훈병원 병상/비급여/진료수가·위탁병원)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 현충시설·보훈단체 좌표 원장, 보훈병원은 의료기관 맥락과 연결
+    match:
+      title_regex: 현충시설|보훈시설|보훈단체|유공자단체|병상정보|비급여|진료수가|위탁병원 ?(현황|목록|정보|지정)
+  - slug: veteran-jobs
+    name: 보훈대상자 취업·제대군인 채용정보
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 취업|채용
+  - slug: veteran-regional
+    name: 시군구별 보훈대상자 인원 (지역 연계)
+    depth: front
+    novelty: medium
+    cycle: monthly
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 외교
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/외교.md
+  note: '외교부·KOICA·재외동포협력센터. 해외안전·여행경보(실시간성), 재외공관·여권·국가코드, 국제기구 공석, ODA 사업·조달, 재외동포 단체만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: travel-safety
+    name: 해외안전·여행경보 (국가별 여행경보·특별여행주의보·안전공지·사건사고·입국허가요건·현지연락처·의료/치안환경)
+    depth: front
+    novelty: high
+    cycle: event
+    value_source: 해외여행객 필수, 경보 조정은 모델이 모르는 시의성. 국가·지역 표준코드가 키
+    match:
+      title_regex: 여행|안전|사건사고|입국허가|입국|현지연락처|의료환경|치안환경|파견지 통합
+  - slug: missions-countries
+    name: 재외공관·주한공관·여권·국가 표준코드·국가 기본정보
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 국가·지역 표준코드 = 출입국·무역·관광 국적 데이터의 매핑 마스터
+    match:
+      title_regex: 공관|여권|표준코드|구분코드|코드정보|기본정보|해외이주|재외동포현황
+  - slug: intl-org-jobs
+    name: 국제기구 공석 (분야·기구별·JPO·UNV·인턴십)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 공석|인턴십|JPO|UNV
+  - slug: oda-projects
+    name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
+    depth: front
+    novelty: medium
+    value_source: 사업 단위 원장, KOICA 조달은 정부조달과 같은 개념
+    match:
+      title_regex: 협력사업|사업정보|조달|발주|파견|봉사단|대외경제협력|개발협력|유무상연계|긴급구호
+  - slug: overseas-korean-orgs
+    name: 재외동포 단체 (한인회·경제·한글학교·언론·NGO)
+    depth: front
+    novelty: medium
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 병무행정
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/병무행정.md
+  note: '병무청·국방부. 모집병·사회복무요원·병역지정업체·검사장/예우시설/군 복지시설만. 장병 개인 조회 API는 개인 서비스라 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: alternative-service
+    name: 사회복무요원·병역지정업체 (복무기관·본인선택 공석·전문연구/산업기능요원 지정업체·인원배정·병역일터 채용)
+    depth: front
+    novelty: high
+    value_source: 병역지정업체 = 사업자 원장(기업 축), 사회복무 공석은 시의성
+    match:
+      title_regex: 사회복무요원|복무기관|소집계획|공석|지정업체|인원배정|산업기능요원|전문연구요원|병역일터|채용공고|공중보건의사
+  - slug: military-recruitment
+    name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 모집|특기|배점|구비서류|입영원|지원가능|접수현황
+  - slug: military-service-facilities
+    name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 통일
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/통일.md
+  note: '통일부. 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만 — 북한 참고 자료(개황·용어·도서)와 통계는 배제 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: north-korea-trends
+    name: 북한 동향 (일일·월별 동향·김정은 공개 활동)
+    depth: front
+    novelty: high
+    cycle: event
+    match:
+      title_regex: 동향|김정은|공개 활동
+  - slug: nk-people-orgs
+    name: 북한 인물·허가법인·협력사업 승인내역
+    depth: front
+    novelty: medium
+    match:
+      title_regex: 인물|인명록|허가법인|승인내역
+  - slug: inter-korean
+    name: 남북회담·남북합의서·북한정보포털 검색
+    depth: front
+    novelty: low
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 통일외교안보 - 방위력개선
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/통일외교안보/방위력개선.md
+  note: '방위사업청·국방기술품질원·국방과학연구소. 군수품 조달 원장(입찰·결과·계획·계약·해외입찰)과 방산업체·국방 인증·규격만 (Claude가 구름의 기준 적용: 개별 객체 원장·실시간성은 살리고 통계·부수·불규칙·기관 운영은 우선 배제)'
+  subsectors:
+  - slug: defense-procurement
+    name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
+    depth: front
+    novelty: high
+    cycle: daily
+    value_source: 나라장터와 별도인 국방전자조달 — 정부조달과 같은 개념, 사업자번호로 기업 축
+    match:
+      title_regex: 입찰|낙찰|조달|계약|발주|사전의향서|가격정보|업체정보
+  - slug: defense-industry-standards
+    name: 방산업체·국방 인증·규격 (방산업체 지정·DQ마크·국방규격/표준·군수품 코드·민간이전 기술)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 공공행정 - 일반행정
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/일반행정.md
+  note: 'BRM 공공행정의 잔여 모음. Claude가 구름 기준(개체 단위·실시간은 활용, 부수적·불규칙·통계는 배제)으로 정리 (2026-09-29): 다른 부문의 개체 데이터는 원래 부문으로 옮기고, 생활 행정시설·실시간 도시데이터·상권만 남김'
+  subsectors:
+  - slug: realtime-city
+    name: 실시간 도시데이터 (서울 실시간 도시·인구 데이터)
+    depth: front
+    novelty: high
+    cycle: realtime
+    value_source: 주요 장소별 실시간 혼잡·인구 — 모델이 절대 모르는 지금의 사실
+    match:
+      title_regex: 실시간 (도시|인구)|도시데이터
+  - slug: commercial-area
+    name: 상권·유동인구·지역 인허가 (상권 변화·점포 이력·유동/생활인구·착한가격·지역화폐·모범음식점)
+    depth: front
+    novelty: high
+    cross_cutting: true
+    value_source: 상권 분석 원료 — 행정동·상권 × 월 격자, 점포·업소 원장. LOCALDATA 인허가와 shared_source
+    match:
+      title_regex: 상권|유동인구|생활인구|점포|착한가격|지역화폐|모범음식점|생존율|폐업율|영업상태|업종별 인허가|인허가|집객시설|전통시장|물가
+  - slug: civic-facilities
+    name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    value_source: 좌표 있는 생활 시설 원장 — 공공시설 개방·무인민원은 표준데이터
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back
+- sector: 공공행정 - 국가통계
+  decided_at: '2026-09-29'
+  decided_by: 구름
+  doc: knowledge/sectors/공공행정/국가통계.md
+  note: 통계 모음 — 구름 기준상 대부분 배제하고 지역 격자로 다른 데이터에 붙는 것만 남김 (Claude, 2026-09-29)
+  subsectors:
+  - slug: sgis-grid
+    name: SGIS 통계지리 (집계구·통계주제도·분석지도)
+    depth: front
+    novelty: low
+    cross_cutting: true
+    value_source: 지역 통계를 공간에 붙이는 틀 — 집계구·행정구역 경계와 격자 지표
+    match:
+      title_regex: SGIS|통계지리|집계구|통계주제도|분석지도
+  - slug: regional-grid
+    name: 지역 격자 (읍면동 유동인구·체류 외국인·시장 물가)
+    depth: front
+    novelty: medium
+    cross_cutting: true
+    match:
+      title_regex: .
+  default:
+    slug: excluded-rest
+    name: 제외 대상
+    depth: back

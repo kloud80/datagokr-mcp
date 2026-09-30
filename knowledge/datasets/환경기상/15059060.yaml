@@ -1,0 +1,256 @@
+# Dataset 15059060 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15059060'
+tier: verified
+title: 기상청_레이더자료(경량화) 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059060/openapi.do
+synonyms:
+  - 기상청 레이더
+  - 합성장 한반도
+  - 지점별 QCD 한반도
+  - 강수
+  - 에코
+description_portal: 레이더 합성장 한반도, 행정구역 및 지점별 QCD 한반도, 행정구역 정보를 조회하는 서비스(참고) 기상레이더는 전파를 대기 중에 발사하여 강수입자에 부딪혀 산란되어 되돌아오는 신호를 이용하여 강수지역, 강수세기, 이동속도 등을 탐지하는 원격관측장비입니다. 집중호우, 태풍, 우박 등 강수현상을 짧은 시간 동안 입체적으로 파악할 수 있어 위험기상의 조기 감시와 예측에 이용되고 있습니다. 기상청은 전국에 현업용 기상레이더관측소 10개소(백령도, 관악산, 광덕산, 강릉, 오성산, 진도, 면봉산, 구덕산, 고산, 성산), 기술개발용 레이더 테스트베드(용인) 1개소, 소형 기상레이더 3개소(수리산, 덕적도, 망일산) 및 인천공항 기상레이더 1개소를 설치하여 운영하고 있습니다.
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: /getCompCappiQcdAll
+    name: 레이더합성장한반도조회
+    endpoint: https://apis.data.go.kr/1360000/WthrRadarInfoService/getCompCappiQcdAll
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: XML
+        desc: 응답자료형식
+      - name: dateTime
+        required: true
+        example: '201911120300'
+        desc: 관측시간
+      - name: compType
+        required: true
+        example: CPP
+        desc: 합성 타입
+      - name: dataTypeCd
+        required: true
+        example: CZ
+        desc: 자료구분코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dateTime
+      title: 관측시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202609301000'
+      stats:
+        min: 202609301000
+        p50: 202609301000
+        max: 202609301000
+        unique: 1
+    - name: gridKm
+      title: 격자크기
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.5'
+      stats:
+        min: 0.5
+        p50: 0.5
+        max: 0.5
+        unique: 1
+    - name: xdim
+      title: X 좌표 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1274'
+      stats:
+        min: 1274
+        p50: 1274
+        max: 1274
+        unique: 1
+    - name: ydim
+      title: Y 좌표 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1583'
+      stats:
+        min: 1583
+        p50: 1583
+        max: 1583
+        unique: 1
+    - name: x0
+      title: X 좌표 기준점
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '249.0'
+      stats:
+        min: 249
+        p50: 249
+        max: 249
+        unique: 1
+    - name: y0
+      title: Y 좌표 기준점
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1327.0'
+      stats:
+        min: 1327
+        p50: 1327
+        max: 1327
+        unique: 1
+    - name: unit
+      title: 단위
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - dBZ
+      stats:
+        unique: 1
+    - name: value
+      title: 값
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - -250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-25
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.9103
+  rank_in_sector: 2
+  brm: 과학기술 - 과학기술연구
+  sector_rule: weather-to-environment
+  why: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천
+claims:
+  - id: c-15059060-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059060.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059060.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15059060-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059060-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059060.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059060-04
+    kind: coverage
+    value: API 전체 건수 1 · 검증 수신 1행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15059060.json
+        observed_at: '2026-09-30'
+        detail: total 1, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15059060-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059060-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  total_count: 1
+  ops_ok: 1/1
+  latency_ms: 1946
+  run: probe/runs/15059060.json
+  stats: probe/stats/15059060.json
+  data: probe/data/15059060/
+status: active

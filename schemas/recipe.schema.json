@@ -1,0 +1,284 @@
+{
+  "$defs": {
+    "RecipeDataset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "join",
+            "context",
+            "lookup"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "role"
+      ],
+      "title": "RecipeDataset",
+      "type": "object"
+    },
+    "RecipeVerified": {
+      "additionalProperties": false,
+      "properties": {
+        "code_run": {
+          "title": "Code Run",
+          "type": "string"
+        },
+        "at": {
+          "format": "date",
+          "title": "At",
+          "type": "string"
+        },
+        "ok": {
+          "title": "Ok",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code_run",
+        "at",
+        "ok"
+      ],
+      "title": "RecipeVerified",
+      "type": "object"
+    },
+    "Schedule": {
+      "additionalProperties": false,
+      "properties": {
+        "cron": {
+          "title": "Cron",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "description": "claim id",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cron",
+        "reason"
+      ],
+      "title": "Schedule",
+      "type": "object"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "minimum": 1,
+          "title": "Step",
+          "type": "integer"
+        },
+        "do": {
+          "enum": [
+            "fetch",
+            "join",
+            "aggregate",
+            "filter",
+            "derive",
+            "map"
+          ],
+          "title": "Do",
+          "type": "string"
+        },
+        "dataset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset"
+        },
+        "edge": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edge"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "by": {
+          "items": {
+            "type": "string"
+          },
+          "title": "By",
+          "type": "array"
+        },
+        "measures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Measures",
+          "type": "array"
+        },
+        "produces": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Produces"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "step",
+        "do"
+      ],
+      "title": "Step",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "goal_examples": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Goal Examples",
+      "type": "array"
+    },
+    "context": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context"
+    },
+    "datasets": {
+      "items": {
+        "$ref": "#/$defs/RecipeDataset"
+      },
+      "minItems": 1,
+      "title": "Datasets",
+      "type": "array"
+    },
+    "joins": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Joins",
+      "type": "array"
+    },
+    "pipeline": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "minItems": 1,
+      "title": "Pipeline",
+      "type": "array"
+    },
+    "schedule": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Schedule"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "verified": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RecipeVerified"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "author": {
+      "title": "Author",
+      "type": "string"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "approved"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "goal_examples",
+    "datasets",
+    "pipeline",
+    "author"
+  ],
+  "title": "Recipe",
+  "type": "object",
+  "$id": "https://pds.local/schemas/recipe.schema.json"
+}

@@ -1,0 +1,276 @@
+# Dataset 15128555 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15128555'
+tier: verified
+title: 한국관광공사_관광지 집중률 방문자 추이 예측 정보
+sector: 문화관광/관광/tourism-statistics
+agency:
+  id: B551011
+  name: 한국관광공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15128555/openapi.do
+synonyms:
+  - 데이터랩
+  - 관광지
+  - 집중률
+  - 방문자
+  - 예측
+description_portal: ㈜케이티의 이동통신 데이터를 기반으로 제공되는 관광지별 조회일 기준 향후 30일간의 관광지 방문자의 집중률 정보입니다. 2018년부터의 방문자 데이터를 기반으로 패턴을 분석하여 해당 관광지에 방문자가 얼마나 집중되는지를 예측한 값으로, 가장 붐비는 시기를 100으로 보았을 때 향후 30일간의 집중률을 상대 수치로 환산한 값입니다. ㈜케이티에 가입된 휴대전화 단말기를 소지한 사람의 이동 정보를 기반으로 평일/공휴일, 휴가시즌 등의 시기적 특성을 반영하여 머신러닝 기법으로 추정되었기 때문에 각종 환경변화에 따라 실제 방문자 수와 예측값 간에 차이가 있을 수 있습니다.
+team:
+  dept: 디지털인프라팀
+services:
+  - op: /tatsCnctrRatedList
+    name: 관광지 집중률 정보 목록조회
+    endpoint: https://apis.data.go.kr/B551011/TatsCnctrRateService/tatsCnctrRatedList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: MobileOS
+        required: true
+        example: ETC
+        desc: 'OS 구분 : IOS (아이폰), AND (안드로이드), WEB(웹), ETC(기타)'
+      - name: MobileApp
+        required: true
+        example: AppTest
+        desc: 서비스명(어플명)
+      - name: areaCd
+        required: true
+        example: '51'
+        desc: 관광지 지역코드 ( 참고문서 매뉴얼 파일중 '관광지_시군구_코드정보' 파일 참고 )
+      - name: signguCd
+        required: true
+        example: '51130'
+        desc: 관광지 시군구코드  ( 참고문서 매뉴얼 파일중 '관광지_시군구_코드정보' 파일 참고 )
+      - name: tAtsNm
+        required: false
+        example: 간현관광지
+        desc: 관광지명
+      - name: _type
+        required: false
+        example: json
+        desc: '응답메세지 형식 : REST방식의 URL호출 시 json값 추가(디폴트 응답메세지 형식은XML)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: baseYmd
+      title: 기준연월일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930'
+        - '20261001'
+        - '20261002'
+      stats:
+        min: 20260930
+        p50: 20261014.5
+        max: 20261029
+        unique: 30
+    - name: areaCd
+      title: 지역코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '51'
+      stats:
+        min: 51
+        p50: 51
+        max: 51
+        unique: 1
+    - name: areaNm
+      title: 지역명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강원특별자치도
+      stats:
+        unique: 1
+    - name: signguCd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '51130'
+      stats:
+        min: 51130
+        p50: 51130
+        max: 51130
+        unique: 1
+    - name: signguNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 원주시
+      stats:
+        unique: 1
+    - name: tAtsNm
+      title: 관광지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 간현관광지
+      stats:
+        unique: 1
+    - name: cnctrRate
+      title: 집중률
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41.26'
+        - '53.58'
+        - '58.42'
+      stats:
+        min: 23.62
+        p50: 49.57
+        max: 99.79
+        unique: 30
+  foreign_keys:
+    - fields:
+        - signguCd
+      reference:
+        key: sgg_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 시군구
+  temporal: 2026-09-30 ~ 2026-10-29
+cycle: default
+classification:
+  subsector_name: 관광 통계 (관광지점 입장객·출입국·관광 소비·방문객)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7208
+  rank_in_sector: 66
+  brm: 문화관광 - 관광
+  why: '관광지점·시군구 × 월 — 지역 정보로 연결 (구름: 지역 정보라 연결). 관광지점코드·시군구코드가 키'
+claims:
+  - id: c-15128555-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15128555.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15128555.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15128555-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-29 (관측일 기준 -29일 전) — 미래 날짜(일정·계획형) 포함
+    evidence:
+      - type: measured
+        source: probe/synthesis#15128555
+        observed_at: '2026-09-30'
+        detail: latest 2026-10-29, lag -29
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15128555-03
+    kind: key
+    value: '실측 조인 키: sgg_cd(signguCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15128555.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15128555-04
+    kind: coverage
+    value: API 전체 건수 30 · 검증 수신 30행 · 범위 전국 · 행정단위 시군구 · 기간 2026-09-30 ~ 2026-10-29
+    evidence:
+      - type: measured
+        source: probe/runs/15128555.json
+        observed_at: '2026-09-30'
+        detail: total 30, rows 30
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15128555-06
+    kind: admin_note
+    value: "세부 부문 '관광 통계 (관광지점 입장객·출입국·관광 소비·방문객)'의 가치: 관광지점·시군구 × 월 — 지역 정보로 연결 (구름: 지역 정보라 연결). 관광지점코드·시군구코드가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#tourism-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128555-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128555-10
+    kind: pitfall
+    value: 날짜 컬럼에 미래 값(2026-10-29) — 최신성은 적재일 컬럼으로 판단해야 한다
+    evidence:
+      - type: measured
+        source: probe/synthesis#15128555
+        observed_at: '2026-09-30'
+        detail: lag -29
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 30
+  total_count: 30
+  ops_ok: 1/1
+  latency_ms: 114
+  latest: '2026-10-29'
+  lag_days: -29
+  run: probe/runs/15128555.json
+  stats: probe/stats/15128555.json
+  data: probe/data/15128555/
+status: active

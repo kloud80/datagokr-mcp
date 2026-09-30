@@ -1,0 +1,188 @@
+# Dataset 15000371 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15000371'
+tier: verified
+title: 과학기술정보통신부 우정사업본부_EMS신청 조회 서비스
+sector: 교통물류/물류등기타/parcel-delivery
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15000371/openapi.do
+synonyms:
+  - 정보/통신
+  - 소프트웨어
+  - 인터넷 S/W
+description_portal: '국제특급우편(EMS)신청에 필요한 정보 조회 및 확인 기능을 제공하는 OPEN API 서비스 입니다. ㅇ 출력하는 항목(사용자가 응답 받게 되는 데이터) : 전체건수, 번호, 신청일, 접수번호, 접수 우체국, 수취인, 등기번호, 상태, 취소'
+team:
+  dept: 우정사업정보센터 보험정보과 보험운영팀
+services:
+  - op: /getNationList
+    endpoint: http://openapi.epost.go.kr/postal/retrieveEMSService/retrieveEMSService/getNationList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 44
+        max: 87
+        unique: 87
+    - name: nationNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 일본
+        - 홍콩(중국)
+        - 중국
+      stats:
+        unique: 87
+    - name: nation
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - JP
+        - HK
+        - CN
+      stats:
+        unique: 87
+    - name: engNationNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - JAPAN
+        - HONG KONG(CHINA)
+        - CHINA(PEOPLE'S REP)
+      stats:
+        unique: 87
+    - name: chrgeApplcArea
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '4'
+        - '2'
+      stats:
+        unique: 24
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 생활물류 (택배·EMS·우편물 종적·무인택배함)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7893
+  rank_in_sector: 5
+  brm: 교통물류 - 물류등기타
+  why: 우정사업본부 택배·EMS 신청/행방·국내우편물 종적 = 송장 단위 조회 도구, 무인택배함은 위치 원장
+claims:
+  - id: c-15000371-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15000371.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15000371.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15000371-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000371-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15000371.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000371-04
+    kind: coverage
+    value: 검증 수신 87행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15000371.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 87
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000371-06
+    kind: admin_note
+    value: "세부 부문 '생활물류 (택배·EMS·우편물 종적·무인택배함)'의 가치: 우정사업본부 택배·EMS 신청/행방·국내우편물 종적 = 송장 단위 조회 도구, 무인택배함은 위치 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#parcel-delivery
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15000371-07
+    kind: admin_note
+    value: '[교통물류 - 물류등기타 · 결정] 물류시설·화물운송·생활물류·주차장만 남김. 통계는 우선 배제 (`logistics-stats`), 나머지 배제 (`logistics-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L478
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 87
+  ops_ok: 1/1
+  latency_ms: 666
+  run: probe/runs/15000371.json
+  stats: probe/stats/15000371.json
+  data: probe/data/15000371/
+status: active

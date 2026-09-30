@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDS 핵심 데이터 랭킹</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1b; --ink-2: #5b5b57; --ink-3: #8a8a85;
+  --line: #e4e3de; --line-2: #efeee9; --accent: #2f5bd3; --accent-soft: #e6ecfb;
+  --ok: #1f7a4d; --warn: #a15c00; --ext: #7a3fb8; --ext-soft: #f1e9fa;
+  --heat-0: #f3f5fb; --heat-1: #2f5bd3;
+  --sel: #fff6d6; --shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514; --panel: #1d1d1c; --ink: #ecebe6; --ink-2: #b3b2ac; --ink-3: #85847f;
+    --line: #33332f; --line-2: #2a2a27; --accent: #7d9bf0; --accent-soft: #232c45;
+    --ok: #5cc28f; --warn: #e0a24a; --ext: #c39cf0; --ext-soft: #2e2440;
+    --heat-0: #20232b; --heat-1: #7d9bf0; --sel: #3a3420; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514; --panel: #1d1d1c; --ink: #ecebe6; --ink-2: #b3b2ac; --ink-3: #85847f;
+  --line: #33332f; --line-2: #2a2a27; --accent: #7d9bf0; --accent-soft: #232c45;
+  --ok: #5cc28f; --warn: #e0a24a; --ext: #c39cf0; --ext-soft: #2e2440;
+  --heat-0: #20232b; --heat-1: #7d9bf0; --sel: #3a3420; --shadow: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 13px/1.5 system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel);
+}
+header h1 { font-size: 15px; margin: 0; font-weight: 650; letter-spacing: -.01em; }
+header .sub { color: var(--ink-3); font-size: 12px; }
+header .spacer { flex: 1; }
+.btn {
+  border: 1px solid var(--line); background: var(--panel); border-radius: 6px;
+  padding: 4px 10px; cursor: pointer;
+}
+.btn:hover { border-color: var(--ink-3); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.counter { font-weight: 600; }
+.counter .goal { color: var(--ink-3); font-weight: 400; }
+
+#heatwrap { padding: 10px 16px 0; }
+details.heat > summary { cursor: pointer; color: var(--ink-2); font-size: 12px; margin-bottom: 6px; }
+table.heat { border-collapse: separate; border-spacing: 2px 1px; font-size: 11.5px; line-height: 1.3; }
+table.heat th { font-weight: 500; color: var(--ink-2); padding: 1px 6px; text-align: left; white-space: nowrap; }
+table.heat th.col { text-align: center; }
+table.heat td {
+  min-width: 72px; text-align: right; padding: 1px 8px; border-radius: 3px; cursor: pointer;
+  border: 1px solid transparent;
+}
+table.heat td.on { border-color: var(--ink); }
+table.heat td.total { background: transparent; color: var(--ink-2); cursor: default; }
+
+main {
+  display: grid; grid-template-columns: 250px minmax(0, 1fr) 380px; gap: 0;
+  height: max(640px, calc(100vh - 52px - var(--heat-h, 0px)));
+}
+@media (max-width: 1100px) {
+  main { grid-template-columns: 1fr; height: auto; }
+  #tree, #detail { max-height: 50vh; }
+}
+#tree, #center, #detail { overflow: auto; min-height: 0; }
+#tree { border-right: 1px solid var(--line); padding: 8px 0; background: var(--panel); }
+#detail { border-left: 1px solid var(--line); background: var(--panel); padding: 12px 14px 40px; }
+#center { display: flex; flex-direction: column; }
+
+.tree-f > .node { font-weight: 600; }
+.node {
+  display: flex; align-items: baseline; gap: 6px; padding: 3px 12px; cursor: pointer;
+  white-space: nowrap;
+}
+.node:hover { background: var(--line-2); }
+.node.on { background: var(--accent-soft); }
+.node .name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.node .n { color: var(--ink-3); font-size: 11px; }
+.node .avg { color: var(--ink-2); font-size: 11px; width: 34px; text-align: right; }
+.node .chk { color: var(--ok); font-size: 11px; font-weight: 600; min-width: 22px; text-align: right; }
+.tree-a .node { padding-left: 26px; font-weight: 400; }
+.tree-s .node { padding-left: 42px; font-size: 12px; color: var(--ink-2); }
+.tree-s .node .dep { font-size: 10px; color: var(--ok); margin-left: 4px; }
+.tree-head { padding: 0 12px 6px; color: var(--ink-3); font-size: 11px; display: flex; gap: 6px; }
+.tree-head span:first-child { flex: 1; }
+
+.filters {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--panel);
+  position: sticky; top: 0; z-index: 2;
+}
+.filters input[type=search] {
+  width: 220px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; background: var(--bg);
+}
+.filters select { border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; background: var(--bg); }
+.chip {
+  border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; cursor: pointer; user-select: none;
+  font-size: 12px; background: var(--bg); color: var(--ink-3);
+}
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.crumbs { font-size: 12px; color: var(--ink-2); }
+.crumbs b { color: var(--ink); font-weight: 600; }
+.crumbs .x { cursor: pointer; color: var(--ink-3); margin-left: 2px; }
+
+table.grid { width: 100%; border-collapse: collapse; }
+table.grid th {
+  position: sticky; top: 45px; background: var(--bg); z-index: 1;
+  text-align: left; font-weight: 500; color: var(--ink-2); font-size: 12px;
+  padding: 6px 8px; border-bottom: 1px solid var(--line); cursor: pointer; white-space: nowrap;
+}
+table.grid th.sorted { color: var(--ink); }
+table.grid td { padding: 5px 8px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+table.grid tr { cursor: pointer; }
+table.grid tr:hover td { background: var(--line-2); }
+table.grid tr.sel td { background: var(--sel); }
+table.grid tr.picked td:first-child { box-shadow: inset 3px 0 var(--ok); }
+td.num { text-align: right; white-space: nowrap; }
+td.unit { white-space: nowrap; font-size: 12px; }
+td.title { min-width: 240px; }
+td.title .ag { color: var(--ink-3); font-size: 11.5px; }
+td.memo input {
+  width: 100%; min-width: 120px; border: 1px solid transparent; background: transparent;
+  border-radius: 4px; padding: 1px 4px;
+}
+td.memo input:hover, td.memo input:focus { border-color: var(--line); background: var(--panel); outline: none; }
+.badge {
+  display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 4px; line-height: 18px;
+  background: var(--line-2); color: var(--ink-2); white-space: nowrap;
+}
+.badge.ext { background: var(--ext-soft); color: var(--ext); }
+.badge.api { background: var(--accent-soft); color: var(--accent); }
+.badge.nk { background: transparent; color: var(--warn); border: 1px solid currentColor; }
+.bar { height: 6px; background: var(--line-2); border-radius: 3px; overflow: hidden; min-width: 50px; }
+.bar > i { display: block; height: 100%; background: var(--accent); }
+.scorecell { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.pager { display: flex; gap: 8px; align-items: center; padding: 10px 12px; color: var(--ink-2); }
+.empty { padding: 40px; text-align: center; color: var(--ink-3); }
+
+#detail h2 { font-size: 15px; margin: 0 0 4px; line-height: 1.35; }
+#detail .ag { color: var(--ink-2); margin-bottom: 8px; }
+#detail .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+#detail h3 { font-size: 12px; color: var(--ink-3); font-weight: 500; margin: 16px 0 6px; text-transform: none; }
+.kv { display: grid; grid-template-columns: 92px 1fr; gap: 3px 10px; font-size: 12.5px; }
+.kv dt { color: var(--ink-3); }
+.kv dd { margin: 0; word-break: break-all; }
+.comp { display: grid; grid-template-columns: 96px 1fr 44px; gap: 4px 8px; align-items: center; font-size: 12px; }
+.comp .w { color: var(--ink-3); }
+.comp .v { text-align: right; }
+.tokens { display: flex; flex-wrap: wrap; gap: 3px; }
+.tokens span { background: var(--line-2); border-radius: 3px; padding: 0 5px; font-size: 11.5px; }
+.pick {
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin: 12px 0; background: var(--bg);
+}
+.pick label { display: flex; gap: 6px; align-items: center; font-weight: 600; cursor: pointer; }
+.pick textarea {
+  width: 100%; margin-top: 8px; min-height: 58px; border: 1px solid var(--line); border-radius: 6px;
+  padding: 6px 8px; background: var(--panel); resize: vertical;
+}
+.muted { color: var(--ink-3); }
+.note { font-size: 11.5px; color: var(--ink-3); }
+#loading { padding: 60px; text-align: center; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<header>
+  <h1>PDS 핵심 데이터 랭킹</h1>
+  <span class="sub" id="sub"></span>
+  <span class="spacer"></span>
+  <span class="counter" id="counter"></span>
+  <button class="btn" id="btnImport" title="이전에 내보낸 targets.json 불러오기">불러오기</button>
+  <button class="btn primary" id="btnExport">targets.json 내보내기</button>
+  <button class="btn" id="btnTheme" title="테마 전환">◐</button>
+  <input type="file" id="fileImport" accept="application/json" hidden>
+</header>
+<div id="loading">데이터 푸는 중…</div>
+<div id="app" hidden>
+  <div id="heatwrap">
+    <details class="heat" id="heatDetails" open>
+      <summary>부문(정책분야) × 기관 계층 — 칸을 누르면 필터, 다시 누르면 해제. 현재 유형·행정단위·검색 필터 기준</summary>
+      <div id="heat"></div>
+    </details>
+  </div>
+  <main>
+    <nav id="tree"></nav>
+    <section id="center">
+      <div class="filters" id="filters"></div>
+      <div id="tablewrap"></div>
+    </section>
+    <aside id="detail"><div class="muted">행을 누르면 메타 원문과 점수 근거가 여기 나옵니다.</div></aside>
+  </main>
+</div>
+
+<script id="payload" type="application/octet-stream">__PAYLOAD_B64__</script>
+<script>
+(async function () {
+  "use strict";
+  const STORE_KEY = "pds.phase1.targets.v1";
+  const PAGE = 100;
+  const KIND_LABEL = { REST: "REST API", API_LINK: "외부 API", SOAP: "SOAP", STD: "표준데이터", FILE: "파일", FILE_LINK: "외부 파일" };
+  const COMP_LABEL = { usage: "활용", designation: "지정", api_kind: "유형", granularity: "건별원천", linkable: "연계키", coverage: "전수", novelty: "시의성", freshness: "갱신", meta_fill: "메타채움" };
+  const APPR = { auto: "자동승인", review: "심의승인" };
+
+  // ---------- 데이터 풀기
+  async function decode() {
+    const b64 = document.getElementById("payload").textContent.trim();
+    const bin = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const stream = new Blob([bin]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return JSON.parse(await new Response(stream).text());
+  }
+  let P;
+  try { P = await decode(); }
+  catch (e) {
+    document.getElementById("loading").textContent = "데이터를 풀지 못했습니다 (DecompressionStream 미지원 브라우저?): " + e;
+    return;
+  }
+  const C = P.cols, D = P.dict, N = C.id.length;
+  const EXT = new Set(P.meta.external_kinds.map(k => D.kind.indexOf(k)));
+  const byId = new Map(C.id.map((id, i) => [id, i]));
+  const titleLC = C.title.map((t, i) => (t + " " + (D.agency[C.agency[i]] || "")).toLowerCase());
+
+  // ---------- 저장소
+  function loadTargets() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch { return {}; }
+  }
+  let targets = loadTargets();
+  function saveTargets() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(targets)); } catch (e) { console.warn(e); }
+    renderCounter();
+  }
+  const isPicked = id => !!(targets[id] && targets[id].checked);
+
+  // ---------- 상태
+  const S = {
+    q: "", kinds: new Set(D.kind.map((_, i) => i)), unit: -1, tier: -1, field: -1, area: -1, sub: -1,
+    nkOnly: false, pickedOnly: false, sort: "score", dir: -1, page: 0, sel: null,
+  };
+
+  // ---------- 필터
+  function passBase(i) {   // 히트맵·트리 집계에 쓰는 필터 (부문·계층 제외)
+    if (!S.kinds.has(C.kind[i])) return false;
+    if (S.unit >= 0 && C.unit[i] !== S.unit) return false;
+    if (S.nkOnly && !C.nk[i]) return false;
+    if (S.pickedOnly && !isPicked(C.id[i])) return false;
+    if (S.q && !titleLC[i].includes(S.q)) return false;
+    return true;
+  }
+  function pass(i) {
+    if (!passBase(i)) return false;
+    if (S.tier >= 0 && C.tier[i] !== S.tier) return false;
+    if (S.field >= 0 && C.field[i] !== S.field) return false;
+    if (S.area >= 0 && C.area[i] !== S.area) return false;
+    if (S.sub >= 0 && C.subsector[i] !== S.sub) return false;
+    return true;
+  }
+  const areaField = new Map();   // area idx → field idx
+  for (let i = 0; i < N; i++) if (!areaField.has(C.area[i])) areaField.set(C.area[i], C.field[i]);
+
+  // ---------- 헤더
+  function renderCounter() {
+    const picked = Object.values(targets).filter(t => t.checked);
+    const noReason = picked.filter(t => !(t.reason || "").trim()).length;
+    document.getElementById("counter").innerHTML =
+      `심층 대상 ${picked.length}건 <span class="goal">/ 목표 50~80${noReason ? ` · 사유 없음 ${noReason}` : ""}</span>`;
+  }
+  document.getElementById("sub").textContent =
+    `스냅샷 ${P.meta.snapshot} · ${N.toLocaleString()}건 · 생성 ${P.meta.generated}` +
+    (P.meta.top100_available ? "" : " · Top100 목록 미반영");
+
+  // ---------- 히트맵
+  function heatColor(v, max) {
+    if (!v) return "transparent";
+    const t = Math.sqrt(v / max);
+    return `color-mix(in oklab, var(--heat-1) ${Math.round(6 + t * 80)}%, var(--heat-0))`;
+  }
+  function renderHeat() {
+    const F = D.field.length, T = D.tier.length;
+    const m = Array.from({ length: F }, () => new Array(T).fill(0));
+    for (let i = 0; i < N; i++) if (passBase(i)) m[C.field[i]][C.tier[i]]++;
+    let max = 1; m.forEach(r => r.forEach(v => { if (v > max) max = v; }));
+    const order = [...Array(F).keys()].sort((a, b) => D.field[a].localeCompare(D.field[b], "ko"));
+    let h = `<table class="heat"><tr><th></th>${D.tier.map(t => `<th class="col">${t}</th>`).join("")}<th class="col">계</th></tr>`;
+    for (const f of order) {
+      const tot = m[f].reduce((a, b) => a + b, 0);
+      h += `<tr><th>${D.field[f]}</th>`;
+      for (let t = 0; t < T; t++) {
+        const v = m[f][t], on = S.field === f && S.tier === t;
+        const dark = v && Math.sqrt(v / max) > .5;
+        h += `<td class="${on ? "on" : ""}" data-f="${f}" data-t="${t}" style="background:${heatColor(v, max)};${dark ? "color:#fff" : ""}">${v ? v.toLocaleString() : "·"}</td>`;
+      }
+      h += `<td class="total">${tot.toLocaleString()}</td></tr>`;
+    }
+    document.getElementById("heat").innerHTML = h + "</table>";
+  }
+  document.getElementById("heat").addEventListener("click", e => {
+    const td = e.target.closest("td[data-f]"); if (!td) return;
+    const f = +td.dataset.f, t = +td.dataset.t;
+    if (S.field === f && S.tier === t && S.area < 0) { S.field = -1; S.tier = -1; }
+    else { S.field = f; S.tier = t; S.area = -1; S.sub = -1; }
+    S.page = 0; renderAll();
+  });
+
+  // ---------- 트리
+  function renderTree() {
+    const fAgg = new Map(), aAgg = new Map(), sAgg = new Map();
+    const pickedArea = new Map(), pickedField = new Map();
+    for (let i = 0; i < N; i++) {
+      if (isPicked(C.id[i])) {
+        pickedArea.set(C.area[i], (pickedArea.get(C.area[i]) || 0) + 1);
+        pickedField.set(C.field[i], (pickedField.get(C.field[i]) || 0) + 1);
+      }
+      if (!passBase(i)) continue;
+      if (S.tier >= 0 && C.tier[i] !== S.tier) continue;
+      for (const [m, k] of [[fAgg, C.field[i]], [aAgg, C.area[i]], [sAgg, C.subsector[i]]]) {
+        const a = m.get(k) || { n: 0, s: 0 }; a.n++; a.s += C.score[i]; m.set(k, a);
+      }
+    }
+    const fields = [...fAgg.keys()].sort((a, b) => D.field[a].localeCompare(D.field[b], "ko"));
+    const node = (cls, name, a, chk, on, attrs, label) =>
+      `<div class="node ${on ? "on" : ""}" ${attrs}><span class="name" title="${esc(name)}">${label ?? esc(name)}</span>` +
+      `<span class="n">${a.n.toLocaleString()}</span><span class="avg">${(a.s / a.n).toFixed(2)}</span>` +
+      `<span class="chk">${chk ? "✓" + chk : ""}</span></div>`;
+    let h = `<div class="tree-head"><span>정책분야 › 정책영역</span><span>수</span><span>평균</span><span>✓</span></div>`;
+    h += `<div class="node ${S.field < 0 && S.area < 0 ? "on" : ""}" data-all="1"><span class="name">전체</span></div>`;
+    for (const f of fields) {
+      const areas = [...aAgg.keys()].filter(a => areaField.get(a) === f)
+        .sort((a, b) => (aAgg.get(b).s / aAgg.get(b).n) - (aAgg.get(a).s / aAgg.get(a).n));
+      h += `<div class="tree-f">` + node("f", D.field[f], fAgg.get(f), pickedField.get(f), S.field === f && S.area < 0, `data-f="${f}"`);
+      h += `<div class="tree-a">` + areas.map(a => {
+        let x = node("a", D.area[a].split(" - ")[1] || D.area[a], aAgg.get(a), pickedArea.get(a), S.area === a && S.sub < 0, `data-a="${a}"`);
+        const subs = [...sAgg.keys()].filter(s => s >= 0 && D.subsector[s].split("|")[0] === D.area[a])
+          .sort((p, q) => (sAgg.get(q).s / sAgg.get(q).n) - (sAgg.get(p).s / sAgg.get(p).n));
+        if (subs.length) x += `<div class="tree-s">` + subs.map(s => {
+          const [, , name, depth] = D.subsector[s].split("|");
+          const dep = { front: "앞", back: "", hold: "보류", system: "시스템" }[depth] || "";
+          return node("s", name, sAgg.get(s), 0, S.sub === s, `data-s="${s}" data-a="${a}"`,
+                      esc(name) + (dep ? `<span class="dep">${dep}</span>` : ""));
+        }).join("") + `</div>`;
+        return x;
+      }).join("");
+      h += `</div></div>`;
+    }
+    document.getElementById("tree").innerHTML = h;
+  }
+  document.getElementById("tree").addEventListener("click", e => {
+    const n = e.target.closest(".node"); if (!n) return;
+    if (n.dataset.all) { S.field = -1; S.area = -1; S.sub = -1; }
+    else if (n.dataset.s !== undefined) { S.sub = +n.dataset.s; S.area = +n.dataset.a; S.field = areaField.get(S.area); }
+    else if (n.dataset.a !== undefined) { S.area = +n.dataset.a; S.field = areaField.get(S.area); S.sub = -1; }
+    else { S.field = +n.dataset.f; S.area = -1; S.sub = -1; }
+    S.page = 0; renderAll();
+  });
+
+  // ---------- 필터 바
+  function renderFilters() {
+    const unitOpts = [`<option value="-1">행정단위 전체</option>`]
+      .concat(D.unit.map((u, i) => `<option value="${i}" ${S.unit === i ? "selected" : ""}>${u}</option>`)).join("");
+    const tierOpts = [`<option value="-1">기관 계층 전체</option>`]
+      .concat(D.tier.map((u, i) => `<option value="${i}" ${S.tier === i ? "selected" : ""}>${u}</option>`)).join("");
+    const crumbs = [];
+    if (S.sub >= 0) crumbs.push(`<b>${D.area[S.area]} › ${D.subsector[S.sub].split("|")[2]}</b><span class="x" data-clear="sub">✕</span>`);
+    else if (S.area >= 0) crumbs.push(`<b>${D.area[S.area]}</b><span class="x" data-clear="area">✕</span>`);
+    else if (S.field >= 0) crumbs.push(`<b>${D.field[S.field]}</b><span class="x" data-clear="field">✕</span>`);
+    const el = document.getElementById("filters");
+    el.innerHTML =
+      `<input type="search" id="q" placeholder="제목·기관 검색" value="${S.q.replace(/"/g, "&quot;")}">` +
+      D.kind.map((k, i) => `<span class="chip ${S.kinds.has(i) ? "on" : ""}" data-kind="${i}">${KIND_LABEL[k] || k}</span>`).join("") +
+      `<select id="unit">${unitOpts}</select><select id="tier">${tierOpts}</select>` +
+      `<span class="chip ${S.nkOnly ? "on" : ""}" data-toggle="nkOnly">국가중점만</span>` +
+      `<span class="chip ${S.pickedOnly ? "on" : ""}" data-toggle="pickedOnly">체크만</span>` +
+      `<span class="crumbs">${crumbs.join(" ")}</span>`;
+  }
+  const filtersEl = document.getElementById("filters");
+  let qTimer;
+  filtersEl.addEventListener("input", e => {
+    if (e.target.id !== "q") return;
+    clearTimeout(qTimer);
+    qTimer = setTimeout(() => { S.q = e.target.value.trim().toLowerCase(); S.page = 0; renderAll(true); }, 180);
+  });
+  filtersEl.addEventListener("change", e => {
+    if (e.target.id === "unit") S.unit = +e.target.value;
+    else if (e.target.id === "tier") S.tier = +e.target.value;
+    else return;
+    S.page = 0; renderAll();
+  });
+  filtersEl.addEventListener("click", e => {
+    const c = e.target.closest("[data-kind],[data-toggle],[data-clear]"); if (!c) return;
+    if (c.dataset.kind !== undefined) {
+      const k = +c.dataset.kind;
+      if (e.altKey || e.metaKey) { S.kinds = new Set([k]); }   // Alt+클릭: 이것만
+      else S.kinds.has(k) ? S.kinds.delete(k) : S.kinds.add(k);
+    } else if (c.dataset.toggle) S[c.dataset.toggle] = !S[c.dataset.toggle];
+    else if (c.dataset.clear === "sub") { S.sub = -1; }
+    else if (c.dataset.clear === "area") { S.area = -1; S.sub = -1; }
+    else if (c.dataset.clear === "field") { S.field = -1; S.area = -1; S.sub = -1; }
+    S.page = 0; renderAll();
+  });
+
+  // ---------- 테이블
+  const COLS = [
+    { key: "pick", label: "✓", sort: null },
+    { key: "rank", label: "순위", sort: i => C.score[i], num: true },
+    { key: "title", label: "제목 · 기관", sort: i => C.title[i] },
+    { key: "kind", label: "유형", sort: i => C.kind[i] },
+    { key: "unit", label: "행정단위", sort: i => C.unit[i] },
+    { key: "score", label: "prelim", sort: i => C.score[i], num: true },
+    { key: "usage", label: "활용", sort: i => C.usage[i] || 0, num: true },
+    { key: "nk", label: "국가중점", sort: i => C.nk[i] },
+    { key: "modified", label: "수정일", sort: i => C.modified[i] || "" },
+    { key: "memo", label: "메모 (왜 뽑았나)", sort: null },
+  ];
+  let rows = [];
+  function computeRows() {
+    rows = [];
+    for (let i = 0; i < N; i++) if (pass(i)) rows.push(i);
+    const col = COLS.find(c => c.key === S.sort) || COLS[1];
+    const f = col.sort, dir = S.dir;
+    rows.sort((a, b) => {
+      const x = f(a), y = f(b);
+      if (x < y) return -dir; if (x > y) return dir;
+      return C.score[b] - C.score[a];
+    });
+  }
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function kindBadge(i) {
+    const k = D.kind[C.kind[i]];
+    const cls = EXT.has(C.kind[i]) ? "ext" : (k === "REST" || k === "SOAP" ? "api" : "");
+    return `<span class="badge ${cls}">${KIND_LABEL[k] || k}</span>`;
+  }
+  function renderTable() {
+    const wrap = document.getElementById("tablewrap");
+    if (!rows.length) { wrap.innerHTML = `<div class="empty">조건에 맞는 데이터가 없습니다.</div>`; return; }
+    const pages = Math.ceil(rows.length / PAGE);
+    S.page = Math.min(S.page, pages - 1);
+    const start = S.page * PAGE, slice = rows.slice(start, start + PAGE);
+    // 순위는 현재 정렬과 무관하게 "현재 필터 안 점수 순위"
+    const rankInFilter = new Map();
+    if (S.sort === "score" || S.sort === "rank") slice.forEach((i, k) => rankInFilter.set(i, S.dir < 0 ? start + k + 1 : rows.length - start - k));
+    let h = `<table class="grid"><thead><tr>` + COLS.map(c =>
+      `<th data-sort="${c.sort ? c.key : ""}" class="${S.sort === c.key ? "sorted" : ""}" ${c.num ? 'style="text-align:right"' : ""}>` +
+      `${c.label}${S.sort === c.key ? (S.dir < 0 ? " ↓" : " ↑") : ""}</th>`).join("") + `</tr></thead><tbody>`;
+    for (const i of slice) {
+      const id = C.id[i], t = targets[id], picked = isPicked(id);
+      const r = rankInFilter.get(i);
+      h += `<tr data-i="${i}" class="${S.sel === i ? "sel" : ""} ${picked ? "picked" : ""}">` +
+        `<td><input type="checkbox" data-pick="${id}" ${picked ? "checked" : ""} aria-label="심층 분석 대상"></td>` +
+        `<td class="num">${r ?? ""}<div class="note">전체 ${C.rank[i].toLocaleString()}</div></td>` +
+        `<td class="title">${esc(C.title[i])}<div class="ag">${esc(D.agency[C.agency[i]])} · ${esc(D.tier[C.tier[i]])}</div></td>` +
+        `<td>${kindBadge(i)}</td>` +
+        `<td class="unit">${esc(D.unit[C.unit[i]])}${C.unit_conf[i] === 0 ? '<span class="muted" title="컬럼 정보 없음 — 추정 불가"> ?</span>' : ""}</td>` +
+        `<td class="num"><div class="scorecell">${C.score[i].toFixed(3)}<div class="bar"><i style="width:${C.score[i] * 100}%"></i></div></div></td>` +
+        `<td class="num">${(C.usage[i] || 0).toLocaleString()}</td>` +
+        `<td>${C.nk[i] ? '<span class="badge nk">국가중점</span>' : ""}</td>` +
+        `<td class="num">${C.modified[i] || ""}</td>` +
+        `<td class="memo"><input data-memo="${id}" value="${esc(t?.reason || "")}" placeholder="${picked ? "사유 입력" : ""}"></td></tr>`;
+    }
+    h += `</tbody></table><div class="pager">` +
+      `<button class="btn" data-page="-1" ${S.page === 0 ? "disabled" : ""}>이전</button>` +
+      `<span>${(start + 1).toLocaleString()}–${Math.min(start + PAGE, rows.length).toLocaleString()} / ${rows.length.toLocaleString()}</span>` +
+      `<button class="btn" data-page="1" ${S.page >= pages - 1 ? "disabled" : ""}>다음</button></div>`;
+    wrap.innerHTML = h;
+  }
+  const tableEl = document.getElementById("tablewrap");
+  tableEl.addEventListener("click", e => {
+    const th = e.target.closest("th[data-sort]");
+    if (th && th.dataset.sort) {
+      const k = th.dataset.sort;
+      if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = (k === "title" ? 1 : -1); }
+      S.page = 0; computeRows(); renderTable(); return;
+    }
+    const pg = e.target.closest("[data-page]");
+    if (pg) { S.page += +pg.dataset.page; renderTable(); document.getElementById("center").scrollTop = 0; return; }
+    if (e.target.matches("input")) return;
+    const tr = e.target.closest("tr[data-i]"); if (!tr) return;
+    S.sel = +tr.dataset.i;
+    tableEl.querySelectorAll("tr.sel").forEach(x => x.classList.remove("sel"));
+    tr.classList.add("sel");
+    renderDetail();
+  });
+  tableEl.addEventListener("change", e => {
+    const id = e.target.dataset.pick; if (!id) return;
+    setPick(id, e.target.checked);
+    e.target.closest("tr").classList.toggle("picked", e.target.checked);
+    renderTree(); if (S.sel !== null && C.id[S.sel] === id) renderDetail();
+  });
+  tableEl.addEventListener("input", e => {
+    const id = e.target.dataset.memo; if (!id) return;
+    setReason(id, e.target.value);
+  });
+
+  function setPick(id, on) {
+    const i = byId.get(id);
+    const t = targets[id] || { reason: "" };
+    t.checked = on; t.updated_at = new Date().toISOString();
+    t.title = C.title[i]; t.sector = D.area[C.area[i]];
+    targets[id] = t;
+    if (!on && !(t.reason || "").trim()) delete targets[id];
+    saveTargets();
+  }
+  function setReason(id, v) {
+    const i = byId.get(id);
+    const t = targets[id] || { checked: false };
+    t.reason = v; t.updated_at = new Date().toISOString();
+    t.title = C.title[i]; t.sector = D.area[C.area[i]];
+    targets[id] = t;
+    saveTargets();
+  }
+
+  // ---------- 상세
+  function tokens(s) {
+    return s ? `<div class="tokens">${s.split(",").map(x => x.trim()).filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</div>` : `<span class="muted">없음</span>`;
+  }
+  function renderDetail() {
+    const el = document.getElementById("detail");
+    if (S.sel === null) return;
+    const i = S.sel, id = C.id[i], d = P.detail[id], t = targets[id] || {};
+    const ext = EXT.has(C.kind[i]);
+    const kindName = D.kind[C.kind[i]];
+    const url = `https://www.data.go.kr/data/${id}/${kindName === "FILE" || kindName === "FILE_LINK" || kindName === "STD" ? "fileData" : "openapi"}.do`;
+    const W = P.meta.weights;
+    const comp = Object.keys(W).map(k => {
+      const v = C["s_" + k][i];
+      const imp = !!C.imputed[i] && C.imputed[i].split(",").includes(k);
+      return `<span>${COMP_LABEL[k]} <span class="w">×${W[k]}</span></span>` +
+        `<div class="bar"><i style="width:${(v ?? 0) * 100}%;${imp ? "opacity:.45" : ""}"></i></div>` +
+        `<span class="v">${v == null ? "–" : v.toFixed(2)}${imp ? "*" : ""}</span>`;
+    }).join("");
+    let h = `<h2>${esc(C.title[i])}</h2>` +
+      `<div class="ag">${esc(D.agency[C.agency[i]])} · ${esc(D.tier[C.tier[i]])}</div>` +
+      `<div class="badges">${kindBadge(i)}` +
+      `<span class="badge ${ext ? "ext" : ""}">${ext ? "channel: external" : "channel: portal"}</span>` +
+      (C.nk[i] ? `<span class="badge nk">국가중점</span>` : "") +
+      (C.std[i] ? `<span class="badge">제공표준</span>` : "") +
+      `<span class="badge">${esc(D.area[C.area[i]])}${C.subsector[i] >= 0 ? " › " + esc(D.subsector[C.subsector[i]].split("|")[2]) : ""}</span></div>` +
+      `<a href="${url}" target="_blank" rel="noopener">포털에서 보기 ↗</a> <span class="muted">· 목록키 ${id}</span>` +
+      `<div class="pick"><label><input type="checkbox" id="dPick" ${isPicked(id) ? "checked" : ""}> 심층 분석 대상</label>` +
+      `<textarea id="dReason" placeholder="왜 뽑았는지 한 줄 (Phase 2 입력)">${esc(t.reason || "")}</textarea></div>` +
+      `<h3>점수 ${C.score[i].toFixed(3)} · 전체 ${C.rank[i].toLocaleString()}위 · 정책영역 내 ${C.rank_sector[i].toLocaleString()}위</h3>` +
+      `<div class="comp">${comp}</div>` +
+      (C.imputed[i] ? `<div class="note" style="margin-top:4px">* 외부 링크: 포털 메타로 판단 불가 → 포털 REST API 중앙값 대입</div>` : "") +
+      (d && d.shape_ev ? `<div class="note" style="margin-top:4px">건별원천 근거: ${esc(d.shape_ev[0])} · 연계키: ${esc(d.shape_ev[1])} · 전수: ${esc(d.shape_ev[2])}</div>` : "");
+    if (!d) {
+      h += `<h3>메타</h3><div class="muted">상세 메타는 API·표준 전부와 정책영역별 상위 파일 ${P.meta.file_detail_per_area}건만 담았습니다. 포털 링크에서 확인하세요.</div>`;
+    } else {
+      const unitLine = `${esc(D.unit[C.unit[i]])} <span class="muted">(${["low", "medium", "high"][C.unit_conf[i]]} · ${esc(d.unit_ev)})</span>`;
+      h += `<h3>메타</h3><dl class="kv">` +
+        `<dt>행정단위</dt><dd>${unitLine}</dd>` +
+        `<dt>갱신 주기</dt><dd>${esc(D.cycle[C.cycle[i]] || "–")}${d.next ? ` · 차기 ${d.next}` : ""}</dd>` +
+        `<dt>수정 / 등록</dt><dd>${C.modified[i] || "–"} / ${d.reg || "–"}</dd>` +
+        `<dt>활용 / 조회</dt><dd>${(C.usage[i] || 0).toLocaleString()} / ${(C.views[i] || 0).toLocaleString()}</dd>` +
+        (d.appr ? `<dt>승인</dt><dd>개발 ${APPR[d.appr[0]] || "–"} · 운영 ${APPR[d.appr[1]] || "–"}</dd>` : "") +
+        (d.traffic ? `<dt>개발 트래픽</dt><dd>${d.traffic.toLocaleString()} / 일</dd>` : "") +
+        (d.rows ? `<dt>전체 행</dt><dd>${d.rows.toLocaleString()}</dd>` : "") +
+        (d.fmt ? `<dt>포맷</dt><dd>${esc(d.fmt)}</dd>` : "") +
+        (d.provide ? `<dt>제공형태</dt><dd>${esc(d.provide)}</dd>` : "") +
+        (d.space ? `<dt>공간범위</dt><dd>${esc(d.space)}</dd>` : "") +
+        (d.time ? `<dt>시간범위</dt><dd>${esc(d.time)}</dd>` : "") +
+        `<dt>보유근거</dt><dd>${d.law ? esc(d.law) : '<span class="muted">없음</span>'}</dd>` +
+        `<dt>데이터 한계</dt><dd>${d.limit ? esc(d.limit) : '<span class="muted">없음</span>'}</dd>` +
+        `</dl>` +
+        `<h3>요청변수</h3>${tokens(d.req)}` +
+        `<h3>출력결과</h3>${tokens(d.out)}` +
+        (d.desc ? `<h3>설명</h3><div>${esc(d.desc)}</div>` : "") +
+        (d.notes ? `<h3>기타 유의사항</h3><div>${esc(d.notes)}</div>` : "") +
+        (d.kw ? `<h3>키워드</h3>${tokens(d.kw)}` : "");
+    }
+    el.innerHTML = h;
+  }
+  document.getElementById("detail").addEventListener("change", e => {
+    if (e.target.id !== "dPick" || S.sel === null) return;
+    setPick(C.id[S.sel], e.target.checked);
+    renderTree(); renderTable();
+  });
+  document.getElementById("detail").addEventListener("input", e => {
+    if (e.target.id !== "dReason" || S.sel === null) return;
+    setReason(C.id[S.sel], e.target.value);
+    const inp = tableEl.querySelector(`input[data-memo="${C.id[S.sel]}"]`);
+    if (inp) inp.value = e.target.value;
+  });
+
+  // ---------- 내보내기 / 불러오기
+  document.getElementById("btnExport").addEventListener("click", () => {
+    const picked = Object.entries(targets).filter(([, t]) => t.checked);
+    const missing = picked.filter(([, t]) => !(t.reason || "").trim());
+    if (missing.length && !confirm(`사유가 없는 대상이 ${missing.length}건 있습니다. 그래도 내보낼까요?`)) return;
+    const out = {
+      schema: "pds.targets.v1",
+      exported_at: new Date().toISOString(),
+      snapshot: P.meta.snapshot,
+      count: picked.length,
+      targets: picked.map(([id, t]) => {
+        const i = byId.get(id);
+        const kind = D.kind[C.kind[i]];
+        return {
+          id, title: C.title[i], agency: D.agency[C.agency[i]], agency_tier: D.tier[C.tier[i]],
+          brm: D.area[C.area[i]], kind, channel: EXT.has(C.kind[i]) ? "external" : "portal",
+          admin_unit: D.unit[C.unit[i]], prelim_score: C.score[i], rank_overall: C.rank[i],
+          national_key: !!C.nk[i], reason: (t.reason || "").trim(), picked_at: t.updated_at,
+          url: `https://www.data.go.kr/data/${id}/${["FILE", "FILE_LINK", "STD"].includes(kind) ? "fileData" : "openapi"}.do`,
+        };
+      }).sort((a, b) => a.brm.localeCompare(b.brm, "ko") || b.prelim_score - a.prelim_score),
+    };
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "targets.json"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+  document.getElementById("btnImport").addEventListener("click", () => document.getElementById("fileImport").click());
+  document.getElementById("fileImport").addEventListener("change", async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      let n = 0;
+      for (const t of j.targets || []) {
+        if (!byId.has(t.id)) continue;
+        targets[t.id] = { checked: true, reason: t.reason || "", title: t.title, sector: t.brm, updated_at: t.picked_at || new Date().toISOString() };
+        n++;
+      }
+      saveTargets(); renderAll();
+      alert(`${n}건 불러옴`);
+    } catch (err) { alert("불러오기 실패: " + err); }
+    e.target.value = "";
+  });
+
+  // ---------- 테마
+  document.getElementById("btnTheme").addEventListener("click", () => {
+    const r = document.documentElement;
+    const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    r.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("pds.theme", r.dataset.theme); } catch {}
+    renderHeat();
+  });
+  try { const th = localStorage.getItem("pds.theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
+
+  // ---------- 렌더
+  function renderAll(keepFilters) {
+    if (!keepFilters) renderFilters();   // 검색 입력 중엔 포커스를 잃지 않게 필터 바를 다시 그리지 않는다
+    computeRows(); renderHeat(); renderTree(); renderTable();
+    const hw = document.getElementById("heatwrap").offsetHeight;
+    document.documentElement.style.setProperty("--heat-h", hw + "px");
+  }
+  const heatDet = document.getElementById("heatDetails");
+  try { if (localStorage.getItem("pds.heat") === "closed") heatDet.open = false; } catch {}
+  heatDet.addEventListener("toggle", () => {
+    try { localStorage.setItem("pds.heat", heatDet.open ? "open" : "closed"); } catch {}
+    document.documentElement.style.setProperty("--heat-h", document.getElementById("heatwrap").offsetHeight + "px");
+  });
+  document.getElementById("loading").hidden = true;
+  document.getElementById("app").hidden = false;
+  renderCounter();
+  renderAll();
+})();
+</script>
+</body>
+</html>

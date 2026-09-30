@@ -1,0 +1,1818 @@
+# Dataset 15012005 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15012005'
+tier: verified
+title: 소상공인시장진흥공단_상가(상권)정보_API
+sector: 산업고용/산업·중소기업일반/commercial-stores
+agency:
+  id: B553077
+  name: 소상공인시장진흥공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15012005/openapi.do
+synonyms:
+  - 상가업소
+  - 소상공인
+  - 상권정보
+  - 업소현황
+  - 전국단위
+  - 시도단위
+  - 반경조회
+  - 영역별조회
+description_portal: '안녕하십니까.소상공인시장진흥공단입니다.공공데이터포털(data.go.kr)을 통해서 개방 중인 소상공인시장진흥공단_상가(상권)정보 데이터 안내드립니다.1. 데이터 출처 : 국세청/카드사2. 업종 분류 1) (상권업종분류) 표준산업분류 기반 업종분류 2) (업종분류 체계) 대분류(10개), 중분류(75개), 소분류(247개) 3) (업종코드) 대분류(2자리), 중분류(4자리), 소분류(6자리) * 표준산업분류(10차)  -표준산업분류는 업종분류 정제에 따라 상권업종분류 연계표와 상이할 수 있습니다.   예시) 표준산업분류(제조업 - 떡류 제조업)  vs  상권업종분류(음식점업 - 떡/한과)3. 제공방식 1) 구분자 : 콤마(,) 2) 인코딩 : utf-8 4 주요 제공항목  상가업소번호, 상호명, 주소, 상권업종명, 표준산업분류명, 경도, 위도 등 URL: https://bigdata.sbiz.or.kr/#/notice/384818589907726336'
+team:
+  dept: AI빅데이터실
+services:
+  - op: /storeZoneOne
+    name: 지정 상권조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeZoneOne
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: key
+        required: true
+        example: '9174'
+        desc: 조회 대상 상권의 상권번호
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /storeListInDong
+    name: 행정동 단위 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: divId
+        required: true
+        example: ctprvnCd
+        desc: 시도는 ctprvnCd, 시군구는 signguCd, 행정동은 adongCd를 사용
+      - name: key
+        required: true
+        example: '11'
+        desc: 시도는 시도코드값, 시군구는 시군구코드값, 행정동은 행정동코드값을 사용
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: 'xml '
+        desc: xml / json
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /baroApi
+    name: 행정경계조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/baroApi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: resId
+        required: true
+        example: dong
+        desc: (활용가이드 참조) 리소스에 대한 ID로 dong은 행정구역 리소스를 나타낸다.
+      - name: catId
+        required: true
+        example: mega
+        desc: (활용가이드 참조) 리소스에서 카테고리를 구분하는 항목으로 행정구역 API에서는 mega는 시도에 해당한다./리소스에서 카테고리를 구분하는 항목으로 행정구역 API에서는 cty는 시군구에 해당한다./리소스에서 카테고리를 구분하는 항목으로 행정구역 API에서는 admi는 행정동에 해당한다./리소스에서 카테고리를 구분하는 항목으로 행정구역 API에서는 zone
+      - name: type
+        required: false
+        example: xml
+        desc: 데이터유형(xml,json)으로 xml, json 포맷을 제공
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /storeZoneInRadius
+    name: 반경내 상권조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeZoneInRadius
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: radius
+        required: true
+        example: '500'
+        desc: 미터단위(반경제한:2km)
+      - name: cx
+        required: true
+        example: '127.03515915427266'
+        desc: 반경 중심점 경도 값으로 WGS84좌표계
+      - name: cy
+        required: true
+        example: '37.49736277789859'
+        desc: 반경 중심점 위도 값으로 WGS84좌표계
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /storeZoneInRectangle
+    name: 사각형내 상권조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeZoneInRectangle
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: minx
+        required: true
+        example: '127.029563087733'
+        desc: 사각형 바운더리에서 서쪽 경도좌표값으로 WGS84 좌표계
+      - name: miny
+        required: true
+        example: '37.4928121979655'
+        desc: 사각형 바운더리에서 남쪽 위도좌표값으로 WGS84 좌표계
+      - name: maxx
+        required: true
+        example: '127.040755164178'
+        desc: 사각형 바운더리에서 동쪽 경도좌표값으로 WGS84 좌표계
+      - name: maxy
+        required: true
+        example: '37.5019141671133'
+        desc: 사각형 바운더리에서 북쪽 위도좌표값으로 WGS84 좌표계
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /storeZoneInAdmi
+    name: 행정구역 단위 상권조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeZoneInAdmi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: divId
+        required: true
+        example: ctprvnCd
+        desc: 시도는 ctprvnCd, 시군구는 signguCd, 행정동은 adongCd를 사용
+      - name: key
+        required: true
+        example: '11'
+        desc: 시도는 시도코드값, 시군구는 시군구코드값, 행정동은 행정동코드값을 사용
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /storeOne
+    name: 단일 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeOne
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: key
+        required: true
+        example: MA010120220800000971
+        desc: 상가업소번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInBuilding
+    name: 건물 단위 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInBuilding
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 현재 요청 페이지번호
+      - name: numOfRows
+        required: false
+        example: '100'
+        desc: 최대 1000
+      - name: key
+        required: true
+        example: '1111013700102380000013915'
+        desc: 건물관리번호
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: 입력된 대분류 업종에 해당하는 것만 조회(2자리)
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: 입력된 중분류 업종에 해당하는 것만 조회(4자리)
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: 입력된 소분류 업종에 해당하는 것만 조회(6자리)
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInPnu
+    name: 지번 단위 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPnu
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 현재 요청 페이지번호
+      - name: numOfRows
+        required: false
+        example: '100'
+        desc: 최대 1000
+      - name: key
+        required: true
+        example: '1111013700102360001'
+        desc: 지번, PNU코드
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: 입력된 대분류 업종에 해당하는 것만 조회(2자리)
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: 입력된 중분류 업종에 해당하는 것만 조회(4자리)
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: 입력된 소분류 업종에 해당하는 것만 조회(6자리)
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInArea
+    name: 상권내 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInArea
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: key
+        required: true
+        example: '10355'
+        desc: ' 상가업소의 상권번호'
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: xml
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInRadius
+    name: 반경내 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInRadius
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: radius
+        required: true
+        example: '500'
+        desc: ' 반경입력, (미터단위, 최대2000 미터)'
+      - name: cx
+        required: true
+        example: '126.573301'
+        desc: ' 원형의 중심점의 경도값으로 WGS84 좌표계 사용'
+      - name: cy
+        required: true
+        example: '33.449826'
+        desc: ' 원형의 중심점의 위도값으로 WGS84 좌표계 사용'
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: 'xml '
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInRectangle
+    name: 사각형내 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInRectangle
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: minx
+        required: true
+        example: '127.031000'
+        desc: ' 사각형 바운더리에서 서쪽 경도좌표값으로 WGS84 좌표계 사용'
+      - name: miny
+        required: true
+        example: '37.509715'
+        desc: ' 사각형 바운더리에서 남쪽 경도좌표값으로 WGS84 좌표계 사용'
+      - name: maxx
+        required: true
+        example: '127.035730'
+        desc: ' 사각형 바운더리에서 동쪽 경도좌표값으로 WGS84 좌표계 사용'
+      - name: maxy
+        required: true
+        example: '37.510900'
+        desc: ' 사각형 바운더리에서 북쪽 경도좌표값으로 WGS84 좌표계 사용'
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: xml
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInPolygon
+    name: 다각형내 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInPolygon
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: ' 현재 요청 페이지번호'
+      - name: numOfRows
+        required: true
+        example: '20'
+        desc: ' 최대 1000'
+      - name: key
+        required: true
+        example: POLYGON ((126.9204728 35.1523226,126.9192728 35.1531925,126.9181257 35.1522507,1
+        desc: ' WKT 포맷 폴리곤 유형으로 POLYGON((경도 위도, 경도 위도, ...)) 형식으로 경도와 위도 사잉에는 공백이고 좌표값들은 콤마로 구분'
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: xml
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListInUpjong
+    name: 업종별 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInUpjong
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: ' 현재 요청 페이지번호'
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: ' 최대 1000'
+      - name: divId
+        required: true
+        example: indsLclsCd
+        desc: ' 대분류는 indsLclsCd, 중분류는 indsMclsCd, 소분류는 indsSclsCd를 사용'
+      - name: key
+        required: true
+        example: I2
+        desc: ' 대분류는 대분류코드(2자리)값, 중분류는 중분류코드(4자리)값, 소분류는 소분류코드(6자리)값을 사용'
+      - name: type
+        required: false
+        example: xml
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /storeListByDate
+    name: 수정일자기준 상가업소 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/storeListByDate
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: ' 현재 요청 페이지번호'
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: ' 최대 1000'
+      - name: key
+        required: true
+        example: '20230930'
+        desc: ' 일자(YYYYMMDD 형식, 예:20151202)'
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 입력된 대분류 업종에 해당하는 것만 조회(2자리)'
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: ' 입력된 중분류 업종에 해당하는 것만 조회(4자리)'
+      - name: indsSclsCd
+        required: false
+        example: I21201
+        desc: ' 입력된 소분류 업종에 해당하는 것만 조회(6자리)'
+      - name: type
+        required: false
+        example: xml
+        desc: ' xml / json'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /reqStoreModify
+    name: 상가업소정보 변경요청
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/reqStoreModify
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: bizesId
+        required: true
+        example: MA000020230101A000001
+        desc: 변경 대상이 되는 상가업소번호로 해당 번호와 일치하는 업소가 있어야 변경요청이  수락 되어 진행된다.
+      - name: bizesNm
+        required: true
+        example: XXX편의점(예시)
+        desc: 변경 요청하는 상호명
+      - name: brchNm
+        required: true
+        example: 대전은행동점(예시)
+        desc: 변경 요청하는 지점명
+      - name: indsSclsCd
+        required: true
+        example: I21201
+        desc: 변경 요청하는 상권업종소분류코드(6자리)
+      - name: adongCd
+        required: true
+        example: '30170640'
+        desc: 변경 요청하는 행정동 코드
+      - name: lnoAdr
+        required: true
+        example: 대전광역시 서구 둔산동 1353번지
+        desc: 변경 요청하는 구주소
+      - name: rdnmAdr
+        required: true
+        example: 대전광역시 서구 둔산로51번길 66
+        desc: 변경 요청하는 도로명 주소
+      - name: bldNm
+        required: true
+        example: 임광빌딩
+        desc: 변경 요청하는 건물명
+      - name: dongNo
+        required: true
+        example: 가
+        desc: 변경 요청하는 동정보
+      - name: flrNo
+        required: true
+        example: '1'
+        desc: 변경 요청하는 층정보
+      - name: hoNo
+        required: true
+        example: 101호
+        desc: 변경 요청하는 호정보
+      - name: opbizDt
+        required: true
+        example: '20150101'
+        desc: 개업일자를 입력
+      - name: clbizDt
+        required: true
+        example: '20151020'
+        desc: 폐업일자를 입력
+      - name: etcChgReqCnts
+        required: true
+        example: 업종을 중국집에서 일식으로 변경해주세요.
+        desc: 기타 수정사항 텍스트 입력
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /largeUpjongList
+    name: 상권정보 업종 대분류 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/largeUpjongList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: type
+        required: false
+        example: xml
+        desc: xml / json
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /middleUpjongList
+    name: 상권정보 업종 중분류 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/middleUpjongList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: ' 상권정보 업종 대분류 코드(2자리)'
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /smallUpjongList
+    name: 상권정보 업종 소분류 조회
+    endpoint: https://apis.data.go.kr/B553077/api/open/sdsc2/smallUpjongList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: indsLclsCd
+        required: false
+        example: I2
+        desc: 상권정보 업종 대분류 코드(2자리)
+      - name: indsMclsCd
+        required: false
+        example: I212
+        desc: 상권정보 업종 중분류 코드(4자리)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+schema:
+  fields:
+    - name: bizesId
+      title: 해당 상가업소에 부여된 일련번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - MA010120220800021661
+        - MA010120220800013834
+        - MA010120220800013605
+      op: /storeListInDong
+      stats:
+        unique: 1000
+    - name: bizesNm
+      title: 해당 상가업소의 상호명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 이디야커피
+        - 이디야
+        - 커피투어
+      op: /storeListInDong
+      stats:
+        unique: 963
+    - name: brchNm
+      title: 해당 상가업소가 지점인 경우 지점명
+      type: string
+      null_rate: 0.911
+      sample_values:
+        - 홍대점
+        - 여의도점
+        - 코리아
+      op: /storeListInDong
+      stats:
+        unique: 68
+    - name: indsLclsCd
+      title: 해당 상가업소의 상권업종대분류코드(2자리)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I2
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: indsLclsNm
+      title: 해당 상가업소의 상권업종대분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 음식
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: indsMclsCd
+      title: 해당 상가업소의 상권업종중분류코드(4자리)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I212
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: indsMclsNm
+      title: 해당 상가업소의 상권업종중분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '비알코올 '
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: indsSclsCd
+      title: 해당 상가업소의 상권업종소분류코드(6자리)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I21201
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: indsSclsNm
+      title: 해당 상가업소의 상권업종소분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 카페
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: ksicCd
+      title: 해당 상가업소의 표준산업분류코드(6자리)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I56221
+        - I56229
+        - I56123
+      op: /storeListInDong
+      stats:
+        unique: 10
+    - name: ksicNm
+      title: 해당 상가업소의 표준산업분류코드에 대한 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 커피 전문점
+        - 기타 비알코올 음료점업
+        - 서양식 음식점업
+      op: /storeListInDong
+      stats:
+        unique: 10
+    - name: ctprvnCd
+      title: 광역시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      op: /storeListInDong
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: ctprvnNm
+      title: 광역시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: signguCd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11110'
+        - '11440'
+        - '11560'
+      op: /storeListInDong
+      stats:
+        min: 11110
+        p50: 11410
+        max: 11740
+        unique: 25
+    - name: signguNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+        - 마포구
+        - 영등포구
+      op: /storeListInDong
+      stats:
+        unique: 25
+    - name: adongCd
+      title: 해당 상가업소의 행정동 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11440660'
+        - '11110615'
+        - '11410585'
+      op: /storeListInDong
+      stats:
+        min: 11110515
+        p50: 11410710
+        max: 11740700
+        unique: 248
+    - name: adongNm
+      title: 해당 상가업소의 행정동 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서교동
+        - 종로1.2.3.4가동
+        - 신촌동
+      op: /storeListInDong
+      stats:
+        unique: 247
+    - name: ldongCd
+      title: 해당 상가업소의 법정동 코드
+      type: number
+      semantic_type: bjd_cd
+      null_rate: 0.0
+      sample_values:
+        - '1144012000'
+        - '1156011000'
+        - '1144012100'
+      op: /storeListInDong
+      stats:
+        min: 1111010100
+        p50: 1141012000
+        max: 1174010900
+        unique: 275
+    - name: ldongNm
+      title: 해당 상가업소의 법정동 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서교동
+        - 여의도동
+        - 동교동
+      op: /storeListInDong
+      stats:
+        unique: 274
+    - name: lnoCd
+      title: 해당 상가업소 지번주소에 해당하는 PNU코드
+      type: number
+      semantic_type: pnu
+      null_rate: 0.0
+      sample_values:
+        - '1114010500101970000'
+        - '1156011000100350002'
+        - '1141011600100290081'
+      op: /storeListInDong
+      stats:
+        min: 1111010100101400064
+        p50: 1141012000101289984
+        max: 1174010900103219968
+        unique: 969
+    - name: plotSctCd
+      title: 해당 상가업소 지번주소의 대지구분 코드(1:대지, 2:산)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: plotSctNm
+      title: 해당 상가업소 지번주소의 대지구분 코드명(대지, 산)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대지
+      op: /storeListInDong
+      stats:
+        unique: 1
+    - name: lnoMnno
+      title: 해당 상가업소 지번주소의 본번지
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '36'
+        - '2'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 186
+        max: 4346
+        unique: 502
+    - name: lnoSlno
+      title: 해당 상가업소 지번주소의 부번지
+      type: number
+      null_rate: 0.196
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 11
+        max: 838
+        unique: 127
+    - name: lnoAdr
+      title: 해당 상가업소 지번기준 전체주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 중구 을지로2가 197
+        - 서울특별시 영등포구 여의도동 35-2
+        - 서울특별시 서대문구 창천동 29-81
+      op: /storeListInDong
+      stats:
+        unique: 969
+    - name: rdnmCd
+      title: 해당 상가업소 도로명주소 도로명코드
+      type: number
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - '111103100013'
+        - '111104100259'
+        - '115003115008'
+      op: /storeListInDong
+      stats:
+        min: 111103005001
+        p50: 114104136408.5
+        max: 117404172444
+        unique: 652
+    - name: rdnm
+      title: 해당 상가업소 도로명주소 도로명코드에 대한 명칭
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구 종로
+        - 서울특별시 종로구 인사동길
+        - 서울특별시 강서구 양천로
+      op: /storeListInDong
+      stats:
+        unique: 652
+    - name: bldMnno
+      title: 해당 상가업소 도로명주소 기준 건물 본번지
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '11'
+        - '12'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 40
+        max: 1592
+        unique: 273
+    - name: bldSlno
+      title: 해당 상가업소 도로명주소 기준 건물 부번지
+      type: number
+      null_rate: 0.855
+      sample_values:
+        - '1'
+        - '2'
+        - '6'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 4
+        max: 51
+        unique: 27
+    - name: bldMngNo
+      title: 해당 상가업소 도로명주소 기준 건물관리번호
+      type: number
+      null_rate: 0.002
+      sample_values:
+        - '1114010500101970000020588'
+        - '1156011000100350002031380'
+        - '1141011600100290090022795'
+      op: /storeListInDong
+      stats:
+        min: 1111010100101400020123648
+        p50: 1141012000101289961717760
+        max: 1174010900105020045262848
+        unique: 967
+    - name: bldNm
+      title: 해당 상가업소 도로명주소 기준 건물명
+      type: string
+      null_rate: 0.584
+      sample_values:
+        - 동
+        - 명칭없음
+        - 일부
+      op: /storeListInDong
+      stats:
+        unique: 338
+    - name: rdnmAdr
+      title: 해당 상가업소 도로명 주소기준 전체주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 중구 을지로 54-1
+        - 서울특별시 영등포구 국제금융로6길 30
+        - 서울특별시 서대문구 신촌로 109
+      op: /storeListInDong
+      stats:
+        unique: 969
+    - name: oldZipcd
+      title: 해당 상가업소 구우편번호(개편전 우편번호)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '110300'
+        - '110054'
+        - '100804'
+      op: /storeListInDong
+      stats:
+        min: 100032
+        p50: 122842.5
+        max: 158861
+        unique: 597
+    - name: newZipcd
+      title: 해당 상가업소 신우편번호(개편후 우편번호)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '04529'
+        - '03146'
+        - '03767'
+      op: /storeListInDong
+      stats:
+        min: 1000
+        p50: 4206.5
+        max: 8864
+        unique: 682
+    - name: dongNo
+      title: 해당 상가업소가 소재한 동정보
+      type: code
+      null_rate: 1.0
+      op: /storeListInDong
+      stats:
+        unique: 0
+    - name: flrNo
+      title: 해당 상가업소가 소재한 층정보
+      type: number
+      null_rate: 0.337
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /storeListInDong
+      stats:
+        min: 1
+        p50: 1
+        max: 16
+        unique: 15
+    - name: hoNo
+      title: 해당 상가업소가 소재한 호정보
+      type: code
+      null_rate: 1.0
+      op: /storeListInDong
+      stats:
+        unique: 0
+    - name: lon
+      title: 해당 상가업소의 WGS84기준 경도 좌표값
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '126.983836585205'
+        - '126.926606197406'
+        - '126.937799602388'
+      op: /storeListInDong
+      stats:
+        min: 126.802957316013
+        p50: 126.9498269474465
+        max: 127.175348822228
+        unique: 969
+    - name: lat
+      title: 해당 상가업소의 WGS84기준 위도 좌표값
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.5659060103897'
+        - '37.5217173213898'
+        - '37.5558356087937'
+      op: /storeListInDong
+      stats:
+        min: 37.464779975006
+        p50: 37.557071449007296
+        max: 37.6888292863133
+        unique: 969
+    - name: ctprvnCd
+      title: 광역시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '51'
+        - '41'
+        - '48'
+      op: /baroApi
+      stats:
+        min: 11
+        p50: 38.5
+        max: 52
+        unique: 16
+    - name: ctprvnNm
+      title: 광역시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강원특별자치도
+        - 경기도
+        - 경상남도
+      op: /baroApi
+      stats:
+        unique: 16
+    - name: stdrDt
+      title: 데이터 배포일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-07-01'
+      op: /baroApi
+      stats:
+        min: '2026-07-01'
+        max: '2026-07-01'
+        unique: 1
+    - name: trarNo
+      title: 결과코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10116'
+        - '10117'
+      op: /storeZoneInRadius
+      stats:
+        min: 10116
+        p50: 10116.5
+        max: 10117
+        unique: 2
+    - name: mainTrarNm
+      title: 상권이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울역삼1동우체국
+        - 역삼역2번 출구
+      op: /storeZoneInRadius
+      stats:
+        unique: 2
+    - name: ctprvnCd
+      title: 광역시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      op: /storeZoneInRadius
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: ctprvnNm
+      title: 광역시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /storeZoneInRadius
+      stats:
+        unique: 1
+    - name: signguCd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11680'
+      op: /storeZoneInRadius
+      stats:
+        min: 11680
+        p50: 11680
+        max: 11680
+        unique: 1
+    - name: signguNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+      op: /storeZoneInRadius
+      stats:
+        unique: 1
+    - name: trarArea
+      title: 상권의 면적(㎡, 평방미터)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '260341'
+        - '373814'
+      op: /storeZoneInRadius
+      stats:
+        min: 260341
+        p50: 317077.5
+        max: 373814
+        unique: 2
+    - name: coordNum
+      title: 상권영역 다각형의 좌표개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '730'
+        - '714'
+      op: /storeZoneInRadius
+      stats:
+        min: 714
+        p50: 722
+        max: 730
+        unique: 2
+    - name: coords
+      title: 상권영역 다각형의 좌표값 문자열
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 'POLYGON ((127.027120819072 37.4995867824745, 127.027131502397 37.4995643485807, '
+        - 'POLYGON ((127.033272774789 37.4994655538636, 127.033272135113 37.4994653494875, '
+      op: /storeZoneInRadius
+      stats:
+        unique: 2
+    - name: stdrDt
+      title: 데이터 배포일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2024-01-01'
+      op: /storeZoneInRadius
+      stats:
+        min: '2024-01-01'
+        max: '2024-01-01'
+        unique: 1
+    - name: trarNo
+      title: 결과코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10116'
+        - '10117'
+      op: /storeZoneInRectangle
+      stats:
+        min: 10116
+        p50: 10116.5
+        max: 10117
+        unique: 2
+    - name: mainTrarNm
+      title: 상권이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울역삼1동우체국
+        - 역삼역2번 출구
+      op: /storeZoneInRectangle
+      stats:
+        unique: 2
+    - name: ctprvnCd
+      title: 광역시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      op: /storeZoneInRectangle
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: ctprvnNm
+      title: 광역시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /storeZoneInRectangle
+      stats:
+        unique: 1
+    - name: signguCd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11680'
+      op: /storeZoneInRectangle
+      stats:
+        min: 11680
+        p50: 11680
+        max: 11680
+        unique: 1
+    - name: signguNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+      op: /storeZoneInRectangle
+      stats:
+        unique: 1
+    - name: trarArea
+      title: 상권의 면적(㎡, 평방미터)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '260341'
+        - '373814'
+      op: /storeZoneInRectangle
+      stats:
+        min: 260341
+        p50: 317077.5
+        max: 373814
+        unique: 2
+    - name: coordNum
+      title: 상권영역 다각형의 좌표개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '730'
+        - '714'
+      op: /storeZoneInRectangle
+      stats:
+        min: 714
+        p50: 722
+        max: 730
+        unique: 2
+    - name: coords
+      title: 상권영역 다각형의 좌표값 문자열
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 'POLYGON ((127.027120819072 37.4995867824745, 127.027131502397 37.4995643485807, '
+        - 'POLYGON ((127.033272774789 37.4994655538636, 127.033272135113 37.4994653494875, '
+      op: /storeZoneInRectangle
+      stats:
+        unique: 2
+    - name: stdrDt
+      title: 데이터 배포일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2024-01-01'
+      op: /storeZoneInRectangle
+      stats:
+        min: '2024-01-01'
+        max: '2024-01-01'
+        unique: 1
+    - name: trarNo
+      title: 결과코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10121'
+        - '10122'
+        - '10123'
+      op: /storeZoneInAdmi
+      stats:
+        min: 10000
+        p50: 10087.5
+        max: 10176
+        unique: 176
+    - name: mainTrarNm
+      title: 상권이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 삼양사거리역1번 출구
+        - 서울수유초등학교
+        - 수유역8번 출구
+      op: /storeZoneInAdmi
+      stats:
+        unique: 176
+    - name: ctprvnCd
+      title: 광역시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      op: /storeZoneInAdmi
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: ctprvnNm
+      title: 광역시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      op: /storeZoneInAdmi
+      stats:
+        unique: 1
+    - name: signguCd
+      title: 시군구코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '11680'
+        - '11650'
+        - '11140'
+      op: /storeZoneInAdmi
+      stats:
+        min: 11110
+        p50: 11500
+        max: 11740
+        unique: 25
+    - name: signguNm
+      title: 시군구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+        - 서초구
+        - 중구
+      op: /storeZoneInAdmi
+      stats:
+        unique: 25
+    - name: trarArea
+      title: 상권의 면적(㎡, 평방미터)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35422'
+        - '36842'
+        - '151422'
+      op: /storeZoneInAdmi
+      stats:
+        min: 15550
+        p50: 78408
+        max: 646572
+        unique: 176
+    - name: coordNum
+      title: 상권영역 다각형의 좌표개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '422'
+        - '218'
+        - '386'
+      op: /storeZoneInAdmi
+      stats:
+        min: 18
+        p50: 665
+        max: 3549
+        unique: 165
+    - name: coords
+      title: 상권영역 다각형의 좌표값 문자열
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 'POLYGON ((127.018180337381 37.6196725450063, 127.018306450418 37.6196190175715, '
+        - 'POLYGON ((127.021726880468 37.6299751420204, 127.021805224412 37.6298800393402, '
+        - POLYGON ((127.022281547931 37.6390118590148, 127.02222603063 37.6390074528999, 1
+      op: /storeZoneInAdmi
+      stats:
+        unique: 176
+    - name: stdrDt
+      title: 데이터 배포일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2024-01-01'
+      op: /storeZoneInAdmi
+      stats:
+        min: '2024-01-01'
+        max: '2024-01-01'
+        unique: 1
+  foreign_keys:
+    - fields:
+        - ctprvnCd
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - signguCd
+      reference:
+        key: sgg_cd
+      evidence: measured
+    - fields:
+        - ldongCd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - lnoCd
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - lnoAdr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - rdnmCd
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - rdnm
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - rdnmAdr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lon
+      reference:
+        key: coord
+      evidence: measured
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+  temporal: 2024-01-01 ~ 2024-01-01
+cycle: default
+classification:
+  subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9647
+  rank_in_sector: 1
+  brm: 산업고용 - 산업·중소기업일반
+  why: 상가업소 단위(상호·업종·좌표) 전수 원장 = 상권 분석의 기준. 전국대규모및준대규모점포표준데이터 포함(물류등기타에서 재검토 후보였던 것)
+claims:
+  - id: c-15012005-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 5/6
+    evidence:
+      - type: measured
+        source: probe/runs/15012005.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 5/6
+      - type: measured
+        source: probe/apply/15012005.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15012005-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2024-01-01 (관측일 기준 1003일 전) — 검증 호출 조건(key=20230930, opbizDt=20150101, clbizDt=20151020) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15012005
+        observed_at: '2026-09-30'
+        detail: latest 2024-01-01, lag 1003
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15012005-03
+    kind: key
+    value: '실측 조인 키: admin_area_code(ctprvnCd), sgg_cd(signguCd), bjd_cd(ldongCd), pnu(lnoCd), address(lnoAdr), address(rdnmCd), address(rdnm), address(rdnmAdr), coord(lon), coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15012005.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 72개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15012005-04
+    kind: coverage
+    value: API 전체 건수 22,739 · 검증 수신 2,076행 · 범위 전국 · 행정단위 필지·건물 · 기간 2024-01-01 ~ 2024-01-01
+    evidence:
+      - type: measured
+        source: probe/runs/15012005.json
+        observed_at: '2026-09-30'
+        detail: total 22739, rows 2076
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15012005-06
+    kind: admin_note
+    value: "세부 부문 '상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)'의 가치: 상가업소 단위(상호·업종·좌표) 전수 원장 = 상권 분석의 기준. 전국대규모및준대규모점포표준데이터 포함(물류등기타에서 재검토 후보였던 것)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#commercial-stores
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15012005-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15012005-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /storeZoneOne'
+    evidence:
+      - type: measured
+        source: probe/runs/15012005.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15012005-11
+    kind: pitfall
+    value: 전수 22,739건 중 검증은 2,076행만 받음 — 전량 수집은 페이지 반복 23회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15012005.json
+        observed_at: '2026-09-30'
+        detail: total 22739 rows 2076
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 2076
+  total_count: 22739
+  ops_ok: 5/6
+  latency_ms: 624
+  latest: '2024-01-01'
+  lag_days: 1003
+  run: probe/runs/15012005.json
+  stats: probe/stats/15012005.json
+  data: probe/data/15012005/
+status: active

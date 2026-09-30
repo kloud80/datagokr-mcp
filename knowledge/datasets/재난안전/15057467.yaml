@@ -1,0 +1,379 @@
+# Dataset 15057467 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15057467'
+tier: verified
+title: 한국도로교통공단_지자체별 교통사고 다발지역
+sector: 재난안전/안전관리/accident-hotspots
+agency:
+  id: B555234
+  name: 한국도로교통공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057467/openapi.do
+synonyms:
+  - 교통사고
+  - 사고다발지역
+  - 전국
+  - 지자체별
+  - 상위3개소
+description_portal: '전국 각 지자체별 교통사고 다발지역 정보(지자체별 top3 지점)- 대상사고 : 1년간 발생한 전체 교통사고- 다발지역 선정조건 : 반경 150m 내, 대상사고 3건 이상인 지점 중 상위 3개소(TOP3)   * 지자체별로 해당 조건에 해당하는 지점이 3개가 되지 않을 경우 1개 또는 2개 지점만 선정될 수 있음- WMS 형태의 API 정보는 교통사고정보개방시스템(https://opendata.koroad.or.kr/api/sample.do)을 통해 확인하실 수 있습니다. * 해당자료는 교통사고분석시스템(https://taas.koroad.or.kr) 데이터를 기반으로 함'
+team:
+  dept: AI데이터전략처
+services:
+  - op: /getRestFrequentzoneLg
+    name: 지자체별사고 다발지역정보 Rest 조회
+    endpoint: https://apis.data.go.kr/B552061/frequentzoneLg/getRestFrequentzoneLg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchYearCd
+        required: true
+        example: '2017'
+        desc: 연도코드
+      - name: siDo
+        required: true
+        example: '11'
+        desc: 시도코드
+      - name: guGun
+        required: true
+        example: '200'
+        desc: 시군구코드
+      - name: type
+        required: false
+        example: xml
+        desc: 데이터유형
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 검색건수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: afos_fid
+      title: 다발지역FID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6467425'
+        - '6467426'
+        - '6467427'
+      stats:
+        min: 6467425
+        p50: 6467426
+        max: 6467427
+        unique: 3
+    - name: afos_id
+      title: 다발지역ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2018074'
+      stats:
+        min: 2018074
+        p50: 2018074
+        max: 2018074
+        unique: 1
+    - name: bjd_cd
+      title: 법정동코드
+      type: number
+      semantic_type: bjd_cd
+      null_rate: 0.0
+      sample_values:
+        - '1120010700'
+        - '1120011800'
+      stats:
+        min: 1120010700
+        p50: 1120010700
+        max: 1120011800
+        unique: 2
+    - name: spot_cd
+      title: 지점코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11200001'
+        - '11200002'
+        - '11200003'
+      stats:
+        min: 11200001
+        p50: 11200002
+        max: 11200003
+        unique: 3
+    - name: sido_sgg_nm
+      title: 시도시군구명
+      type: code
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성동구1
+        - 서울특별시 성동구2
+        - 서울특별시 성동구3
+      stats:
+        unique: 3
+    - name: spot_nm
+      title: 지점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성동구 행당동(고산자로왕십리로진입 인근)
+        - 서울특별시 성동구 송정동(왕십리길광나룻길진출 인근)
+        - 서울특별시 성동구 행당동(무학여고앞 인근)
+      stats:
+        unique: 3
+    - name: occrrnc_cnt
+      title: 발생건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '31'
+        - '28'
+        - '23'
+      stats:
+        min: 23
+        p50: 28
+        max: 31
+        unique: 3
+    - name: caslt_cnt
+      title: 사상자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '47'
+        - '43'
+        - '32'
+      stats:
+        min: 32
+        p50: 43
+        max: 47
+        unique: 3
+    - name: dth_dnv_cnt
+      title: 사망자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: se_dnv_cnt
+      title: 중상자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '13'
+        - '4'
+      stats:
+        min: 4
+        p50: 6
+        max: 13
+        unique: 3
+    - name: sl_dnv_cnt
+      title: 경상자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '31'
+        - '29'
+        - '22'
+      stats:
+        min: 22
+        p50: 29
+        max: 31
+        unique: 3
+    - name: wnd_dnv_cnt
+      title: 부상신고자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '1'
+        - '6'
+      stats:
+        min: 1
+        p50: 6
+        max: 10
+        unique: 3
+    - name: geom_json
+      title: 다발지역폴리곤
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '{"type":"Polygon","coordinates":[[[127.03643997,37.56153953],[127.03641408,37.56'
+        - '{"type":"Polygon","coordinates":[[[127.04551734,37.55109676],[127.04549145,37.55'
+        - '{"type":"Polygon","coordinates":[[[127.03535849,37.55849583],[127.0353326,37.558'
+      stats:
+        unique: 3
+    - name: lo_crd
+      title: 경도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '127.035092495823'
+        - '127.044169871244'
+        - '127.034011018795'
+      stats:
+        min: 127.034011018795
+        p50: 127.035092495823
+        max: 127.044169871244
+        unique: 3
+    - name: la_crd
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.561539531825'
+        - '37.551096761607'
+        - '37.558495830319'
+      stats:
+        min: 37.551096761607
+        p50: 37.558495830319
+        max: 37.561539531825
+        unique: 3
+  foreign_keys:
+    - fields:
+        - bjd_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - sido_sgg_nm
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - lo_crd
+      reference:
+        key: coord
+      evidence: measured
+    - fields:
+        - la_crd
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8999
+  rank_in_sector: 1
+  brm: 재난안전 - 안전관리
+  why: 교통사고다발지역 표준데이터 — 도로·경찰 교통사고와 same_concept
+claims:
+  - id: c-15057467-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15057467.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15057467.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15057467-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057467-03
+    kind: key
+    value: '실측 조인 키: bjd_cd(bjd_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15057467.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057467-04
+    kind: coverage
+    value: API 전체 건수 3 · 검증 수신 3행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15057467.json
+        observed_at: '2026-09-30'
+        detail: total 3, rows 3
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057467-06
+    kind: admin_note
+    value: "세부 부문 '사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)'의 가치: 교통사고다발지역 표준데이터 — 도로·경찰 교통사고와 same_concept"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#accident-hotspots
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057467-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 3
+  total_count: 3
+  ops_ok: 1/1
+  latency_ms: 722
+  run: probe/runs/15057467.json
+  stats: probe/stats/15057467.json
+  data: probe/data/15057467/
+status: active

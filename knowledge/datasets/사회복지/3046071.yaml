@@ -1,0 +1,399 @@
+# Dataset 3046071 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '3046071'
+tier: verified
+title: 국민연금공단_국민연금 가입 사업장 내역
+sector: 사회복지/공적연금/pension-workplaces
+agency:
+  id: B552015
+  name: 국민연금공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3046071/openapi.do
+synonyms:
+  - 국민연금
+  - 자격
+  - 사업장
+  - 국민연금 가입 사업장
+  - 국민연금 사업장 상세
+description_portal: '(국민연금가입사업장정보) 법정동단위 지역별, 국민연금 가입 사업장 정보* 제공 범위: 가입자 수 3인 이상 법인사업장, 가입자 수 10인 이상 개인사업장(2025.7.이후)* 사업장 컬럼별 상세설명○ 자료생성년월 → 자격마감일(사유발생일이 속하는 달의 다음달 15일)까지 신고분 반영○ 가입자 수 → 가입자 수(고지인원 수 포함)○ 당월고지금액 → 국민연금법 시행령 제5조에 의거 기준소득월액 상한액 적용으로 실제소득과 고지금액은 상이할 수 있음■상한액 2021.7. ~ 2022.6. 5,240,000원■상한액 2022.7. ~ 2023.6. 5,530,000원■상한액 2023.7. ~ 2024.6. 5,900,000원■상한액 2024.7. ~ 2025.6. 6,170,000원■상한액 2025.7. ~ 2026.6. 6,370,000원○ 신규취득자수 → 납부재개 포함 ※전달 고지대상자와 비교하므로 실제 취득자수와 상이할 수 있음(초일 취득이 아닌 경우  당월 미고지되면 다음 달 취득자 수에 반영)○ 상실가입자수 → 납부예외 포함. ※해당 자료추출월과 익월을 비교하여 자료추출월에는 고지가 있으나 익월에는 고지가  없는 대상자에 대한 건수를 제공하므로 실제 상실자 수와 상이할 수 있음'
+team:
+  dept: 가입지원실
+services:
+  - op: /getBassInfoSearchV2
+    name: 사업장 정보조회 서비스
+    endpoint: https://apis.data.go.kr/B552015/NpsBplcInfoInqireServiceV2/getBassInfoSearchV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: ldongAddrMgplDgCd
+        required: false
+        desc: 시도(행정자치부 법정동 주소코드 참조)
+      - name: ldongAddrMgplSgguCd
+        required: false
+        desc: 시군구(행정자치부 법정동 주소코드 참조)
+      - name: ldongAddrMgplSgguEmdCd
+        required: false
+        desc: 읍면동(행정자치부 법정동 주소코드 참조)
+      - name: wkplNm
+        required: true
+        desc: 사업장명
+      - name: bzowrRgstNo
+        required: false
+        desc: 사업자등록번호(앞에서 6자리)
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답자료형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getDetailInfoSearchV2
+    name: 상세 정보조회
+    endpoint: https://apis.data.go.kr/B552015/NpsBplcInfoInqireServiceV2/getDetailInfoSearchV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: seq
+        required: true
+        desc: 식별번호
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답자료형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getPdAcctoSttusInfoSearchV2
+    name: 기간별 현황 정보조회
+    endpoint: https://apis.data.go.kr/B552015/NpsBplcInfoInqireServiceV2/getPdAcctoSttusInfoSearchV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: seq
+        required: true
+        desc: 식별번호
+      - name: dataCrtYm
+        required: false
+        desc: 년월(yyyymm)
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답자료형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: bzowrRgstNo
+      title: 사업자등록번호(앞에서 6자리)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 843860****
+        - 124815****
+        - 106880****
+      stats:
+        unique: 151
+    - name: dataCrtYm
+      title: 자료생성년월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202602'
+        - '202606'
+        - '202608'
+      stats:
+        min: 202601
+        p50: 202605
+        max: 202608
+        unique: 8
+    - name: ldongAddrMgplDgCd
+      title: 시도(행정자치부 법정동 주소코드 참조)
+      type: number
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - '41'
+        - '44'
+        - '12'
+      stats:
+        min: 11
+        p50: 41
+        max: 52
+        unique: 16
+    - name: ldongAddrMgplSgguCd
+      title: 시군구(행정자치부 법정동 주소코드 참조)
+      type: number
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - '220'
+        - '595'
+        - '117'
+      stats:
+        min: 110
+        p50: 220
+        max: 860
+        unique: 42
+    - name: ldongAddrMgplSgguEmdCd
+      title: 읍면동(행정자치부 법정동 주소코드 참조)
+      type: number
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - '105'
+        - '128'
+        - '101'
+      stats:
+        min: 101
+        p50: 111
+        max: 350
+        unique: 31
+    - name: seq
+      title: 식별번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7098292'
+        - '7097213'
+        - '7097155'
+      stats:
+        min: 2760739
+        p50: 4984655
+        max: 7098292
+        unique: 1000
+    - name: wkplJnngStcd
+      title: 1:등록, 2:탈퇴
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: wkplNm
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)세종산업개발/일용/화성 삼성전자 H1 Hook Up 유지보수(2026년)중 G Hook Up
+        - 주식회사 던킨삼성전자알5점
+        - (주)미동이엔씨/일용/삼성전자 평택CDC 물류창고 신축공사 중 전기공사
+      stats:
+        unique: 295
+    - name: wkplRoadNmDtlAddr
+      title: 사업장도로명상세주소
+      type: string
+      semantic_type: address
+      null_rate: 0.094
+      sample_values:
+        - 경기도 화성시 병점구 삼성전자로
+        - 경기도 평택시 삼성로
+        - 경기도 수원시 영통구 삼성로
+      stats:
+        unique: 79
+    - name: wkplStylDvcd
+      title: 1:법인, 2:개인
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+  foreign_keys:
+    - fields:
+        - ldongAddrMgplDgCd
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ldongAddrMgplSgguCd
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ldongAddrMgplSgguEmdCd
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - wkplRoadNmDtlAddr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9456
+  rank_in_sector: 1
+  brm: 사회복지 - 공적연금
+  why: '사업장별 가입자 수·월 납부액 = 기업 규모·급여 수준을 추정하는 거의 유일한 공개 원장 (구름: 사업장 단위라 필수). 사업자번호로 기업 축(국세청·공정위·R&D·조달) 전체와 연결'
+claims:
+  - id: c-3046071-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/3
+    evidence:
+      - type: measured
+        source: probe/runs/3046071.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/3
+      - type: measured
+        source: probe/apply/3046071.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-3046071-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3046071-03
+    kind: key
+    value: '실측 조인 키: address(ldongAddrMgplDgCd), address(ldongAddrMgplSgguCd), address(ldongAddrMgplSgguEmdCd), address(wkplRoadNmDtlAddr)'
+    evidence:
+      - type: measured
+        source: probe/stats/3046071.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3046071-04
+    kind: coverage
+    value: API 전체 건수 1,909 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/3046071.json
+        observed_at: '2026-09-30'
+        detail: total 1909, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3046071-06
+    kind: admin_note
+    value: "세부 부문 '국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)'의 가치: 사업장별 가입자 수·월 납부액 = 기업 규모·급여 수준을 추정하는 거의 유일한 공개 원장 (구름: 사업장 단위라 필수). 사업자번호로 기업 축(국세청·공정위·R&D·조달) 전체와 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#pension-workplaces
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3046071-10
+    kind: pitfall
+    value: 필수 파라미터 seq는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/3046071.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3046071-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /getDetailInfoSearchV2, /getPdAcctoSttusInfoSearchV2'
+    evidence:
+      - type: measured
+        source: probe/runs/3046071.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 1909
+  ops_ok: 1/3
+  latency_ms: 6267
+  run: probe/runs/3046071.json
+  stats: probe/stats/3046071.json
+  data: probe/data/3046071/
+status: active

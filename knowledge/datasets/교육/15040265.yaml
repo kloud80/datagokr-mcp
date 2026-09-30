@@ -1,0 +1,186 @@
+# Dataset 15040265 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15040265'
+tier: verified
+title: 한국산업인력공단_국가기술자격증 배송주소구간 정보
+sector: 교육/평생·직업교육/national-qualifications
+agency:
+  id: B490007
+  name: 한국산업인력공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15040265/openapi.do
+synonyms:
+  - 국가자격
+  - 기술자격
+  - 배송주소
+description_portal: “국가기술자격증 배송주소구간 정보” API는 한국산업인력공단이 제공하는 공공데이터 서비스로, 국가기술자격증의 우편 배송을 위한 도로명 주소 구간 정보를 XML 형식으로 제공합니다. 이 API는 자격증 우편 발송 시 필요한 주소 구간 데이터를 조회할 수 있어, 자격증 발급 시스템이나 우편 관리 시스템에 활용됩니다. 요청 시 ServiceKey와 같은 인증키를 포함하여 호출하며, 응답에는 지역명, 지역코드, 시작 및 종료 우편번호 등의 정보가 포함됩니다. 개발계정 기준으로 월 1,000회 호출이 가능하며, 운영계정은 활용 사례 등록을 통해 추가 트래픽을 신청할 수 있습니다 .
+team:
+  dept: 자격정보화부
+services:
+  - op: /getAddrList
+    endpoint: http://openapi.q-net.or.kr/api/service/rest/InquiryQualDlvrAddrSVC/getAddrList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dlvrRgnNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+        - 강원
+        - 대전
+      stats:
+        unique: 15
+    - name: dlvrSectCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '03'
+      stats:
+        min: 1
+        p50: 8
+        max: 15
+        unique: 15
+    - name: endZipCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '08866'
+        - '26509'
+        - '35428'
+      stats:
+        min: 8866
+        p50: 43166
+        max: 63644
+        unique: 15
+    - name: startZipCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01000'
+        - '24000'
+        - '34000'
+      stats:
+        min: 1000
+        p50: 41000
+        max: 63000
+        unique: 15
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 국가자격 (국가기술자격·국가전문자격)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7648
+  rank_in_sector: 1
+  brm: 공공행정 - 일반행정
+  sector_rule: general-admin-to-qualification
+  why: 종목·시험 일정·합격률·자격 보유 — 채용·창업 요건, 업종 인허가(면허제한)와 연결
+claims:
+  - id: c-15040265-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15040265.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15040265.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15040265-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15040265-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15040265.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15040265-04
+    kind: coverage
+    value: 검증 수신 15행 · 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15040265.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 15
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15040265-06
+    kind: admin_note
+    value: "세부 부문 '국가자격 (국가기술자격·국가전문자격)'의 가치: 종목·시험 일정·합격률·자격 보유 — 채용·창업 요건, 업종 인허가(면허제한)와 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#national-qualifications
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15040265-07
+    kind: admin_note
+    value: '[교육 · 평생·직업교육] 국가자격만 (`lifelong-non-qualification`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L457
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 15
+  ops_ok: 1/1
+  latency_ms: 275
+  run: probe/runs/15040265.json
+  stats: probe/stats/15040265.json
+  data: probe/data/15040265/
+status: active

@@ -1,0 +1,886 @@
+# 맥락 연결 (context) — 부처가 달라 BRM 부문은 다르지만 국민 입장에서는 같은 맥락인 데이터를 잇는다 (구름 2026-09-29).
+# "어린이집(복지부)과 유치원(교육부)은 다른 카테고리지만 부모에게는 같은 질문" 같은 연결을 차원별로 정리해 관계망에 반영한다.
+#
+# dimension (연결 차원) — 무엇이 같은가:
+#   life_context       국민의 생애·상황 맥락이 같다 (같은 질문에 함께 답해야 한다)
+#   spatial_regulation 같은 필지·공간에 겹쳐 걸리는 규제 레이어 (PNU·폴리곤으로 겹친다)
+#   admin_area         같은 행정구역 단위(시군구·시도 × 월/연) 지표라 지역으로 나란히 놓인다
+#   shared_key         같은 식별 키로 조인된다 (key에 keys.yaml id)
+#   shared_source      같은 원천 시스템에서 나온다 (공통 원장 하나를 부문별로 잘라 쓴다)
+#   same_concept       같은 개념을 다른 기관이 다른 기준·값으로 낸다 (대표 선정·기준 차이 서술 필요)
+#   economic           돈·거래·자본 흐름으로 이어진다 (수출입 사슬·연기금·소상공인 매출 등)
+#
+# members: {sector, subsector} — subsector를 생략하면 부문 전체. role은 선택(맥락 안에서 맡는 역할).
+# 컴파일: context 노드 1개 + member --in_context--> context (props: dimension, role, key). note는 벡터화 문서.
+- id: early-childhood-care
+  name: 영유아 돌봄 (0~7세)
+  dimension: life_context
+  question: 우리 아이 어디에 맡길까 — 어린이집·유치원·돌봄
+  note: '어린이집(복지부, 영유아보육법)과 유치원(교육부, 유아교육법)은 부처·코드가 다르지만 부모에게는 같은 선택지. 초등돌봄(교육청)·다함께돌봄(복지부)까지 0~12세 돌봄이 4개 체계로 나뉜다. 영유아·아동 시설 매핑표(어린이집코드·유치원코드·사회복지시설코드)가 선결 과제
+
+    '
+  members:
+  - sector: 사회복지 - 보육·가족및여성
+    subsector: childcare-centers
+    role: 어린이집
+  - sector: 교육 - 유아및초·중등교육
+    subsector: kindergarten
+    role: 유치원
+  - sector: 교육 - 유아및초·중등교육
+    subsector: after-school-care
+    role: 초등돌봄
+  - sector: 사회복지 - 보육·가족및여성
+    subsector: child-family-facilities
+    role: 지역아동센터·다함께돌봄
+- id: pregnancy-birth
+  name: 임신·출산
+  dimension: life_context
+  question: 출산 지원금·산후조리원·산부인과
+  note: 지자체 출산장려금(사회복지)·산후조리원 인허가(보건의료, 모자보건법)·산부인과 요양기관(건강보험)이 한 생애 사건에 걸린다
+  members:
+  - sector: 사회복지 - 보육·가족및여성
+    subsector: birth-support
+    role: 지원금·바우처
+  - sector: 보건의료 - 보건의료
+    subsector: medical-facility-licensing
+    role: 산후조리원·의원 개설
+  - sector: 보건의료 - 건강보험
+    subsector: medical-institutions
+    role: 산부인과 요양기관
+- id: elderly-care
+  name: 노후 돌봄
+  dimension: life_context
+  question: 부모님 모실 곳 — 요양원·주간보호·복지관·치매안심센터
+  note: 장기요양기관(건보공단 코드)과 노인복지시설(사회복지시설코드)을 함께 봐야 완성. 치매안심센터는 보건소 소속
+  members:
+  - sector: 보건의료 - 건강보험
+    subsector: long-term-care
+    role: 장기요양기관
+  - sector: 사회복지 - 노인·청소년
+    subsector: elderly-facilities
+    role: 노인복지시설
+  - sector: 사회복지 - 노인·청소년
+    subsector: age-friendly-housing
+    role: 노인 주거
+  - sector: 보건의료 - 보건의료
+    subsector: public-health-centers
+    role: 보건소·치매안심센터
+- id: find-care-now
+  name: 지금 진료받을 곳
+  dimension: life_context
+  question: 근처 병원·약국·응급실·야간 진료
+  note: 요양기관(심평원 ykiho)·응급의료(hpid)·의료기관 인허가(LOCALDATA)가 같은 병원을 다른 코드로 가진다
+  members:
+  - sector: 보건의료 - 건강보험
+    subsector: medical-institutions
+    role: 병원·약국 원장
+  - sector: 보건의료 - 보건의료
+    subsector: emergency-medical
+    role: 응급실·야간·AED
+  - sector: 보건의료 - 보건의료
+    subsector: public-health-centers
+    role: 보건소
+- id: accessibility-mobility
+  name: 장애인·교통약자 이동
+  dimension: life_context
+  question: 휠체어로 갈 수 있나 — 편의시설·전용 주차·콜택시·저상버스
+  note: 장애인 편의시설(복지부)·장애인 전용 주차구역(주차장, 물류등기타로 모임)·특별교통수단/저상버스(교통)가 한 이동 경로에 걸린다
+  members:
+  - sector: 사회복지 - 취약계층지원
+    subsector: accessibility
+    role: 편의시설·특별교통
+  - sector: 교통물류 - 물류등기타
+    subsector: parking
+    role: 전용 주차구역
+  - sector: 교통물류 - 도로
+    subsector: bus-transit
+    role: 저상버스·대중교통
+- id: outing-leisure
+  name: 나들이·여가
+  dimension: life_context
+  question: 주말에 어디 갈까 — 관광지·휴양림·체육시설·공연·축제
+  members:
+  - sector: 문화관광 - 관광
+    subsector: tour-contents
+  - sector: 문화관광 - 관광
+    subsector: festivals-events
+  - sector: 농축수산 - 임업·산촌
+    subsector: forest-recreation
+  - sector: 문화관광 - 체육
+    subsector: sports-facilities
+  - sector: 문화관광 - 문화예술
+    subsector: performances
+  - sector: 환경기상 - 자연
+    subsector: national-parks
+    role: 국립공원 탐방
+- id: what-can-i-build
+  name: 이 땅에 뭘 지을 수 있나
+  dimension: spatial_regulation
+  key: pnu
+  question: 필지 하나에 겹쳐 걸린 규제 전부
+  note: '국토계획법 용도지역·지구·구역 위에 개별법 레이어(산지관리법 산지 구분, 농지법 농업진흥지역, 문화유산법 보호구역, 해양공간계획법 용도구역)가 겹친다. 토지이용계획확인이 이 레이어를 모아 보여주는 필지 단위 마스터 — 각 레이어 원천은 소관 부문
+
+    '
+  members:
+  - sector: 국토관리 - 토지이용규제
+    subsector: land-use-plan-check
+    role: 필지별 규제 마스터
+  - sector: 국토관리 - 토지이용규제
+    subsector: zoning
+    role: 용도지역
+  - sector: 국토관리 - 토지이용규제
+    subsector: zones
+    role: 용도구역
+  - sector: 국토관리 - 토지이용규제
+    subsector: districts
+    role: 용도지구
+  - sector: 농축수산 - 임업·산촌
+    subsector: forest-land-regulation
+    role: 산지 구분
+  - sector: 농축수산 - 농업·농촌
+    subsector: farmland
+    role: 농업진흥지역
+  - sector: 문화관광 - 문화재
+    subsector: heritage-protection-zones
+    role: 문화유산 보호구역
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: marine-spatial
+    role: 해양 용도구역
+  - sector: 국토관리 - 국토·도시계획
+    subsector: development-permit
+    role: 개발행위허가
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: mining-aggregates
+    role: 광업·채석 구역
+  - sector: 환경기상 - 자연
+    subsector: env-spatial-layers
+    role: 국토환경성평가·자연 보전 레이어
+  - sector: 환경기상 - 환경일반
+    subsector: env-spatial
+    role: 상수원보호구역·생태자연도
+  - sector: 환경기상 - 해양환경
+    subsector: marine-protected
+    role: 해양보호구역
+  - sector: 환경기상 - 환경일반
+    subsector: eia
+    role: 환경영향평가 사업구역
+  - sector: 국토관리 - 국토·도시계획
+    subsector: district-unit-plan
+    role: 지구단위계획
+- id: property-ledger
+  name: 부동산 원장 사슬 (필지 → 건물 → 호)
+  dimension: shared_key
+  key: pnu
+  question: 이 집·땅의 가격·규모·거래
+  note: 토지(PNU) → 건축물대장(건물) → 공동주택 동·호로 이어지는 원장에 공시가격·실거래가 붙는다. 실거래는 단지명이 자유 텍스트라 K-apt 단지코드 매핑 필요
+  members:
+  - sector: 국토관리 - 토지·지적
+    subsector: cadastre
+    role: 필지
+  - sector: 국토관리 - 토지·지적
+    subsector: land-price
+    role: 공시지가
+  - sector: 국토관리 - 건축물
+    subsector: building-registry
+    role: 건물
+  - sector: 국토관리 - 주택
+    subsector: price-disclosure
+    role: 주택 공시가격
+  - sector: 국토관리 - 주택
+    subsector: real-transactions
+    role: 실거래
+  - sector: 국토관리 - 주택
+    subsector: apartment-management
+    role: 단지(K-apt)
+- id: regional-indicators
+  name: 시군구 지역 지표
+  dimension: admin_area
+  key: sgg_cd
+  question: 이 지역은 어떤 곳인가 — 인구·외국인·고령·취약계층·치안·관광·의료 이용
+  note: '집계지만 시군구 × 월(연) 격자라 지역 정보로 나란히 놓인다 (구름: 통계·실태는 지역에 연계). 주민등록 인구가 분모. 범죄는 대검(처리)·경찰청(발생) 기준 차이
+
+    '
+  members:
+  - sector: 공공행정 - 지방행정·재정지원
+    subsector: population-registry
+    role: 인구(분모)
+  - sector: 법률 - 법무및검찰
+    subsector: immigration-stay
+    role: 체류 외국인
+  - sector: 법률 - 법무및검찰
+    subsector: crime-statistics
+    role: 범죄
+  - sector: 문화관광 - 관광
+    subsector: tourism-statistics
+    role: 관광객
+  - sector: 사회복지 - 노인·청소년
+    subsector: regional-statistics
+    role: 고령·독거
+  - sector: 사회복지 - 취약계층지원
+    subsector: regional-statistics
+    role: 취약계층
+  - sector: 사회복지 - 취약계층지원
+    subsector: disability-registry
+    role: 장애인
+  - sector: 사회복지 - 취약계층지원
+    subsector: basic-livelihood
+    role: 기초생활 수급
+  - sector: 사회복지 - 공적연금
+    subsector: pension-statistics
+    role: 연금 가입·수급
+  - sector: 보건의료 - 건강보험
+    subsector: medical-utilization
+    role: 의료 이용
+  - sector: 보건의료 - 건강보험
+    subsector: insurance-eligibility
+    role: 건강보험 적용인구
+  - sector: 재정금융 - 무역및투자유치
+    subsector: trade-statistics
+    role: 시군구 수출입
+  - sector: 재정금융 - 세제
+    subsector: regional-tax
+    role: 지방세
+  - sector: 산업고용 - 고용노동
+    subsector: regional-employment
+    role: 고용
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: energy-usage
+    role: 전력 사용
+  - sector: 재난안전 - 경찰
+    subsector: crime-occurrence
+    role: 범죄 발생(경찰)
+  - sector: 재난안전 - 안전관리
+    subsector: fire-rescue
+    role: 화재(소방서별)
+  - sector: 통일외교안보 - 보훈
+    subsector: veteran-regional
+    role: 보훈대상자
+  - sector: 공공행정 - 국가통계
+    subsector: sgis-grid
+    role: 통계 공간 틀(집계구)
+  - sector: 공공행정 - 국가통계
+    subsector: regional-grid
+    role: 유동인구·물가
+- id: enterprise-axis
+  name: 기업 축 (사업자번호)
+  dimension: shared_key
+  key: bizno
+  question: 이 회사는 어떤 곳인가 — 규모·고용·인증·공장·거래
+  note: 국민연금 사업장(가입자 수·납부액)이 규모 추정의 핵심이고, 사회적기업 인증·공장 등록·가맹·조달·R&D가 같은 사업자번호로 붙는다
+  members:
+  - sector: 사회복지 - 공적연금
+    subsector: pension-workplaces
+    role: 고용 규모
+  - sector: 사회복지 - 사회복지일반
+    subsector: social-economy
+    role: 사회적기업·협동조합
+  - sector: 국토관리 - 산업단지
+    subsector: factory-registry
+    role: 공장
+  - sector: 공공행정 - 공정거래
+    subsector: franchise
+    role: 가맹본부
+  - sector: 공공행정 - 정부조달
+    role: 조달 계약
+  - sector: 과학기술 - 과학기술연구
+    subsector: national-rnd
+    role: R&D 과제
+  - sector: 재정금융 - 세제
+    subsector: business-registration
+    role: 사업자 상태(휴폐업)
+  - sector: 재정금융 - 금융
+    subsector: corporate-disclosure
+    role: 공시·재무
+  - sector: 재정금융 - 산업금융
+    subsector: guaranteed-firms
+    role: 보증 이용 기업
+  - sector: 재정금융 - 산업금융
+    subsector: lender-registry
+    role: 대부업
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: sme-certification
+    role: 벤처·이노비즈·창업기업 확인
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: local-company-registry
+    role: 지역 기업 목록
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: business-licenses
+    role: 업종 인허가
+  - sector: 산업고용 - 고용노동
+    subsector: employment-institutions
+    role: 강소기업·표준사업장
+  - sector: 산업고용 - 고용노동
+    subsector: labor-unions
+    role: 노동조합
+  - sector: 산업고용 - 산업기술지원
+    subsector: construction-firms
+    role: 건설업체
+  - sector: 산업고용 - 산업기술지원
+    subsector: certified-tech-companies
+    role: 소부장 전문기업
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: power-plants
+    role: 발전사업자
+  - sector: 환경기상 - 대기
+    subsector: emission-sources
+    role: 대기 배출 사업장
+  - sector: 환경기상 - 환경일반
+    subsector: pollution-sources
+    role: 오염원·화학물질 사업장
+  - sector: 환경기상 - 폐기물
+    subsector: waste-business
+    role: 폐기물 처리업·배출자
+  - sector: 통일외교안보 - 방위력개선
+    subsector: defense-procurement
+    role: 국방 조달 계약업체
+  - sector: 통일외교안보 - 병무행정
+    subsector: alternative-service
+    role: 병역지정업체
+- id: pension-fund-economy
+  name: 연금 기금과 자본시장
+  dimension: shared_key
+  question: 연기금이 어디에 투자하나
+  note: 기금 운용(국내 주식·위탁운용사·거래증권사)은 경제로 연결 (구름) — 종목코드·금융회사로 재정금융 주식·금융 데이터와 조인. 재정금융 검토 때 상대 부문 추가
+  members:
+  - sector: 사회복지 - 공적연금
+    subsector: pension-fund
+    role: 기금 운용
+  - sector: 사회복지 - 공적연금
+    subsector: retirement-pension
+    role: 퇴직연금
+  - sector: 재정금융 - 금융
+    subsector: securities-market
+    role: 종목 시세·발행
+  - sector: 재정금융 - 금융
+    subsector: corporate-disclosure
+    role: 투자 대상 공시
+  - sector: 재정금융 - 금융
+    subsector: financial-institutions
+    role: 퇴직연금 사업자·금융회사
+  - sector: 재정금융 - 금융
+    subsector: financial-products
+    role: 퇴직연금·펀드 상품
+- id: localdata-licenses
+  name: 지방행정 인허가 (LOCALDATA)
+  dimension: shared_source
+  key: localdata_license_no
+  note: 행안부 지방행정 인허가 한 시스템을 부문별로 잘라 쓴다 — 공통 원장 도시에 하나를 두고 업종 필터로 참조하는 구조 후보 (부문 확정 때 결정)
+  members:
+  - sector: 문화관광 - 체육
+    subsector: sports-business-registry
+    role: 체육시설업
+  - sector: 문화관광 - 관광
+    subsector: lodging
+    role: 숙박업
+  - sector: 보건의료 - 보건의료
+    subsector: medical-facility-licensing
+    role: 병원·의원·산후조리원
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: business-licenses
+    role: 산업 업종 인허가
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: energy-business-licenses
+    role: 에너지 업종 인허가
+  - sector: 식품건강 - 식품의약안전
+    subsector: food-business-licenses
+    role: 식품접객·제조 업소
+  - sector: 식품건강 - 식품의약안전
+    subsector: public-hygiene-businesses
+    role: 공중위생업소
+- id: welfare-facilities
+  name: 사회복지시설 마스터
+  dimension: shared_source
+  key: welfare_facility_cd
+  note: 노인·아동·장애인·노숙인 시설이 모두 사회보장정보원 사회복지시설 정보시스템에서 나온다. 장기요양기관(건보공단)·어린이집(아이사랑)만 다른 코드
+  members:
+  - sector: 사회복지 - 취약계층지원
+    subsector: welfare-facilities-master
+    role: 마스터
+  - sector: 사회복지 - 노인·청소년
+    subsector: elderly-facilities
+  - sector: 사회복지 - 노인·청소년
+    subsector: youth-support-centers
+  - sector: 사회복지 - 보육·가족및여성
+    subsector: child-family-facilities
+  - sector: 사회복지 - 취약계층지원
+    subsector: disability-services
+- id: medical-institution-codes
+  name: 의료기관 3코드
+  dimension: shared_key
+  key: medical_inst_cd
+  note: 심평원 ykiho(암호화)·응급 hpid·LOCALDATA 인허가번호 — 서로 주소·명칭으로만 매핑된다
+  members:
+  - sector: 보건의료 - 건강보험
+    subsector: medical-institutions
+    role: ykiho
+  - sector: 보건의료 - 보건의료
+    subsector: emergency-medical
+    role: hpid
+  - sector: 보건의료 - 보건의료
+    subsector: medical-facility-licensing
+    role: 인허가번호
+- id: drug-master
+  name: 의약품 마스터
+  dimension: shared_key
+  key: drug_cd
+  note: 식약처 품목 허가(품목기준코드)와 심평원 약가·급여 목록(약품코드)이 같은 약을 가리킨다
+  members:
+  - sector: 보건의료 - 보건의료
+    subsector: drugs-devices
+    role: 허가·DUR
+  - sector: 보건의료 - 건강보험
+    subsector: insurance-codes
+    role: 약가·급여
+- id: events-registries
+  name: 행사·공연·축제 4중 등록
+  dimension: same_concept
+  note: 같은 행사가 TourAPI·문화포털·KOPIS·지자체에 따로 등록된다 — 대표 결정 필요
+  members:
+  - sector: 문화관광 - 관광
+    subsector: festivals-events
+    role: 축제(TourAPI)
+  - sector: 문화관광 - 문화예술
+    subsector: performances
+    role: 공연(KOPIS)
+  - sector: 문화관광 - 문화예술
+    subsector: cultural-events
+    role: 전시·행사(문화포털)
+- id: food-prices
+  name: 농수산물 물가
+  dimension: same_concept
+  question: 장바구니 물가
+  note: 농산물(KAMIS·도매시장)과 수산물(위판장·도매시장) 가격이 같은 물가 질문에 답한다. 품목코드·어종코드 매핑 필요
+  members:
+  - sector: 농축수산 - 농업·농촌
+    subsector: agri-prices
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: seafood-prices
+- id: vessels
+  name: 선박 등록
+  dimension: same_concept
+  note: 상선(선박법, 해운·항만)과 어선(어선법, 해양수산)이 다른 원장 — 어선은 해양수산이 대표
+  members:
+  - sector: 교통물류 - 해운·항만
+    subsector: vessel-registry
+    role: 상선
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: fishery-licenses
+    role: 어선
+- id: trade-logistics-chain
+  name: 수출입 물류 사슬
+  dimension: economic
+  question: 이 물건은 어떻게 들어오고 나가나 — 수출입 실적·통관·항만/공항 물동량·화물운송·물류창고
+  note: 관세청 수출입 실적(품목·국가)과 항만 물동량·항공 화물·화물운송업·물류시설·공장이 같은 흐름의 단계. 경제 차원 연결 — 테스트의 허용 차원 목록에 economic 추가 필요 (2026-09-29, Claude가 구름 기준 적용)
+  members:
+  - sector: 재정금융 - 무역및투자유치
+    subsector: trade-statistics
+    role: 수출입 실적
+  - sector: 재정금융 - 무역및투자유치
+    subsector: trade-codes
+    role: 선사·항공사·주선업자 부호
+  - sector: 교통물류 - 해운·항만
+    subsector: port-cargo
+    role: 항만 물동량
+  - sector: 교통물류 - 항공·공항
+    subsector: aviation-statistics
+    role: 항공 화물
+  - sector: 교통물류 - 물류등기타
+    subsector: freight-carriers
+    role: 화물운송·주선업
+  - sector: 교통물류 - 물류등기타
+    subsector: logistics-facilities
+    role: 물류창고
+  - sector: 국토관리 - 산업단지
+    subsector: factory-registry
+    role: 생산 공장
+- id: local-merchants
+  name: 지역 소상공인 사업장
+  dimension: economic
+  question: 이 동네 가게들 — 지역화폐 가맹점·인허가 업소·사업자 상태
+  note: 지역사랑상품권 가맹점(재정)·지방행정 인허가 업소(체육·숙박·의료)·국세청 사업자 상태가 같은 사업장을 가리킨다. 주소·사업자번호로 매칭. 산업고용(소상공인·상권) 검토 때 멤버 추가
+  members:
+  - sector: 재정금융 - 재정·금융
+    subsector: local-currency
+    role: 지역화폐 가맹점
+  - sector: 재정금융 - 세제
+    subsector: business-registration
+    role: 사업자 상태
+  - sector: 문화관광 - 체육
+    subsector: sports-business-registry
+    role: 체육시설업
+  - sector: 문화관광 - 관광
+    subsector: lodging
+    role: 숙박업
+- id: public-asset-parcels
+  name: 공매·국공유 재산의 필지
+  dimension: spatial_regulation
+  key: pnu
+  question: 이 공매 물건·국유지는 어떤 땅인가
+  note: 공매 물건·국유/공유재산 소재지를 PNU로 지적·공시지가·토지이용규제에 붙인다
+  members:
+  - sector: 재정금융 - 재정·금융
+    subsector: public-assets
+    role: 공매·국공유재산
+  - sector: 국토관리 - 토지·지적
+    subsector: cadastre
+    role: 필지
+  - sector: 국토관리 - 토지·지적
+    subsector: land-price
+    role: 공시지가
+  - sector: 국토관리 - 토지이용규제
+    subsector: land-use-plan-check
+    role: 규제
+- id: local-commerce
+  name: 동네 상권
+  dimension: life_context
+  question: 이 동네에 어떤 가게가 있고 장사가 되나 — 상가·인허가·유동·카드매출
+  note: '소상공인 상가업소(산업고용)가 상권의 기준 원장이고, 업종 인허가(LOCALDATA: 음식점·숙박·체육·의료)와 관광 카드 소비·지역 통계가 같은 공간에 겹친다. 상가업소는 좌표·건물관리번호로 건축물 원장과도 이어진다'
+  members:
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: commercial-stores
+    role: 상가업소 원장
+  - sector: 산업고용 - 산업·중소기업일반
+    subsector: business-licenses
+    role: 업종 인허가
+  - sector: 문화관광 - 관광
+    subsector: lodging
+    role: 숙박업
+  - sector: 문화관광 - 체육
+    subsector: sports-business-registry
+    role: 체육시설업
+  - sector: 보건의료 - 보건의료
+    subsector: medical-facility-licensing
+    role: 병의원
+  - sector: 국토관리 - 건축물
+    subsector: building-registry
+    role: 건물
+- id: energy-grid-realtime
+  name: 오늘의 에너지
+  dimension: life_context
+  question: 지금 전력 수급·유가·충전소 상태
+  note: 전력거래소 실시간 수급·SMP와 오피넷 유가·충전소 상태가 실시간 에너지 질문에 함께 답한다. 발전소 원장·배출 측정·환경방사선과 이어진다
+  members:
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: power-market-realtime
+    role: 전력 수급·시장
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: fuel-charging
+    role: 유가·충전
+  - sector: 교통물류 - 도로
+    subsector: ev-fuel
+    role: 충전소·주유소(지자체 파일)
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: power-plants
+    role: 발전소 원장
+- id: plant-environment
+  name: 발전·원자력 시설 주변 환경
+  dimension: spatial_regulation
+  question: 우리 동네 발전소·원전이 내뿜는 것
+  note: 발전소 대기오염물질·수질 배출과 원전 부지 환경방사선이 시설 좌표로 환경기상(대기·수질) 측정망과 겹친다 — 환경기상 검토 때 상대 부문 추가
+  members:
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: plant-emissions
+    role: 발전소 배출
+  - sector: 산업고용 - 원자력기술
+    subsector: radiation-monitoring
+    role: 환경방사선
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: power-plants
+    role: 발전소 위치
+- id: job-search
+  name: 일자리 찾기
+  dimension: life_context
+  question: 어디서 뽑고, 어떤 훈련을 받고, 그 회사는 어떤 곳인가
+  note: 채용 공고·훈련 과정·정부 일자리사업이 구직 질문에 함께 답하고, 회사 실사는 기업 축(국민연금 사업장 규모·강소기업·벤처 인증)으로 이어진다. 직업분류(KECO·NCS)가 공고·훈련·자격을 잇는 키
+  members:
+  - sector: 산업고용 - 고용노동
+    subsector: job-postings
+    role: 채용 공고
+  - sector: 산업고용 - 고용노동
+    subsector: vocational-training
+    role: 직업훈련
+  - sector: 산업고용 - 고용노동
+    subsector: government-job-programs
+    role: 정부 일자리사업
+  - sector: 산업고용 - 고용노동
+    subsector: employment-institutions
+    role: 강소기업·고용센터
+  - sector: 사회복지 - 공적연금
+    subsector: pension-workplaces
+    role: 회사 규모
+  - sector: 교육 - 평생·직업교육
+    role: 국가자격
+- id: regulated-land-use-extraction
+  name: 광업·토석채취와 토지 규제
+  dimension: spatial_regulation
+  key: pnu
+  note: 광업권·토석채취 허가 구역은 산지 구분·농지·용도지역과 같은 필지에 겹친다
+  members:
+  - sector: 산업고용 - 에너지및자원개발
+    subsector: mining-aggregates
+    role: 광업·채석 허가
+  - sector: 농축수산 - 임업·산촌
+    subsector: forest-land-regulation
+    role: 산지 구분
+  - sector: 국토관리 - 토지이용규제
+    subsector: land-use-plan-check
+    role: 필지 규제
+- id: disaster-evacuation
+  name: 재난 시 대피
+  dimension: life_context
+  question: 지금 위험한가, 어디로 대피하나 — 특보·위험지역·대피소·쉼터
+  note: 재난 특보·위험지역(안전관리), 홍수 예보/경보(수자원), 대피시설·쉼터(안전관리)가 한 상황에 걸린다. 무더위쉼터는 경로당(노인복지시설)이 다수 지정된다
+  members:
+  - sector: 재난안전 - 안전관리
+    subsector: disaster-hazards
+    role: 특보·위험지역
+  - sector: 재난안전 - 안전관리
+    subsector: evacuation-shelters
+    role: 대피·쉼터
+  - sector: 국토관리 - 수자원
+    subsector: flood-warning
+    role: 홍수 특보
+  - sector: 사회복지 - 노인·청소년
+    subsector: elderly-facilities
+    role: 경로당(무더위쉼터 지정)
+- id: neighborhood-safety
+  name: 우리 동네 안전
+  dimension: life_context
+  question: 이 동네 안전한가 — 범죄·CCTV·비상벨·경찰서·사고 다발
+  note: 방범 인프라(안전관리)·생활안전지도/경찰관서(경찰)·지역 범죄(경찰·대검)·교통 규제(도로)가 같은 질문에 답한다
+  members:
+  - sector: 재난안전 - 안전관리
+    subsector: crime-prevention
+    role: CCTV·비상벨·보안등
+  - sector: 재난안전 - 경찰
+    subsector: police-safety-map
+    role: 범죄 위험도
+  - sector: 재난안전 - 경찰
+    subsector: police-facilities
+    role: 경찰관서
+  - sector: 재난안전 - 경찰
+    subsector: crime-occurrence
+    role: 범죄 발생(경찰)
+  - sector: 법률 - 법무및검찰
+    subsector: crime-statistics
+    role: 범죄 처리(대검)
+  - sector: 재난안전 - 안전관리
+    subsector: accident-hotspots
+    role: 사고 다발
+  - sector: 교통물류 - 도로
+    subsector: road-regulations
+    role: 보호구역·단속카메라
+- id: crime-statistics-bases
+  name: 범죄 통계 두 기준
+  dimension: same_concept
+  note: 경찰청(발생·검거 기준)과 대검(검찰 접수·처리 기준)이 다른 범죄 수치를 낸다 — 도시에에 기준 차이 병기, 지역 치안 대표는 경찰청 발생
+  members:
+  - sector: 재난안전 - 경찰
+    subsector: crime-occurrence
+    role: 발생(경찰청)
+  - sector: 법률 - 법무및검찰
+    subsector: crime-statistics
+    role: 처리(대검)
+- id: traffic-accidents
+  name: 교통사고 3중 등록
+  dimension: same_concept
+  note: 교통사고 다발지역(행안부 표준)·경찰청 교통사고·도로교통공단(TAAS) 사고가 같은 사건을 다른 집계로 낸다 — 대표는 TAAS 다발지역
+  members:
+  - sector: 재난안전 - 안전관리
+    subsector: accident-hotspots
+    role: 다발지역 표준
+  - sector: 재난안전 - 경찰
+    subsector: police-traffic-accidents
+    role: 경찰청
+  - sector: 교통물류 - 도로
+    subsector: traffic-accidents
+    role: 도로교통공단
+- id: eating-out
+  name: 외식·먹거리 신뢰
+  dimension: life_context
+  question: 어디서 먹을까, 믿을 만한가 — 음식점·위생등급·행정처분·회수
+  note: 식품 인허가 업소(LOCALDATA)·위생등급/모범음식점·행정처분·관광 음식점(TourAPI)이 같은 업소를 가리킨다 — 인허가번호·주소로 조인
+  members:
+  - sector: 식품건강 - 식품의약안전
+    subsector: food-business-licenses
+    role: 음식점 원장
+  - sector: 식품건강 - 식품의약안전
+    subsector: hygiene-designations
+    role: 위생등급·모범음식점
+  - sector: 식품건강 - 식품의약안전
+    subsector: food-safety-alerts
+    role: 행정처분·회수
+  - sector: 문화관광 - 관광
+    subsector: tour-contents
+    role: 관광 음식점(TourAPI)
+- id: food-product-trace
+  name: 식품 제품 추적
+  dimension: shared_key
+  key: food_product_cd
+  note: 품목제조보고번호·바코드로 제품 DB·회수/판매중지·수입식품을 잇는다
+  members:
+  - sector: 식품건강 - 식품의약안전
+    subsector: food-product-db
+    role: 제품·영양
+  - sector: 식품건강 - 식품의약안전
+    subsector: food-safety-alerts
+    role: 회수·판매중지
+  - sector: 식품건강 - 식품의약안전
+    subsector: imported-food
+    role: 수입식품
+- id: coastal-water-use
+  name: 바다·물가 이용 규제
+  dimension: spatial_regulation
+  question: 여기서 수상레저·낚시·어업을 해도 되나
+  note: 해경 수상레저 금지구역·주조업지, 해양공간 용도구역, 어장(면허·허가)이 같은 수면에 겹친다
+  members:
+  - sector: 재난안전 - 해경
+    subsector: water-restriction-zones
+    role: 수상레저 금지구역
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: marine-spatial
+    role: 해양 용도구역
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: fishery-licenses
+    role: 어장
+- id: environment-now
+  name: 지금 바깥 환경
+  dimension: life_context
+  question: 오늘 나가도 되나 — 날씨·특보·미세먼지·자외선·꽃가루·홍수
+  note: 기상청 예보·특보, 에어코리아 대기질, 홍수 예보(수자원), 해양 관측·예보(해양수산)가 같은 외출·안전 질문에 답한다. 모두 실시간
+  members:
+  - sector: 환경기상 - 대기
+    subsector: weather-forecast
+    role: 날씨·특보
+  - sector: 환경기상 - 대기
+    subsector: air-quality
+    role: 미세먼지·오존
+  - sector: 환경기상 - 대기
+    subsector: weather-observation
+    role: 관측
+  - sector: 국토관리 - 수자원
+    subsector: flood-warning
+    role: 홍수
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: ocean-observation
+    role: 물때·파고
+- id: water-environment
+  name: 물 환경 (수량·수질)
+  dimension: same_concept
+  question: 이 하천·저수지 물은 깨끗한가, 얼마나 차 있나
+  note: '수량(수자원: 수위·댐·상수도)과 수질(환경기상: 측정망·조류경보·지하수)이 물관리 일원화 후 같은 환경부 소관이지만 BRM은 둘로 나뉜다. 측정소 위치·하천코드로 겹친다'
+  members:
+  - sector: 환경기상 - 상하수도·수질
+    subsector: water-quality
+    role: 수질 측정
+  - sector: 환경기상 - 상하수도·수질
+    subsector: groundwater
+    role: 지하수
+  - sector: 국토관리 - 수자원
+    subsector: hydro-observation
+    role: 수위·유량
+  - sector: 국토관리 - 수자원
+    subsector: water-supply
+    role: 상수도 수질검사
+  - sector: 환경기상 - 해양환경
+    subsector: marine-quality
+    role: 해양 수질
+- id: pollution-exposure
+  name: 우리 동네 오염원
+  dimension: spatial_regulation
+  question: 집 근처에 어떤 배출 시설·화학물질 취급 사업장·폐기물 처리장이 있나
+  note: 대기·수질 배출시설, 유해화학물질 취급시설, 폐기물 처리시설이 좌표로 겹친다 — 주거지 선택·환경 민원의 근거
+  members:
+  - sector: 환경기상 - 대기
+    subsector: emission-sources
+  - sector: 환경기상 - 환경일반
+    subsector: pollution-sources
+  - sector: 환경기상 - 상하수도·수질
+    subsector: water-pollution-sources
+  - sector: 환경기상 - 폐기물
+    subsector: waste-business
+- id: overseas-travel
+  name: 해외여행·출입국
+  dimension: life_context
+  question: 이 나라 가도 되나 — 여행경보·입국요건·항공편·출입국
+  note: 외교부 여행경보(실시간성)·입국허가요건, 항공 운항정보, 법무부 출입국 통계가 한 여행 준비에 걸린다. 국가 표준코드(country_cd)로 잇는다
+  members:
+  - sector: 통일외교안보 - 외교
+    subsector: travel-safety
+    role: 여행경보·안전
+  - sector: 통일외교안보 - 외교
+    subsector: missions-countries
+    role: 재외공관·국가코드
+  - sector: 교통물류 - 항공·공항
+    subsector: flight-operations
+    role: 항공편
+  - sector: 법률 - 법무및검찰
+    subsector: immigration-stay
+    role: 출입국
+- id: veterans-care
+  name: 보훈 가족 돌봄
+  dimension: life_context
+  question: 국가유공자 부모님 진료·요양·예우
+  note: 보훈병원·보훈요양원(보훈복지의료공단)과 일반 요양기관·장기요양·노인복지시설을 함께 봐야 완성
+  members:
+  - sector: 통일외교안보 - 보훈
+    subsector: veteran-facilities
+    role: 보훈병원·요양원
+  - sector: 보건의료 - 건강보험
+    subsector: medical-institutions
+    role: 위탁·일반 요양기관
+  - sector: 보건의료 - 건강보험
+    subsector: long-term-care
+    role: 장기요양
+- id: public-procurement
+  name: 공공조달 (나라장터·국방·ODA)
+  dimension: same_concept
+  question: 공공기관이 무엇을 사고 누가 따가나
+  note: 조달청 나라장터와 별도로 방위사업청 국방전자조달·KOICA ODA 조달이 있다. 입찰·계약 원장 구조가 같고 사업자번호로 기업 축과 이어진다
+  members:
+  - sector: 공공행정 - 정부조달
+    role: 나라장터
+  - sector: 통일외교안보 - 방위력개선
+    subsector: defense-procurement
+    role: 국방전자조달
+  - sector: 통일외교안보 - 외교
+    subsector: oda-projects
+    role: KOICA 조달
+- id: commercial-district
+  name: 상권 (가게·유동인구·인허가·매출)
+  dimension: life_context
+  question: 여기서 장사하면 될까 — 상권 변화·유동인구·경쟁 점포·업종 인허가
+  note: 상권 데이터가 일반행정(지자체 상권 분석)·산업고용(소상공인 상가업소)·LOCALDATA 인허가·국가통계 유동인구에 흩어져 있다
+  members:
+  - sector: 공공행정 - 일반행정
+    subsector: commercial-area
+    role: 지자체 상권·유동인구
+  - sector: 공공행정 - 국가통계
+    subsector: regional-grid
+    role: 읍면동 유동인구
+  - sector: 문화관광 - 관광
+    subsector: lodging
+    role: 숙박업
+  - sector: 문화관광 - 체육
+    subsector: sports-business-registry
+    role: 체육시설업
+- id: realtime-now
+  name: 지금 이 순간 (실시간)
+  dimension: life_context
+  question: 지금 어디가 붐비나·지금 도착하나·지금 열었나
+  note: 실시간성이 높은 데이터 — 모델이 모르는 지금의 사실. 전략 응답에서 realtime-query + 이력 적재 대상
+  members:
+  - sector: 공공행정 - 일반행정
+    subsector: realtime-city
+  - sector: 교통물류 - 도로
+    subsector: traffic-realtime
+  - sector: 교통물류 - 도로
+    subsector: bus-transit
+  - sector: 교통물류 - 항공·공항
+    subsector: flight-operations
+  - sector: 보건의료 - 보건의료
+    subsector: emergency-medical
+  - sector: 국토관리 - 수자원
+    subsector: hydro-observation
+  - sector: 농축수산 - 해양수산·어촌
+    subsector: ocean-observation

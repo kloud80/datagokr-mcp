@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PDS data family v1",
+  "type": "object",
+  "required": ["family", "title", "version", "updated", "datasets", "entities", "keys", "edges"],
+  "properties": {
+    "family": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "title": {"type": "string"},
+    "version": {"type": "integer"},
+    "updated": {"type": "string"},
+    "summary": {"type": "string"},
+    "sources": {"type": "array", "items": {"type": "string"}},
+    "scope": {"type": "object"},
+    "conventions": {"type": "object"},
+    "pitfalls": {"type": "array", "items": {"type": "string"}},
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "keys"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "stage": {"type": ["integer", "null"]},
+          "keys": {"type": "array", "items": {"type": "string"}},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "format", "aliases"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "format": {"type": "object"},
+          "companion": {"type": "string"},
+          "global_key": {"type": "string"},
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["dataset", "field"],
+              "properties": {
+                "dataset": {"type": "string"},
+                "field": {"type": "string"},
+                "io": {"enum": ["out", "in", "both"]},
+                "transform": {"type": "string"},
+                "status": {"enum": ["documented", "inferred", "verified", "refuted"]}
+              }
+            }
+          },
+          "pitfalls": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "short", "role", "service"],
+        "properties": {
+          "id": {"type": "string"},
+          "short": {"type": "string"},
+          "title": {"type": "string"},
+          "role": {"enum": ["stage", "hub", "reference", "aggregate", "derived", "mirror"]},
+          "entity": {"type": ["string", "array", "null"]},
+          "service": {"type": "string"},
+          "ops": {"type": "integer"},
+          "does": {"type": "string"},
+          "op_groups": {"type": "array"},
+          "provides_keys": {"type": "array", "items": {"type": "string"}},
+          "lookup_by": {"type": "array", "items": {"type": "string"}},
+          "use_when": {"type": "string"},
+          "caveats": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "from", "to", "status", "evidence"],
+        "properties": {
+          "type": {"enum": ["lifecycle", "lookup", "join", "reference", "hierarchy", "mirror", "derived", "aggregate"]},
+          "from": {"type": "string"},
+          "to": {"type": ["string", "array"]},
+          "status": {"enum": ["documented", "inferred", "verified", "refuted"]},
+          "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+        }
+      }
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "goal", "steps", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "goal": {"type": "string"},
+          "steps": {"type": "array", "minItems": 1},
+          "status": {"enum": ["documented", "inferred", "verified", "refuted"]}
+        }
+      }
+    }
+  }
+}

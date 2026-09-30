@@ -1,0 +1,211 @@
+# Dataset 15158948 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15158948'
+tier: verified
+title: 한국공항공사_공항 코드 정보_GW
+sector: 교통물류/항공·공항/airport-codes
+agency:
+  id: B551178
+  name: 한국공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158948/openapi.do
+synonyms:
+  - 한국공항공사
+  - 공항 코드
+  - 김포공항 코드
+  - 제주공항 코드
+  - 김해공항 코드
+  - 청주공항 코드
+description_portal: 한국공항공사는 인천국제공항을 제외한 김포, 김해, 제주, 대구 등 전국 14개 공항을 통합 관리하고 운영하는 대한민국의 대표적인 공공기관입니다. 본 API는 전세계 공항의 공항 코드 정보를 제공합니다.제공되는 주요 데이터 항목으로는 공항코드, 공항 도시 명(영어, 일본어, 중국어 등 지원) 등이 상세히 포함되어 있습니다. 이를 통해 세계 공항 편명 검색, 스케줄 조회 등 다양한 목적의 데이터 활용이 가능합니다.제공되는 데이터에 대한 추가적인 요구사항이 있으시거나, 기능 개선 및 데이터 오류 등에 대한 의견이 있으신 분은 한국공항공사 담당 부서(02-2660-4803)로 연락해 주시면 친절하게 안내해 드리겠습니다.
+team:
+  dept: 데이터융합부
+services:
+  - op: /info
+    name: 공항 코드 정보
+    endpoint: https://apis.data.go.kr/B551178/airport-code/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: '응답 형식(JSON & XML), 기본값 : XML (샘플 : xml)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: cityCode
+      title: 공항 코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - YXE
+        - NCL
+        - MRU
+      stats:
+        unique: 1000
+    - name: cityKorean
+      title: 공항명(한국어)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 시애틀
+        - 세인트루이스
+        - 바그다드
+      stats:
+        unique: 979
+    - name: cityEnglish
+      title: 공항명(영어)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SEATTLE
+        - TSENTRALNY
+        - ORLANDO
+      stats:
+        unique: 983
+    - name: cityJapan
+      title: 공항명(일본어)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SEATTLE
+        - TSENTRALNY
+        - ORLANDO
+      stats:
+        unique: 983
+    - name: cityChina
+      title: 공항명(중국어)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SEATTLE
+        - TSENTRALNY
+        - ORLANDO
+      stats:
+        unique: 983
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공항·항공사 코드 (IATA/ICAO 마스터)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3781
+  rank_in_sector: 155
+  brm: 교통물류 - 항공·공항
+  why: 운항·통계·노선 데이터를 잇는 조인 키 마스터 (세계공항·세계항공사 코드, 국내 공항 위치)
+claims:
+  - id: c-15158948-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15158948.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15158948.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15158948-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15158948-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158948.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15158948-04
+    kind: coverage
+    value: API 전체 건수 1,391 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158948.json
+        observed_at: '2026-09-30'
+        detail: total 1391, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15158948-06
+    kind: admin_note
+    value: "세부 부문 '공항·항공사 코드 (IATA/ICAO 마스터)'의 가치: 운항·통계·노선 데이터를 잇는 조인 키 마스터 (세계공항·세계항공사 코드, 국내 공항 위치)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#airport-codes
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158948-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 1391
+  ops_ok: 1/1
+  latency_ms: 41
+  run: probe/runs/15158948.json
+  stats: probe/stats/15158948.json
+  data: probe/data/15158948/
+status: active

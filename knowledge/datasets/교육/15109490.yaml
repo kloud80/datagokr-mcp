@@ -1,0 +1,227 @@
+# Dataset 15109490 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15109490'
+tier: verified
+title: 대전광역시_유치원 정보
+sector: 교육/유아및초·중등교육/kindergarten
+agency:
+  id: '6300000'
+  name: 대전광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15109490/openapi.do
+synonyms:
+  - 유치원
+  - 원아
+  - 어린이
+  - 학급수
+  - 위치
+description_portal: 대전광역시 유치원 정보 자료는 대전 지역 내 유치원에 관한 상세한 정보를 통합적으로 제공합니다. 이 데이터에는 유치원명, 주소, 행정 구역, 전화번호, 설립 연도, 인가정원, 현재 원아수, 학급수, 운영유형, 평가지표 등 기본 현황이 포함됩니다. 이를 통해 학부모는 자녀의 유치원 선택 시 각 기관의 위치, 규모, 정원 대비 현원, 부가 서비스 등을 확인할 수 있으며 행정기관이나 연구기관은 지역별 교육 환경 분석, 유아 수용능력, 인구변동에 따른 시설 계획, 교육정책 수립 등에 활용할 수 있습니다. 2022년 대전광역시 공공데이터 기업매칭사원사업으로 개발한 데이터입니다.
+team:
+  dept: 법무통계담당관
+services:
+  - op: /getkinderschInfo
+    name: 대전광역시 유치원 정보
+    endpoint: https://apis.data.go.kr/6300000/openapi2022/kinderschInfo/getkinderschInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: gu
+        required: true
+        example: A
+        desc: N:공립,P:사립,A:전체
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: kndrgrNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 한빛유치원
+        - 혜원유치원
+        - 꿈내리유치원
+      stats:
+        unique: 263
+    - name: signgu
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서구
+        - 유성구
+        - 중구
+      stats:
+        unique: 5
+    - name: locplc
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 유성구 송강로42번길 61
+        - 서구 청사서로 11
+        - 서구 복수서로 10
+      stats:
+        unique: 267
+    - name: zip
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34225'
+        - '34333'
+        - '34008'
+      stats:
+        min: 34005
+        p50: 34676
+        max: 35806
+        unique: 232
+    - name: telno
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 489-5673
+        - 581-7524
+        - 524-3261
+      stats:
+        unique: 268
+    - name: lxtnNo
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - '600'
+        - '400'
+      stats:
+        unique: 21
+    - name: fxnum
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 489-5692
+        - 334-7524
+        - 524-4578
+      stats:
+        unique: 268
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 유치원 (알리미·처음학교로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.662
+  rank_in_sector: 29
+  brm: 교육 - 유아및초·중등교육
+  why: 유치원 위치·원아 수 = 젊은 가구의 공간 분포 — 주거 수요 선행 지표. 어린이집(사회복지)과 짝
+claims:
+  - id: c-15109490-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15109490.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15109490.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15109490-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109490-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15109490.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109490-04
+    kind: coverage
+    value: API 전체 건수 268 · 검증 수신 268행 · 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15109490.json
+        observed_at: '2026-09-30'
+        detail: total 268, rows 268
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109490-06
+    kind: admin_note
+    value: "세부 부문 '유치원 (알리미·처음학교로)'의 가치: 유치원 위치·원아 수 = 젊은 가구의 공간 분포 — 주거 수요 선행 지표. 어린이집(사회복지)과 짝"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#kindergarten
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15109490-07
+    kind: admin_note
+    value: '[교육 · 유아·초중등] 기관·학생·학교 단위는 대부분 유지, 지역별 통계 배제 (`k12-regional-stats`). 세부: 나이스 일상 정보(daily) · 유치원 · 학교 공시 · 돌봄 · 고입 · 특수.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L458
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 268
+  total_count: 268
+  ops_ok: 1/1
+  latency_ms: 242
+  run: probe/runs/15109490.json
+  stats: probe/stats/15109490.json
+  data: probe/data/15109490/
+status: active

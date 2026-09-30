@@ -1,0 +1,277 @@
+# Dataset 3069985 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '3069985'
+tier: verified
+title: 국토안전관리원_안전진단전문기관 정보
+sector: 산업고용/산업·중소기업일반/business-licenses
+agency:
+  id: B554390
+  name: 국토안전관리원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3069985/openapi.do
+synonyms:
+  - 안전진단
+  - 진단업체
+  - 업체명
+description_portal: 시설물의 안전관리에 관한 특별법에서 규정한 광역시/도의 안전진단전문기관에 대한 정보조회 서비스
+team:
+  dept: AI전략실
+services:
+  - op: /getSafetyDignOrgList
+    name: 안전진단 전문기관 정보
+    endpoint: https://apis.data.go.kr/B552016/SafetyDignOrgService/getSafetyDignOrgList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: type
+        required: false
+        example: json
+        desc: 응답결과 데이터 타입
+      - name: corpNm
+        required: false
+        example: (재)한국건설시험연구소
+        desc: 업체명
+      - name: addr
+        required: false
+        example: 경상남도
+        desc: 주소
+      - name: bsnStatus
+        required: false
+        example: 말소
+        desc: 영업상태
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gubun
+      title: 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안전진단전문기관
+      stats:
+        unique: 1
+    - name: corpNm
+      title: 업체명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (재)한국건설시험연구소
+      stats:
+        unique: 1
+    - name: indutyField
+      title: 업종분야
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 교량/터널,건축
+      stats:
+        unique: 1
+    - name: rprsntvNm
+      title: 대표자명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 여환부
+      stats:
+        unique: 1
+    - name: addr
+      title: 주소
+      type: date
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 경상남도 창원시 의창구 우곡로 217번길 26호 2층(명서동, 건설회관)
+      stats:
+        min: '2172-06-02'
+        max: '2172-06-02'
+        unique: 1
+    - name: mngMbyNm
+      title: 관리주체명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경상남도
+      stats:
+        unique: 1
+    - name: telNo
+      title: 전화번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 055-238-6200
+      stats:
+        unique: 1
+    - name: regYmd
+      title: 등록일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '19950829'
+      stats:
+        min: 19950829
+        p50: 19950829
+        max: 19950829
+        unique: 1
+    - name: bsnStatus
+      title: 영업상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 말소
+      stats:
+        unique: 1
+    - name: mngNo
+      title: 관리번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: no
+      title: 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7906
+  rank_in_sector: 6
+  brm: 산업고용 - 산업·중소기업일반
+  why: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표
+claims:
+  - id: c-3069985-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/3069985.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/3069985.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-3069985-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3069985-03
+    kind: key
+    value: '실측 조인 키: address(addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/3069985.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3069985-04
+    kind: coverage
+    value: API 전체 건수 1 · 검증 수신 1행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/3069985.json
+        observed_at: '2026-09-30'
+        detail: total 1, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3069985-06
+    kind: admin_note
+    value: "세부 부문 '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'의 가치: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3069985-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  total_count: 1
+  ops_ok: 1/1
+  latency_ms: 101
+  run: probe/runs/3069985.json
+  stats: probe/stats/3069985.json
+  data: probe/data/3069985/
+status: active

@@ -1,0 +1,193 @@
+# Dataset 15148366 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15148366'
+tier: verified
+title: 부산광역시_강서구 홈페이지 예산현황
+sector: 재정금융/기획재정/national-budget-plan
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15148366/openapi.do
+synonyms:
+  - 예산현황
+  - 공공기관
+  - 재정투명성
+  - 부서별예산
+  - 행정정보
+description_portal: 공공기관 예산현황 API는 특정 연도의 예산 정보를 체계적으로 제공하여 행정의 투명성과 재정 운영에 대한 이해를 높이는 데 목적이 있습니다. 제공되는 항목에는 해당연도, 예산제목, 예산부서명, 예산내용이 포함되며, 이를 통해 어떤 부서에서 어떤 사업이나 활동에 예산을 배정했는지 상세히 확인할 수 있습니다. 예산 데이터는 시민이 재정 지출의 우선순위를 파악하고 정책 방향을 이해하는 데 중요한 참고 자료가 되며, 연구자나 정책 담당자에게는 재정 건전성 분석과 행정 성과 평가 자료로 활용될 수 있습니다. 또한 예산항목별 세부 내용이 포함되어 있어 기관의 주요 사업 추진 방향을 비교하거나 연도별 증감 추세를 파악하는 데 유용합니다. 이 API는 공공데이터 개방을 통해 시민 참여를 확대하고, 효율적 재정 집행을 위한 기반 자료를 제공하는 데 기여합니다.
+team:
+  dept: 빅데이터과
+services:
+  - op: /getKsBudget
+    name: 부산광역시 강서구 홈페이지 예산현황 조회
+    endpoint: https://apis.data.go.kr/6260000/KsBudgetService/getKsBudget
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: rlvtYr
+        required: false
+        example: '2025'
+        desc: 해당연도
+      - name: resultType
+        required: false
+        example: xml
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rlvtYr
+      title: 해당연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2025
+        unique: 1
+    - name: bgtTtl
+      title: 예산제목
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2025년도 본예산
+        - 2025년도 제2회 추가경정예산
+        - 2025년도 제1회 추가경정예산
+      stats:
+        unique: 5
+    - name: bgtDeptNm
+      title: 예산부서명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기획실
+      stats:
+        unique: 1
+    - name: bgtCn
+      title: 예산내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - h3 class=h3예산규모/h3!R!!N!div class=tbl-wrap!R!!N!    p class=guide표를 좌우로 이동하여 내용을
+        - 'h3 class=h3예산규모/h3!R!!N!div class=tbl-wrap!R!!N!!T!p class=guide표를 좌우로 이동하여 내용을 '
+        - 'h3 class=h3예산규모/h3!R!!N!div class=tbl-wrap!R!!N!!T!p class=guide표를 좌우로 이동하여 내용을 '
+      stats:
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 국가 예산·국채 (세출/지출 세목 예산, 국고채 발행·시장)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.3632
+  rank_in_sector: 14
+  brm: 재정금융 - 기획재정
+  why: 국가 예산·국채 (세출/지출 세목 예산, 국고채 발행·시장)
+claims:
+  - id: c-15148366-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15148366.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15148366.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15148366-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15148366-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15148366.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15148366-04
+    kind: coverage
+    value: API 전체 건수 5 · 검증 수신 5행 · 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15148366.json
+        observed_at: '2026-09-30'
+        detail: total 5, rows 5
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15148366-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 기획재정] 국가 예산 API·국채만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L627
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 5
+  total_count: 5
+  ops_ok: 1/1
+  latency_ms: 605
+  run: probe/runs/15148366.json
+  stats: probe/stats/15148366.json
+  data: probe/data/15148366/
+status: active

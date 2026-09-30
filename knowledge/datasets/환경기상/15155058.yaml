@@ -1,0 +1,653 @@
+# Dataset 15155058 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15155058'
+tier: verified
+title: 행정안전부_공중화장실정보 조회서비스
+sector: 환경기상/환경일반/public-toilets
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155058/openapi.do
+synonyms:
+  - 화장실
+  - 위치
+  - 정보
+  - 위생
+  - 복지
+description_portal: '공중화장실정보 데이터는 국민의 위생상의 편의와 복지증진을 위해 공중이 이용하도록 국가, 지방자치단체, 법인 또는 개인이 설치하는 화장실에 대한 데이터로 화장실명, 소재지 주소 정보와 함께 남녀·장애인·어린이용 위생시설 수, 개방시간 등 기본 이용 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 지자체에서 관리하는 공중화장실정보 화장실명, 주소, 개방시간 등을 제공- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의- 해당 데이터 법령 소관기관 및 문의처 :  행정안전부 주소정보혁신과 / 044-205-3545 * 공중화장실정보 데이터의 원천데이터 정책 변경에 따라, 지방자치단체별로 소유하고 있는 원천데이터로부터 좌표정보가 제외되어(2025년 2월) 해당 항목의 제공이 중단됨을 안내해 드립니다.   [제외 항목] WGS84 위도,WGS84 경도'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info_v2
+    name: 공중화장실정보 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/public_restroom_info_v2/info_v2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[LCTN_ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 소재지도로명주소 을(를) 포함하는 값
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+      - name: cond[DAT_CRTR_YMD::GTE]
+        required: false
+        desc: 데이터기준일자 이상의 값(YYYYMMDD)
+      - name: cond[DAT_CRTR_YMD::LT]
+        required: false
+        desc: 데이터기준일자 미만의 값(YYYYMMDD)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history_v2
+    name: 공중화장실정보 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/public_restroom_info_v2/history_v2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[DAT_CRTR_YMD::GTE]
+        required: false
+        desc: 데이터작성기준일자 이상의 값(YYYYMMDD)
+      - name: cond[DAT_CRTR_YMD::LT]
+        required: false
+        desc: 데이터작성기준일자 미만의 값(YYYYMMDD)
+      - name: cond[LAST_MDFCN_PNT::GTE]
+        required: false
+        desc: 최종수정시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[LAST_MDFCN_PNT::LT]
+        required: false
+        desc: 최종수정시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[LCTN_ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 소재지도로명주소 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BSS_STT_NM
+      title: 근거법령명
+      type: code
+      null_rate: 0.298
+      sample_values:
+        - 법제3조제16호-영제3조제1항제1호
+        - 법제3조제11호
+        - 법제3조제13호
+      stats:
+        unique: 20
+    - name: DAT_CRTR_YMD
+      title: 데이터 기준일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-06-30'
+        - '2026-05-20'
+        - '2026-05-19'
+      stats:
+        min: '2026-04-02'
+        max: '2026-09-23'
+        unique: 59
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-05-21 03:03:03'
+        - '2026-07-21 22:27:40'
+        - '2026-07-17 22:27:40'
+      stats:
+        min: '2026-05-15'
+        max: '2026-09-29'
+        unique: 69
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.047
+      sample_values:
+        - U
+        - I
+      stats:
+        unique: 2
+    - name: DIAP_EXCHCON_EN
+      title: 기저귀교환대유무
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: DIAP_EXCHCON_PLC
+      title: 기저귀교환대장소
+      type: code
+      null_rate: 0.816
+      sample_values:
+        - 여자화장실
+        - 남자화장실+여자화장실
+        - 여자화장실+남자화장실
+      stats:
+        unique: 4
+    - name: EMRGNCBLL_INSTL_PLC
+      title: 비상벨설치장소
+      type: code
+      null_rate: 0.498
+      sample_values:
+        - 여자화장실
+        - 장애인화장실+여자화장실
+        - 장애인화장실+남자화장실+여자화장실
+      stats:
+        unique: 13
+    - name: EMRGNCBLL_INSTL_YN
+      title: 비상벨설치여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+    - name: FEMALE_CHLD_TOILT_CNT
+      title: 여성용-어린이용대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 13
+        unique: 6
+    - name: FEMALE_FRDBL_TOILT_CNT
+      title: 여성용-장애인용대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 1
+        max: 8
+        unique: 8
+    - name: FEMALE_TOILT_CNT
+      title: 여성용-대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+        - '3'
+      stats:
+        min: 0
+        p50: 2
+        max: 94
+        unique: 39
+    - name: INSTL_YM
+      title: 설치연월
+      type: string
+      null_rate: 0.556
+      sample_values:
+        - 1994-12
+        - 2015-03
+        - 1994-01
+      stats:
+        unique: 262
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-23 10:47:45'
+        - '2026-09-23 10:46:31'
+        - '2026-09-23 10:45:08'
+      stats:
+        min: '2026-04-01'
+        max: '2026-09-28'
+        unique: 1000
+    - name: LCTN_LOTNO_ADDR
+      title: 소재지지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.21
+      sample_values:
+        - 경기도 평택시 이충동 591
+        - 전남광주통합특별시 동구 금남로1가 41 금남지하상가
+        - 대구광역시 북구 관음동 1372
+      stats:
+        unique: 719
+    - name: LCTN_ROAD_NM_ADDR
+      title: 소재지도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.151
+      sample_values:
+        - 충청북도 옥천군 옥천읍 동부로 15
+        - 충청북도 옥천군 옥천읍 삼금로4길 6
+        - 충청북도 옥천군 옥천읍 대학길 15
+      stats:
+        unique: 708
+    - name: MALE_CHLD_TOILT_CNT
+      title: 남성용-어린이용대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 7
+        unique: 4
+    - name: MALE_CHLD_URNL_CNT
+      title: 남성용-어린이용소변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 7
+        unique: 5
+    - name: MALE_FRDBL_TOILT_CNT
+      title: 남성용-장애인용대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 1
+        max: 8
+        unique: 8
+    - name: MALE_FRDBL_URNL_CNT
+      title: 남성용-장애인용소변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 8
+        unique: 8
+    - name: MALE_TOILT_CNT
+      title: 남성용-대변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 97
+        unique: 33
+    - name: MALE_URNL_CNT
+      title: 남성용-소변기수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+        - '3'
+      stats:
+        min: 0
+        p50: 2
+        max: 134
+        unique: 37
+    - name: MNG_INST_NM
+      title: 관리기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 담양군청
+        - 북구청
+        - 옥천군 보건소
+      stats:
+        unique: 446
+    - name: MNG_NO
+      title: 관리번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202658050000100027'
+        - '202658050000100026'
+        - '202658050000100025'
+      stats:
+        min: 199644300000100000
+        p50: 202445900000100000
+        max: 202665100000100032
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3450000'
+        - '4430000'
+        - '5390000'
+      stats:
+        min: 3000000
+        p50: 4430000
+        max: 6510000
+        unique: 45
+    - name: OPN_HR
+      title: 개방시간
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 상시
+        - 정시
+        - 미개방
+      stats:
+        unique: 4
+    - name: OPN_HR_DTL
+      title: 개방시간상세
+      type: string
+      null_rate: 0.538
+      sample_values:
+        - 09:00~18:00
+        - 00:00~24:00
+        - 09:00~21:00
+      stats:
+        unique: 83
+    - name: RMOD_YM
+      title: 리모델링연월
+      type: code
+      null_rate: 0.957
+      sample_values:
+        - 2018-10
+        - 2023-07
+        - 2020-09
+      stats:
+        unique: 40
+    - name: RSTRM_ENTRAN_CCTV_INSTL_EN
+      title: 화장실입구CCTV설치유무
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: RSTRM_NM
+      title: 화장실명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 팔달공영주차장
+        - 중앙주유소
+        - 신흥주유소
+      stats:
+        unique: 997
+    - name: RSTRM_PSN_SE_NM
+      title: 화장실소유구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 공공기관-지방자치단체
+        - 민간
+        - 공공기관-국가공공기관
+      stats:
+        unique: 6
+    - name: SE_NM
+      title: 구분명
+      type: code
+      null_rate: 0.002
+      sample_values:
+        - 개방화장실
+        - 공중화장실
+        - 간이화장실
+      stats:
+        unique: 3
+    - name: SFTY_MNG_FCLT_INSTL_TRGT
+      title: 안전관리시설설치대상여부
+      type: code
+      null_rate: 0.298
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: TELNO
+      title: 전화번호
+      type: string
+      null_rate: 0.453
+      sample_values:
+        - 061-380-3072
+        - 053-665-2865
+        - 053-665-3936
+      stats:
+        unique: 307
+    - name: WSTE_PRCS_MTH_NM
+      title: 오물처리방식명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수세식
+        - 수거식
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - LCTN_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - LCTN_ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2026-04-01 ~ 2026-09-29
+cycle: default
+classification:
+  subsector_name: 공중화장실 (전국 표준·개방화장실)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.7897
+  rank_in_sector: 2
+  brm: 환경기상 - 환경일반
+  why: 생활 편의 시설 원장, 좌표
+claims:
+  - id: c-15155058-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155058.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155058.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15155058-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-29 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15155058
+        observed_at: '2026-09-30'
+        detail: latest 2026-09-29, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155058-03
+    kind: key
+    value: '실측 조인 키: address(LCTN_LOTNO_ADDR), address(LCTN_ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15155058.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 34개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155058-04
+    kind: coverage
+    value: API 전체 건수 53,587 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2026-04-01 ~ 2026-09-29
+    evidence:
+      - type: measured
+        source: probe/runs/15155058.json
+        observed_at: '2026-09-30'
+        detail: total 53587, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155058-06
+    kind: admin_note
+    value: "세부 부문 '공중화장실 (전국 표준·개방화장실)'의 가치: 생활 편의 시설 원장, 좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#public-toilets
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155058-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155058-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155058.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155058-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history_v2'
+    evidence:
+      - type: measured
+        source: probe/runs/15155058.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15155058-12
+    kind: pitfall
+    value: 전수 53,587건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 54회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15155058.json
+        observed_at: '2026-09-30'
+        detail: total 53587 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 53587
+  ops_ok: 1/2
+  latency_ms: 121
+  latest: '2026-09-29'
+  lag_days: 1
+  run: probe/runs/15155058.json
+  stats: probe/stats/15155058.json
+  data: probe/data/15155058/
+status: active

@@ -1,0 +1,224 @@
+# Dataset 3048029 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '3048029'
+tier: verified
+title: 국토교통부_물류창고업등록정보
+sector: 교통물류/물류등기타/logistics-facilities
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3048029/openapi.do
+synonyms:
+  - 물류창고업
+  - 물류창고
+  - 창고업등록
+  - 창고업면적
+  - 연도별창고
+description_portal: 물류창고업 등록정보를 제공하는 물류창고업현황 메뉴는 물류시설 개발 및 운영에 관한 법률에 따라 물류창고업으로 등록된 일정규모 이상의 영업용 창고 정보입니다. 국토교통부에 등록하는 일반 물류창고업(해양수산부 항만창고 포함) 외에 관세청의 보세창고, 환경부의 유해화학물질 보관창고, 식품의약품안전처의 (식품)냉동냉장창고, (축산)축산물보관창고, 해양수산부의 (수산물)냉동냉장창고의 정보를 함께 제공합니다. 보관장소(창고)의 면적, 동수, 위치, 대표자, 업체명, 취급품목, 종업원수, 시설장비 현황 등의 정보 제공으로 다양한 목적에서 중요한 기초자료로 활용됩니다.
+team:
+  dept: 첨단물류과
+services:
+  - op: /WhsInfoList
+    name: 물류창고업등록정보 목록조회
+    endpoint: https://apis.data.go.kr/1611000/whsinfoview2/WhsInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        example: json
+        desc: 출력 타입
+      - name: sday
+        required: false
+        example: '20180712'
+        desc: 조회 시작 날짜
+      - name: eday
+        required: false
+        example: '20180712'
+        desc: 조회 종료 날짜
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: STORAGE_ITEM
+      title: 보관품목명
+      type: code
+      null_rate: 0.789
+      sample_values:
+        - 일반
+        - 냉동ㆍ냉장
+        - 컨테이너전용
+      stats:
+        unique: 18
+    - name: RNUM
+      title: 레코드번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: COMPANY_NAME
+      title: 업체명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 엑소후레쉬물류(주)
+        - 씨제이대한통운(주)
+        - (주)빙그레
+      stats:
+        unique: 854
+    - name: WARE_NO
+      title: 보관창고번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 1967M62600000049
+        - 1972M62700000731
+        - 1975M62600000416
+      stats:
+        unique: 1000
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 물류시설 (물류창고업 등록·물류단지·물류터미널·물류센터)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7717
+  rank_in_sector: 10
+  brm: 교통물류 - 물류등기타
+  why: 물류창고업 등록 원장(소재지·면적·보관 종류 상온·냉장·위험물) = 지역 물류 인프라 입지, 사업자번호로 기업과 연결
+claims:
+  - id: c-3048029-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/3048029.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/3048029.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-3048029-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3048029-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3048029.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3048029-04
+    kind: coverage
+    value: API 전체 건수 5,975 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/3048029.json
+        observed_at: '2026-09-30'
+        detail: total 5975, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3048029-06
+    kind: admin_note
+    value: "세부 부문 '물류시설 (물류창고업 등록·물류단지·물류터미널·물류센터)'의 가치: 물류창고업 등록 원장(소재지·면적·보관 종류 상온·냉장·위험물) = 지역 물류 인프라 입지, 사업자번호로 기업과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#logistics-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3048029-07
+    kind: admin_note
+    value: '[교통물류 - 물류등기타 · 결정] 물류시설·화물운송·생활물류·주차장만 남김. 통계는 우선 배제 (`logistics-stats`), 나머지 배제 (`logistics-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L478
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3048029-10
+    kind: pitfall
+    value: 전수 5,975건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 6회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/3048029.json
+        observed_at: '2026-09-30'
+        detail: total 5975 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 5975
+  ops_ok: 1/1
+  latency_ms: 81
+  run: probe/runs/3048029.json
+  stats: probe/stats/3048029.json
+  data: probe/data/3048029/
+status: active

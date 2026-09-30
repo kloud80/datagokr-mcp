@@ -1,0 +1,176 @@
+# Dataset 15033311 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15033311'
+tier: verified
+title: 한국식품안전관리인증원_HACCP 인증업체정보
+sector: 식품건강/식품의약안전/hygiene-designations
+agency:
+  id: B553748
+  name: 한국식품안전관리인증원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15033311/openapi.do
+synonyms:
+  - 안전관리인증
+  - HACCP
+  - 식품안전
+  - 한국식품안전관리인증원
+  - 국민건강
+description_portal: (HACCP 인증업체정보) HACCP 인증을 받은 업체의 HACCP인증번호, 축산/식품 업체 구분, 업체명, 사업자 번호, 대표자명, 주소, 지역1(시도), 지역2(시군구), 업태코드, 업태명, 업종코드, 업종명, 유형코드, 유형명, 인증일, 인증종료일 등 인증 관련 정보를 제공
+team:
+  dept: 기술혁신본부
+services:
+  - op: /getCertCompanyListService2
+    name: HACCP 인증업체정보 조회
+    endpoint: https://apis.data.go.kr/B553748/CertCompanyListService2/getCertCompanyListService2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: appointno
+        required: false
+        example: 2018-6-0116
+        desc: HACCP인증업체별로 부여된 고유번호
+      - name: company
+        required: false
+        example: 권농장
+        desc: 업체명
+      - name: returnType
+        required: false
+        example: xml
+        desc: 결과 응답 형식
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: item
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "{'businessitemNm': '육 계', 'businesstype': '56', 'issueenddate': '2027-08-30', 'c"
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 위생 지정 (음식점 위생등급·모범음식점·안심식당·HACCP 적용업소)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8848
+  rank_in_sector: 3
+  brm: 식품건강 - 식품의약안전
+  why: 외식 선택 근거, 업소 인허가번호로 인허가 원장과 조인
+claims:
+  - id: c-15033311-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15033311.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15033311.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15033311-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15033311-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15033311.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15033311-04
+    kind: coverage
+    value: API 전체 건수 1 · 검증 수신 1행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15033311.json
+        observed_at: '2026-09-30'
+        detail: total 1, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15033311-06
+    kind: admin_note
+    value: "세부 부문 '위생 지정 (음식점 위생등급·모범음식점·안심식당·HACCP 적용업소)'의 가치: 외식 선택 근거, 업소 인허가번호로 인허가 원장과 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#hygiene-designations
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15033311-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  total_count: 1
+  ops_ok: 1/1
+  latency_ms: 7101
+  run: probe/runs/15033311.json
+  stats: probe/stats/15033311.json
+  data: probe/data/15033311/
+status: active

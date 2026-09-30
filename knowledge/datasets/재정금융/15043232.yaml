@@ -1,0 +1,647 @@
+# Dataset 15043232 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '15043232'
+tier: verified
+title: 금융위원회_금융회사기본정보
+sector: 재정금융/금융/financial-institutions
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15043232/openapi.do
+synonyms:
+  - 금융
+  - 법인
+  - 거래소
+  - 금융회사
+  - 기업개요
+description_portal: '금융회사기본정보는 기준일자, 법인등록번호 또는 금융회사명을 기준으로 개별 금융회사의 기업 개요 정보를 제공하는 데이터입니다. 주요 제공 항목에는 금융회사명, 대표자명, 사업자등록번호, 설립일자, 종업원 수, 주소, 전화번호, 표준산업분류, 결산월, 상장일자 및 폐지일자(KRX, 코스닥, 거래소 등), 회계감사 의견, 중소기업 여부 등이 포함됩니다. 해당 데이터는 특정 시점의 정보를 기준으로 금융회사 현황을 구조적으로 파악할 수 있도록 구성되어 있습니다.데이터는 단일 오퍼레이션으로 구성되어 있습니다.① 금융회사기업개요조회 : 기준일자, 법인등록번호, 금융회사명을 통하여 사업자등록번호, 금융회사주소, 금융회사설립일자, 금융회사종업원수 등을 조회하는 금융회사기업개요조회 기능※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getFnCoOutl
+    name: 금융회사기업개요조회
+    endpoint: https://apis.data.go.kr/1160100/service/GetFnCoBasiInfoService/getFnCoOutl
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식
+      - name: basDt
+        required: false
+        example: '20200408'
+        desc: 기준일자
+      - name: crno
+        required: false
+        example: '1101113892240'
+        desc: 법인등록번호
+      - name: fncoNm
+        required: false
+        example: 메리츠자산운용
+        desc: 금융회사명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /GetFnCoBasiInfoService
+    name: (요청주소)
+    endpoint: https://apis.data.go.kr/1160100/service/GetFnCoBasiInfoService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식
+      - name: basDt
+        required: false
+        example: '20200408'
+        desc: 기준일자
+      - name: crno
+        required: false
+        example: '1101113892240'
+        desc: 법인등록번호
+      - name: fncoNm
+        required: false
+        example: 메리츠자산운용
+        desc: 금융회사명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: actnAudpnNm
+      title: 회계감사인명
+      type: code
+      null_rate: 0.956
+      sample_values:
+        - 삼일회계법인
+        - 한영회계법인
+        - 삼정회계법인
+      stats:
+        unique: 14
+    - name: audtRptOpnnCtt
+      title: 감사보고서의견내용
+      type: code
+      null_rate: 0.956
+      sample_values:
+        - 적정의견
+        - 예외사항없음
+      stats:
+        unique: 2
+    - name: basDt
+      title: 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200408'
+      stats:
+        min: 20200408
+        p50: 20200408
+        max: 20200408
+        unique: 1
+    - name: bzno
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '220'
+        - '202'
+        - '101'
+      stats:
+        min: 101
+        p50: 1288101780.5
+        max: 8988800273
+        unique: 976
+    - name: corpRegMrktDcd
+      title: 법인등록시장구분코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+        - P
+        - F
+      stats:
+        unique: 7
+    - name: corpRegMrktDcdNm
+      title: 법인등록시장구분코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 유가
+        - 코스닥
+      stats:
+        unique: 3
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110137558'
+        - '1101110412926'
+        - '1101111644007'
+      stats:
+        min: 1101110002959
+        p50: 1101114287988
+        max: 2201110001312
+        unique: 994
+    - name: empeAvgCnwkTermCtt
+      title: 종업원평균근속기간내용
+      type: string
+      null_rate: 0.812
+      sample_values:
+        - '5.5'
+        - '10'
+        - '8.9'
+      stats:
+        unique: 162
+    - name: fncoAdr
+      title: 금융회사주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 영등포구 의사당대로 143 (여의도동, 금융투자센터빌딩) 5층
+        - 서울특별시 영등포구 63로 50
+        - 서울특별시 종로구 종로 47
+      stats:
+        unique: 986
+    - name: fncoEmpeAvgSlryAmt
+      title: 금융회사종업원평균급여금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '83000000'
+        - '91000000'
+      stats:
+        min: 0
+        p50: 0
+        max: 282194000
+        unique: 137
+    - name: fncoEmpeCnt
+      title: 금융회사종업원수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '259'
+        - '122'
+      stats:
+        min: 0
+        p50: 0
+        max: 19063
+        unique: 193
+    - name: fncoEnsnNm
+      title: 금융회사영문명
+      type: string
+      null_rate: 0.016
+      sample_values:
+        - SHINHAN BANK
+        - Kookmin Bank
+        - Shinhan Card Co.,Ltd
+      stats:
+        unique: 980
+    - name: fncoEstbDt
+      title: 금융회사설립일자
+      type: number
+      null_rate: 0.009
+      sample_values:
+        - '20120302'
+        - '19721030'
+        - '19880401'
+      stats:
+        min: 18970219
+        p50: 19990707
+        max: 20190901
+        unique: 925
+    - name: fncoFxno
+      title: 금융회사팩스번호
+      type: string
+      null_rate: 0.066
+      sample_values:
+        - 02-776-8194
+        - 02-774-4543
+        - 0505-127-0726
+      stats:
+        unique: 925
+    - name: fncoHmpgUrl
+      title: 금융회사홈페이지URL
+      type: string
+      null_rate: 0.238
+      sample_values:
+        - 없음
+        - '-'
+        - www.sbisb.co.kr
+      stats:
+        unique: 733
+    - name: fncoKosdaqLstgAbolDt
+      title: 금융회사코스닥상장폐지일자
+      type: code
+      null_rate: 0.995
+      sample_values:
+        - 09/02/03
+        - 13/02/27
+        - 04/11/05
+      stats:
+        unique: 5
+    - name: fncoKosdaqLstgDt
+      title: 금융회사코스닥상장일자
+      type: code
+      null_rate: 0.977
+      sample_values:
+        - 93/12/07
+        - 96/11/19
+        - 52/09/14
+      stats:
+        unique: 23
+    - name: fncoKrxLstgAbolDt
+      title: 금융회사KONEX상장폐지일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: fncoKrxLstgDt
+      title: 금융회사KONEX상장일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: fncoMainBizNm
+      title: 금융회사주요사업명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: fncoNm
+      title: 금융회사명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)국민은행
+        - 한화투자증권(주)
+        - (주)하나은행
+      stats:
+        unique: 994
+    - name: fncoRprNm
+      title: 금융회사대표자명
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - 예금보험공사
+        - 한상구
+        - 정태영
+      stats:
+        unique: 966
+    - name: fncoSmenpYn
+      title: 금융회사중소기업여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: fncoStacMm
+      title: 금융회사결산월
+      type: number
+      null_rate: 0.006
+      sample_values:
+        - '12'
+        - '03'
+        - '06'
+      stats:
+        min: 1
+        p50: 12
+        max: 12
+        unique: 9
+    - name: fncoTlno
+      title: 금융회사전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-756-0505
+        - 1588-5191
+        - 02-3455-2114
+      stats:
+        unique: 992
+    - name: fncoXchgLstgAbolDt
+      title: 금융회사거래소상장폐지일자
+      type: code
+      null_rate: 0.966
+      sample_values:
+        - 17/07/21
+        - 12/10/17
+        - 15/09/15
+      stats:
+        unique: 32
+    - name: fncoXchgLstgDt
+      title: 금융회사거래소상장일자
+      type: string
+      null_rate: 0.895
+      sample_values:
+        - 75/06/30
+        - 87/08/24
+        - 75/09/30
+      stats:
+        unique: 97
+    - name: fncoZpcd
+      title: 금융회사우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '07327'
+        - '07325'
+        - '07326'
+      stats:
+        min: 2460
+        p50: 7332
+        max: 791052
+        unique: 538
+    - name: fssCorpChgDtm
+      title: 금융감독원법인변경일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2017/06/30
+        - 2020/02/26
+        - 2020/02/28
+      stats:
+        min: '2017-06-30'
+        max: '2020-04-09'
+        unique: 229
+    - name: fssCorpUnqNo
+      title: 금융감독원법인고유번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00160588'
+        - '00126229'
+        - '00148610'
+      stats:
+        min: 100197
+        p50: 380810
+        max: 1450682
+        unique: 1000
+    - name: isinCd
+      title: ISIN코드
+      type: number
+      semantic_type: stock_cd
+      null_rate: 0.857
+      sample_values:
+        - '000880'
+        - '000830'
+        - '003530'
+      stats:
+        min: 10
+        p50: 8670
+        max: 316140
+        unique: 143
+    - name: isinCdNm
+      title: ISIN코드명
+      type: number
+      semantic_type: stock_cd
+      null_rate: 0.857
+      sample_values:
+        - '000880'
+        - '000830'
+        - '003530'
+      stats:
+        min: 10
+        p50: 8670
+        max: 316140
+        unique: 143
+    - name: mntrFcnFncoCd
+      title: 주거래금융공동망금융회사코드
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: mntrFcnFncoCdNm
+      title: 주거래금융공동망금융회사코드명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: sicCd
+      title: 표준산업분류코드
+      type: number
+      null_rate: 0.007
+      sample_values:
+        - '64201'
+        - '64132'
+        - '66192'
+      stats:
+        min: 16
+        p50: 64201
+        max: 94990
+        unique: 158
+    - name: sicNm
+      title: 표준산업분류명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - bzno
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - fncoAdr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - isinCdNm
+      reference:
+        key: stock_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2017-06-30 ~ 2020-04-09
+cycle: default
+classification:
+  subsector_name: 금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.9019
+  rank_in_sector: 9
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자
+claims:
+  - id: c-15043232-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15043232.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15043232.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15043232-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2020-04-09 (관측일 기준 2365일 전) — 검증 호출 조건(basDt=20200408) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15043232
+        observed_at: '2026-09-30'
+        detail: latest 2020-04-09, lag 2365
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15043232-03
+    kind: key
+    value: '실측 조인 키: bizno(bzno), corp_rgst_no(crno), address(fncoAdr), stock_cd(isinCd), stock_cd(isinCdNm)'
+    evidence:
+      - type: measured
+        source: probe/stats/15043232.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 36개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15043232-04
+    kind: coverage
+    value: API 전체 건수 2,348,388 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2017-06-30 ~ 2020-04-09
+    evidence:
+      - type: measured
+        source: probe/runs/15043232.json
+        observed_at: '2026-09-30'
+        detail: total 2348388, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15043232-06
+    kind: admin_note
+    value: "세부 부문 '금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)'의 가치: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#financial-institutions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15043232-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15043232-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1160100/service/GetFnCoBasiInfoService'
+    evidence:
+      - type: measured
+        source: probe/runs/15043232.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15043232-11
+    kind: pitfall
+    value: 전수 2,348,388건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 2,349회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15043232.json
+        observed_at: '2026-09-30'
+        detail: total 2348388 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 2348388
+  ops_ok: 1/2
+  latency_ms: 6931
+  latest: '2020-04-09'
+  lag_days: 2365
+  run: probe/runs/15043232.json
+  stats: probe/stats/15043232.json
+  data: probe/data/15043232/
+status: active

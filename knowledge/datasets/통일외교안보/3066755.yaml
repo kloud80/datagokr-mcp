@@ -1,0 +1,307 @@
+# Dataset 3066755 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+id: '3066755'
+tier: verified
+title: 병무청_인터넷입영원계획
+sector: 통일외교안보/병무행정/military-recruitment
+agency:
+  id: '1300000'
+  name: 병무청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3066755/openapi.do
+synonyms:
+  - 인터넷
+  - 입영원
+  - 계획
+  - 공석
+  - 사회복무요원
+  - 분기
+  - 시군구
+  - 소집
+description_portal: 병무청 누리집(홈페이지)을 통해 우선소집원, 선복무, 재학생입영원 접수 시 확인할 수 있는 정보에 대한 데이터입니다. 소집년도, 소집분기, 시군구, 공석인원수 데이터를 제공합니다. 현재는 병무청 누리집(홈페이지)을 통한 우선소집원, 선복무 신청을 접수하지 않아, 우선소집원 데이터는 2007년부터 2018년까지의 데이터, 선복무 데이터는 2014년부터 2019년까지의 데이터인 점 참고하여 주시기 바랍니다.  아울러 재학생입영원 데이터의 경우 재학생 입영(소집)등 신청(수시) 화면에서 제공하는 데이터입니다.
+team:
+  dept: 사회복무정책과
+services:
+  - op: /list
+    name: 인터넷입영원계획목록
+    endpoint: https://apis.data.go.kr/1300000/intrntIywGyehoek/list/intrntIywGyehoek/list
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /list
+    name: (요청주소)
+    endpoint: https://apis.data.go.kr/1300000/intrntIywGyehoek/list
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: bjdsggjusoCd
+      title: 법정동시군구주소코드
+      type: number
+      semantic_type: sgg_cd
+      null_rate: 0.0
+      sample_values:
+        - '43770'
+        - '47850'
+        - '41210'
+      stats:
+        min: 41195
+        p50: 43770
+        max: 48160
+        unique: 14
+    - name: bjdsggjusoNm
+      title: 법정동시군구주소명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충청북도 음성군
+        - 경상북도 칠곡군
+        - 경기도 광명시
+      stats:
+        unique: 14
+    - name: gongseokPcnt
+      title: 공석인원수
+      type: number
+      null_rate: 0.003
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 1
+        max: 50
+        unique: 27
+    - name: ipyeongGbcd
+      title: 입영구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 3
+    - name: ipyeongQu
+      title: 입영분기
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '4'
+        - '1'
+      stats:
+        min: 1
+        p50: 3
+        max: 4
+        unique: 4
+    - name: ipyeongYy
+      title: 입영년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2014'
+        - '2016'
+        - '2012'
+      stats:
+        min: 2007
+        p50: 2014
+        max: 2025
+        unique: 19
+    - name: rnum
+      title: Row number
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: sayongYn
+      title: 사용여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - bjdsggjusoCd
+      reference:
+        key: sgg_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7101
+  rank_in_sector: 10
+  brm: 통일외교안보 - 병무행정
+  why: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
+claims:
+  - id: c-3066755-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/3066755.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/3066755.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-3066755-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3066755-03
+    kind: key
+    value: '실측 조인 키: sgg_cd(bjdsggjusoCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/3066755.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3066755-04
+    kind: coverage
+    value: API 전체 건수 27,029 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/3066755.json
+        observed_at: '2026-09-30'
+        detail: total 27029, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3066755-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3066755-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1300000/intrntIywGyehoek/list'
+    evidence:
+      - type: measured
+        source: probe/runs/3066755.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-3066755-11
+    kind: pitfall
+    value: 전수 27,029건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 28회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/3066755.json
+        observed_at: '2026-09-30'
+        detail: total 27029 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1000
+  total_count: 27029
+  ops_ok: 1/2
+  latency_ms: 170
+  run: probe/runs/3066755.json
+  stats: probe/stats/3066755.json
+  data: probe/data/3066755/
+status: active
