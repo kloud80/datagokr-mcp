@@ -1,0 +1,66 @@
+# 레시피 초안 — 맥락 지금 진료받을 곳 (KNOWLEDGE-SPEC §3.7). pds/strategy/recipe_draft.py 생성, 구름 확정 전(draft).
+# 멤버 5개 중 선언된 Edge로 이어진 5개. 이어지지 않은 멤버: 없음
+id: find-care-now
+goal_examples:
+  - 근처 병원·약국·응급실·야간 진료
+context: find-care-now
+datasets:
+  - id: '15000563'
+    role: primary
+  - id: '15001698'
+    role: join
+  - id: '15001699'
+    role: join
+  - id: '15021137'
+    role: join
+  - id: '15051057'
+    role: join
+joins:
+  - e-0124
+  - e-0366
+  - e-0168
+  - e-0171
+  - e-0172
+pipeline:
+  - step: 1
+    do: fetch
+    dataset: '15000563'
+    produces: 15000563.parquet
+  - step: 2
+    do: fetch
+    dataset: '15001698'
+    produces: 15001698.parquet
+  - step: 3
+    do: join
+    edge: e-0124
+    note: 15000563 ⋈ 15001698
+  - step: 4
+    do: fetch
+    dataset: '15001699'
+    produces: 15001699.parquet
+  - step: 5
+    do: join
+    edge: e-0366
+    note: 15001698 ⋈ 15001699
+  - step: 6
+    do: join
+    edge: e-0168
+    note: 15000563 ⋈ 15123899 (허브 연속지적도(PNU))
+  - step: 7
+    do: fetch
+    dataset: '15021137'
+    produces: 15021137.parquet
+  - step: 8
+    do: join
+    edge: e-0171
+    note: 15123899 ⋈ 15021137 (허브 연속지적도(PNU))
+  - step: 9
+    do: fetch
+    dataset: '15051057'
+    produces: 15051057.parquet
+  - step: 10
+    do: join
+    edge: e-0172
+    note: 15123899 ⋈ 15051057 (허브 연속지적도(PNU))
+author: claude-draft
+status: draft

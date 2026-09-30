@@ -45,8 +45,12 @@ def road_key(addr: str) -> str | None:
 
 
 def _vworld() -> tuple[str, str]:
+    """브이월드 키: VWORLD_API_KEY(+VWORLD_DOMAIN) 환경변수 → secrets/keys.json['vworld']."""
     import json
+    import os
     from pds import config
+    if os.getenv("VWORLD_API_KEY"):
+        return os.environ["VWORLD_API_KEY"], os.getenv("VWORLD_DOMAIN", "")
     v = json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["vworld"]
     return v["key"], v.get("domain", "bv")
 

@@ -335,7 +335,8 @@ def currency_iso() -> dict:
     import json as _j
     import httpx
     from pds.probe.deep import _items_xml
-    key = _j.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["data.go.kr"]["decoding"]
+    from pds.probe.deep import service_key
+    key = service_key()
     day = (dt.date.today() - dt.timedelta(days=3)).strftime("%Y%m%d")
     r = httpx.get("https://apis.data.go.kr/1220000/retrieveTrifFxrtInfo/getRetrieveTrifFxrtInfo",
                   params={"serviceKey": key, "aplyBgnDt": day, "weekFxrtTpcd": "2"}, timeout=40)

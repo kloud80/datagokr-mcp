@@ -14,6 +14,8 @@
   validate [--strict]  지식 원본 스키마·상호 참조 검사 (KNOWLEDGE-SPEC §5). --strict면 승격 조건도 오류
   schema-export        pydantic 모델 → schemas/*.schema.json
   gen-dataset [id…]    targets.json + probe → knowledge/datasets/ (id 없으면 verified 전체)
+  serve [--port 8765]  서비스 API + 웹 채팅 (http://127.0.0.1:8765)
+  mcp [--http]         MCP 서버 (stdio 기본, --http면 streamable-http :8766)
 """
 from __future__ import annotations
 
@@ -195,6 +197,16 @@ def cmd_gen_dataset(args):
     return 1 if res["failed"] else 0
 
 
+def cmd_serve(args):
+    import uvicorn
+    uvicorn.run("pds.service.app:app", host=args.host, port=args.port, reload=False)
+
+
+def cmd_mcp(args):
+    from pds.mcp.server import main as run
+    run(http=args.http)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="pds")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -226,6 +238,13 @@ def main(argv=None):
     gd.add_argument("ids", nargs="*")
     gd.add_argument("--status", default="verified")
     gd.set_defaults(fn=cmd_gen_dataset)
+    sv = sub.add_parser("serve")
+    sv.add_argument("--host", default="127.0.0.1")
+    sv.add_argument("--port", type=int, default=8765)
+    sv.set_defaults(fn=cmd_serve)
+    mc = sub.add_parser("mcp")
+    mc.add_argument("--http", action="store_true")
+    mc.set_defaults(fn=cmd_mcp)
     s = sub.add_parser("summary")
     s.add_argument("--top", type=int, default=40)
     s.set_defaults(fn=cmd_summary)

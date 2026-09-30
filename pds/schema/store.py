@@ -38,13 +38,16 @@ def rel(p: Path) -> str:
 
 
 _SAFE = YAML(typ="safe", pure=True)
+_LOCK = __import__("threading").Lock()  # ruamel 파서 인스턴스는 스레드 안전하지 않다 (서비스·병렬 초안 생성)
 
 
 def _load(p: Path):
     """쓰기(ruamel, YAML 1.2)와 같은 판본으로 읽는다 — PyYAML(1.1)은 '09:00'을 숫자로, 'Y'·'no'를 불리언으로 읽는다."""
     if p.suffix == ".json":
         return json.loads(p.read_text(encoding="utf-8"))
-    return _SAFE.load(p.read_text(encoding="utf-8"))
+    text = p.read_text(encoding="utf-8")
+    with _LOCK:
+        return _SAFE.load(text)
 
 
 def iter_raw(kind: str) -> Iterator[tuple[dict, Path]]:

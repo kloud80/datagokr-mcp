@@ -21,8 +21,8 @@ BOX = "126.9680,37.5800,126.9780,37.5870"  # 종로구 청운·효자동 일대 
 
 
 def _key() -> tuple[str, str]:
-    v = json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["vworld"]
-    return v["key"], v.get("domain", "bv")
+    from pds.rules import _vworld
+    return _vworld()
 
 
 def _save(dsid: str, name: str, df: pd.DataFrame, run: dict) -> None:

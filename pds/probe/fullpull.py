@@ -23,7 +23,8 @@ SIDO2 = ["11", "26", "27", "28", "29", "30", "31", "36", "41", "42", "43", "44",
 
 
 def _key() -> str:
-    return json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["data.go.kr"]["decoding"]
+    from pds.probe.deep import service_key
+    return service_key()  # DATA_GO_KR_SERVICE_KEY 환경변수 → secrets/keys.json
 
 
 def fetch_all(client: httpx.Client, url: str, params: dict, size: int = 1000, max_pages: int = 500,
@@ -182,8 +183,8 @@ def _get_retry(c: httpx.Client, url: str, params: dict, tries: int = 3) -> httpx
 
 
 def land_characteristics(per_site: int = 120) -> dict:
-    vw = json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["vworld"]
-    key, domain = vw["key"], vw.get("domain", "bv")
+    from pds.rules import _vworld
+    key, domain = _vworld()
     rows, calls = [], 0
     with httpx.Client(timeout=40) as c:
         for site, (lon, lat) in LAND_SITES.items():

@@ -139,9 +139,57 @@ def apply(batch_id: str) -> dict:
     return {"applied": ok, "failed": bad, "usage": usage}
 
 
+def _apply_one(d: dict, path, text: str, tag: str) -> None:
+    out = json.loads(text)
+    claim_ids = {x["id"] for x in d.get("claims") or []}
+    cited = [x for x in out.get("cited_claims") or [] if x in claim_ids]
+    d["summary_user"] = out["summary_user"].strip()
+    d["limits"] = out["limits"].strip()
+    d["synonyms"] = list(dict.fromkeys((d.get("synonyms") or []) + [s.strip() for s in out.get("synonyms") or [] if s.strip()]))[:15]
+    d["review"] = {"summary": "draft", "by": f"llm:{MODEL}", "at": dt.date.today().isoformat(), "batch": tag,
+                   "cited_claims": cited, "dropped_citations": len(out.get("cited_claims") or []) - len(cited)}
+    Dataset.model_validate(d)
+    store.dump(d, path, header=f"Dataset {d['id']} — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전")
+
+
+def run_sync(workers: int = 6, force: bool = False) -> dict:
+    """배치 대신 바로 호출 (동시 workers건). 같은 입력·스키마·검증."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    paths = {d["id"]: p for d, p in store.iter_raw("dataset")}
+    ds = targets(force)
+    c = _client()
+
+    system = _system()
+    inputs = {d["id"]: _input(d) for d in ds}  # YAML 파서는 스레드 안전하지 않다 — 입력은 메인 스레드에서 미리 만든다
+
+    def one(d):  # 스레드에서는 API 호출만
+        r = c.messages.create(model=MODEL, max_tokens=4000, system=system,
+                              output_config={"effort": "medium", "format": {"type": "json_schema", "schema": SCHEMA}},
+                              messages=[{"role": "user", "content": inputs[d["id"]]}])
+        if r.stop_reason == "refusal":
+            raise RuntimeError("refusal")
+        return d, next(b.text for b in r.content if b.type == "text"), r.usage
+
+    ok, bad, usage = 0, {}, {"input": 0, "output": 0}
+    with ThreadPoolExecutor(workers) as ex:
+        futs = {ex.submit(one, d): d["id"] for d in ds}
+        for f in as_completed(futs):
+            try:
+                d, text, u = f.result()
+                _apply_one(d, paths[d["id"]], text, "sync")
+                usage["input"] += u.input_tokens
+                usage["output"] += u.output_tokens
+                ok += 1
+            except Exception as e:  # noqa: BLE001
+                bad[futs[f]] = f"{type(e).__name__}: {str(e)[:120]}"
+    return {"applied": ok, "failed": bad, "usage": usage}
+
+
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "apply":
+    if len(sys.argv) > 1 and sys.argv[1] == "sync":
+        print(run_sync())
+    elif len(sys.argv) > 1 and sys.argv[1] == "apply":
         print(apply(sys.argv[2]))
     else:
         rec = submit(limit=int(sys.argv[1]) if len(sys.argv) > 1 else None)
