@@ -1,0 +1,184 @@
+# Dataset 15109778 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15109778'
+tier: candidate
+title: 성평등가족부_청소년쉼터
+sector: 사회복지/노인·청소년/youth-support-centers
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15109778/openapi.do
+synonyms:
+  - 청소년
+  - 쉼터
+  - 청소년쉼터
+  - 시설
+  - 위치
+  - 연락처
+description_portal: 다양한 사유로 가출한 청소년들이 사회구성원으로 성장할 수 있는 청소년쉼터의 시설 정보를 제공하는 오픈 API형 데이터입니다.  해당 개방데이터는 청소년쉼터의 POI정보(도로명주소, 지번주소, 위도, 경도), 시설명, 시설 유형, 전화번호, 이메일주소, 운영 형태, 전체 정원 수, 입소 대상, 입소 기간, 인근 교통시설명 등을 확인할 수 있습니다.  청소년쉼터의 위치 및 운영 현황을 파악할 수 있어, 위기 청소년 보호 체계 강화와 긴급 보호 서비스 제공에 실질적으로 기여합니다. 또한 입소 조건 및 수용 능력 분석을 통해 맞춤형 지원 정책 수립, 지역 기반의 복지 자원 연계, 청소년 안전망 구축 등에 효과적으로 활용될 수 있습니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getTeenRAreaListV2
+    name: 청소년쉼터 조회
+    endpoint: https://apis.data.go.kr/1383000/gmis/teenRAreaServiceV2/getTeenRAreaListV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 결과타입
+      - name: fcltNm
+        required: false
+        example: 서울시립청소년이동쉼터
+        desc: 시설명
+      - name: ctpvNm
+        required: false
+        example: 서울
+        desc: 시도명
+      - name: sggNm
+        required: false
+        example: 종로
+        desc: 시군구명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 청소년 보호·복지 (상담복지센터·쉼터·꿈드림·자립지원관)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7026
+  rank_in_sector: 29
+  brm: 사회복지 - 노인·청소년
+  why: 위기 청소년 즉시성 수요, 센터코드·좌표
+claims:
+  - id: c-15109778-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15109778.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15109778.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15109778-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109778-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15109778.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109778-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15109778.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15109778-06
+    kind: admin_note
+    value: "세부 부문 '청소년 보호·복지 (상담복지센터·쉼터·꿈드림·자립지원관)'의 가치: 위기 청소년 즉시성 수요, 센터코드·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#youth-support-centers
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15109778-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15109778-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getTeenRAreaListV2'
+    evidence:
+      - type: measured
+        source: probe/runs/15109778.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 783
+  run: probe/runs/15109778.json
+  stats: probe/stats/15109778.json
+  data: probe/data/15109778/
+status: active

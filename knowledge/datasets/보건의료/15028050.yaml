@@ -1,0 +1,177 @@
+# Dataset 15028050 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15028050'
+tier: candidate
+title: 국민건강보험공단 질병예측 정보
+sector: 보건의료/건강보험/medical-utilization
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15028050/openapi.do
+synonyms:
+  - 국민건강알람서비스
+  - 질병예측
+  - 진료정보
+description_portal: ME?
+team:
+  dept: 빅데이터운영실
+services:
+  - op: /getDissForecastInfo
+    name: 예측진료정보조회
+    endpoint: https://apis.data.go.kr/B550928/dissForecastInfoSvc/getDissForecastInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한페이지 결과 수
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: type
+        required: false
+        example: xml
+        desc: 데이터타입
+      - name: dissCd
+        required: true
+        example: '1'
+        desc: 질병 코드
+      - name: znCd
+        required: false
+        example: '11'
+        desc: 지역 코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8107
+  rank_in_sector: 9
+  brm: 보건의료 - 건강보험
+  why: 시군구 × KCD × 월 격자 원장. 심평원(청구 기준)과 공단(자격 기준)이 다른 값
+claims:
+  - id: c-15028050-01
+    kind: access
+    value: 포털 활용신청 승인유형 미기록, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15028050.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15028050.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 None
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15028050-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15028050-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15028050.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15028050-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15028050.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15028050-06
+    kind: admin_note
+    value: "세부 부문 '진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)'의 가치: 시군구 × KCD × 월 격자 원장. 심평원(청구 기준)과 공단(자격 기준)이 다른 값"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-utilization
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15028050-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15028050-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/B550928/dissForecastInfoSvc/getDissForecastInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15028050.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 키미등록
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 70
+  run: probe/runs/15028050.json
+  stats: probe/stats/15028050.json
+  data: probe/data/15028050/
+status: active

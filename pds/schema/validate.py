@@ -81,7 +81,7 @@ def run(strict: bool = False) -> tuple[Report, dict[str, list]]:
                     rep.err(loc, f"{kind} id {oid} 중복 ({where[(kind, oid)]})")
                 where[(kind, oid)] = loc
             # 디렉터리형은 파일명 = id
-            if kind in ("key", "context", "recipe", "mapping") and path.stem != oid:
+            if kind in ("key", "context", "recipe", "mapping", "code") and path.stem != oid:
                 rep.err(loc, f"파일명 {path.stem} ≠ id {oid}")
             if kind == "law" and path.stem != obj.law_id:
                 rep.err(loc, f"파일명 {path.stem} ≠ law_id {obj.law_id}")
@@ -198,6 +198,20 @@ def run(strict: bool = False) -> tuple[Report, dict[str, list]]:
             d = datasets.get(x.id)
             if d is None or d.tier != "verified":
                 rep.err(loc, f"{x.id}는 verified Dataset이 아님 — 레시피에 쓸 수 없다")
+
+    codes = {c.id for c in objs["code"]}
+    for c in objs["code"]:
+        loc = f"codes/{c.id}"
+        if c.key and c.key not in keys:
+            rep.err(loc, f"key {c.key} 없음")
+        if c.file and not (config.KNOWLEDGE / c.file).exists():
+            rep.err(loc, f"file {c.file} 없음")
+        for u in c.used_by:
+            ds_ref(loc, u.dataset, "used_by")
+    for d in objs["dataset"]:
+        for fld in d.schema_.fields:
+            if fld.code_list and fld.code_list not in codes:
+                rep.err(store.rel(store.dataset_path(d.sector, d.id)), f"field {fld.name}.code_list {fld.code_list} 없음")
 
     for g in objs["gap"]:
         if g.sector not in subs:

@@ -1,0 +1,272 @@
+# Dataset 15108420 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15108420'
+tier: candidate
+title: 국토교통부_마이홈포털 공공주택 모집공고 조회 서비스
+sector: 국토관리/주택/subscription
+domain: 국토관리/주택
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108420/openapi.do
+synonyms:
+  - 주거복지
+  - 공공임대주택
+  - 모집공고
+  - 임대주택공급정보
+  - 국민임대공고안내
+  - 행복주택공고안내
+  - 영구임대공고안내
+  - 통합공공임대공고안내
+description_portal: 국토교통부에서 제공하는 마이홈포털 공공임대주택 모집공고 조회 서비스입니다. 오퍼레이션 파라미터를 기준으로 공공임대주택 모집공고 조회하는 서비스 (유의)조회하는 시점에 따라 ‘응답 메시지’가 달라질 수 있습니다. API는 활용신청을 통해 받은 인증키를 사용하여 접속할 수 있습니다. 데이터는 시도 등의 지역 정보를 포함하고 있으며, 공공임대주택 정보를 제공하고 있습니다. 공공임대주택으로는 국민임대, 영구임대, 행복주택 등의 유형을 구분하여 제공중입니다. 자세한 파라미터는 참고문서 파일을 참고해주십시오.
+team:
+  dept: 청년주거정책과
+services:
+  - op: /rsdtRcritNtcList
+    name: 공공임대주택 모집공고 조회
+    endpoint: https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: brtcCode
+        required: false
+        desc: 광역시도 코드
+      - name: signguCode
+        required: false
+        desc: 시군구 코드
+      - name: numOfRows
+        required: false
+        desc: 조회될 목록의 페이지당 데이터 개수 (기본값:10)
+      - name: pageNo
+        required: false
+        desc: 조회될 페이지의 번호 (기본값:1)
+      - name: suplyTy
+        required: false
+        desc: 공급유형
+      - name: houseTy
+        required: false
+        desc: 주택유형
+      - name: lfstsTyAt
+        required: false
+        desc: 전세형 모집 여부
+      - name: bassMtRntchrgSe
+        required: false
+        desc: 월임대료 구분
+      - name: yearMtBegin
+        required: false
+        desc: 모집공고월시작(YYYYMM)
+      - name: yearMtEnd
+        required: false
+        desc: 모집공고월종료(YYYYMM)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /ltRsdtRcritNtcList
+    name: 공공분양주택 모집공고 조회
+    endpoint: https://apis.data.go.kr/1613000/HWSPR02/ltRsdtRcritNtcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: brtcCode
+        required: false
+        example: '43'
+        desc: 광역시도 코드
+      - name: signguCode
+        required: false
+        example: '750'
+        desc: 시군구 코드
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 조회될 목록의 페이지당 데이터 개수 (기본값:10)
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 조회될 페이지의 번호 (기본값:1)
+      - name: houseTy
+        required: false
+        example: '11'
+        desc: 주택유형
+      - name: yearMtBegin
+        required: false
+        desc: 모집공고월시작(YYYYMM)
+      - name: yearMtEnd
+        required: false
+        desc: 모집공고월종료(YYYYMM)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+cycle: event
+classification:
+  subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8753
+  rank_in_sector: 12
+  brm: 국토관리 - 주택
+  sector_rule: land-restructure-주택
+  why: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보
+claims:
+  - id: c-15108420-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 0/2
+    evidence:
+      - type: measured
+        source: probe/runs/15108420.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/2
+      - type: measured
+        source: probe/apply/15108420.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15108420-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108420-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15108420.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108420-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 필지·건물
+    evidence:
+      - type: measured
+        source: probe/runs/15108420.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108420-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15108420-06
+    kind: admin_note
+    value: "세부 부문 '청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)'의 가치: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#subscription
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15108420-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108420-10
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /rsdtRcritNtcList, /ltRsdtRcritNtcList'
+    evidence:
+      - type: measured
+        source: probe/runs/15108420.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/2
+  latency_ms: 400
+  run: probe/runs/15108420.json
+  stats: probe/stats/15108420.json
+  data: probe/data/15108420/
+status: active

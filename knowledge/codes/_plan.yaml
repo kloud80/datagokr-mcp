@@ -1,0 +1,85 @@
+# 코드표 확보 계획 — 먼저 목록을 정하고 원천을 확보한다 (구름 2026-09-30 "대상 데이터들의 필드 별로 코드표가 있으면 이해가 수월한 리스트를 먼저 정하고").
+# 근거 목록: reports/code_needs.md (pds/codes/needs.py — 검증 데이터 필드 전수 판정, A=불투명 코드 193필드·78데이터).
+# fields: 이 코드 체계를 싣는 필드 이름 정규식 (대소문자 무시). source: 원천 데이터셋 또는 외부. status: planned → acquired / portal_absent
+# priority: 1 = 여러 데이터가 공유하는 국가 표준 · 2 = 한 기관 여러 데이터 · 3 = 한 데이터 전용(명세 설명에서 추출)
+- id: bjd_cd
+  name: 법정동코드
+  priority: 1
+  fields: '^(법정동코드|ldCode|bjdCode|legaldongCode|emd_cd|stdgCd)$'
+  source: {dataset: '15123287', kind: file}
+  status: acquired
+- id: instt_cd
+  name: 행정표준 기관코드 (개방자치단체코드 포함)
+  priority: 1
+  fields: '^(OPN_ATMY_GRP_CD|instt_?cd|insttCode|orgCd|제공기관코드)$'
+  source: {dataset: '15077870', kind: api}
+  status: planned
+  note: 인허가(LOCALDATA) 8종이 공유 — 개방자치단체코드 5710000 등
+- id: country_iso
+  name: 국가코드 (ISO 3166)
+  priority: 1
+  fields: '^(country_iso_alp2|MANUF_CLT_COUNTRY_CODE|natCd|countryCode|nation)$'
+  source: {dataset: '15091117', kind: file}
+  status: planned
+- id: currency_iso
+  name: 통화코드 (ISO 4217)
+  priority: 1
+  fields: '(Crcd|Crncy|curUnit|cur_unit|totalForeignAmount|cocuCd)$'
+  source: {dataset: '15101230', kind: api}
+  status: planned
+- id: port_locode
+  name: 국가·항구코드 (UN/LOCODE)
+  priority: 1
+  fields: '(NatPrtCd|portCd|prtCd|항구코드)$'
+  source: {dataset: '15114126', kind: file}
+  status: planned
+- id: hs_cd
+  name: HS부호 (관세 품목분류)
+  priority: 1
+  fields: '^(frghtPrdlstCd|hsCd|hsSgn|hsk|HS부호|품목번호)$'
+  source: {dataset: '15049722', kind: file}
+  status: planned
+- id: ksic
+  name: 한국표준산업분류 (KSIC)
+  priority: 1
+  fields: '^(KSIC_CD|ksic|rprsntvIndutyCode|업종코드|indutyCd|inds_clsfc_clss_cd)$'
+  source: {external: 통계청 통계분류포털 (kssc.kostat.go.kr) — 포털에 전체 목록 없음}
+  status: portal_absent
+  note: 대용 — 공장등록·신보 데이터에서 본 코드만 observed로
+- id: ncs
+  name: 국가직무능력표준(NCS) 분류
+  priority: 2
+  fields: '^ncs(Lclas|Mclas|Sclas|Subd)Cd$'
+  source: {dataset: '15083321', kind: file}
+  status: planned
+- id: customs_office
+  name: 세관부호
+  priority: 2
+  fields: '^(cstmSgn|cstmCd|세관부호)$'
+  source: {external: 관세청 UNI-PASS 공통코드 (unipass.customs.go.kr, 별도 키)}
+  status: portal_absent
+- id: ssis_common
+  name: 사회서비스 공통코드 (사회보장정보원 — 고용형태·학력·임금 등)
+  priority: 2
+  fields: '^(wk(Jn|Sch|Mn|Rt|Sp|Wk|Dc)|sysDvsnCd|fcltTyDvsn)$'
+  source: {dataset: '15059061', kind: api}
+  status: planned
+- id: police_common
+  name: 경찰청 공통코드
+  priority: 2
+  fields: '^(REGION_CD)$'
+  source: {dataset: '15000651', kind: api}
+  status: planned
+- id: land_category
+  name: 지목
+  priority: 1
+  fields: '^(lndcgrCode|jimok|지목코드)$'
+  source: {law: 공간정보의 구축 및 관리 등에 관한 법률 제67조}
+  status: acquired
+- id: spec_enums
+  name: 명세서 필드 설명에 정의된 소규모 코드 (예 'H:Html, T:Text')
+  priority: 3
+  fields: '*'
+  source: {spec: probe/specs response_fields desc}
+  status: planned
+  note: 데이터 한 건 전용 코드는 명세 설명에서 추출 — 설명에 없으면 관측값만(observed)

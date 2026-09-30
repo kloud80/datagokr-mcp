@@ -160,9 +160,103 @@ PLANS: dict[str, Callable[[], dict]] = {"apt": apt_list, "ykiho": hosp_ykiho, "h
                                         "rtms": rtms_trades, "busstop": bus_stops_all}
 
 
+
+# ─────────────────────────── 토지특성 코드 관측 (지목·용도지역·지형·도로접면·이용상황) — 전국 15곳 필지 표본
+LAND_SITES = {  # 이름: (경도, 위도) — 도심·농촌·산지·공단·해안이 섞이게
+    "서울종로": (126.973, 37.583), "평택농촌": (127.00, 36.95), "평창산지": (128.40, 37.50), "당진논": (126.60, 36.90),
+    "나주들": (126.70, 35.00), "의성": (128.70, 36.35), "창원공단": (128.68, 35.23), "제주": (126.50, 33.45),
+    "송도": (126.64, 37.39), "해운대": (129.16, 35.16), "달성": (128.45, 35.75), "울산공단": (129.33, 35.50),
+    "괴산": (127.80, 36.80), "김제": (126.88, 35.80), "속초": (128.59, 38.20),
+}
+
+
+def _get_retry(c: httpx.Client, url: str, params: dict, tries: int = 3) -> httpx.Response | None:
+    for i in range(tries):
+        try:
+            r = c.get(url, params=params)
+            time.sleep(0.15)
+            return r
+        except httpx.HTTPError:
+            time.sleep(2 * (i + 1))
+    return None
+
+
+def land_characteristics(per_site: int = 120) -> dict:
+    vw = json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["vworld"]
+    key, domain = vw["key"], vw.get("domain", "bv")
+    rows, calls = [], 0
+    with httpx.Client(timeout=40) as c:
+        for site, (lon, lat) in LAND_SITES.items():
+            box = f"BOX({lon - 0.006},{lat - 0.006},{lon + 0.006},{lat + 0.006})"
+            r = _get_retry(c, "https://api.vworld.kr/req/data", {"service": "data", "request": "GetFeature", "data": "LP_PA_CBND_BUBUN",
+                           "geomFilter": box, "format": "json", "size": per_site, "page": 1, "geometry": "false", "key": key, "domain": domain})
+            calls += 1
+            if r is None:
+                continue
+            feats = ((r.json()["response"].get("result") or {}).get("featureCollection") or {}).get("features") or []
+            for f in feats:
+                pnu = f["properties"].get("pnu")
+                q = _get_retry(c, "https://api.vworld.kr/ned/data/getLandCharacteristics",
+                               {"pnu": pnu, "stdrYear": "2025", "format": "json", "numOfRows": 1, "pageNo": 1, "key": key, "domain": domain})
+                calls += 1
+                try:
+                    fld = (q.json().get("landCharacteristicss") or {}).get("field") or [] if q is not None else []
+                except ValueError:
+                    fld = []
+                for x in fld[:1]:
+                    rows.append({**x, "_site": site})
+    df = pd.DataFrame(rows)
+    (OUT / "vworld_landchar").mkdir(parents=True, exist_ok=True)
+    df.astype(str).to_parquet(OUT / "vworld_landchar" / "sample.parquet", index=False)
+    rec = {"id": "vworld_landchar", "rows": len(df), "calls": calls, "sites": list(LAND_SITES), "at": dt.datetime.now().isoformat(timespec="seconds"),
+           "file": "data/master/vworld_landchar/sample.parquet"}
+    LOG.mkdir(parents=True, exist_ok=True)
+    (LOG / "vworld_landchar.json").write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    return rec
+
+
+PLANS["landchar"] = land_characteristics
+
+
+
+def stan_org_codes() -> dict:
+    """행정표준 기관코드 전수 (15077870) — 응답이 {StanOrgCd: [{head}, {row: [...]}]} 형태라 전용 페이지 루프."""
+    url = "https://apis.data.go.kr/1741000/StanOrgCd2/getStanOrgCdList2"
+    rows, total, calls, page = [], None, 0, 1
+    with httpx.Client(timeout=60) as c:
+        while True:
+            r = _get_retry(c, url, {"serviceKey": _key(), "pageNo": page, "numOfRows": 1000, "type": "json"})
+            calls += 1
+            if r is None:
+                break
+            try:
+                body = r.json()["StanOrgCd"]
+            except (ValueError, KeyError):
+                break
+            if total is None:
+                total = int(body[0]["head"][0]["totalCount"])
+            part = body[1]["row"] if len(body) > 1 else []
+            if not part:
+                break
+            rows += part
+            if len(rows) >= total:
+                break
+            page += 1
+    df = pd.DataFrame(rows)
+    (OUT / "15077870").mkdir(parents=True, exist_ok=True)
+    df.astype(str).to_parquet(OUT / "15077870" / "stan_org_cd.parquet", index=False)
+    rec = {"id": "15077870", "name": "stan_org_cd", "rows": len(df), "total_reported": total, "calls": calls,
+           "at": dt.datetime.now().isoformat(timespec="seconds"), "file": "data/master/15077870/stan_org_cd.parquet"}
+    LOG.mkdir(parents=True, exist_ok=True)
+    (LOG / "15077870.json").write_text(json.dumps({"stan_org_cd": rec}, ensure_ascii=False, indent=1), encoding="utf-8")
+    return rec
+
+
+PLANS["stanorg"] = stan_org_codes
+
 if __name__ == "__main__":
     import sys
     for name in sys.argv[1:] or list(PLANS):
         t0 = time.time()
         rec = PLANS[name]()
-        print(name, {k: rec[k] for k in ("rows", "total_reported", "calls", "empty_parts")}, f"{time.time() - t0:.0f}s", flush=True)
+        print(name, {k: rec.get(k) for k in ("rows", "total_reported", "calls", "empty_parts")}, f"{time.time() - t0:.0f}s", flush=True)

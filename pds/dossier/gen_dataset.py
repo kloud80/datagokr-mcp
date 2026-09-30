@@ -20,7 +20,7 @@ from pds.schema import store
 
 P = config.ROOT / "probe"
 GENERATOR = "pds.dossier.gen_dataset"
-PRESERVE = ("summary_user", "limits", "synonyms", "sla", "facets", "edges_hint", "family", "status", "cycle")
+PRESERVE = ("summary_user", "limits", "synonyms", "sla", "facets", "edges_hint", "family", "status", "cycle", "review")
 KIND = {"REST": "API", "SOAP": "API", "STD": "STD", "FILE": "FILE", "API_LINK": "EXTERNAL_API", "FILE_LINK": "EXTERNAL_FILE"}
 # synth.py 실측 키 이름 → Key id
 SYNTH_KEY = {"bizno": "bizno", "crno": "corp_rgst_no", "pnu": "pnu", "bjd": "bjd_cd", "sgg": "sgg_cd", "sido": "admin_area_code",
@@ -127,7 +127,29 @@ def _field_type(t: str | None) -> str:
     return {"number": "number", "code": "code", "text": "string", "date": "date"}.get(t or "", "any")
 
 
+# 이름으로 정체가 확정된 필드 → Key (매핑·키 원장에서 확인한 것만, 2026-09-30)
+NAME_KEY = {"ykiho": "ykiho", "hpid": "hpid", "kaptCode": "apt_complex_cd", "aptSeq": "rtms_apt_seq",
+            "longTermAdminSym": "ltc_instt_cd", "nodeid": "tago_node_id", "sttn_id": "busstop_sttn_id",
+            "SD_SCHUL_CODE": "neis_school_cd", "학교ID": "school_cd", "단지고유번호": "reb_complex_id", "필지고유번호": "pnu",
+            "pnu": "pnu", "PNU": "pnu", "LAWD_CD": "sgg_cd", "sggCd": "sgg_cd", "signguCd": "sgg_cd", "bizesId": "store_id",
+            "brno": "bizno", "bizrno": "bizno", "bzno": "bizno", "사업자등록번호": "bizno", "crno": "corp_rgst_no", "jurirno": "corp_rgst_no",
+            "법인등록번호": "corp_rgst_no", "법정동코드": "bjd_cd", "ldCode": "bjd_cd", "bjdCode": "bjd_cd", "isinCd": "stock_cd",
+            "srtnCd": "stock_cd", "hsSgn": "hs_cd",
+            # 2026-09-30 추가: 교통·선박·충전소 (키 원장의 형식 설명과 값 표본으로 확인)
+            "imoNo": "vessel_id", "clsgn": "vessel_id", "vsslNo": "vessel_id", "stn_cd": "transit_node_cd",
+            "dptre_stn_cd": "transit_node_cd", "arvl_stn_cd": "transit_node_cd", "airportId": "airport_cd",
+            "depAirportId": "airport_cd", "arrAirportId": "airport_cd", "statId": "fuel_station_id"}
+
+
+@lru_cache
+def _code_keys() -> dict:
+    """코드표 id → Key id (코드표가 조인 키이기도 한 것)."""
+    return {c["id"]: c["key"] for c, _ in store.iter_raw("code") if c.get("key")}
+
+
 def _semantic(col: str, synth_keys: dict) -> str | None:
+    if col in NAME_KEY:
+        return NAME_KEY[col]
     for k in synth_keys.get(col, []):
         if k in NAME_OK and not NAME_OK[k].search(col):
             continue
@@ -142,6 +164,19 @@ def _num(v):
     if isinstance(v, float) and v.is_integer():
         return int(v)
     return v
+
+
+@lru_cache
+def _code_index() -> dict:
+    """(데이터셋, 필드) → 코드표 id. 공식(complete) > 스캔 > 관측 순으로 하나만."""
+    rank = {"complete": 0, "master_scan": 1, "observed": 2}
+    best: dict = {}
+    for c, _ in store.iter_raw("code"):
+        for u in c.get("used_by") or []:
+            k = (u["dataset"], u["field"])
+            if k not in best or rank[c["completeness"]] < rank[best[k][1]]:
+                best[k] = (c["id"], c["completeness"])
+    return {k: v[0] for k, v in best.items()}
 
 
 def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
@@ -162,10 +197,12 @@ def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
                  "semantic_type": _semantic(str(name), kc),
                  "null_rate": round(float(s["null_rate"]), 4) if isinstance(s.get("null_rate"), (int, float)) else None,
                  "sample_values": [str(k)[:80] for k in list((s.get("top") or {}).keys())[:3]],
-                 "op": op if multi else None}
+                 "op": op if multi else None, "code_list": _code_index().get((dsid, str(name)))}
             if s.get("min") is not None or s.get("unique") is not None:
                 f["stats"] = {k: _num(s.get(k)) for k in ("min", "p50", "max") if s.get(k) is not None} | (
                     {"unique": int(s["unique"])} if s.get("unique") is not None else {})
+            if not f.get("semantic_type") and f.get("code_list") in _code_keys():
+                f["semantic_type"] = _code_keys()[f["code_list"]]
             out.append({k: v for k, v in f.items() if v not in (None, [], {})})
     return out
 

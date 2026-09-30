@@ -27,3 +27,14 @@ def test_sgg_and_road_key():
 def test_rules_catalog_matches_code():
     cat = yaml.safe_load((config.KNOWLEDGE / "rules.yaml").read_text(encoding="utf-8"))
     assert {r["id"] for r in cat} == set(RULES)
+
+
+def test_admin_name_to_code():
+    import pytest
+    from pds import config
+    from pds.rules import admin_name_to_code
+    if not (config.KNOWLEDGE / "codes" / "bjd_cd.parquet").exists():
+        pytest.skip("법정동 코드표 없음")
+    assert admin_name_to_code("종로구", "서울특별시") == "11110"
+    assert admin_name_to_code("중구") is None            # 모호
+    assert admin_name_to_code("수원시 장안구") == "41111"

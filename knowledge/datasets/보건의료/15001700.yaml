@@ -1,0 +1,214 @@
+# Dataset 15001700 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15001700'
+tier: verified
+title: 건강보험심사평가원_비급여진료비정보조회서비스
+sector: 보건의료/건강보험/nonpayment-fees
+agency:
+  id: B551182
+  name: 건강보험심사평가원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15001700/openapi.do
+synonyms:
+  - 의료통계
+  - 비급여
+  - 진료비
+  - 의료비용
+  - 보건의료빅데이터
+description_portal: '건강보험심사평가원에서 관리하는 병원급 이상 의료기관의 비급여진료비 정보를 조회하는 서비스- 비급여항목코드정보: 비급여코드(명), 중분류코드(명), 소분류코드(명), 상세분류코드(명), 적용개시일자, 적용종료일자- 비급여항목병원목록: 암호화된 요양기호, 병원명, 종별코드(명), 요양기관소재지, 비급여코드(명), 적용개시일자, 적용종료일자, 최소가격, 최대비용- 비급여진료비용종별정보: 비급여코드(명), 적용시작일, 종별 최대/최소/평균/중간비용- 비급여진료비용지역별정보: 비급여코드(명), 적용시작일, 전체최대비용, 지역별 최대/최소/평균/중간비용※ 본 비급여진료비정보조회서비스는 의료법에 의거하여 병원급 이상의 의료기관의 비급여진료비 정보를 제공중입니다.'
+team:
+  dept: 빅데이터실
+services:
+  - op: /getNonPaymentItemHospDtlList
+    name: 비급여항목병원목록상세(16.3월이후)
+    endpoint: https://apis.data.go.kr/B551182/nonPaymentDamtInfoService/getNonPaymentItemHospDtlList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '2'
+        desc: 한 페이지 결과 수
+      - name: ykiho
+        required: true
+        example: (생략)
+        desc: 암호화된 요양기호
+      - name: clCd
+        required: false
+        example: '01'
+        desc: 종별코드
+      - name: sidoCd
+        required: false
+        example: '110000'
+        desc: 시도코드
+      - name: sgguCd
+        required: false
+        example: '110008'
+        desc: 시군구코드
+      - name: yadmNm
+        required: false
+        example: 중앙대학교병원
+        desc: 병원명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 비급여 진료비 (기관별 항목별 가격)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8873
+  rank_in_sector: 3
+  brm: 보건의료 - 건강보험
+  why: 도수치료·MRI 가격 차이, 요양기관기호 × 비급여코드
+claims:
+  - id: c-15001700-01
+    kind: access
+    value: 포털 활용신청 승인유형 미기록, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15001700.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15001700.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 None
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15001700-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15001700-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15001700.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15001700-04
+    kind: coverage
+    value: 검증 수신 1행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15001700.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15001700-06
+    kind: admin_note
+    value: "세부 부문 '비급여 진료비 (기관별 항목별 가격)'의 가치: 도수치료·MRI 가격 차이, 요양기관기호 × 비급여코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#nonpayment-fees
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15001700-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 1
+  ops_ok: 1/1
+  latency_ms: 97
+  run: probe/runs/15001700.json
+  stats: probe/stats/15001700.json
+  data: probe/data/15001700/
+status: active

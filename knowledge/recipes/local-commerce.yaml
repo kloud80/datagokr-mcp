@@ -1,0 +1,93 @@
+# 레시피 초안 — 맥락 동네 상권 (KNOWLEDGE-SPEC §3.7). pds/strategy/recipe_draft.py 생성, 구름 확정 전(draft).
+# 멤버 7개 중 선언된 Edge로 이어진 7개. 이어지지 않은 멤버: 없음
+id: local-commerce
+goal_examples:
+  - 이 동네에 어떤 가게가 있고 장사가 되나 — 상가·인허가·유동·카드매출
+context: local-commerce
+datasets:
+  - id: '15012005'
+    role: primary
+  - id: '15155124'
+    role: join
+  - id: '15134735'
+    role: join
+  - id: '15155077'
+    role: join
+  - id: '15000736'
+    role: join
+  - id: '15154822'
+    role: join
+  - id: '3069985'
+    role: join
+joins:
+  - e-0039
+  - e-0096
+  - e-0105
+  - e-0036
+  - e-0167
+  - e-0169
+  - e-0175
+  - e-0192
+pipeline:
+  - step: 1
+    do: fetch
+    dataset: '15012005'
+    produces: 15012005.parquet
+  - step: 2
+    do: fetch
+    dataset: '15155124'
+    produces: 15155124.parquet
+  - step: 3
+    do: join
+    edge: e-0039
+    note: 15012005 ⋈ 15155124
+  - step: 4
+    do: join
+    edge: e-0096
+    note: 15012005 ⋈ 15123287 (허브 법정동 코드표)
+  - step: 5
+    do: fetch
+    dataset: '15134735'
+    produces: 15134735.parquet
+  - step: 6
+    do: join
+    edge: e-0105
+    note: 15123287 ⋈ 15134735 (허브 법정동 코드표)
+  - step: 7
+    do: join
+    edge: e-0036
+    note: 15012005 ⋈ 15123899 (허브 연속지적도(PNU))
+  - step: 8
+    do: fetch
+    dataset: '15155077'
+    produces: 15155077.parquet
+  - step: 9
+    do: join
+    edge: e-0167
+    note: 15123899 ⋈ 15155077 (허브 연속지적도(PNU))
+  - step: 10
+    do: fetch
+    dataset: '15000736'
+    produces: 15000736.parquet
+  - step: 11
+    do: join
+    edge: e-0169
+    note: 15123899 ⋈ 15000736 (허브 연속지적도(PNU))
+  - step: 12
+    do: fetch
+    dataset: '15154822'
+    produces: 15154822.parquet
+  - step: 13
+    do: join
+    edge: e-0175
+    note: 15123899 ⋈ 15154822 (허브 연속지적도(PNU))
+  - step: 14
+    do: fetch
+    dataset: '3069985'
+    produces: 3069985.parquet
+  - step: 15
+    do: join
+    edge: e-0192
+    note: 15123899 ⋈ 3069985 (허브 연속지적도(PNU))
+author: claude-draft
+status: draft

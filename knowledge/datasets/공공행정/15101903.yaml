@@ -1,0 +1,825 @@
+# Dataset 15101903 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15101903'
+tier: candidate
+title: 국민권익위원회_민원빅데이터_분석정보_API_2022
+sector: 공공행정/국민권익·인권/civil-complaints
+agency:
+  id: '1140100'
+  name: 국민권익위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15101903/openapi.do
+synonyms:
+  - 민원정보
+  - 민원분석
+  - 빅데이터
+  - 공공정책
+  - 민원데이터
+  - 통계
+description_portal: 국민신문고와 지자체 민원 창구 등에서 수집된 민원 데이터를 종합적으로 분석하여 제공합니다. 급증 키워드 정보, 핵심 키워드 정보, 민원분석 분류체계 정보, 맞춤형통계 정보, 키워드 트렌드 정보, 유사사례 정보,연관어 분석 정보, 오늘의 민원 이슈,민원발생 기관 순위, 민원발생 지역 순위, 키워드 기반 민원 건수 정보,지역 인구수 대비 민원 현황 정보, 최다 민원 키워드 정보, 분석보고서 정보, 키워드 기반 성별 정보, 키워드 기반 연령 정보 등의 데이터를 조회할 수 있습니다. 이를 통해 민원의 유형과 추이를 파악하고, 정책 수립 및 행정 서비스 개선에 활용할 수 있습니다.
+team:
+  dept: 민원정보분석과
+services:
+  - op: /minRisingKeyword5
+    name: 급등 키워드 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minRisingKeyword5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: analysisTime
+        required: true
+        desc: YYYYMMDDHH
+      - name: maxResult
+        required: true
+        desc: 결과로 반환될 최대 Term의 개수
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: brtcNameAKeyword
+        required: false
+        desc: 민원발생지를 시도 또는 시군구 단위로 조회. 시군구 조회 시 '시도/시군구' 형태로 입력해야함.
+      - name: classificationMulti
+        required: false
+        desc: 하위분야 구분자 ‘/’, 여러개인경우 구분자 콤마(‘,’), 민원분석 분류체계 참조
+      - name: sex
+        required: false
+        desc: 성별코드정보 (m:남, w:여, NONE:정보없음, 문서 3.3 참조)
+      - name: age
+        required: false
+        desc: 연령코드정보(0:분류불가, 10:10대, 20:20대......,90:90대, NONE;정보없음, 문서 3.4 참조)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minTopNKeyword5
+    name: 핵심 키워드 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minTopNKeyword5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: resultCount
+        required: true
+        desc: 결과 수
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: dateFrom
+        required: true
+        desc: YYYYMMDD
+      - name: dateTo
+        required: true
+        desc: YYYYMMDD
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minClfcInfo5
+    name: 민원분석 분류체계 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minClfcInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchCatName
+        required: false
+        desc: 분류명 검색 시 활용
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minStaticsInfo5
+    name: 맞춤형통계 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minStaticsInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: period
+        required: true
+        desc: '분석주기 (DAILY : 일별, MONTHLY : 월별, YEARLY : 년별)'
+      - name: sortBy
+        required: true
+        desc: 정렬 대상(NAME, VALUE)
+      - name: sortOrder
+        required: true
+        desc: 정렬 조건(true, false)
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd만 작성할 시 000000자동으로 셋팅됨, 특정시간을 지정할때는 yyyyMMddHHmmss로 14자리를 작성해서 요청할 수 있음.
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd만 작성시 현재시간으로 시분초가 셋팅됨, 특정시간을 지정할때는 yyyyMMddHHmmss로 14자리를 작성해서 요청할 수 있음.
+      - name: depCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: depCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: classificationMulti
+        required: false
+        desc: 하위분야 구분자 ‘/’, 여러개인경우 구분자 콤마(‘,’), 민원분석 분류체계 참조
+      - name: sex
+        required: false
+        desc: 성별코드정보 (m:남, w:여, NONE:정보없음, 문서 3.3 참조)
+      - name: age
+        required: false
+        desc: 연령코드정보(0:분류불가, 10:10대, 20:20대......,90:90대, NONE;정보없음, 문서 3.4 참조)
+      - name: brtcNameAKeyword
+        required: false
+        desc: 지역 한글명, 하위지역 구분자 ‘/’, 해당지역에서 발생된 민원을 조회할 수 있음.
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minSimilarInfo5
+    name: 유사사례 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minSimilarInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: startPos
+        required: true
+        desc: 페이지시작번호
+      - name: retCount
+        required: true
+        desc: 한 번에 가져올 결과 수
+      - name: searchword
+        required: true
+        desc: 질의문 또는 민원 형태의 데이터를 입력
+      - name: target
+        required: true
+        desc: 정책Q&A(qna), 공개민원(qna_origin)
+      - name: mainSubCd
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mainSubCdPath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: mngDepCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mngDepCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: minScore
+        required: false
+        desc: 유사도 점수(높을수록 완전히 일치하는 사례가 리턴됨)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minTimeSeriseView5
+    name: 키워드 트렌드 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minTimeSeriseView5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: period
+        required: true
+        desc: '분석주기(DAILY : 일별, MONTHLY : 월별, YEARLY : 년별)'
+      - name: sortBy
+        required: true
+        desc: 정렬 대상(NAME, VALUE)
+      - name: sortOrder
+        required: true
+        desc: 정렬 조건(true, false)
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd만 작성할 시 000000자동으로 셋팅됨, 특정시간을 지정할때는 yyyyMMddHHmmss로 14자리를 작성해서 요청할 수 있음.
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd만 작성시 현재시간으로 시분초가 셋팅됨, 특정시간을 지정할때는 yyyyMMddHHmmss로 14자리를 작성해서 요청할 수 있음.
+      - name: depCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: depCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mainSubCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: searchword
+        required: false
+        desc: 해당 키워드로 검색한 키워드 트렌드값 반환, 3.8 참고자료 참조
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minWdcloudInfo5
+    name: 연관어 분석 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minWdcloudInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchword
+        required: true
+        desc: 검색질의어 정보(문서 3.8 참조)
+      - name: resultCount
+        required: true
+        desc: 결과수
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: classificationMulti
+        required: false
+        desc: 하위분야 구분자 ‘/’, 여러개인경우 구분자 콤마(‘,’), 민원분석 분류체계 참조
+      - name: depCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: depCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: mainSubCd
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mainSubCdPath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: omitDuplicate
+        required: false
+        desc: 기본값:false(중복제거안함), true(중복제거), 동일한 민원들을 한 민원으로 취급
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minTodayTopicInfo5
+    name: 오늘의 민원 이슈
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minTodayTopicInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchDate
+        required: true
+        desc: yyyyMMdd
+      - name: todayTopicTopN
+        required: false
+        desc: 오늘의 이슈 N순위까지 가져옴
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: depCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minMofacetInfo5
+    name: 민원발생 기관 순위
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minMofacetInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: topN
+        required: true
+        desc: N순위까지 가져옴
+      - name: sortBy
+        required: false
+        desc: NAME, VALUE
+      - name: sortOrder
+        required: true
+        desc: true, false
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: mainSubTypeCode
+        required: false
+        desc: 기관유형코드정보(문서 3.5 참조)
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minMrfacetInfo5
+    name: 민원발생 지역 순위
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minMrfacetInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: topN
+        required: true
+        desc: N순위까지 가져옴
+      - name: sortBy
+        required: true
+        desc: NAME, VALUE
+      - name: sortOrder
+        required: true
+        desc: true, false
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mainSubCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minSearchDocCnt5
+    name: 키워드 기반 민원 건수 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minSearchDocCnt5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: searchword
+        required: false
+        desc: 검색질의어 정보(문서 3.8 참조)
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: searchOption
+        required: false
+        desc: '검색어 조회 영역, 기본값 : B0060005(제목+내용), 3.6 참고자료 참조'
+      - name: minScore
+        required: false
+        desc: 유사도 점수,  70(기본값)
+      - name: omitDuplicate
+        required: false
+        desc: 기본값:false(중복제거안함), true(중복제거), 동일한 민원들을 한 민원으로 취급
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minMrPopltnRtInfo5
+    name: 지역 인구수 대비 민원 현황 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minMrPopltnRtInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: topN
+        required: true
+        desc: N순위까지 가져옴
+      - name: sortBy
+        required: true
+        desc: NAME, VALUE
+      - name: sortOrder
+        required: true
+        desc: true, false
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: mainSubCodePath
+        required: false
+        desc: 최상위(0000000)부터 코드를 작성. 마지막 코드를 포함한 하위 코드의 결과를 조회.
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: searchType
+        required: false
+        desc: REGION:지역(시도), DETAIL_REGION:상세지역(시군구)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minDFTopNKeyword5
+    name: 최다 민원 키워드 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minDFTopNKeyword5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: period
+        required: true
+        desc: 분석대상기간정보(HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY, 문서 3.7 참조)
+      - name: analysisTime
+        required: true
+        desc: 분석대상 시간(YYYYMMDDHH)
+      - name: rangeCount
+        required: true
+        desc: 분석대상시간으로부터 period에 따른 기간, Period는 3.7 참고자료 참조
+      - name: maxResult
+        required: true
+        desc: 결과 수
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minAnalsRptstInfo5
+    name: 분석보고서 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minAnalsRptstInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: analsRptstKndCd
+        required: true
+        desc: 분석보고서 구분코드 정보(B0020001:주간동향보고서,B0020002:월간동향보고서,B0020003:이슈분석보고서)
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minPttnStstGndrInfo5
+    name: 키워드 기반 성별 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minPttnStstGndrInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: target
+        required: true
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: searchword
+        required: false
+        desc: 검색질의어 정보(문서 3.8 참조)
+      - name: dateFrom
+        required: true
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: yyyyMMdd
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: searchOption
+        required: false
+        desc: '검색어 조회 영역, 기본값 : B0060005(제목+내용), 3.6 참고자료 참조'
+      - name: minScore
+        required: false
+        desc: 유사도 점수, 70(기본값)
+      - name: omitDuplicate
+        required: false
+        desc: 기본값:false(중복제거안함), true(중복제거), 동일한 민원들을 한 민원으로 취급
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+  - op: /minPttnStstAgeInfo5
+    name: 키워드 기반 연령 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minPttnStstAgeInfo5
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataType
+        required: false
+        desc: json(기본값), xml
+      - name: target
+        required: true
+        example: pttn,dfpt,saeol
+        desc: 분석대상정보 (pttn:일반민원, dfpt:고충민원, saeol:수집민원, prpl:제안, qna:정책Q&A, qna_origin:공개민원, 문서3.2 참조)
+      - name: searchword
+        required: false
+        desc: 검색질의어 정보(문서 3.8 참조)
+      - name: dateFrom
+        required: true
+        example: '20220220'
+        desc: yyyyMMdd
+      - name: dateTo
+        required: true
+        example: '20220310'
+        desc: yyyyMMdd
+      - name: mainSubCode
+        required: false
+        desc: 기관 및 부서코드정보(3.1 참고자료 참조)
+      - name: searchOption
+        required: false
+        desc: 검색영역코드정보(B0060002:제목, B0060003:내용, B0060005:제목 + 내용, 문서 3.6 참조)
+      - name: minScore
+        required: false
+        desc: 유사도 점수, 70(기본값)
+      - name: omitDuplicate
+        required: false
+        desc: 기본값:false(중복제거안함), true(중복제거), 동일한 민원들을 한 민원으로 취급
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 민원 분석 (민원빅데이터)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8569
+  rank_in_sector: 1
+  brm: 공공행정 - 국민권익·인권
+  sector_rule: complaints-oplist-to-rights
+  why: 지역(행정구역) × 기관 × 키워드 × 월 민원 신호 — 지역 이슈의 가장 빠른 신호, 모델이 모름. 행정구역코드로 인구·실거래·상가와 결합
+claims:
+  - id: c-15101903-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-09-30 실호출 성공 오퍼레이션 0/6
+    evidence:
+      - type: measured
+        source: probe/runs/15101903.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/6
+      - type: measured
+        source: probe/apply/15101903.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15101903-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15101903-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15101903.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15101903-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15101903.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15101903-06
+    kind: admin_note
+    value: "세부 부문 '민원 분석 (민원빅데이터)'의 가치: 지역(행정구역) × 기관 × 키워드 × 월 민원 신호 — 지역 이슈의 가장 빠른 신호, 모델이 모름. 행정구역코드로 인구·실거래·상가와 결합"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#civil-complaints
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15101903-07
+    kind: admin_note
+    value: '[국민권익·인권 · 결정] 민원 분석(국민권익위원회 민원빅데이터 분석정보) 하나만 살리고 나머지는 우선 제외 (`rights-non-complaints`). 재검토 여지 있음.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L425
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15101903-10
+    kind: pitfall
+    value: 필수 파라미터 period, resultCount, retCount, searchword, sortBy, sortOrder, startPos는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15101903.json
+        observed_at: '2026-09-30'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15101903-11
+    kind: pitfall
+    value: '오퍼레이션 6개는 최소 파라미터로 응답이 없었다: /minRisingKeyword5, /minTopNKeyword5, /minClfcInfo5, /minStaticsInfo5'
+    evidence:
+      - type: measured
+        source: probe/runs/15101903.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 파라미터부족
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/6
+  latency_ms: 30018
+  run: probe/runs/15101903.json
+  stats: probe/stats/15101903.json
+  data: probe/data/15101903/
+status: active

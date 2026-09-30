@@ -1,5 +1,5 @@
 # Dataset 15125733 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125733'
 tier: verified
 title: 한국철도공사_열차수송통계정보
@@ -266,6 +266,7 @@ schema:
         - '03'
         - '75'
       op: /mainLineTravelerTrain
+      code_list: obs.b551457.mrnt_cd
       stats:
         min: 1
         p50: 8
@@ -298,12 +299,14 @@ schema:
     - name: stn_cd
       title: 역코드
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '3900280'
         - '3900023'
         - '3900096'
       op: /mainLineTravelerTrain
+      code_list: obs.b551457.stn_cd
       stats:
         min: 3900023
         p50: 3900295
@@ -323,12 +326,14 @@ schema:
     - name: arvl_stn_cd
       title: 도착역코드
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '3900447'
         - '3900920'
         - '3900113'
       op: /freightTrain
+      code_list: obs.b551457.arvl_stn_cd
       stats:
         min: 3900044
         p50: 3900447
@@ -417,6 +422,7 @@ schema:
         - '120'
         - '160'
       op: /freightTrain
+      code_list: obs.b551457.item_lclsf_cd
       stats:
         min: 110
         p50: 110
@@ -442,6 +448,7 @@ schema:
         - '121'
         - '112'
       op: /freightTrain
+      code_list: obs.b551457.item_mclsf_cd
       stats:
         min: 111
         p50: 112
@@ -467,6 +474,7 @@ schema:
         - '1211'
         - '1112'
       op: /freightTrain
+      code_list: obs.b551457.item_sclsf_cd
       stats:
         min: 1111
         p50: 1123
@@ -492,6 +500,7 @@ schema:
         - '3900113'
         - '3900548'
       op: /freightTrain
+      code_list: obs.b551457.sndng_stn_cd
       stats:
         min: 3900044
         p50: 3900548
@@ -508,6 +517,17 @@ schema:
       op: /freightTrain
       stats:
         unique: 51
+  foreign_keys:
+    - fields:
+        - stn_cd
+      reference:
+        key: transit_node_cd
+      evidence: measured
+    - fields:
+        - arvl_stn_cd
+      reference:
+        key: transit_node_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -556,7 +576,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15125733-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: transit_node_cd(stn_cd), transit_node_cd(arvl_stn_cd)'
     evidence:
       - type: measured
         source: probe/stats/15125733.json

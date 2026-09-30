@@ -1,0 +1,175 @@
+# Dataset 15098827 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15098827'
+tier: candidate
+title: 보건복지부_보건·복지현황_독거노인 수
+sector: 사회복지/노인·청소년/regional-statistics
+agency:
+  id: '1352000'
+  name: 보건복지부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15098827/openapi.do
+synonyms:
+  - 노인복지
+  - 노인
+  - 독거노인
+  - 연령
+  - 데이터
+description_portal: 보건복지부에서 관리하는 보건복지현황 중 2010년~2024년까지 독거노인 수(년도, 70-74세, 75-79세, 80-84세, 전체 등)에 대한 정보를 제공 합니다.<데이터 이용 시 유의사항>* 장래가구추계의 기준가구는 인구주택총조사와 차이가 있음- 자료의 기준시점이 장래가구추계는 7월 1일이나, 인구주택총조사는 11월 1일임* 작성대상：일반가구(가족으로 이루어진 가구, 가족과 5인 이하 남남이 함께 사는 가구, 1인 가구, 가족이 아닌 남남끼리 사는 5인 이하의 가구)만을 대상으로 하기 때문에 일반가구에 포함되지 않는 시설(기숙사나 노인요양원 등에 집단으로 살고있는 가구), 6인 이상 비친족 가구, 외국인 가구는 제외함* 독거노인수：65세 이상 1인 가구 숫자
+team:
+  dept: 정보통계담당관
+services:
+  - op: /callStat24Api
+    name: 보건복지부_보건·복지현황_독거노인 수 조회
+    endpoint: https://apis.data.go.kr/1352000/ODMS_STAT_24/callStat24Api
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: apiType
+        required: false
+        example: XML
+        desc: 데이터유형
+      - name: year
+        required: false
+        example: '2019'
+        desc: 연도
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역 연계 통계 (시군구 노인인구·독거노인·기초연금 수급·지역별 현황)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7292
+  rank_in_sector: 16
+  brm: 사회복지 - 노인·청소년
+  why: '시군구·시도 단위로 인구·시설 데이터에 연결 (구름: 지역 연계 가능한 통계만)'
+claims:
+  - id: c-15098827-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15098827.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15098827.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15098827-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098827-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15098827.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098827-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15098827.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098827-06
+    kind: admin_note
+    value: "세부 부문 '지역 연계 통계 (시군구 노인인구·독거노인·기초연금 수급·지역별 현황)'의 가치: 시군구·시도 단위로 인구·시설 데이터에 연결 (구름: 지역 연계 가능한 통계만)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15098827-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15098827-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1352000/ODMS_STAT_24/callStat24Api'
+    evidence:
+      - type: measured
+        source: probe/runs/15098827.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 승인대기
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 78
+  run: probe/runs/15098827.json
+  stats: probe/stats/15098827.json
+  data: probe/data/15098827/
+status: active

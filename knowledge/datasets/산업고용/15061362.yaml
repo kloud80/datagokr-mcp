@@ -1,0 +1,190 @@
+# Dataset 15061362 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15061362'
+tier: candidate
+title: 국토교통부_키스콘 건설업체정보 서비스
+sector: 산업고용/산업기술지원/construction-firms
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15061362/openapi.do
+synonyms:
+  - 건설산업기본법
+  - 건설업등록
+  - 행정처분
+  - 지역기반조회
+  - 건설업체정보
+  - 공시정보
+  - 등록현황
+  - 업종분류
+description_portal: '"건설사업자란 건설산업기본법에 따라 건설업을 등록하고 건설업을 하는 자를 말한다. 본 서비스는 건설산업기본법에 의거하여 건설업을 등록한 건설사업자의 정보를 제공한다. 본 API는 공시기간(sDate, eDate), 지역(시·도/시·군·구), 페이지 번호 등 다양한 조회 조건으로 등록 및 공시된 건설사업자 정보를 체계적으로 조회할 수 있도록 한다. 제공되는 데이터는 행정적·학술적·산업적 활용에 적합하며, 예컨대 정책 수립을 위한 통계작성, 건설사업자 실태조사, 입찰 및 계약 적격성 검증, 시장분석 및 리스크관리, GIS기반 사업자 분포 분석 등에 활용할 수 있다. 또한 데이터는 JSON/XML 형식으로 제공되어 시스템 연동이 용이하다. 응답에는 페이지 정보(총건수, 현재페이지, 한페이지당 건수) 및 각 업체별 상세 공시 항목이 포함된다. 제공항목은 아래와 같으며, 서비스별 제공항목은 일부 차이가 있을 수 있다.출력결과(간단 나열): 업체명, 대표자명, 소재지(시도/시군구/상세주소), 등록일자, 공시구분(신규/정정/변경/철회), 업종명, 등록번호, 사업자등록번호, 연락처, 공시일자, 변경사유, 페이지정보(총건수/페이지번호/한페이지건수) 등이다."'
+team:
+  dept: 건설정책과
+services:
+  - op: /GongsiReg
+    name: 국토교통부_건설업체등록
+    endpoint: https://apis.data.go.kr/1613000/ConAdminInfoSvc1/GongsiReg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: sDate
+        required: true
+        example: '20141201'
+        desc: 검색조건기간 공시기간시작일
+      - name: eDate
+        required: true
+        example: '20141202'
+        desc: 검색조건기간 공시기간종료일
+      - name: _type
+        required: false
+        example: json
+        desc: 데이터포맷
+      - name: ncrAreaName
+        required: false
+        example: 서울
+        desc: 등록시도
+      - name: ncrAreaDetailName
+        required: false
+        example: 종로구
+        desc: 등록시군구
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 건설업체·건설공사 (키스콘 건설업체정보·건설공사대장·건설 기술사례)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.852
+  rank_in_sector: 1
+  brm: 산업고용 - 산업기술지원
+  why: 건설업체 등록 원장, 사업자번호
+claims:
+  - id: c-15061362-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15061362.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15061362.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15061362-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15061362-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15061362.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15061362-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15061362.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15061362-06
+    kind: admin_note
+    value: "세부 부문 '건설업체·건설공사 (키스콘 건설업체정보·건설공사대장·건설 기술사례)'의 가치: 건설업체 등록 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#construction-firms
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15061362-07
+    kind: admin_note
+    value: '[산업고용 · 산업기술지원] 제품안전·인증·기술이전/기술은행·소부장 전문/으뜸기업·건설업체(키스콘)만 (`industry-tech-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L643
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15061362-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1613000/ConAdminInfoSvc1/GongsiReg'
+    evidence:
+      - type: measured
+        source: probe/runs/15061362.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 127
+  run: probe/runs/15061362.json
+  stats: probe/stats/15061362.json
+  data: probe/data/15061362/
+status: active

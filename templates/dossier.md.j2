@@ -1,0 +1,87 @@
+{#- 설명서(dossier) — KNOWLEDGE-SPEC §8. knowledge/*.yaml의 뷰. 렌더 결과(docs/dossiers/)는 커밋하지 않는다. -#}
+# {{ title }}
+
+> 생성 {{ today }} · 원본 `knowledge/` (git {{ commit }}) · 이 문서는 파생물 — 고칠 곳은 yaml
+{%- if drafts %} · **요약·한계는 LLM 초안(승인 전)**{% endif %}
+
+## 한 줄
+{{ one_line or "(요약 없음)" }}
+
+## 이 묶음의 데이터
+| id | 데이터 | 형태 | 층 | 오퍼레이션 |
+|---|---|---|---|---|
+{% for d in datasets -%}
+| {{ d.id }} | {{ d.title }} | {{ d.kind }}/{{ d.channel }} | {{ d.tier }} | {{ d.services | map(attribute='op') | join(', ') | truncate(80) }} |
+{% endfor %}
+{% for d in datasets %}
+---
+## {{ d.title }} (`{{ d.id }}`)
+
+{% if d.summary_user %}{{ d.summary_user }}{% if (d.review or {}).get('summary') == 'draft' %} *(초안)*{% endif %}{% endif %}
+
+### 법적 근거
+{% for l in d.applicable_legislation -%}
+- {{ l.law }}{% if l.articles %} 제{{ l.articles | join(', ') }}조{% endif %}{% if l.law_id %} — 원문 `knowledge/laws/{{ l.law_id }}.yaml`{% endif %}
+{% for a in law_articles(l) %}  > 제{{ a.no }}조{% if a.title %}({{ a.title }}){% endif %} {{ a.text | truncate(300) }}
+{% endfor %}
+{%- else -%}
+- 포털 보유근거: {{ d.legal_basis_portal or "없음" }}
+{% endfor %}
+{% for c in claims(d, 'legal_basis') -%}
+- {{ c.value }} {{ ev(c) }}
+{% endfor %}
+### 행정 처리 흐름·결정
+{% for c in claims(d, 'admin_note') -%}
+- {{ c.value }} {{ ev(c) }}
+{% else -%}
+- (기록 없음)
+{% endfor %}
+### 공개 시점과 갱신
+- 명세상 주기: {{ d.accrual_periodicity or "미기재" }}
+{% for c in claims(d, 'cadence') + claims(d, 'publish_lag') -%}
+- {{ c.value }} {{ ev(c) }}
+{% endfor %}
+### 컬럼 사전 (실측)
+| 컬럼 | 의미 | 타입 | null | 값 예 | 키 | 코드표 |
+|---|---|---|---|---|---|---|
+{% for f in d.schema.fields[:40] -%}
+| `{{ f.name }}` | {{ f.title or '' }} | {{ f.type }} | {{ '%.0f%%' % (f.null_rate * 100) if f.null_rate is not none else '' }} | {{ f.sample_values[:2] | join(', ') | truncate(40) }} | {{ f.semantic_type or '' }} | {{ code_ref(f) }} |
+{% endfor %}
+{% if d.schema.fields | length > 40 %}… 외 {{ d.schema.fields | length - 40 }}개{% endif %}
+
+### 조인 키·연결
+{% for fk in d.schema.foreign_keys -%}
+- `{{ fk.fields | join('+') }}` → 키 **{{ fk.reference.key }}**
+{% endfor %}
+{% for e in edges(d) -%}
+- [{{ e.id }}] {{ e.rel }} → `{{ e.other }}` {{ e.other_title }} — {{ e.on_text }}{% if e.relationship %} · {{ e.relationship }}{% endif %}{% if e.rate is not none %} · 실측 매칭 {{ '%.0f%%' % (e.rate * 100) }}{% endif %}{% if e.via %} · 매핑 `{{ e.via }}`{% endif %}
+{% else -%}
+- 선언된 Edge 없음
+{% endfor %}
+### 호출 방법·함정
+{% for s in d.services[:6] -%}
+- `{{ s.method }} {{ s.endpoint }}` — 키 `{{ s.security.name }}`({{ s.security['in'] }}, {{ s.security.issuer }}) · 승인 {{ s.approval }}{% if s.params %} · 파라미터 {{ s.params | selectattr('required') | map(attribute='name') | join(', ') }}{% endif %}
+{% endfor %}
+{% for dist in d.distributions -%}
+- 파일 {{ dist.title }} ({{ dist.format }})
+{% endfor %}
+{% for c in claims(d, 'access') + claims(d, 'pitfall') -%}
+- {{ c.value }} {{ ev(c) }}
+{% endfor %}
+### 실측 요약
+- 판정 {{ d.verification.verdict }} · 관측 {{ d.verification.probed_at }} · 수신 {{ d.verification.rows }}행{% if d.verification.total_count %} / 전체 {{ d.verification.total_count }}{% endif %}{% if d.verification.latency_ms %} · {{ d.verification.latency_ms }}ms{% endif %}
+{% for c in claims(d, 'coverage') + claims(d, 'key') -%}
+- {{ c.value }} {{ ev(c) }}
+{% endfor %}
+### 어울리는 데이터
+{% for x in contexts(d) -%}
+- 맥락 **{{ x.name }}** — {{ x.question or '' }}
+{% else -%}
+- (맥락 없음)
+{% endfor %}
+### 한계와 대체
+{{ d.limits or "(기록 없음)" }}{% if d.limits and (d.review or {}).get('summary') == 'draft' %} *(초안)*{% endif %}
+{% for c in claims(d, 'health') -%}
+- {{ c.value }} {{ ev(c) }}
+{% endfor %}
+{% endfor %}

@@ -1,5 +1,5 @@
 # Dataset 15076243 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15076243'
 tier: verified
 title: 외교부_국가∙지역별 여행경보 조정
@@ -73,6 +73,7 @@ schema:
         - '10'
         - '50'
         - '40'
+      code_list: obs.1262000.continent_cd
       stats:
         min: 10
         p50: 30
@@ -111,11 +112,13 @@ schema:
     - name: country_iso_alp2
       title: ISO 2자리코드
       type: string
+      semantic_type: country_cd
       null_rate: 0.0602
       sample_values:
         - TH
         - PH
         - CN
+      code_list: country_iso
       stats:
         unique: 109
     - name: country_nm
@@ -210,6 +213,12 @@ schema:
         min: '2009-02-15'
         max: '2026-09-04'
         unique: 381
+  foreign_keys:
+    - fields:
+        - country_iso_alp2
+      reference:
+        key: country_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -258,7 +267,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15076243-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(country_iso_alp2)'
     evidence:
       - type: measured
         source: probe/stats/15076243.json

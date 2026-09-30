@@ -1,0 +1,168 @@
+# Dataset 15098795 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15098795'
+tier: candidate
+title: 보건복지부_보건·복지현황_시도별 아동학대 발생현황
+sector: 사회복지/취약계층지원/regional-statistics
+agency:
+  id: '1352000'
+  name: 보건복지부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15098795/openapi.do
+synonyms:
+  - 아동
+  - 어린이
+  - 학대
+  - 복지부
+  - 데이터
+description_portal: 보건복지부에서 관리하는 보건복지현황 중 2015년~2024년까지 시도별 아동학대 발생현황(시도구분, 년도, 아동학대유형_중복학대, 아동학대유형_신체학대, 아동학대유형_정서학대, 등)에 대한 정보를 제공 합니다.<통계 이용 시 주의사항>○아동학대 신고･접수 건 중 일반상담 건수를 제외한 사례 중 아동학대로 판정되어 보호된 사례를 아동학대 발생 현황으로 보고○아동학대 발생 건수는 해마다 신고율이 증가하여 학대피해아동이 늘어나는 현상을 보이는 것으로 실제 학대가 증가했다고 볼 수는 없음○아동：18세 미만의 사람○아동학대：보호자를 포함한 성인이 아동의 건강 또는 복지를 해치거나 정상적 발달을 저해할 수 있는 신체적･정신적･성적 폭력이나 가혹행위를 하는 것과 아동의 보호자가 아동을 유기하거나 방임하는 것을 말함○신체학대：보호자를 포함한 성인이 아동에게 우발적인 사고가 아닌 상황에서 의도적으로 행하는 신체적 폭력 또는 가혹행위○정서학대：보호자를 포함한 성인이 아동에게 행하는 언어적 모욕, 정서적 위협, 감금이나 억제, 기타 가학적인 행위를 하는 것○성학대：보호자를 포함한 성인이 자신의 성적 욕구 충족을 목적으로 아동과 함께하는 모든 행위○방임：고의적, 반복적으로 아동양육과 보호를 소홀히 함으로써 정상적인 발달을 저해하는 모든 행위○유기：보호자로부터 보호를 받아야 하는 아동을 버리는 행위(2012년부터 유기를 방임에 포함)
+team:
+  dept: 정보통계담당관
+services:
+  - op: /callStats46Api
+    name: 보건복지부_보건·복지현황_시도별 아동학대 발생현황 조회
+    endpoint: https://apis.data.go.kr/1352000/ODMS_STAT_46/callStats46Api
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: apiType
+        required: false
+        example: XML
+        desc: 데이터유형
+      - name: year
+        required: false
+        example: '2016'
+        desc: 연도
+      - name: dvsd
+        required: false
+        example: 경기
+        desc: 시도구분
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 시도
+cycle: default
+classification:
+  subsector_name: 지역 연계 통계 (시군구·시도 단위 취약계층 현황)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6652
+  rank_in_sector: 27
+  brm: 사회복지 - 취약계층지원
+  why: 지역에 연계 가능한 통계만 (구름)
+claims:
+  - id: c-15098795-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15098795.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15098795.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15098795-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098795-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15098795.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098795-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 시도
+    evidence:
+      - type: measured
+        source: probe/runs/15098795.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15098795-06
+    kind: admin_note
+    value: "세부 부문 '지역 연계 통계 (시군구·시도 단위 취약계층 현황)'의 가치: 지역에 연계 가능한 통계만 (구름)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15098795-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1352000/ODMS_STAT_46/callStats46Api'
+    evidence:
+      - type: measured
+        source: probe/runs/15098795.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 승인대기
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 37
+  run: probe/runs/15098795.json
+  stats: probe/stats/15098795.json
+  data: probe/data/15098795/
+status: active

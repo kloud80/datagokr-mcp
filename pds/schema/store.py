@@ -21,6 +21,7 @@ PATHS = {
     "mapping": K / "mappings",       # {a}__{b}.yaml (+ .parquet)
     "recipe": K / "recipes",         # {slug}.yaml
     "law": K / "laws",               # {law_id}.yaml
+    "code": K / "codes",             # {id}.yaml (+ .parquet)
     "dataset": K / "datasets",       # {정책분야}/{id}.yaml
     "edge": K / "edges.yaml",        # 목록 한 파일
     "gap": K / "gaps.yaml",          # 목록 한 파일

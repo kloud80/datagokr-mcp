@@ -12,6 +12,9 @@
 > 4. **Claim kind에 `access` 추가.** §2.2 승격 조건(cadence·key·access)과 §7-3(승인유형 → access claim)이 요구하는데 §3.5 목록에 없어서.
 > 5. **검증 두 단계.** `pds validate`는 스키마·참조 오류를 막고, §2.2 승격 조건(Claim ≥ 3·Edge ≥ 1)은 `pds validate --strict`에서만 오류로 본다.
 >    Phase 3 작업 순서상 Edge(§7-5)보다 Dataset 생성(§7-2)이 먼저라, 그 사이에는 경고로 둔다.
+> 6. **여덟 번째 엔티티 CodeList(코드표)** — `knowledge/codes/{id}.yaml`(+parquet), 필드는 `schema.fields[].code_list`로 연결 (구름 2026-09-30 제안:
+>    "코드와 이름이 있는 데이터는 코드표를 설명에 담아야 AI가 데이터를 불러들이는 품질이 달라진다"). 순서는 **필드 전수 판정(`pds/codes/needs.py`,
+>    reports/code_needs.md) → 확보 계획(`knowledge/codes/_plan.yaml`) → 원천 확보(`pds/codes/build.py`)**. completeness: complete(공식 전체)·master_scan(전수 원장 스캔)·observed(표본).
 
 ---
 

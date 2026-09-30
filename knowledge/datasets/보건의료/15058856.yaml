@@ -1,5 +1,5 @@
 # Dataset 15058856 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058856'
 tier: verified
 title: 국민건강보험공단_장기요양기관 시설별 상세조회 서비스
@@ -83,6 +83,7 @@ schema:
     - name: longTermAdminSym
       title: 장기요양기관코드
       type: number
+      semantic_type: ltc_instt_cd
       null_rate: 0.0
       sample_values:
         - '14139000308'
@@ -100,6 +101,12 @@ schema:
         - 더베스트내과의원
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - longTermAdminSym
+      reference:
+        key: ltc_instt_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -147,7 +154,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15058856-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ltc_instt_cd(longTermAdminSym)'
     evidence:
       - type: measured
         source: probe/stats/15058856.json

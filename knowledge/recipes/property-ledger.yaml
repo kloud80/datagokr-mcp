@@ -1,0 +1,93 @@
+# 레시피 초안 — 맥락 부동산 원장 사슬 (필지 → 건물 → 호) (KNOWLEDGE-SPEC §3.7). pds/strategy/recipe_draft.py 생성, 구름 확정 전(draft).
+# 멤버 7개 중 선언된 Edge로 이어진 7개. 이어지지 않은 멤버: 없음
+id: property-ledger
+goal_examples:
+  - 이 집·땅의 가격·규모·거래
+context: property-ledger
+datasets:
+  - id: '15057332'
+    role: primary
+  - id: '15106861'
+    role: join
+  - id: '15126468'
+    role: join
+  - id: '15124006'
+    role: join
+  - id: '15124014'
+    role: join
+  - id: '15134735'
+    role: join
+  - id: '15107729'
+    role: join
+joins:
+  - e-0118
+  - e-0119
+  - e-0092
+  - e-0094
+  - e-0095
+  - e-0105
+  - e-0070
+  - e-0133
+pipeline:
+  - step: 1
+    do: fetch
+    dataset: '15057332'
+    produces: 15057332.parquet
+  - step: 2
+    do: fetch
+    dataset: '15106861'
+    produces: 15106861.parquet
+  - step: 3
+    do: join
+    edge: e-0118
+    note: 15057332 ⋈ 15106861
+  - step: 4
+    do: fetch
+    dataset: '15126468'
+    produces: 15126468.parquet
+  - step: 5
+    do: join
+    edge: e-0119
+    note: 15057332 ⋈ 15126468
+  - step: 6
+    do: join
+    edge: e-0092
+    note: 15057332 ⋈ 15123287 (허브 법정동 코드표)
+  - step: 7
+    do: fetch
+    dataset: '15124006'
+    produces: 15124006.parquet
+  - step: 8
+    do: join
+    edge: e-0094
+    note: 15123287 ⋈ 15124006 (허브 법정동 코드표)
+  - step: 9
+    do: fetch
+    dataset: '15124014'
+    produces: 15124014.parquet
+  - step: 10
+    do: join
+    edge: e-0095
+    note: 15123287 ⋈ 15124014 (허브 법정동 코드표)
+  - step: 11
+    do: fetch
+    dataset: '15134735'
+    produces: 15134735.parquet
+  - step: 12
+    do: join
+    edge: e-0105
+    note: 15123287 ⋈ 15134735 (허브 법정동 코드표)
+  - step: 13
+    do: fetch
+    dataset: '15107729'
+    produces: 15107729.parquet
+  - step: 14
+    do: join
+    edge: e-0070
+    note: 15123287 ⋈ 15107729 (허브 법정동 코드표)
+  - step: 15
+    do: join
+    edge: e-0133
+    note: 15107729 ⋈ 15123899 (허브 연속지적도(PNU))
+author: claude-draft
+status: draft

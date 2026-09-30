@@ -99,6 +99,7 @@ class TableField(Strict):
     sample_values: list[str] = Field(default_factory=list)
     stats: FieldStats | None = None
     op: str | None = Field(None, description="여러 오퍼레이션이면 어느 응답의 컬럼인가")
+    code_list: str | None = Field(None, description="knowledge/codes/{id} — 코드값의 뜻")
 
 
 class ForeignKeyRef(Strict):
@@ -186,6 +187,7 @@ class Dataset(Strict):
     edges_hint: list[str] = Field(default_factory=list)
     verification: Verification | None = None
     limits: str | None = None
+    review: dict[str, Any] | None = Field(None, description="초안·승인 상태 {summary: draft|approved, by, at, …} — 승인은 구름")
     status: Literal["active", "suspect_dead", "hidden", "ended"] = "active"
 
     @model_validator(mode="after")

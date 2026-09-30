@@ -1,0 +1,167 @@
+# Dataset 15107409 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15107409'
+tier: candidate
+title: 행정안전부_통계연보_지역별·세목별 지방세 규모
+sector: 재정금융/세제/regional-tax
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107409/openapi.do
+synonyms:
+  - 지방세규모
+  - 지역별
+  - 세목별
+  - 현년도
+  - 과년도
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방재정' 중 '지방세', '지역별·세목별 지방세 규모'에 관한 통계입니다. 서울, 부산, 대구, 인천, 광주, 대전 등을 기준으로 지역별·세목별 지방세 규모를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getAmountTaxByRegiTaxCategory
+    name: 지역별·세목별 지방세 규모 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/AmountTaxByRegionTaxCategory/getAmountTaxByRegiTaxCategory
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.5373
+  rank_in_sector: 2
+  brm: 재정금융 - 세제
+  why: 시도·시군구 격자 — 지역 지표로 연결
+claims:
+  - id: c-15107409-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107409.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15107409.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15107409-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15107409-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107409.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15107409-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107409.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15107409-06
+    kind: admin_note
+    value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-tax
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107409-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107409-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getAmountTaxByRegiTaxCategory'
+    evidence:
+      - type: measured
+        source: probe/runs/15107409.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 승인대기
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 51
+  run: probe/runs/15107409.json
+  stats: probe/stats/15107409.json
+  data: probe/data/15107409/
+status: active

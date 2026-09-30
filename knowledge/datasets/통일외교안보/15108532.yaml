@@ -1,0 +1,189 @@
+# Dataset 15108532 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15108532'
+tier: candidate
+title: 국가보훈부_국립묘지_안장자_공훈정보
+sector: 통일외교안보/보훈/veteran-merit-records
+agency:
+  id: '1830000'
+  name: 국가보훈부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108532/openapi.do
+synonyms:
+  - 국립묘지
+  - 안장자
+  - 공훈
+description_portal: 국가보훈부 소속 국립묘지 안장자의 정보 및 공훈정보 검색 서비스입니다. (기준일 현재 대전현충원 안장자에 대한 공훈정보만을 제공하고 있습니다.)* `25. 7월 현재 원천 시스템 운영에 어려움이 있어 API 서비스 제공을 일시 중단합니다.  (서비스 재개 일정 미정)
+team:
+  dept: 정보화담당관실
+services:
+  - op: /Merits
+    name: 안장자정보 및 공훈정보 검색
+    endpoint: https://apis.data.go.kr/1180000/NationalCemeteryMerits/Merits
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: areaname
+        required: true
+        example: 대전현충원
+        desc: 국립묘지명
+      - name: name
+        required: true
+        example: 최규하
+        desc: 안장자명
+      - name: deathday
+        required: false
+        example: '1951-06-25'
+        desc: 사망일
+      - name: qualification
+        required: false
+        example: 국가유공자
+        desc: 안장자격
+      - name: burrday
+        required: false
+        example: '1995-06-25'
+        desc: 안장일
+      - name: sn
+        required: false
+        example: '123456'
+        desc: ' 군번'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.437
+  rank_in_sector: 81
+  brm: 통일외교안보 - 보훈
+  why: 개인 단위 공훈 원장 — 국립묘지 안장자 검색, 독립운동 인물
+claims:
+  - id: c-15108532-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15108532.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15108532.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15108532-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108532-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15108532.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108532-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15108532.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15108532-06
+    kind: admin_note
+    value: "세부 부문 '공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)'의 가치: 개인 단위 공훈 원장 — 국립묘지 안장자 검색, 독립운동 인물"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#veteran-merit-records
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15108532-07
+    kind: admin_note
+    value: '[통일외교안보 · 보훈] 공훈·안장자 기록, 현충시설·보훈단체·보훈병원(병상·비급여), 보훈대상자 취업, 시군구 보훈대상자 인원만. 보훈복지의료공단 파일 대부분(병원 내부 진료·검사·영양·EMR)은 배제 (`veterans-deferred`, `veterans-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L696
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108532-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /Merits'
+    evidence:
+      - type: measured
+        source: probe/runs/15108532.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 36
+  run: probe/runs/15108532.json
+  stats: probe/stats/15108532.json
+  data: probe/data/15108532/
+status: active

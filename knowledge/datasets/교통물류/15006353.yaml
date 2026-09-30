@@ -1,5 +1,5 @@
 # Dataset 15006353 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15006353'
 tier: verified
 title: 해양수산부_선박운항정보
@@ -116,6 +116,7 @@ schema:
     - name: clsgn
       title: 호출부호
       type: code
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - C6UM3
@@ -186,9 +187,11 @@ schema:
     - name: frstDpmprtNatPrtCd
       title: 최초출항지국가항구코드
       type: code
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - USDUT
+      code_list: port_locode
       stats:
         unique: 1
     - name: frstDpmprtPrtNm
@@ -202,9 +205,11 @@ schema:
     - name: prvsDpmprtNatPrtCd
       title: 전출항지국가항구코드
       type: code
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - CNDLC
+      code_list: port_locode
       stats:
         unique: 1
     - name: prvsDpmprtPrtNm
@@ -218,9 +223,11 @@ schema:
     - name: nxlnptNatPrtCd
       title: 차항지국가항구코드
       type: code
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - USDUT
+      code_list: port_locode
       stats:
         unique: 1
     - name: nxlnptPrtNm
@@ -234,9 +241,11 @@ schema:
     - name: dstnNatPrtCd
       title: 목적지국가항구코드
       type: code
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - USDUT
+      code_list: port_locode
       stats:
         unique: 1
     - name: dstnPrtNm
@@ -252,6 +261,32 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - clsgn
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - frstDpmprtNatPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
+    - fields:
+        - prvsDpmprtNatPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
+    - fields:
+        - nxlnptNatPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
+    - fields:
+        - dstnNatPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -299,7 +334,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15006353-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(clsgn), port_cd(frstDpmprtNatPrtCd), port_cd(prvsDpmprtNatPrtCd), port_cd(nxlnptNatPrtCd), port_cd(dstnNatPrtCd)'
     evidence:
       - type: measured
         source: probe/stats/15006353.json

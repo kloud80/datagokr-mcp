@@ -1,0 +1,214 @@
+# Dataset 15057131 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057131'
+tier: candidate
+title: 기후에너지환경부 국립환경과학원_하천별 통계 서비스
+sector: 국토관리/수자원/river-registry
+domain: 국토관리/기반시설
+agency:
+  id: '1482021'
+  name: 기후에너지환경부 국립환경과학원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057131/openapi.do
+synonyms:
+  - 전국오염원조사
+  - 하천별
+  - 수질오염원
+description_portal: 물환경보전법 제23조 및 동법 시행규칙 제32조에 따라 매년 전국 광역지자체(17개). 기초지자체(230개)에서 제출한 자료를 바탕으로 국립환경과학원에서 통계자료 등과 비교·검토하여 확정한 자료임. 조사항목은 생활계, 축산계, 산업계, 토지계(국토부자료), 양식계, 매립계, 환경기초시설, 기타수질오염원 8개 항목에 대하여 조사하며, 국가하천 및 지방하천 등 전국 하천별 오염원 항목별로 통계자료를 작성하여 제공함
+team:
+  dept: 물환경연구부 유역총량연구과
+services:
+  - op: /getRivrLvlhPpnSttusInfo
+    name: 하천별 생활계 인구현황 통계정보조회
+    endpoint: https://apis.data.go.kr/1480523/RivrStatService/getRivrLvlhPpnSttusInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: resultType
+        required: false
+        example: xml
+        desc: 결과형식
+      - name: startYear
+        required: false
+        example: '2012'
+        desc: 검색시작년도
+      - name: endYear
+        required: false
+        example: '2014'
+        desc: 검색종료년도
+      - name: riv_cd
+        required: false
+        example: '1016010'
+        desc: 하천코드
+      - name: riv_nm
+        required: false
+        example: 한탄강
+        desc: riv_nm
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6814
+  rank_in_sector: 46
+  brm: 환경기상 - 상하수도·수질
+  sector_rule: water-core-scattered
+  why: 하천코드(WAMIS)·유역 권역 = 공간 규제 원장(하천구역 안팎은 건축 규제), 국가공간정보포털과 중복
+claims:
+  - id: c-15057131-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15057131.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15057131.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15057131-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057131-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057131.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057131-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057131.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15057131-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15057131-06
+    kind: admin_note
+    value: "세부 부문 '하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)'의 가치: 하천코드(WAMIS)·유역 권역 = 공간 규제 원장(하천구역 안팎은 건축 규제), 국가공간정보포털과 중복"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#river-registry
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057131-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057131-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1480523/RivrStatService/getRivrLvlhPpnSttusInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15057131.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 116
+  run: probe/runs/15057131.json
+  stats: probe/stats/15057131.json
+  data: probe/data/15057131/
+status: active

@@ -1,0 +1,140 @@
+# Dataset 15004788 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15004788'
+tier: candidate
+title: 전북특별자치도 전주시_무선인터넷 존
+sector: 과학기술/방송통신/public-wifi
+agency:
+  id: '4641000'
+  name: 전북특별자치도 전주시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15004788/openapi.do
+synonyms:
+  - 무선
+  - 와이파이
+  - 인터넷
+description_portal: 전주시의 무선인터넷존 위치 정보 서비스를 제공한다.
+team:
+  dept: 신성장산업과
+services:
+  - op: /getWifiList
+    endpoint: http://openapi.jeonju.go.kr/rest/wifizone/getWifiList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 공공와이파이
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.6583
+  rank_in_sector: 17
+  brm: 과학기술 - 방송통신
+  why: 공공와이파이
+claims:
+  - id: c-15004788-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15004788.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15004788.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15004788-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15004788-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15004788.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15004788-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15004788.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15004788-06
+    kind: admin_note
+    value: '[방송통신 · 결정] 주소나 사업자번호가 있는 원장만 남기고 통계는 배제 (`broadcast-no-address-biz`). URL·메일·홈페이지 "주소"는 연계 키가 아니므로 판정에서 제외(전 부문 공통 개선).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L450
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15004788-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: http://openapi.jeonju.go.kr/rest/wifizone/getWifiList'
+    evidence:
+      - type: measured
+        source: probe/runs/15004788.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 81
+  run: probe/runs/15004788.json
+  stats: probe/stats/15004788.json
+  data: probe/data/15004788/
+status: active

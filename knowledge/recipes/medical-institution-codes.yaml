@@ -1,0 +1,66 @@
+# 레시피 초안 — 맥락 의료기관 3코드 (KNOWLEDGE-SPEC §3.7). pds/strategy/recipe_draft.py 생성, 구름 확정 전(draft).
+# 멤버 5개 중 선언된 Edge로 이어진 5개. 이어지지 않은 멤버: 없음
+id: medical-institution-codes
+goal_examples:
+  - 의료기관 3코드
+context: medical-institution-codes
+datasets:
+  - id: '15000563'
+    role: primary
+  - id: '15000736'
+    role: join
+  - id: '15001698'
+    role: join
+  - id: '15051057'
+    role: join
+  - id: '15154822'
+    role: join
+joins:
+  - e-0115
+  - e-0124
+  - e-0168
+  - e-0172
+  - e-0175
+pipeline:
+  - step: 1
+    do: fetch
+    dataset: '15000563'
+    produces: 15000563.parquet
+  - step: 2
+    do: fetch
+    dataset: '15000736'
+    produces: 15000736.parquet
+  - step: 3
+    do: join
+    edge: e-0115
+    note: 15000563 ⋈ 15000736
+  - step: 4
+    do: fetch
+    dataset: '15001698'
+    produces: 15001698.parquet
+  - step: 5
+    do: join
+    edge: e-0124
+    note: 15000563 ⋈ 15001698
+  - step: 6
+    do: join
+    edge: e-0168
+    note: 15000563 ⋈ 15123899 (허브 연속지적도(PNU))
+  - step: 7
+    do: fetch
+    dataset: '15051057'
+    produces: 15051057.parquet
+  - step: 8
+    do: join
+    edge: e-0172
+    note: 15123899 ⋈ 15051057 (허브 연속지적도(PNU))
+  - step: 9
+    do: fetch
+    dataset: '15154822'
+    produces: 15154822.parquet
+  - step: 10
+    do: join
+    edge: e-0175
+    note: 15123899 ⋈ 15154822 (허브 연속지적도(PNU))
+author: claude-draft
+status: draft

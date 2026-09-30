@@ -1,5 +1,5 @@
 # Dataset 15125762 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125762'
 tier: verified
 title: 한국철도공사_열차운행정보
@@ -170,11 +170,13 @@ schema:
     - name: arvl_stn_cd
       title: 도착역코드
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '3900023'
         - '3900114'
         - '3900025'
+      code_list: obs.b551457.arvl_stn_cd
       stats:
         min: 3900023
         p50: 3900114
@@ -193,11 +195,13 @@ schema:
     - name: dptre_stn_cd
       title: 출발역코드
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '3900023'
         - '3900114'
         - '3900025'
+      code_list: obs.b551457.dptre_stn_cd
       stats:
         min: 3900023
         p50: 3900133.5
@@ -262,6 +266,17 @@ schema:
         min: '2026-09-28'
         max: '2026-09-29'
         unique: 694
+  foreign_keys:
+    - fields:
+        - arvl_stn_cd
+      reference:
+        key: transit_node_cd
+      evidence: measured
+    - fields:
+        - dptre_stn_cd
+      reference:
+        key: transit_node_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -310,7 +325,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15125762-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: transit_node_cd(arvl_stn_cd), transit_node_cd(dptre_stn_cd)'
     evidence:
       - type: measured
         source: probe/stats/15125762.json

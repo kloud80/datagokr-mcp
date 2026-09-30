@@ -1,0 +1,218 @@
+# Dataset 15058883 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058883'
+tier: candidate
+title: 해양수산부_해역이용협의정보 서비스
+sector: 환경기상/환경일반/eia
+agency:
+  id: '1192000'
+  name: 해양수산부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15058883/openapi.do
+synonyms:
+  - 해역
+  - 해역이용
+  - 협의정보
+description_portal: 접수연도, 사업명을 이용해 사업번호, 접수일, 결과명, 진행단계명, 사업명, 사업시행자, 사업유형명, 사업유형 기타, 주소시도, 주소구군, 주소읍면동, 사업 소재지 상세주소, 사업 시작일, 사업 종료일, 사업비, 사업규모, 사업목적, 처분기관, 비고, 협의 상태, 위도, 경도를 조회하는 공공데이터 API서비스 입니다.
+team:
+  dept: 해양환경정책과
+services:
+  - op: /getOceansUseInfo2
+    name: 해역이용협의정보조회
+    endpoint: https://apis.data.go.kr/1192000/service/OceansUseService2/getOceansUseInfo2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: ACP_YEAR
+        required: false
+        example: '2013'
+        desc: 접수연도
+      - name: BIZ_NAM
+        required: false
+        example: 선박 피해방지용 침추 설치 (현대미포조선 3안벽 전면)
+        desc: 사업명
+      - name: resultType
+        required: false
+        desc: 결과형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /OceansUseService2
+    name: (요청주소)
+    endpoint: https://apis.data.go.kr/1192000/service/OceansUseService2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: ACP_YEAR
+        required: false
+        example: '2013'
+        desc: 접수연도
+      - name: BIZ_NAM
+        required: false
+        example: 선박 피해방지용 침추 설치 (현대미포조선 3안벽 전면)
+        desc: 사업명
+      - name: resultType
+        required: false
+        desc: 결과형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8064
+  rank_in_sector: 1
+  brm: 환경기상 - 해양환경
+  sector_rule: env-eia-to-general
+  why: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결
+claims:
+  - id: c-15058883-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/2
+    evidence:
+      - type: measured
+        source: probe/runs/15058883.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/2
+      - type: measured
+        source: probe/apply/15058883.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15058883-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058883-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058883.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058883-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15058883.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15058883-06
+    kind: admin_note
+    value: "세부 부문 '환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)'의 가치: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#eia
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058883-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058883-10
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1192000/service/OceansUseService2/getOceansUseInfo2, https://apis.data.go.kr/1192000/service/OceansUseService2'
+    evidence:
+      - type: measured
+        source: probe/runs/15058883.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/2
+  latency_ms: 52
+  run: probe/runs/15058883.json
+  stats: probe/stats/15058883.json
+  data: probe/data/15058883/
+status: active

@@ -17,3 +17,19 @@
   function: pds.rules.road_key
   keys: [address]
   note: 전남광주통합특별시·강원/전북특별자치도처럼 시도 명칭이 기관마다 달라 시도는 쓰지 않는다
+- id: R-12
+  name: 좌표(WGS84) → PNU — 브이월드 연속지적도 점 포함 필지
+  function: pds.rules.coord_to_pnu
+  keys: [coord, pnu]
+  note: 외부 호출(브이월드 key). 좌표만 있는 데이터를 필지 축(PNU)에 붙이는 공간 조인
+- id: R-13
+  name: 주소 → 좌표 — 브이월드 지오코더(도로명 → 지번 순)
+  function: pds.rules.address_to_coord
+  keys: [address, coord]
+  note: 이어서 R-12로 PNU. 주소 표기 품질에 따라 실패율이 있다 (join 프로브로 실측)
+- id: R-14
+  name: 행정구역 이름 → 코드 (법정동 코드표 이름 매칭)
+  function: pds.rules.admin_name_to_code
+  keys: [admin_area_code, sgg_cd, bjd_cd]
+  note: '중구·동구처럼 여러 시도에 있는 이름은 시도 이름(parent)이 있어야 한다. 모호하면 None'
+

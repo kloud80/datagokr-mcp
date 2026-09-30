@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import Field, model_validator
 
-from pds.schema.common import Strict
+from pds.schema.common import Evidence, Strict  # noqa: F401 — CodeList.evidence
 
 DIMENSIONS = ("life_context", "spatial_regulation", "admin_area", "shared_key", "shared_source", "same_concept", "economic")
 
@@ -188,6 +188,48 @@ class Recipe(Strict):
         steps = [s.step for s in self.pipeline]
         if steps != sorted(steps) or len(set(steps)) != len(steps):
             raise ValueError("step 번호는 증가하는 고유값")
+        return self
+
+
+# ─────────────────────────── CodeList — knowledge/codes/{id}.yaml (+ .parquet) — 적용 메모 6 (2026-09-30 구름 제안)
+class CodeValue(Strict):
+    code: str
+    name: str
+    count: int | None = Field(None, description="관측·스캔 빈도")
+    valid: bool = True
+    note: str | None = None
+
+
+class CodeUse(Strict):
+    dataset: str
+    field: str
+    name_field: str | None = Field(None, description="같은 응답에 이름 컬럼이 같이 오면")
+
+
+class CodeList(Strict):
+    """코드값 → 이름표. AI가 필터 파라미터를 정확히 넣고 결과를 사람 말로 풀려면 전수가 필요하다."""
+    id: str = Field(pattern=r"^[a-z0-9][a-z0-9_.\-]*$")
+    name: str
+    key: str | None = Field(None, description="이 코드가 조인 키이기도 하면 Key id (예: bjd_cd)")
+    completeness: Literal["complete", "master_scan", "observed"] = Field(
+        description="complete=공식 원천 전체 · master_scan=전수 원장을 훑어 쓰이는 값 전부 · observed=표본에서 본 값만")
+    evidence: list["Evidence"] = Field(min_length=1)
+    aliases: list[str] = Field(default_factory=list, description="이 코드를 싣는 컬럼 이름들 (예: lndcgrCode, jimok)")
+    values: list[CodeValue] = Field(default_factory=list)
+    file: str | None = Field(None, description="값이 많으면 parquet (code, name, valid, …)")
+    rows: int = Field(ge=1)
+    used_by: list[CodeUse] = Field(default_factory=list)
+    notes: str | None = None
+
+    @model_validator(mode="after")
+    def _values_or_file(self):
+        if not self.values and not self.file:
+            raise ValueError("values 또는 file")
+        if self.values and len(self.values) != self.rows:
+            raise ValueError(f"rows {self.rows} ≠ values {len(self.values)}")
+        codes = [v.code for v in self.values]
+        if len(codes) != len(set(codes)):
+            raise ValueError("code 중복")
         return self
 
 

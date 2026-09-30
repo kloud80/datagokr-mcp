@@ -44,4 +44,68 @@ def road_key(addr: str) -> str | None:
     return rk(addr)
 
 
-RULES = {"R-02": sgg_from_bjd, "R-07": pnu_from_parts, "R-07-rtms": pnu_from_rtms, "R-11": road_key}
+def _vworld() -> tuple[str, str]:
+    import json
+    from pds import config
+    v = json.loads((config.ROOT / "secrets" / "keys.json").read_text(encoding="utf-8"))["vworld"]
+    return v["key"], v.get("domain", "bv")
+
+
+def coord_to_pnu(lat: float, lon: float, client=None) -> str | None:
+    """R-12 좌표(WGS84) → 그 점을 포함하는 필지의 PNU (브이월드 연속지적도 LP_PA_CBND_BUBUN, POINT 필터)."""
+    import httpx
+    key, domain = _vworld()
+    c = client or httpx.Client(timeout=30)
+    r = c.get("https://api.vworld.kr/req/data", params={"service": "data", "request": "GetFeature", "data": "LP_PA_CBND_BUBUN",
+              "geomFilter": f"POINT({lon} {lat})", "format": "json", "size": 1, "geometry": "false", "key": key, "domain": domain})
+    try:
+        feats = ((r.json()["response"].get("result") or {}).get("featureCollection") or {}).get("features") or []
+    except (ValueError, KeyError):
+        return None
+    return feats[0]["properties"].get("pnu") if feats else None
+
+
+def address_to_coord(address: str, client=None) -> tuple[float, float] | None:
+    """R-13 주소 → 좌표 (브이월드 지오코더: 도로명 먼저, 실패하면 지번). 이어서 R-12로 PNU."""
+    import httpx
+    key, _ = _vworld()
+    c = client or httpx.Client(timeout=30)
+    for typ in ("road", "parcel"):
+        r = c.get("https://api.vworld.kr/req/address", params={"service": "address", "request": "getcoord", "crs": "epsg:4326",
+                  "address": address, "format": "json", "type": typ, "key": key})
+        try:
+            res = r.json()["response"]
+        except (ValueError, KeyError):
+            continue
+        if res.get("status") == "OK":
+            pt = res["result"]["point"]
+            return float(pt["y"]), float(pt["x"])
+    return None
+
+
+_BJD_NAMES: dict | None = None
+
+
+def admin_name_to_code(name: str, parent: str | None = None) -> str | None:
+    """R-14 행정구역 이름 → 코드 (법정동 코드표 knowledge/codes/bjd_cd.parquet의 현행 코드). '종로구'처럼 모호하면 parent(시도 이름)로 좁힌다.
+    시군구는 5자리, 시도는 2자리, 읍면동은 10자리로 돌려준다."""
+    global _BJD_NAMES
+    if _BJD_NAMES is None:
+        from pds import config
+        t = pd.read_parquet(config.KNOWLEDGE / "codes" / "bjd_cd.parquet")
+        t = t[t["valid"].astype(str).isin(["True", "true", "1"])]
+        _BJD_NAMES = {}
+        for code, full in zip(t["code"], t["name"]):
+            toks = full.split()
+            level = 2 if code[2:] == "0" * 8 else 5 if code[5:] == "0" * 5 else 10
+            _BJD_NAMES.setdefault(toks[-1], []).append((code[:level], full))
+    n = str(name or "").strip().split()[-1] if name else ""
+    hits = _BJD_NAMES.get(n, []) if n else []
+    if parent:
+        hits = [h for h in hits if str(parent).strip()[:2] in h[1]] or hits
+    codes = {h[0] for h in hits}
+    return codes.pop() if len(codes) == 1 else None
+
+
+RULES = {"R-02": sgg_from_bjd, "R-07": pnu_from_parts, "R-07-rtms": pnu_from_rtms, "R-11": road_key,
+         "R-12": coord_to_pnu, "R-13": address_to_coord, "R-14": admin_name_to_code}

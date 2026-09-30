@@ -1,5 +1,5 @@
 # Dataset 15086418 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15086418'
 tier: verified
 title: 한국산업인력공단_NCS 교육과정
@@ -60,9 +60,11 @@ schema:
     - name: ncsLclasCd
       title: 대분류코드
       type: number
+      semantic_type: job_code
       null_rate: 0.0
       sample_values:
         - '01'
+      code_list: ncs
       stats:
         min: 1
         p50: 1
@@ -79,9 +81,11 @@ schema:
     - name: ncsMclasCd
       title: 중분류코드
       type: number
+      semantic_type: job_code
       null_rate: 0.0
       sample_values:
         - '01'
+      code_list: ncs
       stats:
         min: 1
         p50: 1
@@ -98,9 +102,11 @@ schema:
     - name: ncsSclasCd
       title: 소분류코드
       type: number
+      semantic_type: job_code
       null_rate: 0.0
       sample_values:
         - '01'
+      code_list: ncs
       stats:
         min: 1
         p50: 1
@@ -117,10 +123,12 @@ schema:
     - name: ncsSubdCd
       title: 세분류코드
       type: number
+      semantic_type: job_code
       null_rate: 0.0
       sample_values:
         - '01'
         - '02'
+      code_list: ncs
       stats:
         min: 1
         p50: 1
@@ -325,6 +333,27 @@ schema:
         - "요구사항 확인이란 업무 분석가가 수집･분석･정의한 요구사항과 이에 따른 분석모델에 대해서 확인과 현행 시스템에 대해 분석하는 능력이다.\r\n프로젝"
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - ncsLclasCd
+      reference:
+        key: job_code
+      evidence: measured
+    - fields:
+        - ncsMclasCd
+      reference:
+        key: job_code
+      evidence: measured
+    - fields:
+        - ncsSclasCd
+      reference:
+        key: job_code
+      evidence: measured
+    - fields:
+        - ncsSubdCd
+      reference:
+        key: job_code
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -372,7 +401,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15086418-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: job_code(ncsLclasCd), job_code(ncsMclasCd), job_code(ncsSclasCd), job_code(ncsSubdCd)'
     evidence:
       - type: measured
         source: probe/stats/15086418.json

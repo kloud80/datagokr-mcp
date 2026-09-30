@@ -105,7 +105,10 @@ def _items_json(obj: Any) -> list[dict] | None:
         return None
     for k in ("item", "items", "data", "list", "row", "rows", "result", "body", "response"):
         if k in obj:
-            got = _items_json(obj[k])
+            v = obj[k]
+            if k in ("item", "row") and isinstance(v, dict) and v and all(not isinstance(x, (dict, list)) for x in v.values()):
+                return [v]  # 단건 조회: item이 목록이 아니라 객체 하나 (예: 공동주택 기본정보 kaptCode 조회)
+            got = _items_json(v)
             if got is not None:
                 return got
     for v in obj.values():

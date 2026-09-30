@@ -1,0 +1,157 @@
+# Dataset 15056672 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056672'
+tier: candidate
+title: 과학기술정보통신부 우정사업본부_우체국 배달점주소 조회 서비스
+sector: 과학기술/우정/postal-delivery
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15056672/openapi.do
+synonyms:
+  - 경제경영
+  - 마케팅
+  - 물류유통관리
+  - 배달점 주소
+  - 집배구번호
+  - 주소
+  - 우편번호
+  - 우체국
+description_portal: '주소정보를 입력하면 해당 주소의 집배구번호, 좌표정보를 제공하는 OPEN API 서비스 입니다.ㅇ 출력하는 항목(사용자가 응답 받게 되는 데이터) : 우편번호, 주소, 집배구번호, X좌표, Y좌표이 문서는 우체국 배달점주소 조회 서비스를 공공데이터 OpenAPI로 활용하기 위한 기술 가이드입니다. API 서비스 개요, 상세 기능 목록, 각 기능별 요청·응답 메시지 명세, 필수·옵션 항목 구분, 복수건 처리 규칙, 요청·응답 예제, 에러 코드 목록 등을 포함합니다. 개발자가 배달점주소 데이터를 효율적으로 연동·활용할 수 있도록 구조와 규격을 제공하며, 주소 기반의 배송 서비스 구현 및 품질 향상에 필요한 표준화된 정보를 제시합니다.'
+team:
+  dept: 우정사업정보센터 인터넷우체국팀
+services:
+  - op: /getDeliveryCdService
+    endpoint: http://openapi.epost.go.kr/postal/registerDeliveryCdService/registerDeliveryCdService/getDeliveryCdService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 우편번호·배달
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7705
+  rank_in_sector: 7
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-postal-to-postal
+  why: 우편번호(기초구역) 단위 택배·배달 물량, 소포 종적 — 지역 소비·물류 신호
+claims:
+  - id: c-15056672-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15056672.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15056672.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15056672-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15056672-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056672.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15056672-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15056672.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15056672-06
+    kind: admin_note
+    value: "세부 부문 '우편번호·배달'의 가치: 우편번호(기초구역) 단위 택배·배달 물량, 소포 종적 — 지역 소비·물류 신호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#postal-delivery
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056672-07
+    kind: admin_note
+    value: '[과학기술 - 우정 · 결정] 우편번호·배달·주소만 남기고 나머지 전부 제외 (`postal-non-address`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L435
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056672-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: http://openapi.epost.go.kr/postal/registerDeliveryCdService/registerDeliveryCdService/getDeliveryCdService'
+    evidence:
+      - type: measured
+        source: probe/runs/15056672.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 62
+  run: probe/runs/15056672.json
+  stats: probe/stats/15056672.json
+  data: probe/data/15056672/
+status: active

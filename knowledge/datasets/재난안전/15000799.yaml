@@ -1,0 +1,190 @@
+# Dataset 15000799 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15000799'
+tier: candidate
+title: 경찰청_분실물정보 조회 서비스
+sector: 재난안전/경찰/lost-found
+agency:
+  id: '1320000'
+  name: 경찰청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15000799/openapi.do
+synonyms:
+  - 분실물정보조회
+  - 경찰
+  - 분실물
+  - 분류종류지역기간
+  - 명칭및보관장소
+  - 상세정보조회
+  - 경찰청홈페이지
+  - 분실물반환
+description_portal: 경찰청 범죄예방정책과에서 제공하는 분실물정보 조회 서비스는 경찰청 홈페이지를 통해 잃어버린 물건에 대한 정보를 검색할 수 있도록 지원합니다. 사용자는 분실물의 종류, 분실 지역, 분실 기간 등의 정보를 활용하여 습득 여부를 확인할 수 있습니다.또한, 분실물의 명칭이나 현재 보관 장소를 기준으로 검색할 수 있으며, 습득된 물품의 상세 정보를 조회하여 자신의 물건인지 판단하는 데 도움을 받을 수 있습니다. 이 서비스는 분실물의 신속한 반환을 돕고, 시민들의 불편을 최소화하는 데 기여할 것으로 기대됩니다. 분실자는 경찰청 홈페이지를 통해 간편하게 자신의 분실물 습득 정보를 확인할 수 있습니다.
+team:
+  dept: 범죄예방대응국 범죄예방정책과
+services:
+  - op: /getLostGoodsInfoAccToClAreaPd
+    name: 분류별, 지역별, 기간별 분실물 정보 조회
+    endpoint: https://apis.data.go.kr/1320000/LostGoodsInfoInqireService/getLostGoodsInfoAccToClAreaPd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: START_YMD
+        required: false
+        example: '20170801'
+        desc: 분실물 등록날짜
+      - name: END_YMD
+        required: false
+        example: '20171130'
+        desc: 분실물 등록날짜
+      - name: PRDT_CL_CD_01
+        required: false
+        example: PRA000
+        desc: 상위물품코드
+      - name: PRDT_CL_CD_02
+        required: false
+        example: PRA300
+        desc: 하위물품코드
+      - name: LST_LCT_CD
+        required: false
+        example: LCA000
+        desc: 분실지역코드
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 목록 건수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: review
+    traffic:
+      dev: 100000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 분실물·습득물 (경찰청 유실물 통합포털 — 건별 실시간)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.846
+  rank_in_sector: 1
+  brm: 재난안전 - 경찰
+  why: 물건 하나 단위 실시간 원장 — 분실자 직접 수요
+claims:
+  - id: c-15000799-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 100,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15000799.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15000799.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15000799-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000799-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15000799.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000799-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15000799.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15000799-06
+    kind: admin_note
+    value: "세부 부문 '분실물·습득물 (경찰청 유실물 통합포털 — 건별 실시간)'의 가치: 물건 하나 단위 실시간 원장 — 분실자 직접 수요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lost-found
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15000799-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 경찰] 분실물·습득물(건별 실시간), 경찰관서 위치, 생활안전지도(범죄 위험도), 지역 단위 범죄 발생·검거·112신고, 지역·지점 교통사고만. 교차로·교통소통·돌발·도로위험예보·TCS → 도로. 운전면허 통계·만족도·경찰병원·실종/가출(제한)·성별/연령별 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L660
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15000799-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/1320000/LostGoodsInfoInqireService/getLostGoodsInfoAccToClAreaPd'
+    evidence:
+      - type: measured
+        source: probe/runs/15000799.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 승인대기
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 34
+  run: probe/runs/15000799.json
+  stats: probe/stats/15000799.json
+  data: probe/data/15000799/
+status: active

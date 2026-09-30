@@ -1,6 +1,6 @@
 # Phase 2 라운드 2 — 호출·다운로드·셀 통계 결과
 
-대상 208건 · 성공 109 · 파일(별도) 58 · 응답0행 30 · 미실행 4 · 파라미터부족 3 · 승인대기 3 · 키미등록 1
+대상 208건 · 성공 110 · 파일(별도) 58 · 응답0행 31 · 미실행 4 · 승인대기 3 · 키미등록 1 · 파라미터부족 1
 
 | 판정 | 데이터 | 부문/세부 | 심의 | 성공 오퍼레이션 | 받은 행 | 전체 건수 | 평균 ms | 컬럼 수 | 대표 컬럼 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -66,6 +66,7 @@
 | 성공 | [헌법재판소_사건정보 조회 서비스](https://www.data.go.kr/data/15141079/openapi.do) | 법률 - 법무및검찰<br>crime-statistics | 자동승인 | 1/6 | 5 | 5 | 41 | 13 | clause, endRsta, etc, eventNo, isUnanimous, item, lawArtiClent, lawNm |
 | 성공 | [법무부_마을변호사  지역별 현황](https://www.data.go.kr/data/15121954/openapi.do) | 법률 - 법무및검찰<br>lawyers | 자동승인 | 1/1 | 1,000 | 3,008 | 37 | 10 | AreaNote, Attorney, AttorneyNote, City, CityPublicServant, CityServDuty, State, Village |
 | 성공 | [법무부_장단기체류외국인 국적(지역)별 체류외국인 현황 조회서비스](https://www.data.go.kr/data/15149911/openapi.do) | 법률 - 법무및검찰<br>immigration-stay | 자동승인 | 1/1 | 209 | 209 | 68 | 4 | country, month, personCount, year |
+| 성공 | [건강보험심사평가원_의약품사용정보조회서비스](https://www.data.go.kr/data/15047819/openapi.do) | 보건의료 - 건강보험<br>insurance-codes |  | 6/6 | 7 | 2 | 68 | 15 | clCdNm, diagYm, insupTpCd, items, meftDivNo, meftDivNoNm, msupUseAmt, numOfRows |
 | 성공 | [공무원연금공단_공무원연금취급기관정보](https://www.data.go.kr/data/15032175/openapi.do) | 사회복지 - 공적연금<br>occupational-pension-stats | 자동승인 | 1/1 | 13 | 13 | 726 | 22 | gdCd, gdCdNm, hnkPnsInstNo, pnsInstAlyBgnDt, pnsInstBldMngNo, pnsInstClCd, pnsInstDtlNwad, pnsInstEngNm |
 | 성공 | [국민연금공단_국민연금 가입현황](https://www.data.go.kr/data/15005710/openapi.do) | 사회복지 - 공적연금<br>pension-statistics | 자동승인 | 3/3 | 3 | 1 | 49 | 7 | avgAntcPnsAmt, hghsAntcPnsAmt, jnngBrkdSgmntPrsnCnt, rcgnAvgAmt, rcgnAvgMcnt, rcgnHghsAmt, rcgnHghsMcnt |
 | 성공 | [금융위원회_퇴직연금기본정보](https://www.data.go.kr/data/15094798/openapi.do) | 사회복지 - 공적연금<br>retirement-pension | 자동승인 | 1/1 | 1,000 | 626,138 | 714 | 8 | basDt, basprc, cmpyCd, cmpyNm, fndCd, fndNm, nPptAmt, ofrInstNm |
@@ -120,6 +121,7 @@
 | 응답0행 | [과학기술정보통신부 우정사업본부_우체국 배달점주소 조회 서비스](https://www.data.go.kr/data/15056672/openapi.do) | 과학기술 - 우정<br>postal-delivery | 자동승인 | 0/1 | 0 | 0 | 62 | 0 |  |
 | 응답0행 | [기후에너지환경부 국립환경과학원_하천별 통계 서비스](https://www.data.go.kr/data/15057131/openapi.do) | 국토관리 - 수자원<br>river-registry | 자동승인 | 0/1 | 0 | 0 | 116 | 0 |  |
 | 응답0행 | [한국수자원공사_하수처리장 일일 수질](https://www.data.go.kr/data/15099046/openapi.do) | 국토관리 - 수자원<br>sewerage | 자동승인 | 0/3 | 0 | 0 | 76 | 0 |  |
+| 응답0행 | [국토교통부_토지이용규제정보서비스](https://www.data.go.kr/data/15058410/openapi.do) | 국토관리 - 토지이용규제<br>land-use-plan-check | 자동승인 | 0/2 | 0 | 0 | 321 | 0 |  |
 | 응답0행 | [전남광주통합특별시 광양시_휴양림](https://www.data.go.kr/data/15076798/openapi.do) | 농축수산 - 임업·산촌<br>forest-recreation | 자동승인 | 0/1 | 0 | 0 | 119 | 0 |  |
 | 응답0행 | [산림청 국립산림과학원_목재류 비관세장벽 현황정보](https://www.data.go.kr/data/15083709/openapi.do) | 농축수산 - 임업·산촌<br>forest-products | 자동승인 | 0/1 | 0 | 0 | 99 | 0 |  |
 | 응답0행 | [경상남도 남해군_어선 등록 정보 데이터 조회 서비스](https://www.data.go.kr/data/15109848/openapi.do) | 농축수산 - 해양수산·어촌<br>fishery-licenses | 자동승인 | 0/1 | 0 | 0 | 155 | 0 |  |
@@ -144,8 +146,6 @@
 | 응답0행 | [국립생태원_생태자연도 서비스](https://www.data.go.kr/data/15057288/openapi.do) | 환경기상 - 환경일반<br>env-spatial | 자동승인 | 0/2 | 0 | 0 | 15028 | 0 |  |
 | 응답0행 | [기후에너지환경부 국립환경과학원_국립환경과학원 온실가스 검증기관 지정현황](https://www.data.go.kr/data/15000943/openapi.do) | 환경기상 - 환경일반<br>env-business | 자동승인 | 0/0 | 0 | 0 |  | 0 |  |
 | 파라미터부족 | [기술보증기금_법인기업 등록특허의 국가과학기술표준분류체계 매핑 정보](https://www.data.go.kr/data/15159559/openapi.do) | 과학기술 - 과학기술연구<br>national-rnd | 자동승인 | 0/1 | 0 | 0 | 619 | 0 |  |
-| 파라미터부족 | [국토교통부_토지이용규제정보서비스](https://www.data.go.kr/data/15058410/openapi.do) | 국토관리 - 토지이용규제<br>land-use-plan-check | 자동승인 | 0/2 | 0 | 0 | 56 | 0 |  |
-| 파라미터부족 | [건강보험심사평가원_의약품사용정보조회서비스](https://www.data.go.kr/data/15047819/openapi.do) | 보건의료 - 건강보험<br>insurance-codes |  | 0/6 | 0 | 0 | 27 | 0 |  |
 | 승인대기 | [보건복지부_보건·복지현황_독거노인 수](https://www.data.go.kr/data/15098827/openapi.do) | 사회복지 - 노인·청소년<br>regional-statistics | 심의 | 0/1 | 0 | 0 | 78 | 0 |  |
 | 승인대기 | [보건복지부_보건·복지현황_시도별 아동학대 발생현황](https://www.data.go.kr/data/15098795/openapi.do) | 사회복지 - 취약계층지원<br>regional-statistics | 심의 | 0/1 | 0 | 0 | 37 | 0 |  |
 | 승인대기 | [행정안전부_통계연보_지역별·세목별 지방세 규모](https://www.data.go.kr/data/15107409/openapi.do) | 재정금융 - 세제<br>regional-tax | 심의 | 0/1 | 0 | 0 | 51 | 0 |  |

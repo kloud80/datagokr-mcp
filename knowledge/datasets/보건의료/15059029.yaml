@@ -1,5 +1,5 @@
 # Dataset 15059029 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle)와 generated_by 없는 claim은 보존된다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059029'
 tier: verified
 title: 국민건강보험공단_장기요양기관 검색 서비스
@@ -223,6 +223,7 @@ schema:
     - name: longTermAdminSym
       title: 장기요양기관기호
       type: number
+      semantic_type: ltc_instt_cd
       null_rate: 0.0
       sample_values:
         - '31138000052'
@@ -351,6 +352,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - longTermAdminSym
+      reference:
+        key: ltc_instt_cd
+      evidence: measured
+    - fields:
         - siDoCd
       reference:
         key: admin_area_code
@@ -407,7 +413,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15059029-03
     kind: key
-    value: '실측 조인 키: admin_area_code(siDoCd), address(detailAddr)'
+    value: '실측 조인 키: ltc_instt_cd(longTermAdminSym), admin_area_code(siDoCd), address(detailAddr)'
     evidence:
       - type: measured
         source: probe/stats/15059029.json

@@ -1,6 +1,6 @@
 # Phase 2 라운드 1 — 호출·다운로드·셀 통계 결과
 
-대상 80건 · 성공 61 · 응답0행 6 · 파라미터부족 5 · 파일(별도) 4 · 키미등록 2 · 승인대기 1 · 미실행 1
+대상 80건 · 성공 64 · 응답0행 5 · 파일(별도) 4 · 파라미터부족 3 · 키미등록 2 · 승인대기 1 · 미실행 1
 
 | 판정 | 데이터 | 부문/세부 | 심의 | 성공 오퍼레이션 | 받은 행 | 전체 건수 | 평균 ms | 컬럼 수 | 대표 컬럼 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -27,11 +27,14 @@
 | 성공 | [한국수자원공사_실시간 수도정보 수질(시간) 조회 서비스(GW)](https://www.data.go.kr/data/15057290/openapi.do) | 국토관리 - 수자원<br>water-supply | 자동승인 | 1/2 | 24 | 24 | 91 | 12 | clUnit, clVal, fcltyAddr, fcltyMngNm, fcltyMngNo, liIndDivName, no, occrrncDt |
 | 성공 | [한국수자원공사_실시간 수도정보 유량(시간) 조회 서비스(GW)](https://www.data.go.kr/data/15056653/openapi.do) | 국토관리 - 수자원<br>hydro-observation | 자동승인 | 1/2 | 48 | 48 | 104 | 9 | dataItemDesc, dataItemDiv, dataItemTagsn, dataVal, fcltyMngNo, fcltyNm, itemUnit, no |
 | 성공 | [국토교통부_아파트 매매 실거래가 상세 자료](https://www.data.go.kr/data/15126468/openapi.do) | 국토관리 - 주택<br>real-transactions | 자동승인 | 1/1 | 49 | 49 | 139 | 32 | aptDong, aptNm, aptSeq, bonbun, bubun, buildYear, buyerGbn, cdealDay |
+| 성공 | [국토교통부_공동주택 기본 정보제공 서비스](https://www.data.go.kr/data/15058453/openapi.do) | 국토관리 - 주택<br>apartment-management | 자동승인 | 2/2 | 2 | 0 | 47 | 65 | bjdCode, codeAptNm, codeClean, codeDisinf, codeEcon, codeElev, codeEmgr, codeFalarm |
 | 성공 | [국토교통부_건축HUB_주택인허가정보 서비스](https://www.data.go.kr/data/15136560/openapi.do) | 국토관리 - 주택<br>housing-supply | 자동승인 | 1/6 | 1 | 1 | 44 | 30 | apprvDay, bjdongCd, bldNm, block, bun, crtnDay, demolEndDay, demolExtngDay |
 | 성공 | [한국농수산식품유통공사_전국 공영도매시장 실시간 경매정보](https://www.data.go.kr/data/15141808/openapi.do) | 농축수산 - 농업·농촌<br>agri-prices | 자동승인 | 1/1 | 1,000 | 120,015 | 52 | 1 | corp_cd |
 | 성공 | [해양수산부_수협 산지조합 위판장 정보](https://www.data.go.kr/data/15056511/openapi.do) | 농축수산 - 해양수산·어촌<br>seafood-prices | 자동승인 | 1/1 | 268 | 268 | 42 | 10 | addr, administzoneCode, csmtmktCode, csmtmktNm, fxNum, hmpgAdres, mxtrCode, mxtrNm |
 | 성공 | [해양수산부 국립해양조사원_조위관측소 실측·예측 조위 조회](https://www.data.go.kr/data/15142507/openapi.do) | 농축수산 - 해양수산·어촌<br>ocean-observation | 자동승인 | 1/1 | 24 | 24 | 39 | 6 | bscTdlvHgt, lat, lot, obsrvnDt, obsvtrNm, tdlvHgt |
 | 성공 | [한국관광공사_국문 관광정보 서비스_GW](https://www.data.go.kr/data/15101578/openapi.do) | 문화관광 - 관광<br>tour-contents | 자동승인 | 2/6 | 1,007 | 9,681 | 158 | 13 | acmpyNeedMtr, acmpyPsblCpam, acmpyTypeCd, code, contentid, etcAcmpyInfo, name, relaAcdntRiskMtr |
+| 성공 | [건강보험심사평가원_의료기관별상세정보서비스](https://www.data.go.kr/data/15001699/openapi.do) | 보건의료 - 건강보험<br>medical-institutions |  | 4/6 | 93 | 28 | 43 | 12 | arivPlc, cdiagDrCnt, dgsbjtCd, dgsbjtCdNm, dgsbjtPrSdrCnt, dir, dtlSdrCnt, lineNo |
+| 성공 | [건강보험심사평가원_비급여진료비정보조회서비스](https://www.data.go.kr/data/15001700/openapi.do) | 보건의료 - 건강보험<br>nonpayment-fees |  | 1/1 | 1 | 0 | 97 | 4 | items, numOfRows, pageNo, totalCount |
 | 성공 | [국민건강보험공단_장기요양기관 시설별 상세조회 서비스](https://www.data.go.kr/data/15058856/openapi.do) | 보건의료 - 건강보험<br>long-term-care | 자동승인 | 1/1 | 2 | 2 | 83 | 4 | adptFrDt, adptToDt, longTermAdminSym, yoyangNm |
 | 성공 | [행정안전부_건강_약국 조회서비스](https://www.data.go.kr/data/15154822/openapi.do) | 보건의료 - 보건의료<br>medical-facility-licensing | 자동승인 | 1/2 | 1,000 | 70,658 | 9263 | 24 | BPLC_NM, CLSBIZ_YMD, CRD_INFO_X, CRD_INFO_Y, DAT_UPDT_PNT, DAT_UPDT_SE, DSGN_YMD, DTL_SALS_STTS_CD |
 | 성공 | [국립중앙의료원_전국 응급의료기관 정보 조회 서비스](https://www.data.go.kr/data/15000563/openapi.do) | 보건의료 - 보건의료<br>emergency-medical | 자동승인 | 5/6 | 1,930 | 528 | 297 | 188 | MKioskTy1, MKioskTy10, MKioskTy10Msg, MKioskTy11, MKioskTy12, MKioskTy12Msg, MKioskTy13, MKioskTy14 |
@@ -69,13 +72,10 @@
 | 응답0행 | [국토교통부_마이홈포털 공공주택 모집공고 조회 서비스](https://www.data.go.kr/data/15108420/openapi.do) | 국토관리 - 주택<br>subscription | 자동승인 | 0/2 | 0 | 0 | 400 | 0 |  |
 | 응답0행 | [전남광주통합특별시 광양시_문화축제](https://www.data.go.kr/data/15076596/openapi.do) | 문화관광 - 관광<br>festivals-events | 자동승인 | 0/1 | 0 | 0 | 171 | 0 |  |
 | 응답0행 | [전남광주통합특별시 광양시_공연행사정보](https://www.data.go.kr/data/15076681/openapi.do) | 문화관광 - 문화예술<br>performances | 자동승인 | 0/1 | 0 | 0 | 664 | 0 |  |
-| 응답0행 | [건강보험심사평가원_비급여진료비정보조회서비스](https://www.data.go.kr/data/15001700/openapi.do) | 보건의료 - 건강보험<br>nonpayment-fees |  | 0/1 | 0 | 0 | 56 | 0 |  |
 | 응답0행 | [국토교통부_키스콘 건설업체정보 서비스](https://www.data.go.kr/data/15061362/openapi.do) | 산업고용 - 산업기술지원<br>construction-firms | 자동승인 | 0/1 | 0 | 0 | 127 | 0 |  |
 | 파라미터부족 | [국민권익위원회_민원빅데이터_분석정보_API_2022](https://www.data.go.kr/data/15101903/openapi.do) | 공공행정 - 국민권익·인권<br>civil-complaints | 자동승인 | 0/6 | 0 | 0 | 30018 | 0 |  |
 | 파라미터부족 | [재정경제부_공공기관 정보 조회 서비스](https://www.data.go.kr/data/15125287/openapi.do) | 공공행정 - 일반행정<br>civic-facilities | 자동승인 | 0/2 | 0 | 0 | 308 | 0 |  |
 | 파라미터부족 | [한국자산관리공사_차세대 온비드 부동산 물건목록 조회서비스](https://www.data.go.kr/data/15157207/openapi.do) | 공공행정 - 정부자원관리<br>state-property | 자동승인 | 0/1 | 0 | 0 | 81 | 0 |  |
-| 파라미터부족 | [국토교통부_공동주택 기본 정보제공 서비스](https://www.data.go.kr/data/15058453/openapi.do) | 국토관리 - 주택<br>apartment-management | 자동승인 | 0/2 | 0 | 0 | 43 | 0 |  |
-| 파라미터부족 | [건강보험심사평가원_의료기관별상세정보서비스](https://www.data.go.kr/data/15001699/openapi.do) | 보건의료 - 건강보험<br>medical-institutions |  | 0/6 | 0 | 0 | 40 | 0 |  |
 | 승인대기 | [경찰청_분실물정보 조회 서비스](https://www.data.go.kr/data/15000799/openapi.do) | 재난안전 - 경찰<br>lost-found | 심의 | 0/1 | 0 | 0 | 34 | 0 |  |
 | 키미등록 | [중앙선거관리위원회_투표소 정보](https://www.data.go.kr/data/15000836/openapi.do) | 공공행정 - 국정운영<br>election |  | 0/1 | 0 | 0 | 81 | 0 |  |
 | 키미등록 | [기상청_지점정보(기상관측, 특보구역) 조회서비스](https://www.data.go.kr/data/15058846/openapi.do) | 환경기상 - 대기<br>weather-forecast |  | 0/1 | 0 | 0 | 84 | 0 |  |

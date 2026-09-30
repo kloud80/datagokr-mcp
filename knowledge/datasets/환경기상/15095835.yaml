@@ -1,0 +1,154 @@
+# Dataset 15095835 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15095835'
+tier: candidate
+title: 서울특별시 서초구_다중이용시설 위생요소 정보 조회 서비스
+sector: 환경기상/대기/indoor-air
+agency:
+  id: '3210000'
+  name: 서울특별시 서초구
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095835/openapi.do
+synonyms:
+  - 위생점검
+  - 공기질 분석
+  - 다중이용시설
+description_portal: 서초구 그린안심존으로 인증된 다중이용시설의 방역 및 소독에 대한 정보로 최신 업데이트된 시설의 위생점검일자, 폼알데하이드, 부유세균, 공팜이의 분석 결과와 소독 여부 등을 조회할 수 있다.
+team:
+  dept: 기후환경과
+services:
+  - op: /getClenaAirSeoChoFaInfo
+    name: 다중이용시설의 위생점검 및 공기질 분석, 소독일자 정보
+    endpoint: https://apis.data.go.kr/3210000/ClenaAirSeoCho/getClenaAirSeoChoFaInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema: {}
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실내공기질 (다중이용시설·지하역사 자동측정망)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5742
+  rank_in_sector: 426
+  brm: 환경기상 - 대기
+  why: 실내공기질 (다중이용시설·지하역사 자동측정망)
+claims:
+  - id: c-15095835-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095835.json
+        observed_at: '2026-09-30'
+        detail: ops_ok 0/1
+      - type: measured
+        source: probe/apply/15095835.json
+        observed_at: '2026-09-30'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-01'
+  - id: c-15095835-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095835-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095835.json
+        observed_at: '2026-09-30'
+        detail: 컬럼 0개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095835-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095835.json
+        observed_at: '2026-09-30'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+  - id: c-15095835-06
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095835-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: https://apis.data.go.kr/3210000/ClenaAirSeoCho/getClenaAirSeoChoFaInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15095835.json
+        observed_at: '2026-09-30'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-01'
+verification:
+  verdict: 응답0행
+  probed_at: '2026-09-30'
+  channel: portal
+  rows: 0
+  ops_ok: 0/1
+  latency_ms: 30066
+  run: probe/runs/15095835.json
+  stats: probe/stats/15095835.json
+  data: probe/data/15095835/
+status: active
