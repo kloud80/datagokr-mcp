@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pandas as pd
 
 from pds import config
-from pds.expand.wave2 import OUT
+from pds.expand import OUT
 from pds.schema import store
 
 MODEL = "claude-sonnet-5-5"

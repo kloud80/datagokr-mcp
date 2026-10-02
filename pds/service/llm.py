@@ -1,4 +1,4 @@
-"""LLM 계층 — 전략 설명(explain)과 채팅 에이전트(chat). 모델 PDS_CHAT_MODEL(기본 claude-opus-5-5), 키는 .env CLAUDE_API_KEY(또는 ANTHROPIC_API_KEY).
+"""LLM 계층 — 전략 설명(explain)과 채팅 에이전트(chat). 모델 PDS_CHAT_MODEL(기본 claude-sonnet-5-5), 키는 .env CLAUDE_API_KEY(또는 ANTHROPIC_API_KEY).
 
 원칙 (KNOWLEDGE-SPEC §6-7, §10): LLM은 데이터·조인을 고르지 않는다 — 플래너가 고른 것에 "왜"·요약 문장만 붙이고, 인용은 입력으로 준 claim id만.
 채팅은 도구(검색·상세·전략·코드표)를 서버가 실행하고, 답은 도구 결과에 근거한다.
@@ -17,7 +17,7 @@ from pds import config
 from pds.schema import GROUNDED
 from pds.service import index as sindex
 
-MODEL = os.environ.get("PDS_CHAT_MODEL") or "claude-opus-5-5"  # 비용에 맞춰 .env로 바꾼다 (예: claude-sonnet-5-5, claude-haiku-4-5)
+MODEL = os.environ.get("PDS_CHAT_MODEL") or "claude-sonnet-5-5"  # 2026-10-02 비교: Haiku는 인용 형식·제외 판단 실패, Sonnet은 Opus와 같은 품질에 비용 절반
 FALLBACK = {"betas": ["server-side-fallback-2026-07-01"], "extra_body": {"fallbacks": "default"}}
 
 

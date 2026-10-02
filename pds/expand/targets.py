@@ -12,7 +12,7 @@ import sys
 import pandas as pd
 
 from pds import config
-from pds.expand.wave2 import OUT
+from pds.expand import OUT, ROUND, WAVE
 
 PRIORITY_MAX = 3
 
@@ -36,12 +36,12 @@ def build() -> list[dict]:
     for r in d.sort_values(["priority", "prelim_score"], ascending=[True, False]).itertuples():
         kind = r.api_kind_label if r.api_kind_label in ("REST", "SOAP", "STD", "FILE", "API_LINK", "FILE_LINK") else "FILE"
         sub = r.sub if isinstance(r.sub, str) and r.sub and not r.sub.startswith("new:") else (r.subsector or "misc")
-        note = f"wave2 p{int(r.priority)}" + (f" · 이동 제안 → {r.move_to}" if isinstance(r.move_to, str) and r.move_to else "") + \
+        note = f"{WAVE} p{int(r.priority)}" + (f" · 이동 제안 → {r.move_to}" if isinstance(r.move_to, str) and r.move_to else "") + \
                (f" · 새 세부 부문 {r.sub[4:]}" if isinstance(r.sub, str) and r.sub.startswith("new:") else "")
         out.append({"id": r.id, "title": r.title, "agency": r.agency_name, "sector": r.sector, "subsector": sub,  # 이동 제안은 note에 — 부문 재배치는 사람이 확정
                     "subsector_name": r.subsector_name if sub == r.subsector else sub, "kind": kind,
                     "prelim_score": round(float(r.prelim_score), 3), "usage": int(r.usage_count or 0), "url": r.url,
-                    "round": "external" if kind in ("API_LINK", "FILE_LINK") else "4", "why": str(r.why), "status": "pending",
+                    "round": "external" if kind in ("API_LINK", "FILE_LINK") else ROUND, "why": str(r.why), "status": "pending",
                     "note": note})
     return out
 
