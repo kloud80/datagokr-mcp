@@ -7,19 +7,25 @@
   4 candidates = 검색된 candidate 층 (조인 참여 불가) · unverified_leads = catalog 층 상위 5 (단서)
   5 LLM은 summary·why 문장만 — 입력은 선택된 claim, 출력은 claim id 인용 (pds/service/llm.py). LLM 없이도 규칙 문장으로 응답
   6 §4 검증 규칙을 통과해야 반환 (validate)
+  · 지역 범위가 목표와 어긋나는 데이터(부산 데이터 ↔ 성수동)는 고르기 전에 빼서 not_recommended에 사유와 함께 (region.py)
+  · progress(stage, status, detail) 콜백으로 단계 진행을 알린다 — 웹은 SSE로 받아 단계 체크리스트를 그린다
 """
 from __future__ import annotations
 
 import datetime as dt
 import re
 import subprocess
+import time
 from functools import lru_cache
+from typing import Callable
 
 import networkx as nx
 
 from pds import config
 from pds.schema import GROUNDED
 from pds.service import index as sindex
+from pds.strategy import badges as bdg
+from pds.strategy import region as rgn
 
 HUBS = {"15123287": "법정동 코드표", "15123899": "연속지적도(PNU)"}
 ROLE_KINDS = ("access", "key", "cadence", "coverage", "legal_basis", "admin_note")
@@ -117,28 +123,49 @@ def select(goal: str) -> dict:
         members |= {x["id"] for x in recipe["datasets"]}
         recipe = None
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])
+    region = rgn.goal_regions(goal)
+    excluded, kept = [], []
+    for d, s in scored:  # 지역이 어긋나면 주제가 맞아도 쓰지 않는다 — 상위권이었던 것만 사유와 함께 남긴다
+        why = rgn.mismatch(d, region)
+        if not why:
+            kept.append((d, s))
+        elif s >= 0.4 * scored[0][1]:
+            excluded.append({"id": d["id"], "title": d["title"], "reason": why, "kind": "region", "evidence": []})
+    scored = kept
     if scored:  # 1순위의 40% 미만은 관련이 약하다 — 허브(PNU·법정동)로 아무거나 이어 붙이지 않게
         scored = [(d, s) for d, s in scored if s >= 0.4 * scored[0][1]]
-    return {"ctx": ctx, "ctx_hits": ctx_hits, "recipe": recipe, "scored": scored, "members": members, "q": q}
+    return {"ctx": ctx, "ctx_hits": ctx_hits, "recipe": recipe, "scored": scored, "members": members, "q": q,
+            "region": region, "excluded": excluded[:4]}
 
 
-def plan(goal: str, use_llm: bool = True, max_datasets: int = 6) -> dict:
+Progress = Callable[[str, str, str], None]
+
+
+def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progress | None = None) -> dict:
     ix = sindex.get()
+    t0 = time.time()
+    say = progress or (lambda *_: None)
+    say("context", "running", "")
     sel = select(goal)
+    say("context", "done", sel["ctx"]["id"] if sel["ctx"] else "맥락 없음 — 검색만")
+    n_ex = len(sel["excluded"])
+    say("candidates", "done", f"검증 후보 {len(sel['scored'])}개" + (f" · 지역 불일치 제외 {n_ex}개" if n_ex else ""))
+    say("joins", "running", "")
     g = _graph()
     edges = {e["id"]: e for e in ix.edges}
     gaps = []
 
     if sel["recipe"]:  # 승인된 레시피 = 골든셋 경로
         r = sel["recipe"]
-        chosen = [x["id"] for x in r["datasets"]][:max_datasets + 2]
+        chosen = list(dict.fromkeys(x["id"] for x in r["datasets"]))[:max_datasets + 2]
         join_ids = [j for j in r["joins"] if all(n in chosen or n in HUBS for n in (edges[j]["src"], edges[j]["dst"]))]
         source = f"recipe:{r['id']} ({r.get('status')})"
     else:
         cands = [d["id"] for d, _ in sel["scored"]]
         if not cands:
             return validate({"goal": goal, "summary": "관련 검증 데이터를 찾지 못했습니다.", "datasets": [], "joins": [], "pipeline": [],
-                             "schedule": None, "candidates": [], "unverified_leads": _leads(goal, set()), "not_recommended": [],
+                             "schedule": None, "candidates": [], "unverified_leads": _leads(goal, set(), sel["region"]),
+                             "not_recommended": sel["excluded"], "hubs": {},
                              "gaps": [g["name"] for g, _ in ix.search_gaps(goal)], "confidence": 0.0,
                              "knowledge_version": _commit(), "source": "search"})
         primary = cands[0]
@@ -157,12 +184,13 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6) -> dict:
                     for mid in path[1:-1]:  # 경로 가운데 데이터도 받아야 조인이 된다 (허브 제외)
                         if mid not in HUBS and mid not in chosen:
                             chosen.append(mid)
-                    chosen.append(other)
+                    if other not in chosen:
+                        chosen.append(other)
                     for a, b in zip(path, path[1:]):
                         if g[a][b]["edge"] not in join_ids:
                             join_ids.append(g[a][b]["edge"])
                     continue
-            if len(chosen) < 3:  # 이어지지 않아도 상위 관련 데이터는 context 역할로
+            if len(chosen) < 3 and other not in chosen:  # 이어지지 않아도 상위 관련 데이터는 context 역할로
                 chosen.append(other)
                 gaps.append(f"{ix.datasets[primary]['title'][:30]} ↔ {ix.datasets[other]['title'][:30]}: 조인 경로 미선언")
         source = "search"
@@ -177,11 +205,15 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6) -> dict:
             continue
         role = "primary" if n == 0 else ("lookup" if any(edges[j]["rel"] == "lookup" and edges[j]["dst"] == i for j in join_ids)
                                          else "join" if i in connected else "context")
+        acc = _access(d)
         datasets.append({"id": i, "tier": "verified", "role": role, "title": d["title"], "agency": d["agency"]["name"],
                          "why": _why_rule(d, role), "evidence": _claim_ids(i, ROLE_KINDS)[:6],
-                         "access": _access(d), "fetch": _fetch(d), "caveats": _claim_ids(i, ("pitfall",))[:4],
-                         "portal_url": d.get("portal_url")})
+                         "access": acc, "fetch": _fetch(d), "caveats": _claim_ids(i, ("pitfall",))[:4],
+                         "portal_url": d.get("portal_url"), "rows": bdg.rows(d), "badges": bdg.badges(d, acc),
+                         "claims": bdg.claims_view(d)})
     joins = [_join_entry(edges[j], ix) for j in join_ids]
+    hubs_used = sorted({j["hub"] for j in joins if j.get("hub")})
+    say("joins", "done", f"선언된 조인 {len(joins)}개" + (f" · 허브 {', '.join(hubs_used)}" if hubs_used else "") + f" ({time.time() - t0:.1f}s)")
     pipeline = [{"step": k + 1, "do": "fetch", "dataset": x["id"], "produces": f"{x['id']}.parquet"} for k, x in enumerate(datasets)]
     for j in joins:
         pipeline.append({"step": len(pipeline) + 1, "do": "join", "edge": j["edge"],
@@ -192,14 +224,15 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6) -> dict:
     cand = [{"id": d["id"], "tier": "candidate", "title": d["title"], "sector": d["sector"],
              "status": (d.get("verification") or {}).get("verdict"), "why_maybe": _why_rule(d, "candidate"),
              "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None)}
-            for d, s in ix.search_datasets(q, 3, tiers=("candidate",)) if s > 5]
+            for d, s in ix.search_datasets(q, 3, tiers=("candidate",)) if s > 5 and not rgn.mismatch(d, sel["region"])]
     gaps += [f"{g['name']}: {g['reason'][:120]}" for g, s in ix.search_gaps(q) if s > 6]
     rates = [j["match_rate"] if j["match_rate"] is not None else j["confidence"] or 0.5 for j in joins]
     conf = round(min(0.95, 0.35 + 0.1 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0)
                      + (0.1 if sel["ctx"] else 0)), 2)
     out = {"goal": goal, "context": sel["ctx"]["id"] if sel["ctx"] else None, "summary": None, "datasets": datasets, "joins": joins,
-           "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand, "unverified_leads": _leads(q, known | {c["id"] for c in cand}),
-           "not_recommended": _not_recommended(chosen), "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
+           "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand, "unverified_leads": _leads(q, known | {c["id"] for c in cand}, sel["region"]),
+           "not_recommended": sel["excluded"] + _not_recommended(chosen),
+           "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)}, "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
            "source": source, "generated_at": dt.datetime.now().isoformat(timespec="seconds")}
     out["summary"] = _summary_rule(out)
     if use_llm:
@@ -229,10 +262,13 @@ def _schedule(datasets: list[dict]) -> dict | None:
     return None  # 갱신 관찰(7일 재호출) 전이라 실측 주기 근거 없음
 
 
-def _leads(goal: str, known: set[str]) -> list[dict]:
+def _leads(goal: str, known: set[str], region: dict | None = None) -> list[dict]:
     out = []
     ix = sindex.get()
-    res = ix.search_catalog(goal, 5, exclude=known)
+    res = ix.search_catalog(goal, 10, exclude=known)
+    if region:
+        res = [(r, s) for r, s in res if not rgn.mismatch({"agency_name": r["agency_name"], "title": r["title"]}, region)]
+    res = res[:5]
     top = res[0][1] if res else 1
     for r, s in res:
         out.append({"id": r["id"], "tier": "catalog", "title": r["title"], "agency": r["agency_name"], "kind": r.get("api_type") or r.get("list_type"),
@@ -249,11 +285,37 @@ def _not_recommended(ids: list[str]) -> list[dict]:
     for i in ids:
         d = ix.datasets.get(i) or {}
         if d.get("status") in ("suspect_dead", "ended"):
-            out.append({"id": i, "reason": f"상태 {d['status']}", "evidence": []})
+            out.append({"id": i, "title": d.get("title"), "reason": f"상태 {d['status']}", "kind": "status", "evidence": []})
         dep = [c for c in d.get("claims") or [] if c.get("rank") == "deprecated"]
         if dep:
-            out.append({"id": i, "reason": dep[0]["value"][:120], "evidence": [dep[0]["id"]]})
+            out.append({"id": i, "title": d.get("title"), "reason": dep[0]["value"][:120], "kind": "deprecated", "evidence": [dep[0]["id"]]})
     return out
+
+
+def exclude(p: dict, dsid: str, reason: str) -> dict:
+    """전략에서 데이터 하나를 뺀다 — 채팅 LLM의 판단을 전략 JSON에 반영해 설명과 패널이 같은 말을 하게.
+    그 데이터에 닿는 조인도 빼고, 남은 데이터의 역할·파이프라인·코드를 다시 만든다."""
+    d = next((x for x in p["datasets"] if x["id"] == dsid), None)
+    if d is None:
+        return p
+    p["datasets"] = [x for x in p["datasets"] if x["id"] != dsid]
+    p["joins"] = [j for j in p["joins"] if dsid not in (j["left"], j["right"])]
+    p["not_recommended"] = [*p["not_recommended"], {"id": dsid, "title": d["title"], "reason": reason, "kind": "review", "evidence": []}]
+    linked = {n for j in p["joins"] for n in (j["left"], j["right"])}
+    for k, x in enumerate(p["datasets"]):
+        if k == 0:
+            x["role"] = "primary"
+        elif x["role"] in ("join", "lookup", "primary") and x["id"] not in linked:
+            x["role"] = "context"
+    p["pipeline"] = [{"step": k + 1, "do": "fetch", "dataset": x["id"], "produces": f"{x['id']}.parquet"} for k, x in enumerate(p["datasets"])]
+    for j in p["joins"]:
+        p["pipeline"].append({"step": len(p["pipeline"]) + 1, "do": "join", "edge": j["edge"],
+                              "note": f"{j['left']} ⋈ {j['right']}" + (f" via {j['hub']}" if j.get("hub") else "")})
+    p["hubs"] = {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in p["joins"])}
+    p["summary"] = _summary_rule(p)
+    from pds.strategy.codegen import render as codegen
+    p["code"] = codegen(p)
+    return validate(p)
 
 
 def jsonable(x):

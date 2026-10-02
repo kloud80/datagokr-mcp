@@ -1,161 +1,236 @@
-import { useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
+  AgentAccordion,
   AgentButton,
   AgentChip,
   AgentEmptyState,
   AgentPlan,
-  AgentSectionPanel,
+  AgentSegmentedControl,
   AgentTabs,
 } from '@bv-ds/ui'
-import type { Plan, PlanJoin } from './api'
-import { DsLink, type OpenDataset } from './md'
+import type { Badge, Plan, PlanDataset } from './api'
+import { JoinMap, fmtCount, shortTitle } from './JoinMap'
+import { TrustIcon, TrustLegend } from './Trust'
+import type { OpenDataset } from './md'
 
-function Rate({ j }: { j: PlanJoin }) {
-  if (j.match_rate == null) return <AgentChip variant="neutral">실측 보류</AgentChip>
-  const p = Math.round(j.match_rate * 100)
-  return <AgentChip variant={p >= 80 ? 'live' : 'secondary'}>실측 {p}%</AgentChip>
+export type PlanTab = 'map' | 'data' | 'pipe' | 'code' | 'leads'
+
+const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', context: '참고' }
+
+function BadgeChip({ b }: { b: Badge }) {
+  if (b.tone === 'warn') return <span className="pds-warn">⚠ {b.label}</span>
+  const v = b.tone === 'ok' ? 'live' : b.tone === 'inf' ? 'primary' : b.tone === 'key' ? 'secondary' : 'neutral'
+  return <AgentChip variant={v}>{b.label}</AgentChip>
 }
 
-function access(d: Plan['datasets'][number]) {
-  const a = d.access
-  const ch = a.channel === 'external' ? `외부 사이트 키 ${a.issuer ?? ''}` : `포털 활용신청 ${a.approval ?? ''}`
-  return [d.agency, ch, a.daily_limit ? `일 ${a.daily_limit.toLocaleString()}회` : ''].filter(Boolean).join(' · ')
+function bestRate(p: Plan, id: string) {
+  const r = p.joins.filter((j) => j.left === id || j.right === id).map((j) => j.match_rate).filter((x): x is number => x != null)
+  return r.length ? Math.max(...r) : null
 }
 
-export function PlanPanel({ plan, open }: { plan: Plan; open: OpenDataset }) {
-  const [tab, setTab] = useState('data')
-  const [copied, setCopied] = useState(false)
-  const p = plan
-
-  const data = p.datasets.length ? (
-    <div className="pds-stack">
-      {p.datasets.map((d) => (
-        <AgentSectionPanel
-          key={d.id}
-          title={d.title}
-          description={access(d)}
-          action={<DsLink id={d.id} open={open} />}
-        >
-          <div className="pds-row">
-            <AgentChip variant={d.role === 'context' ? 'secondary' : 'primary'}>{d.role}</AgentChip>
-            <AgentChip variant="neutral">{d.tier}</AgentChip>
-          </div>
-          <p className="pds-body">{d.why}</p>
-          <span className="pds-ev">
-            근거 {d.evidence.join(', ')}
-            {d.caveats.length ? ` · 주의 ${d.caveats.join(', ')}` : ''}
-          </span>
-        </AgentSectionPanel>
-      ))}
-    </div>
-  ) : (
-    <AgentEmptyState compact title="검증 데이터 없음" description="목표에 맞는 verified 데이터를 찾지 못했습니다. 후보·단서 탭을 보세요." />
-  )
-
-  const joins = (
-    <div className="pds-stack">
-      {p.joins.map((j) => (
-        <AgentSectionPanel key={j.edge} title={`${j.edge} · ${j.rel}`} action={<Rate j={j} />}>
-          <div className="pds-row">
-            <DsLink id={j.left} open={open} /> <span>⋈</span> <DsLink id={j.right} open={open} />
-            {j.hub ? <AgentChip variant="secondary">허브 {j.hub}</AgentChip> : null}
-          </div>
-          <span className="pds-ev">
-            {(j.on.left ?? []).join('+')} = {(j.on.right ?? []).join('+')}
-            {j.on.transform ? ` · 규칙 ${j.on.transform}` : ''}
-            {j.via_mapping ? ` · 매핑 ${j.via_mapping}` : ''}
-            {j.relationship ? ` · ${j.relationship}` : ''}
-          </span>
-        </AgentSectionPanel>
-      ))}
-      {p.gaps.length ? (
-        <AgentSectionPanel title="공백 · 경로 없음" variant="filled">
-          <ul className="pds-list">{p.gaps.map((g, i) => <li key={i}>{g}</li>)}</ul>
-        </AgentSectionPanel>
+function DataCard({ d, plan, focus, open }: { d: PlanDataset; plan: Plan; focus: boolean; open: OpenDataset }) {
+  const rate = bestRate(plan, d.id)
+  const num = d.rows != null ? { v: fmtCount(d.rows), u: '전체 건수' } : rate != null ? { v: `${Math.round(rate * 100)}%`, u: '조인 매치' } : { v: '—', u: '건수 미상' }
+  return (
+    <article id={`ds-${d.id}`} className={`pds-card${focus ? ' pds-card--focus' : ''}`}>
+      <div className="pds-card-main">
+        <div className="pds-card-name">
+          <TrustIcon trust="verified" />
+          <AgentChip variant={d.role === 'primary' ? 'new' : d.role === 'context' ? 'neutral' : 'primary'}>{ROLE_LABEL[d.role] ?? d.role}</AgentChip>
+          <button type="button" className="pds-card-title" onClick={() => open(d.id)} title="설명서 열기">{d.title}</button>
+        </div>
+        <div className="pds-card-meta">{d.agency} · {d.why}</div>
+      </div>
+      <div className="pds-card-num">{num.v}<small>{num.u}</small></div>
+      <div className="pds-badges">{d.badges.map((b, i) => <BadgeChip key={i} b={b} />)}</div>
+      {d.claims.length ? (
+        <AgentAccordion
+          className="pds-claims"
+          items={[{
+            id: 'ev',
+            title: `근거 ${d.claims.length}건 보기`,
+            content: (
+              <table className="pds-claim-table">
+                <tbody>
+                  {d.claims.map((c) => (
+                    <tr key={c.id}>
+                      <th>{c.kind_label}</th>
+                      <td>{c.value}<span className="pds-ev">{c.id} · {c.evidence.join('·')}{c.date ? ` · ${c.date}` : ''}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ),
+          }]}
+        />
       ) : null}
-      {!p.joins.length && !p.gaps.length ? <AgentEmptyState compact title="조인 없음" description="단일 데이터로 충분한 목표입니다." /> : null}
-    </div>
+    </article>
   )
+}
 
-  const pipe = (
-    <div className="pds-stack">
+function keysNeeded(p: Plan) {
+  const portal = p.datasets.filter((d) => d.access.channel !== 'external')
+  const ext = [...new Set(p.datasets.filter((d) => d.access.channel === 'external').map((d) => d.access.issuer || '외부 사이트'))]
+  const auto = portal.every((d) => d.access.approval === 'auto')
+  return [
+    portal.length ? `data.go.kr 서비스키 1개로 ${portal.length}개 호출${auto ? ' (전부 자동승인)' : ' (일부 심의승인)'} — DATA_GO_KR_SERVICE_KEY` : '',
+    ext.length ? `외부 키: ${ext.join(', ')}` : '',
+  ].filter(Boolean).join(' · ')
+}
+
+export function PlanPanel(props: {
+  plan: Plan | null
+  versions: number[]
+  version: number | null
+  onVersion: (v: number) => void
+  tab: PlanTab
+  onTab: (t: PlanTab) => void
+  focusId: string | null
+  open: OpenDataset
+  onFocus: (id: string) => void
+}) {
+  const { plan: p, versions, version, onVersion, tab, onTab, focusId, open, onFocus } = props
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!focusId) return
+    document.getElementById(`ds-${focusId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [focusId, tab, version])
+
+  if (!p) {
+    return (
+      <aside className="pds-panel">
+        <div className="pds-pbody pds-pbody--empty">
+          <AgentEmptyState title="전략이 여기에 나타납니다" description="왼쪽에서 하고 싶은 일을 말하면, 검증된 데이터·실측된 조인 경로·실행 코드를 이 자리에 펼칩니다." />
+          <TrustLegend />
+        </div>
+      </aside>
+    )
+  }
+
+  const leadsN = p.candidates.length + p.unverified_leads.length
+  const ds = new Map(p.datasets.map((d) => [d.id, d]))
+  const name = (id?: string) => (id ? (ds.get(id) ? shortTitle(ds.get(id)!.title, 22) : p.hubs[id] ?? id) : '')
+  const excluded = (focusable: boolean) => p.not_recommended.map((x) => (
+    <div key={x.id} id={focusable ? `ds-${x.id}` : undefined} className={`pds-excluded${focusable && focusId === x.id ? ' pds-card--focus' : ''}`}>
+      <TrustIcon trust="excluded" />
+      <AgentChip variant="hot">제외</AgentChip>
+      <button type="button" className="pds-card-title" onClick={() => open(x.id)}>{x.title ?? x.id}</button>
+      <span className="pds-ev">{x.reason}</span>
+    </div>
+  ))
+
+  let content: ReactNode
+  if (tab === 'map') {
+    content = (
+      <>
+        {p.datasets.length ? <JoinMap plan={p} onSelect={(id) => { onTab('data'); onFocus(id) }} /> : null}
+        <TrustLegend />
+        {p.joins.length === 0 ? <p className="pds-note">선언된 조인이 없습니다 — 각 데이터를 따로 받아 참고용으로 씁니다.</p> : null}
+        {p.gaps.length ? <div className="pds-note"><b>공백</b><ul>{p.gaps.map((g, i) => <li key={i}>{g}</li>)}</ul></div> : null}
+        {p.not_recommended.length ? <><h3 className="pds-sec">제외한 데이터</h3>{excluded(false)}</> : null}
+      </>
+    )
+  } else if (tab === 'data') {
+    content = (
+      <>
+        {p.datasets.map((d) => <DataCard key={d.id} d={d} plan={p} focus={focusId === d.id} open={open} />)}
+        {excluded(true)}
+      </>
+    )
+  } else if (tab === 'pipe') {
+    content = (
       <AgentPlan
         title="실행 순서"
         description={p.schedule ? `갱신: ${p.schedule.reason}` : '갱신 주기: 실측 관찰(7일 재호출) 전 — 근거 없음'}
-        items={p.pipeline.map((s, i) => ({
-          id: `s${i}`,
-          status: 'pending' as const,
-          label: s.do === 'fetch' ? `받기 ${s.dataset}` : `조인 ${s.edge}`,
-          description: s.do === 'fetch' ? p.datasets.find((d) => d.id === s.dataset)?.title : s.note,
-        }))}
+        items={p.pipeline.map((s) => {
+          const j = s.edge ? p.joins.find((x) => x.edge === s.edge) : undefined
+          return {
+            id: `s${s.step}`,
+            status: 'pending' as const,
+            label: s.do === 'fetch' ? `받기 — ${name(s.dataset)}` : `잇기 — ${name(j?.left)} ⋈ ${name(j?.right)}`,
+            description: s.do === 'fetch'
+              ? ds.get(s.dataset!)?.badges.filter((b) => b.kind === 'access' || b.kind === 'pitfall').map((b) => b.label).join(' · ')
+              : j ? `${(j.on.left ?? []).join('+')} = ${(j.on.right ?? []).join('+')}${j.on.transform ? ` · 규칙 ${j.on.transform}` : ''} · ${j.match_rate == null ? '미측정' : `실측 ${Math.round(j.match_rate * 100)}%`}` : s.note,
+          }
+        })}
       />
-    </div>
-  )
+    )
+  } else if (tab === 'code') {
+    content = (
+      <>
+        <p className="pds-note">필요한 키: {keysNeeded(p) || '없음'}</p>
+        <pre className="pds-pre">{p.code}</pre>
+      </>
+    )
+  } else {
+    content = leadsN ? (
+      <>
+        <p className="pds-note">추천이 아니라 단서입니다. 호출·내용이 확인되지 않았으니 직접 확인한 뒤 쓰세요.</p>
+        {p.candidates.map((c) => (
+          <div key={c.id} className="pds-lead">
+            <div className="pds-card-name"><TrustIcon trust="lead" /><AgentChip variant="neutral">후보</AgentChip>
+              <button type="button" className="pds-card-title" onClick={() => open(c.id)}>{c.title}</button></div>
+            <span className="pds-ev">{[c.status, c.blocked_by].filter(Boolean).join(' · ')}</span>
+          </div>
+        ))}
+        {p.unverified_leads.map((l) => (
+          <div key={l.id} className="pds-lead">
+            <div className="pds-card-name"><TrustIcon trust="lead" />
+              <a href={l.portal_url} target="_blank" rel="noreferrer">{l.title}</a></div>
+            <span className="pds-ev">{l.agency}{l.kind ? ` · ${l.kind}` : ''} · 유사도 {l.similarity}</span>
+            <span className="pds-ev">확인할 것: 활용신청 승인유형 · 조인 키(법정동·PNU·사업자번호) · 최근 수정일</span>
+          </div>
+        ))}
+      </>
+    ) : <AgentEmptyState compact title="단서 없음" description="포털 목록에서도 비슷한 데이터를 찾지 못했습니다." />
+  }
 
-  const code = (
-    <div className="pds-stack">
-      <div>
-        <AgentButton
-          variant="secondary"
-          size="sm"
-          onClick={() => navigator.clipboard.writeText(p.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })}
-        >
-          {copied ? '복사됨' : '코드 복사'}
-        </AgentButton>
-      </div>
-      <pre className="pds-pre">{p.code}</pre>
-    </div>
-  )
-
-  const more = (
-    <div className="pds-stack">
-      <AgentSectionPanel title="선정됐지만 미검증 (candidate)" description="지식 체계에 올라 있으나 호출 실측이 끝나지 않은 데이터">
-        {p.candidates.length ? (
-          <ul className="pds-list">
-            {p.candidates.map((c) => (
-              <li key={c.id}>
-                {c.title} <DsLink id={c.id} open={open} />
-                <span className="pds-ev">{[c.status, c.blocked_by].filter(Boolean).join(' · ')}</span>
-              </li>
-            ))}
-          </ul>
-        ) : <span className="pds-ev">없음</span>}
-      </AgentSectionPanel>
-      <AgentSectionPanel title="단서 — 포털 목록에서 비슷한 것 (catalog)" description="직접 확인이 필요합니다. 전략에는 쓰이지 않았습니다.">
-        {p.unverified_leads.length ? (
-          <ul className="pds-list">
-            {p.unverified_leads.map((l) => (
-              <li key={l.portal_url}>
-                <a href={l.portal_url} target="_blank" rel="noreferrer">{l.title}</a>
-                <span className="pds-ev">{l.agency} · 유사도 {l.similarity} · {l.why_maybe}</span>
-              </li>
-            ))}
-          </ul>
-        ) : <span className="pds-ev">없음</span>}
-      </AgentSectionPanel>
-    </div>
-  )
+  const download = () => {
+    const url = URL.createObjectURL(new Blob([p.code], { type: 'text/x-python' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pds_strategy_v${version ?? 1}.py`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
-    <div className="pds-plan">
-      <p className="pds-body">{p.summary}</p>
-      <div className="pds-row">
-        {p.context ? <AgentChip variant="secondary">맥락 {p.context}</AgentChip> : null}
-        <AgentChip variant="primary">신뢰도 {p.confidence}</AgentChip>
-        <AgentChip variant="neutral">지식 {p.knowledge_version}</AgentChip>
-      </div>
-      <AgentTabs
-        label="전략 구성"
-        value={tab}
-        onChange={setTab}
-        items={[
-          { id: 'data', label: `데이터 ${p.datasets.length}`, content: data },
-          { id: 'joins', label: `조인 ${p.joins.length}`, content: joins },
-          { id: 'pipe', label: '순서', content: pipe },
-          { id: 'code', label: '코드', content: code },
-          { id: 'more', label: `단서 ${p.candidates.length + p.unverified_leads.length}`, content: more },
-        ]}
-      />
-    </div>
+    <aside className="pds-panel">
+      <header className="pds-phead">
+        <div className="pds-phead-row">
+          <h2 className="pds-ptitle">{p.goal} <span className="pds-pver">전략 v{version}</span></h2>
+          {versions.length > 1 ? (
+            <AgentSegmentedControl size="sm" label="전략 버전" value={String(version)} onChange={(v) => onVersion(Number(v))}
+              options={versions.map((v) => ({ value: String(v), label: `v${v}` }))} />
+          ) : null}
+        </div>
+        <div className="pds-row">
+          <AgentChip variant="live">검증 {p.datasets.length}</AgentChip>
+          {p.not_recommended.length ? <AgentChip variant="hot">제외 {p.not_recommended.length}</AgentChip> : null}
+          {leadsN ? <AgentChip variant="neutral">단서 {leadsN}</AgentChip> : null}
+          <span className="pds-ev">{p.context ? `맥락 ${p.context} · ` : ''}신뢰도 {p.confidence} · 지식 {p.knowledge_version}</span>
+        </div>
+        <AgentTabs
+          label="전략 구성"
+          value={tab}
+          onChange={(t) => onTab(t as PlanTab)}
+          items={[
+            { id: 'map', label: '조인 지도' },
+            { id: 'data', label: `데이터 ${p.datasets.length}` },
+            { id: 'pipe', label: `단계 ${p.pipeline.length}` },
+            { id: 'code', label: '코드' },
+            { id: 'leads', label: `단서 ${leadsN}` },
+          ]}
+        />
+      </header>
+      <div className="pds-pbody">{content}</div>
+      <footer className="pds-actions">
+        <AgentButton size="sm" variant="primary" onClick={() => navigator.clipboard.writeText(p.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })}>
+          {copied ? '복사됨' : '코드 복사'}
+        </AgentButton>
+        <AgentButton size="sm" variant="secondary" onClick={download}>.py 내려받기</AgentButton>
+      </footer>
+    </aside>
   )
 }

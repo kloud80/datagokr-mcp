@@ -1,4 +1,9 @@
-/* 겉 배치만. 색·간격·글꼴은 전부 --agent-* 토큰 (agent-guide §4: 리터럴 금지). */
+/* 겉 배치만. 색·간격·글꼴은 전부 --agent-* 토큰 (agent-guide §4: 리터럴 금지). 컴포넌트 내부 클래스는 건드리지 않는다. */
+html,
+body,
+#root {
+  height: 100%;
+}
 body {
   margin: 0;
   background: var(--agent-bg-1);
@@ -8,54 +13,463 @@ body {
   font-size: var(--agent-fs-md);
 }
 
+/* ── 2열 셸: 각 열이 스스로 스크롤한다 (페이지는 스크롤하지 않음) */
 .pds-app {
-  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(36rem, 2fr) minmax(0, 3fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+.pds-switch {
+  display: none;
+}
+.pds-chat,
+.pds-panel {
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
-.pds-app > section {
-  flex: 1;
-  min-height: 0;
+.pds-chat {
+  border-right: 1px solid var(--agent-border-1);
+  background: var(--agent-bg-1);
+}
+.pds-panel {
+  background: var(--agent-bg-2);
 }
 
-.pds-stack {
+/* ── 왼쪽: 대화 */
+.pds-chat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--agent-space-3);
+  padding: var(--agent-space-3) var(--agent-space-5);
+  border-bottom: 1px solid var(--agent-border-1);
+}
+.pds-brand {
+  margin: 0;
+  font-size: var(--agent-fs-lg);
+  font-weight: 700;
+}
+.pds-info {
+  font: inherit;
+  color: var(--agent-fg-3);
+  background: none;
+  border: 1px solid var(--agent-border-1);
+  border-radius: var(--agent-radius-pill);
+  padding: 0 var(--agent-space-2);
+  cursor: help;
+}
+.pds-msgs {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--agent-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--agent-space-5);
+}
+.pds-composer {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--agent-space-1);
+  padding: var(--agent-space-3) var(--agent-space-5) var(--agent-space-4);
+  border-top: 1px solid var(--agent-border-1);
+  background: var(--agent-bg-1);
+}
+.pds-intro,
+.pds-answer {
   display: flex;
   flex-direction: column;
   gap: var(--agent-space-3);
-  padding-top: var(--agent-space-3);
 }
+.pds-steps {
+  font-size: var(--agent-fs-sm);
+}
+
+/* 답마다 붙는 전략 버전 카드 */
+.pds-vcard {
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--agent-space-1) var(--agent-space-3);
+  padding: var(--agent-space-3) var(--agent-space-4);
+  background: var(--agent-bg-1);
+  border: 1px solid var(--agent-border-2);
+  border-radius: var(--agent-radius-lg);
+  cursor: pointer;
+}
+.pds-vcard:hover,
+.pds-vcard--on {
+  border-color: var(--agent-primary-main);
+  box-shadow: var(--agent-shadow-sm);
+}
+.pds-vcard:focus-visible {
+  outline: none;
+  box-shadow: var(--agent-shadow-focus);
+}
+.pds-vcard-name {
+  font-weight: 700;
+  color: var(--agent-primary-main);
+}
+.pds-vcard-chips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--agent-space-1);
+}
+
+/* ── 오른쪽: 전략 */
+.pds-phead {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--agent-space-2);
+  padding: var(--agent-space-4) var(--agent-space-6) 0;
+  background: var(--agent-bg-1);
+  border-bottom: 1px solid var(--agent-border-1);
+}
+.pds-phead-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--agent-space-3);
+}
+.pds-ptitle {
+  margin: 0;
+  font-size: var(--agent-fs-xl);
+  font-weight: 700;
+  text-wrap: balance;
+}
+.pds-pver {
+  color: var(--agent-primary-main);
+  white-space: nowrap;
+}
+.pds-pbody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--agent-space-5) var(--agent-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--agent-space-3);
+}
+.pds-pbody--empty {
+  justify-content: center;
+  align-items: center;
+}
+.pds-actions {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--agent-space-2);
+  padding: var(--agent-space-3) var(--agent-space-6);
+  background: var(--agent-bg-1);
+  border-top: 1px solid var(--agent-border-1);
+}
+.pds-sec {
+  margin: var(--agent-space-4) 0 0;
+  font-size: var(--agent-fs-sm);
+  font-weight: 700;
+  color: var(--agent-fg-3);
+}
+.pds-note {
+  margin: 0;
+  padding: var(--agent-space-2) var(--agent-space-3);
+  font-size: var(--agent-fs-sm);
+  color: var(--agent-fg-2);
+  background: var(--agent-warning-soft);
+  border-radius: var(--agent-radius-sm);
+}
+.pds-note ul {
+  margin: var(--agent-space-1) 0 0;
+  padding-left: var(--agent-space-5);
+}
+
+/* 데이터 카드 — 왼쪽 이름·배지, 오른쪽 숫자 하나 */
+.pds-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--agent-space-2) var(--agent-space-4);
+  padding: var(--agent-space-4);
+  background: var(--agent-bg-1);
+  border: 1px solid var(--agent-border-1);
+  border-radius: var(--agent-radius-lg);
+  scroll-margin: var(--agent-space-6);
+}
+.pds-card--focus {
+  border-color: var(--agent-primary-main);
+  box-shadow: var(--agent-shadow-focus);
+}
+.pds-card-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--agent-space-1);
+}
+.pds-card-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--agent-space-2);
+}
+.pds-card-title {
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  color: var(--agent-fg-1);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.pds-card-title:hover {
+  color: var(--agent-primary-main);
+  text-decoration: underline;
+}
+.pds-card-meta {
+  font-size: var(--agent-fs-sm);
+  color: var(--agent-fg-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pds-card-num {
+  grid-row: 1;
+  grid-column: 2;
+  align-self: center;
+  text-align: right;
+  font-size: var(--agent-fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pds-card-num small {
+  display: block;
+  font-size: var(--agent-fs-xs);
+  font-weight: 400;
+  color: var(--agent-fg-3);
+}
+.pds-badges {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--agent-space-1);
+}
+.pds-claims {
+  grid-column: 1 / -1;
+}
+.pds-claim-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--agent-fs-sm);
+}
+.pds-claim-table th {
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--agent-fg-3);
+  padding: var(--agent-space-2) var(--agent-space-3) var(--agent-space-2) 0;
+  border-top: 1px solid var(--agent-border-1);
+}
+.pds-claim-table td {
+  padding: var(--agent-space-2) 0;
+  border-top: 1px solid var(--agent-border-1);
+}
+.pds-claim-table td .pds-ev {
+  display: block;
+}
+.pds-excluded,
+.pds-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--agent-space-1) var(--agent-space-2);
+  padding: var(--agent-space-3) var(--agent-space-4);
+  border: 1px dashed var(--agent-border-2);
+  border-radius: var(--agent-radius-lg);
+  scroll-margin: var(--agent-space-6);
+}
+.pds-excluded .pds-card-title {
+  text-decoration: line-through;
+  color: var(--agent-fg-3);
+}
+.pds-excluded .pds-ev,
+.pds-lead .pds-ev {
+  flex-basis: 100%;
+}
+.pds-lead {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.pds-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--agent-space-1);
+  font-size: var(--agent-fs-xs);
+  font-weight: 700;
+  color: var(--agent-warning-fg);
+  background: var(--agent-warning-soft);
+  border-radius: var(--agent-radius-pill);
+  padding: var(--agent-space-1) var(--agent-space-2);
+}
+
+/* 조인 지도 */
+.pds-map {
+  background: var(--agent-bg-1);
+  border: 1px solid var(--agent-border-1);
+  border-radius: var(--agent-radius-lg);
+  padding: var(--agent-space-3);
+  overflow-x: auto;
+}
+.pds-map svg {
+  display: block;
+  width: 100%;
+  min-width: 56rem;
+  height: auto;
+  font-family: var(--agent-font-sans);
+}
+.pds-node rect {
+  fill: var(--agent-bg-1);
+  stroke: var(--agent-border-2);
+  stroke-width: 1.5;
+}
+.pds-node--primary rect {
+  stroke: var(--agent-primary-main);
+  stroke-width: 2.5;
+}
+.pds-node--hub rect {
+  fill: var(--agent-secondary-pale);
+  stroke: var(--agent-secondary-main);
+  stroke-width: 2;
+}
+.pds-node--isolated rect {
+  stroke-dasharray: 4 3;
+}
+.pds-node:hover rect {
+  stroke: var(--agent-primary-main);
+}
+.pds-node-title {
+  font-size: var(--agent-fs-sm);
+  font-weight: 700;
+  fill: var(--agent-fg-1);
+}
+.pds-node-sub {
+  font-size: var(--agent-fs-xs);
+  fill: var(--agent-fg-3);
+}
+.pds-edge {
+  fill: none;
+  stroke-width: 2;
+}
+.pds-edge--verified {
+  stroke: var(--agent-success);
+}
+.pds-edge--declared {
+  stroke: var(--agent-warning);
+  stroke-dasharray: 6 4;
+}
+.pds-edge-label {
+  font-size: var(--agent-fs-xs);
+  fill: var(--agent-fg-2);
+  paint-order: stroke;
+  stroke: var(--agent-bg-1);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+/* 신뢰 기호 ● ◐ ○ × */
+.pds-trust {
+  display: inline-block;
+  flex: none;
+  width: var(--agent-space-3);
+  height: var(--agent-space-3);
+  border-radius: var(--agent-radius-pill);
+  border: 2px solid currentColor;
+  vertical-align: middle;
+}
+.pds-trust--verified {
+  color: var(--agent-success);
+  background: currentColor;
+}
+.pds-trust--declared {
+  color: var(--agent-warning);
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+.pds-trust--lead {
+  color: var(--agent-fg-4);
+}
+.pds-trust--excluded {
+  color: var(--agent-error);
+  border-radius: var(--agent-radius-xs);
+  background: linear-gradient(45deg, transparent 42%, currentColor 42%, currentColor 58%, transparent 58%),
+    linear-gradient(-45deg, transparent 42%, currentColor 42%, currentColor 58%, transparent 58%);
+  border-color: transparent;
+}
+.pds-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--agent-space-2) var(--agent-space-4);
+  font-size: var(--agent-fs-xs);
+  color: var(--agent-fg-3);
+}
+.pds-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--agent-space-1);
+}
+
+/* 답 본문 참조 [[id]] */
+.pds-ref {
+  font: inherit;
+  font-family: var(--agent-font-mono);
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--agent-space-1);
+  color: var(--agent-primary-main);
+  background: var(--agent-primary-pale);
+  border: 0;
+  border-radius: var(--agent-radius-xs);
+  padding: 0 var(--agent-space-1);
+  cursor: pointer;
+  vertical-align: baseline;
+}
+.pds-ref .pds-trust {
+  width: var(--agent-space-2);
+  height: var(--agent-space-2);
+}
+.pds-ref--excluded {
+  color: var(--agent-error);
+  background: var(--agent-error-soft);
+  text-decoration: line-through;
+}
+.pds-ref--lead {
+  color: var(--agent-fg-3);
+  background: var(--agent-bg-3);
+}
+.pds-ref:hover {
+  text-decoration: underline;
+}
+
+/* 공통 */
 .pds-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--agent-space-2);
 }
-.pds-plan {
-  display: flex;
-  flex-direction: column;
-  gap: var(--agent-space-3);
+.pds-ev {
+  font-size: var(--agent-fs-xs);
+  color: var(--agent-fg-3);
+  word-break: break-all;
 }
-.pds-intro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--agent-space-3);
-}
-
-.pds-body {
-  margin: 0;
-  font-size: var(--agent-fs-sm);
-  line-height: 1.6;
-  color: var(--agent-fg-2);
-}
-.pds-list {
-  margin: 0;
-  padding-left: var(--agent-space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--agent-space-2);
-  font-size: var(--agent-fs-sm);
-}
-
 .pds-md p,
 .pds-md ul {
   margin: 0 0 var(--agent-space-2);
@@ -66,7 +480,7 @@ body {
 }
 .pds-md .pds-h {
   font-weight: 700;
-  margin-top: var(--agent-space-4);
+  margin-top: var(--agent-space-3);
 }
 .pds-md .pds-h1 { font-size: var(--agent-fs-xl); }
 .pds-md .pds-h2 { font-size: var(--agent-fs-lg); }
@@ -76,11 +490,10 @@ body {
   overflow-x: auto;
   margin-bottom: var(--agent-space-3);
 }
-
 .pds-code,
 .pds-pre {
   font-family: var(--agent-font-mono);
-  background: var(--agent-bg-2);
+  background: var(--agent-bg-3);
   border-radius: var(--agent-radius-sm);
 }
 .pds-code {
@@ -89,14 +502,12 @@ body {
 }
 .pds-pre {
   margin: 0;
-  padding: var(--agent-space-3);
+  padding: var(--agent-space-4);
   font-size: var(--agent-fs-xs);
+  line-height: 1.5;
   overflow: auto;
-  max-height: 60vh;
   border: 1px solid var(--agent-border-1);
 }
-
-/* 포털 ID → 설명서 열기. 링크처럼 보이는 텍스트 버튼 */
 .pds-dslink {
   font: inherit;
   font-family: var(--agent-font-mono);
@@ -111,15 +522,51 @@ body {
 .pds-dslink:hover {
   text-decoration: underline;
 }
-.pds-dslink:focus-visible {
+.pds-dslink:focus-visible,
+.pds-ref:focus-visible,
+.pds-card-title:focus-visible {
   outline: none;
   box-shadow: var(--agent-shadow-focus);
 }
 
-/* 근거·주의 claim ID — MetaLabel은 대문자 변환이 있어 ID에는 쓰지 않는다 */
-.pds-ev {
-  font-family: var(--agent-font-mono);
-  font-size: var(--agent-fs-xs);
-  color: var(--agent-fg-3);
-  word-break: break-all;
+/* ── 좁은 화면: 대화/전략 전환 */
+@media (max-width: 960px) {
+  .pds-app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .pds-switch {
+    display: block;
+    padding: var(--agent-space-2) var(--agent-space-4);
+    border-bottom: 1px solid var(--agent-border-1);
+    background: var(--agent-bg-1);
+  }
+  .pds-chat {
+    border-right: 0;
+  }
+  .pds-app--chat .pds-panel,
+  .pds-app--plan .pds-chat {
+    display: none;
+  }
+  .pds-msgs,
+  .pds-composer,
+  .pds-chat-top {
+    padding-left: var(--agent-space-4);
+    padding-right: var(--agent-space-4);
+  }
+  .pds-phead,
+  .pds-pbody,
+  .pds-actions {
+    padding-left: var(--agent-space-4);
+    padding-right: var(--agent-space-4);
+  }
+  .pds-card-num {
+    font-size: var(--agent-fs-lg);
+  }
+}
+
+/* 본문 열 안의 블록은 줄어들지 않는다 (지도가 찌그러지며 내부 스크롤이 생기지 않게) */
+.pds-pbody > *,
+.pds-msgs > * {
+  flex-shrink: 0;
 }

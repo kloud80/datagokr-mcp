@@ -1,4 +1,4 @@
-"""LLM 계층 — 전략 설명(explain)과 채팅 에이전트(chat). 모델 claude-opus-5-5, 키는 .env CLAUDE_API_KEY(또는 ANTHROPIC_API_KEY).
+"""LLM 계층 — 전략 설명(explain)과 채팅 에이전트(chat). 모델 PDS_CHAT_MODEL(기본 claude-opus-5-5), 키는 .env CLAUDE_API_KEY(또는 ANTHROPIC_API_KEY).
 
 원칙 (KNOWLEDGE-SPEC §6-7, §10): LLM은 데이터·조인을 고르지 않는다 — 플래너가 고른 것에 "왜"·요약 문장만 붙이고, 인용은 입력으로 준 claim id만.
 채팅은 도구(검색·상세·전략·코드표)를 서버가 실행하고, 답은 도구 결과에 근거한다.
@@ -7,6 +7,9 @@
 from __future__ import annotations
 
 import json
+import os
+import time
+from typing import Callable
 
 import anthropic
 
@@ -14,7 +17,7 @@ from pds import config
 from pds.schema import GROUNDED
 from pds.service import index as sindex
 
-MODEL = "claude-opus-5-5"
+MODEL = os.environ.get("PDS_CHAT_MODEL") or "claude-opus-5-5"  # 비용에 맞춰 .env로 바꾼다 (예: claude-sonnet-5-5, claude-haiku-4-5)
 FALLBACK = {"betas": ["server-side-fallback-2026-07-01"], "extra_body": {"fallbacks": "default"}}
 
 
@@ -87,6 +90,10 @@ TOOLS = [
     {"name": "plan_strategy", "description": "사용자 목표(자연어)에 맞는 공공데이터 조합·조인·파이프라인·실행 코드를 만든다. 목표가 나오면 먼저 이것을 부른다.",
      "input_schema": {"type": "object", "properties": {"goal": {"type": "string", "description": "사용자 목표 문장"}},
                       "required": ["goal"], "additionalProperties": False}},
+    {"name": "exclude_dataset", "description": "직전 plan_strategy 결과에서 목표에 맞지 않는 데이터를 뺀다(지역·대상·시점 불일치 등). "
+                                              "전략 패널·코드가 함께 갱신된다. 답에서만 빼고 전략에 남겨 두지 않는다.",
+     "input_schema": {"type": "object", "properties": {"id": {"type": "string"}, "reason": {"type": "string", "description": "사용자에게 보일 한 줄 사유"}},
+                      "required": ["id", "reason"], "additionalProperties": False}},
     {"name": "search_datasets", "description": "지식 체계에서 데이터셋을 검색한다. tier: verified(검증) · candidate(선정·미검증) · catalog(포털 전체 9.6만, 단서).",
      "input_schema": {"type": "object", "properties": {"query": {"type": "string"},
                                                        "tier": {"type": "string", "enum": ["verified", "candidate", "catalog"]}},
@@ -101,32 +108,61 @@ TOOLS = [
 ]
 CHAT_SYSTEM = """당신은 data.go.kr 공공데이터 전략 도우미입니다. 사용자의 목표를 듣고, 어떤 공공데이터를 어떻게 이어 쓰면 되는지 안내합니다.
 지식 체계는 세 층입니다: verified(실제 호출·다운로드로 검증) · candidate(선정됐으나 미검증) · catalog(포털 전체 목록, 단서일 뿐).
+화면 오른쪽 패널에 전략(데이터 카드·조인 지도·단계·코드)이 그대로 나옵니다. 답은 그 전략을 읽어 주는 설명입니다.
 
 규칙
-- 목표가 나오면 plan_strategy를 먼저 부르고, 그 결과를 바탕으로 답합니다. 데이터·조인을 스스로 지어내지 않습니다.
+- 목표가 나오면 plan_strategy를 먼저 부르고, 그 결과만 바탕으로 답합니다. 데이터·조인을 스스로 지어내지 않습니다.
+- 전략과 다른 말을 하지 않습니다. 고른 데이터가 목표에 맞지 않으면(지역·대상·시점 불일치) 답에서만 빼지 말고
+  exclude_dataset으로 전략에서 빼고 사유를 한 줄로 말합니다. not_recommended에 있는 데이터는 그 사유를 그대로 전합니다.
+- 데이터는 반드시 [[목록키]] 형식으로 언급합니다 (예: 일반음식점 인허가 [[15154916]]). 화면이 카드 링크로 바꿉니다. 괄호 속 숫자로 쓰지 않습니다.
+- candidate·catalog는 "미검증 단서"라고 분명히 말합니다.
 - 조인은 plan_strategy가 준 선언된 Edge만 말합니다. 경로가 없으면 없다고 말합니다.
-- 데이터를 언급할 때 목록키(id)를 괄호로 붙입니다. candidate·catalog는 "미검증"이라고 분명히 말합니다.
 - 코드값 뜻이나 지역 코드가 필요하면 find_code_list·lookup_code로 확인합니다.
-- 답은 한국어로, 짧은 문단과 목록으로. 표준 절차: ①어떤 데이터(역할) ②어떻게 잇나(키) ③주의점 ④다음에 할 일.
+- 답은 한국어로 짧게 — 패널에 세부가 다 있으므로 핵심만 8~14줄. 순서: ①핵심 데이터와 역할 ②어떻게 잇나 ③주의점 ④다음에 할 일.
 - 키(인증키)를 요구받으면: 포털 데이터는 data.go.kr 활용신청, 외부 사이트는 해당 사이트 발급이라고 안내합니다. 키 값을 묻거나 다루지 않습니다."""
 
+TOOL_LABEL = {"plan_strategy": "전략 계산", "exclude_dataset": "전략에서 제외", "search_datasets": "데이터 검색",
+              "get_dataset": "데이터 상세 조회", "find_code_list": "코드표 찾기", "lookup_code": "코드값 조회"}
+STAGE_LABEL = {"context": "맥락 찾기", "candidates": "데이터 후보", "joins": "조인 경로"}
 
-def run_tool(name: str, args: dict, plans: list) -> str:
+Emit = Callable[[dict], None]
+
+
+def _slim(p: dict) -> str:
     ix = sindex.get()
+    slim = {k: p[k] for k in ("goal", "context", "summary", "confidence", "gaps")}
+    slim["datasets"] = [{k: d[k] for k in ("id", "role", "title", "agency", "why")} | {"access": d["access"], "rows": d.get("rows")}
+                        for d in p["datasets"]]
+    slim["joins"] = [{k: j[k] for k in ("edge", "left", "right", "on", "relationship", "via_mapping", "match_rate", "hub")} for j in p["joins"]]
+    slim["not_recommended"] = [{k: x.get(k) for k in ("id", "title", "reason")} for x in p["not_recommended"]]
+    slim["candidates"] = [{k: c[k] for k in ("id", "title", "status")} for c in p["candidates"]]
+    slim["unverified_leads"] = [{k: x[k] for k in ("id", "title", "agency")} for x in p["unverified_leads"]]
+    slim["claims"] = {d["id"]: [c["value"][:160] for c in ix.grounded_claims(d["id"])][:8] for d in p["datasets"]}
+    return json.dumps(slim, ensure_ascii=False, default=str)
+
+
+def run_tool(name: str, args: dict, plans: list, emit: Emit | None = None, t0: float = 0.0) -> str:
+    ix = sindex.get()
+    emit = emit or (lambda _e: None)
     if name == "plan_strategy":
         from pds.strategy.plan import plan
-        p = plan(args["goal"], use_llm=False)  # 설명은 채팅 답에서 — 두 번 부르지 않는다
+
+        def progress(stage: str, status: str, detail: str) -> None:
+            emit({"type": "step", "id": stage, "label": STAGE_LABEL.get(stage, stage), "status": status, "detail": detail,
+                  "t": round(time.time() - t0, 1)})
+        p = plan(args["goal"], use_llm=False, progress=progress)  # 설명은 채팅 답에서 — 두 번 부르지 않는다
+        p["version"] = len(plans) + 1
         plans.append(p)
-        slim = {k: p[k] for k in ("goal", "context", "summary", "confidence", "gaps")}
-        slim["datasets"] = [{k: d[k] for k in ("id", "role", "title", "agency", "why", "evidence", "caveats")} | {"access": d["access"]}
-                            for d in p["datasets"]]
-        slim["joins"] = [{k: j[k] for k in ("edge", "left", "right", "on", "relationship", "via_mapping", "match_rate", "hub")} for j in p["joins"]]
-        slim["pipeline"] = p["pipeline"]
-        slim["candidates"] = p["candidates"]
-        slim["unverified_leads"] = [{k: x[k] for k in ("id", "title", "agency", "note")} for x in p["unverified_leads"]]
-        claims = {d["id"]: {c["id"]: c["value"][:200] for c in ix.grounded_claims(d["id"])} for d in p["datasets"]}
-        slim["claims"] = claims
-        return json.dumps(slim, ensure_ascii=False, default=str)
+        emit({"type": "plan", "plan": p})
+        return _slim(p)
+    if name == "exclude_dataset":
+        from pds.strategy.plan import exclude
+        if not plans:
+            return json.dumps({"error": "먼저 plan_strategy를 불러야 한다"})
+        p = exclude(plans[-1], args["id"], args["reason"])
+        plans[-1] = p
+        emit({"type": "plan", "plan": p})
+        return json.dumps({"ok": True, "remaining": [(d["id"], d["role"]) for d in p["datasets"]]}, ensure_ascii=False)
     if name == "search_datasets":
         if args["tier"] == "catalog":
             res = [{"id": r["id"], "title": r["title"], "agency": r["agency_name"], "tier": "catalog", "note": "미검증 단서"}
@@ -163,28 +199,50 @@ def run_tool(name: str, args: dict, plans: list) -> str:
     return json.dumps({"error": f"모르는 도구 {name}"})
 
 
-def chat(history: list[dict], max_turns: int = 6) -> dict:
-    """history: [{role: user|assistant, content: str}] (웹 클라이언트가 들고 있는 텍스트 대화). 반환: 답·전략·도구 기록."""
+def _create(c, msgs: list) -> object:
+    kw = {"output_config": {"effort": "low"}} if "haiku" not in MODEL else {}  # Haiku는 effort 미지원
+    return c.beta.messages.create(model=MODEL, max_tokens=8000, system=CHAT_SYSTEM, tools=TOOLS, **FALLBACK, **kw, messages=msgs)
+
+
+def chat(history: list[dict], max_turns: int = 6, emit: Emit | None = None) -> dict:
+    """history: [{role: user|assistant, content: str}] (웹 클라이언트가 들고 있는 텍스트 대화). 반환: 답·전략·도구 기록·사용량.
+    emit: 진행 이벤트 콜백 — {type: step|plan, …} (SSE로 화면에 단계·전략을 먼저 보낸다)."""
     msgs = [{"role": m["role"], "content": m["content"]} for m in history if m.get("content")]
     plans, trace = [], []
+    usage = {"model": MODEL, "calls": 0, "input": 0, "output": 0, "cache_read": 0, "cache_write": 0}
+    emit = emit or (lambda _e: None)
+    t0 = time.time()
     c = client()
-    for _ in range(max_turns):
-        r = c.beta.messages.create(model=MODEL, max_tokens=8000, system=CHAT_SYSTEM, tools=TOOLS, **FALLBACK,
-                                   output_config={"effort": "low"}, messages=msgs)
+    for turn in range(max_turns):
+        sid = "understand" if turn == 0 else f"write{turn}"
+        label = "질문 이해" if turn == 0 else "설명 작성"
+        emit({"type": "step", "id": sid, "label": label, "status": "running", "detail": "", "t": round(time.time() - t0, 1)})
+        r = _create(c, msgs)
+        u = r.usage  # 비용 추적 — 응답마다 누적
+        usage["calls"] += 1
+        usage["input"] += u.input_tokens or 0
+        usage["output"] += u.output_tokens or 0
+        usage["cache_read"] += getattr(u, "cache_read_input_tokens", 0) or 0
+        usage["cache_write"] += getattr(u, "cache_creation_input_tokens", 0) or 0
         if r.stop_reason == "refusal":
-            return {"reply": "이 요청은 처리할 수 없습니다.", "plans": plans, "trace": trace, "stop": "refusal"}
+            emit({"type": "step", "id": sid, "label": label, "status": "failed", "detail": "처리할 수 없는 요청", "t": round(time.time() - t0, 1)})
+            return {"reply": "이 요청은 처리할 수 없습니다.", "plans": plans, "trace": trace, "stop": "refusal", "usage": usage}
         calls = [b for b in r.content if getattr(b, "type", "") == "tool_use"]
+        detail = "도구 " + ", ".join(TOOL_LABEL.get(b.name, b.name) for b in calls) if calls else ""
+        if turn and calls:  # 설명 도중 도구를 더 부르면 검토 단계로 표시
+            label = "검토 · 수정"
+        emit({"type": "step", "id": sid, "label": label, "status": "done", "detail": detail, "t": round(time.time() - t0, 1)})
         if not calls:
-            return {"reply": _text(r), "plans": plans, "trace": trace, "stop": r.stop_reason}
+            return {"reply": _text(r), "plans": plans, "trace": trace, "stop": r.stop_reason, "usage": usage}
         msgs.append({"role": "assistant", "content": r.content})
         results = []
         for b in calls:
             try:
-                out = run_tool(b.name, dict(b.input), plans)
+                out = run_tool(b.name, dict(b.input), plans, emit, t0)
                 results.append({"type": "tool_result", "tool_use_id": b.id, "content": out})
             except Exception as e:  # noqa: BLE001 — 도구 오류는 is_error로 돌려준다
                 out = f"{type(e).__name__}: {str(e)[:300]}"
                 results.append({"type": "tool_result", "tool_use_id": b.id, "content": out, "is_error": True})
             trace.append({"tool": b.name, "input": dict(b.input), "chars": len(out)})
         msgs.append({"role": "user", "content": results})
-    return {"reply": "도구 호출이 너무 길어져 멈췄습니다. 질문을 좁혀 주세요.", "plans": plans, "trace": trace, "stop": "max_turns"}
+    return {"reply": "도구 호출이 너무 길어져 멈췄습니다. 질문을 좁혀 주세요.", "plans": plans, "trace": trace, "stop": "max_turns", "usage": usage}

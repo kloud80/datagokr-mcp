@@ -1,7 +1,8 @@
 """서비스 API + 웹 채팅 — `python -m pds serve` (기본 http://127.0.0.1:8765).
 
   GET  /                     웹 채팅 — frontend/ 빌드(web/dist, BV 디자인 시스템). 빌드가 없으면 web/index.html
-  POST /api/chat             {messages:[{role,content}]} → {reply, plans, trace}
+  POST /api/chat             {messages:[{role,content}]} → {reply, plans, trace, usage}
+  POST /api/chat/stream      같은 입력 → SSE: step(단계 진행) · plan(전략 먼저) · done(답) · error
   POST /api/plan             {goal, use_llm?} → 전략 응답 (KNOWLEDGE-SPEC §4)
   GET  /api/search?q=&tier=  검색 (verified · candidate · catalog)
   GET  /api/datasets/{id}    Dataset 상세 + 설명서(markdown)
@@ -11,12 +12,15 @@
 """
 from __future__ import annotations
 
+import json
+import queue
+import threading
 import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -64,6 +68,40 @@ def api_chat(body: ChatIn):
     out = llm.chat(msgs)
     out["elapsed_s"] = round(time.time() - t0, 1)
     return jsonable(out)
+
+
+@app.post("/api/chat/stream")
+def api_chat_stream(body: ChatIn):
+    """채팅을 스레드에서 돌리며 진행 이벤트를 SSE로 흘린다 — 25초 동안 스피너 대신 단계와 전략 카드가 먼저 보이게."""
+    from pds.service import llm
+    msgs = [m for m in body.messages if m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str)][-20:]
+    if not msgs or msgs[-1]["role"] != "user":
+        raise HTTPException(400, "마지막 메시지는 user여야 한다")
+    q: queue.Queue = queue.Queue()
+    t0 = time.time()
+
+    def work():
+        try:
+            out = llm.chat(msgs, emit=q.put)
+            out["elapsed_s"] = round(time.time() - t0, 1)
+            q.put({"type": "done", **out})
+        except Exception as e:  # noqa: BLE001 — 오류도 이벤트로 알린다
+            q.put({"type": "error", "detail": f"{type(e).__name__}: {str(e)[:300]}"})
+
+    threading.Thread(target=work, daemon=True).start()
+
+    def gen():
+        while True:
+            try:
+                ev = q.get(timeout=15)
+            except queue.Empty:
+                yield ": keep-alive\n\n"  # 프록시가 연결을 끊지 않게
+                continue
+            yield f"data: {json.dumps(jsonable(ev), ensure_ascii=False, default=str)}\n\n"
+            if ev["type"] in ("done", "error"):
+                return
+
+    return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 @app.post("/api/plan")

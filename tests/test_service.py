@@ -45,3 +45,22 @@ def test_api_endpoints():
     assert c.get("/api/search", params={"q": "응급실"}).json()[0]["id"] == "15000563"
     p = c.post("/api/plan", json={"goal": "지금 가까운 응급실 병상", "use_llm": False}).json()
     assert p["datasets"][0]["id"] == "15000563"
+
+
+def test_goal_regions():
+    from pds.strategy.region import goal_regions
+    assert goal_regions("성수동 상권 변화를 월 단위로 추적하고 싶어")["sido"] == {"서울특별시"}
+    assert goal_regions("부산 해운대구 카페")["sido"] == {"부산광역시"}
+    assert goal_regions("지금 가까운 응급실과 병상 현황")["sido"] == set()
+
+
+@needs_catalog
+def test_plan_excludes_other_region():
+    from pds.strategy.plan import exclude, plan
+    p = plan("성수동 상권 변화를 월 단위로 추적하고 싶어", use_llm=False)
+    assert "15095253" not in {d["id"] for d in p["datasets"]}  # 부산 점포이력
+    assert any(x["id"] == "15095253" and x["kind"] == "region" for x in p["not_recommended"])
+    assert len({d["id"] for d in p["datasets"]}) == len(p["datasets"])
+    gone = p["datasets"][1]["id"]
+    q = exclude(p, gone, "테스트")
+    assert gone not in {d["id"] for d in q["datasets"]} and all(gone not in (j["left"], j["right"]) for j in q["joins"])
