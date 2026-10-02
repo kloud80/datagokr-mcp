@@ -1,0 +1,583 @@
+# Dataset 15124959 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15124959'
+tier: verified
+title: 국토교통부_기상상태별 사고누적지점 조회 서비스
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124959/openapi.do
+synonyms:
+  - 기상상태별사고정보
+  - 기상상태별사고누적지점
+  - 사고누적지점
+  - 날씨별사고
+  - 사고지점
+  - 기상별 사고다발지점
+  - 날씨별 교통사고
+  - 우천 사고 다발지
+  - 안개 사고 지점
+  - 눈길 교통사고
+  - 사고 다발지역
+  - 교통사고 누적지점
+description_portal: 기상상태별 사고누적지점 정보 및 사고정보를 기준년도, 광역지자체명, 기초지자체명, 지점구분(기상상태구분_맑은날, 흐린날, 비, 안개, 눈,기타) 으로 조회하여 기상상태별 사고누적지점 정보 및 지점별 교통사고 상세 현황 정보 제공합니다.  유형별 교통사고를 분류함으로써 지역별 교통안전대책 수립 및 유형별 교통안전계획 시행 ,개선방안 등을 수립하는데 유용하게 사용될 수 있습니다.사고 다발 지점 선정 기준 은 과거 3년간(기준년도 포함) 반경 50m 이내, 5건 이상 발생한 상위 30개 지점입니다.
+team:
+  dept: 교통안전정책과
+services:
+  - op: /T_OD_WTHR_CNDTN_BRN_INFO
+    name: 기상상태별 사고누적지점_지점정보
+    endpoint: https://apis.data.go.kr/1613000/WTHR_CNDTN/T_OD_WTHR_CNDTN_BRN_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: brnch_se_nm
+        required: true
+        desc: 기상상태구분 * 맑음, 흐림, 비, 안개, 눈
+      - name: mtrpl_lcgv_nm
+        required: true
+        desc: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주서울특별시(X), 제주도(X), 세종특별자치시(X)
+      - name: basic_lcgv_nm
+        required: false
+        desc: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /T_OD_WTHR_CNDTN_ACDNT_INFO
+    name: 기상상태별 사고누적지점_사고정보
+    endpoint: https://apis.data.go.kr/1613000/WTHR_CNDTN/T_OD_WTHR_CNDTN_ACDNT_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        example: '2021'
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: brnch_se_nm
+        required: true
+        example: 기상상태흐림
+        desc: 기상상태구분 * 맑음, 흐림, 비, 안개, 눈
+      - name: mtrpl_lcgv_nm
+        required: true
+        example: 서울
+        desc: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주서울특별시(X), 제주도(X), 세종특별자치시(X)
+      - name: basic_lcgv_nm
+        required: true
+        example: 종로구
+        desc: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      - name: plc_nm
+        required: true
+        example: 서울지방경찰청(북동)
+        desc: 사고누적지점명* 과거 3년간 반경 50m 이내에서 기상상태별(맑음/흐림/비/안개/눈) 교통사고가 5건 이상 발생한 지점
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prptr_sexdstn
+      title: '가해운전자 성별 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남
+      stats:
+        unique: 1
+    - name: crtr_yr
+      title: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: mtrpl_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주서울특별시(X), 제주도(X), 세종특별자치시(X)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      stats:
+        unique: 1
+    - name: acdnt_sclsf
+      title: 사고 유형 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 측면직각충돌
+        - 추돌(진행중)
+      stats:
+        unique: 2
+    - name: acdnt_plc
+      title: 사고 발생장소 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구 내자동 서울지방경찰청(북동)
+        - 서울특별시 종로구 적선동 서울지방경찰청(북동)
+      stats:
+        unique: 2
+    - name: prptr_vhtyp
+      title: '가해운전자가 탑승한 차량의 종류 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+        - 원동기
+        - 승합
+      stats:
+        unique: 3
+    - name: prptr_vhusg
+      title: '가해운전자가 탑승한 차량의 용도(사업용/비사업용)* 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 사업용
+        - '-'
+        - 비사업용
+      stats:
+        unique: 3
+    - name: row_num
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 2.5
+        max: 4
+        unique: 4
+    - name: sufrer_vhtyp
+      title: '피해자 차량 종류 * 피해자 : 가해운전자 이외의 교통사고 관련자, 보행자 포함'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+      stats:
+        unique: 1
+    - name: acdnt_tm
+      title: 사고 발생 시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18'
+        - '21'
+        - '22'
+      stats:
+        min: 15
+        p50: 19.5
+        max: 22
+        unique: 4
+    - name: dcsd_cnt
+      title: '사망자 수 '
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: acdnt_grd
+      title: 사고등급 * 사망사고, 중상사고,경상사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중상사고
+        - 경상사고
+      stats:
+        unique: 2
+    - name: road_type
+      title: 도로종류* 사고발생  지점 도로종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 특별광역시도
+      stats:
+        unique: 1
+    - name: acdnt_frm
+      title: 사고 형태* 단독사고, 진출회전사고, 진입회전사고, 보행횡단사고, 주정차사고, 일직선사고, 기타사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 진입회전사고
+        - 일직선사고
+      stats:
+        unique: 2
+    - name: wrvhl_vltn
+      title: 가해차량 법규위반사항
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신호위반
+        - 안전운전불이행
+      stats:
+        unique: 2
+    - name: wthr_stts
+      title: 사고발생 일의 기상상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 흐림
+      stats:
+        unique: 1
+    - name: acdnt_dt
+      title: 사고 발생 일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '04'
+        - '06'
+        - '22'
+      stats:
+        min: 4
+        p50: 14
+        max: 29
+        unique: 4
+    - name: prptr_drnkn
+      title: '가해운전자 음주 여부 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 아니요
+        - 예
+      stats:
+        unique: 2
+    - name: prptr_nmyex
+      title: '가해운전자 경력년수 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 15년이상
+      stats:
+        unique: 1
+    - name: min_inry_cnt
+      title: 경상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 1.5
+        max: 2
+        unique: 3
+    - name: plc_nm
+      title: 사고누적지점명* 과거 3년간 반경 50m 이내에서 기상상태별(맑음/흐림/비/안개/눈) 교통사고가 5건 이상 발생한 지점
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울지방경찰청(북동)
+      stats:
+        unique: 1
+    - name: acdnt_dw
+      title: 사고 발생 요일
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수요일
+        - 화요일
+        - 금요일
+      stats:
+        unique: 3
+    - name: acdnt_octm
+      title: 사고발생시간대* 새벽(05~06시), 출퇴근(07~08, 18~20시), 주간(09~17시), 심야(21~04)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 심야시간대(21~04)
+        - 출·퇴근시간대(07~08,18~20)
+        - 주간(09~17)
+      stats:
+        unique: 3
+    - name: basic_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+      stats:
+        unique: 1
+    - name: acdnt_lclsf
+      title: 사고유형(대분류)* 차대사람, 차대차, 차량단독, 건널목
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 차대차
+      stats:
+        unique: 1
+    - name: srs_inry_cnt
+      title: 중상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 0.5
+        max: 1
+        unique: 2
+    - name: inry_cnt
+      title: 부상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: acdnt_yr
+      title: 사고 발생 년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+        - '2020'
+      stats:
+        min: 2020
+        p50: 2021
+        max: 2021
+        unique: 2
+    - name: acdnt_mm
+      title: 사고 발생 월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '08'
+        - '09'
+      stats:
+        min: 1
+        p50: 4.5
+        max: 9
+        unique: 3
+    - name: brnch_se_nm
+      title: 기상상태구분 * 맑음, 흐림, 비, 안개, 눈
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기상상태흐림
+      stats:
+        unique: 1
+    - name: prptr_age
+      title: '가해운전자 연령 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 25세
+        - 47세
+        - 27세
+      stats:
+        unique: 4
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6901
+  rank_in_sector: 463
+  brm: 교통물류 - 도로
+  why: 기상별 사고누적지점, 좌표 포함
+claims:
+  - id: c-15124959-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15124959.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15124959.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15124959-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124959-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124959.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 31개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124959-04
+    kind: coverage
+    value: API 전체 건수 4 · 검증 수신 4행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15124959.json
+        observed_at: '2026-10-02'
+        detail: total 4, rows 4
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124959-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124959-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124959-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124959-10
+    kind: pitfall
+    value: 필수 파라미터 brnch_se_nm, mtrpl_lcgv_nm는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15124959.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124959-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /T_OD_WTHR_CNDTN_BRN_INFO'
+    evidence:
+      - type: measured
+        source: probe/runs/15124959.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 4
+  total_count: 4
+  ops_ok: 1/2
+  latency_ms: 174
+  run: probe/runs/15124959.json
+  stats: probe/stats/15124959.json
+  data: probe/data/15124959/
+status: active
+summary_user: 기상상태(맑음·흐림·비·안개·눈)별로 과거 3년간(기준년도 포함) 반경 50m 이내 5건 이상 사고가 난 상위 30개 누적지점과, 지점별 사고 상세(일시·유형·사상자·가해운전자 특성)를 담는 전국 대상 API다. 지자체 교통안전 담당자나 분석가가 '비 오는 날 사고가 반복되는 지점은 어디이고 어떤 유형인가' 같은 질문에 쓴다. 조회에 필요한 기상상태구분(brnch_se_nm)과 시도명(mtrpl_lcgv_nm)은 다른 데이터에서 받은 코드를 넘겨야 하고, 전역 조인 키는 없어 이름·코드 매핑이나 같은 기관 코드로 연결한다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 이름·코드 매핑으로만 이어진다. 필수 파라미터 brnch_se_nm, mtrpl_lcgv_nm 값을 먼저 확보해 넘겨야 하며, 오퍼레이션 2개 중 /T_OD_WTHR_CNDTN_BRN_INFO는 최소 파라미터로 응답이 없었다. 검증 시 API 전체 건수는 4건이었다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15124959-03
+    - c-15124959-04
+    - c-15124959-10
+    - c-15124959-11
+    - c-15124959-06
+  dropped_citations: 0

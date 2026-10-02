@@ -1,0 +1,502 @@
+# Dataset 15143846 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15143846'
+tier: verified
+title: 서울교통공사_실시간운임정보
+sector: 교통물류/철도/rail-realtime
+agency:
+  id: B553766
+  name: 서울교통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15143846/openapi.do
+synonyms:
+  - 서울 지하철
+  - 운임 정보
+  - 기후동행카드
+  - 지하철 요금
+  - 운임 비용
+  - 지하철 운임 조회
+  - 역간 요금
+  - 기후동행카드 요금
+  - 구간 운임
+  - 청소년 어린이 요금
+  - 교통비 계산
+  - 서울 지하철 거리운임
+description_portal: 서울교통공사 실시간운임정보 API는 서울지하철을 이용하는 시민들에게 보다 정확하고 신속한 요금 정보를 제공하기 위해 구축된 공공 데이터 서비스입니다. 이 API는 사용자가 입력한 출발역과 도착역 정보를 기준으로, 해당 노선의 이동 거리 및 환승 여부 등을 종합적으로 분석하여, 기준일자에 따라 산정된 실시간 운임 정보를 제공합니다.주요 제공 항목에는 일반, 청소년, 어린이 등 연령별 승객 구분에 따른 카드 및 현금 요금, 이동 거리 기반의 거리운임, 그리고 ‘기후동행카드’ 이용 여부에 따른 승하차 정보 등이 포함되어 있습니다. 이를 통해 이용자는 보다 세분화된 요금 정보를 확인할 수 있으며, 다양한 상황에서 정확한 요금 계산이 가능합니다.해당 API는 실시간 열차 운임 계산 서비스, 대중교통 요금 안내 웹사이트 및 앱, 교통비 예측 시스템 등 다양한 서비스와 연계하여 활용될 수 있으며, 민간 서비스 개발자 및 공공기관에서도 적극적으로 응용이 가능합니다. 실시간운임정보는 Rest API 방식으로 제공되며, 데이터는 수시로 갱신되며 하루 단위로 정기 갱신되어 항상 최신 정보를 유지합니다.이와 같은 실시간 데이터 제공을 통해 서울교통공사는 시민의 교통 편의성을 높이는 것은 물론, 교통 데이터 기반의 혁신 서비스 창출을 지원하고 있습니다.
+team:
+  dept: 데이터팀
+services:
+  - op: /getRltmFare2
+    name: 실시간운임정보 조회
+    endpoint: https://apis.data.go.kr/B553766/fare2/getRltmFare2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 결과 유형 (JSON/XML, default:XML)
+      - name: selectFields
+        required: false
+        desc: "응답으로 받고 싶은 컬럼 명을 선택하여 검색(구분자','로 다중선택) - 예: gnrlCardFare,gnrlCashFare,yungCardFare"
+      - name: dptreStnCd
+        required: false
+        desc: '출발역코드(검색기준: 일치)'
+      - name: dptreStnNm
+        required: false
+        desc: '출발역명(검색기준: 포함)'
+      - name: arvlStnCd
+        required: false
+        desc: '도착역코드(검색기준: 일치)'
+      - name: arvlStnNm
+        required: false
+        desc: '도착역명(검색기준: 포함)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dptreStnCd
+      title: 출발 해당 지하철 역코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0152'
+        - '0151'
+        - '0150'
+      stats:
+        min: 150
+        p50: 152
+        max: 152
+        unique: 3
+    - name: dptreStnNm
+      title: 출발 지하철 역명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종각
+        - 시청
+        - 서울역
+      stats:
+        unique: 3
+    - name: dptreStnNo
+      title: 출발 지하철 역번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '131'
+        - '132'
+        - '133'
+      stats:
+        min: 131
+        p50: 131
+        max: 133
+        unique: 3
+    - name: arvlStnCd
+      title: 도착 지하철 역코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0153'
+        - '0154'
+        - '0309'
+      stats:
+        min: 150
+        p50: 1878
+        max: 4815
+        unique: 636
+    - name: arvlStnNo
+      title: 도착 지하철 역번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '130'
+        - '129'
+        - '319'
+      stats:
+        unique: 636
+    - name: arvlStnNm
+      title: 도착 지하철 역명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 종로3가
+        - 종로5가
+        - 지축
+      stats:
+        unique: 631
+    - name: mvmnDstc
+      title: 지하철 이동 거리
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '15.0'
+        - '17.4'
+        - '12.9'
+      stats:
+        min: 0.8
+        p50: 19.25
+        max: 116.4
+        unique: 469
+    - name: clmtcmpnCardTkcarYn
+      title: 기후동행카드승차여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: clmtcmpnCardGffYn
+      title: 기후동행카드하차여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+    - name: crtrYmd
+      title: '기준일자 (일자형식: YYYYMMDD)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261002'
+      stats:
+        min: 20261002
+        p50: 20261002
+        max: 20261002
+        unique: 1
+    - name: gnrlCardFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1550'
+        - '1650'
+        - '1750'
+      stats:
+        min: 1550
+        p50: 1750
+        max: 5350
+        unique: 26
+    - name: gnrlCashFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1650'
+        - '1750'
+        - '1850'
+      stats:
+        min: 1650
+        p50: 1850
+        max: 5450
+        unique: 26
+    - name: gnrlAddFare
+      title: 일반추가운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1700'
+        - '200'
+      stats:
+        min: 0
+        p50: 0
+        max: 2200
+        unique: 5
+    - name: gnrlDscntFare
+      title: 일반할인운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: yungCardFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '900'
+        - '980'
+        - '1060'
+      stats:
+        min: 900
+        p50: 1060
+        max: 3940
+        unique: 26
+    - name: yungCashFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1650'
+        - '1750'
+        - '1850'
+      stats:
+        min: 1650
+        p50: 1850
+        max: 5450
+        unique: 26
+    - name: yungAddFare
+      title: 청소년추가운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1360'
+        - '560'
+      stats:
+        min: 0
+        p50: 0
+        max: 1760
+        unique: 4
+    - name: yungDscntFare
+      title: 청소년할인운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: childCardFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '550'
+        - '600'
+        - '650'
+      stats:
+        min: 550
+        p50: 650
+        max: 2450
+        unique: 26
+    - name: childCashFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '550'
+        - '600'
+        - '650'
+      stats:
+        min: 550
+        p50: 650
+        max: 2450
+        unique: 26
+    - name: childAddFare
+      title: 어린이추가운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '850'
+        - '350'
+      stats:
+        min: 0
+        p50: 0
+        max: 1100
+        unique: 4
+    - name: childDscntFare
+      title: 어린이할인운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: cmtkFare
+      title: 권종별 거리에 따른 운임
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '68200'
+        - '76700'
+        - '69200'
+      stats:
+        min: 68200
+        p50: 69200
+        max: 129000
+        unique: 17
+    - name: addCrgExpln
+      title: 추가요금설명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "1.   신분당선 추가 요금\n1-1. DXLINE 구간 (강남 ~ 정자)\n-조건: 출발역과 도착역 모두 운영사가 DXLINE일 경우\n-추가 요금"
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2026-10-02 ~ 2026-10-02
+cycle: default
+classification:
+  subsector_name: 실시간 도착·시간표·운임 (조회 도구)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8587
+  rank_in_sector: 2
+  brm: 교통물류 - 철도
+  why: 서울지하철 구간별 운임 조회 도구
+claims:
+  - id: c-15143846-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15143846.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15143846.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15143846-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-02 (관측일 기준 0일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15143846
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-02, lag 0
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15143846-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15143846.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 24개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15143846-04
+    kind: coverage
+    value: API 전체 건수 409,962 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2026-10-02 ~ 2026-10-02
+    evidence:
+      - type: measured
+        source: probe/runs/15143846.json
+        observed_at: '2026-10-02'
+        detail: total 409962, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15143846-06
+    kind: admin_note
+    value: "세부 부문 '실시간 도착·시간표·운임 (조회 도구)'의 가치: 분석용이 아니라 서비스용 조회 — 전략 응답에서 access.mode realtime-query로 표시"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rail-realtime
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15143846-07
+    kind: admin_note
+    value: '[교통물류 - 철도 · 결정] 대부분 유지(제외 규칙 없음). 세부: 건설 계획(event) · 승하차·혼잡 · 실시간·시간표(조회 도구) · 철도망·역·시설(cross-cutting) · 안전 · 화물 · 기타.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L463
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15143846-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15143846-10
+    kind: pitfall
+    value: 전수 409,962건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 410회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15143846.json
+        observed_at: '2026-10-02'
+        detail: total 409962 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 409962
+  ops_ok: 1/1
+  latency_ms: 152
+  latest: '2026-10-02'
+  lag_days: 0
+  run: probe/runs/15143846.json
+  stats: probe/stats/15143846.json
+  data: probe/data/15143846/
+status: active
+summary_user: 서울지하철 출발역·도착역 조합별로 이동 거리와 일반·청소년·어린이 구분의 카드·현금 운임, 추가·할인운임, 기후동행카드 승하차 여부를 담은 조회형 API로, 전국 범위 409,962건이 있고 검증 시점 기준일자는 2026-10-02이다. 이용자나 앱 개발자가 특정 두 역 사이를 갈 때 연령별로 요금이 얼마인지 확인하는 질문에 쓴다. 출발·도착 역코드(dptreStnCd, arvlStnCd)와 역명·역번호를 가지고 있어 같은 기관의 역 정보와는 이어 쓸 수 있으나, 다른 기관 데이터와 잇는 전역 조인 키는 없어 이름·코드 매핑이 필요하다.
+limits: 분석용 집계가 아니라 서비스용 조회 도구이며, 전체 409,962건 중 검증에서는 1,000행만 받았고 전량 수집에는 410회 이상 페이지 반복이 필요하다. 전역 조인 키가 없어 타 기관 데이터와는 이름·코드 매핑으로만 연결된다. 활용신청은 자동승인이며 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15143846-01
+    - c-15143846-02
+    - c-15143846-03
+    - c-15143846-04
+    - c-15143846-06
+    - c-15143846-10
+  dropped_citations: 0

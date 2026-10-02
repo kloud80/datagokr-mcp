@@ -1,0 +1,497 @@
+# Dataset 15094784 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15094784'
+tier: verified
+title: 금융위원회_채권시세정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15094784/openapi.do
+synonyms:
+  - 국채
+  - 소액채권
+  - 일반채권
+  - 채권시세
+  - 거래량
+  - 시장가격
+  - 채권 시세
+  - 채권 종가
+  - 채권 수익률
+  - 국채전문유통시장
+  - 한국거래소 채권
+  - ISIN 채권 시세
+description_portal: '채권시세정보는 한국거래소에서 제공하는 채권시장별 시세입니다. 국채전문유통시장, 일반채권시장, 소액채권시장 등 다양한 채권시장에서 거래되는 채권의 시가, 고가, 저가, 종가, 거래량, 수익률 등의 정보를 종합적으로 확인할 수 있습니다.이 데이터는 1개 오퍼레이션으로 구성되어 있습니다.오퍼레이션은 다음과 같습니다.① 채권시세 : 한국거래소에서 제공하는 채권시세 정보국채전문유통시장, 일반채권시장, 소액채권시장의 시세 정보를 채권시세에 대한 오퍼레이션을 통합적으로 제공한다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getBondPriceInfo_V2
+    name: 채권시세
+    endpoint: https://apis.data.go.kr/1160100/GetBondSecuritiesInfoService_V2/getBondPriceInfo_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        desc: '구분(xml, json) Default: xml'
+      - name: basDt
+        required: false
+        desc: 검색값과 기준일자가 일치하는 데이터를 검색
+      - name: beginBasDt
+        required: false
+        desc: 기준일자가 검색값보다 크거나 같은 데이터를 검색
+      - name: endBasDt
+        required: false
+        desc: 기준일자가 검색값보다 작은 데이터를 검색
+      - name: likeBasDt
+        required: false
+        desc: 기준일자값이 검색값을 포함하는 데이터를 검색
+      - name: likeSrtnCd
+        required: false
+        desc: 단축코드가 검색값을 포함하는 데이터를 검색
+      - name: isinCd
+        required: false
+        desc: 검색값과 ISIN코드이 일치하는 데이터를 검색
+      - name: likeIsinCd
+        required: false
+        desc: ISIN코드가 검색값을 포함하는 데이터를 검색
+      - name: itmsNm
+        required: false
+        desc: 검색값과 종목명이 일치하는 데이터를 검색
+      - name: likeItmsNm
+        required: false
+        desc: 종목명이 검색값을 포함하는 데이터를 검색
+      - name: mrktCtg
+        required: false
+        desc: 검색값과 시장구분이 일치하는 데이터를 검색
+      - name: beginClprVs
+        required: false
+        desc: 종가_대비가 검색값보다 크거나 같은 데이터를 검색
+      - name: endClprVs
+        required: false
+        desc: 종가_대비가 검색값보다 작은 데이터를 검색
+      - name: beginClprBnfRt
+        required: false
+        desc: 종가_수익률이 검색값보다 크거나 같은 데이터를 검색
+      - name: endClprBnfRt
+        required: false
+        desc: 종가_수익률이 검색값보다 작은 데이터를 검색
+      - name: beginMkpBnfRt
+        required: false
+        desc: 시가_수익률이 검색값보다 크거나 같은 데이터를 검색
+      - name: endMkpBnfRt
+        required: false
+        desc: 시가_수익률이 검색값보다 작은 데이터를 검색
+      - name: beginTrqu
+        required: false
+        desc: 거래량이 검색값보다 크거나 같은 데이터를 검색
+      - name: endTrqu
+        required: false
+        desc: 거래량이 검색값보다 작은 데이터를 검색
+      - name: beginTrPrc
+        required: false
+        desc: 거래대금이 검색값보다 크거나 같은 데이터를 검색
+      - name: endTrPrc
+        required: false
+        desc: 거래대금이 검색값보다 작은 데이터를 검색
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: YYYYMMDD 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+        - '20260930'
+        - '20260929'
+      stats:
+        min: 20260929
+        p50: 20260930
+        max: 20261001
+        unique: 3
+    - name: srtnCd
+      title: 종목 코드보다 짧으면서 유일성이 보장되는 코드(9자리)
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - C01501DG9
+        - C03502GG9
+        - C03503GG6
+      stats:
+        unique: 547
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR101501DG93
+        - KR103502GG95
+        - KR103503GG60
+      stats:
+        unique: 547
+    - name: itmsNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 국민주택1종26-09
+        - 국고04500-5609(26-8)
+        - 국고04250-3606(26-6)
+      stats:
+        unique: 547
+    - name: mrktCtg
+      title: 시장 구분 (KTS/소액채권/일반채권중 1)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반채권
+        - 소액채권
+        - KTS
+      stats:
+        unique: 3
+    - name: xpYrCnt
+      title: 년단위 만기기간(KTS만 허용)
+      type: number
+      null_rate: 0.97
+      sample_values:
+        - '10'
+        - '5'
+        - '20'
+      stats:
+        min: 2
+        p50: 10
+        max: 30
+        unique: 7
+    - name: itmsCtg
+      title: 지표/경과(KTS만 허용)
+      type: code
+      null_rate: 0.97
+      sample_values:
+        - 지표
+        - 경과
+      stats:
+        unique: 2
+    - name: clprPrc
+      title: 정규시장의 매매시간종료시까지 형성되는 최종가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '10100'
+        - '8798'
+      stats:
+        min: 5553
+        p50: 9949.25
+        max: 10902.7
+        unique: 592
+    - name: clprVs
+      title: 종가의 전일 대비 등락
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '-49'
+        - '30'
+      stats:
+        min: -506.5
+        p50: 0
+        max: 499.5
+        unique: 253
+    - name: clprBnfRt
+      title: 종가로 체결된 경우의 수익률
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.618'
+        - '4.566'
+        - '4.672'
+      stats:
+        min: -23.411
+        p50: 4.563
+        max: 23.486
+        unique: 761
+    - name: mkpPrc
+      title: 정규시장의 매매시간개시후 형성되는 최초가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '10050'
+        - '8798'
+      stats:
+        min: 5501
+        p50: 9933.65
+        max: 11000
+        unique: 573
+    - name: mkpBnfRt
+      title: 시가로 체결된 경우의 수익률
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.566'
+        - '4.616'
+        - '4.647'
+      stats:
+        min: -23.411
+        p50: 4.598000000000001
+        max: 22.789
+        unique: 769
+    - name: hiprPrc
+      title: 하루 중 가격의 최고치
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '10050'
+        - '10100'
+      stats:
+        min: 5553
+        p50: 9950
+        max: 11000
+        unique: 582
+    - name: hiprBnfRt
+      title: 고가로 체결된 경우의 수익률
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.566'
+        - '4.549'
+        - '4.657'
+      stats:
+        min: -23.411
+        p50: 4.549
+        max: 21.688
+        unique: 775
+    - name: loprPrc
+      title: 하루 중 가격의 최저치
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '8798'
+        - '10100'
+      stats:
+        min: 5500
+        p50: 9922
+        max: 10902.7
+        unique: 588
+    - name: loprBnfRt
+      title: 저가로 체결된 경우의 수익률
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.566'
+        - '4.647'
+        - '4.616'
+      stats:
+        min: -23.411
+        p50: 4.616
+        max: 23.486
+        unique: 775
+    - name: trqu
+      title: 체결수량의 누적 합계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '100000000'
+        - '10000000'
+      stats:
+        min: 10000
+        p50: 29090000
+        max: 2931000000000
+        unique: 772
+    - name: trPrc
+      title: 거래건 별 체결가격 * 체결수량의 누적 합계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '9989'
+        - '5000000'
+      stats:
+        min: 8393
+        p50: 26735807.5
+        max: 2917862550000
+        unique: 989
+  foreign_keys:
+    - fields:
+        - srtnCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2026-09-29 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.7511
+  rank_in_sector: 73
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 채권 일별 시세, 채권기본정보와 이어짐
+claims:
+  - id: c-15094784-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15094784.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15094784.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15094784-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15094784
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094784-03
+    kind: key
+    value: '실측 조인 키: stock_cd(srtnCd), stock_cd(isinCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15094784.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 18개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094784-04
+    kind: coverage
+    value: API 전체 건수 570,358 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2026-09-29 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15094784.json
+        observed_at: '2026-10-02'
+        detail: total 570358, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094784-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15094784-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15094784-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15094784-10
+    kind: pitfall
+    value: 전수 570,358건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 571회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15094784.json
+        observed_at: '2026-10-02'
+        detail: total 570358 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 570358
+  ops_ok: 1/1
+  latency_ms: 815
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15094784.json
+  stats: probe/stats/15094784.json
+  data: probe/data/15094784/
+status: active
+summary_user: 한국거래소 채권시장(국채전문유통·일반채권·소액채권)의 종목별 일별 시세를 담은 원천 데이터로, 시가·고가·저가·종가, 각 수익률, 거래량·거래대금을 기준일자별로 제공한다. 채권 투자자나 분석가가 특정 채권의 최근 종가와 수익률이 어떻게 움직였는지 확인하는 데 쓴다. 단축코드(srtnCd)와 ISIN(isinCd)이 종목코드(stock_cd) 조인 키라서, 같은 종목코드 체계를 쓰는 연기금 보유·기업 공시 데이터와 이어 쓴다.
+limits: 전체 570,358건 중 검증 호출은 1,000행만 받았고 확인된 기간은 2026-09-29~2026-10-01이므로, 전량 수집은 페이지를 571회 이상 반복해야 한다. 만기기간(xpYrCnt)과 지표/경과(itmsCtg)는 국채전문유통시장(KTS)에만 허용되는 필드다. 개발계정은 일 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15094784-01
+    - c-15094784-03
+    - c-15094784-04
+    - c-15094784-06
+    - c-15094784-10
+  dropped_citations: 0

@@ -1,0 +1,82 @@
+# 레시피 초안 — 맥락 교통사고 3중 등록 (KNOWLEDGE-SPEC §3.7). pds/strategy/recipe_draft.py 생성, 구름 확정 전(draft).
+# 멤버 6개 중 선언된 Edge로 이어진 6개. 이어지지 않은 멤버: 없음
+id: traffic-accidents
+goal_examples:
+  - 교통사고 3중 등록
+context: traffic-accidents
+datasets:
+  - id: '15056681'
+    role: primary
+  - id: '15057467'
+    role: join
+  - id: '15058925'
+    role: join
+  - id: '15073263'
+    role: join
+  - id: '15029185'
+    role: join
+  - id: '15048078'
+    role: join
+joins:
+  - e-0485
+  - e-0097
+  - e-0486
+  - e-1391
+  - e-1160
+  - e-1152
+  - e-0709
+pipeline:
+  - step: 1
+    do: fetch
+    dataset: '15056681'
+    produces: 15056681.parquet
+  - step: 2
+    do: join
+    edge: e-0485
+    note: 15056681 ⋈ 15123287 (허브 법정동 코드표)
+  - step: 3
+    do: fetch
+    dataset: '15057467'
+    produces: 15057467.parquet
+  - step: 4
+    do: join
+    edge: e-0097
+    note: 15123287 ⋈ 15057467 (허브 법정동 코드표)
+  - step: 5
+    do: fetch
+    dataset: '15058925'
+    produces: 15058925.parquet
+  - step: 6
+    do: join
+    edge: e-0486
+    note: 15123287 ⋈ 15058925 (허브 법정동 코드표)
+  - step: 7
+    do: fetch
+    dataset: '15073263'
+    produces: 15073263.parquet
+  - step: 8
+    do: join
+    edge: e-1391
+    note: 15123287 ⋈ 15073263 (허브 법정동 코드표)
+  - step: 9
+    do: join
+    edge: e-1160
+    note: 15056681 ⋈ 15123899 (허브 연속지적도(PNU))
+  - step: 10
+    do: fetch
+    dataset: '15029185'
+    produces: 15029185.parquet
+  - step: 11
+    do: join
+    edge: e-1152
+    note: 15123899 ⋈ 15029185 (허브 연속지적도(PNU))
+  - step: 12
+    do: fetch
+    dataset: '15048078'
+    produces: 15048078.parquet
+  - step: 13
+    do: join
+    edge: e-0709
+    note: 15123899 ⋈ 15048078 (허브 연속지적도(PNU))
+author: claude-draft
+status: draft

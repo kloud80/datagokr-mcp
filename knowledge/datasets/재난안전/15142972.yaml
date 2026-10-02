@@ -1,0 +1,284 @@
+# Dataset 15142972 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142972'
+tier: verified
+title: 소방청_지역별 화재피해 현황
+sector: 재난안전/안전관리/fire-rescue
+agency:
+  id: '1661000'
+  name: 소방청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142972/openapi.do
+synonyms:
+  - 화재
+  - 피해현황
+  - 지역
+  - 화재 피해
+  - 화재 통계
+  - 화재 인명피해
+  - 화재 재산피해
+  - 화재 발생 현황
+  - 소방서 출동
+  - 화재 조사 결과
+  - 지역별 화재
+description_portal: 소방청에서 화재 조사가 완료된 화재 현황에 대해 화재발생일자, 출동소방서, 인적 피해 현황(사망, 부상), 금전적 피해 현황 및 주소(읍, 면, 동까지)를 Open API 형식으로 개방
+team:
+  dept: 정보통신과 유지관리사업단
+services:
+  - op: /getOcByregionFpcnd
+    name: 지역별 화재피해 현황 조회
+    endpoint: https://apis.data.go.kr/1661000/FireDamageStatus/getOcByregionFpcnd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식(xml/json)
+      - name: startYmd
+        required: true
+        example: '20190101'
+        desc: 조회시작일자
+      - name: endYmd
+        required: true
+        example: '20190111'
+        desc: 조회종료일자
+      - name: sidoNm
+        required: true
+        example: 대전광역시
+        desc: 시도명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prptDmgSbttAmt
+      title: 재산피해소계금액(천원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '220'
+        - '501'
+      stats:
+        min: 0
+        p50: 576
+        max: 22887
+        unique: 32
+    - name: injrdprPercnt
+      title: 부상자인원수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 3
+    - name: lawAddrName
+      title: 법정동주소(읍, 명, 동 까지)
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 대전광역시 서구 도마동
+        - 대전광역시 대덕구 중리동
+        - 대전광역시 서구 용문동
+      stats:
+        unique: 29
+    - name: ocrnYmdhh
+      title: 발생일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2019-01-01 02:52
+        - 2019-01-01 16:13
+        - 2019-01-01 19:23
+      stats:
+        min: '2019-01-01'
+        max: '2019-01-11'
+        unique: 35
+    - name: gutFsttOgidNm
+      title: 출동소방서
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 동부소방서
+        - 서부소방서
+        - 둔산소방서
+      stats:
+        unique: 5
+    - name: deadPercnt
+      title: 사망자인원수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+  foreign_keys:
+    - fields:
+        - lawAddrName
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2019-01-01 ~ 2019-01-11
+cycle: default
+classification:
+  subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6957
+  rank_in_sector: 135
+  brm: 재난안전 - 안전관리
+  why: 화재 건별 법정동 주소 포함, 기존 화재정보와 유사하나 건별 원장
+claims:
+  - id: c-15142972-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142972.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142972.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15142972-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2019-01-11 (관측일 기준 2821일 전) — 검증 호출 조건(startYmd=20190101, endYmd=20190111) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15142972
+        observed_at: '2026-10-02'
+        detail: latest 2019-01-11, lag 2821
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142972-03
+    kind: key
+    value: '실측 조인 키: address(lawAddrName)'
+    evidence:
+      - type: measured
+        source: probe/stats/15142972.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142972-04
+    kind: coverage
+    value: API 전체 건수 35 · 검증 수신 35행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2019-01-01 ~ 2019-01-11
+    evidence:
+      - type: measured
+        source: probe/runs/15142972.json
+        observed_at: '2026-10-02'
+        detail: total 35, rows 35
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142972-06
+    kind: admin_note
+    value: "세부 부문 '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)'의 가치: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fire-rescue
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142972-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142972-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 35
+  total_count: 35
+  ops_ok: 1/1
+  latency_ms: 265
+  latest: '2019-01-11'
+  lag_days: 2821
+  run: probe/runs/15142972.json
+  stats: probe/stats/15142972.json
+  data: probe/data/15142972/
+status: active
+summary_user: 소방청이 화재 조사를 마친 건을 한 건씩 담는 원천 데이터로, 발생일자·출동소방서·사망 및 부상 인원·재산피해금액(천원)·법정동 주소(읍·면·동까지)를 제공한다. 검증 호출 기준 전국 35건(2019-01-01~2019-01-11)이 확인되며, 특정 기간·지역에서 화재로 인명·재산 피해가 얼마나 났는지 살펴보려는 분석가나 지자체 담당자가 쓴다. 법정동 주소(lawAddrName, 키 address)를 조인 키로 삼아 같은 주소 단위의 다른 데이터와 이어 쓰며, 같은 소방 부문의 소방용수·비상소화장치·119안전센터 데이터와 위치 기준으로 묶어 볼 수 있다.
+limits: 확인된 범위는 검증 호출 조건인 2019-01-01~2019-01-11의 35건뿐이며, 실측 최신 행이 2019-01-11이라는 사실이 데이터 자체의 최신성을 뜻하지는 않는다. 조인 키는 읍·면·동 단위 주소 문자열이라 시군구 코드 같은 별도 코드표는 제공되지 않는다. 호출은 serviceKey가 필요하고 개발계정은 일 1,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15142972-01
+    - c-15142972-02
+    - c-15142972-03
+    - c-15142972-04
+    - c-15142972-06
+  dropped_citations: 0

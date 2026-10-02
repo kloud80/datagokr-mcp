@@ -1,0 +1,280 @@
+# Dataset 15125518 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125518'
+tier: verified
+title: 공정거래위원회_가맹정보_브랜드 취소 목록 정보 제공 서비스
+sector: 공공행정/공정거래/franchise
+agency:
+  id: '1130000'
+  name: 공정거래위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125518/openapi.do
+synonyms:
+  - 가맹본부
+  - 본부
+  - 브랜드
+  - 가맹사업 등록취소
+  - 정보공개서 등록취소
+  - 프랜차이즈 브랜드 취소
+  - 가맹본부 등록취소 사유
+  - 가맹 브랜드 취소 현황
+  - 프랜차이즈 창업 확인
+description_portal: 브랜드 취소 목록에 대한 기준년도, 브랜드관리번호를 이용하여 등록취소유형명, 등록취소사유내용 등 정보 조회 서비스를 제공합니다.
+team:
+  dept: 정보화담당관실
+services:
+  - op: /getbrandRtrcnListinfo
+    name: 브랜드 취소 목록 조회
+    endpoint: https://apis.data.go.kr/1130000/FftcBrandRtrcnInfo2_Service/getbrandRtrcnListinfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: json
+        desc: 결과형식(xml/json)
+      - name: jngBizCrtraYr
+        required: true
+        example: '2023'
+        desc: 가맹사업기준년도
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: jngBizCrtraYr
+      title: 가맹사업기준년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023'
+      stats:
+        min: 2023
+        p50: 2023
+        max: 2023
+        unique: 1
+    - name: jnghdqrtrsConmNm
+      title: 가맹본부상호명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)이마홀딩스
+        - ㈜트릴리언
+        - (주)맛있는수다
+      stats:
+        unique: 832
+    - name: brandNm
+      title: 브랜드명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 화 커피(WHA COFFEE)
+        - 슈퍼키친도시락
+        - 더페이스샵
+      stats:
+        unique: 1000
+    - name: rcptDate
+      title: 접수일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220502'
+        - '20220429'
+        - '20220428'
+      stats:
+        min: 20191230
+        p50: 20220429
+        max: 20230804
+        unique: 255
+    - name: rgsRtrcnTyNm
+      title: 등록취소유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자진
+        - 직권
+      stats:
+        unique: 2
+    - name: rgsRtrcnRsnCn
+      title: 등록취소사유내용
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 자진취소
+        - 자진취소요청
+        - 자진취소 요청
+      stats:
+        unique: 69
+    - name: rgsRtrcnCmptnDt
+      title: 등록취소완료일시
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1682607600000'
+        - '1682953200000'
+        - '1703689200000'
+      stats:
+        min: 1676473200000
+        p50: 1682953200000
+        max: 1703689200000
+        unique: 106
+  foreign_keys:
+    - fields:
+        - rgsRtrcnCmptnDt
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2019-12-30 ~ 2023-08-04
+cycle: default
+classification:
+  subsector_name: 가맹사업
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6472
+  rank_in_sector: 40
+  brm: 산업고용 - 산업·중소기업일반
+  sector_rule: ftc-to-fairtrade
+  why: 브랜드 등록취소 이력, 폐업 분석에 활용
+claims:
+  - id: c-15125518-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125518.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125518.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15125518-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2023-08-04 (관측일 기준 1155일 전) — 검증 호출 조건(jngBizCrtraYr=2023) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15125518
+        observed_at: '2026-10-02'
+        detail: latest 2023-08-04, lag 1155
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125518-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(rgsRtrcnCmptnDt)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125518.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125518-04
+    kind: coverage
+    value: API 전체 건수 1,486 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2019-12-30 ~ 2023-08-04
+    evidence:
+      - type: measured
+        source: probe/runs/15125518.json
+        observed_at: '2026-10-02'
+        detail: total 1486, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125518-06
+    kind: admin_note
+    value: '[공정거래 · 결정] 공정위의 등록·지정·공시 4개 체인만 대상 — **기업집단 · 가맹사업 · 특수판매(통신판매·다단계·방문·후원방문·전화권유) · 상조(선불식할부)**. 나머지는 제외 (`exclusions.yaml` `ftc-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L60
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125518-07
+    kind: admin_note
+    value: '[공정거래 · 이유] 대중 수요는 셋 다 "이 사업자 믿어도 되나" — 창업 예정자(가맹 정보공개서), 소비자(통신판매·상조 등록 확인), 투자·언론(기업집단 지분·내부거래). 개방 데이터가 있는 곳도 등록·지정·공시 영역뿐이고, 네 체인 모두 **사업자등록번호·법인등록번호**로 묶인다. 하도급 실태조사·1372 상담통계·기업결합은 집계, 결정문·리콜은 사건·문서 단위라 연계 불가.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L62
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125518-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 1486
+  ops_ok: 1/1
+  latency_ms: 365
+  latest: '2023-08-04'
+  lag_days: 1155
+  run: probe/runs/15125518.json
+  stats: probe/stats/15125518.json
+  data: probe/data/15125518/
+status: active
+summary_user: 가맹본부 브랜드의 정보공개서 등록취소 건을 브랜드 단위로 담은 목록으로, 등록취소유형·사유·완료일시를 제공하며 전국 기준 전체 1,486건, 2019-12-30~2023-08-04 범위다. 창업 예정자가 관심 있는 가맹 브랜드가 등록취소된 적이 있는지, 그 사유가 무엇인지 확인하는 질문에 쓴다. 법인등록번호(corp_rgst_no)로 공정위 가맹사업 등 다른 등록·공시 데이터와 이어 쓰며, 네 체인 모두 사업자등록번호·법인등록번호로 묶인다.
+limits: 검증 호출이 기준년도 2023 조건이라 최신 행 날짜(2023-08-04)가 데이터 자체의 최신성과 다를 수 있다. 검증 때 수신한 것은 1,000행으로 전체 1,486건보다 적으므로 전체를 보려면 페이지 단위 호출이 필요하다. 집계 통계나 결정문 같은 사건·문서 단위 자료는 이 데이터로 연계할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15125518-02
+    - c-15125518-03
+    - c-15125518-04
+    - c-15125518-07
+  dropped_citations: 0

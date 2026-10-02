@@ -1,0 +1,244 @@
+# Dataset 15059974 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059974'
+tier: verified
+title: 해양환경공단_해양환경측정망CTD 관측서비스
+sector: 환경기상/해양환경/marine-quality
+agency:
+  id: B553931
+  name: 해양환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059974/openapi.do
+synonyms:
+  - CTD측정
+  - 수직관측
+  - 해양프로파일
+  - 수질변화
+  - 수심별자료
+  - 환경지표
+  - 해양관측
+  - 조사정점
+  - CTD
+  - 해양환경측정망
+  - 수온 염분 수직 프로파일
+  - 수심별 수온
+  - 전기전도도
+  - 해양 수질 관측
+  - 수층 구조
+description_portal: 이 데이터는 해양환경공단이 운영하는 해양환경측정망을 기반으로 CTD(Conductivity·Temperature·Depth) 장비를 활용하여 수행한 관측 정보를 제공하는 공공데이터 API 서비스이다. CTD 장비를 통해 수심별 전기전도도, 수온, 깊이 정보를 측정하며, 이를 바탕으로 염분, 수질 구조, 수층 안정도 등 주요 해양환경 특성을 정밀하게 분석할 수 있도록 수직 프로파일 자료를 제공한다. 또한 조사정점의 코드, 위치, 관측일시 등 기본 공간·시간 정보를 함께 제시하여 특정 해역의 수층 변화와 환경 특성을 종합적으로 파악할 수 있도록 지원한다. 아울러 연속적 수심 자료와 배경 환경요소를 포함한 표준화된 데이터 구조를 제공함으로써 해양 생태환경 연구, 수질 변화 감시, 정책 의사결정 등 다양한 활용 목적에 적합하도록 구성된 서비스이다.
+team:
+  dept: AI디지털융합처
+services:
+  - op: /getOceansNemoCtd
+    name: 해양환경측정망CTD 관측서비스
+    endpoint: https://apis.data.go.kr/B553931/OceansNemoCtdService/getOceansNemoCtd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: OCEAN_NM
+        required: false
+        example: 동해
+        desc: 해역명
+      - name: ECLGY_ZONE_AREA_NM
+        required: false
+        example: 동해
+        desc: 생태구명
+      - name: STNPNT_KOREAN_NM
+        required: false
+        example: 영일
+        desc: 정점명
+      - name: sdate
+        required: false
+        example: '20180101'
+        desc: 조사시작일
+      - name: edate
+        required: false
+        example: '20190101'
+        desc: 조사종료일
+      - name: STNPNT_CD
+        required: false
+        example: 0302H1
+        desc: 정점코드
+      - name: _type
+        required: true
+        example: xml
+        desc: 페이지 문서 형태
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 페이지 크기
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: list
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 페이지 크기
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 전체 결과수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해양 수질 측정 (해양수질자동측정망·해양환경측정망 실시간)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7817
+  rank_in_sector: 5
+  brm: 환경기상 - 해양환경
+  why: 측정망 CTD 수심별 관측 정점 단위
+claims:
+  - id: c-15059974-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059974.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059974.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15059974-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059974-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059974.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059974-04
+    kind: coverage
+    value: 검증 수신 1행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059974.json
+        observed_at: '2026-10-02'
+        detail: total None, rows 1
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059974-06
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 해양환경] 해양 오염사고·쓰레기 · 해양 보호구역·생태 · 해양 수질 자동측정(해수욕장 수질적합·해양방사능 포함). 국가해양생태계종합조사(연 1회 조사)·해수욕장 일반정보 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L686
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059974-07
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1
+  ops_ok: 1/1
+  latency_ms: 160
+  run: probe/runs/15059974.json
+  stats: probe/stats/15059974.json
+  data: probe/data/15059974/
+status: active
+summary_user: 해양환경공단이 해양환경측정망에서 CTD 장비로 잰 수심별 전기전도도·수온·깊이 수직 프로파일을 조사정점 코드·위치·관측일시와 함께 제공하는 API이다. 해역의 염분과 수층 구조 변화를 살피려는 연구자나 수질 감시 담당자가 특정 정점의 수층 특성을 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 같은 기관의 다른 해양 수질 데이터와는 정점 코드나 이름 매핑으로 이어 써야 한다.
+limits: 검증 호출에서 받은 데이터는 1행이어서 정점 수나 관측 기간 등 전체 규모는 확인되지 않았다. 범위는 전국이고 비공간 단위로 확인되며, 다른 데이터와는 공통 키가 없어 자동 조인은 되지 않는다. 개발계정은 일 5,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15059974-01
+    - c-15059974-03
+    - c-15059974-04
+    - c-15059974-06
+  dropped_citations: 0

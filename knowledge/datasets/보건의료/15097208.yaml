@@ -1,0 +1,228 @@
+# Dataset 15097208 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15097208'
+tier: verified
+title: 식품의약품안전처_안전상비의약품 정보
+sector: 보건의료/보건의료/drugs-devices
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15097208/openapi.do
+synonyms:
+  - 의약품
+  - 상비의약품
+  - 의약품유효기간
+  - 제품명
+  - 저장방법
+  - 안전상비의약품
+  - 편의점 상비약
+  - 편의점 판매 의약품
+  - 상비약 목록
+  - 의약품 유효기간
+  - 의약품 저장방법
+  - 식약처 상비약 API
+description_portal: 식품의약품안전처 「안전상비의약품 정보」 OpenAPI는 편의점 등에서 판매가 허용된 안전상비의약품의 기본 정보를 제공하는 공공데이터입니다. 제공 항목에는 제품명, 제조·수입업체명, 유효기간, 저장방법 등이 포함되어 있어 소비자는 구입하려는 의약품의 이름과 제조사, 유효기간을 직접 확인하고 올바른 보관 방법까지 파악할 수 있습니다. 이를 통해 소비자는 의약품을 보다 안전하게 선택하고 사용할 수 있으며, 편의점이나 유통업체는 판매 가능한 품목을 손쉽게 파악하고 재고 관리나 상품 구성을 효율적으로 조정하는 데  활용할 수 있습니다.
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getSafeStadDrugInq
+    endpoint: https://apis.data.go.kr/1471000/SafeStadDrugService/getSafeStadDrugInq
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: PRDLST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 닥터베아제정
+        - 베아제정
+        - 신신파스아렉스
+      stats:
+        unique: 13
+    - name: BSSH_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (주)한국얀센
+        - (주)대웅제약
+        - (주)한독
+      stats:
+        unique: 8
+    - name: VLD_PRD_YMD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제조일로부터 36개월
+        - 제조일로부터 24개월
+      stats:
+        unique: 2
+    - name: STRG_MTH_CONT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기밀용기, 실온(1-30℃)보관
+        - 밀폐용기 실온보관
+        - 기밀용기, 실온(1~30℃) 보관
+      stats:
+        unique: 11
+    - name: BIZRNO
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1208111440'
+        - '1248601143'
+        - '2208100530'
+      stats:
+        min: 1108100102
+        p50: 1248601143
+        max: 6258500499
+        unique: 8
+  foreign_keys:
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7515
+  rank_in_sector: 62
+  brm: 식품건강 - 식품의약안전
+  sector_rule: drugs-to-health
+  why: 안전상비의약품 품목, 판매업소와 연계
+claims:
+  - id: c-15097208-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15097208.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15097208.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15097208-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15097208-03
+    kind: key
+    value: '실측 조인 키: bizno(BIZRNO)'
+    evidence:
+      - type: measured
+        source: probe/stats/15097208.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15097208-04
+    kind: coverage
+    value: API 전체 건수 13 · 검증 수신 13행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15097208.json
+        observed_at: '2026-10-02'
+        detail: total 13, rows 13
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15097208-06
+    kind: admin_note
+    value: "세부 부문 '의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)'의 가치: 식약처 품목기준코드·의약품 표준코드로 심평원 약가·급여 목록(건강보험)과 연결. DUR 병용·연령금기는 처방 안전"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#drugs-devices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15097208-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15097208-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 13
+  total_count: 13
+  ops_ok: 1/1
+  latency_ms: 255
+  run: probe/runs/15097208.json
+  stats: probe/stats/15097208.json
+  data: probe/data/15097208/
+status: active
+summary_user: 편의점 등에서 판매가 허용된 안전상비의약품의 제품명, 업체명, 유효기간, 저장방법을 품목별로 담은 API로, 전국 기준 전체 13건이다. 소비자가 구입할 약의 제조사와 보관 방법을 확인하거나 유통업체가 판매 가능 품목을 파악하는 질문에 쓴다. 사업자등록번호(BIZRNO, 키 bizno)로 업체 단위 데이터와 이어 쓸 수 있고, 약가·급여 목록 연결은 식약처 품목기준코드가 필요한데 이 API에는 해당 필드가 없다.
+limits: 전체가 13건뿐이라 안전상비의약품 외 일반 의약품 정보나 효능·용법, DUR 정보는 이 데이터로 알 수 없다. 품목기준코드 필드가 없어 심평원 약가·급여 목록과는 직접 조인되지 않는다. 필드 명세상 의미와 코드표가 비어 있어 유효기간 등 값의 해석은 호출 결과로 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15097208-01
+    - c-15097208-03
+    - c-15097208-04
+    - c-15097208-06
+  dropped_citations: 0

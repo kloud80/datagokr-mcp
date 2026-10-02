@@ -1,0 +1,523 @@
+# Dataset 15140153 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15140153'
+tier: verified
+title: 인천국제공항공사_항공기 운항 현황 상세 조회
+sector: 교통물류/항공·공항/flight-operations
+agency:
+  id: B551177
+  name: 인천국제공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15140153/openapi.do
+synonyms:
+  - 인천국제공항공사
+  - 인천공항
+  - 여객화물
+  - D-3~D+6
+  - 항공기 등록번호
+  - 항공기 기종
+  - 인천공항 운항정보
+  - 항공편 출도착
+  - 항공기 결항 지연
+  - 인천공항 도착 시간
+  - 인천공항 게이트
+  - 항공편 실시간 조회
+  - 편명 조회
+  - 공항 운항 현황 API
+description_portal: 인천국제공항공사에서 관리하는 인천공항 항공기 운항정보입니다. 여객기 및 항공기의 출발/도착 정보 현황에 대한 데이터로 조회일 기준 D-3~D+6일간의 운항현황 데이터를 확인할 수 있습니다. 예정시간 또는 변경시간 기준으로 조회시간 구분코드를 지정하여 조회일자와 시간별로 조회할 수 있습니다.편명UNIQ코드, 편명, 3자리 IATA 공항코드, 여객기/화물기 구분코드 기준으로 조회조건을 제공합니다. 편명UNIQ코드값, 항공기 운항타입, 항공사, 편명, 코드세웨어 구분, 마스터편명, 예정일시, 주기장위치, 변경일시, 출/도착 공항코드, 출/도착 공항명, 게이트번호, 체크인카운터, 터미널, 출구, 운항현황 정보,  항공기 서브 타입, 항공기 등록 기호 등을 제공합니다.개발계정 일 500트래픽, 운영계정(서비스 URL 및 상세 운영사례 기재 필요) 신청 시 일 100,000트래픽을 제공합니다.
+team:
+  dept: 인프라DX팀
+services:
+  - op: /getFltArrivalsDeOdp
+    name: 항공기 운항편 조회 – 도착
+    endpoint: https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/getFltArrivalsDeOdp
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: searchdtCode
+        required: false
+        desc: '항공기 스케줄 조회기준 S: 예정시간기준,  E: 변경시간기준 default=E'
+      - name: searchDate
+        required: false
+        desc: 항공기 스케줄 조회일자 default=sysdate
+      - name: searchFrom
+        required: false
+        desc: 항공기 스케줄  ~시부터
+      - name: searchTo
+        required: false
+        desc: 항공기 스케줄  ~시까지
+      - name: passengerOrCargo
+        required: false
+        desc: '여객기/화물기구분 P : 여객기 C : 화물기 default=P'
+      - name: fid
+        required: false
+        desc: 각 스케줄에 따른 편명 별 유니크 코드 값(랜덤생성)
+      - name: flightId
+        required: false
+        desc: 항공편명
+      - name: airportCode
+        required: false
+        desc: 인천공항에 도착하는 출발지 공항 코드 (IATA 공식 홈페이지 참조)
+      - name: tmp1
+        required: false
+        desc: 추가현황1
+      - name: tmp2
+        required: false
+        desc: 추가현황2
+      - name: type
+        required: false
+        desc: 응답유형 [xml, json] default=xml
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getFltDeparturesDeOdp
+    name: 항공기 운항편 조회 – 출발
+    endpoint: https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/getFltDeparturesDeOdp
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: searchdtCode
+        required: false
+        example: E
+        desc: '항공기 스케줄 조회기준 S: 예정시간기준,  E: 변경시간기준 default=E'
+      - name: searchDate
+        required: false
+        example: '20241222'
+        desc: 항공기 스케줄 조회일자 default=sysdate
+      - name: searchFrom
+        required: false
+        example: '0000'
+        desc: 항공기 스케줄  ~시부터
+      - name: searchTo
+        required: false
+        example: '2400'
+        desc: 항공기 스케줄  ~시까지
+      - name: fid
+        required: false
+        example: '2024121600000006269075'
+        desc: 각 스케줄에 따른 편명 별 유니크 코드 값(랜덤생성)
+      - name: flightId
+        required: false
+        example: 5Y8232
+        desc: 항공편명
+      - name: passengerOrCargo
+        required: false
+        example: C
+        desc: '여객기/화물기구분  P : 여객기 C : 화물기 default=P'
+      - name: airportCode
+        required: false
+        example: ORD
+        desc: 인천공항에서 출발하는 도착지 공항 코드 (IATA 공식 홈페이지 참조)
+      - name: tmp1
+        required: false
+        desc: 추가현황1
+      - name: tmp2
+        required: false
+        desc: 추가현황1
+      - name: type
+        required: false
+        example: xml
+        desc: 응답유형 [xml, json] default=xml
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: fid
+      title: 각 스케줄에 따른 편명 별 유니크 코드 값(랜덤생성)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026092600000007827955'
+        - '2026092600000007828799'
+        - '2026092600000007829231'
+      stats:
+        min: 2026092500000008044544
+        p50: 2026092600000007897088
+        max: 2026100100000008110080
+        unique: 1000
+    - name: codeshare
+      title: 코드쉐어 여부 Master/ Slave
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Slave
+        - Master
+      stats:
+        unique: 2
+    - name: masterFlightId
+      title: 마스터편명
+      type: string
+      null_rate: 0.466
+      sample_values:
+        - KE744
+        - EY822
+        - BR170
+      stats:
+        unique: 249
+    - name: flightId
+      title: 항공편명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - TW248
+        - CX426
+        - QF8233
+      stats:
+        unique: 1000
+    - name: airline
+      title: 항공사 국문명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 대한항공
+        - 아시아나항공
+        - 델타항공
+      stats:
+        unique: 100
+    - name: airport
+      title: 인천공항에 도착하는 편명의 출발지 공항 한글명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 오사카/ 간사이
+        - 도쿄/나리타
+        - 홍콩
+      stats:
+        unique: 132
+    - name: airportCode
+      title: 인천공항에 도착하는 출발지 공항 코드 (IATA 공식 홈페이지 참조)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - KIX
+        - NRT
+        - HKG
+      stats:
+        unique: 132
+    - name: passengerOrCargo
+      title: '여객기/화물기구분 Passenger : 여객기 Cargo : 화물기 default=Passenger'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Passenger
+      stats:
+        unique: 1
+    - name: scheduleDatetime
+      title: 출발예정일시YYYYMMDDHH24MM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610021630'
+        - '202610021600'
+        - '202610021055'
+      stats:
+        min: 202610020025
+        p50: 202610021240
+        max: 202610021920
+        unique: 179
+    - name: estimatedDatetime
+      title: 출발변경일시 YYYYMMDDHH24MM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610021107'
+        - '202610021631'
+        - '202610021827'
+      stats:
+        min: 202610020017
+        p50: 202610021238.5
+        max: 202610021921
+        unique: 368
+    - name: carousel
+      title: 수하물 수취대 번호
+      type: number
+      null_rate: 0.032
+      sample_values:
+        - '17'
+        - '5'
+        - '15'
+      stats:
+        min: 2
+        p50: 11
+        max: 21
+        unique: 21
+    - name: exitNumber
+      title: 출구 번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B
+        - A
+        - E
+      stats:
+        unique: 6
+    - name: fstandPosition
+      title: 주기장위치
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '278'
+        - '251'
+        - '221'
+      stats:
+        min: 2
+        p50: 222
+        max: 291
+        unique: 138
+    - name: gateNumber
+      title: 도착게이트
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '278'
+        - '251'
+        - '221'
+      stats:
+        min: 2
+        p50: 224
+        max: 291
+        unique: 138
+    - name: terminalId
+      title: '도착터미널 P01: 제 1터미널 P02: 탑승동 P03: 제 2터미널 C01:화물터미널 남측 C02:화물터미널 북측 C03:화물터미널(3단계)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - P03
+        - P01
+        - P02
+      stats:
+        unique: 3
+    - name: remark
+      title: 운항상태 (도착,결항,지연,회항,착륙)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 도착
+      stats:
+        unique: 1
+    - name: typeOfFlight
+      title: 항공기 운항 타입(I=International, D=Domestic)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - D
+      stats:
+        unique: 2
+    - name: aircraftSubtype
+      title: 항공기 서브 타입 (IATA code)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 32Q
+        - '333'
+        - '738'
+      stats:
+        unique: 24
+    - name: aircraftRegNo
+      title: 항공기 등록 기호 및 Tail No
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - HL8258
+        - HL8746
+        - HL8084
+      stats:
+        unique: 360
+    - name: tmp1
+      title: 기타
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: tmp2
+      title: 기타
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2026-09-25 ~ 2026-10-02
+cycle: default
+classification:
+  subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7255
+  rank_in_sector: 7
+  brm: 교통물류 - 항공·공항
+  why: 인천공항 여객·화물 통합 운항 상세, 실시간
+claims:
+  - id: c-15140153-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15140153.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15140153.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15140153-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-02 (관측일 기준 0일 전) — 검증 호출 조건(searchDate=20241222) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15140153
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-02, lag 0
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15140153-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140153.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 21개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15140153-04
+    kind: coverage
+    value: API 전체 건수 1,225 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2026-09-25 ~ 2026-10-02
+    evidence:
+      - type: measured
+        source: probe/runs/15140153.json
+        observed_at: '2026-10-02'
+        detail: total 1225, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15140153-06
+    kind: admin_note
+    value: "세부 부문 '운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)'의 가치: 편 단위 실시간 운항·결항·지연 — 모델이 절대 모르는 오늘의 사실. 공항공사·인천공항 두 체계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#flight-operations
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15140153-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140153-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140153-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getFltDeparturesDeOdp'
+    evidence:
+      - type: measured
+        source: probe/runs/15140153.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 1225
+  ops_ok: 1/2
+  latency_ms: 557
+  latest: '2026-10-02'
+  lag_days: 0
+  run: probe/runs/15140153.json
+  stats: probe/stats/15140153.json
+  data: probe/data/15140153/
+status: active
+summary_user: 인천국제공항의 항공편 단위 출도착 운항정보를 담은 API로, 편명·항공사·예정/변경 일시·게이트·터미널·운항상태(도착·결항·지연 등)를 편 단위로 제공한다. 여행객이나 마중 나가는 사람이 오늘 특정 편이 지연·결항됐는지, 어느 게이트·출구로 나오는지 확인하는 질문에 쓴다. 전역 조인 키는 없고 IATA 공항코드(airportCode)와 항공편명, 항공기 등록 기호로 같은 기관 데이터나 항공 관련 정보와 이름·코드 매핑해 잇는다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 기관 데이터와는 이름·코드 매핑으로만 연결된다. 오퍼레이션 중 /getFltDeparturesDeOdp는 최소 파라미터로 응답이 없었고, 최신 행 날짜는 검증 호출 조건(searchDate) 기준이라 데이터 최신성과 다를 수 있다. 개발계정은 일 500회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15140153-01
+    - c-15140153-02
+    - c-15140153-03
+    - c-15140153-04
+    - c-15140153-06
+    - c-15140153-10
+  dropped_citations: 0

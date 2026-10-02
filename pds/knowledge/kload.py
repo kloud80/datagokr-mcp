@@ -20,7 +20,9 @@ TABLES = ["pds_k_dataset", "pds_k_claim", "pds_k_edge", "pds_k_key", "pds_k_mapp
 
 
 def _j(x) -> str:
-    return json.dumps(x, ensure_ascii=False, default=str)
+    """Postgres json은 NaN·Infinity를 받지 않는다 — 셀 통계의 무한대 값(예: max=inf)은 null로."""
+    from pds.strategy.plan import jsonable
+    return json.dumps(jsonable(x), ensure_ascii=False, default=str)
 
 
 def frames() -> dict[str, pd.DataFrame]:

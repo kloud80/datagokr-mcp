@@ -1,0 +1,405 @@
+# Dataset 15142304 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142304'
+tier: verified
+title: 한국해양교통안전공단_여객선 운항상태 정보
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B554035
+  name: 한국해양교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142304/openapi.do
+synonyms:
+  - 연안여객선
+  - 교통정보
+  - 여객선출발정보
+  - 여객선도착정보
+  - 항로
+  - 연안여객선 결항
+  - 여객선 운항 여부
+  - 배 결항 조회
+  - 섬 여객선 운항정보
+  - 여객선 출항 시각
+  - 운항통제
+  - 가보고싶은섬
+  - 연안여객선 교통정보
+description_portal: "해당 데이터는 한국해양교통안전공단(KOMSA)에서 국가중점데이터로 개방한 \"연안여객선 교통정보\" 관련 데이터 중 하나로공단의 운항관리 대상 연안여객선의 운항상태 정보를 포함하고 있습니다.여객선명, 여객선코드, 일자, 여객선출발시각, 면허항로명, 운항항로명, 운항상태 등이 포함된 정보 입니다.여객선의 대중교통 편입('20.12.)에 따라 도서민, 여행객 등 여객선 이용객의 교통편의 증진을 위해 연안여객선 교통정보를 활용할 수 있습니다. * (참고)국가중점데이터: 국민, 기업 등 수요 중심으로 개방의 효과성, 시급성 등이 높은 분야를 선정하고 민간에서 활용하기 용이한 형태로 정체, 가공하여 개방된 양질의 대용량 데이터를 제공합니다.* (유의사항) 승선인원수, 하선인원수 정보는 참고용으로 제공되는 정보로 국가 통계 등 실제 데이터와 차이가 있을 수 있으니 사용에 유의하여 주시기 바랍니다."
+team:
+  dept: 해양안전실 디지털융합팀
+services:
+  - op: /get-ferry-route-info-v4
+    name: 여객선 운항상태 정보 조회
+    endpoint: https://apis.data.go.kr/B554035/ferry-route-info-v4/get-ferry-route-info-v4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답타입(JSON,XML)
+      - name: filters
+        required: false
+        desc: 응답에 포함할 칼럼(rlvt_ymd, comm_tm 등)
+      - name: rlvtYmd
+        required: true
+        desc: 출항일자
+      - name: psnshpNm
+        required: false
+        desc: 여객선명
+      - name: sailTm
+        required: false
+        desc: 출항시각
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: psnshp_cd
+      title: 여객선코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E62
+        - E61
+        - E59
+      stats:
+        unique: 30
+    - name: psnshp_nm
+      title: 여객선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 완농페리3호
+        - 드림장보고호
+        - 섬사랑2호
+      stats:
+        unique: 30
+    - name: rlvt_ymd
+      title: 출항일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261002'
+      stats:
+        min: 20261002
+        p50: 20261002
+        max: 20261002
+        unique: 1
+    - name: sail_tm
+      title: 츨항시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '830'
+        - '800'
+        - '700'
+      stats:
+        min: 630
+        p50: 1030
+        max: 2000
+        unique: 54
+    - name: lcns_seawy_cd
+      title: 면허항로코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E09
+        - E02
+        - E97
+      stats:
+        unique: 24
+    - name: lcns_seawy_nm
+      title: 면허항로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 땅끝-산양
+        - 화흥포-소안
+        - 당목-일정
+      stats:
+        unique: 24
+    - name: nvg_seawy_cd
+      title: 운항항로코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '03'
+      stats:
+        min: 1
+        p50: 2
+        max: 21
+        unique: 10
+    - name: nvg_seawy_nm
+      title: 운항항로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 땅끝산양
+        - 화흥포동천-소안
+        - 당목일정
+      stats:
+        unique: 26
+    - name: nvg_drc_cd
+      title: 운항방향코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: nvg_drc_nm
+      title: 운항방향명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정방향
+        - 역방향
+      stats:
+        unique: 2
+    - name: nvg_stts_cd
+      title: 운항상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '5'
+        - '4'
+      stats:
+        min: 2
+        p50: 4
+        max: 7
+        unique: 6
+    - name: nvg_stts_nm
+      title: 운항상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 운항중
+        - 입항중
+        - 출항중
+      stats:
+        unique: 6
+    - name: nvg_stts_chg_dt
+      title: 운항상태변경시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-02T16:17:55'
+        - '2026-10-02T17:51:44'
+        - '2026-10-02T17:51:45'
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-02'
+        unique: 750
+    - name: portcl_cd
+      title: 기항지코드
+      type: code
+      null_rate: 0.3
+      sample_values:
+        - E023
+        - E002
+        - E012
+      stats:
+        unique: 46
+    - name: portcl_nm
+      title: 기항지명
+      type: code
+      null_rate: 0.3
+      sample_values:
+        - 산양
+        - 땅끝
+        - 동천
+      stats:
+        unique: 46
+    - name: emkt_nope
+      title: 승선인원수
+      type: number
+      null_rate: 0.76
+      sample_values:
+        - '0.0'
+        - '23.0'
+        - '5.0'
+      stats:
+        min: 0
+        p50: 11
+        max: 508
+        unique: 69
+    - name: lvsp_nope
+      title: 하선인원수
+      type: number
+      null_rate: 0.756
+      sample_values:
+        - '0.0'
+        - '3.0'
+        - '23.0'
+      stats:
+        min: 0
+        p50: 18
+        max: 488
+        unique: 75
+    - name: vsl_no
+      title: 선박번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - WDR166705
+        - MPR166203
+        - MPR256211
+      stats:
+        unique: 30
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2026-10-02 ~ 2026-10-02
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.63
+  rank_in_sector: 29
+  brm: 교통물류 - 해운·항만
+  why: 연안여객선 실시간 운항상태, 전국 범위
+claims:
+  - id: c-15142304-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142304.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142304.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15142304-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-02 (관측일 기준 0일 전) — 검증 호출 조건(rlvtYmd=20261002) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15142304
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-02, lag 0
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142304-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142304.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 18개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142304-04
+    kind: coverage
+    value: API 전체 건수 4,467 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2026-10-02 ~ 2026-10-02
+    evidence:
+      - type: measured
+        source: probe/runs/15142304.json
+        observed_at: '2026-10-02'
+        detail: total 4467, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142304-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142304-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142304-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 4467
+  ops_ok: 1/1
+  latency_ms: 169
+  latest: '2026-10-02'
+  lag_days: 0
+  run: probe/runs/15142304.json
+  stats: probe/stats/15142304.json
+  data: probe/data/15142304/
+status: active
+summary_user: 연안여객선의 운항 건별 상태(출항일자·출항시각·면허항로·운항항로·방향·기항지·운항상태와 변경시간)를 담은 API로, 전체 4,467건이며 범위는 전국이다. 도서 주민이나 여행객이 오늘 이 배가 정상 운항하는지, 결항·변경됐는지 확인하는 질문에 쓴다. 전역 조인 키는 없어서 여객선코드·항로코드·기항지코드 등 같은 기관 코드나 여객선명·항로명·기항지명 매핑으로 같은 공단의 항로·선사·터미널 데이터와 이어 쓴다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 타 기관 데이터와는 이름·코드 매핑이 필요하다. 검증 수신은 1,000행이고 기간이 2026-10-02 하루였으며, 이 날짜는 검증 호출 조건(rlvtYmd) 때문이라 데이터 자체의 최신성과 다를 수 있다. 승선·하선 인원수는 참고용이라 실제 통계와 차이가 있을 수 있고, 개발계정은 일 100회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15142304-01
+    - c-15142304-02
+    - c-15142304-03
+    - c-15142304-04
+    - c-15142304-06
+  dropped_citations: 0

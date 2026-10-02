@@ -1,0 +1,345 @@
+# Dataset 15098552 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15098552'
+tier: verified
+title: 국토교통부_(TAGO)_열차정보
+sector: 교통물류/철도/rail-realtime
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15098552/openapi.do
+synonyms:
+  - 열차
+  - 기차 운행
+  - 열차정보
+  - 열차 운행 정보
+  - 기차 데이터
+  - 열차 시간표
+  - KTX 시간표
+  - 기차 시간표 조회
+  - 출발역 도착역 조회
+  - 차량종류 코드
+  - 철도 운행정보
+  - TAGO 열차
+description_portal: 출발/도착지를 기준으로 열차(KTX포함)의 운행시간표정보를 조회하는 열차정보 서비스이다. 열차정보는 출/도착지 기반, 차량 종류 목록, 시도별 기차목록, 도시코드목록 조회가 가능하다. 출발지와 도착지를 기준으로 열차(KTX 포함)의 운행 시간표 정보를 조회할 수 있는 열차정보 서비스이다. 본 서비스는 이용자가 선택한 출발역과 도착역을 기반으로 해당 구간을 운행하는 열차의 시간표 정보를 제공하며, 열차의 출발 시간, 도착 예정 시간 등 기본적인 운행 현황을 확인할 수 있도록 구성되어 있다. 또한 차량 종류 목록, 시도별 기차 목록, 도시 코드 목록 조회 기능을 함께 제공하여 열차 정보 검색 및 관련 데이터 활용이 가능하다. 이를 통해 이용자는 철도 운행 정보를 종합적으로 파악하고 이동 일정 계획 수립에 참고할 수 있습니다.또한 한번에 출력되는 데이터 목록수를 설정할수 있으며, 페이지 번호를 설정하여 전체 데이터를 분할하여 호출이 가능합니다. TAGO 연계현황및 기술자료는 http://www.tago.go.kr에서 확인이 가능합니다.데이터 활용 추가 문의사항은 TAGO 운영팀(054-459-7870)으로 문의 바랍니다.
+team:
+  dept: 모빌리티총괄과
+services:
+  - op: /GetStrtpntAlocFndTrainInfo
+    name: 출/도착지기반열차정보 조회
+    endpoint: https://apis.data.go.kr/1613000/TrainInfo/GetStrtpntAlocFndTrainInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: _type
+        required: false
+        desc: 데이터 타입(xml, json)
+      - name: depPlaceId
+        required: true
+        desc: 출발기차역ID [상세기능3. 시/도별 기차역 목록조회]에서 조회 가능
+      - name: arrPlaceId
+        required: true
+        desc: 도착기차역ID [상세기능3. 시/도별 기차역 목록조회]에서 조회 가능
+      - name: depPlandTime
+        required: false
+        desc: 출발일(YYYYMMDD), null 입력시 오늘 날짜 조회
+      - name: trainGradeCode
+        required: false
+        desc: 차량종류코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /GetCtyAcctoTrainSttnList
+    name: 시/도별 기차역 목록조회
+    endpoint: https://apis.data.go.kr/1613000/TrainInfo/GetCtyAcctoTrainSttnList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: _type
+        required: false
+        desc: 데이터 타입(xml, json)
+      - name: cityCode
+        required: true
+        desc: 시/도 ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /GetVhcleKndList
+    name: 차량종류 목록 조회
+    endpoint: https://apis.data.go.kr/1613000/TrainInfo/GetVhcleKndList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: _type
+        required: false
+        desc: 데이터 타입(xml, json)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /GetCtyCodeList
+    name: 도시코드 목록 조회
+    endpoint: https://apis.data.go.kr/1613000/TrainInfo/GetCtyCodeList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: _type
+        required: false
+        desc: 데이터 타입(xml, json)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: vehiclekndid
+      title: 차량종류코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '00'
+        - '01'
+        - '02'
+      op: /GetVhcleKndList
+      stats:
+        unique: 15
+    - name: vehiclekndnm
+      title: 차량종류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KTX
+        - 새마을호
+        - 무궁화호
+      op: /GetVhcleKndList
+      stats:
+        unique: 15
+    - name: citycode
+      title: 도시코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '12'
+        - '21'
+      op: /GetCtyCodeList
+      stats:
+        min: 11
+        p50: 28.5
+        max: 38
+        unique: 16
+    - name: cityname
+      title: 도시명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+        - 세종특별자치시
+        - 부산광역시
+      op: /GetCtyCodeList
+      stats:
+        unique: 16
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 도착·시간표·운임 (조회 도구)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8262
+  rank_in_sector: 6
+  brm: 교통물류 - 철도
+  why: 전국 열차 KTX 포함 시간표·운임
+claims:
+  - id: c-15098552-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 2/4
+    evidence:
+      - type: measured
+        source: probe/runs/15098552.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 2/4
+      - type: measured
+        source: probe/apply/15098552.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15098552-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15098552-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15098552.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15098552-04
+    kind: coverage
+    value: 검증 수신 31행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15098552.json
+        observed_at: '2026-10-02'
+        detail: total None, rows 31
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15098552-06
+    kind: admin_note
+    value: "세부 부문 '실시간 도착·시간표·운임 (조회 도구)'의 가치: 분석용이 아니라 서비스용 조회 — 전략 응답에서 access.mode realtime-query로 표시"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rail-realtime
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15098552-07
+    kind: admin_note
+    value: '[교통물류 - 철도 · 결정] 대부분 유지(제외 규칙 없음). 세부: 건설 계획(event) · 승하차·혼잡 · 실시간·시간표(조회 도구) · 철도망·역·시설(cross-cutting) · 안전 · 화물 · 기타.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L463
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15098552-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15098552-10
+    kind: pitfall
+    value: 필수 파라미터 arrPlaceId, cityCode, depPlaceId는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15098552.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15098552-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /GetStrtpntAlocFndTrainInfo, /GetCtyAcctoTrainSttnList'
+    evidence:
+      - type: measured
+        source: probe/runs/15098552.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 31
+  ops_ok: 2/4
+  latency_ms: 40
+  run: probe/runs/15098552.json
+  stats: probe/stats/15098552.json
+  data: probe/data/15098552/
+status: active
+summary_user: 출발역·도착역 기준으로 KTX를 포함한 열차 운행 시간표를 조회하고, 차량 종류·도시 코드 목록도 함께 내려주는 조회형 API이다(검증 시 전국 범위 31행 수신). 승객이 특정 구간의 열차 출발·도착 시각을 확인해 이동 일정을 짤 때 쓴다. 필수 파라미터인 출발·도착 장소 ID와 도시코드는 다른 데이터에서 먼저 받아 넘겨야 하며, 필드 중 도시코드(citycode)·차량종류코드(vehiclekndid)가 이 목록 조회와 이어지는 코드이다.
+limits: 전역에서 통하는 조인 키는 실측 컬럼에서 찾지 못해, 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 오퍼레이션 4개 중 2개(/GetStrtpntAlocFndTrainInfo, /GetCtyAcctoTrainSttnList)는 최소 파라미터로 응답이 없었다. 분석용 데이터가 아니라 서비스용 조회 도구이며, 개발계정은 일 10,000회 호출 한도가 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15098552-01
+    - c-15098552-03
+    - c-15098552-04
+    - c-15098552-06
+    - c-15098552-10
+    - c-15098552-11
+  dropped_citations: 0

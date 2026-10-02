@@ -1,0 +1,589 @@
+# Dataset 15124958 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15124958'
+tier: verified
+title: 국토교통부_도로별 사고누적구간 조회 서비스
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124958/openapi.do
+synonyms:
+  - 도로별사고정보
+  - 도로별사고누적구간
+  - 사고누적구간
+  - 사고다발지점
+  - 교통사고정보
+  - 사고다발구간
+  - 사고 다발지점
+  - 교통사고 누적구간
+  - 도로별 교통사고
+  - 교통안전대책
+  - 교통사고 상세현황
+  - 사고 잦은 도로
+description_portal: '지자체별 도로별 사고누적구간 정보 및 사고정보를 기준년도, 도로등급, 도로명 기준으로 조회하여 도로별 사고누적구간 정보 및 구간별 교통사고 상세 현황 정보제공합니다. 지자체별 교통안전대책수립 및 시행계획 등을 수립하는데 도움이 될 수 있습니다. 구간 선정 기준은 과거 3년간(기준년도 포함) 반경 50m 이내, 5건 이상 발생한 상위 30개 지점입니다. 주요제공 정보 : 교통사고원인조사 대상 도로별 사고누적구간 정보(광역지차제명,구간명,발생건수 등) 및 구간결 교통사고 상세 현황 정보(사고정소, 사고형태,기상상태 등)'
+team:
+  dept: 교통안전정책과
+services:
+  - op: /T_OD_ROAD_TYPE_SEG_INFO
+    name: 도로별 사고누적구간_구간정보
+    endpoint: https://apis.data.go.kr/1613000/ROAD_TYPE/T_OD_ROAD_TYPE_SEG_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: road_grd
+        required: true
+        desc: 도로등급 구분 * 고속도로, 도시고속화도로, 일반국도
+      - name: road_nm
+        required: true
+        desc: 도로명* 고속도로명/국도00호선/00로
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /T_OD_ROAD_TYPE_ACDNT_INFO
+    name: 도로별 사고누적구간_사고정보
+    endpoint: https://apis.data.go.kr/1613000/ROAD_TYPE/T_OD_ROAD_TYPE_ACDNT_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        example: '2021'
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: road_grd
+        required: true
+        example: 고속국도
+        desc: 도로등급 구분 * 고속도로, 도시고속화도로, 일반국도
+      - name: road_nm
+        required: true
+        example: 경부고속도로
+        desc: 도로명* 고속도로명/국도00호선/00로
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prptr_sexdstn
+      title: '가해운전자 성별 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남
+        - 여
+        - '-'
+      stats:
+        unique: 3
+    - name: crtr_yr
+      title: 교통누적구간선정 기준년도* 기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: acdnt_sclsf
+      title: 사고 유형 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 추돌(진행중)
+        - 측면직각충돌
+        - 차대차-기타
+      stats:
+        unique: 5
+    - name: acdnt_plc
+      title: 사고 발생장소 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도 오산시 원동 부산 금정구 378~379Km
+        - 서울특별시 서초구 원지동 부산 금정구 415~416Km
+        - 서울특별시 서초구 원지동 부산 금정구 414~415Km
+      stats:
+        unique: 40
+    - name: prptr_vhtyp
+      title: '가해운전자가 탑승한 차량의 종류 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+        - 화물
+        - 승합
+      stats:
+        unique: 7
+    - name: road_nm
+      title: 도로명* 고속도로명/국도00호선/00로
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부고속도로
+      stats:
+        unique: 1
+    - name: prptr_vhusg
+      title: '가해운전자가 탑승한 차량의 용도(사업용/비사업용)* 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 비사업용
+        - 사업용
+        - '-'
+      stats:
+        unique: 3
+    - name: row_num
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 43.5
+        max: 86
+        unique: 86
+    - name: sufrer_vhtyp
+      title: '피해자 차량 종류 * 피해자 : 가해운전자 이외의 교통사고 관련자, 보행자 포함'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+        - 승합
+        - 화물
+      stats:
+        unique: 5
+    - name: acdnt_tm
+      title: 사고 발생 시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '15'
+        - '22'
+      stats:
+        min: 0
+        p50: 14
+        max: 23
+        unique: 22
+    - name: dcsd_cnt
+      title: '사망자 수 '
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: acdnt_grd
+      title: 사고등급 * 사망사고, 중상사고,경상사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경상사고
+        - 중상사고
+        - 부상사고
+      stats:
+        unique: 4
+    - name: seg_nm
+      title: 사고누적구간명* 과거 3년간 1km 구간 내에서 교통사고가 3건 이상 발생한 구간
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산 금정구 415~416Km
+        - 부산 금정구 416~417Km
+        - 부산 금정구 421~422Km
+      stats:
+        unique: 21
+    - name: road_type
+      title: 도로종류* 사고발생  지점 도로종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고속국도
+        - 특별광역시도
+        - 기타
+      stats:
+        unique: 4
+    - name: acdnt_frm
+      title: 사고 형태* 단독사고, 진출회전사고, 진입회전사고, 보행횡단사고, 주정차사고, 일직선사고, 기타사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일직선사고
+        - 진입회전사고
+        - 기타사고
+      stats:
+        unique: 4
+    - name: wrvhl_vltn
+      title: 가해차량 법규위반사항
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안전운전불이행
+        - 안전거리미확보
+        - 차로위반
+      stats:
+        unique: 5
+    - name: wthr_stts
+      title: 사고발생 일의 기상상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 맑음
+        - 비
+        - 흐림
+      stats:
+        unique: 4
+    - name: acdnt_dt
+      title: 사고 발생 일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '26'
+        - '10'
+        - '17'
+      stats:
+        min: 1
+        p50: 15.5
+        max: 31
+        unique: 29
+    - name: prptr_drnkn
+      title: '가해운전자 음주 여부 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 아니요
+        - 예
+      stats:
+        unique: 2
+    - name: prptr_nmyex
+      title: '가해운전자 경력년수 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 15년이상
+        - 10년미만
+        - '-'
+      stats:
+        unique: 8
+    - name: min_inry_cnt
+      title: 경상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 14
+        unique: 10
+    - name: acdnt_dw
+      title: 사고 발생 요일
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금요일
+        - 목요일
+        - 토요일
+      stats:
+        unique: 7
+    - name: acdnt_octm
+      title: 사고발생시간대* 새벽(05~06시), 출퇴근(07~08, 18~20시), 주간(09~17시), 심야(21~04)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주간(09~17)
+        - 출·퇴근시간대(07~08,18~20)
+        - 심야시간대(21~04)
+      stats:
+        unique: 4
+    - name: acdnt_lclsf
+      title: 사고유형(대분류)* 차대사람, 차대차, 차량단독, 건널목
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 차대차
+        - 차량단독
+        - 차대사람
+      stats:
+        unique: 3
+    - name: srs_inry_cnt
+      title: 중상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 5
+        unique: 5
+    - name: inry_cnt
+      title: 부상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 12
+        unique: 5
+    - name: acdnt_yr
+      title: 사고 발생 년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+        - '2019'
+        - '2020'
+      stats:
+        min: 2019
+        p50: 2020
+        max: 2021
+        unique: 3
+    - name: acdnt_mm
+      title: 사고 발생 월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '05'
+        - '09'
+        - '10'
+      stats:
+        min: 1
+        p50: 6.5
+        max: 12
+        unique: 12
+    - name: road_grd
+      title: 도로등급 구분 * 고속도로, 도시고속화도로, 일반국도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고속국도
+      stats:
+        unique: 1
+    - name: prptr_age
+      title: '가해운전자 연령 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 49세
+        - 26세
+        - 48세
+      stats:
+        unique: 45
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6954
+  rank_in_sector: 435
+  brm: 교통물류 - 도로
+  why: 도로별 사고누적구간, 좌표 포함 사고 다발 정보
+claims:
+  - id: c-15124958-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15124958.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15124958.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15124958-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124958-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124958.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 30개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124958-04
+    kind: coverage
+    value: API 전체 건수 86 · 검증 수신 86행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15124958.json
+        observed_at: '2026-10-02'
+        detail: total 86, rows 86
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124958-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124958-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124958-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124958-10
+    kind: pitfall
+    value: 필수 파라미터 road_grd, road_nm는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15124958.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15124958-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /T_OD_ROAD_TYPE_SEG_INFO'
+    evidence:
+      - type: measured
+        source: probe/runs/15124958.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 86
+  total_count: 86
+  ops_ok: 1/2
+  latency_ms: 100
+  run: probe/runs/15124958.json
+  stats: probe/stats/15124958.json
+  data: probe/data/15124958/
+status: active
+summary_user: 도로별 사고누적구간(구간명·발생건수 등)과 구간별 교통사고 상세 내역(사고 일시·형태·기상·가해운전자 특성·사상자 수)을 담은 조회 API로, 전국 범위에서 검증 시 86행이 수신됐다. 지자체 교통안전대책 수립 담당자나 분석가가 '우리 지역 어느 도로 구간에 사고가 몰리고 원인이 무엇인가'를 따질 때 쓴다. 전역 조인 키는 없어 도로등급(road_grd)·도로명(road_nm) 값을 다른 데이터에서 먼저 받아 넘겨야 하며, 같은 기관 코드나 이름 매핑으로만 다른 데이터와 이어진다.
+limits: 필수 파라미터 도로등급·도로명은 다른 데이터의 코드라 먼저 조회해 넘겨야 하고, 실측 컬럼에서 전역 조인 키를 찾지 못해 타 데이터와는 이름·코드 매핑으로만 연결된다. 오퍼레이션 2개 중 /T_OD_ROAD_TYPE_SEG_INFO는 최소 파라미터로 응답이 없었다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15124958-01
+    - c-15124958-03
+    - c-15124958-04
+    - c-15124958-06
+    - c-15124958-10
+    - c-15124958-11
+  dropped_citations: 0

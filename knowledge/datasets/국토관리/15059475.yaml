@@ -1,0 +1,226 @@
+# Dataset 15059475 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059475'
+tier: verified
+title: 한국토지주택공사_임대주택단지 조회 서비스
+sector: 국토관리/주택/rental
+domain: 국토관리/주택
+agency:
+  id: B552555
+  name: 한국토지주택공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059475/openapi.do
+synonyms:
+  - LH공사
+  - 주거복지
+  - 홈페이지
+  - 국민임대
+  - 행복주택
+  - LH 임대주택
+  - 공공임대주택 단지
+  - 영구임대
+  - 임대료 보증금
+  - 임대주택 현황
+  - LH 단지 정보
+description_portal: '한국토지주택공사(LH)가 관리하는 전국 공공임대주택단지의 정보를 제공하는 서비스입니다. 서민 주거 안정과 주거 선택권 확대를 위해 전국 임대주택 현황 데이터를 개방하고 있습니다.해당 서비스를 이용하여 지역별 공급 현황과 임대 조건을 한눈에 파악할 수 있어, 공공 주거 정책 수립을 위한 기초 분석 자료나 서민 주거 복지 향상을 위한 정보 인프라로 가치 높게 활용할 수 있습니다.주요 제공 항목: 단지명, 주소, 최초 입주일, 공급 유형(영구·국민임대, 행복주택 등), 총세대수, 전용면적, 임대보증금 및 월임대료 정보 등'
+team:
+  dept: IT운영처 데이터운영팀
+services:
+  - op: /lhLeaseInfo1
+    endpoint: https://apis.data.go.kr/B552555/lhLeaseInfo1/lhLeaseInfo1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dsSch
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - '[{}]'
+      stats:
+        unique: 1
+    - name: dsList
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - '[]'
+      stats:
+        unique: 1
+    - name: resHeader
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'RS_DTTM': '20261002084248', 'SS_CODE': 'Y'}]"
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-02'
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+cycle: default
+classification:
+  subsector_name: 임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8129
+  rank_in_sector: 23
+  brm: 국토관리 - 주택
+  sector_rule: land-restructure-주택
+  why: 전국 공공임대단지 원장, 임대료·세대수 포함
+claims:
+  - id: c-15059475-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059475.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059475.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15059475-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059475-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059475.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059475-04
+    kind: coverage
+    value: 검증 수신 2행 · 범위 전국 · 행정단위 필지·건물
+    evidence:
+      - type: measured
+        source: probe/runs/15059475.json
+        observed_at: '2026-10-02'
+        detail: total None, rows 2
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059475-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15059475-06
+    kind: admin_note
+    value: "세부 부문 '임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)'의 가치: 전세 사기 이후 수요 급증. 전월세 실거래와 병합 관계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rental
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059475-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059475-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 2
+  ops_ok: 1/1
+  latency_ms: 5110
+  run: probe/runs/15059475.json
+  stats: probe/stats/15059475.json
+  data: probe/data/15059475/
+status: active
+summary_user: 한국토지주택공사가 관리하는 전국 공공임대주택단지 정보를 조회하는 API로, 단지 단위로 단지명·주소·공급 유형·세대수·임대 조건 등을 담는다. 검증 호출에서는 전국 범위의 2행이 수신되었다. 공공임대 입주를 알아보는 사람이나 지역별 공급 현황을 보는 분석가가 쓰며, 전월세 실거래 데이터와 병합해 보는 관계이지만 실측 컬럼에서 전역 조인 키는 찾지 못해 이름·코드 매핑이나 같은 기관 코드로 연결해야 한다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 단지명·주소 매핑 등을 거쳐야 연결된다. 검증 수신은 2행뿐이라 전체 규모나 갱신 주기는 확인되지 않았고, 활용신청 후 serviceKey가 필요하며 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15059475-01
+    - c-15059475-03
+    - c-15059475-04
+    - c-15059475-06
+  dropped_citations: 0

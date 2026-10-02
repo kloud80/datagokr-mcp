@@ -1,0 +1,245 @@
+# Dataset 15125025 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125025'
+tier: verified
+title: 한국환경공단_냉매회수업체 정보
+sector: 환경기상/대기/emission-sources
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125025/openapi.do
+synonyms:
+  - 냉매
+  - 회수
+  - 업체
+  - 냉매 회수업체
+  - 냉매회수업
+  - 냉매관리제도
+  - RIMS
+  - 냉매정보관리시스템
+  - 냉매 회수 등록업체
+  - 프레온 회수업체
+description_portal: 냉매는 냉동기 내부에서 순환을 통해 열을 흡수하고 온도를 낮추는 화학물질로써 지구온난화 등 기후·생태계 변화를 유발한다. 한국환경공단은 기후변화 대응을 위해 대기환경보전법에 따라 ‘냉매관리제도’를 시행하고 있으며, 냉매정보관리시스템(RIMS)에 등록된 데이터 중 냉매사용기기 정보의 제작사, 유형(압축방식), 용도, 냉매종류, 1일법정냉동능력(RT) 정보와 냉매회수업체의 업체명, 등록번호, 주소, 상세주소 정보를 개방합니다.
+team:
+  dept: 탄소중립지원처 불소계온실가스관리부
+services:
+  - op: /getRtrvlBzentyInfo
+    name: 회수업체 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/rfrtRtvlBzentyPrcndInfoService/getRtrvlBzentyInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: conm
+        required: false
+        desc: 상호
+      - name: returnType
+        required: true
+        example: json
+        desc: 데이터 타입
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: addr
+      title: 주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 금천구 시흥대로 97
+        - 경기도 안양시 동안구 엘에스로 92
+        - 광주광역시 서구 매월2로 53
+      stats:
+        unique: 675
+    - name: daddr
+      title: 상세주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0208
+      sample_values:
+        - 1층
+        - 2층
+        - ' 1층'
+      stats:
+        unique: 607
+    - name: conm
+      title: 상호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 레프코리아
+        - 세기산업
+        - 세기공조
+      stats:
+        unique: 713
+    - name: clbsRegNo
+      title: 회수업등록번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2025-00003
+        - 2025-00002
+        - 2025-00001
+      stats:
+        unique: 721
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - daddr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 대기 배출원·자동차 환경 (배출시설 사업장·굴뚝 TMS·비산먼지·석면·온실가스 배출·자동차 배출가스/환경인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6961
+  rank_in_sector: 102
+  brm: 환경기상 - 대기
+  why: 냉매회수업체 전국 등록 목록, 주소 보유
+claims:
+  - id: c-15125025-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125025.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125025.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15125025-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125025-03
+    kind: key
+    value: '실측 조인 키: address(addr), address(daddr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125025.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125025-04
+    kind: coverage
+    value: API 전체 건수 721 · 검증 수신 721행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15125025.json
+        observed_at: '2026-10-02'
+        detail: total 721, rows 721
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125025-06
+    kind: admin_note
+    value: "세부 부문 '대기 배출원·자동차 환경 (배출시설 사업장·굴뚝 TMS·비산먼지·석면·온실가스 배출·자동차 배출가스/환경인증)'의 가치: 사업장 단위 배출원 원장(인허가·TMS 실시간) — 사업자번호로 기업 축"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#emission-sources
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125025-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125025-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 721
+  total_count: 721
+  ops_ok: 1/1
+  latency_ms: 51
+  run: probe/runs/15125025.json
+  stats: probe/stats/15125025.json
+  data: probe/data/15125025/
+status: active
+summary_user: 전국 냉매회수업체 721건을 업체 단위로 담은 목록으로, 상호(conm)·회수업등록번호·주소·상세주소를 건별로 제공한다. 냉매를 쓰는 사업자나 국민이 자기 지역에서 냉매 회수를 맡길 등록 업체가 어디인지 찾는 질문에 쓴다. 주소(addr)·상세주소(daddr)가 주소 조인 키여서 다른 주소 기반 데이터와 연결하며, 사업자번호 같은 기업 키는 필드에 없다.
+limits: 필드가 상호·등록번호·주소·상세주소뿐이라 회수량, 냉매 종류별 처리 실적, 업체 연락처는 이 데이터로 알 수 없다. 사업자번호가 없어 기업 단위 데이터와는 주소 문자열로만 이어야 하므로 표기 차이에 주의한다. 개발계정은 일 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15125025-01
+    - c-15125025-03
+    - c-15125025-04
+    - c-15125025-06
+  dropped_citations: 0

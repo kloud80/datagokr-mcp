@@ -1,0 +1,255 @@
+# Dataset 15106744 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15106744'
+tier: verified
+title: 한국전력거래소_발전원별 발전량
+sector: 산업고용/에너지및자원개발/power-market-realtime
+agency:
+  id: B552115
+  name: 한국전력거래소
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15106744/openapi.do
+synonyms:
+  - 발전원별
+  - 발전량
+  - 시간
+  - 전력
+  - 시장
+  - 발전원별 발전량
+  - 시간별 발전량
+  - 전력거래소 발전량
+  - 일별 발전량
+  - 전력 정산 데이터
+  - 에너지원별 발전
+  - 전력거래량
+description_portal: 한국전력거래소는 전력을 생산하는 발전사업자, 전력을 수요지까지 전달하는 송배전사업자, 전력을 구매하여 판매하는 판매사업자, 전력을 사용하는 소비자 등으로 구성되는 전력시장에서 전력의 판매 및 구매 활동을 실시간으로 운영, 감시하는 "전력시장 운영 업무"와 전력 수요에 맞춰 전력 생산량을 결정하고 이를 안정적으로 수요지에 공급되도록 하는 "전력계통 운영 업무"등을 전담하고 있습니다.해당목록은 일별 시간별로 발전원별 발전량을 보여주는 서비스입니다.※ 해당 자료는 전력거래 정산데이터로 향후 수정 정산에 따라 데이터 및 수치 등이 일부 변동될 가능성이 있음.
+team:
+  dept: 전사AX총괄팀
+services:
+  - op: /getPvAmountByPwrGen
+    name: 발전원별 발전량 조회
+    endpoint: https://apis.data.go.kr/B552115/PvAmountByPwrGen/getPvAmountByPwrGen
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '30'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: true
+        example: xml
+        desc: 응답메시지 형식(xml/json)
+      - name: tradeYmd
+        required: true
+        example: '20220904'
+        desc: 날짜(YYYYMMDD)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tradeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '03'
+      stats:
+        min: 1
+        p50: 12.5
+        max: 24
+        unique: 24
+    - name: fuelTpCd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 유전
+        - 유연탄
+        - 원자력
+      stats:
+        unique: 8
+    - name: tradeYmd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220904'
+      stats:
+        min: 20220904
+        p50: 20220904
+        max: 20220904
+        unique: 1
+    - name: amgo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '224.309'
+        - '224.551'
+      stats:
+        min: 0
+        p50: 1770.6000000000001
+        max: 21474.989
+        unique: 185
+    - name: rn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 96.5
+        max: 192
+        unique: 192
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2022-09-04 ~ 2022-09-04
+cycle: default
+classification:
+  subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7249
+  rank_in_sector: 38
+  brm: 산업고용 - 에너지및자원개발
+  why: 전국 발전원별 시간별 발전량 실시간 관측
+claims:
+  - id: c-15106744-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15106744.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15106744.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15106744-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2022-09-04 (관측일 기준 1489일 전) — 검증 호출 조건(tradeYmd=20220904) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15106744
+        observed_at: '2026-10-02'
+        detail: latest 2022-09-04, lag 1489
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15106744-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15106744.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15106744-04
+    kind: coverage
+    value: API 전체 건수 192 · 검증 수신 192행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2022-09-04 ~ 2022-09-04
+    evidence:
+      - type: measured
+        source: probe/runs/15106744.json
+        observed_at: '2026-10-02'
+        detail: total 192, rows 192
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15106744-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15106744-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15106744-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 192
+  total_count: 192
+  ops_ok: 1/1
+  latency_ms: 2444
+  latest: '2022-09-04'
+  lag_days: 1489
+  run: probe/runs/15106744.json
+  stats: probe/stats/15106744.json
+  data: probe/data/15106744/
+status: active
+summary_user: 전력거래 정산 기준으로 일자·시간별 발전원별 발전량을 담은 전국 단위 API로, 검증 호출에서 2022-09-04 하루치 192행이 수신됐다. 전력 수급 분석가나 에너지 사업자가 특정 날짜에 어떤 발전원이 시간대별로 얼마나 전력을 생산했는지 확인하는 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 이름·코드 매핑이나 같은 기관의 코드로만 잇고, 같은 부문의 수급예보·SMP·REC 등 전력거래소 자료와 함께 본다.
+limits: 포털 설명상 정산 데이터라 수정 정산에 따라 수치가 일부 바뀔 수 있다. 확인된 최신 행 날짜(2022-09-04)는 검증 호출 조건(tradeYmd=20220904) 기준이라 데이터 자체가 오래됐다고 단정할 수 없으며, 날짜를 바꿔 호출해야 한다. 개발계정은 일 100회 호출로 제한되고 serviceKey가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15106744-01
+    - c-15106744-02
+    - c-15106744-03
+    - c-15106744-04
+    - c-15106744-06
+  dropped_citations: 0
