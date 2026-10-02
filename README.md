@@ -226,11 +226,16 @@ python -m pds serve --host 0.0.0.0 --port 9001         # 웹 채팅 + API
 
 | 경로 | 내용 |
 |---|---|
-| `/` | 웹 채팅 — 대화 + 전략 패널(데이터·조인·파이프라인·실행 코드·후보·단서) |
+| `/` | 웹 채팅 — 대화 + 진행 요약·출처 + 전략 패널(데이터·조인·순서·실행 코드·단서) + 데이터 설명서 서랍 |
 | `POST /api/chat` | 대화 (도구: 전략 수립·검색·상세·코드표) |
 | `POST /api/plan` | `{goal}` → 전략 응답 ([KNOWLEDGE-SPEC §4](KNOWLEDGE-SPEC.md)) — 근거·조인 규칙을 서버가 검사 |
 | `GET /api/search?q=&tier=` | 세 층 검색 |
 | `GET /api/datasets/{id}` · `/api/codes/{id}?q=` | 상세·설명서 · 코드 조회 |
+
+**웹 화면**은 `frontend/`(React 19 + Vite, BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트)에서 빌드한다.
+`cd frontend && npm install && npm run build` → `web/dist`를 서버가 `/`에서 서빙한다. `@bv-ds/*`는 사내 레지스트리
+패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다 — 빌드가 없으면 단순판 `web/index.html`이 대신 뜬다.
+개발 중에는 `npm run dev`(5173, `/api`는 9001로 프록시).
 
 **MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `get_dataset` ·
 `list_code_lists` · `lookup_code`, 리소스 `dataset://{id}`.

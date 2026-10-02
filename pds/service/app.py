@@ -1,6 +1,6 @@
 """서비스 API + 웹 채팅 — `python -m pds serve` (기본 http://127.0.0.1:8765).
 
-  GET  /                     웹 채팅 (web/index.html)
+  GET  /                     웹 채팅 — frontend/ 빌드(web/dist, BV 디자인 시스템). 빌드가 없으면 web/index.html
   POST /api/chat             {messages:[{role,content}]} → {reply, plans, trace}
   POST /api/plan             {goal, use_llm?} → 전략 응답 (KNOWLEDGE-SPEC §4)
   GET  /api/search?q=&tier=  검색 (verified · candidate · catalog)
@@ -17,6 +17,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from pds import config
@@ -33,6 +34,9 @@ app = FastAPI(title="datagokr-mcp", version="0.1.0", description="data.go.kr 공
               lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 WEB = config.ROOT / "web"
+DIST = WEB / "dist"  # cd frontend && npm run build
+if (DIST / "assets").is_dir():
+    app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
 
 class ChatIn(BaseModel):
@@ -46,7 +50,8 @@ class PlanIn(BaseModel):
 
 @app.get("/")
 def home():
-    return FileResponse(WEB / "index.html")
+    built = DIST / "index.html"
+    return FileResponse(built if built.exists() else WEB / "index.html")
 
 
 @app.post("/api/chat")
