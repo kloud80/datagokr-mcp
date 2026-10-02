@@ -104,6 +104,7 @@ export interface Usage {
 }
 
 export interface ChatDone {
+  turn_id?: string
   reply: string
   plans: Plan[]
   trace: { tool: string; input: Record<string, unknown> }[]
@@ -136,11 +137,33 @@ async function json<T>(r: Response): Promise<T> {
 }
 
 /** /api/chat/stream — SSE(POST)라 EventSource 대신 fetch 스트림을 직접 읽는다. */
+/** 브라우저 세션 id — 사용 기록(개선용)에서 같은 사람의 대화를 묶는다. 저장이 막히면 탭마다 새로 */
+export function sessionId(): string {
+  try {
+    let v = localStorage.getItem('pds-session')
+    if (!v) {
+      v = crypto.randomUUID()
+      localStorage.setItem('pds-session', v)
+    }
+    return v
+  } catch {
+    return 'tab-' + Math.random().toString(36).slice(2)
+  }
+}
+
+export function sendFeedback(turn_id: string, rating: 'up' | 'down', comment?: string) {
+  return fetch('/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ turn_id, rating, comment, session: sessionId() }),
+  })
+}
+
 async function chatStream(messages: { role: string; content: string }[], on: (e: StreamEvent) => void): Promise<void> {
   const r = await fetch('/api/chat/stream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, session: sessionId() }),
   })
   if (!r.ok || !r.body) {
     const j = await r.json().catch(() => ({}))

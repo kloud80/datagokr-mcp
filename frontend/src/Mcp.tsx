@@ -103,6 +103,7 @@ pip install -e . && python -m pds setup --no-db
           </AgentAlert>
           <ul className="doc-facts">
             <li>테스트 서버라 사용량 제한·가용성을 보장하지 않습니다. 남용이 보이면 토큰 인증이나 요청 제한을 붙입니다.</li>
+            <li>서비스 개선을 위해 도구 호출(도구 이름·인자·시간)을 서버에 기록하고 사용 통계(GA4)로 집계합니다. IP는 해시로만 남깁니다.</li>
             <li>설명(explain=true)과 채팅 화면의 LLM 답변이 필요하면 저장소를 받아 내 Claude 키로 실행하세요.</li>
             <li>HTTP(비암호화) 주소라 일부 클라이언트는 https만 허용합니다 — 그때는 mcp-remote의 <code className="pds-code">--allow-http</code> 또는 내 컴퓨터(stdio) 방식을 쓰세요.</li>
           </ul>

@@ -20,7 +20,9 @@ import threading
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+import uuid
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
@@ -57,6 +59,33 @@ if (DIST / "assets").is_dir():
 
 class ChatIn(BaseModel):
     messages: list[dict]
+    session: str | None = None  # 브라우저가 만든 무작위 id (사용 기록용)
+
+
+class FeedbackIn(BaseModel):
+    turn_id: str
+    rating: str  # up · down
+    comment: str | None = None
+    session: str | None = None
+
+
+def _who(req: Request) -> str:
+    from pds.service.usage import client_hash
+    ip = (req.headers.get("x-forwarded-for") or "").split(",")[0].strip() or (req.client.host if req.client else "")
+    return client_hash(ip, req.headers.get("user-agent"))
+
+
+def _log_chat(out: dict, msgs: list[dict], turn_id: str, session: str | None, who: str, status: str = "ok", error: str | None = None) -> None:
+    from pds.service.usage import record
+    plans = out.get("plans") or []
+    p = plans[-1] if plans else {}
+    ids = [d["id"] for d in p.get("datasets") or []]
+    record("chat", ga=("chat_answer", {"status": status, "plans": len(plans), "datasets": len(ids), "elapsed_s": out.get("elapsed_s")}),
+           turn_id=turn_id, session=session, client_hash=who, question=msgs[-1]["content"] if msgs else None,
+           reply=out.get("reply"), plan_ids={"datasets": ids, "excluded": [x["id"] for x in p.get("not_recommended") or []],
+                                             "joins": [j["edge"] for j in p.get("joins") or []], "context": p.get("context")},
+           trace=out.get("trace"), usage=out.get("usage"), elapsed_s=out.get("elapsed_s"), status=status, error=error,
+           args={"turns": len(msgs)})
 
 
 class PlanIn(BaseModel):
@@ -81,7 +110,7 @@ def favicon():
 
 
 @app.post("/api/chat")
-def api_chat(body: ChatIn):
+def api_chat(body: ChatIn, req: Request):
     from pds.service import llm
     t0 = time.time()
     msgs = [m for m in body.messages if m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str)][-20:]
@@ -89,11 +118,13 @@ def api_chat(body: ChatIn):
         raise HTTPException(400, "마지막 메시지는 user여야 한다")
     out = llm.chat(msgs)
     out["elapsed_s"] = round(time.time() - t0, 1)
+    out["turn_id"] = uuid.uuid4().hex
+    _log_chat(out, msgs, out["turn_id"], body.session, _who(req), status=out.get("stop") == "refusal" and "refusal" or "ok")
     return jsonable(out)
 
 
 @app.post("/api/chat/stream")
-def api_chat_stream(body: ChatIn):
+def api_chat_stream(body: ChatIn, req: Request):
     """채팅을 스레드에서 돌리며 진행 이벤트를 SSE로 흘린다 — 25초 동안 스피너 대신 단계와 전략 카드가 먼저 보이게."""
     from pds.service import llm
     msgs = [m for m in body.messages if m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str)][-20:]
@@ -101,14 +132,19 @@ def api_chat_stream(body: ChatIn):
         raise HTTPException(400, "마지막 메시지는 user여야 한다")
     q: queue.Queue = queue.Queue()
     t0 = time.time()
+    turn_id, who = uuid.uuid4().hex, _who(req)
 
     def work():
         try:
             out = llm.chat(msgs, emit=q.put)
             out["elapsed_s"] = round(time.time() - t0, 1)
+            out["turn_id"] = turn_id
             q.put({"type": "done", **out})
+            _log_chat(out, msgs, turn_id, body.session, who, status=out.get("stop") == "refusal" and "refusal" or "ok")
         except Exception as e:  # noqa: BLE001 — 오류도 이벤트로 알린다
             q.put({"type": "error", "detail": f"{type(e).__name__}: {str(e)[:300]}"})
+            _log_chat({"elapsed_s": round(time.time() - t0, 1)}, msgs, turn_id, body.session, who, status="error",
+                      error=f"{type(e).__name__}: {str(e)[:300]}")
 
     threading.Thread(target=work, daemon=True).start()
 
@@ -126,10 +162,26 @@ def api_chat_stream(body: ChatIn):
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
+@app.post("/api/feedback")
+def api_feedback(body: FeedbackIn, req: Request):
+    """답에 대한 👍/👎 — 개선용 기록 (pds_usage_log kind=feedback)."""
+    from pds.service.usage import record
+    if body.rating not in ("up", "down"):
+        raise HTTPException(400, "rating은 up 또는 down")
+    record("feedback", ga=("chat_feedback", {"rating": body.rating}), turn_id=body.turn_id, session=body.session,
+           client_hash=_who(req), args={"rating": body.rating, "comment": (body.comment or "")[:1000]})
+    return {"ok": True}
+
+
 @app.post("/api/plan")
-def api_plan(body: PlanIn):
+def api_plan(body: PlanIn, req: Request):
+    from pds.service.usage import record
     from pds.strategy.plan import plan
-    return plan(body.goal, use_llm=body.use_llm)
+    t0 = time.time()
+    p = plan(body.goal, use_llm=False)  # 공개 서버에선 LLM 설명을 끈다 (비용)
+    record("plan", ga=("api_plan", {"datasets": len(p["datasets"])}), client_hash=_who(req), question=body.goal,
+           plan_ids={"datasets": [d["id"] for d in p["datasets"]]}, elapsed_s=round(time.time() - t0, 2), status="ok")
+    return p
 
 
 @app.get("/api/search")
@@ -200,13 +252,54 @@ def api_stats():
 #   상태 없는(stateless) JSON 응답. 도구는 지식 체계 읽기만 하고 사용자 키를 다루지 않는다.
 #   LLM 비용이 드는 설명(explain=true)은 PDS_MCP_ALLOW_LLM=1일 때만 (기본 꺼짐).
 #   모든 경로를 받는 마운트라 맨 끝에 둔다 — 위의 라우트가 먼저 처리된다.
+class _McpUsage:
+    """원격 MCP 요청을 엿보아 tools/call을 기록한다 (본문을 읽은 뒤 그대로 다시 흘려보낸다)."""
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("method") != "POST" or not scope.get("path", "").startswith("/mcp"):
+            return await self.inner(scope, receive, send)
+        chunks, more = [], True
+        while more:
+            msg = await receive()
+            chunks.append(msg.get("body", b""))
+            more = msg.get("more_body", False)
+        body = b"".join(chunks)
+        sent = False
+
+        async def replay():
+            nonlocal sent
+            if not sent:
+                sent = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            return await receive()
+
+        t0 = time.time()
+        await self.inner(scope, replay, send)
+        try:
+            msgs = json.loads(body or b"null")
+            for m in msgs if isinstance(msgs, list) else [msgs]:
+                if isinstance(m, dict) and m.get("method") == "tools/call":
+                    from pds.service.usage import client_hash, record
+                    h = dict((k.decode(), v.decode()) for k, v in scope.get("headers") or [])
+                    ip = (h.get("x-forwarded-for") or "").split(",")[0].strip() or (scope.get("client") or ("",))[0]
+                    who = client_hash(ip, h.get("user-agent"))
+                    name = (m.get("params") or {}).get("name")
+                    record("mcp", ga=("mcp_tool_call", {"tool": name}), session=who, client_hash=who, question=name,
+                           args=(m.get("params") or {}).get("arguments"), elapsed_s=round(time.time() - t0, 2), status="ok")
+        except Exception:  # noqa: BLE001 — 기록 실패가 응답을 막지 않게
+            pass
+
+
 def _mount_mcp() -> None:
     from mcp.server.transport_security import TransportSecuritySettings
 
     from pds.mcp.server import server as mcp_server
     mcp_app = mcp_server.streamable_http_app(streamable_http_path="/mcp", stateless_http=True, json_response=True,
                                              transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
-    app.mount("/", mcp_app)
+    app.mount("/", _McpUsage(mcp_app))
 
 
 _mount_mcp()

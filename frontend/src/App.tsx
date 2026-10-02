@@ -9,7 +9,7 @@ import {
   AgentTooltip,
   PromptInput,
 } from '@bv-ds/ui'
-import { api, type Plan, type Stats, type Step, type Usage } from './api'
+import { api, sendFeedback, type Plan, type Stats, type Step, type Usage } from './api'
 import { Markdown } from './md'
 import { PlanPanel, type PlanTab } from './PlanPanel'
 import { DatasetDrawer } from './DatasetDrawer'
@@ -37,6 +37,8 @@ interface Turn {
   error?: string
   usage?: Usage
   elapsed?: number
+  turnId?: string
+  rating?: 'up' | 'down'
 }
 
 const STEP_STATUS = { running: 'in_progress', done: 'completed', failed: 'completed' } as const
@@ -100,7 +102,7 @@ export function App() {
           setTab('map')
           setFocusId(null)
         } else if (e.type === 'done') {
-          patch((t) => ({ ...t, content: e.reply, status: 'done', usage: e.usage, elapsed: e.elapsed_s }))
+          patch((t) => ({ ...t, content: e.reply, status: 'done', usage: e.usage, elapsed: e.elapsed_s, turnId: e.turn_id }))
         } else if (e.type === 'error') {
           patch((t) => ({ ...t, status: 'failed', error: e.detail }))
         }
@@ -194,6 +196,18 @@ export function App() {
                       </span>
                     </button>
                   ) : null}
+                  {t.status === 'done' && t.turnId ? (
+                    <div className="pds-feedback" role="group" aria-label="이 답이 도움이 됐나요?">
+                      <span className="pds-ev">{t.rating ? '의견 고맙습니다' : '도움이 됐나요?'}</span>
+                      {(['up', 'down'] as const).map((r) => (
+                        <button key={r} type="button" className={`pds-fb${t.rating === r ? ' pds-fb--on' : ''}`} disabled={!!t.rating}
+                          aria-label={r === 'up' ? '도움이 됐어요' : '아쉬워요'}
+                          onClick={() => { void sendFeedback(t.turnId!, r); setTurns((ts) => ts.map((x, k) => (k === i ? { ...x, rating: r } : x))) }}>
+                          {r === 'up' ? '👍' : '👎'}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                   {t.status === 'failed' ? (
                     <div className="pds-row">
                       <span className="pds-warn">오류: {t.error}</span>
@@ -215,6 +229,7 @@ export function App() {
             placeholder={busy ? '답을 만드는 중…' : '예) 성수동 상권 변화를 월 단위로 추적하고 싶어'}
           />
           <span className="pds-ev">Enter로 보내기 · Shift+Enter로 줄바꿈 — 답변에는 직접 불러 보거나 법령·검토로 확인된 내용만 씁니다</span>
+          <span className="pds-ev">대화 내용은 서비스 개선을 위해 서버에 저장됩니다 (개인 식별 정보는 남기지 않습니다).</span>
           <Credit compact />
         </div>
       </section>
