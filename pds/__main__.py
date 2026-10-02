@@ -22,6 +22,8 @@ from __future__ import annotations
 import argparse
 import sys
 
+from pathlib import Path
+
 import pandas as pd
 
 from pds import config
@@ -207,7 +209,30 @@ def cmd_mcp(args):
     run(http=args.http)
 
 
+def cmd_setup(args):
+    from pds.setup import setup
+    setup(rebuild=args.rebuild, with_kg=args.kg, skip_db=args.no_db)
+
+
+def cmd_data_pack(_):
+    from pds.setup import data_pack
+    data_pack()
+
+
+def cmd_db_backup(args):
+    from pds.setup import db_backup
+    db_backup(Path(args.out) if args.out else None)
+
+
+def cmd_db_restore(args):
+    from pds.setup import db_restore
+    db_restore(Path(args.src), yes=args.yes)
+
+
 def main(argv=None):
+    for s in (sys.stdout, sys.stderr):  # 윈도 콘솔(cp949)에서 한글·기호 출력이 깨지지 않게
+        if hasattr(s, "reconfigure"):
+            s.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(prog="pds")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("download").set_defaults(fn=cmd_download)
@@ -245,6 +270,19 @@ def main(argv=None):
     mc = sub.add_parser("mcp")
     mc.add_argument("--http", action="store_true")
     mc.set_defaults(fn=cmd_mcp)
+    st = sub.add_parser("setup", help="처음 받은 저장소를 한 번에 세팅 (스냅샷·설명서·DB·색인)")
+    st.add_argument("--rebuild", action="store_true", help="스냅샷을 받지 않고 포털에서 새로 만든다")
+    st.add_argument("--kg", action="store_true", help="지식 그래프(kg)도 DB에 적재")
+    st.add_argument("--no-db", action="store_true", help="DB 단계를 건너뛴다")
+    st.set_defaults(fn=cmd_setup)
+    sub.add_parser("data-pack").set_defaults(fn=cmd_data_pack)
+    bk = sub.add_parser("db-backup", help="DB의 pds_* 테이블만 parquet로 백업")
+    bk.add_argument("--out")
+    bk.set_defaults(fn=cmd_db_backup)
+    rs = sub.add_parser("db-restore", help="db-backup 결과를 되돌린다 (pds_* 테이블만)")
+    rs.add_argument("src")
+    rs.add_argument("--yes", action="store_true")
+    rs.set_defaults(fn=cmd_db_restore)
     s = sub.add_parser("summary")
     s.add_argument("--top", type=int, default=40)
     s.set_defaults(fn=cmd_summary)

@@ -217,11 +217,29 @@ DB·검색 색인·설명서·임베딩은 모두 이 파일에서 다시 만들
 ## 5. 써 보기
 
 ```bash
-python -m venv .venv && .venv/Scripts/activate        # macOS·Linux: source .venv/bin/activate
+python -m venv .venv && .venv/Scripts/activate        # macOS·Linux: source .venv/bin/activate  (Python 3.11+)
 pip install -e .
-cp .env.example .env                                   # CLAUDE_API_KEY만 있어도 채팅이 된다
-python -m pds download && python -m pds build          # 포털 목록 9.6만 (catalog 층 · 단서 검색)
-python -m pds serve --host 0.0.0.0 --port 9001         # 웹 채팅 + API
+cp .env.example .env                                   # CLAUDE_API_KEY만 있어도 채팅이 된다. Postgres는 선택
+python -m pds setup                                    # 한 번에 세팅 (아래 표)
+python -m pds serve --port 8765                        # 웹 채팅 + API → http://127.0.0.1:8765
+```
+
+`setup`이 하는 일 — 원본은 파일(`knowledge/` + 포털 목록 스냅샷)이고 DB는 그로부터 만드는 파생 인덱스다:
+
+| 단계 | 내용 | 없으면 |
+|---|---|---|
+| 지식 검증 | `knowledge/`(git에 있음) 스키마·참조 검사 | — |
+| 포털 목록 스냅샷 | GitHub Release `data-20260731`의 `pds-data-20260731.zip`(46MB)을 받아 `data/processed/`에 푼다. 못 받으면 포털에서 새로 만든다(`download`+`build`, 수십 분) — `--rebuild`로 강제 | 단서(catalog) 검색만 빠진다 |
+| 설명서 | `docs/dossiers/` 생성 | 데이터 상세의 설명서가 빈다 |
+| Postgres | `.env`의 `POSTGRES_*`가 있으면 마이그레이션(`sql/`) → 목록·분류·점수 적재 → 지식 엔티티 적재. `--kg`면 지식 그래프도 | 서비스는 DB 없이 돈다 |
+| 색인 | 검색 색인(`data/processed/service_index.pkl`) | 첫 요청 때 만든다 |
+
+백업·복원 — DB 스키마를 다른 시스템과 같이 쓰는 경우가 있어 **`pds_*` 테이블만** 다룬다:
+
+```bash
+python -m pds db-backup                    # backups/pds-YYYYMMDD/*.parquet + manifest.json
+python -m pds db-restore backups/pds-YYYYMMDD --yes
+python -m pds data-pack                    # 스냅샷 zip (Release에 올리는 파일)
 ```
 
 | 경로 | 내용 |

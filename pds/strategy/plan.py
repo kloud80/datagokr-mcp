@@ -232,7 +232,9 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     out = {"goal": goal, "context": sel["ctx"]["id"] if sel["ctx"] else None, "summary": None, "datasets": datasets, "joins": joins,
            "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand, "unverified_leads": _leads(q, known | {c["id"] for c in cand}, sel["region"]),
            "not_recommended": sel["excluded"] + _not_recommended(chosen),
-           "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)}, "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
+           "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)},
+           "region": {"names": sel["region"]["names"], "sido": sorted(sel["region"]["sido"])},
+           "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
            "source": source, "generated_at": dt.datetime.now().isoformat(timespec="seconds")}
     out["summary"] = _summary_rule(out)
     if use_llm:

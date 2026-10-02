@@ -68,6 +68,30 @@ function DataCard({ d, plan, focus, open }: { d: PlanDataset; plan: Plan; focus:
   )
 }
 
+// 클립보드 API는 https·localhost에서만 열린다 — http(bv.bigvalue.co.kr:9001)에서는 선택 후 복사로 대신한다
+async function copyText(text: string): Promise<boolean> {
+  if (window.isSecureContext && navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch { /* 아래 방식으로 */ }
+  }
+  const ta = document.createElement('textarea')
+  ta.value = text
+  ta.setAttribute('readonly', '')
+  ta.style.position = 'fixed'
+  ta.style.opacity = '0'
+  document.body.appendChild(ta)
+  ta.select()
+  let ok = false
+  try {
+    ok = document.execCommand('copy')
+  } finally {
+    document.body.removeChild(ta)
+  }
+  return ok
+}
+
 function keysNeeded(p: Plan) {
   const portal = p.datasets.filter((d) => d.access.channel !== 'external')
   const ext = [...new Set(p.datasets.filter((d) => d.access.channel === 'external').map((d) => d.access.issuer || '외부 사이트'))]
@@ -90,7 +114,7 @@ export function PlanPanel(props: {
   onFocus: (id: string) => void
 }) {
   const { plan: p, versions, version, onVersion, tab, onTab, focusId, open, onFocus } = props
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState<'done' | 'fail' | null>(null)
 
   useEffect(() => {
     if (!focusId) return
@@ -226,8 +250,8 @@ export function PlanPanel(props: {
       </header>
       <div className="pds-pbody">{content}</div>
       <footer className="pds-actions">
-        <AgentButton size="sm" variant="primary" onClick={() => navigator.clipboard.writeText(p.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })}>
-          {copied ? '복사됨' : '코드 복사'}
+        <AgentButton size="sm" variant="primary" onClick={() => void copyText(p.code).then((ok) => { setCopied(ok ? 'done' : 'fail'); setTimeout(() => setCopied(null), 2000) })}>
+          {copied === 'done' ? '복사됨' : copied === 'fail' ? '복사 실패 — .py로 받으세요' : '코드 복사'}
         </AgentButton>
         <AgentButton size="sm" variant="secondary" onClick={download}>.py 내려받기</AgentButton>
       </footer>
