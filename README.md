@@ -250,7 +250,9 @@ python -m pds data-pack                    # 스냅샷 zip (Release에 올리는
 | `GET /api/search?q=&tier=` | 세 층 검색 |
 | `GET /api/datasets/{id}` · `/api/codes/{id}?q=` | 상세·설명서 · 코드 조회 |
 
-**웹 화면**은 `frontend/`(React 19 + Vite, BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트)에서 빌드한다.
+**웹 화면**은 빌드된 결과(`web/dist`)가 저장소에 들어 있어 받자마자 뜬다. 원본은 `frontend/`(React 19 + Vite,
+BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시스템 레지스트리가 사내 전용이라 외부에서는 다시 빌드할 수 없다.
+다시 빌드하려면(사내):
 `cd frontend && npm install && npm run build` → `web/dist`를 서버가 `/`에서 서빙한다. `@bv-ds/*`는 사내 레지스트리
 패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다. API(`/api/*`)는 빌드 없이도 동작한다.
 개발 중에는 `npm run dev`(5173, `/api`는 9001로 프록시).
