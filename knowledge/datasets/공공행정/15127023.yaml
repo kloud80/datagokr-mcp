@@ -1,0 +1,285 @@
+# Dataset 15127023 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15127023'
+tier: verified
+title: 공정거래위원회_전화권유판매 수신거부 등록 업체 현황 서비스
+sector: 공공행정/공정거래/special-sales
+agency:
+  id: '1130000'
+  name: 공정거래위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15127023/openapi.do
+synonyms:
+  - 전화권유판매
+  - 수신거부
+  - 업체현황
+  - 전화권유판매업체
+  - 수신거부 등록
+  - 텔레마케팅 업체
+  - 특수판매 업체
+  - 전화영업 사업자
+  - 사업자등록번호 조회
+  - 업체 영업상태
+description_portal: 이 API 는 공정거래위원회에서 제공하는 공정거래위원회_전화권유판매 수신거부 등록 업체 현황 서비스 입니다. 기준년월, 사업자등록번호, 지역명, 한글업체명, 카테고리명, 영업상태명, 등록일시 등의 전화권유판매 수신거부 등록 업체 현황을 제공 합니다.
+team:
+  dept: 정보화담당관실
+services:
+  - op: /getTelidsalRcptnRejectRegEntrpsStus_2
+    name: 전화권유판매 수신거부 등록 업체 현황 조회
+    endpoint: https://apis.data.go.kr/1130000/TelidsalRcptnRejectTelidsalRcptnRejectRegEntrpsStus_2Service/getTelidsalRcptnRejectRegEntrpsStus_2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 결과형식(xml/json)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: crtraYm
+      title: 기준년월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202402'
+        - '202103'
+        - '202104'
+      stats:
+        min: 202103
+        p50: 202402
+        max: 202402
+        unique: 3
+    - name: brno
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1120397454'
+        - '2048647523'
+        - '1252315683'
+      stats:
+        min: 505550789
+        p50: 2144827131.5
+        max: 8998700416
+        unique: 994
+    - name: areaNm
+      title: 지역명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강남구
+        - 서울특별시 서초구
+        - 서울특별시 구로구
+      stats:
+        unique: 150
+    - name: kornEntrpsNm
+      title: 한글업체명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 공부이야기 연구소
+        - 예원교육
+        - KS telecom
+      stats:
+        unique: 987
+    - name: ctgryNm
+      title: 카테고리명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N/A
+        - 기타
+        - 통신기기
+      stats:
+        unique: 11
+    - name: bsnSttusNm
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업종료
+        - 영업중
+      stats:
+        unique: 2
+    - name: opnRgsDt
+      title: 등록일시
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - N/A
+        - '20131231193052'
+        - '20160331181444'
+      stats:
+        unique: 258
+  foreign_keys:
+    - fields:
+        - brno
+      reference:
+        key: bizno
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 전자상거래·특수판매
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6042
+  rank_in_sector: 59
+  brm: 재정금융 - 산업금융
+  sector_rule: ftc-to-fairtrade
+  why: 전화권유판매 수신거부 업체, 사업자번호 보유
+claims:
+  - id: c-15127023-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15127023.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15127023.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15127023-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15127023-03
+    kind: key
+    value: '실측 조인 키: bizno(brno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15127023.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15127023-04
+    kind: coverage
+    value: API 전체 건수 806,517 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15127023.json
+        observed_at: '2026-10-02'
+        detail: total 806517, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15127023-06
+    kind: admin_note
+    value: '[공정거래 · 결정] 공정위의 등록·지정·공시 4개 체인만 대상 — **기업집단 · 가맹사업 · 특수판매(통신판매·다단계·방문·후원방문·전화권유) · 상조(선불식할부)**. 나머지는 제외 (`exclusions.yaml` `ftc-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L60
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15127023-07
+    kind: admin_note
+    value: '[공정거래 · 이유] 대중 수요는 셋 다 "이 사업자 믿어도 되나" — 창업 예정자(가맹 정보공개서), 소비자(통신판매·상조 등록 확인), 투자·언론(기업집단 지분·내부거래). 개방 데이터가 있는 곳도 등록·지정·공시 영역뿐이고, 네 체인 모두 **사업자등록번호·법인등록번호**로 묶인다. 하도급 실태조사·1372 상담통계·기업결합은 집계, 결정문·리콜은 사건·문서 단위라 연계 불가.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L62
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15127023-08
+    kind: admin_note
+    value: wave2 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15127023-10
+    kind: pitfall
+    value: 전수 806,517건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 807회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15127023.json
+        observed_at: '2026-10-02'
+        detail: total 806517 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 806517
+  ops_ok: 1/1
+  latency_ms: 371
+  run: probe/runs/15127023.json
+  stats: probe/stats/15127023.json
+  data: probe/data/15127023/
+status: active
+summary_user: 전화권유판매 수신거부에 등록된 업체를 업체별 건으로 담은 API로, 전국 범위 전체 806,517건이다. 소비자가 전화를 건 업체가 수신거부 등록 업체인지, 영업 상태가 어떤지 확인하는 질문에 쓴다. 사업자등록번호(brno, 키 bizno)로 공정위의 통신판매·다단계·가맹사업·상조 등 다른 등록·공시 데이터와 이어 쓴다.
+limits: 전체 806,517건 중 검증 호출은 1,000행만 받아 전량 수집에는 페이지를 807회 이상 반복해야 한다. 하도급 실태조사·1372 상담통계·기업결합은 집계 단위, 결정문·리콜은 사건·문서 단위라 이 데이터와 연계되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15127023-03
+    - c-15127023-04
+    - c-15127023-06
+    - c-15127023-07
+    - c-15127023-10
+  dropped_citations: 0

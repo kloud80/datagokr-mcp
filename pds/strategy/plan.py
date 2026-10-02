@@ -107,7 +107,11 @@ def clean_goal(goal: str) -> str:
 
 def select(goal: str) -> dict:
     ix = sindex.get()
+    region = rgn.goal_regions(goal)
     q = clean_goal(goal)
+    for n in region["names"]:  # 지명은 검색어가 아니라 필터 — '성수동'이 '성수기'와 겹치지 않게
+        q = q.replace(n, " ")
+    q = re.sub(r"\s+", " ", q).strip() or clean_goal(goal)
     ctx_hits = ix.search_contexts(q, 3)
     ctx = ctx_hits[0][0] if ctx_hits and ctx_hits[0][1] >= 3.5 else None
     ctxs = [c for c, sc in ctx_hits if ctx and sc >= 0.8 * ctx_hits[0][1]][:2]
@@ -122,8 +126,8 @@ def select(goal: str) -> dict:
     if recipe and recipe.get("status") != "approved":  # 초안 레시피는 통째로 쓰지 않고 가산점으로만
         members |= {x["id"] for x in recipe["datasets"]}
         recipe = None
+    hits = [(d, s * _region_weight(d, region)) for d, s in hits]
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])
-    region = rgn.goal_regions(goal)
     excluded, kept = [], []
     for d, s in scored:  # 지역이 어긋나면 주제가 맞아도 쓰지 않는다 — 상위권이었던 것만 사유와 함께 남긴다
         why = rgn.mismatch(d, region)
@@ -136,6 +140,16 @@ def select(goal: str) -> dict:
         scored = [(d, s) for d, s in scored if s >= 0.4 * scored[0][1]]
     return {"ctx": ctx, "ctx_hits": ctx_hits, "recipe": recipe, "scored": scored, "members": members, "q": q,
             "region": region, "excluded": excluded[:4]}
+
+
+def _region_weight(d: dict, region: dict) -> float:
+    """목표에 지역이 없으면 한 지역 데이터(부산 심야약국·대전 유치원)는 전국 데이터 뒤로, 같은 지역이면 조금 앞으로."""
+    r = rgn.dataset_region(d)
+    if r is None:
+        return 1.0
+    if not region["sido"]:
+        return 0.45
+    return 1.15 if r in region["sido"] else 1.0
 
 
 Progress = Callable[[str, str, str], None]

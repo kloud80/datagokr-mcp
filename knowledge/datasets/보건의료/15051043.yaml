@@ -1,0 +1,346 @@
+# Dataset 15051043 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15051043'
+tier: verified
+title: 건강보험심사평가원_요양기관개폐업정보조회서비스
+sector: 보건의료/건강보험/medical-institutions
+agency:
+  id: B551182
+  name: 건강보험심사평가원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15051043/openapi.do
+synonyms:
+  - 요양기관
+  - 의료시설
+  - 의료정보
+  - 보건의료자원
+  - 보건의료데이터
+  - 병원 폐업
+  - 약국 폐업
+  - 의원 개업
+  - 휴업 의료기관
+  - 요양기관 개폐업
+  - 신규 개업 병원
+  - 의료기관 폐업 현황
+  - 심평원 개폐업
+description_portal: 기준년월에 개폐업 또는 휴업한 병원과 약국의 요양기관명, 개폐업휴업구분, 전화번호, 주소 등을 조회하는 서비스- 요양기호는 1:1로 매칭한 암호화된 요양기호로 제공하고 있으며, 별도의 복호화 방법 또는 요양기호는 제공하고 있지 않습니다. - 지역코드 등 API 활용을 위한 코드는 보건의료빅데이터개방시스템(opendata.hira.or.kr) > 서비스 소개 > 용어설명 > 코드조회를 참고하여 주시기 바랍니다.※ 폐업정보는 기준년월 관계없이 최근 1년간 데이터를 제공합니다.※ 개업정보는 기준년월 기준으로 개업한 데이터를 제공하고 있으며, 폐업정보가 적재시점으로부터 최근 1년 내에 이루어진 경우에는 동시 조회됩니다.
+team:
+  dept: 빅데이터실
+services:
+  - op: /getHospPharmacyOpCloList1
+    name: 병원약국개폐업목록조회
+    endpoint: https://apis.data.go.kr/B551182/yadmOpCloInfoService2/getHospPharmacyOpCloList1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: crtrYm
+        required: true
+        example: '202406'
+        desc: 기준년월
+      - name: yadmTp
+        required: true
+        example: '0'
+        desc: (요양기관구분) 전체:0, 병원:1, 약국:2
+      - name: opCloTp
+        required: true
+        example: '0'
+        desc: (개폐업휴업구분) 전체:0, 개업:1, 폐업:2, 휴업:3
+      - name: sidoCd
+        required: false
+        example: '110000'
+        desc: 시도코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: addr
+      title: 주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 중랑구 면목로
+        - 서울특별시 강남구 압구정로71길 4, 미산빌딩 4층, 5(일부)층 (청담동)
+        - 서울특별시 동작구 노량진로
+      stats:
+        unique: 996
+    - name: clCdNm
+      title: 요양종별명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의원
+        - 약국
+        - 한의원
+      stats:
+        unique: 8
+    - name: crtrYm
+      title: 기준년월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202603'
+        - '202604'
+        - '202602'
+      stats:
+        min: 202510
+        p50: 202603
+        max: 202609
+        unique: 12
+    - name: estbCnclTp
+      title: 개폐업구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 개업
+      stats:
+        unique: 1
+    - name: estbDd
+      title: 개업일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20251001'
+        - '20260428'
+        - '20260303'
+      stats:
+        min: 20251001
+        p50: 20260330.5
+        max: 20260930
+        unique: 246
+    - name: shwSbjtCdNm
+      title: 표시과목명
+      type: code
+      null_rate: 0.515
+      sample_values:
+        - 일반의
+        - 정형외과
+        - 내과
+      stats:
+        unique: 18
+    - name: sidoCd
+      title: 시도코드
+      type: number
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - '110000'
+      stats:
+        min: 110000
+        p50: 110000
+        max: 110000
+        unique: 1
+    - name: sidoCdNm
+      title: 시도코드명
+      type: code
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      stats:
+        unique: 1
+    - name: telno
+      title: 전화번호
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - 02-000-0000
+        - 02-0000-0000
+        - '-'
+      stats:
+        unique: 980
+    - name: yadmNm
+      title: 요양기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 블리비의원
+        - 스마일약국
+        - 톤즈의원
+      stats:
+        unique: 985
+    - name: ykiho
+      title: 암호화된 요양기호
+      type: string
+      semantic_type: ykiho
+      null_rate: 0.0
+      sample_values:
+        - JDQ4MTg4MSM1MSMkMiMkNCMkMDAkMzgxNzAyIzIxIyQxIyQ5IyQwMyQzNjEyMjIjNTEjJDEjJDYjJDgz
+        - JDQ4MTg4MSM1MSMkMiMkNCMkMDAkMzgxOTYxIzExIyQxIyQ3IyQ3MiQzNjE4MzIjNDEjJDEjJDQjJDgz
+        - JDQ4MTg4MSM1MSMkMSMkMCMkMTMkNDgxMzUxIzUxIyQxIyQxIyQwMyQzNjE4MzIjNjEjJDEjJDgjJDgz
+      stats:
+        unique: 1000
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - sidoCd
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - sidoCdNm
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - ykiho
+      reference:
+        key: ykiho
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2025-10-01 ~ 2026-09-30
+cycle: default
+classification:
+  subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8529
+  rank_in_sector: 6
+  brm: 보건의료 - 건강보험
+  why: 월별 병의원·약국 개폐업 이력, 상권 변화 분석에 유용
+claims:
+  - id: c-15051043-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15051043.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15051043.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15051043-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-30 (관측일 기준 2일 전) — 검증 호출 조건(crtrYm=202406) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15051043
+        observed_at: '2026-10-02'
+        detail: latest 2026-09-30, lag 2
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15051043-03
+    kind: key
+    value: '실측 조인 키: address(addr), admin_area_code(sidoCd), admin_area_code(sidoCdNm), ykiho(ykiho)'
+    evidence:
+      - type: measured
+        source: probe/stats/15051043.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15051043-04
+    kind: coverage
+    value: API 전체 건수 2,429 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2025-10-01 ~ 2026-09-30
+    evidence:
+      - type: measured
+        source: probe/runs/15051043.json
+        observed_at: '2026-10-02'
+        detail: total 2429, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15051043-06
+    kind: admin_note
+    value: "세부 부문 '요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)'의 가치: 보건의료 최다 트래픽, 전국 의료기관 전수. 심평원 API 6~8개가 ykiho 하나로 묶이는 체인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-institutions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051043-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051043-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 2429
+  ops_ok: 1/1
+  latency_ms: 153
+  latest: '2026-09-30'
+  lag_days: 2
+  run: probe/runs/15051043.json
+  stats: probe/stats/15051043.json
+  data: probe/data/15051043/
+status: active
+summary_user: 기준년월에 개업·폐업·휴업한 병원·의원·약국을 기관 단위로 담는 API로, 요양기관명·요양종별·표시과목·주소·전화번호·개업일자를 제공하며 전체 2,429건, 전국 범위다. 지역에서 최근 문을 닫거나 새로 연 병원·약국이 어디인지 살피려는 분석가나 사업자가 쓴다. 암호화된 요양기호(ykiho)로 심평원의 다른 요양기관 API와, 시도코드(sidoCd)와 주소(addr)로 지역 단위 데이터와 이어 쓴다.
+limits: 폐업정보는 기준년월과 관계없이 최근 1년간만 제공하고 개업정보는 기준년월에 개업한 건만 주므로 장기 추이 분석에는 맞지 않는다. 요양기호는 암호화된 값이라 복호화하거나 원래 요양기호로 바꿀 수 없다. 최신 행 날짜(2026-09-30)는 검증 호출 조건(crtrYm=202406) 기준이라 데이터 자체의 최신성과 다를 수 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15051043-02
+    - c-15051043-03
+    - c-15051043-04
+    - c-15051043-06
+  dropped_citations: 0

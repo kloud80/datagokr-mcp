@@ -1,0 +1,305 @@
+# Dataset 15057111 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15057111'
+tier: verified
+title: 기상청_예보구역정보 조회서비스
+sector: 환경기상/대기/weather-forecast
+agency:
+  id: '1360000'
+  name: 기상청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057111/openapi.do
+synonyms:
+  - 관측지점
+  - 예보구역
+  - 특보구역
+  - 예비특보
+  - 단기예보
+  - 예보구역코드
+  - 특보구역코드
+  - 기상특보구역
+  - regId
+  - 날씨 구역
+  - 예보 지역 코드
+  - 기상청 구역 정보
+description_portal: 기상청에서 운영하는 관측지점, 기상예보구역, 기상특보구역 등에 대한 정보를 제공합니다.예보구역은  우리나라에서 날씨예보를 제공하기 위해 설정한 지리적 구획 단위입니다.기상청은 예보의 효율성과 정확도를 높이기 위해 행정구역과 자연지리적 특성을 고려하여 전국을 여러 예보기반 구역으로 나누어 관리하고 있습니다.특보구역은 기상청에서 발표하는 육상 및 해상의 기상특보구역코드 정보입니다.한파, 건조, 안개, 폭염, 지진해일, 폭풍해일, 호우, 대설, 태풍, 풍랑, 강풍 12개 기상현상에 대해 중대한 재해발생이 예상될 때 해당 지역에 대하여 기상특보의 발표 기준에 따라 주의보 및 경보로 구분하여 178개 시 · 군 단위와 44개 해역으로 세분화하여 발표합니다.
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: /getFcstZoneCd
+    endpoint: https://apis.data.go.kr/1360000/FcstZoneInfoService/getFcstZoneCd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: regId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '10000000'
+        - '11000000'
+        - 11A00000
+      stats:
+        unique: 100
+    - name: lat
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '37.89833333'
+        - '37.45777778'
+      stats:
+        min: 0
+        p50: 37.444577554999995
+        max: 38.0749
+        unique: 71
+    - name: lon
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '127.41444444'
+        - '127.18972222'
+      stats:
+        min: 0
+        p50: 126.98669185
+        max: 128.4867639
+        unique: 71
+    - name: regEn
+      type: code
+      null_rate: 0.94
+      sample_values:
+        - Baengnyeongdo
+        - Seoul
+        - Incheon
+      stats:
+        unique: 6
+    - name: regName
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서해5도
+        - 소요산
+        - 용문산
+      stats:
+        unique: 95
+    - name: regSp
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C
+        - P9
+        - D
+      stats:
+        unique: 10
+    - name: regUp
+      type: code
+      null_rate: 0.02
+      sample_values:
+        - 11B00000
+        - 11B20600
+        - 11C00000
+      stats:
+        unique: 30
+    - name: seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: stnF3
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '102'
+        - '108'
+      stats:
+        min: 0
+        p50: 0
+        max: 119
+        unique: 7
+    - name: tmEd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '210012310000'
+      stats:
+        min: 210012310000
+        p50: 210012310000
+        max: 210012310000
+        unique: 1
+    - name: tmSt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '201610131800'
+        - '199001010000'
+        - '201002230000'
+      stats:
+        min: 199001010000
+        p50: 201501221100
+        max: 202503051700
+        unique: 9
+  foreign_keys:
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+    - fields:
+        - lon
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 1990-01-01 ~ 2025-03-05
+cycle: default
+classification:
+  subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8888
+  rank_in_sector: 4
+  brm: 과학기술 - 과학기술연구
+  sector_rule: weather-to-environment
+  why: 예보구역·관측지점 코드 마스터, 다른 기상 API 조인 기준
+claims:
+  - id: c-15057111-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15057111.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15057111.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15057111-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2025-03-05 (관측일 기준 576일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15057111
+        observed_at: '2026-10-02'
+        detail: latest 2025-03-05, lag 576
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057111-03
+    kind: key
+    value: '실측 조인 키: coord(lat), coord(lon)'
+    evidence:
+      - type: measured
+        source: probe/stats/15057111.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057111-04
+    kind: coverage
+    value: API 전체 건수 100 · 검증 수신 100행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 1990-01-01 ~ 2025-03-05
+    evidence:
+      - type: measured
+        source: probe/runs/15057111.json
+        observed_at: '2026-10-02'
+        detail: total 100, rows 100
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057111-06
+    kind: admin_note
+    value: "세부 부문 '기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)'의 가치: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-forecast
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057111-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057111-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 100
+  total_count: 100
+  ops_ok: 1/1
+  latency_ms: 187
+  latest: '2025-03-05'
+  lag_days: 576
+  run: probe/runs/15057111.json
+  stats: probe/stats/15057111.json
+  data: probe/data/15057111/
+status: active
+summary_user: 기상청이 예보 제공을 위해 나눈 예보구역과 특보구역, 관측지점의 코드·이름·좌표를 구역 단위로 담은 API로, 검증 때 전국 범위 100건이 수신됐다. 날씨 예보나 특보 조회 서비스를 만드는 개발자·분석가가 특정 지역이 어느 예보구역·특보구역에 속하는지 알아볼 때 쓴다. 위도·경도(coord)가 실측 조인 키라 좌표가 있는 다른 데이터와 이어 쓰고, 예보구역·격자(nx,ny)를 키로 하는 기상 예보·특보 API와 함께 쓰는 용도다.
+limits: 실측 최신 행 날짜가 2025-03-05(관측일 기준 576일 전)로 확인되며 구역 변경 이력의 반영 여부는 이 자료로 알 수 없다. 필드 명세에 의미와 코드표가 없어 regUp, regSp, stnF3 등의 뜻은 별도 확인이 필요하다. 개발계정은 일 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15057111-01
+    - c-15057111-02
+    - c-15057111-03
+    - c-15057111-04
+    - c-15057111-06
+  dropped_citations: 0

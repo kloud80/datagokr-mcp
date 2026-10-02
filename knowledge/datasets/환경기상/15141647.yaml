@@ -1,0 +1,304 @@
+# Dataset 15141647 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15141647'
+tier: verified
+title: 한국환경공단_전기전자제품및자동차의재활용시스템 업체 정보 조회 서비스
+sector: 환경기상/폐기물/waste-business
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141647/openapi.do
+synonyms:
+  - 환경성보장제
+  - 폐가전
+  - 폐차
+  - 폐가전 재활용 업체
+  - 폐자동차 재활용 업체
+  - 전기전자제품 재활용업체 주소
+  - 자동차 재활용 업체 목록
+  - 재활용업체 사업자번호
+  - EPR 재활용 업체
+description_portal: 환경성보장제 적용을 받는 폐전기전자제품, 폐자동차 재활용 업체의 업종, 업체명, 우편번호, 도로명주소, 상세주소 등의 정보를 조회하는 서비스입니다.
+team:
+  dept: 환경성보장처 EcoAS운영부
+services:
+  - op: /getEcoassysBzentyInfo
+    name: 전기전자제품및자동차의재활용시스템 업체 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/ecoassysBzentyService/getEcoassysBzentyInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: true
+        desc: 데이터 반환타입(json/xml)
+      - name: bzentyNm
+        required: false
+        desc: 업체명
+      - name: brNo
+        required: false
+        desc: 사업자등록번호
+      - name: rdnmAddr
+        required: false
+        desc: 도로명주소
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bzentyNm
+      title: 업체명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)대우어플라이언스
+        - (주)라셀르
+        - (주)리큅
+      stats:
+        unique: 954
+    - name: bzentyTpbizNm
+      title: 업체업종
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수입업
+        - 판매업
+        - 제조업
+      stats:
+        unique: 17
+    - name: brNo
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1328164052'
+        - '1058719066'
+        - '2038125026'
+      stats:
+        min: 1018119252
+        p50: 2158644467
+        max: 8948602159
+        unique: 958
+    - name: bzentyTypeNm
+      title: 업체유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전기전자
+        - 자동차공제조합,전기전자
+        - 자동차,전기전자
+      stats:
+        unique: 6
+    - name: zip
+      title: 우편번호
+      type: number
+      null_rate: 0.02
+      sample_values:
+        - '14084'
+        - '704801'
+        - '617809'
+      stats:
+        min: 2130
+        p50: 61555.5
+        max: 791120
+        unique: 853
+    - name: rdnmAddr
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 금천구 가산동
+        - 서울특별시 용산구 한강로3가
+        - 서울특별시 강남구  선릉로
+      stats:
+        unique: 922
+    - name: dtlAddr
+      title: 상세주소
+      type: string
+      semantic_type: address
+      null_rate: 0.064
+      sample_values:
+        - .
+        - 2층
+        - 1층
+      stats:
+        unique: 855
+  foreign_keys:
+    - fields:
+        - brNo
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
+        - rdnmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - dtlAddr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6428
+  rank_in_sector: 240
+  brm: 환경기상 - 폐기물
+  why: 전기전자·자동차 재활용 업체 전국 목록
+claims:
+  - id: c-15141647-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15141647.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15141647.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15141647-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141647-03
+    kind: key
+    value: '실측 조인 키: bizno(brNo), address(rdnmAddr), address(dtlAddr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15141647.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141647-04
+    kind: coverage
+    value: API 전체 건수 8,160 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15141647.json
+        observed_at: '2026-10-02'
+        detail: total 8160, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141647-06
+    kind: admin_note
+    value: "세부 부문 '폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)'의 가치: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#waste-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141647-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 폐기물] 생활폐기물 배출·수거 지점(대형폐기물·수거함·종량제 판매소) · 폐기물 처리업·배출자. 발생량·처리현황 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L683
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141647-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141647-10
+    kind: pitfall
+    value: 전수 8,160건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 9회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15141647.json
+        observed_at: '2026-10-02'
+        detail: total 8160 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 8160
+  ops_ok: 1/1
+  latency_ms: 361
+  run: probe/runs/15141647.json
+  stats: probe/stats/15141647.json
+  data: probe/data/15141647/
+status: active
+summary_user: 환경성보장제 적용 대상인 폐전기전자제품·폐자동차 재활용 업체의 업종, 업체명, 사업자등록번호, 도로명주소를 업체 단위로 담으며 전국 8,160건 규모다. 사업자나 분석가가 우리 지역에 어떤 재활용 업체가 있고 어디에 있는지 확인하는 질문에 쓴다. 사업자등록번호(brNo)와 도로명·상세주소(rdnmAddr, dtlAddr)를 키로 다른 폐기물 처리업·배출자 원장이나 주소 기반 데이터와 이어 쓴다.
+limits: 검증 때는 전체 8,160건 중 1,000행만 받았으며, 전량 수집은 페이지를 9회 이상 반복해야 한다. 발생량·처리현황 같은 통계는 담지 않고 업체 정보만 조회한다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15141647-03
+    - c-15141647-04
+    - c-15141647-06
+    - c-15141647-07
+    - c-15141647-10
+  dropped_citations: 0

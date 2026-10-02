@@ -1,0 +1,776 @@
+# Dataset 15043459 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15043459'
+tier: verified
+title: 금융위원회_기업 재무정보
+sector: 재정금융/금융/corporate-disclosure
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15043459/openapi.do
+synonyms:
+  - 재무제표
+  - 재무상태표
+  - 손익계산서
+  - 요약재무제표조회
+  - 재무상태표조회
+  - 손익계산서조회
+  - 기업재무정보
+  - 기업재무
+  - 기업 재무제표
+  - 요약재무제표
+  - 법인등록번호 재무
+  - 기업 매출액 영업이익
+  - 재무 건전성
+  - 부채비율
+description_portal: 기업 재무정보는 법인등록번호와 사업연도를 기준으로 기업의 재무제표 항목을 조회할 수 있는 데이터입니다.제공 항목에는 기업의 매출액, 영업이익, 총자산, 총부채, 자본금 등 요약 재무정보뿐 아니라, 계정과목별 재무상태표와 손익계산서 항목이 포함됩니다.데이터는 요약재무제표 조회, 재무상태표 조회, 손익계산서 조회의 세 가지 오퍼레이션으로 구성되어 있으며, 각 항목에 대해 전기·당기·전분기 등의 비교 수치도 함께 제공됩니다.본 데이터는 기업의 경영성과 분석, 재무 건전성 평가, 투자 위험 분석, 기업 간 재무비교 등 다양한 금융 분석에 활용될 수 있습니다.※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getIncoStat_V2
+    name: 손익계산서조회
+    endpoint: https://apis.data.go.kr/1160100/service/GetFinaStatInfoService_V2/getIncoStat_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: bizYear
+        required: true
+        desc: 법인에 대해 법령이 규정한 1회계기간으로서 법인세의 과세기간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBs_V2
+    name: 재무상태표조회
+    endpoint: https://apis.data.go.kr/1160100/service/GetFinaStatInfoService_V2/getBs_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: bizYear
+        required: false
+        desc: 법인에 대해 법령이 규정한 1회계기간으로서 법인세의 과세기간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getSummFinaStat_V2
+    name: 요약재무제표조회
+    endpoint: https://apis.data.go.kr/1160100/service/GetFinaStatInfoService_V2/getSummFinaStat_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식(xml/json)
+      - name: crno
+        required: false
+        example: '1746110000741'
+        desc: 법인등록번호
+      - name: bizYear
+        required: false
+        example: '2019'
+        desc: 법인에 대해 법령이 규정한 1회계기간으로서 법인세의 과세기간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20251231'
+        - '20250630'
+        - '20250930'
+      op: /getIncoStat_V2
+      stats:
+        min: 20250331
+        p50: 20251231
+        max: 20251231
+        unique: 4
+    - name: crno
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110003684'
+        - '1101110012776'
+        - '1101110003262'
+      op: /getIncoStat_V2
+      stats:
+        min: 0
+        p50: 1101110015762
+        max: 1101110035108
+        unique: 105
+    - name: bizYear
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+      op: /getIncoStat_V2
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2025
+        unique: 1
+    - name: fnclDcd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - PL_ifrs-full_SeparateMember
+        - PL_ifrs-full_ConsolidatedMember
+      op: /getIncoStat_V2
+      stats:
+        unique: 2
+    - name: fnclDcdNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 별도재무제표 [member]
+        - 연결재무제표 [member]
+      op: /getIncoStat_V2
+      stats:
+        unique: 2
+    - name: acitId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - dart_OperatingIncomeLoss
+        - ifrs-full_ProfitLoss
+        - ifrs-full_ComprehensiveIncome
+      op: /getIncoStat_V2
+      stats:
+        unique: 8
+    - name: acitNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업이익(손실)
+        - 당기순이익(손실)
+        - 총포괄손익
+      op: /getIncoStat_V2
+      stats:
+        unique: 8
+    - name: thqrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getIncoStat_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: crtmAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5293178000'
+        - '5814915563'
+        - '-7900246863'
+      op: /getIncoStat_V2
+      stats:
+        min: -371513059455
+        p50: 36455749207.5
+        max: 74785440000000
+        unique: 982
+    - name: lsqtAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getIncoStat_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: pvtrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '57235842614'
+        - '5844472345'
+        - '219699586442'
+      op: /getIncoStat_V2
+      stats:
+        min: -3795777587867
+        p50: 33103272984.5
+        max: 55646829000000
+        unique: 986
+    - name: bpvtrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '239540000000'
+        - '94772410649'
+        - '13177414269'
+      op: /getIncoStat_V2
+      stats:
+        min: -798709000000
+        p50: 31896397551
+        max: 53134813000000
+        unique: 985
+    - name: curCd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+        - CNY
+      op: /getIncoStat_V2
+      stats:
+        unique: 2
+    - name: basDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20251231'
+        - '20250630'
+      op: /getBs_V2
+      stats:
+        min: 20250630
+        p50: 20251231
+        max: 20251231
+        unique: 2
+    - name: crno
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110015861'
+        - '1101110005664'
+        - '1101110006274'
+      op: /getBs_V2
+      stats:
+        min: 0
+        p50: 1101110006274
+        max: 1101110017990
+        unique: 59
+    - name: bizYear
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+      op: /getBs_V2
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2025
+        unique: 1
+    - name: fnclDcd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - FS_ifrs-full_SeparateMember
+        - FS_ifrs-full_ConsolidatedMember
+      op: /getBs_V2
+      stats:
+        unique: 2
+    - name: fnclDcdNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 별도재무제표 [member]
+        - 연결재무제표 [member]
+      op: /getBs_V2
+      stats:
+        unique: 2
+    - name: acitId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ifrs-full_Assets
+        - ifrs-full_CurrentAssets
+        - ifrs-full_CurrentLiabilities
+      op: /getBs_V2
+      stats:
+        unique: 12
+    - name: acitNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자산총계
+        - 유동자산
+        - 유동부채
+      op: /getBs_V2
+      stats:
+        unique: 12
+    - name: thqrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getBs_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: crtmAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20000000000'
+        - '141443775000'
+        - '427907000000'
+      op: /getBs_V2
+      stats:
+        min: -154851649000
+        p50: 411124080416
+        max: 289329420000000
+        unique: 940
+    - name: lsqtAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getBs_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: pvtrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20000000000'
+        - '141443775000'
+        - '427907000000'
+      op: /getBs_V2
+      stats:
+        min: -176940278184
+        p50: 414122265664
+        max: 252232214000000
+        unique: 941
+    - name: bpvtrAcitAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20000000000'
+        - '141443775000'
+        - '427907000000'
+      op: /getBs_V2
+      stats:
+        min: -241852637763
+        p50: 383904855343.5
+        max: 209738149000000
+        unique: 943
+    - name: curCd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+        - CNY
+      op: /getBs_V2
+      stats:
+        unique: 2
+    - name: basDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20191231'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 20191231
+        p50: 20191231
+        max: 20191231
+        unique: 1
+    - name: crno
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1746110000741'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 1746110000741
+        p50: 1746110000741
+        max: 1746110000741
+        unique: 1
+    - name: bizYear
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 2019
+        p50: 2019
+        max: 2019
+        unique: 1
+    - name: fnclDcd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '110'
+        - '120'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 110
+        p50: 115
+        max: 120
+        unique: 2
+    - name: fnclDcdNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 연결요약재무제표
+        - 별도요약재무제표
+      op: /getSummFinaStat_V2
+      stats:
+        unique: 2
+    - name: enpSaleAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '64366847807959'
+        - '30373510738515'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 30373510738515
+        p50: 47370179273237
+        max: 64366847807959
+        unique: 2
+    - name: enpBzopPft
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '3868854558550'
+        - '2586359351732'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 2586359351732
+        p50: 3227606955141
+        max: 3868854558550
+        unique: 2
+    - name: iclsPalClcAmt
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '3053278000619'
+        - '1831248899843'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 1831248899843
+        p50: 2442263450231
+        max: 3053278000619
+        unique: 2
+    - name: enpCrtmNpf
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1982637208513'
+        - '1175712402299'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 1175712402299
+        p50: 1579174805406
+        max: 1982637208513
+        unique: 2
+    - name: enpTastAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '79058661130791'
+        - '55710766417120'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 55710766417120
+        p50: 67384713773955.5
+        max: 79058661130791
+        unique: 2
+    - name: enpTdbtAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '31263954310516'
+        - '10096581285877'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 10096581285877
+        p50: 20680267798196.5
+        max: 31263954310516
+        unique: 2
+    - name: enpTcptAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '47794706820275'
+        - '45614185131243'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 45614185131243
+        p50: 46704445975759
+        max: 47794706820275
+        unique: 2
+    - name: enpCptlAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '482403125000'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 482403125000
+        p50: 482403125000
+        max: 482403125000
+        unique: 1
+    - name: fnclDebtRto
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '65.413005729'
+        - '22.1347400087'
+      op: /getSummFinaStat_V2
+      stats:
+        min: 22.1347400087
+        p50: 43.773872868850006
+        max: 65.413005729
+        unique: 2
+    - name: curCd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+      op: /getSummFinaStat_V2
+      stats:
+        unique: 1
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - enpBzopPft
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - iclsPalClcAmt
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - enpCrtmNpf
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2025-03-31 ~ 2025-12-31
+cycle: event
+classification:
+  subsector_name: 기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9099
+  rank_in_sector: 6
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 기업 재무 핵심, 기업기본정보와 법인번호로 연결
+claims:
+  - id: c-15043459-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 3/3
+    evidence:
+      - type: measured
+        source: probe/runs/15043459.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 3/3
+      - type: measured
+        source: probe/apply/15043459.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15043459-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2025-12-31 (관측일 기준 275일 전) — 검증 호출 조건(bizYear=2019) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15043459
+        observed_at: '2026-10-02'
+        detail: latest 2025-12-31, lag 275
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043459-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno), corp_rgst_no(enpBzopPft), corp_rgst_no(iclsPalClcAmt), corp_rgst_no(enpCrtmNpf)'
+    evidence:
+      - type: measured
+        source: probe/stats/15043459.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 41개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043459-04
+    kind: coverage
+    value: API 전체 건수 46,655 · 검증 수신 2,002행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2025-03-31 ~ 2025-12-31
+    evidence:
+      - type: measured
+        source: probe/runs/15043459.json
+        observed_at: '2026-10-02'
+        detail: total 46655, rows 2002
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043459-06
+    kind: admin_note
+    value: "세부 부문 '기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)'의 가치: 법인등록번호·사업자번호로 기업 축 전체와 연결. 주요사항보고서는 사건 단위 시의성(유상증자·합병·소송)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#corporate-disclosure
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15043459-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15043459-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15043459-10
+    kind: pitfall
+    value: 전수 46,655건 중 검증은 2,002행만 받음 — 전량 수집은 페이지 반복 47회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15043459.json
+        observed_at: '2026-10-02'
+        detail: total 46655 rows 2002
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 2002
+  total_count: 46655
+  ops_ok: 3/3
+  latency_ms: 374
+  latest: '2025-12-31'
+  lag_days: 275
+  run: probe/runs/15043459.json
+  stats: probe/stats/15043459.json
+  data: probe/data/15043459/
+status: active
+summary_user: 법인등록번호(crno)와 사업연도(bizYear)를 기준으로 기업의 요약 재무(매출액·영업이익·총자산·총부채·자본금), 재무상태표, 손익계산서 항목을 조회하는 API로, 전체 46,655건에 전국 범위이며 수신 확인된 기간은 2025-03-31~2025-12-31이다. 분석가나 투자자가 특정 기업의 영업이익과 부채 규모가 연도별로 어떻게 달라졌는지, 재무 건전성은 어떤지 확인하는 질문에 쓴다. 법인등록번호(corp_rgst_no) 키로 같은 기관의 기업기본·지배구조 등 기업 정보나 공시 데이터와 이어 쓴다.
+limits: 전체 46,655건 중 검증 호출은 2,002행만 받았고, 전량을 모으려면 페이지를 47회 이상 반복해야 한다. 실측 최신 행 날짜(2025-12-31)는 검증 호출 조건(bizYear=2019) 기준이라 데이터 자체의 최신성과 다를 수 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15043459-03
+    - c-15043459-04
+    - c-15043459-06
+    - c-15043459-10
+    - c-15043459-02
+  dropped_citations: 0

@@ -1,0 +1,699 @@
+# Dataset 15125365 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125365'
+tier: verified
+title: 창업진흥원_창업공간플랫폼(창업공간)_조회서비스
+sector: 산업고용/산업·중소기업일반/sme-certification
+agency:
+  id: B552735
+  name: 창업진흥원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125365/openapi.do
+synonyms:
+  - 입주공간
+  - 입주지원
+  - 공간지원
+  - 창업공간플랫폼
+  - 창업공간
+  - 창업진흥원
+  - 창업보육센터
+  - 공유오피스
+  - 회의실 예약
+  - 창업지원 센터
+  - 창업 사무공간
+  - 창업진흥원 공간
+description_portal: 해당 정보는 정부에서 지원하는 전국의 창업공간에 대한 정보를 통합 제공하는 서비스로, 예비창업자 및 창업기업이 사무실, 회의실 등의 공간을 검색하고 이용할 수 있도록 지원합니다. 이용자는 지역, 공간 유형, 제공 서비스 등을 기준으로 공간을 탐색할 수 있으며, 각 센터별로 입주 조건, 예약 가능 시설, 위치, 연락처, 운영기관 등 상세한 정보를 확인할 수 있습니다. 또한 공간별로 입주기업 현황, 제공 편의시설, 이용 요금 등의 부가 정보도 함께 제공되어 창업자가 필요에 맞는 창업공간을 쉽게 비교하고 선택할 수 있도록 돕습니다. 이 서비스는 창업공간 수요자와 공급자 간의 효율적인 연결을 통해 공간 이용률을 높이고, 창업 초기의 정착 지원을 위한 기반 인프라로 활용됩니다.
+team:
+  dept: 디지털AI실
+services:
+  - op: /getCenterSpaceList
+    name: 등록센터 공간 정보
+    endpoint: https://apis.data.go.kr/B552735/kisedSlpService/getCenterSpaceList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: false
+        desc: 페이지
+      - name: perPage
+        required: false
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: false
+        desc: json/xml(default:xml)
+      - name: cond[spce_id::EQ]
+        required: false
+        desc: 공간 ID
+      - name: cond[spce_nm::LIKE]
+        required: false
+        desc: 공간명
+      - name: cond[cntr_nm::LIKE]
+        required: false
+        desc: 센터명
+      - name: cond[rsvt_psbl_clss::EQ]
+        required: false
+        desc: 예약가능여부
+      - name: cond[rent::GTE]
+        required: false
+        desc: 임대료 이상
+      - name: cond[rent::LTE]
+        required: false
+        desc: 임대료 이하
+      - name: cond[guam::GTE]
+        required: false
+        desc: 보증금 이상
+      - name: cond[guam::LTE]
+        required: false
+        desc: 보증금 이하
+      - name: cond[addr::LIKE]
+        required: false
+        desc: 주소
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getCenterList
+    name: 등록센터 목록 정보
+    endpoint: https://apis.data.go.kr/B552735/kisedSlpService/getCenterList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: false
+        example: '1'
+        desc: 페이지
+      - name: perPage
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: false
+        example: json
+        desc: json/xml(default:xml)
+      - name: cond[cntr_nm::LIKE]
+        required: false
+        example: 한국농수산대학 창업보육센터
+        desc: 센터명
+      - name: cond[regin_clss::LIKE]
+        required: false
+        example: 전라북도
+        desc: 지역구분
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: addr
+      title: 주소
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성북구 정릉로 77
+        - 전라북도 익산시 익산대로 460 원광대학교
+        - 서울특별시 강남구 역삼로 165
+      op: /getCenterSpaceList
+      stats:
+        unique: 5
+    - name: buld_id
+      title: 건물ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '164'
+        - '4'
+        - '227'
+      op: /getCenterSpaceList
+      stats:
+        min: 4
+        p50: 164
+        max: 227
+        unique: 5
+    - name: buld_nm
+      title: 건물명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국민대 창업보육건물
+        - 원광대학교 IT·BT창업보육건물
+        - TIPS타운(팁스타운)
+      op: /getCenterSpaceList
+      stats:
+        unique: 5
+    - name: cmnus_ar
+      title: 공용면적
+      type: code
+      null_rate: 1.0
+      op: /getCenterSpaceList
+      stats:
+        unique: 0
+    - name: cntr_id
+      title: 센터ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '164'
+        - '4'
+        - '227'
+      op: /getCenterSpaceList
+      stats:
+        min: 4
+        p50: 164
+        max: 227
+        unique: 5
+    - name: cntr_intrd_type_nm
+      title: 센터소개유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "<p style=\"font-family: 'Nanum Gothic'; font-size: 14pt; line-height: 33.6px; mar"
+        - "<p style=\"font-family: 'Nanum Gothic'; font-size: 14pt; line-height: 33.6px; mar"
+        - "<p style=\"font-family: 'Nanum Gothic'; font-size: 14pt; line-height: 33.6px; mar"
+      op: /getCenterSpaceList
+      stats:
+        unique: 5
+    - name: cntr_nm
+      title: 센터명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국민대학교 창업보육센터
+        - 원광대학교 IT·BT창업보육센터
+        - 팁스타운
+      op: /getCenterSpaceList
+      stats:
+        unique: 5
+    - name: cntr_type_nm
+      title: 센터유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 창업보육센터
+      op: /getCenterSpaceList
+      stats:
+        unique: 1
+    - name: excuse_ar
+      title: 전용면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '32'
+        - '25'
+        - '30'
+      op: /getCenterSpaceList
+      stats:
+        min: 5
+        p50: 32
+        max: 417
+        unique: 40
+    - name: guam
+      title: 보증금
+      type: number
+      null_rate: 0.48
+      sample_values:
+        - '1700000.0'
+        - '1280000.0'
+        - '900000.0'
+      op: /getCenterSpaceList
+      stats:
+        min: 600000
+        p50: 1850000
+        max: 60040000
+        unique: 31
+    - name: hmpg
+      title: 홈페이지
+      type: code
+      null_rate: 0.43
+      sample_values:
+        - http://www.kookmin.ac.kr
+        - http://www.jointips.or.kr
+      op: /getCenterSpaceList
+      stats:
+        unique: 2
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getCenterSpaceList
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: latde
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.612015313835045'
+        - '35.971724778828990'
+        - '37.495384429913600'
+      op: /getCenterSpaceList
+      stats:
+        min: 35.97172477882899
+        p50: 37.612015313835045
+        max: 37.79729709963292
+        unique: 5
+    - name: lgtde
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.995262941218090'
+        - '126.960219905824990'
+        - '127.037048706218900'
+      op: /getCenterSpaceList
+      stats:
+        min: 126.960219905825
+        p50: 126.99526294121809
+        max: 128.85365661307347
+        unique: 5
+    - name: pstno
+      title: 우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '02707'
+        - '54538'
+        - '06247'
+      op: /getCenterSpaceList
+      stats:
+        min: 2707
+        p50: 6247
+        max: 54538
+        unique: 5
+    - name: rent
+      title: 임대료
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '170000'
+        - '90000'
+        - '128000'
+      op: /getCenterSpaceList
+      stats:
+        min: 0
+        p50: 315000
+        max: 5250000
+        unique: 53
+    - name: rsvt_psbl_clss
+      title: 예약가능구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 예약불가
+      op: /getCenterSpaceList
+      stats:
+        unique: 1
+    - name: seat_clss
+      title: 좌석구분
+      type: code
+      null_rate: 1.0
+      op: /getCenterSpaceList
+      stats:
+        unique: 0
+    - name: seat_co
+      title: 좌석 회사
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 공실
+        - 주식회사 퓨처플레이
+        - 주식회사 액트너랩
+      op: /getCenterSpaceList
+      stats:
+        unique: 66
+    - name: seat_type_nm
+      title: 좌석유형명
+      type: code
+      null_rate: 1.0
+      op: /getCenterSpaceList
+      stats:
+        unique: 0
+    - name: spce_cnt
+      title: 공간 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '36'
+        - '74'
+        - '109'
+      op: /getCenterSpaceList
+      stats:
+        min: 18
+        p50: 36
+        max: 109
+        unique: 5
+    - name: spce_id
+      title: 공간ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6581'
+        - '6582'
+        - '6583'
+      op: /getCenterSpaceList
+      stats:
+        min: 2094
+        p50: 7815.5
+        max: 10385
+        unique: 100
+    - name: spce_nm
+      title: 공간명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (102호) 창업보육센터보육실 [내아이힐링발달센터]
+        - (105호) 창업보육센터 보육실 [(주)비엠바이오]
+        - (106호) 창업보육센터 보육실 [산채뜰]
+      op: /getCenterSpaceList
+      stats:
+        unique: 100
+    - name: spce_type_nm
+      title: 공간유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 호실형
+      op: /getCenterSpaceList
+      stats:
+        unique: 1
+    - name: addr
+      title: 주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 부산 남구 신선로 365 (용당동, 부경대학교용당캠퍼스)
+        - 부산 사상구 주례로 47 (주례동, 동서대학교)
+        - 강원 춘천시 강원대학길 1 (효자동, 강원대학교)
+      op: /getCenterList
+      stats:
+        unique: 95
+    - name: buld_id
+      title: 건물ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '4'
+      op: /getCenterList
+      stats:
+        min: 2
+        p50: 65.5
+        max: 1564
+        unique: 100
+    - name: buld_nm
+      title: 건물명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 산학협력관
+        - 한국농수산대학창업보육건물
+        - 경기도여성창업보육건물
+      op: /getCenterList
+      stats:
+        unique: 99
+    - name: cntr_id
+      title: 센터ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '68'
+        - '61'
+        - '99'
+      op: /getCenterList
+      stats:
+        min: 2
+        p50: 57
+        max: 103
+        unique: 79
+    - name: cntr_intrd_type_nm
+      title: 센터소개유형명
+      type: string
+      null_rate: 0.05
+      sample_values:
+        - "<p style=\"font-family: 'Nanum Gothic'; font-size: 14pt; line-height: 33.6px; mar"
+        - "<p style=\"line-height: 1.8; font-family: 'Nanum Gothic'; font-size: 14pt; margin"
+        - "<span style=\"font-size: 14pt; font-family: 'Nanum Gothic'; line-height: 33.6px; "
+      op: /getCenterList
+      stats:
+        unique: 74
+    - name: cntr_nm
+      title: 센터명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부경대학교 창업보육센터
+        - 차의과학대학교 바이오스타트업 창업보육센터
+        - 강원대학교 강원 창업보육센터
+      op: /getCenterList
+      stats:
+        unique: 79
+    - name: cntr_type_nm
+      title: 센터유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 창업보육센터
+      op: /getCenterList
+      stats:
+        unique: 1
+    - name: hmpg
+      title: 홈페이지
+      type: string
+      null_rate: 0.19
+      sample_values:
+        - http://startup.pknu.ac.kr
+        - http://bi.cha.ac.kr
+        - http://kwbi.kangwon.ac.kr
+      op: /getCenterList
+      stats:
+        unique: 61
+    - name: latde
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '35.847675000000000'
+        - '35.827687193234375'
+        - '37.292746200000000'
+      op: /getCenterList
+      stats:
+        min: 34.7756829915048
+        p50: 36.351640450000005
+        max: 37.93976563104468
+        unique: 99
+    - name: lgtde
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.584170000000000'
+        - '127.069516817214900'
+        - '127.107854100000000'
+      op: /getCenterList
+      stats:
+        min: 126.37058298908912
+        p50: 127.1865991871541
+        max: 129.2837612523775
+        unique: 99
+    - name: pstno
+      title: 우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '48547'
+        - '24341'
+        - '47011'
+      op: /getCenterList
+      stats:
+        min: 1795
+        p50: 33566.5
+        max: 62271
+        unique: 84
+    - name: regin_clss
+      title: 지역구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 부산광역시
+        - 전남광주통합특별시
+      op: /getCenterList
+      stats:
+        unique: 13
+    - name: spce_cnt
+      title: 공간 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '12'
+        - '19'
+      op: /getCenterList
+      stats:
+        min: 0
+        p50: 21.5
+        max: 121
+        unique: 52
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - latde
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7805
+  rank_in_sector: 9
+  brm: 산업고용 - 산업·중소기업일반
+  why: 전국 창업공간 좌표 API
+claims:
+  - id: c-15125365-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15125365.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15125365.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15125365-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125365-03
+    kind: key
+    value: '실측 조인 키: address(addr), coord(latde)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125365.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 37개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125365-04
+    kind: coverage
+    value: API 전체 건수 100 · 검증 수신 200행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15125365.json
+        observed_at: '2026-10-02'
+        detail: total 100, rows 200
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125365-06
+    kind: admin_note
+    value: "세부 부문 '기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)'의 가치: 확인서·인증서 단위 원장, 사업자번호로 기업 축 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#sme-certification
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125365-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125365-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 200
+  total_count: 100
+  ops_ok: 2/2
+  latency_ms: 121
+  run: probe/runs/15125365.json
+  stats: probe/stats/15125365.json
+  data: probe/data/15125365/
+status: active
+summary_user: 전국 정부 지원 창업공간(센터)을 센터·건물·공간 단위로 담은 조회 API로, 주소·좌표와 공간유형, 면적, 보증금·임대료, 예약가능구분, 홈페이지를 제공한다. API 전체 건수는 100건이다. 예비창업자나 창업기업이 "내 지역에서 예약 가능한 사무실·회의실 공간이 어디이고 임대 조건은 얼마인가"를 찾는 데 쓴다. 주소(addr)와 위경도(latde)가 조인 키라서 지도 표시나 지역 기반 창업지원 데이터와 이어 쓰며, 사업자번호 키는 없다.
+limits: API 전체 건수가 100건이고 검증 호출로 200행을 받았으므로, 응답 행 수와 건수 표기가 다를 수 있어 호출 결과를 확인해야 한다. 조인 키는 주소와 좌표뿐이라 사업자번호 기반 기업 인증 데이터와 직접 연결되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15125365-01
+    - c-15125365-03
+    - c-15125365-04
+    - c-15125365-06
+  dropped_citations: 0

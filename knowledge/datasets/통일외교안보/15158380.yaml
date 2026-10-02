@@ -1,0 +1,268 @@
+# Dataset 15158380 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158380'
+tier: verified
+title: 한국국제협력단_KOICA ODA 조달 정보조회
+sector: 통일외교안보/외교/oda-projects
+agency:
+  id: B260003
+  name: 한국국제협력단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158380/openapi.do
+synonyms:
+  - KOICA
+  - ODA
+  - 개발협력사업
+  - 조달정보
+  - 입찰
+  - 사업계약
+  - 물자공급
+  - KOICA 입찰
+  - ODA 발주계획
+  - 수의계약
+  - 국제개발협력 조달
+  - 한국국제협력단 입찰공고
+  - 수원국
+  - ODA 입찰정보
+description_portal: KOICA의 ODA 개발협력사업에서 발생하는 조달정보를 제공하는 API입니다. 년간 발주 계획, 입찰정보 목록, 수의계약 목록 등 필요한 조달 정보를 조회할 수 있어 국제개발 사업에 참여하고자 하는 기업과 유관기관에게 필수적인 공공정보입니다. 해당 API는 인증키(serviceKey), 페이지 번호(pageNo), 페이지당 호출건수(numOfRows) 등 기본적인 요청변수를 사용하여 오퍼레이션별 데이터를 제공합니다. 출력결과에는 목록, 입찰범위내용, 사업명, 계약방법, 발주시기, 조달구분, 조달대상, 낙찰자선정방식, 수원국, 입찰한도금액, 입찰명, 입찰진행상태명, 공고번호 등의 항목이 포함되며, 각 항목에 대한 데이터는 XML 형식과 JSON 형식으로 반환됩니다.
+team:
+  dept: 데이터팀
+services:
+  - op: /getOrprPlanInfoList
+    name: KOICA 년간 발주 계획 조회
+    endpoint: https://apis.data.go.kr/B260003/PrcureService/getOrprPlanInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: P_PAGE_NO
+        required: true
+        desc: 페이지번호
+      - name: P_PAGE_SIZE
+        required: true
+        desc: 한 페이지 결과 수
+      - name: P_YEAR
+        required: true
+        desc: 해당년도
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBidPblancInfoList
+    name: KOICA 입찰정보 목록조회
+    endpoint: https://apis.data.go.kr/B260003/PrcureService/getBidPblancInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: P_PAGE_NO
+        required: true
+        desc: 페이지번호
+      - name: P_PAGE_SIZE
+        required: true
+        desc: 한 페이지 결과 수
+      - name: P_YEAR
+        required: true
+        desc: 해당년도
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getVltrnCntrctList
+    name: KOICA 수의계약 목록 조회
+    endpoint: https://apis.data.go.kr/B260003/PrcureService/getVltrnCntrctList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: P_PAGE_NO
+        required: true
+        desc: 페이지번호
+      - name: P_PAGE_SIZE
+        required: true
+        desc: 한 페이지 결과 수
+      - name: P_YEAR
+        required: true
+        desc: 해당년도
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ITEMS
+      type: code
+      null_rate: 1.0
+      op: /getOrprPlanInfoList
+      stats:
+        unique: 0
+    - name: ITEMS
+      type: code
+      null_rate: 1.0
+      op: /getBidPblancInfoList
+      stats:
+        unique: 0
+    - name: ITEMS
+      type: code
+      null_rate: 1.0
+      op: /getVltrnCntrctList
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5691
+  rank_in_sector: 64
+  brm: 통일외교안보 - 외교
+  why: ODA 발주·입찰·계약 건별 조달 원장
+claims:
+  - id: c-15158380-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 3/3
+    evidence:
+      - type: measured
+        source: probe/runs/15158380.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 3/3
+      - type: measured
+        source: probe/apply/15158380.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15158380-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15158380-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158380.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15158380-04
+    kind: coverage
+    value: 검증 수신 3행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15158380.json
+        observed_at: '2026-10-02'
+        detail: total None, rows 3
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15158380-06
+    kind: admin_note
+    value: "세부 부문 'ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)'의 가치: 사업 단위 원장, KOICA 조달은 정부조달과 같은 개념"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#oda-projects
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158380-07
+    kind: admin_note
+    value: '[통일외교안보 · 외교] 해외안전·여행경보(실시간성), 재외공관·여권·국가 표준코드, 국제기구 공석, KOICA ODA 사업·조달, 재외동포 단체만. 국가별 정치·경제 개황은 모델이 아는 참고 텍스트, 코로나 입국조치는 종료 → 배제 (`diplomacy-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L697
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158380-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158380-10
+    kind: pitfall
+    value: 필수 파라미터 P_PAGE_NO는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15158380.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 3
+  ops_ok: 3/3
+  latency_ms: 120
+  run: probe/runs/15158380.json
+  stats: probe/stats/15158380.json
+  data: probe/data/15158380/
+status: active
+summary_user: KOICA의 ODA 개발협력사업에서 나오는 조달정보(연간 발주계획, 입찰정보 목록, 수의계약 목록)를 사업 단위로 담은 API이다. 국제개발 사업에 참여하려는 기업과 유관기관이 "어떤 ODA 사업이 언제 발주되고 어떤 입찰이 진행 중인가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 잇는다.
+limits: 실측 컬럼에서 전역 조인 키가 확인되지 않아 다른 기관 데이터와 바로 결합하기 어렵다. 필수 파라미터 P_PAGE_NO는 다른 데이터의 코드라 먼저 받아서 넘겨야 하며, 검증 호출은 3행만 수신해 전체 규모는 확인되지 않았다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15158380-01
+    - c-15158380-03
+    - c-15158380-04
+    - c-15158380-06
+    - c-15158380-10
+  dropped_citations: 0

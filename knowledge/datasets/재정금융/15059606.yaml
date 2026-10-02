@@ -1,0 +1,248 @@
+# Dataset 15059606 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059606'
+tier: verified
+title: 금융위원회_금융회사부보정보
+sector: 재정금융/금융/financial-institutions
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059606/openapi.do
+synonyms:
+  - 부보
+  - 예금
+  - 상품
+  - 예금자보호
+  - 금융회사
+  - 예금현황
+  - 금융상품
+  - 부보금융회사
+  - 부보 여부
+  - 예금보호 대상
+  - 금융회사 업권
+  - 예금보험
+  - 법인등록번호 금융회사
+description_portal: '금융회사부보정보는 예금자보호 대상 금융회사 및 금융상품 현황을 종합적으로 제공하는 데이터입니다.데이터는 다음 3가지 오퍼레이션으로 구성되어 있습니다.① 부보대상 금융회사 조회 : 금융회사명 또는 고유번호를 기준으로 부보여부, 업권구분, 본점소재지, 인가일자 등을 조회하는 기능② 부보대상 금융상품 조회 : 금융회사별로 보호 대상이 되는 예금상품명, 상품유형, 예금자보호 적용 여부, 해지 조건 등을 조회하는 기능③ 부보대상 예금현황 조회 : 기준일자 및 금융회사명을 기준으로 예금총액, 부보금액, 미보호금액, 계좌수 등을 확인하는 기능※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getDepoInsuSubjFnCo
+    endpoint: https://apis.data.go.kr/1160100/service/GetFnCoDepoInsuInfoService/getDepoInsuSubjFnCo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930'
+      stats:
+        min: 20260930
+        p50: 20260930
+        max: 20260930
+        unique: 1
+    - name: binsFncoAraCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '07'
+        - '04'
+        - '05'
+      stats:
+        min: 4
+        p50: 7
+        max: 7
+        unique: 4
+    - name: binsFncoAraCdNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 저축은행
+        - 생보
+        - 손보
+      stats:
+        unique: 4
+    - name: binsFncoRevsDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20201230'
+        - '20200115'
+        - '20200413'
+      stats:
+        min: 20151014
+        p50: 20201230
+        max: 20250714
+        unique: 21
+    - name: binsTrgtYn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: crno
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110000000'
+        - '1101110003204'
+        - '1101110005078'
+      stats:
+        min: 1101110000000
+        p50: 1156110000737
+        max: 2301110182384
+        unique: 118
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2015-10-14 ~ 2026-09-30
+cycle: default
+classification:
+  subsector_name: 금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8467
+  rank_in_sector: 25
+  brm: 재정금융 - 금융
+  why: 예금자보호 부보 금융회사 원장
+claims:
+  - id: c-15059606-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059606.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059606.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15059606-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-30 (관측일 기준 2일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15059606
+        observed_at: '2026-10-02'
+        detail: latest 2026-09-30, lag 2
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059606-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15059606.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059606-04
+    kind: coverage
+    value: API 전체 건수 118 · 검증 수신 118행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2015-10-14 ~ 2026-09-30
+    evidence:
+      - type: measured
+        source: probe/runs/15059606.json
+        observed_at: '2026-10-02'
+        detail: total 118, rows 118
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15059606-06
+    kind: admin_note
+    value: "세부 부문 '금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)'의 가치: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#financial-institutions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059606-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059606-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 118
+  total_count: 118
+  ops_ok: 1/1
+  latency_ms: 80
+  latest: '2026-09-30'
+  lag_days: 2
+  run: probe/runs/15059606.json
+  stats: probe/stats/15059606.json
+  data: probe/data/15059606/
+status: active
+summary_user: 예금자보호 대상(부보) 금융회사의 부보 여부, 업권 구분, 부보 변경일 등을 금융회사 단위로 담은 API로, 검증 시 전국 118건이 수신됐고 기준일은 2015-10-14부터 2026-09-30까지다. 국민이나 분석가가 '이 금융회사는 예금자보호 대상인가, 어느 업권에 속하나' 같은 질문을 확인할 때 쓴다. 법인등록번호 키(crno, corp_rgst_no)로 같은 키를 쓰는 금융회사 기본·재무·지배구조 등 다른 금융회사 원장 데이터와 이어 쓰고, 퇴직연금·금융상품의 공급자 정보를 보강할 수 있다.
+limits: 실측으로 호출에 성공한 것은 오퍼레이션 1개뿐이므로 포털 설명의 금융상품·예금현황 조회가 동일하게 동작하는지는 확인되지 않았다. 활용신청은 자동승인이며 개발계정은 일 10,000회로 제한된다. 실시간 데이터가 아니라 실측 최신 행은 2026-09-30(관측일 2일 전)이다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15059606-01
+    - c-15059606-02
+    - c-15059606-03
+    - c-15059606-04
+    - c-15059606-06
+  dropped_citations: 0

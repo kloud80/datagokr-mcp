@@ -1,0 +1,476 @@
+# Dataset 15056681 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15056681'
+tier: verified
+title: 한국도로교통공단_자전거 교통사고 다발지역
+sector: 재난안전/안전관리/accident-hotspots
+agency:
+  id: B555234
+  name: 한국도로교통공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15056681/openapi.do
+synonyms:
+  - 교통사고 다발지역
+  - 자전거사고
+  - 교통사고
+  - 사고다발지역
+  - 자전거
+  - 자전거 사고 다발지점
+  - 자전거 사고 위험지역
+  - 자전거 사고 핫스팟
+  - 자전거 사고 잦은 곳
+  - 교통사고 다발지 자전거
+  - 자전거 사고 위치
+  - WMS 사고다발
+description_portal: '자전거 교통사고에 대한 교통사고 다발지역 정보- 대상 사고 : 1년간 발생한 가해자의 차종 또는 피해자의 차종이 자전거인 교통사고- 사고다발지역 선정조건 : 반경 200m 내 대상사고 4건 이상 발생지점(사망사고 포함시 3건 이상)- WMS 형태의 API 정보는 교통사고정보개방시스템(https://opendata.koroad.or.kr/api/sample.do)을 통해 확인하실 수 있습니다.*교통사고분석시스템(https://taas.koroad.or.kr)의 데이터를 기반으로 함'
+team:
+  dept: AI데이터전략처
+services:
+  - op: /getRestFrequentzoneBicycle
+    name: 자전거사고다발지역정보 Rest 조회
+    endpoint: https://apis.data.go.kr/B552061/frequentzoneBicycle/getRestFrequentzoneBicycle
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: searchYearCd
+        required: true
+        example: '2021'
+        desc: 조회하고자 하는 연도값 입력(값 없을 시 공백리턴)
+      - name: siDo
+        required: true
+        example: '11'
+        desc: 코드종류 코드값전체 공백시 전체 선택서울특별시 11부산광역시 26대구광역시 27인천광역시 28광주광역시 29대전광역시 30울산광역시 31세종특별자치시 36경기도 41강원도 42충청북도 43충청남도 44전라북도 45전라남도 46경상북도 47경상남도 48제주특별자치도 50
+      - name: guGun
+        required: true
+        example: '110'
+        desc: '시도 코드종류 코드값서울특별시 강남구 680 강동구 740 강북구 305 강서구 500 관악구 620 광진구 215 구로구 530 금천구 545 노원구 350 도봉구 320 동대문구 230 동작구 590 마포구 440 서대문구 410 서초구 650 성동구 200 성북구 290 송파구 710 양천구 470 영등포구 560 용산구 170 은평구 380 종로구 '
+      - name: type
+        required: false
+        example: xml
+        desc: 결과형식(xml/json)
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 검색건수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getWMSFrequentzoneBicycle
+    name: 자전거사고다발지역정보 WMS 조회
+    endpoint: https://apis.data.go.kr/B552061/frequentzoneBicycle/getWMSFrequentzoneBicycle
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: layers
+        required: true
+        desc: 레이어를 결정 frebicycle 고정값 사용
+      - name: format
+        required: true
+        desc: 이미지 포맷을 결정 image/png 고정값 사용
+      - name: transparent
+        required: true
+        desc: 이미지의 투영성을 결정 TRUE 고정값 사용
+      - name: service
+        required: true
+        desc: 서비스 형태를 결정 WMS 고정값 사용
+      - name: version
+        required: true
+        desc: 서비스 버전을 결정 1.1.1 고정값 사용
+      - name: request
+        required: true
+        desc: 요청 형태를 결정 GetMap 고정값 사용
+      - name: srs
+        required: true
+        desc: 좌표계를 결정 EPSG:4326 고정값 사용
+      - name: bbox
+        required: true
+        desc: '바운더리박스로 대각선의 좌표를 결정 기본값(전국) : 126.0,33.0,132.0,38.5'
+      - name: width
+        required: true
+        desc: '결과 이미지의 가로 크기를 결정, 기본값 : 512'
+      - name: height
+        required: true
+        desc: '결과 이미지의 세로 크기를 결정, 기본값 : 469'
+      - name: searchYearCd
+        required: true
+        desc: 조회하고자 하는 연도값 입력
+      - name: siDo
+        required: true
+        desc: 법정동 시도 코드
+      - name: guGun
+        required: true
+        desc: 법정동 시군구 코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: afos_fid
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6806238'
+        - '6806239'
+        - '6805883'
+      stats:
+        min: 6805883
+        p50: 6806238
+        max: 6806239
+        unique: 3
+    - name: afos_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2022083'
+      stats:
+        min: 2022083
+        p50: 2022083
+        max: 2022083
+        unique: 1
+    - name: bjd_cd
+      type: number
+      semantic_type: bjd_cd
+      null_rate: 0.0
+      sample_values:
+        - '1111010700'
+        - '1111015700'
+        - '1111012300'
+      stats:
+        min: 1111010700
+        p50: 1111012300
+        max: 1111015700
+        unique: 3
+    - name: spot_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11110001'
+        - '11110002'
+        - '11110003'
+      stats:
+        min: 11110001
+        p50: 11110002
+        max: 11110003
+        unique: 3
+    - name: sido_sgg_nm
+      type: code
+      semantic_type: admin_area_code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구1
+        - 서울특별시 종로구2
+        - 서울특별시 종로구3
+      stats:
+        unique: 3
+    - name: spot_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구 적선동(적선현대빌딩 부근)
+        - 서울특별시 종로구 인의동(종로4가사거리 부근)
+        - 서울특별시 종로구 서린동(종로구청입구교차로 부근)
+      stats:
+        unique: 3
+    - name: occrrnc_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '5'
+      stats:
+        min: 4
+        p50: 4
+        max: 5
+        unique: 2
+    - name: caslt_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '5'
+      stats:
+        min: 4
+        p50: 4
+        max: 5
+        unique: 2
+    - name: dth_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: se_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 1
+        unique: 2
+    - name: sl_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '0'
+        - '4'
+      stats:
+        min: 0
+        p50: 2
+        max: 4
+        unique: 3
+    - name: wnd_dnv_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '0'
+      stats:
+        min: 0
+        p50: 2
+        max: 3
+        unique: 3
+    - name: geom_json
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '{"type":"Polygon","coordinates":[[[126.97466371,37.57536392],[126.97462919,37.57'
+        - '{"type":"Polygon","coordinates":[[[126.99939223,37.57083711],[126.99935771,37.57'
+        - '{"type":"Polygon","coordinates":[[[126.98089454,37.56987425],[126.98086002,37.56'
+      stats:
+        unique: 3
+    - name: lo_crd
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '126.972867077854'
+        - '126.997595602156'
+        - '126.979097913739'
+      stats:
+        min: 126.972867077854
+        p50: 126.979097913739
+        max: 126.997595602156
+        unique: 3
+    - name: la_crd
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.575363915713'
+        - '37.570837112544'
+        - '37.569874254294'
+      stats:
+        min: 37.569874254294
+        p50: 37.570837112544
+        max: 37.575363915713
+        unique: 3
+  foreign_keys:
+    - fields:
+        - bjd_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - sido_sgg_nm
+      reference:
+        key: admin_area_code
+      evidence: measured
+    - fields:
+        - lo_crd
+      reference:
+        key: coord
+      evidence: measured
+    - fields:
+        - la_crd
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8689
+  rank_in_sector: 9
+  brm: 재난안전 - 안전관리
+  why: 자전거 사고다발지역, 좌표·법정동 키
+claims:
+  - id: c-15056681-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15056681.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15056681.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15056681-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056681-03
+    kind: key
+    value: '실측 조인 키: bjd_cd(bjd_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15056681.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056681-04
+    kind: coverage
+    value: API 전체 건수 3 · 검증 수신 3행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15056681.json
+        observed_at: '2026-10-02'
+        detail: total 3, rows 3
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056681-06
+    kind: admin_note
+    value: "세부 부문 '사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)'의 가치: 교통사고다발지역 표준데이터 — 도로·경찰 교통사고와 same_concept"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#accident-hotspots
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056681-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056681-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056681-10
+    kind: pitfall
+    value: 필수 파라미터 bbox, format, guGun, height, layers, request, searchYearCd, service, siDo, srs, transparent, version, width는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15056681.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056681-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getWMSFrequentzoneBicycle'
+    evidence:
+      - type: measured
+        source: probe/runs/15056681.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 3
+  total_count: 3
+  ops_ok: 1/2
+  latency_ms: 94
+  run: probe/runs/15056681.json
+  stats: probe/stats/15056681.json
+  data: probe/data/15056681/
+status: active
+summary_user: 자전거가 가해자 또는 피해자 차종인 1년간의 교통사고 중, 반경 200m 내 4건 이상(사망 포함 시 3건 이상) 발생한 지점을 다발지역 단위로 담는 API이며, 검증 시 전국 범위에서 3행이 수신됐다. 지자체 도로 안전 담당자나 분석가가 자전거 사고가 잦은 지점이 어디인지 확인하는 질문에 쓴다. 법정동코드(bjd_cd), 시도시군구명(sido_sgg_nm), 경도·위도 좌표(lo_crd, la_crd)로 다른 지역·지도 데이터와 이어 쓰고, 교통사고 다발지역 표준데이터와 같은 개념의 자료로 함께 본다.
+limits: 필수 파라미터인 bbox, format, guGun, siDo, searchYearCd, layers 등은 다른 데이터의 코드를 먼저 받아 넘겨야 한다. 오퍼레이션 1개(getWMSFrequentzoneBicycle)는 최소 파라미터로 호출했을 때 응답이 없었고, 검증에서 받은 건수도 3건뿐이라 전체 규모 판단에는 쓰기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15056681-01
+    - c-15056681-03
+    - c-15056681-04
+    - c-15056681-06
+    - c-15056681-10
+    - c-15056681-11
+  dropped_citations: 0

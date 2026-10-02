@@ -1,0 +1,519 @@
+# Dataset 15141648 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15141648'
+tier: verified
+title: 한국환경공단_순환자원 인정업체 정보 조회 서비스
+sector: 환경기상/폐기물/waste-business
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141648/openapi.do
+synonyms:
+  - 순환자원인정제도
+  - 순환자원품목
+  - 진위확인
+  - 순환자원 인정
+  - 인정업체 진위확인
+  - 사업자등록번호 조회
+  - 순환자원 인정제도
+  - 폐기물 재활용 인정업체
+  - 순환자원 인정상태
+  - 한국환경공단 API
+description_portal: 순환자원 인정제도의 적용을 받는 대상 업체 정보를 조회하는 서비스입니다. 사업자등록번호와 특정 기준일자를 입력받아 순환자원 인정업체의 유효성 여부를 통해 업체정보에 대한 진위확인이 가능합니다.
+team:
+  dept: 생활폐기물처 생활폐기물정보부
+services:
+  - op: /getRotatRsrcRcgBzentyInfo
+    name: 순환자원 인정업체 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/rotatRsrcRcgService/getRotatRsrcRcgBzentyInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: true
+        desc: 데이터 반환타입(json/xml)
+      - name: brNo
+        required: false
+        example: '1248100979'
+        desc: 사업자등록번호
+      - name: bzentyNm
+        required: false
+        example: 삼성전기(주) 수원사업장
+        desc: 업체명
+      - name: lctnAddr
+        required: false
+        example: 경기 수원시 영통구 매영로 150
+        desc: 소재지주소
+      - name: trgtWstNmListCn
+        required: false
+        example: 비철금속
+        desc: 대상폐기물명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getRotatRsrcRcgAthcInfo
+    name: 순환자원 인정업체 진위 확인 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/rotatRsrcRcgService/getRotatRsrcRcgAthcInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: true
+        desc: 데이터 반환타입(json/xml)
+      - name: brNo
+        required: true
+        desc: 사업자등록번호
+      - name: stdDate
+        required: true
+        desc: 기준일자
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: bzentyNm
+      title: 업체명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 삼성전기(주) 수원사업장
+      stats:
+        unique: 1
+    - name: rprsvNm
+      title: 대표자명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 장덕현
+        - 대표이사
+      stats:
+        unique: 2
+    - name: brNo
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1248100979'
+      stats:
+        min: 1248100979
+        p50: 1248100979
+        max: 1248100979
+        unique: 1
+    - name: telNo
+      title: 전화번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0312106417'
+        - '0313004173'
+      stats:
+        min: 312106417
+        p50: 312106417
+        max: 313004173
+        unique: 2
+    - name: lctnZip
+      title: 소재지우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '16674'
+      stats:
+        min: 16674
+        p50: 16674
+        max: 16674
+        unique: 1
+    - name: lctnAddr
+      title: 소재지주소
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 경기 수원시 영통구 매영로 150 　
+        - 경기 수원시 영통구 매영로 150 1
+      stats:
+        unique: 2
+    - name: trgtWstCdListCn
+      title: 대상폐기물코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 51-29-02
+      stats:
+        unique: 1
+    - name: trgtWstNmListCn
+      title: 대상폐기물명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 비철금속
+      stats:
+        unique: 1
+    - name: wstDtlKndNm
+      title: 폐기물세부종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MLCC 제조공정 중 발생하는 반제칩 및 폐기칩, Index
+        - 금형 방전설비의 가공용 동툴 사용 후 폐기되는 폐동
+        - Inductor공정 중 CCL(구리판) 반입 시 보호용으로 사용 후 폐기되는 동박(Cu)으로 한정
+      stats:
+        unique: 3
+    - name: reutilTypeCdListCn
+      title: 사용용도코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '|R-4|R-4-1'
+      stats:
+        unique: 1
+    - name: useUsgNmListCn
+      title: 사용용도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금속성 제품을 제조하는 유형
+      stats:
+        unique: 1
+    - name: certInstNm
+      title: 품질표지인증기타사항
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: qltCvrCertEtcMttr
+      title: 품질표지인증기타사항
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: szSpcfctTempsttCn
+      title: 크기·규격등성상
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: hrmflSbstCtqyCn
+      title: 유해물질함유량
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: alsbtnCtqyCn
+      title: 이물질함유량
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: qltCvrCertRotatRsrcCn
+      title: 품질표지인증순환자원
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: certNoVl
+      title: 인증번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: qltCvrCertSeNm
+      title: 품질표지인증구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 해당없음
+      stats:
+        unique: 1
+    - name: issuNoVl
+      title: 발급번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제한강순환-188호
+        - 제한강순환-149호
+        - 제 한강순환-130호
+      stats:
+        unique: 3
+    - name: rcgYmd
+      title: 인정일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250801'
+        - '20241031'
+        - '20231120'
+      stats:
+        min: 20231120
+        p50: 20241031
+        max: 20250801
+        unique: 3
+    - name: rcgInstNm
+      title: 인정기관
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한강유역환경청
+      stats:
+        unique: 1
+    - name: rcgSttsNm
+      title: 인정상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인정(정상)
+      stats:
+        unique: 1
+    - name: rcgPrdEndYmd
+      title: 인정기간종료일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20280731'
+        - '20271030'
+        - '20261119'
+      stats:
+        min: 20261119
+        p50: 20271030
+        max: 20280731
+        unique: 3
+    - name: rcgPrdBgngYmd
+      title: 인정기간시작일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250801'
+        - '20241031'
+        - '20231120'
+      stats:
+        min: 20231120
+        p50: 20241031
+        max: 20250801
+        unique: 3
+    - name: etcMttr
+      title: 기타사항
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: prdctnPlnqtyCn
+      title: 생산계획량
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 24t/3년
+        - 1t/3년
+        - 53t/3년
+      stats:
+        unique: 3
+    - name: certYmdListCn
+      title: 인증일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - brNo
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
+        - lctnAddr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6845
+  rank_in_sector: 97
+  brm: 환경기상 - 폐기물
+  why: 순환자원 인정업체 사업자번호 조인 가능
+claims:
+  - id: c-15141648-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15141648.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15141648.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15141648-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141648-03
+    kind: key
+    value: '실측 조인 키: bizno(brNo), address(lctnAddr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15141648.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 28개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141648-04
+    kind: coverage
+    value: API 전체 건수 3 · 검증 수신 3행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15141648.json
+        observed_at: '2026-10-02'
+        detail: total 3, rows 3
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141648-06
+    kind: admin_note
+    value: "세부 부문 '폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)'의 가치: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#waste-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141648-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 폐기물] 생활폐기물 배출·수거 지점(대형폐기물·수거함·종량제 판매소) · 폐기물 처리업·배출자. 발생량·처리현황 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L683
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141648-08
+    kind: admin_note
+    value: wave2 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141648-10
+    kind: pitfall
+    value: 필수 파라미터 brNo는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15141648.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15141648-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getRotatRsrcRcgAthcInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15141648.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 3
+  total_count: 3
+  ops_ok: 1/2
+  latency_ms: 52
+  run: probe/runs/15141648.json
+  stats: probe/stats/15141648.json
+  data: probe/data/15141648/
+status: active
+summary_user: 순환자원 인정제도 대상 업체의 업체명·대표자·소재지, 대상 폐기물과 사용용도, 인정상태와 인정기간을 업체 단위로 담은 조회 API이며, 검증 시 전국 범위에서 전체 3건 중 3행을 받았다. 거래 상대나 신고 업체가 순환자원 인정업체로 유효한지 사업자등록번호와 기준일자로 진위를 확인하려는 사업자·담당자가 쓴다. 사업자등록번호(brNo)와 소재지주소(lctnAddr)를 조인 키로 삼아 폐기물 처리 사업자·배출 사업장 원장 같은 다른 사업자 데이터와 이어 쓰며, 필수 입력인 사업자번호는 다른 데이터에서 먼저 받아 넘겨야 한다.
+limits: 필수 파라미터 brNo는 다른 데이터에서 먼저 확보해야 하므로 이 API만으로 업체 목록을 탐색하기는 어렵다. 오퍼레이션 2개 중 /getRotatRsrcRcgAthcInfo는 최소 파라미터로 응답이 없었고, 실호출 성공은 1개였다. 발생량·처리현황 통계는 다루지 않으며 검증 시 전체 건수는 3건이었다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15141648-01
+    - c-15141648-03
+    - c-15141648-04
+    - c-15141648-06
+    - c-15141648-07
+    - c-15141648-10
+    - c-15141648-11
+  dropped_citations: 0

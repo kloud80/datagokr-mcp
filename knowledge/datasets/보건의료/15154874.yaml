@@ -1,0 +1,646 @@
+# Dataset 15154874 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15154874'
+tier: verified
+title: 행정안전부_건강_의원 조회서비스
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15154874/openapi.do
+synonyms:
+  - 의사
+  - 의료행위
+  - 병원
+  - 보건소
+  - 한의원
+  - 의원 인허가
+  - 병의원 개폐업
+  - 의료기관 개업 폐업
+  - 의원 영업상태
+  - 의원 LOCALDATA
+  - 동네 병원 위치
+  - 의료기관 현황
+  - 진료과목 의원 목록
+description_portal: '건강_의원 데이터는 의원, 보건소, 한의원 등 진료시설을 갖추고 환자를 대상으로 의사가 의료행위를 하는 의료기관 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 의원 인허가 정보를 일괄 취합하여 전국 데이터로 제공 - 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의 - 해당 데이터 법령 소관기관 및 문의처 : 보건복지부 의료기관정책과 / 044-202-2481 * 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 건강_의원 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/clinics/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 도로명주소 을(를) 포함하는 값
+      - name: cond[MDLCR_INST_BTP_NM::LIKE]
+        required: false
+        desc: 의료기관종별명 을(를) 포함하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업자명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 건강_의원 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/clinics/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 모리프한의원
+        - 연세바로치과교정과의원
+        - 오다한의원
+      stats:
+        unique: 979
+    - name: BZSTAT_SE_NM
+      title: 업태구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의원
+        - 치과의원
+        - 한의원
+      stats:
+        unique: 5
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.99
+      sample_values:
+        - '2026-08-31'
+        - '2026-09-30'
+        - '2026-09-07'
+      stats:
+        min: '2026-06-01'
+        max: '2026-09-30'
+        unique: 9
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.081
+      sample_values:
+        - '202478.198069493'
+        - '209393.076054654'
+        - '187695.209339166'
+      stats:
+        min: 131521.450676851
+        p50: 204034.550647422
+        max: 413695.49572484
+        unique: 841
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.081
+      sample_values:
+        - '444131.846519282'
+        - '446147.977949052'
+        - '443900.432750153'
+      stats:
+        min: -27471.6151434697
+        p50: 442034.534802084
+        max: 521885.675776632
+        unique: 841
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-06-20 03:03:03'
+        - '2026-06-19 03:03:03'
+        - '2026-05-16 03:03:03'
+      stats:
+        min: '2026-04-17'
+        max: '2026-10-01'
+        unique: 573
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - U
+        - I
+      stats:
+        unique: 2
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '03'
+        - '15'
+      stats:
+        min: 3
+        p50: 13
+        max: 15
+        unique: 3
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업중
+        - 폐업
+        - 전출
+      stats:
+        unique: 3
+    - name: GFA
+      title: 총면적
+      type: number
+      null_rate: 0.026
+      sample_values:
+        - '217'
+        - '165.3'
+        - '296'
+      stats:
+        min: 17.7
+        p50: 260.45000000000005
+        max: 372505
+        unique: 947
+    - name: HCWKR_CNT
+      title: 의료인수
+      type: number
+      null_rate: 0.026
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 0
+        p50: 1
+        max: 20
+        unique: 12
+    - name: HSPTLZRM_CNT
+      title: 입원실수
+      type: number
+      null_rate: 0.026
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 28
+        unique: 17
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-11 03:13:23'
+        - '2026-09-11 07:43:24'
+        - '2026-09-17 21:13:30'
+      stats:
+        min: '2026-04-16'
+        max: '2026-09-30'
+        unique: 954
+    - name: LCPMT_RTRCN_YMD
+      title: 인허가취소일자(YYYYMMDD)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-08-26'
+        - '2026-05-18'
+        - '2026-04-29'
+      stats:
+        min: '2026-04-15'
+        max: '2026-09-30'
+        unique: 121
+    - name: LCTN_ZIP
+      title: 소재지우편번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LOTNO_ADDR
+      title: 지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.145
+      sample_values:
+        - 서울특별시 강남구 역삼동 819-2
+        - 서울특별시 송파구 신천동 17-6
+        - 서울특별시 구로구 고척동 85-15
+      stats:
+        unique: 789
+    - name: MDEXM_SBJCT_CN
+      title: 진료과목내용
+      type: string
+      null_rate: 0.03
+      sample_values:
+        - 412 411 410 409 408 407 406 405 404 403 402
+        - 301 302 303 304 305 306 307 308
+        - 308 307 306 305 304 303 302 301
+      stats:
+        unique: 280
+    - name: MDEXM_SBJCT_CN_NM
+      title: 진료과목내용명
+      type: string
+      null_rate: 0.03
+      sample_values:
+        - 한방내과, 한방부인과, 한방소아과, 한방안·이비인후·피부과, 한방신경정신과, 한방재활의학과, 사상체질과, 침구과
+        - 구강악안면외과, 치과보철과, 치과교정과, 소아치과, 치주과, 치과보존과, 구강내과, 영상치의학과, 구강병리과, 예방치과, 통합치의학과
+        - 정형외과, 신경외과, 마취통증의학과, 재활의학과
+      stats:
+        unique: 253
+    - name: MDLCR_INST_BTP_NM
+      title: 의료기관종별명
+      type: code
+      null_rate: 0.026
+      sample_values:
+        - 의원
+        - 치과의원
+        - 한의원
+      stats:
+        unique: 5
+    - name: MNG_NO
+      title: 관리번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - PHMA120264771020041100001
+        - PHMA120265810024041100003
+        - PHMA120263980021041100007
+      stats:
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3220000'
+        - '3210000'
+        - '3230000'
+      stats:
+        min: 3000000
+        p50: 3545000
+        max: 6520000
+        unique: 158
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 전북특별자치도 순창군 순창읍 옥천로 58
+        - 전남광주통합특별시 서구 화정로 259, 201호 (농성동)
+        - 경기도 구리시 경춘로 223, 명동빌딩 503호 (인창동)
+      stats:
+        unique: 1000
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '06134'
+        - '06035'
+        - '06014'
+      stats:
+        min: 1034
+        p50: 14077
+        max: 63629
+        unique: 778
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '05'
+      stats:
+        min: 1
+        p50: 1
+        max: 5
+        unique: 3
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+        - 제외/삭제/전출
+      stats:
+        unique: 3
+    - name: SCKBD_CNT
+      title: 병상수
+      type: number
+      null_rate: 0.026
+      sample_values:
+        - '0'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 29
+        unique: 19
+    - name: TCBIZ_BGNG_YMD
+      title: 휴업시작일자(YYYYMMDD)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: TCBIZ_END_YMD
+      title: 휴업종료일자(YYYYMMDD)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: TELNO
+      title: 전화번호
+      type: string
+      null_rate: 0.086
+      sample_values:
+        - 02-000-0000
+        - 052-276-7000
+        - 063-653-5300
+      stats:
+        unique: 909
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2026-04-15 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8843
+  rank_in_sector: 5
+  brm: 보건의료 - 보건의료
+  why: 전국 의원 인허가 원장, 상권 분석 핵심
+claims:
+  - id: c-15154874-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15154874.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15154874.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15154874-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15154874
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15154874-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15154874.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 30개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15154874-04
+    kind: coverage
+    value: API 전체 건수 125,797 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2026-04-15 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15154874.json
+        observed_at: '2026-10-02'
+        detail: total 125797, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15154874-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15154874-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15154874-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15154874-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15154874.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15154874-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15154874.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15154874-12
+    kind: pitfall
+    value: 전수 125,797건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 126회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15154874.json
+        observed_at: '2026-10-02'
+        detail: total 125797 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 125797
+  ops_ok: 1/2
+  latency_ms: 250
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15154874.json
+  stats: probe/stats/15154874.json
+  data: probe/data/15154874/
+status: active
+summary_user: 전국 자치단체가 관리하는 의원 인허가 정보를 개별 의원 단위로 취합한 원천 데이터로, 전체 125,797건에 인허가일자·영업상태·폐업일자·진료과목·병상수·주소·좌표를 담는다. 상권 분석가나 지자체 담당자가 특정 지역에서 의원이 최근 개업·폐업했는지 확인하는 질문에 쓴다. 지번주소(LOTNO_ADDR)와 도로명주소(ROAD_NM_ADDR)를 address 키로 삼아 다른 주소 기반 데이터와 이어 쓴다.
+limits: 검증 때는 전체 125,797건 중 1,000행만 받았고, 전량 수집하려면 페이지를 126회 이상 반복해야 한다. 필수 파라미터인 기준일자(BASE_DATE)와 개방자치단체코드(OPN_ATMY_GRP_CD)는 다른 데이터에서 먼저 받아 넘겨야 하며, /history 오퍼레이션은 최소 파라미터로 응답이 없었다. 좌표는 Bessel 중부원점TM(EPSG:5174) 기준이라 다른 좌표계와 겹치려면 변환이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15154874-03
+    - c-15154874-04
+    - c-15154874-06
+    - c-15154874-10
+    - c-15154874-11
+    - c-15154874-12
+  dropped_citations: 0

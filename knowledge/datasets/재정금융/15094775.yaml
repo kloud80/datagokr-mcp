@@ -1,0 +1,337 @@
+# Dataset 15094775 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15094775'
+tier: verified
+title: 금융위원회_KRX상장종목정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15094775/openapi.do
+synonyms:
+  - 주식
+  - 종목
+  - 상장
+  - KRX
+  - 시장구분
+  - 상장기업
+  - 상장종목
+  - 상장 종목 목록
+  - KRX 종목코드
+  - ISIN코드
+  - 단축코드
+  - 한국거래소 상장사
+  - 코스피 코스닥 종목
+  - 법인등록번호 종목
+description_portal: 'KRX상장종목정보는 한국거래소에 상장된 종목의 기본 정보를 제공하는 데이터입니다.데이터는 단일 오퍼레이션으로 구성되어 있으며,기준일자 또는 ISIN코드 등을 기준으로, 기준일자, 단축코드, ISIN코드, 시장구분, 종목명, 법인등록번호, 법인명 정보를 제공합니다.※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)※ ISIN코드란 ? 국제증권식별번호(ISIN : International Securities Identification Number)라는 명칭으로 널리 통용되고 있는 증권표준코드로 모든 증권상품에 개별적으로 부여되고 있는 12자리 고유번호이 데이터는 상장종목 분석, 투자자 정보 제공, 시장 현황 파악, 산업별 분류 통계 생성 등 다양한 자본시장 관련 분석에 활용할 수 있습니다.※ 외국회사의 경우 국내법인번호를 제공하지 않습니다. ※ 외국회사는 대한민국 외의 국가에서 설립되어 해당 국가의 법령에 따라 등록, 운영되는 법인을 의미하며, 국내에 별도의 법인등록을 하지 않은 경우 국내 법인등록번호가 존재하지 않습니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getItemInfo_V2
+    name: 종목정보
+    endpoint: https://apis.data.go.kr/1160100/GetKrxListedInfoService_V2/getItemInfo_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: false
+        desc: 페이지 번호
+      - name: resultType
+        required: false
+        desc: '구분(xml, json) Default: xml'
+      - name: basDt
+        required: false
+        desc: 검색값과 기준일자가 일치하는 데이터를 검색
+      - name: beginBasDt
+        required: false
+        desc: 기준일자가 검색값보다 크거나 같은 데이터를 검색
+      - name: endBasDt
+        required: false
+        desc: 기준일자가 검색값보다 작은 데이터를 검색
+      - name: likeBasDt
+        required: false
+        desc: 기준일자값이 검색값을 포함하는 데이터를 검색
+      - name: likeSrtnCd
+        required: false
+        desc: 단축코드가 검색값을 포함하는 데이터를 검색
+      - name: isinCd
+        required: false
+        desc: 검색값과 ISIN코드이 일치하는 데이터를 검색
+      - name: likeIsinCd
+        required: false
+        desc: ISIN코드가 검색값을 포함하는 데이터를 검색
+      - name: itmsNm
+        required: false
+        desc: 검색값과 종목명이 일치하는 데이터를 검색
+      - name: likeItmsNm
+        required: false
+        desc: 종목명이 검색값을 포함하는 데이터를 검색
+      - name: crno
+        required: false
+        desc: 검색값과 법인등록번호가 일치하는 데이터를 검색
+      - name: corpNm
+        required: false
+        desc: 검색값과 법인명이 일치하는 데이터를 검색
+      - name: likeCorpNm
+        required: false
+        desc: 법인명이 검색값을 포함하는 데이터를 검색
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: YYYYMMDD 조회의 기준일, 통상 거래일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+      stats:
+        min: 20261001
+        p50: 20261001
+        max: 20261001
+        unique: 1
+    - name: srtnCd
+      title: 종목 코드보다 짧으면서 유일성이 보장되는 코드
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - A900110
+        - A900270
+        - A900260
+      stats:
+        unique: 1000
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - HK0000057197
+        - HK0000214814
+        - HK0000295359
+      stats:
+        unique: 1000
+    - name: mrktCtg
+      title: 시장 구분 (KOSPI/KOSDAQ/KONEX 등)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KOSPI
+        - KOSDAQ
+        - KONEX
+      stats:
+        unique: 3
+    - name: itmsNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 딥커머스
+        - 헝셩그룹
+        - 로스웰
+      stats:
+        unique: 1000
+    - name: crno
+      title: 종목의 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '0000000000000'
+        - '1831462000000'
+        - '1101110043870'
+      stats:
+        min: 0
+        p50: 1101111128918.5
+        max: 2201110000819
+        unique: 995
+    - name: corpNm
+      title: 종목의 법인 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 딥커머스리미티드
+        - 헝셩그룹유한회사
+        - 로스웰인터내셔널유한회사
+      stats:
+        unique: 1000
+  foreign_keys:
+    - fields:
+        - srtnCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2026-10-01 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.8576
+  rank_in_sector: 22
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: KRX 상장종목 원장, 법인번호 연결 핵심
+claims:
+  - id: c-15094775-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15094775.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15094775.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15094775-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15094775
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094775-03
+    kind: key
+    value: '실측 조인 키: stock_cd(srtnCd), stock_cd(isinCd), corp_rgst_no(crno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15094775.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094775-04
+    kind: coverage
+    value: API 전체 건수 4,255,131 · 검증 수신 1,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2026-10-01 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15094775.json
+        observed_at: '2026-10-02'
+        detail: total 4255131, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15094775-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15094775-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15094775-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15094775-10
+    kind: pitfall
+    value: 전수 4,255,131건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 4,256회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15094775.json
+        observed_at: '2026-10-02'
+        detail: total 4255131 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 4255131
+  ops_ok: 1/1
+  latency_ms: 4743
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15094775.json
+  stats: probe/stats/15094775.json
+  data: probe/data/15094775/
+status: active
+summary_user: 한국거래소에 상장된 종목의 기본 정보(단축코드·ISIN코드·시장구분·종목명·법인등록번호·법인명)를 기준일자별 종목 단위로 담는 API이며, 전체 4,255,131건이 쌓여 있다. 투자자나 분석가가 특정 날짜에 어느 시장(KOSPI·KOSDAQ·KONEX 등)에 어떤 종목이 상장돼 있는지, 그 종목을 발행한 법인이 어디인지 확인하는 데 쓴다. 단축코드·ISIN코드(stock_cd)로 일별 시세나 연기금 보유 자료와, 법인등록번호(corp_rgst_no)로 기업 공시·기업정보와 이어 쓴다.
+limits: 전체 4,255,131건 중 검증에서는 1,000행만 받았고, 전량 수집하려면 페이지를 4,256회 이상 반복해야 한다. 실시간이 아니며 기준일 영업일 하루 뒤 오후 1시 이후에 갱신되므로 최신 행 날짜(실측 2026-10-01)는 호출 시점에 따라 달라질 수 있다. 외국회사는 국내 법인등록번호가 제공되지 않아 법인등록번호 조인이 되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15094775-03
+    - c-15094775-04
+    - c-15094775-06
+    - c-15094775-10
+    - c-15094775-02
+  dropped_citations: 0

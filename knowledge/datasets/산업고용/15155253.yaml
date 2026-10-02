@@ -1,0 +1,605 @@
+# Dataset 15155253 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155253'
+tier: verified
+title: 행정안전부_자원환경_석유판매업 조회서비스
+sector: 산업고용/에너지및자원개발/energy-business-licenses
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155253/openapi.do
+synonyms:
+  - 석유
+  - 주유소
+  - 용제판매소
+  - 원유
+  - 휘발유
+  - 주유소 인허가
+  - 석유판매업소
+  - 석유제품 판매업
+  - 주유소 영업상태
+  - 주유소 폐업
+  - LOCALDATA 에너지
+description_portal: '자원환경_석유판매업 데이터는 주유소, 용제판매소 등에서 원유, 휘발유, 등유 등 석유제품을 판매하는 업소정보 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 석유판매업 인허가 정보를 일괄 취합하여 전국 데이터로 제공- 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의- 해당 데이터 법령 소관기관 및 문의처 : 산업통상부 석유산업과 / 044-203-5226 * 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 자원환경_석유판매업 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/oil_retailers/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+      - name: cond[ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 도로명주소 을(를) 포함하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 자원환경_석유판매업 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/oil_retailers/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 현대석유
+        - 우리에너지
+        - 유진에너지
+      stats:
+        unique: 936
+    - name: BZSTAT_SE_NM
+      title: 업태구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주유소
+        - 일반판매소
+        - 용제판매소
+      stats:
+        unique: 7
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.876
+      sample_values:
+        - '2025-09-15'
+        - '2026-04-22'
+        - '2024-05-14'
+      stats:
+        min: '2018-09-13'
+        max: '2026-09-21'
+        unique: 117
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.058
+      sample_values:
+        - '269560.377508183'
+        - '257022.898297917'
+        - '194042.959026822'
+      stats:
+        min: 125720.415314978
+        p50: 234684.758626986
+        max: 424966.694409083
+        unique: 815
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.058
+      sample_values:
+        - '448250.823117257'
+        - '428540.793441867'
+        - '478903.461409035'
+      stats:
+        min: -17605.2641415151
+        p50: 353217.2643611735
+        max: 539624.992518406
+        unique: 815
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-12-15 16:15:28'
+        - '2026-07-14 11:38:15'
+        - '2026-03-26 22:30:24'
+      stats:
+        min: '2025-12-15'
+        max: '2026-10-01'
+        unique: 264
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - U
+      stats:
+        unique: 2
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '07'
+        - '01'
+        - '03'
+      stats:
+        min: 1
+        p50: 7
+        max: 7
+        unique: 7
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업개시
+        - 신규등록
+        - 폐지
+      stats:
+        unique: 7
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-22 09:53:17'
+        - '2026-09-22 13:05:15'
+        - '2026-09-18 10:57:59'
+      stats:
+        min: '2018-07-09'
+        max: '2026-09-30'
+        unique: 1000
+    - name: LCPMT_RTRCN_YMD
+      title: 인허가취소일자(YYYYMMDD)
+      type: date
+      null_rate: 0.981
+      sample_values:
+        - '2024-08-16'
+        - '2024-01-24'
+        - '2025-11-27'
+      stats:
+        min: '2020-07-08'
+        max: '2025-11-27'
+        unique: 19
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2022-10-25'
+        - '2019-08-14'
+        - '2019-04-22'
+      stats:
+        min: '2018-07-02'
+        max: '2026-09-22'
+        unique: 716
+    - name: LCTN_AREA
+      title: 소재지면적
+      type: number
+      null_rate: 0.298
+      sample_values:
+        - '1500'
+        - '4.9'
+        - '1495'
+      stats:
+        min: 4.9
+        p50: 1015.95
+        max: 191169
+        unique: 598
+    - name: LOTNO_ADDR
+      title: 지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 경기도 양평군 청운면 갈운리 53-1
+        - 경기도 여주시 대신면 하림리 72-2
+        - 경기도 안양시 동안구 관양동 912
+      stats:
+        unique: 876
+    - name: MNG_NO
+      title: 관리번호
+      type: number
+      semantic_type: pnu
+      null_rate: 0.0
+      sample_values:
+        - '2026424108701200001'
+        - '2026469107601200001'
+        - '2026477101301500001'
+      stats:
+        min: 1986548000001499904
+        p50: 2021494512051200000
+        max: 2026587505901499904
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4050000'
+        - '5020000'
+        - '5530000'
+      stats:
+        min: 3000000
+        p50: 4641000
+        max: 6520000
+        unique: 184
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.053
+      sample_values:
+        - 경기도 안양시 동안구 흥안대로 457-41 (관양동)
+        - 경기도 양주시 광적면 부흥로 256
+        - 경상남도 김해시 김해대로2553번길 34 (어방동)
+      stats:
+        unique: 877
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.054
+      sample_values:
+        - '12532'
+        - '12611'
+        - '10801'
+      stats:
+        min: 1776
+        p50: 30124
+        max: 63641
+        unique: 759
+    - name: ROBIZ_YMD
+      title: 재개업일자
+      type: date
+      null_rate: 0.971
+      sample_values:
+        - '2020-08-27'
+        - '2021-07-26'
+        - '2025-11-18'
+      stats:
+        min: '2018-11-15'
+        max: '2026-09-04'
+        unique: 28
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 4
+        unique: 4
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+        - 휴업
+      stats:
+        unique: 4
+    - name: TCBIZ_BGNG_YMD
+      title: 휴업시작일자(YYYYMMDD)
+      type: date
+      null_rate: 0.958
+      sample_values:
+        - '2023-04-11'
+        - '2025-12-18'
+        - '2026-09-01'
+      stats:
+        min: '2018-07-20'
+        max: '2026-09-28'
+        unique: 32
+    - name: TCBIZ_END_YMD
+      title: 휴업종료일자(YYYYMMDD)
+      type: date
+      null_rate: 0.958
+      sample_values:
+        - '2024-04-10'
+        - '2026-12-17'
+        - '2026-12-31'
+      stats:
+        min: '2019-06-19'
+        max: '2027-07-18'
+        unique: 31
+    - name: TELNO
+      title: 전화번호
+      type: string
+      null_rate: 0.593
+      sample_values:
+        - 02-2662-7837
+        - 053-985-3434
+        - 044-850-1032
+      stats:
+        unique: 388
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - MNG_NO
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2018-07-02 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6605
+  rank_in_sector: 152
+  brm: 산업고용 - 에너지및자원개발
+  why: LOCALDATA 석유판매업 전국 인허가 원장
+claims:
+  - id: c-15155253-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155253.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155253.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15155253-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15155253
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155253-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15155253.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 24개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155253-04
+    kind: coverage
+    value: API 전체 건수 29,630 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2018-07-02 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15155253.json
+        observed_at: '2026-10-02'
+        detail: total 29630, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155253-06
+    kind: admin_note
+    value: "세부 부문 '에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)'의 가치: LOCALDATA 에너지 업종 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155253-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155253-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155253-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155253.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155253-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15155253.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155253-12
+    kind: pitfall
+    value: 전수 29,630건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 30회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15155253.json
+        observed_at: '2026-10-02'
+        detail: total 29630 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 29630
+  ops_ok: 1/2
+  latency_ms: 109
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15155253.json
+  stats: probe/stats/15155253.json
+  data: probe/data/15155253/
+status: active
+summary_user: 전국 지자체가 관리하는 석유판매업(주유소·용제판매소 등) 인허가 정보를 사업장 건별로 담은 원천 데이터로, 전체 29,630건이며 인허가일자·영업상태·휴폐업일자·주소·좌표를 포함한다. 분석가나 사업자가 특정 지역에 영업 중인 석유판매 사업장이 어디에 있고 언제 인허가를 받았거나 폐업했는지 확인하는 질문에 쓴다. 지번주소·도로명주소(address) 키로 다른 주소 기반 데이터와 잇고, 관리번호(MNG_NO)는 pnu 키로 실측되었으며, 개방자치단체코드는 다른 데이터에서 받아 넘겨야 한다.
+limits: 필수 파라미터인 기준일자와 개방자치단체코드는 다른 데이터의 코드를 먼저 받아 넘겨야 하고, /history 오퍼레이션은 최소 파라미터로 응답이 없었다. 검증은 1,000행만 받았으며 전량 수집은 페이지를 30회 이상 반복해야 한다. 실시간 유가나 판매량은 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15155253-03
+    - c-15155253-04
+    - c-15155253-10
+    - c-15155253-11
+    - c-15155253-12
+    - c-15155253-06
+  dropped_citations: 0

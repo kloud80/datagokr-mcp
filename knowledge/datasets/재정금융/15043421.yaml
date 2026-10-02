@@ -1,0 +1,1009 @@
+# Dataset 15043421 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15043421'
+tier: verified
+title: 금융위원회_채권발행정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15043421/openapi.do
+synonyms:
+  - 채권
+  - 대차
+  - 만기
+  - 채권발행
+  - 발행금액
+  - 만기현황
+  - 자금조달
+  - 채권 발행 현황
+  - 회사채 발행
+  - 채권 만기
+  - 채권 원리금
+  - 표면이율
+  - 채권 발행 종목
+  - ISIN 채권
+  - 예탁결제원 채권
+description_portal: '채권발행정보는 기준일자, 법인등록번호 또는 채권발행인명을 기준으로 채권 관련 주요 정보를 제공하는 데이터입니다. 제공 항목에는 채권종류별 발행·만기 현황, 발행자별 발행종목 내역, 채권 원리금 지급 정보 등이 포함됩니다. 주요 세부 항목에는 발행금액, 납입금액, 표면이율, 금리구분(고정·변동), 발행통화, 만기일, 채권이자유형, 원금 및 이자 지급금액 등이 있으며, 채권 종류별 신규 발행금액과 상환금액, 증감 현황도 확인할 수 있습니다. 본 데이터는 발행자별 발행 종목 현황 조회, 종류별 발행 만기 현황 조회, 채권 원리금 조회 3가지 오퍼레이션으로 제공되며, 채권시장의 유동성, 기업의 자금조달 구조, 금융시장 안정성 분석, 정책 수립 자료 등으로 활용 할 수 있습니다.※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getIssuIssuItemStat_V2
+    name: 발행자별발행종목현황조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondTradInfoService_V2/getIssuIssuItemStat_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: bondIsurNm
+        required: false
+        desc: 채권을 발행한 발행 회사의 명칭
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getKindIssuMatuStat_V2
+    name: 종류별발행만기현황조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondTradInfoService_V2/getKindIssuMatuStat_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: scrsItmsKcdNm
+        required: false
+        desc: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드의 명칭
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBondPrinAndInte_V2
+    name: 채권원리금조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondTradInfoService_V2/getBondPrinAndInte_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: piamPayDt
+        required: false
+        desc: 원리금이 지급되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: bondIsurNm
+        required: false
+        desc: 채권을 발행한 발행 회사의 명칭
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200806'
+        - '20200827'
+        - '20200730'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 20200715
+        p50: 20200817
+        max: 20200915
+        unique: 59
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101350000937'
+        - '1101110995378'
+        - '1101710029402'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 1101110000086
+        p50: 1101117099250.5
+        max: 2849110205160
+        unique: 458
+    - name: scrsItmsKcd
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1105'
+        - '1106'
+        - '1108'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 1103
+        p50: 1106
+        max: 3201
+        unique: 7
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR6010141911
+        - KR60659026A3
+        - KR6004944874
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 1000
+    - name: scrsItmsKcdNm
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금융채
+        - 유동화SPC채
+        - 일반회사채
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 7
+    - name: bondIsurNm
+      title: 채권을 발행한 발행 회사의 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 한국산업은행
+        - 현대캐피탈
+        - 한국주택금융공사
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 458
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - 삼성중공업 101(사모)
+        - 현대카드 669-1
+        - 하나은행 41-07이2갑-16
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 1000
+    - name: bondIssuDt
+      title: 채권을 발행한 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20190509'
+        - '20170731'
+        - '20170831'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 20100225
+        p50: 20180724
+        max: 20200902
+        unique: 461
+    - name: bondIssuFrmtNm
+      title: 채권 발행 형태에 대한 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전자증권
+        - 공사채등록
+        - 실물발행
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 3
+    - name: bondIssuAmt
+      title: 채권에 대한 최초발행금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000000000'
+        - '20000000000'
+        - '30000000000'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 0
+        p50: 20000000000
+        max: 2600000000000
+        unique: 196
+    - name: bondIssuCurCd
+      title: 채권발행시 해당 채권의 각국 통화를 관리하는 코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 1
+    - name: bondIssuCurCdNm
+      title: 채권발행시 해당 채권의 각국 통화를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 1
+    - name: bondExprDt
+      title: 채권의 만기일자(상환된 경우, 상환 일자)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200828'
+        - '20200731'
+        - '20200807'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 20200716
+        p50: 20200818
+        max: 20230720
+        unique: 66
+    - name: bondPymtAmt
+      title: 채권에 대한 납입금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000000000'
+        - '20000000000'
+        - '30000000000'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 0
+        p50: 20000000000
+        max: 2600000000000
+        unique: 243
+    - name: irtChngDcd
+      title: 변동금리, 고정금리등 금리를 구분하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: irtChngDcdNm
+      title: 변동금리, 고정금리등 금리를 구분하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고정
+        - 변동
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 2
+    - name: bondSrfcInrt
+      title: 채권에 대한 표면 이자율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5.57'
+        - '2.5'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 0
+        p50: 2.3354999999999997
+        max: 12
+        unique: 564
+    - name: bondIntTcd
+      title: 채권별 이자 유형이 이표채인지, 할인채인지등을 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '4'
+      op: /getIssuIssuItemStat_V2
+      stats:
+        min: 1
+        p50: 1
+        max: 4
+        unique: 4
+    - name: bondIntTcdNm
+      title: 채권별 이자 유형이 이표채인지, 할인채인지등을 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이표채
+        - 할인채
+        - 단리채
+      op: /getIssuIssuItemStat_V2
+      stats:
+        unique: 4
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080101'
+        - '20080401'
+        - '20080501'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 20080101
+        p50: 20120901
+        max: 20170501
+        unique: 113
+    - name: scrsItmsKcd
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1101'
+        - '1102'
+        - '1103'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 1101
+        p50: 1105
+        max: 3202
+        unique: 9
+    - name: scrsItmsKcdNm
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국채
+        - 지방채
+        - 특수채
+      op: /getKindIssuMatuStat_V2
+      stats:
+        unique: 9
+    - name: bondNewIssuAmt1
+      title: 채권을 신규로 발행하는 경우 그 발행 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000000'
+        - '3000000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 46430000000000
+        unique: 307
+    - name: bondNewIssuAmt2
+      title: 채권신규발행금액2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '100000000000'
+        - '80000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 180000000000
+        max: 24255266000000
+        unique: 573
+    - name: bondNewIssuAmt3
+      title: 채권신규발행금액3
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '50000000000'
+        - '40000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 220756950000
+        max: 14581000000000
+        unique: 607
+    - name: bondNewIssuAmt4
+      title: 채권신규발행금액4
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000000'
+        - '20000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 531410000000
+        max: 42427269320000
+        unique: 765
+    - name: bondNewIssuAmt5
+      title: 채권신규발행금액5
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '170000000000'
+        - '220000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 1506091500000
+        max: 71117276400000
+        unique: 887
+    - name: bondRdptAmt1
+      title: 채권을 상환한 경우, 그 상환 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000000'
+        - '3000000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 43550000000000
+        unique: 299
+    - name: bondRdptAmt2
+      title: 채권상환금액2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '220000000000'
+        - '40000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 170000000000
+        max: 17989967000000
+        unique: 583
+    - name: bondRdptAmt3
+      title: 채권상환금액3
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '50000000000'
+        - '40000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 93123731500
+        max: 11854800000000
+        unique: 577
+    - name: bondRdptAmt4
+      title: 채권상환금액4
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '20000000000'
+        - '50000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 252035917500
+        max: 22937622580000
+        unique: 816
+    - name: bondRdptAmt5
+      title: 채권상환금액5
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '40000000000'
+        - '100000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: 0
+        p50: 1005527776500
+        max: 57475068300000
+        unique: 963
+    - name: bondIcdrAmt1
+      title: 채권의 증가 혹은 감소한 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000000'
+        - '-2000000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: -10620000000000
+        p50: 0
+        max: 11365000000000
+        unique: 361
+    - name: bondIcdrAmt2
+      title: 채권증감금액2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000000'
+        - '20000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: -12513690000000
+        p50: 0
+        max: 14078516000000
+        unique: 664
+    - name: bondIcdrAmt3
+      title: 채권증감금액3
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '70000000000'
+        - '40000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: -9747000000000
+        p50: 0
+        max: 14581000000000
+        unique: 645
+    - name: bondIcdrAmt4
+      title: 채권증감금액4
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '-20000000000'
+        - '-30000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: -21784000410000
+        p50: 89544621000
+        max: 32318910590000
+        unique: 917
+    - name: bondIcdrAmt5
+      title: 채권증감금액5
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '-40000000000'
+        - '-35000000000'
+        - '-50000000000'
+      op: /getKindIssuMatuStat_V2
+      stats:
+        min: -23784000410000
+        p50: 225144320000
+        max: 32846935550000
+        unique: 987
+    - name: piamPayDt
+      title: 원리금이 지급되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200229'
+        - '20210228'
+        - '20220228'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 20130619
+        p50: 20210830.5
+        max: 20261001
+        unique: 687
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110000086'
+        - '0000000000000'
+        - '0004118300391'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 0
+        p50: 1101110000086
+        max: 1101110000086
+        unique: 6
+    - name: scrsItmsKcd
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1108'
+        - '1102'
+        - '1106'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 1102
+        p50: 1108
+        max: 1108
+        unique: 3
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR2005011334
+        - KR2005011490
+        - KR2005011516
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 69
+    - name: scrsItmsKcdNm
+      title: 해당 유가증권의 종목종류(ex, 우선주, 보통주)를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반회사채
+        - 지방채
+        - 유동화SPC채
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 3
+    - name: bondIsurNm
+      title: 채권을 발행한 발행 회사의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 롯데쇼핑
+        - 전남광주통합특별시
+        - 노무라인터내셔널펀딩피티이
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 9
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - 광주지방채 4
+        - 광주지방채 8
+        - 광주지방채 9
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 69
+    - name: bondIssuCurCd
+      title: 채권발행시 해당 채권의 각국 통화를 관리하는 코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+        - USD
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 2
+    - name: bondIssuCurCdNm
+      title: 채권발행시 해당 채권의 각국 통화를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+        - USD
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 2
+    - name: hldyAplPiamPayDt
+      title: 원리금 지급일자가 휴일인경우, 휴일자를 고려하여 지정한 지급 일자(전영업일 혹은 익영업일지급등)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200302'
+        - '20200831'
+        - '20201130'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 20130619
+        p50: 20210830.5
+        max: 20261001
+        unique: 619
+    - name: piamDcd
+      title: 해당 금액이 원금인지, 이자인지, 원금과 이자를 포함한 금액인지를 구분하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: piamDcdNm
+      title: 해당 금액이 원금인지, 이자인지, 원금과 이자를 포함한 금액인지를 구분하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이자
+        - 원리금
+      op: /getBondPrinAndInte_V2
+      stats:
+        unique: 2
+    - name: bondSrfcInrt
+      title: 채권에 대한 표면 이자율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3.45'
+        - '3.1'
+        - '2.38'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 0.011808215
+        p50: 2.74
+        max: 9.31665
+        unique: 118
+    - name: pamtPayAmt
+      title: 만기 및 원리금 균등분할 상환 시 지급되는 원금
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '175000000'
+        - '1537500000'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 350000000000
+        unique: 33
+    - name: intPayAmt
+      title: 이자 지급 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '621775000'
+        - '255000000'
+        - '1027500000'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 98894.53
+        p50: 396750000
+        max: 9476736000
+        unique: 296
+    - name: ttwBasInt
+      title: 채권의 이자를 만원 단위로 환산한 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '86.25'
+        - '77.5'
+        - '59.5'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 1.181
+        p50: 69.875
+        max: 536.141
+        unique: 138
+    - name: rmanDpsgCnt
+      title: 채권에 대한 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50000000000'
+        - '30000000000'
+        - '150000000000'
+      op: /getBondPrinAndInte_V2
+      stats:
+        min: 9375000
+        p50: 50000000000
+        max: 350000000000
+        unique: 197
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - isinCdNm
+      reference:
+        key: stock_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+  temporal: 2008-01-01 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9066
+  rank_in_sector: 8
+  brm: 재정금융 - 금융
+  why: 채권 발행 내역 원장, 법인등록번호로 조인
+claims:
+  - id: c-15043421-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 3/3
+    evidence:
+      - type: measured
+        source: probe/runs/15043421.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 3/3
+      - type: measured
+        source: probe/apply/15043421.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15043421-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15043421
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043421-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd), stock_cd(isinCdNm)'
+    evidence:
+      - type: measured
+        source: probe/stats/15043421.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 54개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043421-04
+    kind: coverage
+    value: API 전체 건수 778,232 · 검증 수신 3,000행 · 범위 전국 · 행정단위 전국·비공간 · 기간 2008-01-01 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15043421.json
+        observed_at: '2026-10-02'
+        detail: total 778232, rows 3000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15043421-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15043421-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15043421-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15043421-10
+    kind: pitfall
+    value: 전수 778,232건 중 검증은 3,000행만 받음 — 전량 수집은 페이지 반복 779회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15043421.json
+        observed_at: '2026-10-02'
+        detail: total 778232 rows 3000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 3000
+  total_count: 778232
+  ops_ok: 3/3
+  latency_ms: 762
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15043421.json
+  stats: probe/stats/15043421.json
+  data: probe/data/15043421/
+status: active
+summary_user: 채권 발행 종목별 발행금액·표면이율·만기일, 채권 종류별 신규 발행·상환·증감 금액, 원리금 지급 일정을 담은 API로, 전국 범위 778,232건(2008-01-01~2026-10-01)이 있다. 분석가나 기업 재무 담당자가 특정 회사가 어떤 채권을 언제 얼마나 발행했고 만기가 언제인지 확인하는 질문에 쓴다. 법인등록번호(crno)로 기업 공시·재무 데이터와, 채권 국제식별번호(isinCd)로 종목코드 기반 시세·종목 원장과 이어 쓴다.
+limits: 전체 778,232건 중 검증은 3,000행만 받았으며, 전량 수집하려면 페이지를 779회 이상 반복 호출해야 한다. 최신 행 날짜는 관측일 기준 1일 전이다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15043421-02
+    - c-15043421-03
+    - c-15043421-04
+    - c-15043421-06
+    - c-15043421-10
+  dropped_citations: 0

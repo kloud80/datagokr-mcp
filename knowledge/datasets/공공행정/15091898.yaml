@@ -1,0 +1,251 @@
+# Dataset 15091898 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15091898'
+tier: verified
+title: 공정거래위원회_기업집단포털_대규모기업집단 소속회사 임원현황 정보 조회 서비스
+sector: 공공행정/공정거래/business-group
+agency:
+  id: '1130000'
+  name: 공정거래위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15091898/openapi.do
+synonyms:
+  - 기업집단포털
+  - 대규모기업집단
+  - 소속회사 임원현황
+  - 임원명
+  - 동일인과의 관계
+  - 직위
+  - 기업집단 임원
+  - 계열사 임원
+  - 대기업집단 임원 현황
+  - 동일인 관계
+  - 공정위 기업집단 포털
+  - 소속회사 임원
+  - 재벌 임원
+description_portal: '대규모기업집단 지정년도와 기업집단코드, 법인등록번호를 기준으로 기업집단에 속한 소속회사의 임원명, 동일인과의 관계, 직위 등 지정 기업집단 소속회사의 임원현황 정보를 조회하는 서비스※ 당해년도 정보 제공 시기 : 당해년도 5월 1일 기준※ 지정된 기업집단의 자료를 제출받아(2월 중 ~ 4월 중) 검토 시기를 거쳐 보도 자료 공개와 함께 당해 5월 1일에 정보 제공※ 요청년월(공개년월 또는 지정년월) : [사용 가능한 공개년월 조회 서비스(publicYmList)] API 를 활용하여 이 서비스(API)를 이용하기 전에 사용 가능한 년월을 확인 후 이용하시기 바랍니다.'
+team:
+  dept: 정보화담당관
+services:
+  - op: /executiveCompSttusListApi
+    name: 대규모기업집단 소속회사 임원현황 정보 조회
+    endpoint: https://apis.data.go.kr/1130000/executiveCompSttusList/executiveCompSttusListApi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: presentnYear
+        required: true
+        example: '202105'
+        desc: 기업집단 지정년월
+      - name: unityGrupCode
+        required: false
+        example: K1000032
+        desc: 기업집단코드
+      - name: jurirno
+        required: false
+        example: '1301110006246'
+        desc: 법인등록번호
+      - name: bizrno
+        required: false
+        desc: 사업자등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bizrno
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '1248100998'
+      stats:
+        min: 1248100998
+        p50: 1248100998
+        max: 1248100998
+        unique: 1
+    - name: exctvNm
+      title: 임원명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 김현석
+        - 안규리
+        - 김선욱
+      stats:
+        unique: 11
+    - name: ofcpsNm
+      title: 직위
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대표이사(해당없음)
+        - 사외이사(해당없음)
+        - 사외이사(감사위원)
+      stats:
+        unique: 4
+    - name: smerRelateNm
+      title: 동일인과의 관계
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임원(소속회사)
+      stats:
+        unique: 1
+  foreign_keys:
+    - fields:
+        - bizrno
+      reference:
+        key: bizno
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기업집단
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7523
+  rank_in_sector: 18
+  brm: 공공행정 - 공정거래
+  sector_rule: ftc-to-fairtrade
+  why: 소속회사 임원현황, 보조 성격이나 키 보유
+claims:
+  - id: c-15091898-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15091898.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15091898.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15091898-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15091898-03
+    kind: key
+    value: '실측 조인 키: bizno(bizrno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15091898.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15091898-04
+    kind: coverage
+    value: API 전체 건수 11 · 검증 수신 11행 · 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15091898.json
+        observed_at: '2026-10-02'
+        detail: total 11, rows 11
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15091898-06
+    kind: admin_note
+    value: '[공정거래 · 결정] 공정위의 등록·지정·공시 4개 체인만 대상 — **기업집단 · 가맹사업 · 특수판매(통신판매·다단계·방문·후원방문·전화권유) · 상조(선불식할부)**. 나머지는 제외 (`exclusions.yaml` `ftc-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L60
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15091898-07
+    kind: admin_note
+    value: '[공정거래 · 이유] 대중 수요는 셋 다 "이 사업자 믿어도 되나" — 창업 예정자(가맹 정보공개서), 소비자(통신판매·상조 등록 확인), 투자·언론(기업집단 지분·내부거래). 개방 데이터가 있는 곳도 등록·지정·공시 영역뿐이고, 네 체인 모두 **사업자등록번호·법인등록번호**로 묶인다. 하도급 실태조사·1372 상담통계·기업결합은 집계, 결정문·리콜은 사건·문서 단위라 연계 불가.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L62
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15091898-08
+    kind: admin_note
+    value: wave2 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 11
+  total_count: 11
+  ops_ok: 1/1
+  latency_ms: 5909
+  run: probe/runs/15091898.json
+  stats: probe/stats/15091898.json
+  data: probe/data/15091898/
+status: active
+summary_user: 대규모기업집단으로 지정된 기업집단 소속회사의 임원명·직위·동일인과의 관계를 회사 단위로 담은 조회 API이며, 검증 시 전체 11건이 전국 범위로 수신됐다. 투자자·언론·분석가가 특정 기업집단 계열사의 임원이 총수(동일인)와 어떤 관계인지 확인하는 질문에 쓴다. 사업자등록번호(bizrno, 키 bizno)로 같은 공정위 등록·지정·공시 체인의 다른 데이터와 이어 쓴다.
+limits: 요청년월은 사용 가능한 공개년월 조회 서비스(publicYmList)로 먼저 확인한 뒤 호출해야 하며, 당해년도 정보는 5월 1일 기준으로 제공된다. 검증 시 전체 건수가 11건이므로 기업집단 전체 임원 규모를 대표하는지는 이 자료만으로 판단할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15091898-01
+    - c-15091898-03
+    - c-15091898-04
+    - c-15091898-06
+    - c-15091898-07
+  dropped_citations: 0

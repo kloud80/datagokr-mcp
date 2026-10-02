@@ -1,0 +1,403 @@
+# Dataset 15125219 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125219'
+tier: verified
+title: 한국조폐공사_지류_지역사랑상품권_환전지점정보
+sector: 재정금융/재정·금융/local-currency
+agency:
+  id: B190001
+  name: 한국조폐공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125219/openapi.do
+synonyms:
+  - 지역화폐
+  - 환전지점
+  - 지역사랑상품권 지점
+  - 지역사랑상품권
+  - 지류상품권
+  - 지류 상품권 환전
+  - 상품권 환전소
+  - 지역화폐 환전처
+  - 지역사랑상품권 환전 장소
+  - 종이 상품권 교환
+  - 조폐공사 상품권 지점
+  - 지역화폐 지류 환전지점
+description_portal: '지역사랑상품권 운영대행사들로부터 수집한 지류 상품권 환전지점에 대한 지점명, 주소, 대표전화번호, 상품권명, 판매여부, 읍면동코드 등을 제공한다.아래는 데이터 사용시 참고바랍니다:1) 제공기관코드:코나아이: I0000001한국간편결제진흥원: I0000002신한카드: I0000003한국조폐공사: I0000004KT: I0000005농협은행: I0000006광주은행: I0000007대구은행: I0000008ITS&G: I0000009NICE 정보통신: I0000010KIS 정보통신: I0000011인조이웍스: I0000012부산은행: I0000014비즈플레이:I00000152) 사용처지역코드(5자리):- 행정안전부에서 제공하는 법정동코드(지역코드 10자리) 중, 앞 5자리(시도코드 2자리 + 시군구코드 3자리)를 사용하고 있습니다.- 코드 정보는 참고문서를 확인바랍니다.3) 읍면동코드(8자리):- 행정안전부에서 제공하는 법정동코드(지역코드 10자리)의 앞 8자리(시도 코드 2자리 + 시군구 코드 3자리 + 읍면동 코드 3자리)를 사용하고 있습니다.- 법정동코드는 행정안전부_행정표준코드_법정동코드 API(https://www.data.go.kr/data/15077871/openapi.do)를 활용하여 조회할 수 있습니다.'
+team:
+  dept: 지급결제운영부
+services:
+  - op: /exchangeV2
+    name: 환전여부_지점정보
+    endpoint: https://apis.data.go.kr/B190001/paperExchange/v2/exchangeV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: perPage
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: cond[brnch_id::EQ]
+        required: false
+        example: '20231120339'
+        desc: 검색값과 지점구분ID가 일치하는 데이터를 검색
+      - name: cond[brnch_nm::EQ]
+        required: false
+        example: NH농협은행 평택시지부
+        desc: 검색값과 지점명이 일치하는 데이터를 검색
+      - name: cond[gt_nm::EQ]
+        required: false
+        example: 경기평택사랑상품권
+        desc: 검색값과 상품권명이 일치하는 데이터를 검색
+      - name: cond[emd_cd::EQ]
+        required: false
+        example: '41220114'
+        desc: 검색값과 읍면동코드가 일치하는 데이터를 검색
+      - name: cond[pvsn_inst_cd::EQ]
+        required: false
+        example: I0000004
+        desc: 검색값과 제공기관코드가 일치하는 데이터를 검색
+      - name: cond[crtr_ymd::EQ]
+        required: false
+        example: '20231120'
+        desc: 검색값과 기준일자가 일치하는 데이터를 검색
+      - name: returnType
+        required: false
+        example: JSON
+        desc: "응답 데이터포맷 설정(JSON 또는 XML, default: 'JSON')"
+      - name: cond[usage_rgn_cd::EQ]
+        required: false
+        example: '11680'
+        desc: 사용처지역코드(법정동코드중 앞5자리)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: brnch_addr
+      title: 지점주소
+      type: string
+      semantic_type: address
+      null_rate: 0.27
+      sample_values:
+        - 충북 충주시 호암수청2로 29
+        - 경남 밀양시 단장면 단장로 1082
+        - 경북 구미시 사곡로 21
+      stats:
+        unique: 73
+    - name: brnch_daddr
+      title: 지점상세주소
+      type: code
+      semantic_type: address
+      null_rate: 0.9
+      sample_values:
+        - .
+        - 1층
+      stats:
+        unique: 2
+    - name: brnch_id
+      title: 지점구분ID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - BR-0000003986
+        - BR-0000005248
+        - BR-0000000091
+      stats:
+        unique: 100
+    - name: brnch_nm
+      title: 지점명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 농협은행 남제주지점
+        - 법환새마을금고
+        - 농협은행 노형지점
+      stats:
+        unique: 95
+    - name: brnch_rprs_telno
+      title: 지점대표전화번호('-' 제외 숫자로만 구성)
+      type: number
+      null_rate: 0.27
+      sample_values:
+        - '04300000000'
+        - '000'
+        - '05400000000'
+      stats:
+        min: 0
+        p50: 548571300
+        max: 5400000000
+        unique: 65
+    - name: crtr_ymd
+      title: 데이터 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260823'
+        - '20260930'
+        - '20241010'
+      stats:
+        min: 20241010
+        p50: 20260823
+        max: 20261001
+        unique: 8
+    - name: emd_cd
+      title: 읍면동코드(숫자8자리)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50000000'
+        - '43130107'
+        - '47820253'
+      stats:
+        min: 26290106
+        p50: 48270355
+        max: 52800340
+        unique: 63
+    - name: emd_nm
+      title: 읍면동명
+      type: string
+      null_rate: 0.27
+      sample_values:
+        - 호암동
+        - 청도읍
+        - 공단동
+      stats:
+        unique: 60
+    - name: excng_yn
+      title: 환전여부(Y/N)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: gt_nm
+      title: 상품권명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제주상품권 5천원권
+        - 통영사랑상품권
+        - 구미상품권 2천원권
+      stats:
+        unique: 23
+    - name: lat
+      title: 지점주소에 해당하는 위도값
+      type: number
+      semantic_type: coord
+      null_rate: 0.27
+      sample_values:
+        - '36.9566290526'
+        - '35.4872433773'
+        - '36.0950443575'
+      stats:
+        min: 33.2220669098
+        p50: 36.0062864918
+        max: 38.379704785
+        unique: 73
+    - name: lot
+      title: 지점주소에 해당하는 경도값
+      type: number
+      null_rate: 0.27
+      sample_values:
+        - '127.9251157736'
+        - '128.8494394997'
+        - '128.3578511888'
+      stats:
+        min: 126.2545138335
+        p50: 127.9356247621
+        max: 129.1661177661
+        unique: 73
+    - name: pvsn_inst_cd
+      title: 제공기관코드(운영대행사 코드)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I0000010
+        - I0000015
+        - I0000006
+      stats:
+        unique: 5
+    - name: usage_rgn_cd
+      title: 사용처지역코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50000'
+        - '43130'
+        - '48220'
+      stats:
+        min: 26000
+        p50: 48270
+        max: 52800
+        unique: 26
+    - name: usage_rgn_nm
+      title: 사용처지역명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '제주특별자치도 '
+        - 충청북도 충주시
+        - 경상남도 통영시
+      stats:
+        unique: 29
+  foreign_keys:
+    - fields:
+        - brnch_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - brnch_daddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2024-10-10 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.7808
+  rank_in_sector: 11
+  brm: 재정금융 - 재정·금융
+  why: 상품권 환전지점 개체 목록, 좌표·법정동 보유, 규모는 작음
+claims:
+  - id: c-15125219-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125219.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125219.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15125219-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전) — 검증 호출 조건(cond[crtr_ymd::EQ]=20231120) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15125219
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125219-03
+    kind: key
+    value: '실측 조인 키: address(brnch_addr), address(brnch_daddr), coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15125219.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125219-04
+    kind: coverage
+    value: API 전체 건수 100 · 검증 수신 100행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2024-10-10 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15125219.json
+        observed_at: '2026-10-02'
+        detail: total 100, rows 100
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15125219-06
+    kind: admin_note
+    value: "세부 부문 '지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)'의 가치: 가맹점 = 지역 소상공인 사업장 목록(주소·업종), 지역 상권과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#local-currency
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125219-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125219-08
+    kind: admin_note
+    value: wave2 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 100
+  total_count: 100
+  ops_ok: 1/1
+  latency_ms: 324
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15125219.json
+  stats: probe/stats/15125219.json
+  data: probe/data/15125219/
+status: active
+summary_user: 운영대행사들이 보내온 지류 지역사랑상품권 환전지점을 지점 단위로 담는 API로, 지점명·주소·전화번호·상품권명·환전여부·좌표를 싣고 전국 범위에 전체 100건이다. 지류 상품권을 가진 시민이 가까운 환전지점이 어디인지, 해당 상품권을 환전할 수 있는지 찾는 질문에 쓴다. 지점주소(brnch_addr, brnch_daddr)와 위도 좌표(lat)를 키로 가맹점·상권 데이터와 잇고, 8자리 읍면동코드(emd_cd)와 5자리 사용처지역코드는 행정안전부 법정동코드 앞자리와 맞춰 지역 단위로 묶는다.
+limits: 검증 호출 조건(crtr_ymd=20231120) 기준으로 확인한 최신 행 날짜가 2026-10-01이므로 데이터 자체의 최신성과 다를 수 있다. 수록 기간은 2024-10-10~2026-10-01이고 검증 수신은 100행이므로 환전지점 전체 목록이라고 단정하지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15125219-03
+    - c-15125219-04
+    - c-15125219-02
+    - c-15125219-06
+  dropped_citations: 0

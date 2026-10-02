@@ -92,8 +92,10 @@ async def download(page, dsid: str, url: str) -> tuple[bytes, str]:
         return await download_filedata(page, dsid, url)
     await page.goto(url, wait_until="networkidle")
     sel = "#stdCsvDownloadBtn"
+    if not await page.locator(sel).count():  # 전국 표준데이터 중 일부는 CSV 대신 기관 API로 연결(stdLinkBtn)만 둔다
+        raise ValueError("CSV 다운로드 없음 — 표준데이터가 연계 API로 제공됨 (stdLinkBtn)")
     async with page.expect_download(timeout=180000) as di:
-        await page.locator(sel).first.click(force=True)
+        await page.locator(sel).first.click(force=True, timeout=120000)  # 전국 표준데이터는 버튼이 늦게 뜬다
     d = await di.value
     tmp = P / "data" / dsid / f"_raw_{d.suggested_filename}"
     tmp.parent.mkdir(parents=True, exist_ok=True)
@@ -115,7 +117,7 @@ async def run_files(items: list[tuple[str, str]]) -> list[dict]:
                 raw, name = await download(page, dsid, url)
                 df = _read(raw, name)
                 run.update({"file": name, "bytes": len(raw), "rows": len(df), "columns": list(map(str, df.columns)), "ok_ops": 1})
-                df.to_parquet(P / "data" / dsid / f"file_{dt.date.today():%Y%m%d}.parquet")
+                df.astype(str).to_parquet(P / "data" / dsid / f"file_{dt.date.today():%Y%m%d}.parquet")  # 날짜·혼합형 열도 저장되게
                 (P / "stats").mkdir(parents=True, exist_ok=True)
                 (P / "stats" / f"{dsid}.json").write_text(json.dumps({"file": col_stats(df)}, ensure_ascii=False, indent=1, default=str),
                                                           encoding="utf-8")

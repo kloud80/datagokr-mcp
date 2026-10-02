@@ -1,0 +1,268 @@
+# Dataset 15111986 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15111986'
+tier: verified
+title: 식품의약품안전처_식품운반업 인허가 대장 조회
+sector: 식품건강/식품의약안전/food-business-licenses
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15111986/openapi.do
+synonyms:
+  - 식품운반업
+  - 식품운반업 인허가
+  - 인허가
+  - 운반업
+  - 영업
+  - 식품 운반업체
+  - 운반업 인허가
+  - 식품 인허가 업소
+  - 식품운반업 허가 현황
+  - 식약처 인허가 대장
+  - 운반업소 주소
+description_portal: 식품의약품안전처에서 관리하는 식품운반업 인허가 대장에 대한 인허가번호, 업소명, 대표자명, 업종, 허가일자, 주소, 기관명에 대한 속성정보 제공합니다.이 자료를 통하여 신규 비즈니스 창출과 데이터 산업 활성화를 통한 창업 및 일자리 창출 효과를 가져오며, 국민의 알 권리 보장과 공공 가치 창출을 실현하는데 기여할 수 있습니다. 또한 식품운반업 분야의 정보 투명성 제고, 식품산업 발전 지원, 데이터에 기반한 식품안전정책 수립, 맞춤형 서비스 개발 기반 제공으로 국민 편의성을 향상 시킬 수 있습니다.
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getFoodTrsptPrmtRgstr01
+    name: 식품운반업 인허가 대장 조회
+    endpoint: https://apis.data.go.kr/1471000/FoodTrsptPrmtRgstr01/getFoodTrsptPrmtRgstr01
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: bssh_nm
+        required: false
+        desc: 업소명
+      - name: instt_nm
+        required: false
+        desc: 기관명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: LCNS_NO
+      title: 인허가번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250329354'
+        - '20120042354'
+        - '20140628390'
+      stats:
+        min: 19850372019
+        p50: 20180359834
+        max: 20260971641
+        unique: 1000
+    - name: BSSH_NM
+      title: 업소명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 개별화물
+        - 개인화물
+        - 씨제이대한통운(주)
+      stats:
+        unique: 955
+    - name: INDUTY_NM
+      title: 업종
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 식품운반업
+      stats:
+        unique: 1
+    - name: PRMS_DT
+      title: 허가일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20210730'
+        - '20210802'
+        - '20210121'
+      stats:
+        min: 19850429
+        p50: 20180727.5
+        max: 20260929
+        unique: 876
+    - name: LOCP_ADDR
+      title: 주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 송파구
+        - 경상남도 김해시
+        - 전남광주통합특별시 광산구
+      stats:
+        unique: 194
+    - name: INSTT_NM
+      title: 기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경기도 용인시
+        - 서울특별시 송파구
+        - 경상남도 김해시
+      stats:
+        unique: 183
+  foreign_keys:
+    - fields:
+        - LOCP_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 1985-04-29 ~ 2026-09-29
+cycle: default
+classification:
+  subsector_name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5684
+  rank_in_sector: 842
+  brm: 식품건강 - 식품의약안전
+  why: 식품운반업 인허가 대장, 전국 원장
+claims:
+  - id: c-15111986-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15111986.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15111986.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15111986-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-09-29 (관측일 기준 3일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15111986
+        observed_at: '2026-10-02'
+        detail: latest 2026-09-29, lag 3
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15111986-03
+    kind: key
+    value: '실측 조인 키: address(LOCP_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15111986.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15111986-04
+    kind: coverage
+    value: API 전체 건수 2,780 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 1985-04-29 ~ 2026-09-29
+    evidence:
+      - type: measured
+        source: probe/runs/15111986.json
+        observed_at: '2026-10-02'
+        detail: total 2780, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15111986-06
+    kind: admin_note
+    value: "세부 부문 '식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)'의 가치: 전국 음식점·식품업소 전수에 가까운 원장 — 상권 분석의 기본, 인허가번호·사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#food-business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15111986-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15111986-08
+    kind: admin_note
+    value: wave2 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 2780
+  ops_ok: 1/1
+  latency_ms: 285
+  latest: '2026-09-29'
+  lag_days: 3
+  run: probe/runs/15111986.json
+  stats: probe/stats/15111986.json
+  data: probe/data/15111986/
+status: active
+summary_user: 식품운반업으로 인허가를 받은 업소를 건별로 담은 원천 대장으로, 인허가번호·업소명·업종·허가일자·주소·기관명을 전국 범위 2,780건(1985-04-29~2026-09-29)에 걸쳐 제공한다. 창업자나 분석가가 특정 지역에 식품운반업 업소가 어디에 몇 곳 있는지, 언제 허가를 받았는지 확인하는 질문에 쓴다. 주소(LOCP_ADDR)를 조인 키로 삼아 같은 식품 인허가 업소 부문의 다른 업소 데이터나 지역 데이터와 이어 쓴다.
+limits: 검증 때는 전체 2,780건 중 1,000행만 수신했으므로 전수 집계는 페이지 호출을 모두 돌려 확인해야 한다. 조인 키는 주소 문자열 하나뿐이며 사업자번호·좌표는 이 API 필드 목록에 없다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15111986-01
+    - c-15111986-03
+    - c-15111986-04
+    - c-15111986-06
+  dropped_citations: 0

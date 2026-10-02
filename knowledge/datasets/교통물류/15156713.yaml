@@ -1,0 +1,539 @@
+# Dataset 15156713 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15156713'
+tier: verified
+title: 울산항만공사_위치기반 부두운영시설정보
+sector: 교통물류/해운·항만/port-facilities
+agency:
+  id: B551938
+  name: 울산항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15156713/openapi.do
+synonyms:
+  - 울산항
+  - 항만시설
+  - 임대시설
+  - 부두운영
+  - 시설정보
+  - 울산항 부두
+  - 선석 정보
+  - 하역능력
+  - 접안수용력
+  - 부두 수심
+  - 항만 시설 좌표
+  - 정박지
+  - 항만운영사
+description_portal: '본 데이터는 위치기반 울산항 부두운영 시설정보를 국가중점데이터로 개방하여, 항만 이용자들의 편의성 제고 및 운영 투명성을 강화하고자 합니다. 해당 데이터를 통해 울산항 내 부두운영 시설정보를 확인하실 수 있습니다. - 항만청코드, 항구명, 부두명, 시설코드, 길이, 수심, 위도, 경도 등으로 구성 - 업데이트 주기: 월간 - 데이터 유형: 오픈API'
+team:
+  dept: AI정보실
+services:
+  - op: /getGisBaseHrbrFcltDtlInfo
+    name: 항만시설 현황 상세정보
+    endpoint: https://apis.data.go.kr/B551938/GisBaseHrbrFcltDtlInfoService/getGisBaseHrbrFcltDtlInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+      - name: prtNm
+        required: false
+        desc: 항구명
+      - name: prtagCd
+        required: false
+        desc: 항만청코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getGisBaseAnchrgDtlInfo
+    name: 정박지 상세정보 조회
+    endpoint: https://apis.data.go.kr/B551938/GisBaseHrbrFcltDtlInfoService/getGisBaseAnchrgDtlInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '5'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+      - name: anchrgNm
+        required: false
+        example: M1
+        desc: 정박지명
+      - name: fcltCd
+        required: false
+        example: WAM-01
+        desc: 시설코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prtagCd
+      title: 항만청코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '820'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 820
+        p50: 820
+        max: 820
+        unique: 1
+    - name: prtNm
+      title: 항구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 울산본항
+        - 온산항
+        - 울산신항
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 4
+    - name: whrfNm
+      title: 부두명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SK2부두
+        - S-Oil부이
+        - S-Oil&오일허브 부이
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 68
+    - name: fcltCd
+      title: 시설코드
+      type: code
+      null_rate: 0.029
+      sample_values:
+        - MBN
+        - MDU
+        - MBO
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 35
+    - name: fcltSubCd
+      title: 시설하위코드
+      type: number
+      null_rate: 0.029
+      sample_values:
+        - '01'
+        - '02'
+        - '03'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 1
+        p50: 2
+        max: 31
+        unique: 18
+    - name: len
+      title: 길이
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '210'
+        - '270'
+        - 1기
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 46
+    - name: dow
+      title: 수심
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '11'
+        - '14'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 22
+    - name: brthdCapVl
+      title: 접안수용력값
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 20,000
+        - 50,000
+        - 325,000
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 43
+    - name: brthdVslCntVl
+      title: 접안선박수값
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 1
+        p50: 1
+        max: 7
+        unique: 6
+    - name: unloadCapVl
+      title: 하역능력값
+      type: number
+      null_rate: 0.4058
+      sample_values:
+        - '670'
+        - 1,560
+        - '520'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 380
+        p50: 1320
+        max: 9570
+        unique: 36
+    - name: hndlCrgNm
+      title: 취급화물명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 액체화학
+        - 유류
+        - 잡화
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 20
+    - name: whrfSeNm
+      title: 부두구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국유
+        - 민유
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 2
+    - name: lat
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.1304
+      sample_values:
+        - '35.499009'
+        - '35.44742'
+        - '35.53173'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 35.43188
+        p50: 35.46328
+        max: 35.53173
+        unique: 59
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.1304
+      sample_values:
+        - '129.3907'
+        - '129.3758'
+        - '129.3725'
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        min: 129.34191
+        p50: 129.37179
+        max: 129.43768
+        unique: 58
+    - name: ptopNm
+      title: 항만운영사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 공용부두
+        - SK에너지㈜
+        - S-OIL㈜
+      op: /getGisBaseHrbrFcltDtlInfo
+      stats:
+        unique: 38
+    - name: anchrgNm
+      title: 정박지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - M1
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        unique: 1
+    - name: fcltCd
+      title: 시설코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - WAM-01
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        unique: 1
+    - name: indxNo
+      title: 색인번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        min: 0
+        p50: 2
+        max: 4
+        unique: 5
+    - name: lat
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '35.49558333'
+        - '35.50022222'
+        - '35.49855556'
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        min: 35.49558333
+        p50: 35.49740607
+        max: 35.50022222
+        unique: 4
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '129.39416667'
+        - '129.39477778'
+        - '129.40461111'
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        min: 129.39416667
+        p50: 129.39860668
+        max: 129.40461111
+        unique: 5
+    - name: rad
+      title: 반경
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: rmrk
+      title: 비고
+      type: code
+      null_rate: 0.2
+      sample_values:
+        - 2천톤급이하
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        unique: 1
+    - name: anchrgType
+      title: 정박지유형
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - POLYGON
+        - TEXT
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        unique: 2
+    - name: ttlYn
+      title: 제목유무
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        unique: 2
+    - name: sn
+      title: 일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14'
+        - '15'
+        - '16'
+      op: /getGisBaseAnchrgDtlInfo
+      stats:
+        min: 14
+        p50: 16
+        max: 49
+        unique: 5
+  foreign_keys:
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.5281
+  rank_in_sector: 100
+  brm: 교통물류 - 해운·항만
+  why: 울산항 부두 시설 API, 하역능력 포함
+claims:
+  - id: c-15156713-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15156713.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15156713.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15156713-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156713-03
+    kind: key
+    value: '실측 조인 키: coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15156713.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 25개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156713-04
+    kind: coverage
+    value: API 전체 건수 69 · 검증 수신 74행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15156713.json
+        observed_at: '2026-10-02'
+        detail: total 69, rows 74
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156713-06
+    kind: admin_note
+    value: "세부 부문 '항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)'의 가치: 항만코드(UN/LOCODE·해수부 내부 코드 병존, 매핑표 필요)가 입출항·물류를 잇는 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#port-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15156713-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156713-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 74
+  total_count: 69
+  ops_ok: 2/2
+  latency_ms: 144
+  run: probe/runs/15156713.json
+  stats: probe/stats/15156713.json
+  data: probe/data/15156713/
+status: active
+summary_user: 울산항 부두운영 시설을 부두·시설 단위로 담은 위치기반 API로, 길이·수심·접안수용력·하역능력·취급화물·운영사와 위경도를 함께 제공한다. 항만 이용자나 물류 담당자가 특정 부두의 수심과 하역능력이 어느 정도인지, 어디에 있는지 확인하는 데 쓴다. 위도(lat)·경도 좌표를 키로 다른 위치 데이터와 이어 쓰고, 항만코드는 UN/LOCODE와 해수부 내부 코드가 섞여 있어 매핑표를 거쳐 입출항·물류 데이터와 잇는다.
+limits: 포털 설명은 울산항 시설이라 하나 검증 호출에서 범위가 전국으로 표시됐고, API 전체 건수 69건에 검증 수신은 74행으로 차이가 있어 건수 해석에 주의해야 한다. 항만코드 체계가 두 가지라 코드로 바로 조인하면 어긋날 수 있다. 해양 안전·항행경보·선원·해도 등은 이 데이터의 범위 밖이다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15156713-04
+    - c-15156713-03
+    - c-15156713-06
+    - c-15156713-07
+  dropped_citations: 0

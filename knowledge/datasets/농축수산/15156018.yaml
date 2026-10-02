@@ -1,0 +1,238 @@
+# Dataset 15156018 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15156018'
+tier: verified
+title: 해양수산부 국립해양조사원_조석예보(고, 저조)
+sector: 농축수산/해양수산·어촌/ocean-observation
+agency:
+  id: '1192136'
+  name: 해양수산부 국립해양조사원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15156018/openapi.do
+synonyms:
+  - 조석예보
+  - 고조
+  - 저조
+  - 예보
+  - 조석
+  - 해양예보
+  - 조석표
+  - 물때
+  - 만조 간조
+  - 고조 저조
+  - 조위 예보
+  - 바다누리
+  - 국립해양조사원 API
+  - 예보지점 조위
+description_portal: 이 데이터는 해양수산부 국립해양조사원에서 우리나라 관할해역 조석 예보지점의 검색기준 날짜(1일) 고조, 저조 정보(조위, 시각)를 제공하기 위해 수집한 데이터 입니다. 예보지점 코드, 요청일자를 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 예보지점명, 예측일시, 예보지점의 위도/경도 위치정보 및 예측조위값, 극치구분 정보로 구성되어 있습니다. 본 데이터는 연안 및 항만의 해양 안전관리를 위한 조류 예측, 해양재해 대응 계획 수립, 해상교통 및 어업활동 일정 조정, 연구기관의 조석 분석과 해양환경 연구 등에 활용될 수 있습니다.
+team:
+  dept: 해양예보과
+services:
+  - op: /GetTideFcstHghLwApiService
+    name: 조석예보(고, 저조) 조회 API
+    endpoint: https://apis.data.go.kr/1192136/tideFcstHghLw/GetTideFcstHghLwApiService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: '페이지번호 (기본값: 1)'
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: '한 페이지 결과 수 (기본값: 10, 최댓값: 300)'
+      - name: type
+        required: false
+        example: xml
+        desc: 데이터 타입 (xml 또는 json)
+      - name: obsCode
+        required: true
+        example: DT_0018
+        desc: 예보지점 코드
+      - name: reqDate
+        required: false
+        example: '20250809'
+        desc: 요청일자 (yyyyMMdd)
+      - name: include
+        required: false
+        example: lot, lat
+        desc: '출력하고자 하는 항목명 (ex: lot, lat)'
+      - name: exclude
+        required: false
+        example: lot, lat
+        desc: '출력 제외하고자 하는 항목명 (ex: lot, lat)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lot
+      title: 예보지점 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.56305'
+      stats:
+        min: 126.56305
+        p50: 126.56305
+        max: 126.56305
+        unique: 1
+    - name: lat
+      title: 예보지점 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '35.97555'
+      stats:
+        min: 35.97555
+        p50: 35.97555
+        max: 35.97555
+        unique: 1
+  foreign_keys:
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.848
+  rank_in_sector: 3
+  brm: 농축수산 - 해양수산·어촌
+  why: 전국 조석예보 고저조, 예보지점 좌표 보유
+claims:
+  - id: c-15156018-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15156018.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15156018.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15156018-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156018-03
+    kind: key
+    value: '실측 조인 키: coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15156018.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156018-04
+    kind: coverage
+    value: API 전체 건수 4 · 검증 수신 4행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15156018.json
+        observed_at: '2026-10-02'
+        detail: total 4, rows 4
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15156018-06
+    kind: admin_note
+    value: "세부 부문 '해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)'의 가치: 물때·파고는 낚시·레저 안전 필수, 고수온·적조 특보는 양식 피해 직결. KHOA(바다누리) 자체 키, 관측소코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#ocean-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15156018-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156018-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 4
+  total_count: 4
+  ops_ok: 1/1
+  latency_ms: 106
+  run: probe/runs/15156018.json
+  stats: probe/stats/15156018.json
+  data: probe/data/15156018/
+status: active
+summary_user: 국립해양조사원이 전국 조석 예보지점의 하루치 고조·저조 정보(예측 시각과 조위, 극치구분)를 지점별로 담은 API다. 연안·항만 안전 점검이나 물때에 맞춘 낚시·어업·해상 작업 일정을 짜는 사람이 "오늘 이 지점의 만조와 간조는 언제, 조위는 얼마인가"를 확인할 때 쓴다. 예보지점 위도(lat)·경도(lot) 좌표로 다른 위치 기반 데이터와 이어 쓰고, 바다누리 자체 관측소코드 체계를 따르므로 타 기관 코드와는 별도 매핑이 필요하다.
+limits: 검증 호출에서 API 전체 건수가 4건, 수신 4행이었으므로 실제 응답 규모는 호출 조건에 따라 달라질 수 있다. 예보지점 코드와 요청일자를 지정해 1일 단위로 조회하는 구조이며, 실측 조인 키는 위도(lat) 좌표뿐이다. 활용신청은 자동승인되고 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15156018-01
+    - c-15156018-03
+    - c-15156018-04
+    - c-15156018-06
+  dropped_citations: 0

@@ -1,0 +1,195 @@
+# Dataset 15073861 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15073861'
+tier: verified
+title: 한국환경공단_에어코리아_대기오염정보
+sector: 환경기상/대기/air-quality
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15073861/openapi.do
+synonyms:
+  - 미세먼지
+  - 코로나
+  - 오존
+  - 초미세먼지
+  - 에어코리아
+  - 대기질 예보
+  - 측정소 실시간
+  - 통합대기환경지수
+  - 대기오염 측정
+description_portal: 각 측정소별 대기오염정보를 조회하기 위한 서비스로 기간별, 시도별 대기오염 정보와 통합대기환경지수 나쁨 이상 측정소 내역, 대기질(미세먼지/오존) 예보 통보 내역 등을 조회할 수 있다.api 별 상세기능으로는 측정소별 실시간 측정정보 조회, 통합대기환경지수 나쁨이상 측정소 목록조회, 시도별 실시간 측정정보조회, 대기질 예보통보 조회, 초미세먼지 주간예보 조회의 기능으로 이루어져 있습니다. ※ 운영계정으로 사용하고자 할 경우 "한국환경공단 에어코리아 OpenAPI 기술문서" 내 신청 가이드 참고
+team:
+  dept: 대기환경처 대기정책지원부
+services:
+  - op: /getMinuDustFrcstDspth
+    endpoint: https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMinuDustFrcstDspth
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: informCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - PM25
+        - PM10
+        - O3
+      stats:
+        unique: 3
+    - name: dataTime
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-01'
+        - '2026-09-30'
+        - '2026-09-29'
+      stats:
+        min: '2026-09-03'
+        max: '2026-10-02'
+        unique: 30
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2026-09-03 ~ 2026-10-02
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8096
+  rank_in_sector: 19
+  brm: 환경기상 - 대기
+  why: 전국 측정소별 실시간 대기오염·예보 핵심
+claims:
+  - id: c-15073861-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15073861.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15073861.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15073861-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-02 (관측일 기준 0일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15073861
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-02, lag 0
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15073861-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15073861.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15073861-04
+    kind: coverage
+    value: API 전체 건수 824 · 검증 수신 824행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2026-09-03 ~ 2026-10-02
+    evidence:
+      - type: measured
+        source: probe/runs/15073861.json
+        observed_at: '2026-10-02'
+        detail: total 824, rows 824
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15073861-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15073861-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15073861-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 824
+  total_count: 824
+  ops_ok: 1/1
+  latency_ms: 110
+  latest: '2026-10-02'
+  lag_days: 0
+  run: probe/runs/15073861.json
+  stats: probe/stats/15073861.json
+  data: probe/data/15073861/
+status: active
+summary_user: 한국환경공단 에어코리아가 제공하는 측정소별 대기오염 정보 API로, 측정소 단위의 실시간 측정값과 대기질(미세먼지·오존) 예보 통보 내역을 담는다. 검증 호출에서 전국 824행이 수신되었고 기간은 2026-09-03부터 2026-10-02까지다. 오늘 우리 동네 미세먼지가 어느 정도이고 예보가 어떤지 확인하려는 국민이나 분석가가 쓴다. 필드에서 확인되는 것은 예보 구분(informCode)과 측정 시각(dataTime)뿐이며 전역 조인 키가 없어서 다른 데이터와는 측정소 이름·코드 매핑이나 같은 기관의 코드로만 잇는다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 타 기관 데이터와 바로 결합할 수 없다. 개발계정은 일 500회로 호출이 제한되고 운영계정은 별도 신청이 필요하다. 검증 수신 기준 범위는 최근 약 한 달(824행)이므로 장기 이력 분석용으로는 확인된 바가 없다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15073861-01
+    - c-15073861-02
+    - c-15073861-03
+    - c-15073861-04
+    - c-15073861-06
+  dropped_citations: 0

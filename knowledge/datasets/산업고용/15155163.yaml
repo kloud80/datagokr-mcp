@@ -1,0 +1,607 @@
+# Dataset 15155163 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155163'
+tier: verified
+title: 행정안전부_자원환경_고압가스업 조회서비스
+sector: 산업고용/에너지및자원개발/energy-business-licenses
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155163/openapi.do
+synonyms:
+  - 고압가스
+  - 가스업
+  - 가스저장
+  - 가스제조
+  - 가스판매
+  - 고압가스 업소
+  - 고압가스 제조업
+  - 고압가스 판매업
+  - 고압가스 충전소
+  - 고압가스 인허가
+  - 가스 영업소 현황
+  - 고압가스 사업장
+  - 에너지 업종 인허가
+description_portal: '자원환경_고압가스업 데이터는 용기에 충전하는 것을 포함하여 고압가스를 제조,저장 및 판매하는 업소정보 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 고압가스업 인허가 정보를 일괄 취합하여 전국 데이터로 제공 - 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의- 해당 데이터 법령 소관기관 및 문의처 : 산업통상부 에너지안전과 / 044-203-3983 * 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 자원환경_고압가스업 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/high_pressure_gas/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 도로명주소 을(를) 포함하는 값
+      - name: cond[BPLC_SIE_USG_SE_NM::LIKE]
+        required: false
+        desc: 사업장부지용도구분명 을(를) 포함하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업자명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 자원환경_고압가스업 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/high_pressure_gas/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 삼성중공업(주)거제조선소
+        - (주)안산그린에너지피에프브이
+        - 에스케이에어플러스(주)
+      stats:
+        unique: 854
+    - name: BPLC_SIE_USG_SE_NM
+      title: 사업장부지용도구분명
+      type: code
+      null_rate: 0.894
+      sample_values:
+        - 공업용
+        - 기타
+        - 지정되지않음
+      stats:
+        unique: 20
+    - name: BZSTAT_SE_NM
+      title: 업태구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제조
+        - 저장소
+        - 판매
+      stats:
+        unique: 3
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.972
+      sample_values:
+        - '2026-03-11'
+        - '2026-03-09'
+        - '2026-03-06'
+      stats:
+        min: '2025-08-28'
+        max: '2026-07-07'
+        unique: 24
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.118
+      sample_values:
+        - '206870.680233772'
+        - '346399.237199992'
+        - '178930.88057768'
+      stats:
+        min: 2858.79494083613
+        p50: 226809.577805978
+        max: 427157.767271835
+        unique: 713
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.118
+      sample_values:
+        - '481580.016997166'
+        - '156840.927799368'
+        - '424299.254203865'
+      stats:
+        min: -28242.1367931392
+        p50: 348969.294444877
+        max: 525865.47460053
+        unique: 713
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-12-15 16:15:28'
+        - '2026-07-14 11:38:15'
+        - '2026-05-05 22:01:02'
+      stats:
+        min: '2025-12-15'
+        max: '2026-10-01'
+        unique: 527
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - U
+      stats:
+        unique: 2
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 5
+        unique: 5
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업중
+        - 폐업
+        - 휴업
+      stats:
+        unique: 5
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-30 18:37:34'
+        - '2026-09-29 16:00:51'
+        - '2026-09-29 15:18:02'
+      stats:
+        min: '2025-06-16'
+        max: '2026-09-30'
+        unique: 1000
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-07-25'
+        - '2026-06-15'
+        - '2026-06-01'
+      stats:
+        min: '2025-06-12'
+        max: '2026-10-01'
+        unique: 308
+    - name: LCTN_AREA
+      title: 소재지면적
+      type: number
+      null_rate: 0.957
+      sample_values:
+        - '20'
+        - '2935'
+        - '1.19'
+      stats:
+        min: 1.19
+        p50: 2935
+        max: 339974
+        unique: 40
+    - name: LOTNO_ADDR
+      title: 지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 경상남도 거제시 장평동 530 삼성중공업(주)거제조선소
+        - 경기도 양주시 고암동 593-1
+        - 경기도 평택시 고덕면 일원 A1-1BL (평택 첨단복합 일반산업단지)
+      stats:
+        unique: 827
+    - name: MNFTR_SE_NM
+      title: 제조구분명
+      type: code
+      null_rate: 0.279
+      sample_values:
+        - 냉동
+        - 충전
+        - 일반
+      stats:
+        unique: 4
+    - name: MNG_NO
+      title: 관리번호
+      type: number
+      semantic_type: pnu
+      null_rate: 0.0
+      sample_values:
+        - '2026535037402100012'
+        - '2026445014902100007'
+        - '2026571030202100001'
+      stats:
+        min: 1988445014902100224
+        p50: 2026335015602099968
+        max: 2026652017802200064
+        unique: 1000
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5710000'
+        - '3910000'
+        - '4050000'
+      stats:
+        min: 3000000
+        p50: 4495000
+        max: 6520000
+        unique: 171
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.266
+      sample_values:
+        - 전북특별자치도 완주군 봉동읍 완주산단5로 163, 현대자동차
+        - 경기도 평택시 삼성로 41 (고덕동)
+        - 경기도 평택시 진위면 동부대로 120, LG전자 평택칠러공장
+      stats:
+        unique: 628
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.267
+      sample_values:
+        - '53261'
+        - '17786'
+        - '18487'
+      stats:
+        min: 1412
+        p50: 31474
+        max: 63613
+        unique: 524
+    - name: ROBIZ_YMD
+      title: 재개업일자
+      type: date
+      null_rate: 0.985
+      sample_values:
+        - '2025-09-11'
+        - '2026-07-14'
+        - '2026-09-08'
+      stats:
+        min: '2025-09-11'
+        max: '2026-09-08'
+        unique: 14
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 5
+        unique: 5
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+        - 휴업
+      stats:
+        unique: 5
+    - name: TCBIZ_BGNG_YMD
+      title: 휴업시작일자(YYYYMMDD)
+      type: date
+      null_rate: 0.993
+      sample_values:
+        - '2026-09-15'
+        - '2026-09-03'
+        - '2026-07-30'
+      stats:
+        min: '2025-07-24'
+        max: '2026-09-15'
+        unique: 7
+    - name: TCBIZ_END_YMD
+      title: 휴업종료일자(YYYYMMDD)
+      type: date
+      null_rate: 0.993
+      sample_values:
+        - '2027-09-14'
+        - '2028-09-29'
+        - '2027-07-29'
+      stats:
+        min: '2026-01-29'
+        max: '2028-09-29'
+        unique: 7
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - MNG_NO
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2025-06-12 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6515
+  rank_in_sector: 176
+  brm: 산업고용 - 에너지및자원개발
+  why: LOCALDATA 고압가스업 API, 표준데이터와 같은 원장
+claims:
+  - id: c-15155163-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155163.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155163.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15155163-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15155163
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155163-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15155163.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 24개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155163-04
+    kind: coverage
+    value: API 전체 건수 30,537 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2025-06-12 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15155163.json
+        observed_at: '2026-10-02'
+        detail: total 30537, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155163-06
+    kind: admin_note
+    value: "세부 부문 '에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)'의 가치: LOCALDATA 에너지 업종 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155163-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155163-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155163-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155163.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155163-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15155163.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155163-12
+    kind: pitfall
+    value: 전수 30,537건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 31회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15155163.json
+        observed_at: '2026-10-02'
+        detail: total 30537 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 30537
+  ops_ok: 1/2
+  latency_ms: 106
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15155163.json
+  stats: probe/stats/15155163.json
+  data: probe/data/15155163/
+status: active
+summary_user: 전국 지자체가 관리하는 고압가스업(제조·저장·판매, 용기 충전 포함) 인허가 업소를 사업장 단위로 담은 건별 원천 데이터로, 전체 30,537건이며 인허가일자·영업상태·휴폐업일자·주소·좌표 필드를 둔다. 분석가나 지자체 담당자가 특정 지역에 영업 중인 고압가스 업소가 어디에 있고 언제 인허가를 받았는지 확인하는 데 쓴다. 지번주소·도로명주소(address) 키로 다른 주소 기반 데이터와, 관리번호(MNG_NO, pnu 키)로 필지 기반 자료와 잇고, 호출에 필요한 기준일자와 개방자치단체코드는 다른 데이터에서 먼저 받아 넘긴다.
+limits: 검증 때는 전체 30,537건 중 1,000행만 받았으므로 전량을 보려면 페이지를 31회 이상 반복해 호출해야 한다. 필수 파라미터인 기준일자(BASE_DATE)와 개방자치단체코드(OPN_ATMY_GRP_CD)는 다른 데이터의 코드라 먼저 확보해야 하며, 오퍼레이션 중 /history는 최소 파라미터로 응답이 없었다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15155163-03
+    - c-15155163-04
+    - c-15155163-10
+    - c-15155163-11
+    - c-15155163-12
+  dropped_citations: 0

@@ -361,8 +361,13 @@ def render(p: dict) -> str:
             v = _var(x)
             key = "pnu" if hub == PNU_HUB else "bjd_cd"
             line = f"# {j['edge']}: {_short(ds[x]['title'])} → {'필지(PNU)' if key == 'pnu' else '법정동'} · {rate}"
-            if t == "R-12":
-                code = f"{v}['pnu'] = [coord_to_pnu(a, b) for a, b in zip({v}[{cols[0]!r}], {v}[{cols[1]!r}])]"
+            cols = list(cols or [])
+            if not cols:
+                continue
+            if t == "R-12" and len(cols) < 2:
+                code = f"# 좌표 열 {cols[0]} 하나 — 위도·경도로 나눈 뒤 coord_to_pnu(위도, 경도)로 PNU를 붙인다"
+            elif t == "R-12":
+                code =f"{v}['pnu'] = [coord_to_pnu(a, b) for a, b in zip({v}[{cols[0]!r}], {v}[{cols[1]!r}])]"
             elif t == "R-13":
                 code = f"{v}['pnu'] = {v}[{cols[0]!r}].map(address_to_pnu)  # 주소 → 좌표 → PNU (행마다 브이월드 2회 호출)"
             elif t == "R-02":

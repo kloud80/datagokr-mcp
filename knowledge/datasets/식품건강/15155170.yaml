@@ -1,0 +1,720 @@
+# Dataset 15155170 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155170'
+tier: verified
+title: 행정안전부_식품_식품판매업(기타) 조회서비스
+sector: 식품건강/식품의약안전/food-business-licenses
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155170/openapi.do
+synonyms:
+  - 식품판매
+  - 마트
+  - 식품판매업
+  - 기타식품
+  - 판매업(기타)
+  - 마트 인허가
+  - 식품판매업 기타
+  - 식품 판매업소 현황
+  - 대형마트 영업신고
+  - 식품 인허가 업소
+  - 상권 분석 업소 정보
+  - 식품판매점 폐업 여부
+  - 식품판매업 좌표
+description_portal: '식품_식품판매업(기타) 데이터는 제과점, 즉석판매제조가공업, 유통판매업 등에 속하지 않고 마트와 같은 일정 규모 이상의 영업장에서 식품을 판매하는 업소정보 데이터로 인허가일자, 영업상태, 사업장명, 소재지주소 등의 데이터를 제공합니다.- 공공데이터 제공 표준 기준, 전국 자치단체에서 관리하는 식품판매업(기타) 인허가 정보를 일괄 취합하여 전국 데이터로 제공 - 자료는 동일한 서식과 용어로 정리하여 인허가 현황을 일관되게 안내- 해당 데이터에 대한 추가적인 자료 요청시 지자체 및 소관기관 담당자에게 문의- 해당 데이터 법령 소관기관 및 문의처 : 식품의약품안전처 식품안전정책과 / 043-719-2032* 좌표계 : 보정계수 안들어간 Bessel 중부원점TM(EPSG:5174)'
+team:
+  dept: 지역디지털협력과
+services:
+  - op: /info
+    name: 식품_식품판매업(기타) 데이터 조회
+    endpoint: https://apis.data.go.kr/1741000/other_food_retailers/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+      - name: cond[ROAD_NM_ADDR::LIKE]
+        required: false
+        desc: 도로명주소 을(를) 포함하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: false
+        desc: 개방자치단체코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /history
+    name: 식품_식품판매업(기타) 데이터 이력조회
+    endpoint: https://apis.data.go.kr/1741000/other_food_retailers/history
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: '한 페이지 결과 수(max: 100)'
+      - name: returnType
+        required: false
+        desc: 응답의 데이터 타입
+      - name: cond[BASE_DATE::EQ]
+        required: true
+        desc: 데이터기준일자(YYYYMMDD) 미만의 값(해당 일자기준의 상태값을 확인할 수 있습니다.)
+      - name: cond[LCPMT_YMD::GTE]
+        required: false
+        desc: 인허가일자 이상의 값(YYYYMMDD)
+      - name: cond[LCPMT_YMD::LT]
+        required: false
+        desc: 인허가일자 미만의 값(YYYYMMDD)
+      - name: cond[SALS_STTS_CD::EQ]
+        required: false
+        desc: 영업상태코드 와 일치하는 값
+      - name: cond[DAT_UPDT_PNT::GTE]
+        required: false
+        desc: 데이터갱신시점 이상의 값(YYYYMMDDHHMMSS)
+      - name: cond[DAT_UPDT_PNT::LT]
+        required: false
+        desc: 데이터갱신시점 미만의 값(YYYYMMDDHHMMSS)
+      - name: cond[OPN_ATMY_GRP_CD::EQ]
+        required: true
+        desc: 개방자치단체코드
+      - name: cond[BPLC_NM::LIKE]
+        required: false
+        desc: 사업장명 을(를) 포함하는 값
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: BIZPLC_SURRND_SE_NM
+      title: 영업장주변구분명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: BLDG_PSN_SE_NM
+      title: 건물소유구분명
+      type: code
+      null_rate: 0.169
+      sample_values:
+        - 자가
+        - 임대
+      stats:
+        unique: 2
+    - name: BPLC_NM
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 홈마트
+        - 다마트
+        - 제이마트
+      stats:
+        unique: 964
+    - name: BZSTAT_SE_NM
+      title: 업태구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타식품판매업
+      stats:
+        unique: 1
+    - name: CLSBIZ_YMD
+      title: 폐업일자(YYYYMMDD)
+      type: date
+      null_rate: 0.895
+      sample_values:
+        - '2026-08-31'
+        - '2026-05-22'
+        - '2025-06-09'
+      stats:
+        min: '2023-05-17'
+        max: '2026-09-30'
+        unique: 99
+    - name: CRD_INFO_X
+      title: 좌표정보(X)
+      type: number
+      null_rate: 0.08
+      sample_values:
+        - '411244.092532714'
+        - '198507.437120234'
+        - '214317.476808871'
+      stats:
+        min: 132822.155323755
+        p50: 212326.46993236552
+        max: 430396.109627902
+        unique: 891
+    - name: CRD_INFO_Y
+      title: 좌표정보(Y)
+      type: number
+      null_rate: 0.08
+      sample_values:
+        - '239828.465188877'
+        - '452641.178441629'
+        - '375244.154666648'
+      stats:
+        min: -26717.1541749772
+        p50: 366370.434381712
+        max: 555456.486341218
+        unique: 891
+    - name: DAT_UPDT_PNT
+      title: 데이터갱신시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-12-15 16:15:28'
+        - '2026-07-14 11:38:15'
+        - '2026-05-02 22:03:36'
+      stats:
+        min: '2025-12-15'
+        max: '2026-10-01'
+        unique: 310
+    - name: DAT_UPDT_SE
+      title: 데이터갱신구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - U
+      stats:
+        unique: 2
+    - name: DTL_SALS_STTS_CD
+      title: 상세영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: DTL_SALS_STTS_NM
+      title: 상세영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업
+        - 폐업
+      stats:
+        unique: 2
+    - name: FCLT_TOTAL_SCL
+      title: 시설총규모
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '487.31'
+        - '400'
+      stats:
+        min: 0
+        p50: 0
+        max: 10224
+        unique: 311
+    - name: FCTRY_OFJB_EMP_CNT
+      title: 공장사무직직원수
+      type: number
+      null_rate: 0.714
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: FCTRY_PRODWK_EMP_CNT
+      title: 공장생산직직원수
+      type: number
+      null_rate: 0.714
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: FCTRY_SLSPOS_EMP_CNT
+      title: 공장판매직직원수
+      type: number
+      null_rate: 0.714
+      sample_values:
+        - '0'
+        - '2'
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 2
+    - name: FML_PRCTR_CNT
+      title: 여성종사자수
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: GRD_SE_NM
+      title: 등급구분명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: GRNAMT
+      title: 보증액
+      type: number
+      null_rate: 0.998
+      sample_values:
+        - '50000000'
+        - '270000000'
+      stats:
+        min: 50000000
+        p50: 160000000
+        max: 270000000
+        unique: 2
+    - name: HDOFC_EMP_CNT
+      title: 본사직원수
+      type: number
+      null_rate: 0.712
+      sample_values:
+        - '0'
+        - '20'
+        - '16'
+      stats:
+        min: 0
+        p50: 0
+        max: 20
+        unique: 3
+    - name: HPG
+      title: 홈페이지
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LAST_MDFCN_PNT
+      title: 최종수정시점(YYYYMMDDHHMMSS)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-28 15:06:46'
+        - '2026-09-21 17:42:15'
+        - '2026-09-28 18:04:45'
+      stats:
+        min: '2023-02-27'
+        max: '2026-09-30'
+        unique: 1000
+    - name: LCPMT_YMD
+      title: 인허가일자(YYYYMMDD)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-01-27'
+        - '2025-09-12'
+        - '2025-07-09'
+      stats:
+        min: '2023-02-27'
+        max: '2026-09-28'
+        unique: 573
+    - name: LCTN_AREA
+      title: 소재지면적
+      type: number
+      null_rate: 0.024
+      sample_values:
+        - '396.00'
+        - '300.00'
+        - '630.00'
+      stats:
+        min: 0
+        p50: 703.1600000000001
+        max: 180283
+        unique: 908
+    - name: LCTN_ZIP
+      title: 소재지우편번호
+      type: string
+      null_rate: 0.239
+      sample_values:
+        - 790-911
+        - 446-916
+        - 486-903
+      stats:
+        unique: 626
+    - name: LOTNO_ADDR
+      title: 지번주소
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 울산광역시 북구 천곡동 506-2 금상천화
+        - 서울특별시 종로구 안국동 175-3
+        - 대구광역시 동구 용계동 702-4
+      stats:
+        unique: 982
+    - name: MLT_UTZTN_BSNSSP_YN
+      title: 다중이용업소여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: ML_PRCTR_CNT
+      title: 남성종사자수
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: MNG_NO
+      title: 관리번호
+      type: string
+      semantic_type: pnu
+      null_rate: 0.0
+      sample_values:
+        - 5875000-114-2026-00001
+        - 6510000-114-2026-00003
+        - 5130000-114-2026-00003
+      stats:
+        unique: 1000
+    - name: MRNT_AMOUNT
+      title: 월세액
+      type: number
+      null_rate: 0.999
+      sample_values:
+        - '4600000'
+      stats:
+        min: 4600000
+        p50: 4600000
+        max: 4600000
+        unique: 1
+    - name: OPN_ATMY_GRP_CD
+      title: 개방자치단체코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5710000'
+        - '4050000'
+        - '5530000'
+      stats:
+        min: 3000000
+        p50: 4160000
+        max: 6520000
+        unique: 190
+    - name: ROAD_NM_ADDR
+      title: 도로명주소
+      type: string
+      semantic_type: address
+      null_rate: 0.003
+      sample_values:
+        - 울산광역시 북구 가재길 107, 지상1층 (천곡동)
+        - 인천광역시 검단구 가우리들로27번길 23, 1층 (당하동)
+        - 서울특별시 종로구 율곡로 39, 1층 (안국동)
+      stats:
+        unique: 980
+    - name: ROAD_NM_ZIP
+      title: 도로명우편번호
+      type: number
+      null_rate: 0.094
+      sample_values:
+        - '36135'
+        - '31077'
+        - '31203'
+      stats:
+        min: 1117
+        p50: 28218.5
+        max: 63584
+        unique: 803
+    - name: SALS_STTS_CD
+      title: 영업상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: SALS_STTS_NM
+      title: 영업상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영업/정상
+        - 폐업
+      stats:
+        unique: 2
+    - name: SNTTN_BZSTAT_NM
+      title: 위생업태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타식품판매업
+      stats:
+        unique: 1
+    - name: TELNO
+      title: 전화번호
+      type: string
+      null_rate: 0.573
+      sample_values:
+        - 02-380-5894
+        - 070-8611-9658
+        - 02-380-9349
+      stats:
+        unique: 404
+    - name: TRDTN_BSNSSP_DSGN_NO
+      title: 전통업소지정번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: TRDTN_BSNSSP_PRINC_FD
+      title: 전통업소주된음식
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: WTRSPPL_FCLT_SE_NM
+      title: 급수시설구분명
+      type: code
+      null_rate: 0.775
+      sample_values:
+        - 상수도전용
+        - 지하수전용
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - MNG_NO
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2023-02-27 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6778
+  rank_in_sector: 197
+  brm: 식품건강 - 식품의약안전
+  why: 마트 등 식품판매업 전국 인허가 원장, 상권 활용
+claims:
+  - id: c-15155170-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155170.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155170.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15155170-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전)
+    evidence:
+      - type: measured
+        source: probe/synthesis#15155170
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155170-03
+    kind: key
+    value: '실측 조인 키: address(LOTNO_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15155170.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 39개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155170-04
+    kind: coverage
+    value: API 전체 건수 13,831 · 검증 수신 1,000행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2023-02-27 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15155170.json
+        observed_at: '2026-10-02'
+        detail: total 13831, rows 1000
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155170-06
+    kind: admin_note
+    value: "세부 부문 '식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)'의 가치: 전국 음식점·식품업소 전수에 가까운 원장 — 상권 분석의 기본, 인허가번호·사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#food-business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155170-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155170-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155170-10
+    kind: pitfall
+    value: 필수 파라미터 cond[BASE_DATE::EQ], cond[OPN_ATMY_GRP_CD::EQ]는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155170.json
+        observed_at: '2026-10-02'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155170-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /history'
+    evidence:
+      - type: measured
+        source: probe/runs/15155170.json
+        observed_at: '2026-10-02'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15155170-12
+    kind: pitfall
+    value: 전수 13,831건 중 검증은 1,000행만 받음 — 전량 수집은 페이지 반복 14회 이상
+    evidence:
+      - type: measured
+        source: probe/runs/15155170.json
+        observed_at: '2026-10-02'
+        detail: total 13831 rows 1000
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 1000
+  total_count: 13831
+  ops_ok: 1/2
+  latency_ms: 101
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15155170.json
+  stats: probe/stats/15155170.json
+  data: probe/data/15155170/
+status: active
+summary_user: 제과점·즉석판매제조가공업·유통판매업에 속하지 않는, 마트 같은 일정 규모 이상 영업장의 식품판매업(기타) 인허가 업소를 건별로 담은 전국 데이터로, 전체 13,831건이며 인허가일자·영업상태·사업장명·주소·좌표를 포함한다. 상권 분석가나 창업 예정자가 특정 지역에 마트형 식품판매 업소가 몇 곳 있고 영업 중인지 확인하는 질문에 쓴다. 지번주소(LOTNO_ADDR)·도로명주소(ROAD_NM_ADDR)를 주소 키로, 관리번호(MNG_NO)를 pnu 키로 삼아 다른 주소 기반 데이터와 이어 쓴다.
+limits: 필수 파라미터인 기준일자(BASE_DATE)와 개방자치단체코드(OPN_ATMY_GRP_CD)는 다른 데이터에서 먼저 받아 넘겨야 한다. 검증 호출은 1,000행만 받았으며 전량 13,831건을 수집하려면 페이지를 14회 이상 반복해야 하고, 오퍼레이션 중 /history는 최소 파라미터로 응답이 없었다. 수록 기간은 2023-02-27~2026-10-01이다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15155170-03
+    - c-15155170-04
+    - c-15155170-06
+    - c-15155170-10
+    - c-15155170-11
+    - c-15155170-12
+  dropped_citations: 0

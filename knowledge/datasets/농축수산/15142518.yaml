@@ -1,0 +1,290 @@
+# Dataset 15142518 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142518'
+tier: verified
+title: 해양수산부 국립해양조사원_조위관측소 실측 풍향/풍속 조회
+sector: 농축수산/해양수산·어촌/ocean-observation
+agency:
+  id: '1192136'
+  name: 해양수산부 국립해양조사원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142518/openapi.do
+synonyms:
+  - 풍향
+  - 풍속
+  - 조위관측소
+  - 기상
+  - 실시간
+  - 조위관측소 바람
+  - 풍향 풍속
+  - 해상 바람
+  - 실시간 풍속
+  - 바다누리
+  - 국립해양조사원 기상관측
+  - 항만 풍속
+  - 연안 풍향
+description_portal: 이 데이터는 해양수산부 국립해양조사원에서 조위관측소 자동기상관측장비 기반 실시간 풍향, 풍속 측정 정보를 제공하기 위해 제작되었습니다.  관측소 코드, 관측일자 등 값을 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 관측소명, 관측일시, 관측소의 위도/경도 위치정보 및 측정된 풍속과 풍향 값 정보로 구성되어 있습니다.  본 데이터는 해양 기상 변화 분석, 연안 및 항만 주변의 선박 운항 안전성 평가, 해양 연구, 기상 정보 기반의 예측 모델 구축, 해양사고 발생 시 원인 분석과 같은 분야에 활용될 수 있습니다.
+team:
+  dept: 해양예보과
+services:
+  - op: /GetSurveyWindApiService
+    name: 조위관측소 실측 풍향/풍속
+    endpoint: https://apis.data.go.kr/1192136/surveyWind/GetSurveyWindApiService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: type
+        required: true
+        example: json
+        desc: json/xml 중 택 1
+      - name: obsCode
+        required: true
+        example: DT_0001
+        desc: 관측소코드
+      - name: reqDate
+        required: false
+        example: '20241022'
+        desc: '조위관측일 기본값: 현재일시'
+      - name: min
+        required: false
+        example: '60'
+        desc: '출력되는 시간 간격기본값: 1'
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: '페이지 번호 기본값: 1'
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: '한 페이지당 데이터 개수 기본값: 10, 최대값: 300'
+      - name: include
+        required: false
+        desc: 출력하고자 하는 항목명 (ex lat,lot)
+      - name: exclude
+        required: false
+        desc: 출력 제외하고자하는 항목명 (ex lat,lot)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: obsvtrNm
+      title: 관측소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천
+      stats:
+        unique: 1
+    - name: lat
+      title: 위도
+      type: number
+      semantic_type: coord
+      null_rate: 0.0
+      sample_values:
+        - '37.45194'
+      stats:
+        min: 37.45194
+        p50: 37.45194
+        max: 37.45194
+        unique: 1
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.59222'
+      stats:
+        min: 126.59222
+        p50: 126.59222
+        max: 126.59222
+        unique: 1
+    - name: obsrvnDt
+      title: 관측일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-01 00:00:00'
+        - '2026-10-01 01:00:00'
+        - '2026-10-01 02:00:00'
+      stats:
+        min: '2026-10-01'
+        max: '2026-10-01'
+        unique: 24
+    - name: wndrct
+      title: 풍향
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '335.0'
+        - '330.0'
+        - '342.0'
+      stats:
+        min: 273
+        p50: 336
+        max: 357
+        unique: 20
+    - name: wspd
+      title: 풍속
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7.8'
+        - '7.4'
+        - '6.0'
+      stats:
+        min: 1.8
+        p50: 6.25
+        max: 7.9
+        unique: 20
+  foreign_keys:
+    - fields:
+        - lat
+      reference:
+        key: coord
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+  temporal: 2026-10-01 ~ 2026-10-01
+cycle: default
+classification:
+  subsector_name: 해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7344
+  rank_in_sector: 27
+  brm: 농축수산 - 해양수산·어촌
+  why: 조위관측소 실시간 풍향·풍속 API
+claims:
+  - id: c-15142518-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-02 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142518.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142518.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15142518-02
+    kind: cadence
+    value: 실측 최신 행 날짜 2026-10-01 (관측일 기준 1일 전) — 검증 호출 조건(reqDate=20261001) 기준이라 데이터 자체의 최신성과 다를 수 있음
+    evidence:
+      - type: measured
+        source: probe/synthesis#15142518
+        observed_at: '2026-10-02'
+        detail: latest 2026-10-01, lag 1
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142518-03
+    kind: key
+    value: '실측 조인 키: coord(lat)'
+    evidence:
+      - type: measured
+        source: probe/stats/15142518.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142518-04
+    kind: coverage
+    value: API 전체 건수 24 · 검증 수신 24행 · 범위 전국 · 행정단위 개별(주소·좌표) · 기간 2026-10-01 ~ 2026-10-01
+    evidence:
+      - type: measured
+        source: probe/runs/15142518.json
+        observed_at: '2026-10-02'
+        detail: total 24, rows 24
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15142518-06
+    kind: admin_note
+    value: "세부 부문 '해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)'의 가치: 물때·파고는 낚시·레저 안전 필수, 고수온·적조 특보는 양식 피해 직결. KHOA(바다누리) 자체 키, 관측소코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#ocean-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142518-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142518-08
+    kind: admin_note
+    value: wave2 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공
+  probed_at: '2026-10-02'
+  channel: portal
+  rows: 24
+  total_count: 24
+  ops_ok: 1/1
+  latency_ms: 35
+  latest: '2026-10-01'
+  lag_days: 1
+  run: probe/runs/15142518.json
+  stats: probe/stats/15142518.json
+  data: probe/data/15142518/
+status: active
+summary_user: 조위관측소 자동기상관측장비로 잰 풍향·풍속을 관측소·관측일시별 건 단위로 담은 API이며, 검증 호출에서는 전국 24행(2026-10-01 하루치)이 수신됐다. 연안·항만 선박 운항 안전을 살피는 사람이나 해양 기상 분석가가 특정 날짜 관측소의 바람 상태를 확인하는 질문에 쓴다. 위도(lat)가 좌표 조인 키이고 관측소 위치(위도·경도)를 담고 있어 같은 해양 관측·예보 계열의 다른 관측소 자료와 좌표나 관측소 코드로 이어 쓴다.
+limits: 검증 호출은 reqDate=20261001 조건이라 최신 행 날짜(2026-10-01)가 데이터 자체의 최신성을 뜻하지는 않는다. 검증 수신은 24행, 하루치에 한정되어 장기 추세 분석 범위는 확인되지 않았다. 개발계정은 일 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15142518-01
+    - c-15142518-02
+    - c-15142518-03
+    - c-15142518-04
+    - c-15142518-06
+  dropped_citations: 0
