@@ -13,6 +13,7 @@ import { api, type Plan, type Stats, type Step, type Usage } from './api'
 import { Markdown } from './md'
 import { PlanPanel, type PlanTab } from './PlanPanel'
 import { DatasetDrawer } from './DatasetDrawer'
+import { Credit } from './Credit'
 import type { Trust } from './Trust'
 
 // 2열 — 왼쪽 대화(입력창은 열 바닥에 고정, 대화만 스크롤) · 오른쪽 전략(헤더·탭 고정, 본문만 스크롤).
@@ -138,6 +139,7 @@ export function App() {
           <div className="pds-brand-row">
             <h1 className="pds-brand">공공데이터 전략 도우미</h1>
             <a className="pds-docs-link" href="#/docs">Docs</a>
+            <a className="pds-docs-link" href="#/mcp">MCP</a>
           </div>
           <AgentTooltip content={statsText} position="bottom">
             <button type="button" className="pds-info" aria-label="지식 체계 규모">ⓘ</button>
@@ -211,7 +213,8 @@ export function App() {
             disabled={busy}
             placeholder={busy ? '답을 만드는 중…' : '예) 성수동 상권 변화를 월 단위로 추적하고 싶어'}
           />
-          <span className="pds-ev">Enter 보내기 · Shift+Enter 줄바꿈 · 근거(claim)가 있는 사실만 답합니다</span>
+          <span className="pds-ev">Enter로 보내기 · Shift+Enter로 줄바꿈 — 답변에는 직접 불러 보거나 법령·검토로 확인된 내용만 씁니다</span>
+          <Credit compact />
         </div>
       </section>
 

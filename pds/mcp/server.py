@@ -25,8 +25,11 @@ server = MCPServer(name="datagokr-mcp", title="공공데이터 전략 (data.go.k
 
 @server.tool(description="목표(자연어)에 맞는 공공데이터 조합·조인 경로·파이프라인·실행 코드를 만든다. explain=true면 LLM이 근거 claim을 인용해 이유를 쓴다.")
 def plan_public_data_strategy(goal: str, explain: bool = False) -> str:
+    import os
+
     from pds.strategy.plan import plan
-    return json.dumps(plan(goal, use_llm=explain), ensure_ascii=False, default=str)
+    allow = os.environ.get("PDS_MCP_ALLOW_LLM", "1" if os.environ.get("PDS_MCP_STDIO") else "0") == "1"  # 공개 서버에선 LLM 비용 차단
+    return json.dumps(plan(goal, use_llm=explain and allow), ensure_ascii=False, default=str)
 
 
 @server.tool(description="데이터셋 검색. tier: verified | candidate | catalog")
@@ -57,6 +60,9 @@ def dataset_resource(dsid: str) -> str:
 
 
 def main(http: bool = False, port: int = 8766) -> None:
+    import os
+    if not http:
+        os.environ.setdefault("PDS_MCP_STDIO", "1")  # 내 컴퓨터(stdio)에서는 explain 허용
     sindex.get()
     if http:
         server.run(transport="streamable-http", port=port)

@@ -18,6 +18,7 @@ import { DataTable, level } from './docs/DataTable'
 import { SiteTable } from './docs/SiteTable'
 import { fmtCount } from './JoinMap'
 import { TrustLegend } from './Trust'
+import { Credit } from './Credit'
 
 // Docs — 이 시스템을 설명하는 문서. 숫자는 /api/docs에서 실시간으로 (지식 체계가 늘면 같이 바뀐다).
 
@@ -184,6 +185,7 @@ export function Docs() {
       <header className="doc-top">
         <a className="doc-back" href="#/">← 공공데이터 전략 도우미</a>
         <h1 className="doc-title">Docs</h1>
+        <a className="doc-small" href="#/mcp">MCP</a>
         <span className="doc-small">{d ? `지식 버전 ${d.knowledge_version} · 실시간 집계` : '불러오는 중…'}</span>
       </header>
       <div className="doc-layout">
@@ -417,6 +419,7 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
               <p className="doc-small">건수 표기 예: {fmtCount(2300238)} = 2,300,238건.</p>
             </Section>
             <div className="doc-end"><AgentButton variant="secondary" onClick={() => go('philosophy')}>맨 위로</AgentButton></div>
+            <Credit />
           </>)}
         </main>
       </div>

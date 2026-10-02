@@ -10,6 +10,26 @@
 어떤 데이터가 실제로 호출되는가, 지금도 갱신되는가, 무엇과 무엇이 이어지는가, 이 코드값은 무슨 뜻인가.
 이 판단을 사람이 매번 다시 하지 않도록, 그리고 AI가 그럴듯하게 지어내지 않도록, **검증된 지식으로 쌓아 두고 꺼내 쓰는 것**이 이 프로젝트다.
 
+### 바로 써 보기 — 테스트 서버 `http://bv.bigvalue.co.kr:9001`
+
+| 무엇 | 주소 |
+|---|---|
+| 웹 채팅 (목표를 말하면 데이터·조인·실행 코드) | http://bv.bigvalue.co.kr:9001 |
+| Docs (사상·구성·관계·커버리지, 실시간 집계) | http://bv.bigvalue.co.kr:9001/#/docs |
+| MCP 가이드 | http://bv.bigvalue.co.kr:9001/#/mcp |
+| 원격 MCP (Streamable HTTP) | `http://bv.bigvalue.co.kr:9001/mcp` |
+| REST API · 레퍼런스(Swagger) | `http://bv.bigvalue.co.kr:9001/api/…` · http://bv.bigvalue.co.kr:9001/api/reference |
+
+```bash
+claude mcp add --transport http datagokr http://bv.bigvalue.co.kr:9001/mcp     # Claude Code에 MCP 연결
+curl -s -X POST http://bv.bigvalue.co.kr:9001/api/plan -H 'Content-Type: application/json' \
+  -d '{"goal": "성수동 상권 변화를 월 단위로 추적하고 싶어", "use_llm": false}'    # 전략 API
+```
+
+테스트 서버는 가용성·사용량을 보장하지 않는다. 원격 MCP는 읽기 전용이라 인증이 없고, LLM 비용이 드는 설명(explain)은 꺼 두었다.
+
+Created by **BigValue Kloud** & **Claude Code**
+
 ---
 
 ## 목차

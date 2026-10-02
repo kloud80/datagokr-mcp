@@ -8,6 +8,7 @@
   GET  /api/datasets/{id}    Dataset 상세 + 설명서(markdown)
   GET  /api/codes            코드표 목록 · /api/codes/{id}?q= 코드 조회
   GET  /api/stats            지식 체계 규모
+  GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지·데이터별 표)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
@@ -39,11 +40,13 @@ async def lifespan(_app):
         from pds.service import docs
         docs.build()
     threading.Thread(target=_warm, daemon=True).start()
-    yield
+    from pds.mcp.server import server as mcp_server
+    async with mcp_server.session_manager.run():  # /mcp (원격 MCP) 세션 관리자 — 마운트한 앱의 lifespan은 따로 돌지 않는다
+        yield
 
 
 app = FastAPI(title="datagokr-mcp", version="0.1.0", description="data.go.kr 공공데이터 전략 시스템 — 목표 → 데이터·조인·코드",
-              lifespan=lifespan)
+              lifespan=lifespan, docs_url="/api/reference", redoc_url=None, openapi_url="/api/openapi.json")  # 화면의 #/docs와 겹치지 않게
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.add_middleware(GZipMiddleware, minimum_size=2000)  # Docs 집계(수백 KB)를 압축해서
 WEB = config.ROOT / "web"
@@ -67,6 +70,14 @@ def home():
     if not built.exists():
         return PlainTextResponse("웹 화면이 빌드되지 않았습니다 — cd frontend && npm install && npm run build", status_code=503)
     return FileResponse(built)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    f = DIST / "favicon.ico"
+    if not f.exists():
+        raise HTTPException(404)
+    return FileResponse(f, media_type="image/x-icon")
 
 
 @app.post("/api/chat")
@@ -183,3 +194,19 @@ def api_stats():
             "edges": dict(Counter(e["rel"] for e in ix.edges)), "measured_edges": sum(1 for e in ix.edges if e.get("verified")),
             "contexts": len(ix.contexts), "recipes": len(ix.recipes), "code_lists": len(ix.codes), "keys": len(ix.keys),
             "mappings": {m["id"]: m["match_rate"] for m in ix.mappings.values()}}
+
+
+# ── 원격 MCP (streamable HTTP) — http://<서버>/mcp
+#   상태 없는(stateless) JSON 응답. 도구는 지식 체계 읽기만 하고 사용자 키를 다루지 않는다.
+#   LLM 비용이 드는 설명(explain=true)은 PDS_MCP_ALLOW_LLM=1일 때만 (기본 꺼짐).
+#   모든 경로를 받는 마운트라 맨 끝에 둔다 — 위의 라우트가 먼저 처리된다.
+def _mount_mcp() -> None:
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    from pds.mcp.server import server as mcp_server
+    mcp_app = mcp_server.streamable_http_app(streamable_http_path="/mcp", stateless_http=True, json_response=True,
+                                             transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
+    app.mount("/", mcp_app)
+
+
+_mount_mcp()
