@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+import os
 import datetime as dt
 import json
 import time
@@ -20,7 +21,7 @@ from pds import config
 from pds.schema import Dataset, GROUNDED
 from pds.schema import store
 
-MODEL = "claude-opus-5-5"
+MODEL = os.environ.get("PDS_DRAFT_MODEL") or "claude-opus-5-5"  # 대량(2차 확대)은 claude-sonnet-5-5로 비용 절반
 LOG = config.ROOT / "probe" / "llm"
 PROMPT = config.ROOT / "prompts" / "dataset_summary.md"
 
