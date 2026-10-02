@@ -77,6 +77,7 @@ export function App() {
     const history = [...turns.filter((t) => t.status !== 'failed').map(({ role, content }) => ({ role, content })), { role: 'user', content: q }]
     setDraft('')
     setTurns((ts) => [...ts, { role: 'user', content: q }, { role: 'assistant', content: '', steps: [], status: 'running' }])
+    window.gtag?.('event', 'chat_question', { turn: Math.floor(history.length / 2) + 1, chars: q.length })  // 질문 내용은 보내지 않는다
     const patch = (f: (t: Turn) => Turn) => setTurns((ts) => ts.map((t, i) => (i === ts.length - 1 ? f(t) : t)))
     let ver: number | undefined
     try {

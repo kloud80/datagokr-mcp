@@ -35,7 +35,7 @@ export function Mcp() {
             AI가 목표를 받으면 <b>plan_public_data_strategy</b>로 데이터 조합·조인 경로·실행 코드를 받아 답하고,
             필요하면 데이터 상세나 코드값을 조회합니다. 조인은 선언·실측된 것만 돌려줍니다.
           </p>
-          <div className="doc-cards3">
+          <div className="doc-cards-stack">
             <div className="doc-card"><AgentChip variant="live">원격</AgentChip><b className="doc-mono">{MCP_URL}</b><p>Streamable HTTP · 상태 없음 · JSON 응답. 설치 없이 주소만 넣으면 됩니다.</p></div>
             <div className="doc-card"><AgentChip variant="primary">내 컴퓨터</AgentChip><b className="doc-mono">python -m pds mcp</b><p>저장소를 받아 stdio로 실행. 설명(explain)까지 쓰려면 이쪽 + 내 Claude 키.</p></div>
             <div className="doc-card"><AgentChip variant="neutral">REST API</AgentChip><b className="doc-mono">{ORIGIN}/api/…</b><p>MCP가 아닌 일반 HTTP. 레퍼런스: <a href="/api/reference" target="_blank" rel="noreferrer">/api/reference</a></p></div>
