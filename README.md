@@ -234,7 +234,7 @@ python -m pds serve --host 0.0.0.0 --port 9001         # 웹 채팅 + API
 
 **웹 화면**은 `frontend/`(React 19 + Vite, BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트)에서 빌드한다.
 `cd frontend && npm install && npm run build` → `web/dist`를 서버가 `/`에서 서빙한다. `@bv-ds/*`는 사내 레지스트리
-패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다 — 빌드가 없으면 단순판 `web/index.html`이 대신 뜬다.
+패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다. API(`/api/*`)는 빌드 없이도 동작한다.
 개발 중에는 `npm run dev`(5173, `/api`는 9001로 프록시).
 
 **MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `get_dataset` ·

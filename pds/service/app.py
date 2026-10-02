@@ -1,6 +1,6 @@
 """서비스 API + 웹 채팅 — `python -m pds serve` (기본 http://127.0.0.1:8765).
 
-  GET  /                     웹 채팅 — frontend/ 빌드(web/dist, BV 디자인 시스템). 빌드가 없으면 web/index.html
+  GET  /                     웹 채팅 — frontend/ 빌드(web/dist, BV 디자인 시스템)
   POST /api/chat             {messages:[{role,content}]} → {reply, plans, trace, usage}
   POST /api/chat/stream      같은 입력 → SSE: step(단계 진행) · plan(전략 먼저) · done(답) · error
   POST /api/plan             {goal, use_llm?} → 전략 응답 (KNOWLEDGE-SPEC §4)
@@ -55,7 +55,9 @@ class PlanIn(BaseModel):
 @app.get("/")
 def home():
     built = DIST / "index.html"
-    return FileResponse(built if built.exists() else WEB / "index.html")
+    if not built.exists():
+        return PlainTextResponse("웹 화면이 빌드되지 않았습니다 — cd frontend && npm install && npm run build", status_code=503)
+    return FileResponse(built)
 
 
 @app.post("/api/chat")
