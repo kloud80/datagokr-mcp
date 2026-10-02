@@ -213,6 +213,19 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
     approval = {"자동승인": "auto", "심의": "review"}.get((apply or {}).get("심의여부", ""), "unknown")
     traffic = {"dev": int(m.daily_traffic_dev)} if _v(m.daily_traffic_dev) and str(m.daily_traffic_dev).isdigit() else {}
     out = []
+    if run.get("kind") == "external" and run.get("site"):  # pds/probe/external_sites.py 기록 — 호출 URL·파라미터가 그대로 있다
+        site = run["site"]
+        sec = {"www.vworld.kr": {"scheme": "apiKey", "in": "query", "name": "key"},
+               "open.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"}, "www.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"},
+               "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
+        issuer = {"www.vworld.kr": "vworld.kr", "www.law.go.kr": "open.law.go.kr", "openapi.seoul.go.kr:8088": "data.seoul.go.kr"}.get(site, site)
+        for o in run.get("ops") or []:
+            if not o.get("url"):
+                continue
+            out.append({"op": o.get("op"), "name": o.get("op"), "endpoint": o["url"], "method": "GET", "security": sec | {"issuer": issuer},
+                        "params": [{"name": k, "required": True, "example": str(v)[:80]} for k, v in (o.get("params") or {}).items()],
+                        "approval": "external", "format": ["json"], "error_style": "http200_body_code", "verified_ok": bool(o.get("ok"))})
+        return [{k: v for k, v in s.items() if v not in (None, [], {})} for s in out]
     if run.get("channel") == "external":
         site = run.get("site")
         tpl = EXTERNAL.get(site)

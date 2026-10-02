@@ -27,19 +27,15 @@ description_portal: 전산화된 지적도 및 임야도의 도면상 경계점�
 team:
   dept: 국가공간정보센터
 services:
-  - op: req/data
-    name: req/data LP_PA_CBND_BUBUN
-    endpoint: https://api.vworld.kr/req/data
+  - op: 연속지적도WFS조회
+    name: 연속지적도WFS조회
+    endpoint: https://api.vworld.kr/ned/wfs/getCtnlgsSpceWFS
     method: GET
     security:
       scheme: apiKey
       in: query
       name: key
       issuer: vworld.kr
-    paging:
-      page: page
-      size: size
-      max_size: 1000
     approval: external
     format:
       - json
@@ -47,93 +43,15 @@ services:
     verified_ok: true
 schema:
   fields:
-    - name: gosi_year
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '2025'
-      stats:
-        min: 2025
-        p50: 2025
-        max: 2025
-        unique: 1
-    - name: pnu
-      type: number
-      semantic_type: pnu
-      null_rate: 0.0
-      sample_values:
-        - '1111011000100010020'
-        - '1111010200100370000'
-        - '1111010200100360000'
-      stats:
-        min: 1111010100100370048
-        p50: 1111010400101980032
-        max: 1111011900100009984
-        unique: 300
-    - name: jibun
+    - name: '{http://www.opengis.net/gml}coordinates'
       type: string
       null_rate: 0.0
       sample_values:
-        - 92대
-        - 100대
-        - 59대
+        - 1.415491808547056E7,4454923.7309824 1.415491771466021E7,4454929.05098238 1.41549
+        - 1.415487854233215E7,4455091.94863426 1.415487936756422E7,4455090.31458157 1.4154
+        - 1.415497363938234E7,4456862.82678134 1.415508565831547E7,4456804.50229684 1.4155
       stats:
-        unique: 226
-    - name: bonbun
-      type: string
-      null_rate: 0.0
-      sample_values:
-        - '52'
-        - '21'
-        - '59'
-      stats:
-        unique: 150
-    - name: bubun
-      type: code
-      null_rate: 0.7867
-      sample_values:
-        - 3도
-        - 2도
-        - '1'
-      stats:
-        unique: 46
-    - name: addr
-      type: string
-      null_rate: 0.0
-      sample_values:
-        - 서울특별시 종로구 누하동 1-20
-        - 서울특별시 종로구 신교동 37
-        - 서울특별시 종로구 신교동 36
-      stats:
-        unique: 300
-    - name: gosi_month
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '01'
-      stats:
-        min: 1
-        p50: 1
-        max: 1
-        unique: 1
-    - name: jiga
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '2422000'
-        - '4252000'
-        - '9370000'
-      stats:
-        min: 1461000
-        p50: 5111000
-        max: 11840000
-        unique: 166
-  foreign_keys:
-    - fields:
-        - pnu
-      reference:
-        key: pnu
-      evidence: measured
+        unique: 1004
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
@@ -151,10 +69,11 @@ classification:
 claims:
   - id: c-15123899-01
     kind: access
-    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. None 실호출 1/1 성공
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
     evidence:
       - type: measured
         source: probe/runs/15123899.json
+        observed_at: '2026-10-02'
         detail: ops_ok 1/1
       - type: admin_review
         source: knowledge/key_issuers.yaml
@@ -163,6 +82,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
+    valid_until: '2027-04-03'
   - id: c-15123899-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -173,28 +93,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15123899-03
     kind: key
-    value: '실측 조인 키: pnu(pnu)'
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15123899.json
-        detail: 컬럼 8개 값 패턴 판정
+        observed_at: '2026-10-02'
+        detail: 컬럼 1개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15123899-04
     kind: coverage
     value: 검증 수신 300행 · 범위 전국 · 행정단위 필지·건물
     evidence:
       - type: measured
         source: probe/runs/15123899.json
+        observed_at: '2026-10-02'
         detail: total None, rows 300
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15123899-20
     kind: legal_basis
     value: "법 체계 층 '국토 정보 원장 (공간정보·지적·건축물)': 국가공간정보기본법·공간정보관리법(측량·지적)·부동산공시법(공시지가)·건축법(건축물대장·인허가)"
@@ -244,12 +169,14 @@ claims:
     evidence:
       - type: measured
         source: knowledge/targets.json
+        observed_at: '2026-10-02'
         detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
 verification:
   verdict: 성공(외부·브이월드)
+  probed_at: '2026-10-02'
   channel: external
   rows: 300
   ops_ok: 1/1

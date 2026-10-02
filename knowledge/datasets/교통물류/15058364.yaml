@@ -1,0 +1,181 @@
+# Dataset 15058364 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15058364'
+tier: verified
+title: 서울특별시_실시간 도로 소통 정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058364/openapi.do
+synonyms:
+  - 도로
+  - 도로 소통 정보
+  - 도로 정보
+  - 교통상황
+  - 교통량
+  - 실시간 교통정보
+  - 도로 소통
+  - 링크 속도
+  - 통행시간
+  - 여행시간
+  - TOPIS
+  - 서울 교통 OpenAPI
+  - 정체 구간
+description_portal: '해당 데이터는 서울시 실시간 도로 소통 정보 OpenAPI입니다. 데이터의 원본 시스템은 서울시 교통정보 시스템(https://topis.seoul.go.kr)입니다.요청인자 : 인증키, 요청파일타입, 서비스명, 요청시작위치, 요청종료위치, 링크 아이디출력값 : 총 데이터 건수(정상조회 시 출력됨), 요청결과 코드, 요청결과 메시지, 링크 아이디, 속도, 여행 시간※ 바로가기 링크 클릭 시 서울 열린데이터광장 개방 데이터로 이동합니다. 열린데이터광장에서 제공하는 오픈API를 사용하기 위해서는 먼저 인증키를 발급받으셔야 합니다.'
+team:
+  dept: 데이터전략과
+services:
+  - op: TrafficInfo
+    name: TrafficInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/TrafficInfo/1/100/1220003800/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ERROR-301
+      stats:
+        unique: 1
+    - name: MESSAGE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 파일타입 값이 누락 혹은 유효하지 않습니다. 요청인자 중 TYPE을 확인하십시오.
+      stats:
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8007
+  rank_in_sector: 64
+  brm: 교통물류 - 도로
+  why: 서울 링크별 실시간 소통 정보
+claims:
+  - id: c-15058364-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058364.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15058364-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058364-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058364.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058364-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058364.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058364-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058364-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058364-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058364.json
+  stats: probe/stats/15058364.json
+  data: probe/data/15058364/
+status: active
+summary_user: 서울시 교통정보 시스템(TOPIS)이 제공하는 도로 링크별 실시간 속도와 통행시간(여행 시간)을 조회하는 외부 오픈API이다. 운전자나 교통 분석가가 특정 도로 구간이 지금 얼마나 막히는지 확인하는 데 쓰고, 조회 결과를 쌓아 두면 상습 정체 구간 분석에도 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓴다.
+limits: data.seoul.go.kr 인증키가 필요하며 포털 활용신청과는 별개로 발급받아야 한다. 이 API 자체는 현재 시점의 값을 주므로 과거 이력은 직접 적재해야 분석할 수 있다. 필드 목록에는 응답 결과 코드(CODE)와 메시지(MESSAGE)만 확인되어 다른 항목의 의미는 명세에서 별도로 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15058364-01
+    - c-15058364-03
+    - c-15058364-04
+    - c-15058364-06
+  dropped_citations: 0

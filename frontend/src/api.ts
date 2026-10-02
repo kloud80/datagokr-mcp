@@ -168,3 +168,63 @@ export const api = {
   chatStream,
   dataset: (id: string) => fetch(`/api/datasets/${id}`).then((r) => json<DatasetOut>(r)),
 }
+
+// ── Docs (GET /api/docs) — pds/service/docs.py
+export interface DocsRow {
+  id: string
+  title: string
+  agency?: string | null
+  sector: string
+  tier: string
+  channel?: string | null
+  kind?: string | null
+  rows?: number | null
+  spatial?: string | null
+  unit?: string | null
+  lag?: number | null
+  keys: string[]
+  fields: number
+  edges: number
+  rate?: number | null
+  claims: number
+}
+
+export interface DocsData {
+  knowledge_version: string
+  totals: Record<string, number>
+  rounds: Record<string, Record<string, number>>
+  waves: Record<string, Record<string, number>>
+  sectors: { sector: string; verified: number; candidate: number; with_edge: number }[]
+  channels: Record<string, number>
+  edges: { by_rel: Record<string, number>; by_rule: Record<string, number>; rate: Record<string, number>; hubs: { id: string; name: string; edges: number }[]; via_mapping: number }
+  rules: Record<string, string>
+  claims: { by_kind: Record<string, number>; by_evidence: Record<string, number>; grounded: Record<string, number> }
+  keys: { id: string; name: string; type: string; datasets: number }[]
+  contexts: { id: string; name: string; dimension?: string; question?: string; members: number; recipe: boolean }[]
+  mappings: { id: string; rate?: number | null }[]
+  gaps: { name: string; status?: string; reason?: string }[]
+  coverage: Record<'spatial' | 'unit' | 'fresh' | 'rows', Record<string, number>>
+  datasets: DocsRow[]
+  examples: Record<'dataset' | 'edge' | 'rule' | 'context', string>
+  sites?: SiteCoverage | null
+}
+
+export const docsApi = () => fetch('/api/docs').then((r) => json<DocsData>(r))
+
+export interface SiteRow {
+  host: string
+  name: string
+  api: number
+  file: number
+  total: number
+  targets: number
+  verified: number
+  key: '보유·검증' | '보유' | '미보유' | '키 불필요'
+  env: string
+  how: string
+}
+
+export interface SiteCoverage {
+  summary: { catalog: number; portal_direct: number; link_total: number; sites: number; api_sites: number; by_key: Record<string, { sites: number; datasets: number }> }
+  sites: SiteRow[]
+}

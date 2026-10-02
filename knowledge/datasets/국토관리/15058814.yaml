@@ -1,0 +1,216 @@
+# Dataset 15058814 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15058814'
+tier: verified
+title: 국토교통부_광역시도
+sector: 국토관리/지역및도시/unclassified
+domain: 국토관리/미분류
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058814/openapi.do
+synonyms:
+  - 행정구역
+  - 법정동구역
+  - 행정구역도
+  - 광역시도 경계
+  - 시도 경계
+  - 행정구역 경계
+  - vworld
+  - 행정구역 코드
+  - 시도 코드
+  - 지도 API
+description_portal: 오픈API로 행정구역도(광역시도, 시군구, 읍면동, 리)의 정보를 공간정보(지도) 제공 RestAPI로 호출하면 json/xml로 데이터를 반환합니다
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_C_ADSIDO_INFO
+    name: LT_C_ADSIDO_INFO
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_C_ADSIDO_INFO
+      - name: geomFilter
+        required: true
+        example: BOX(126.95,37.52,127.10,37.60)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ctp_eng_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Seoul
+      stats:
+        unique: 1
+    - name: ctprvn_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: ctp_kor_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: survey-boundary
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.755
+  rank_in_sector: 10
+  brm: 국토관리 - 지역및도시
+  why: 전국 광역시도 경계, 조인 기준
+claims:
+  - id: c-15058814-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058814.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15058814-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058814-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058814.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058814-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15058814.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058814-20
+    kind: legal_basis
+    value: "법 체계 층 '미분류 (재구성 후 잔여)': "
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/미분류
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15058814-06
+    kind: admin_note
+    value: '[국토관리 재구성 — 국토기본법 계층 · 결정] BRM 지역및도시·주택을 법 체계에 따라 다시 나눔. 부문 위에 계층(domain)을 새로 둠 — `sector_tree.yaml`, KG `domain` 노드·`in_domain`/`domain_of`/`related_sector` 엣지 (스키마 변경 없음, ARCHITECTURE §2 표에 추가).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L527
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058814-07
+    kind: admin_note
+    value: wave3 p1 · 이동 제안 → 국토관리 - 공간정보
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058814.json
+  stats: probe/stats/15058814.json
+  data: probe/data/15058814/
+status: active
+summary_user: 국토교통부가 vworld 공간정보 RestAPI로 제공하는 행정구역도 데이터로, 광역시도를 중심으로 시군구·읍면동·리 단위 경계 정보를 json/xml로 돌려준다. 지도 서비스나 분석 담당자가 특정 광역시도의 행정구역 경계와 이름(국문·영문)을 지도에 표시하거나 확인할 때 쓴다. 광역시도 코드(ctprvn_cd)가 있으나 전역 조인 키는 확인되지 않아, 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 연결한다.
+limits: vworld.kr 인증키(query 파라미터 key)가 따로 필요하며 포털 활용신청과는 별개다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터셋과 바로 결합되지 않는다. 범위는 전국이며 행정단위는 읍면동까지 확인되었다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15058814-01
+    - c-15058814-03
+    - c-15058814-04
+  dropped_citations: 0

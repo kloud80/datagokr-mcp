@@ -1,0 +1,210 @@
+# Dataset 15057802 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15057802'
+tier: verified
+title: 서울교통공사_역간거리 및 소요시간
+sector: 교통물류/도로/road-construction
+agency:
+  id: B553766
+  name: 서울교통공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057802/openapi.do
+synonyms:
+  - 역간거리
+  - 지하철소요시간
+  - 지하철
+  - 거리
+  - 시간
+  - 지하철 역간거리
+  - 역 간 소요시간
+  - 구간 거리
+  - 누계거리
+  - 지하철 ETA
+  - 서울지하철 구간 시간
+  - 노선별 역 거리
+description_portal: '서울지하철 각 **역 구간의 거리(km)와 평균 소요시간(분)**을 제공하는 API입니다. 노선/역명을 기준으로 조회하면, 해당 노선에서의 구간 거리, 구간 소요시간, 그리고 노선 기점부터의 누계거리 정보를 표준화된 형식으로 받을 수 있습니다. 길찾기·ETA 산정, 시간표/지도 서비스, 운행분석, 연구용 모델링(혼잡·에너지·정시성) 등 다양한 서비스에서 기본 지표로 활용됩니다.<활용사례>ETA/길찾기: 구간별 평균 소요시간(HM)과 거리(DIST_KM)로 도착예정시간 산정, 우회 경로 비교지도·모빌리티: 누계거리(ACML_DIST)를 활용한 노선 거리 보정 및 역간 거리 시각화서비스 기획/정책: 장거리 구간·장시간 구간을 식별해 혼잡 완화, 배차 조정, 정시성 분석에 활용연구/모델링: 구간거리 × 운행패턴으로 에너지·탄소 배출 추정, 혼잡·수요 예측 모델 입력값으로 사용'
+team:
+  dept: 수송운영처
+services:
+  - op: StationDstncReqreTimeHm
+    name: StationDstncReqreTimeHm
+    endpoint: http://openapi.seoul.go.kr:8088/json/StationDstncReqreTimeHm/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SBWY_ROUT_LN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '1'
+      stats:
+        min: 1
+        p50: 2
+        max: 4
+        unique: 4
+    - name: SBWY_STNS_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 시청
+        - 종로3가
+        - 신설동
+      stats:
+        unique: 94
+    - name: HM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1:30
+        - 1:00
+        - 2:00
+      stats:
+        unique: 6
+    - name: DIST_KM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.8'
+        - '0.9'
+        - '1.0'
+      stats:
+        min: 0
+        p50: 1
+        max: 2.3
+        unique: 18
+    - name: ACML_DIST
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.1'
+        - '5.9'
+      stats:
+        min: 0
+        p50: 19.15
+        max: 60.2
+        unique: 91
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: metro-ridership
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8075
+  rank_in_sector: 53
+  brm: 교통물류 - 도로
+  why: 지하철 역간거리·소요시간이라 철도 부문
+claims:
+  - id: c-15057802-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057802.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15057802-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057802-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057802.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057802-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057802.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15057802-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057802-07
+    kind: admin_note
+    value: wave3 p3 · 이동 제안 → 교통물류 - 철도
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057802.json
+  stats: probe/stats/15057802.json
+  data: probe/data/15057802/
+status: active
+summary_user: 서울지하철 노선별 역 구간의 거리(km)와 평균 소요시간(분), 노선 기점부터의 누계거리를 구간 단위로 담은 서울교통공사 외부 API 데이터이다. 길찾기·도착예정시간(ETA) 산정이나 장거리·장시간 구간 식별 같은 운행·정시성 분석에서 "이 두 역 사이는 몇 km, 몇 분인가"를 확인하는 데 쓴다. 필드에 노선명(SBWY_ROUT_LN)과 역명(SBWY_STNS_NM)이 있으나 전역 조인 키는 없어, 다른 지하철 데이터와는 노선·역명 매핑이나 같은 기관 코드로 이어 쓴다.
+limits: data.seoul.go.kr 인증키(KEY)가 필요하며 포털 활용신청과는 별개이다. 전역 조인 키가 없어 다른 데이터와 결합하려면 역명·노선명을 직접 매핑해야 한다. 갱신은 이벤트 주기로 생성 후 불변이라고만 확인되며, 실시간 운행 소요시간은 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15057802-01
+    - c-15057802-02
+    - c-15057802-03
+    - c-15057802-04
+  dropped_citations: 0

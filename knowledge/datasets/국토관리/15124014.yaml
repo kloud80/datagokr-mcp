@@ -29,8 +29,8 @@ description_portal: 개별주택가격정보와 연속지적도를 융복합하�
 team:
   dept: 국가공간정보센터
 services:
-  - op: ned/data/getIndvdLandPriceAttr
-    name: ned/data/getIndvdLandPriceAttr
+  - op: 개별공시지가속성조회
+    name: 개별공시지가속성조회
     endpoint: https://api.vworld.kr/ned/data/getIndvdLandPriceAttr
     method: GET
     security:
@@ -38,10 +38,19 @@ services:
       in: query
       name: key
       issuer: vworld.kr
-    paging:
-      page: page
-      size: size
-      max_size: 1000
+    params:
+      - name: pnu
+        required: true
+        example: '1165010800113320000'
+      - name: format
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
     approval: external
     format:
       - json
@@ -50,92 +59,84 @@ services:
 schema:
   fields:
     - name: mnnmSlno
-      type: string
+      type: number
       null_rate: 0.0
       sample_values:
-        - '37'
-        - '55'
-        - '92'
+        - '1332'
       stats:
-        unique: 54
+        min: 1332
+        p50: 1332
+        max: 1332
+        unique: 1
     - name: pblntfDe
       type: date
       null_rate: 0.0
       sample_values:
-        - '1991-06-29'
+        - '1992-06-01'
         - '1993-05-22'
-        - '1998-06-30'
+        - '1994-06-30'
       stats:
-        min: '1990-08-30'
-        max: '2026-04-30'
-        unique: 36
+        min: '1992-06-01'
+        max: '2017-05-31'
+        unique: 26
     - name: stdLandAt
       type: code
       null_rate: 0.0
       sample_values:
         - N
-        - Y
       stats:
-        unique: 2
+        unique: 1
     - name: stdrYear
       type: number
       null_rate: 0.0
       sample_values:
-        - '1991'
+        - '1992'
         - '1993'
-        - '1998'
+        - '1994'
       stats:
-        min: 1990
-        p50: 1995
-        max: 2026
-        unique: 35
+        min: 1992
+        p50: 2004.5
+        max: 2017
+        unique: 26
     - name: pnu
       type: number
       semantic_type: pnu
       null_rate: 0.0
       sample_values:
-        - '1111011000100010020'
-        - '1111010200100370000'
-        - '1111010200100360000'
+        - '1165010800113320000'
       stats:
-        min: 1111010100100370048
-        p50: 1111010200100290048
-        max: 1111011000100009984
-        unique: 60
+        min: 1165010800113319936
+        p50: 1165010800113319936
+        max: 1165010800113319936
+        unique: 1
     - name: lastUpdtDt
       type: date
       null_rate: 0.0
       sample_values:
         - '2023-08-10'
-        - '2024-01-20'
-        - '2024-07-10'
       stats:
         min: '2023-08-10'
-        max: '2026-05-21'
-        unique: 8
+        max: '2023-08-10'
+        unique: 1
     - name: ldCode
       type: number
       semantic_type: bjd_cd
       null_rate: 0.0
       sample_values:
-        - '1111010200'
-        - '1111010100'
-        - '1111010400'
+        - '1165010800'
       code_list: bjd_cd
       stats:
-        min: 1111010100
-        p50: 1111010200
-        max: 1111011000
-        unique: 7
+        min: 1165010800
+        p50: 1165010800
+        max: 1165010800
+        unique: 1
     - name: ldCodeNm
       type: code
       null_rate: 0.0
       sample_values:
-        - 서울특별시 종로구 신교동
-        - 서울특별시 종로구 청운동
-        - 서울특별시 종로구 효자동
+        - 서울특별시 서초구 서초동
       stats:
-        unique: 7
+        unique: 1
     - name: regstrSeCodeNm
       type: code
       null_rate: 0.0
@@ -148,24 +149,23 @@ schema:
       null_rate: 0.0
       sample_values:
         - '01'
-        - '07'
       stats:
         min: 1
         p50: 1
-        max: 7
-        unique: 2
+        max: 1
+        unique: 1
     - name: pblntfPclnd
       type: number
       null_rate: 0.0
       sample_values:
-        - '895000'
-        - '900000'
-        - '630000'
+        - '1880000'
+        - '1810000'
+        - '1830000'
       stats:
-        min: 186000
-        p50: 1200000
-        max: 4797000
-        unique: 217
+        min: 1700000
+        p50: 3875000
+        max: 11400000
+        unique: 20
     - name: regstrSeCode
       type: number
       null_rate: 0.0
@@ -204,10 +204,11 @@ classification:
 claims:
   - id: c-15124014-01
     kind: access
-    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. None 실호출 1/1 성공
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
     evidence:
       - type: measured
         source: probe/runs/15124014.json
+        observed_at: '2026-10-02'
         detail: ops_ok 1/1
       - type: admin_review
         source: knowledge/key_issuers.yaml
@@ -216,38 +217,45 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
+    valid_until: '2027-04-03'
   - id: c-15124014-02
     kind: cadence
     value: 실측 최신 행 날짜 2026-05-21 (관측일 기준 132일 전)
     evidence:
       - type: measured
         source: probe/synthesis#15124014
+        observed_at: '2026-10-02'
         detail: latest 2026-05-21, lag 132
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15124014-03
     kind: key
     value: '실측 조인 키: pnu(pnu), bjd_cd(ldCode)'
     evidence:
       - type: measured
         source: probe/stats/15124014.json
+        observed_at: '2026-10-02'
         detail: 컬럼 12개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15124014-04
     kind: coverage
     value: 검증 수신 599행 · 범위 전국 · 행정단위 필지·건물
     evidence:
       - type: measured
         source: probe/runs/15124014.json
+        observed_at: '2026-10-02'
         detail: total None, rows 599
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-03'
   - id: c-15124014-20
     kind: legal_basis
     value: "법 체계 층 '국토 정보 원장 (공간정보·지적·건축물)': 국가공간정보기본법·공간정보관리법(측량·지적)·부동산공시법(공시지가)·건축법(건축물대장·인허가)"
@@ -286,12 +294,14 @@ claims:
     evidence:
       - type: measured
         source: knowledge/targets.json
+        observed_at: '2026-10-02'
         detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
 verification:
   verdict: 성공(외부·브이월드)
+  probed_at: '2026-10-02'
   channel: external
   rows: 599
   ops_ok: 1/1

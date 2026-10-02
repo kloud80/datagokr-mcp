@@ -1,0 +1,198 @@
+# Dataset 3068943 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '3068943'
+tier: verified
+title: 국토교통부_교통CCTV
+sector: 재난안전/안전관리/crime-prevention
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/3068943/openapi.do
+synonyms:
+  - 국가공간
+  - CCTV
+  - 교통
+  - 교통 CCTV 위치
+  - 도로 CCTV
+  - CCTV 위치도
+  - 경찰청 CCTV
+  - vworld CCTV
+  - 교통 감시 카메라
+  - CCTV 설치 정보
+description_portal: 경찰청의 CCTV위치도 교통CCTV의 도형, 속성 정보를 조회WFS보다 간결한 형태의 데이터 조회 기능을 제공하며, 복잡한 Query가 필요할 경우 WFS를 사용하도록 권고함CCTV의 위치, 설치 정보만 제공합니다. 영상정보는 다른 API를 참고하셔야 합니다. RestAPI로 호출하면 json/xml로 데이터를 반환합니다
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_P_UTISCCTV
+    name: LT_P_UTISCCTV
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_P_UTISCCTV
+      - name: geomFilter
+        required: true
+        example: BOX(126.95,37.52,127.10,37.60)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: locate
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성동구청
+        - 경기도 오산시청
+        - 연천군 청산면
+      stats:
+        unique: 4
+    - name: cctvname
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성동구청 쓰레기단속
+        - 서울특별시 성동구청 교통단속
+        - 경기도 오산시청 재난재해
+      stats:
+        unique: 6
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 방범·생활안전 인프라 (CCTV·안전비상벨·안심지킴이집·CPTED·보안등·생활안전지도)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7702
+  rank_in_sector: 40
+  brm: 재난안전 - 안전관리
+  why: 전국 교통CCTV 위치 정보
+claims:
+  - id: c-3068943-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/3068943.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-3068943-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-3068943-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3068943.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-3068943-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/3068943.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-3068943-06
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3068943-07
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/3068943.json
+  stats: probe/stats/3068943.json
+  data: probe/data/3068943/
+status: active
+summary_user: 경찰청 CCTV위치도 가운데 교통CCTV의 위치(도형)와 설치 속성 정보를 조회하는 외부 API로, 범위는 전국이다. 도로 위 교통CCTV가 어디에 설치돼 있는지 파악하려는 분석가나 서비스 개발자가 쓰며, 영상 자체는 이 데이터에 없다. 실측 컬럼(locate, cctvname)에서 전역 조인 키를 찾지 못해 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓴다.
+limits: 영상정보는 제공하지 않고 CCTV의 위치와 설치 정보만 담으며, 호출에는 포털 활용신청과 별개로 vworld.kr 인증키(query 파라미터 key)가 필요하다. 전역 조인 키가 없어 다른 데이터와 결합할 때 이름·코드 매핑 작업이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-3068943-01
+    - c-3068943-03
+    - c-3068943-04
+  dropped_citations: 0

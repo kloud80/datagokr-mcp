@@ -1,0 +1,178 @@
+# Dataset 15056827 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15056827'
+tier: verified
+title: 서울특별시_교통량 지점 정보
+sector: 교통물류/도로/traffic-volume
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056827/openapi.do
+synonyms:
+  - 교통량
+  - 도로교통
+  - 돌발사고
+  - 도시고속도로 교통량
+  - 교통량 조사지점
+  - 상시 조사 지점
+  - 수시 조사 지점
+  - 영업소 입출구
+  - TCS
+  - 서울 교통량 API
+description_portal: 서울시 도시고속도로 교통정보시스템에서 제공하는 도시고속도로에 관한 통계데이터 정보입니다
+team:
+  dept: 교통정보과
+services:
+  - op: SpotInfo
+    name: SpotInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/SpotInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ERROR-301
+      stats:
+        unique: 1
+    - name: MESSAGE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 파일타입 값이 누락 혹은 유효하지 않습니다. 요청인자 중 TYPE을 확인하십시오.
+      stats:
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7539
+  rank_in_sector: 180
+  brm: 교통물류 - 도로
+  why: 서울 도시고속도로 교통량 지점
+claims:
+  - id: c-15056827-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056827.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15056827-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056827-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056827.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056827-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056827.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15056827-06
+    kind: admin_note
+    value: "세부 부문 '교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)'의 가치: 조사지점·영업소 단위 교통량 = 상권·입지 분석의 표준 입력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-volume
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056827-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056827-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056827.json
+  stats: probe/stats/15056827.json
+  data: probe/data/15056827/
+status: active
+summary_user: 서울시 도시고속도로 교통정보시스템이 제공하는 교통량 조사 지점 정보를 담은 외부 API 데이터이다. 상권·입지를 분석하는 사람이 조사지점·영업소 단위 교통량이 어느 지점에서 집계되는지 확인하는 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓴다.
+limits: data.seoul.go.kr 인증키(KEY)가 필요하며 포털 활용신청과는 별개이다. 필드 목록에 응답 결과 코드(CODE)와 메시지(MESSAGE)만 확인되어 지점별 세부 항목은 이 자료로 파악할 수 없고, 범위는 전국·비공간 단위로만 표시되어 있다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15056827-01
+    - c-15056827-03
+    - c-15056827-04
+    - c-15056827-06
+  dropped_citations: 0

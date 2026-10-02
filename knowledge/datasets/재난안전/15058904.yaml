@@ -1,0 +1,214 @@
+# Dataset 15058904 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15058904'
+tier: verified
+title: 국토교통부_소방서관할구역
+sector: 재난안전/안전관리/fire-rescue
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058904/openapi.do
+synonyms:
+  - 소방관할구역소방구역
+  - 소방
+  - 구역
+  - 소방서 관할
+  - 관할 소방서
+  - 소방 관할구역
+  - 소방서 현황
+  - 119 관할
+  - 소방서 경계
+  - vworld 소방
+description_portal: 소속 각 소방서의 현황과 관할구역 정보를 제공하기 위해 구축되었습니다. 소방서의 기본 현황과 관할 행정구역 정보를 제공합니다.
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_C_USFSFFB
+    name: LT_C_USFSFFB
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_C_USFSFFB
+      - name: geomFilter
+        required: true
+        example: BOX(126.95,37.52,127.10,37.60)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ward_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1107103'
+        - '1107102'
+        - '1109101'
+      stats:
+        min: 1100106
+        p50: 1107104.5
+        max: 1127401
+        unique: 46
+    - name: ward_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전농119안전센터
+        - 청량리119안전센터
+        - 종암119안전센터
+      stats:
+        unique: 46
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7944
+  rank_in_sector: 23
+  brm: 재난안전 - 안전관리
+  why: 전국 소방서 관할구역 경계
+claims:
+  - id: c-15058904-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058904.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15058904-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058904-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058904.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058904-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058904.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058904-06
+    kind: admin_note
+    value: "세부 부문 '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)'의 가치: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fire-rescue
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058904-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058904-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058904.json
+  stats: probe/stats/15058904.json
+  data: probe/data/15058904/
+status: active
+summary_user: 전국 소방서의 기본 현황과 관할 행정구역을 담은 외부 API 데이터로, 필드는 관할 구역 식별자(ward_id)와 이름(ward_nm)이다. 특정 지역을 어느 소방서가 관할하는지 알고 싶은 국민이나 소방 분석가가 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아 이름·코드 매핑이나 같은 기관 코드로만 다른 소방 데이터(소방용수, 119안전센터 등)와 잇는다.
+limits: vworld.kr 인증키(query 파라미터 key)가 포털 활용신청과 별개로 필요하다. 전역 조인 키가 없어 다른 데이터와는 이름·코드 매핑을 직접 해야 하며, 필드 명세상 의미와 코드표는 입력에 없어 해석에 주의한다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15058904-01
+    - c-15058904-03
+    - c-15058904-04
+    - c-15058904-06
+    - c-15058904-07
+  dropped_citations: 0

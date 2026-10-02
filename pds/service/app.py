@@ -8,6 +8,7 @@
   GET  /api/datasets/{id}    Dataset 상세 + 설명서(markdown)
   GET  /api/codes            코드표 목록 · /api/codes/{id}?q= 코드 조회
   GET  /api/stats            지식 체계 규모
+  GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지·데이터별 표)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
 from __future__ import annotations
@@ -20,6 +21,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -31,12 +33,19 @@ from pds.strategy.plan import jsonable
 @asynccontextmanager
 async def lifespan(_app):
     sindex.get()  # 색인을 먼저 올려 첫 요청이 기다리지 않게
+    import threading
+
+    def _warm():  # Docs 집계도 미리 (첫 열람이 오래 걸리지 않게)
+        from pds.service import docs
+        docs.build()
+    threading.Thread(target=_warm, daemon=True).start()
     yield
 
 
 app = FastAPI(title="datagokr-mcp", version="0.1.0", description="data.go.kr 공공데이터 전략 시스템 — 목표 → 데이터·조인·코드",
               lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(GZipMiddleware, minimum_size=2000)  # Docs 집계(수백 KB)를 압축해서
 WEB = config.ROOT / "web"
 DIST = WEB / "dist"  # cd frontend && npm run build
 if (DIST / "assets").is_dir():
@@ -157,6 +166,13 @@ def api_code(cid: str, q: str | None = None, limit: int = 50):
     if cid not in ix.codes:
         raise HTTPException(404, "없는 코드표")
     return {"code_list": ix.codes[cid], "values": ix.code_values(cid, q, limit)}
+
+
+@app.get("/api/docs")
+def api_docs():
+    """Docs 화면 — 지식 체계 규모·관계·커버리지 집계와 데이터별 표 (pds/service/docs.py)."""
+    from pds.service import docs
+    return docs.build()
 
 
 @app.get("/api/stats")

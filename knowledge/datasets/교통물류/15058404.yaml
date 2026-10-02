@@ -1,0 +1,220 @@
+# Dataset 15058404 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15058404'
+tier: verified
+title: 서울교통공사_노선별 지하철역 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: B553766
+  name: 서울교통공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058404/openapi.do
+synonyms:
+  - 노선
+  - 지하철노선
+  - 지하철정보
+  - 역명
+  - 외국어 지하철역명
+  - 지하철
+  - 도시철도
+  - 서울지하철
+  - 지하철역 조회
+  - 역명 검색
+  - 전철역코드
+  - 호선별 역 목록
+  - 역 외부코드
+  - 지하철 영문 역명
+  - 서울 지하철 노선
+description_portal: 서울교통공사_노선별 지하철역 정보 API는 역명/호선명으로 지하철역 정보를 조회할 수 있는 API입니다.(역명/호선명으로 조회 시 호선, 외부코드, 전철역코드 및 역명, 영문 역명, 중문 역명, 일문 역명 정보 제공)[유의사항]- 줄임말을 사용한 검색은 불가합니다(2, 4, 5호선 동대문역사문화공원역 검색 시 - 동역사, 동역문 검색 불가)- 부역명(병기역명) 검색은 불가하며, 검색 결과에도 노출되지 않습니다.- 역명만 입력하여야 검색이 가능합니다.(1, 4호선 동대문역 검색 시 - 동대문역 검색 불가 → 동대문 검색 가능)
+team:
+  dept: 정보운영센터
+services:
+  - op: SearchSTNBySubwayLineInfo
+    name: SearchSTNBySubwayLineInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/SearchSTNBySubwayLineInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: STATION_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1707'
+        - '1709'
+        - '1815'
+      stats:
+        min: 150
+        p50: 1718.5
+        max: 1919
+        unique: 100
+    - name: STATION_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 명학
+        - 군포
+        - 부개
+      stats:
+        unique: 100
+    - name: STATION_NM_ENG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Myeonghak
+        - Gunpo
+        - Bugae
+      stats:
+        unique: 100
+    - name: LINE_NUM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 01호선
+      stats:
+        unique: 1
+    - name: FR_CODE
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - P148
+        - P150
+        - '151'
+      stats:
+        unique: 100
+    - name: STATION_NM_CHN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 鸣鹤
+        - 军浦
+        - 富开
+      stats:
+        unique: 100
+    - name: STATION_NM_JPN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - タンジョン
+        - ミョンハク
+        - クンポ
+      stats:
+        unique: 99
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: rail-network
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8089
+  rank_in_sector: 50
+  brm: 교통물류 - 도로
+  why: 지하철역 정보라 철도 부문이 맞음, 역주소와 중복 소지
+claims:
+  - id: c-15058404-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058404.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15058404-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058404-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058404.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058404-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058404.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15058404-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058404-07
+    kind: admin_note
+    value: wave3 p2 · 이동 제안 → 교통물류 - 철도
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058404.json
+  stats: probe/stats/15058404.json
+  data: probe/data/15058404/
+status: active
+summary_user: 서울교통공사 지하철역을 역명 또는 호선명으로 조회해 호선, 외부코드(FR_CODE), 전철역코드(STATION_CD)와 한글·영문·중문·일문 역명을 돌려주는 외부 API다. 시민이나 분석가가 특정 역이 몇 호선인지, 역의 외국어 표기가 무엇인지 확인하는 질문에 쓴다. 전역에서 통하는 조인 키는 확인되지 않아, 같은 기관 코드나 역명·코드 매핑으로만 다른 철도 데이터와 잇는다.
+limits: "data.seoul.go.kr 인증키(KEY)가 필요하며 포털 활용신청과는 별개다. 줄임말과 부역명(병기역명) 검색은 안 되고 역명만 넣어야 하며(예: '동대문역'이 아니라 '동대문'), 전역 조인 키가 없어 다른 데이터와는 이름·코드 매핑이 필요하다."
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15058404-01
+    - c-15058404-03
+  dropped_citations: 0

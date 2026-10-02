@@ -1,0 +1,200 @@
+# Dataset 15015052 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15015052'
+tier: verified
+title: 국토교통부_골프장현황도
+sector: 문화관광/체육/sports-business-registry
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15015052/openapi.do
+synonyms:
+  - 골프장
+  - 현황도
+  - 지도
+  - 골프장 현황
+  - 골프장 위치
+  - 골프장 지도
+  - 체육시설업
+  - 토양지하수정보시스템
+  - vworld
+description_portal: 토양지하수정보시스템에 등록되어 관리되는 골프장현황지도 RestAPI로 호출하면 json/xml로 데이터를 반환합니다
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_P_SGISGOLF
+    name: LT_P_SGISGOLF
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_P_SGISGOLF
+      - name: geomFilter
+        required: true
+        example: BOX(124.5,33.0,131.0,38.7)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: golf_name
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 어등산CC
+        - 광릉cc
+        - 레이크사이드CC
+      stats:
+        unique: 94
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 체육시설업 등록·신고 (골프·헬스·당구·체육도장·스키 등, LOCALDATA)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7637
+  rank_in_sector: 3
+  brm: 문화관광 - 체육
+  why: 전국 골프장 현황도 공간 데이터, 좌표 조인 가능
+claims:
+  - id: c-15015052-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15015052.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15015052-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15015052-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15015052.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15015052-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15015052.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15015052-06
+    kind: admin_note
+    value: "세부 부문 '체육시설업 등록·신고 (골프·헬스·당구·체육도장·스키 등, LOCALDATA)'의 가치: 민간 체육시설 명부 = 상권 데이터와 같은 축, 인허가번호·사업자번호. 헬스장 개폐업은 상권 신호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#sports-business-registry
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15015052-07
+    kind: admin_note
+    value: '[문화관광 - 체육 · 결정] 공공 체육시설·체육시설업 등록·생활체육 프로그램·전문체육(선수·대회)까지만. 경륜·경정·토토, 스포츠 산업, 안전·윤리 배제 (`sports-deferred`, `sports-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L576
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15015052-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15015052.json
+  stats: probe/stats/15015052.json
+  data: probe/data/15015052/
+status: active
+summary_user: 국토교통부가 토양지하수정보시스템에 등록해 관리하는 전국 골프장 현황 지도를 vworld RestAPI로 호출해 json/xml로 돌려받는 데이터이며, 필드에는 골프장명(golf_name)이 확인된다. 골프장 현황을 지도 기반으로 확인하려는 분석가나 사업자가 전국 골프장의 위치·분포를 보는 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓰며, 민간 체육시설 명부(인허가번호·사업자번호 축)와는 이름 대조로 연결을 검토한다.
+limits: vworld.kr 인증키(query 파라미터 key)가 별도로 필요하며 포털 활용신청과는 따로 발급받아야 한다. 전역 조인 키가 없어 다른 데이터와 자동 결합이 되지 않고, 이름 매칭 시 오매칭 여부를 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15015052-01
+    - c-15015052-03
+    - c-15015052-04
+    - c-15015052-06
+  dropped_citations: 0

@@ -1,0 +1,239 @@
+# Dataset 15130221 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15130221'
+tier: verified
+title: 서울시설공단_공공자전거 대여소별 이용정보
+sector: 교통물류/도로/bike-pm
+agency:
+  id: B553774
+  name: 서울시설공단
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15130221/openapi.do
+synonyms:
+  - 공공자전거
+  - 따릉이
+  - 대여
+  - 대여소
+  - 대여소별 그룹
+  - 대여건수
+  - 반납건수
+  - 반납
+  - 따릉이 대여소 이용
+  - 공공자전거 대여 반납
+  - 자전거 대여소 통계
+  - 월별 대여건수
+  - 서울 자전거 이용 현황
+description_portal: '서울특별시 공공자전거 따릉이 대여소별 이용정보입니다. 공공자전거 대여소별 이용정보는 서울시 공공자전거(예: 따릉이) 대여 시스템에서 수집된 각 대여소의 이용 현황 데이터를 의미합니다. 이 데이터는 도시 교통 정책 수립, 자전거 인프라 개선, 시민 편의 증진에 활용됩니다.자치구 별 설치 되어있는 대여소 별 대여 및 반납 정보를 월별 단위로 제공하고 있습니다.대여 및 반납 건수를 통하여 자치구 또는 대여소별 로 이용 추이를 쉽게 알 수 있습니다.대여소 이름, 대여소 그룹 이름, 대여건수, 반납건수 를 확인 하실 수 있습니다.'
+team:
+  dept: 공공자전거운영처
+services:
+  - op: tbCycleStationUseMonthInfo
+    name: tbCycleStationUseMonthInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/tbCycleStationUseMonthInfo/1/100/202606/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statMn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202606'
+      stats:
+        min: 202606
+        p50: 202606
+        max: 202606
+        unique: 1
+    - name: stationName
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 108. 서교동 사거리
+        - 729. 서부식자재마트 건너편
+        - 731. 서울시 도로환경관리센터
+      stats:
+        unique: 100
+    - name: stationGrpName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강동구
+        - 양천구
+        - 송파구
+      stats:
+        unique: 11
+    - name: rentCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '354'
+        - '1407'
+        - '1901'
+      stats:
+        min: 97
+        p50: 1301
+        max: 9777
+        unique: 99
+    - name: START_INDEX
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: END_INDEX
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: RNUM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7046
+  rank_in_sector: 394
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 따릉이 대여소별 이용정보, 대여소와 조인 가능
+claims:
+  - id: c-15130221-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-02 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15130221.json
+        observed_at: '2026-10-02'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-03'
+  - id: c-15130221-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15130221-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15130221.json
+        observed_at: '2026-10-02'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15130221-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15130221.json
+        observed_at: '2026-10-02'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-03'
+  - id: c-15130221-06
+    kind: admin_note
+    value: "세부 부문 '자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)'의 가치: 공공자전거 대여소·실시간 잔여(지자체별 비표준), 자전거도로 노선 GIS"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bike-pm
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15130221-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15130221-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-02'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-02'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15130221.json
+  stats: probe/stats/15130221.json
+  data: probe/data/15130221/
+status: active
+summary_user: 서울시 공공자전거(따릉이) 대여소별 월간 대여건수와 반납건수를 대여소 이름·그룹 이름 단위로 담은 이용 집계 데이터이다. 분석가나 정책 담당자가 어느 대여소·자치구의 이용이 많고 어떻게 변해 왔는지 알아볼 때 쓴다. 필드에 전역 조인 키가 없어, 다른 자료와는 대여소 이름 매핑이나 같은 기관 코드로만 이어 쓴다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 대여소 이름 기준의 매핑이 필요하며, 이름이 달라 연결이 어긋날 수 있다. 호출에는 data.seoul.go.kr 인증키(KEY)가 따로 필요하고 포털 활용신청과는 별개이다. 실시간 잔여 대수나 위치 좌표는 필드에 없다.
+review:
+  summary: draft
+  by: llm:claude-sonnet-5-5
+  at: '2026-10-02'
+  batch: sync
+  cited_claims:
+    - c-15130221-01
+    - c-15130221-03
+    - c-15130221-06
+  dropped_citations: 0

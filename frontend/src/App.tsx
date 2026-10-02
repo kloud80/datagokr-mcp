@@ -135,7 +135,10 @@ export function App() {
 
       <section className="pds-chat" aria-label="대화">
         <header className="pds-chat-top">
-          <h1 className="pds-brand">공공데이터 전략 도우미</h1>
+          <div className="pds-brand-row">
+            <h1 className="pds-brand">공공데이터 전략 도우미</h1>
+            <a className="pds-docs-link" href="#/docs">Docs</a>
+          </div>
           <AgentTooltip content={statsText} position="bottom">
             <button type="button" className="pds-info" aria-label="지식 체계 규모">ⓘ</button>
           </AgentTooltip>
