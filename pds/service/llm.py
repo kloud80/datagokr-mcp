@@ -18,6 +18,7 @@ from pds.schema import GROUNDED
 from pds.service import index as sindex
 
 MODEL = os.environ.get("PDS_CHAT_MODEL") or "claude-sonnet-5-5"  # 2026-10-02 비교: Haiku는 인용 형식·제외 판단 실패, Sonnet은 Opus와 같은 품질에 비용 절반
+RERANK = os.environ.get("PDS_CHAT_RERANK", "1") != "0"  # 채팅은 LLM 재순위까지 (Haiku 1회)
 FALLBACK = {"betas": ["server-side-fallback-2026-07-01"], "extra_body": {"fallbacks": "default"}}
 
 
@@ -150,7 +151,7 @@ def run_tool(name: str, args: dict, plans: list, emit: Emit | None = None, t0: f
         def progress(stage: str, status: str, detail: str) -> None:
             emit({"type": "step", "id": stage, "label": STAGE_LABEL.get(stage, stage), "status": status, "detail": detail,
                   "t": round(time.time() - t0, 1)})
-        p = plan(args["goal"], use_llm=False, progress=progress)  # 설명은 채팅 답에서 — 두 번 부르지 않는다
+        p = plan(args["goal"], use_llm=False, progress=progress, rerank=RERANK)  # 설명은 채팅 답에서 — 두 번 부르지 않는다
         p["version"] = len(plans) + 1
         plans.append(p)
         emit({"type": "plan", "plan": p})

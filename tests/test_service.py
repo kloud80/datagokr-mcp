@@ -30,7 +30,7 @@ def test_plan_follows_protocol_rules():
     edge_ids = {e["id"] for e in ix.edges}
     assert p["datasets"] and all(d["tier"] == "verified" for d in p["datasets"])
     assert all(j["edge"] in edge_ids for j in p["joins"])
-    assert len(p["unverified_leads"]) <= 5 and all(x["tier"] == "catalog" for x in p["unverified_leads"])
+    assert len(p["unverified_leads"]) <= 10 and all(x["tier"] == "catalog" for x in p["unverified_leads"])
     assert "def fetch" in p["code"]
 
 

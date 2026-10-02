@@ -92,7 +92,7 @@ const PRINCIPLES: [string, string][] = [
 
 const TIMELINE: { d: string; t: string; s: string }[] = [
   { d: '2026-09-28', t: '1단계 — 포털 목록과 분류', s: 'data.go.kr 전체 96,110건 목록을 받아 정책 분야·세부 부문으로 나누고, 활용·최신성·세부 단위·연결 가능성·시의성으로 점수를 매겼다. 부문 검토 원칙(원장·실시간 유지, 통계·보조 미룸)을 정했다.' },
-  { d: '2026-09-29~30', t: '2단계 — 1차 검증', s: '세부 부문 대표 데이터를 실제로 활용신청·호출·다운로드해 265건을 검증했다(라운드 1~3).' },
+  { d: '2026-09-29~30', t: '2단계 — 1차 검증', s: '세부 부문 대표 데이터를 실제로 활용신청·호출·다운로드해 265건을 검증했다(라운드 1~3, 현재 유지 260건).' },
   { d: '2026-09-30', t: '3단계 — 지식 체계', s: 'KNOWLEDGE-SPEC에 따라 Dataset·Claim·Edge·Key·CodeList·Context·Recipe 스키마를 세우고, 전수 원장으로 코드표 120종·매핑 7종·법령 43개를 만들고, 조인 365개를 선언·실측했다.' },
   { d: '2026-10-01', t: '서비스', s: '전략 플래너·REST API·MCP 서버·웹 채팅. LLM은 선택된 전략을 설명만 한다.' },
   { d: '2026-10-02', t: '화면 v2 · 실행 코드', s: 'BigValue 디자인 시스템 2열 화면, 지역 필터, 답과 전략의 일치(제외 도구), 검증 때 성공한 호출로 실행 코드를 생성.' },
@@ -100,6 +100,7 @@ const TIMELINE: { d: string; t: string; s: string }[] = [
   { d: '2026-10-02', t: '3차 확대 — 점수 상위 5,000건', s: '4,588단위 부문 검토 → 포털 502건 검증 → 391건 편입. 채팅 모델은 비교 후 Sonnet 5.5로.' },
   { d: '2026-10-02', t: '외부 사이트 (키 보유 4곳)', s: '브이월드·서울 열린데이터광장·법제처·나이스의 링크형 데이터 162건을 제공처 페이지에서 호출 주소를 찾아 검증 → 116건.' },
   { d: '2026-10-03', t: '사이트 커버리지 · Docs', s: '포털 링크형 21,988건의 제공처를 모두 조회해 1,309개 사이트로 묶고, 키 보유·검증 여부를 정리했다. 이 문서(Docs)를 만들었다.' },
+  { d: '2026-10-03', t: '검색 개선 — 고정 개수에서 기준값으로', s: '검색 상위 20개·참고 3개 제한을 없애고 BM25 + 의미 임베딩(e5)으로 넓게 찾아 기준값으로 자른다. 채팅은 Haiku 재순위. 정답표 32문항: 전략 재현율 0.74 → 0.98(LLM 없이) · 0.94(재순위, 데이터 평균 6개) · 1순위 적중 0.78 → 0.91. 맥락 “회사 상태 조기 신호” 추가(42개).' },
   { d: '2026-10-03', t: '원격 MCP · 사용 통계', s: '이 서버의 /mcp로 원격 MCP를 열고(읽기 전용·인증 없음) 연결 가이드를 만들었다. Google Analytics 4로 방문·질문 수를 수집한다.' },
 ]
 
@@ -143,8 +144,8 @@ export function Docs() {
     { id: 'core', x: 310, y: 210, w: 340, h: 60, label: 'knowledge/ — YAML 원본', sub: 'Dataset · Claim · Edge · Key · Code · Context · Recipe', tone: 'core', detail: '지식의 원본. git으로 이력·리뷰. 모든 파일은 pydantic 스키마로 검증된다(python -m pds validate).' },
     { id: 'val', x: 20, y: 320, label: '스키마 검증', sub: 'pydantic · JSON Schema', tone: 'derived', detail: '참조 무결성, 근거 규칙(사실 = 실측·법령·검토), 승격 조건(근거 3+ · Edge 1+), 선언되지 않은 Edge 사용 금지.' },
     { id: 'db', x: 250, y: 320, label: 'Postgres', sub: 'pds_* 테이블 (파생)', tone: 'derived', detail: '목록·분류·점수·지식 엔티티·지식 그래프를 적재한 파생 인덱스. 서비스는 DB 없이도 돈다. pds_* 테이블만 백업·복원.' },
-    { id: 'idx', x: 480, y: 320, label: '검색 색인', sub: 'BM25 · 한글 2-gram', tone: 'derived', detail: '데이터셋·맥락·공백·포털 목록 검색. 지식 파일이 바뀌면 다시 만든다.' },
-    { id: 'dossier', x: 710, y: 320, label: '설명서', sub: 'Markdown 1,500여 개', tone: 'derived', detail: '데이터마다 한 줄 요약·호출 방법·필드·키·근거·주의점을 담은 설명서 (docs/dossiers, 화면의 상세 서랍).' },
+    { id: 'idx', x: 480, y: 320, label: '검색 색인', sub: 'BM25 + 의미 임베딩', tone: 'derived', detail: '글자 겹침(BM25 한글 2-gram)과 뜻(multilingual-e5 임베딩)을 합친 관련도로 넓게 찾고, 기준값으로 자른다. 채팅은 LLM 재순위까지. 지식 파일이 바뀌면 다시 만든다.' },
+    { id: 'dossier', x: 710, y: 320, label: '설명서', sub: 'Markdown 1,632개', tone: 'derived', detail: '데이터마다 한 줄 요약·호출 방법·필드·키·근거·주의점을 담은 설명서 (docs/dossiers, 화면의 상세 서랍).' },
     { id: 'plan', x: 150, y: 420, label: '전략 플래너', sub: 'networkx · 선언 Edge만', tone: 'service', detail: '목표 → 맥락 매칭 → 검증 데이터 검색(지역 필터·가중치) → 선언된 Edge로 최단 조인 경로 → 파이프라인 → 검사(§4 규칙).' },
     { id: 'code', x: 400, y: 420, label: '코드 생성기', sub: 'requests + pandas', tone: 'service', detail: '검증 때 성공한 호출(주소·필수 파라미터·형식·실제 페이지 크기)을 다시 꾸며, 이 저장소 없이 돌아가는 Python을 만든다.' },
     { id: 'llm', x: 650, y: 420, label: 'LLM 설명', sub: 'Claude Sonnet 5.5', tone: 'service', detail: '고른 전략을 설명만 한다. 데이터는 [[id]]로 인용, 맞지 않는 데이터는 제외 도구로 전략에서 뺀다. 10문항 비교로 Haiku 대신 Sonnet을 기본으로.' },
@@ -227,7 +228,7 @@ export function Docs() {
                   { key: 1, layer: '지식 원본', tech: 'YAML · pydantic 스키마 · JSON Schema', where: 'knowledge/ · pds/schema' },
                   { key: 2, layer: '수집·검증', tech: 'httpx · Playwright(활용신청·다운로드) · pandas 셀 통계', where: 'pds/probe · pds/ingest' },
                   { key: 3, layer: '관계', tech: '선언 Edge · 변환 규칙 함수 · 매핑표 · 실측 매칭률', where: 'knowledge/edges.yaml · pds/rules · pds/mapping' },
-                  { key: 4, layer: '검색·전략', tech: 'BM25(한글 2-gram) · networkx 최단 경로 · 지역 판정', where: 'pds/service/index.py · pds/strategy' },
+                  { key: 4, layer: '검색·전략', tech: 'BM25(한글 2-gram) + e5 임베딩(fastembed) · LLM 재순위 · networkx 최단 경로 · 지역 판정', where: 'pds/service/index.py · pds/strategy' },
                   { key: 5, layer: '설명', tech: 'Claude Sonnet 5.5 (도구 사용 · 구조화 출력 · 서버 폴백)', where: 'pds/service/llm.py' },
                   { key: 6, layer: '서비스', tech: 'FastAPI · SSE · MCP(mcp 2.x)', where: 'pds/service/app.py · pds/mcp' },
                   { key: 7, layer: '화면', tech: 'React 19 · Vite · BigValue 디자인 시스템(@bv-ds/ui Agent)', where: 'frontend/ → web/dist' },

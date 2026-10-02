@@ -38,9 +38,10 @@ async def lifespan(_app):
     sindex.get()  # 색인을 먼저 올려 첫 요청이 기다리지 않게
     import threading
 
-    def _warm():  # Docs 집계도 미리 (첫 열람이 오래 걸리지 않게)
-        from pds.service import docs
+    def _warm():  # Docs 집계·의미 검색 벡터도 미리 (첫 요청이 오래 걸리지 않게)
+        from pds.service import docs, semantic
         docs.build()
+        semantic.warm()
     threading.Thread(target=_warm, daemon=True).start()
     from pds.mcp.server import server as mcp_server
     async with mcp_server.session_manager.run():  # /mcp (원격 MCP) 세션 관리자 — 마운트한 앱의 lifespan은 따로 돌지 않는다

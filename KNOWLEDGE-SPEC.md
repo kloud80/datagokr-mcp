@@ -289,7 +289,7 @@ author: 구름
 }
 ```
 
-**검증 규칙(서버가 응답 전에 강제)**: `datasets[].evidence`의 모든 claim id가 존재하고 `inferred`만인 것이 없을 것 · `joins[].edge`가 edges.yaml에 존재할 것 · `unverified_leads`는 최대 5개, `tier=catalog`만 · `candidates`에는 조인 참여 없음. 하나라도 어기면 응답 거부.
+**검증 규칙(서버가 응답 전에 강제)**: `datasets[].evidence`의 모든 claim id가 존재하고 `inferred`만인 것이 없을 것 · `joins[].edge`가 edges.yaml에 존재할 것 · `unverified_leads`는 최대 10개(2026-10-03, 5개에서 완화), `tier=catalog`만 · `candidates`에는 조인 참여 없음. 하나라도 어기면 응답 거부.
 
 ---
 

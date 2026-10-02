@@ -2,9 +2,11 @@
 
 순서
   1 맥락 매칭(question) → 레시피가 있으면 그 데이터·조인·파이프라인 (골든셋 경로)
-  2 없으면 verified 검색 + 맥락 멤버 가산점 → primary 1 + 후보 5
-  3 조인 경로 = edges.yaml의 선언된 Edge만 (networkx 최단 경로, 실측 높은 Edge 우선, 매칭률 0 제외). 경로 없으면 gaps에 "조인 경로 미선언"
-  4 candidates = 검색된 candidate 층 (조인 참여 불가) · unverified_leads = catalog 층 상위 5 (단서)
+  2 없으면 넓게 찾기 — BM25(글자 겹침) 상위 60 + 의미 검색(e5 임베딩) 상위 60을 합쳐 관련도(0~1)로 매기고,
+    고정 개수가 아니라 기준값(1위 대비 REL_MIN)으로 자른다. 맥락 멤버 가산점·지역 가중치. rerank=True면 LLM이 관련도 0~3을 다시 매긴다
+  3 조합 — primary + 선언된 Edge로 이어지는 데이터(핵심, 최대 max_datasets) + 이어지지 않아도 관련도 높은 데이터(참고, 최대 max_refs, role=context)
+    조인 경로 = edges.yaml의 선언된 Edge만 (networkx 최단 경로, 실측 높은 Edge 우선, 매칭률 0 제외)
+  4 candidates = 검색된 candidate 층 (조인 참여 불가) · unverified_leads = catalog 층 상위 MAX_LEADS (단서)
   5 LLM은 summary·why 문장만 — 입력은 선택된 claim, 출력은 claim id 인용 (pds/service/llm.py). LLM 없이도 규칙 문장으로 응답
   6 §4 검증 규칙을 통과해야 반환 (validate)
   · 지역 범위가 목표와 어긋나는 데이터(부산 데이터 ↔ 성수동)는 고르기 전에 빼서 not_recommended에 사유와 함께 (region.py)
@@ -105,7 +107,35 @@ def clean_goal(goal: str) -> str:
     return re.sub(r"\s+", " ", INTENT.sub(" ", goal)).strip() or goal
 
 
-def select(goal: str) -> dict:
+POOL_K = 60          # 검색마다 가져오는 수 (BM25·의미 각각)
+POOL_MAX = 40        # 조합에 넘기는 후보 풀 상한
+REL_MIN = 0.42       # 1위 관련도 대비 이 비율 미만은 풀에서 뺀다
+REF_MIN = 0.5        # 조인 없이 '참고'로 넣으려면 1위 대비 이 비율 이상
+W_SEM = 0.6          # 관련도 = (1-W_SEM)·BM25 + W_SEM·의미 (의미 검색이 없으면 BM25만)
+MAX_LEADS = 10
+
+
+def _relevance(q: str, sem_q: str) -> list[tuple[dict, float]]:
+    """BM25와 의미 검색을 0~1로 맞춰 합친 관련도 — 글자가 겹치거나 뜻이 가깝거나."""
+    from pds.service import semantic
+    ix = sindex.get()
+    bm = ix.search_datasets(q, POOL_K, tiers=("verified",))
+    sem, floor = semantic.search_floor(sem_q, POOL_K, tiers=("verified",))
+    rel: dict[str, float] = {}
+    by = {}
+    btop = bm[0][1] if bm else 1.0
+    for d, sc in bm:
+        by[d["id"]] = d
+        rel[d["id"]] = (sc / btop) * ((1 - W_SEM) if sem else 1.0)
+    if sem:
+        stop = max(sem[0][1], floor + 1e-6)
+        for d, c in sem:
+            by[d["id"]] = d
+            rel[d["id"]] = rel.get(d["id"], 0.0) + W_SEM * max(0.0, (c - floor) / (stop - floor))
+    return sorted(((by[i], r) for i, r in rel.items()), key=lambda x: -x[1])
+
+
+def select(goal: str, rerank: bool = False) -> dict:
     ix = sindex.get()
     region = rgn.goal_regions(goal)
     q = clean_goal(goal)
@@ -116,7 +146,10 @@ def select(goal: str) -> dict:
     ctx = ctx_hits[0][0] if ctx_hits and ctx_hits[0][1] >= 3.5 else None
     ctxs = [c for c, sc in ctx_hits if ctx and sc >= 0.8 * ctx_hits[0][1]][:2]
     recipe = ix.recipes.get(ctx["recipe"].split("/")[-1].removesuffix(".yaml")) if ctx and ctx.get("recipe") else None
-    hits = ix.search_datasets(q, 20, tiers=("verified",))
+    sem_q = goal
+    for n in region["names"]:
+        sem_q = sem_q.replace(n, " ")
+    hits = _relevance(q, sem_q)
     members = set()
     for c in ctxs:
         for i, d in ix.datasets.items():
@@ -126,6 +159,11 @@ def select(goal: str) -> dict:
     if recipe and recipe.get("status") != "approved":  # 초안 레시피는 통째로 쓰지 않고 가산점으로만
         members |= {x["id"] for x in recipe["datasets"]}
         recipe = None
+    pinned = {m["dataset"] for c in ctxs for m in c["members"] if m.get("dataset")}
+    have = {d["id"] for d, _ in hits}
+    if hits and pinned - have:  # 데이터 단위로 지정된 맥락 멤버는 검색에 안 걸려도 풀에 넣는다 (국민연금 사업장 ↔ "회사 상태")
+        base = 0.5 * hits[0][1]
+        hits += [(ix.datasets[i], base) for i in sorted(pinned - have) if i in ix.datasets and ix.datasets[i]["tier"] == "verified"]
     hits = [(d, s * _region_weight(d, region)) for d, s in hits]
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])
     excluded, kept = [], []
@@ -136,10 +174,19 @@ def select(goal: str) -> dict:
         elif s >= 0.4 * scored[0][1]:
             excluded.append({"id": d["id"], "title": d["title"], "reason": why, "kind": "region", "evidence": []})
     scored = kept
-    if scored:  # 1순위의 40% 미만은 관련이 약하다 — 허브(PNU·법정동)로 아무거나 이어 붙이지 않게
-        scored = [(d, s) for d, s in scored if s >= 0.4 * scored[0][1]]
+    if scored:  # 1순위 대비 REL_MIN 미만은 관련이 약하다 — 허브(PNU·법정동)로 아무거나 이어 붙이지 않게
+        scored = [(d, s) for d, s in scored if s >= REL_MIN * scored[0][1]][:POOL_MAX]
+    reranked = None
+    if rerank and scored:
+        from pds.strategy.rerank import rerank as llm_rerank
+        sc = llm_rerank(goal, [d for d, _ in scored[:30]])
+        if sc:  # 2점 이상만 — 순서는 LLM 점수, 같으면 검색 관련도
+            top = [(d, s) for d, s in scored[:30] if sc.get(d["id"], 0) >= 2]
+            if top:
+                scored = sorted(top, key=lambda x: (-sc[x[0]["id"]], -x[1]))
+                reranked = sc
     return {"ctx": ctx, "ctx_hits": ctx_hits, "recipe": recipe, "scored": scored, "members": members, "q": q,
-            "region": region, "excluded": excluded[:4]}
+            "region": region, "excluded": excluded[:4], "reranked": reranked}
 
 
 def _region_weight(d: dict, region: dict) -> float:
@@ -155,15 +202,17 @@ def _region_weight(d: dict, region: dict) -> float:
 Progress = Callable[[str, str, str], None]
 
 
-def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progress | None = None) -> dict:
+def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progress | None = None, rerank: bool = False,
+         max_refs: int = 8) -> dict:
     ix = sindex.get()
     t0 = time.time()
     say = progress or (lambda *_: None)
     say("context", "running", "")
-    sel = select(goal)
+    sel = select(goal, rerank=rerank)
     say("context", "done", sel["ctx"]["id"] if sel["ctx"] else "맥락 없음 — 검색만")
     n_ex = len(sel["excluded"])
-    say("candidates", "done", f"검증 후보 {len(sel['scored'])}개" + (f" · 지역 불일치 제외 {n_ex}개" if n_ex else ""))
+    say("candidates", "done", f"검증 후보 {len(sel['scored'])}개" + (" · LLM 재순위" if sel.get("reranked") else "")
+        + (f" · 지역 불일치 제외 {n_ex}개" if n_ex else ""))
     say("joins", "running", "")
     g = _graph()
     edges = {e["id"]: e for e in ix.edges}
@@ -183,11 +232,12 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
                              "gaps": [g["name"] for g, _ in ix.search_gaps(goal)], "confidence": 0.0,
                              "knowledge_version": _commit(), "source": "search"})
         primary = cands[0]
-        chosen, join_ids = [primary], []
-        for other in cands[1:]:
-            if len(chosen) >= max_datasets:
-                break
-            if primary in g and other in g:
+        rel = {d["id"]: s for d, s in sel["scored"]}
+        chosen, join_ids, refs = [primary], [], []
+        for other in cands[1:20]:
+            if other in chosen:
+                continue
+            if len(chosen) < max_datasets and primary in g and other in g:
                 def cost(u, v, d, target=other):  # 허브가 아닌 무관한 데이터를 경유하면 벌점 — 목표와 상관없는 데이터가 끼지 않게
                     return d["weight"] + (0.0 if v in HUBS or v == target or v in cands else 0.8)
                 try:
@@ -204,9 +254,12 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
                         if g[a][b]["edge"] not in join_ids:
                             join_ids.append(g[a][b]["edge"])
                     continue
-            if len(chosen) < 3 and other not in chosen:  # 이어지지 않아도 상위 관련 데이터는 context 역할로
-                chosen.append(other)
-                gaps.append(f"{ix.datasets[primary]['title'][:30]} ↔ {ix.datasets[other]['title'][:30]}: 조인 경로 미선언")
+            # 이어지지 않아도 관련도가 높으면 '참고(조인 없음)'로 — 좋은 데이터를 조인 유무로 버리지 않는다
+            if len(refs) < max_refs and rel.get(other, 0) >= REF_MIN * rel[primary]:
+                refs.append(other)
+        chosen += [r for r in refs if r not in chosen]
+        if refs:
+            gaps.append(f"참고 데이터 {len(refs)}개는 {ix.datasets[primary]['title'][:30]}와(과) 선언된 조인 경로가 없어 따로 받아 봐야 한다")
         source = "search"
 
     connected = {primary_id for primary_id in chosen[:1]}
@@ -238,7 +291,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     cand = [{"id": d["id"], "tier": "candidate", "title": d["title"], "sector": d["sector"],
              "status": (d.get("verification") or {}).get("verdict"), "why_maybe": _why_rule(d, "candidate"),
              "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None)}
-            for d, s in ix.search_datasets(q, 3, tiers=("candidate",)) if s > 5 and not rgn.mismatch(d, sel["region"])]
+            for d, s in _cand_hits(q) if not rgn.mismatch(d, sel["region"])]
     gaps += [f"{g['name']}: {g['reason'][:120]}" for g, s in ix.search_gaps(q) if s > 6]
     rates = [j["match_rate"] if j["match_rate"] is not None else j["confidence"] or 0.5 for j in joins]
     conf = round(min(0.95, 0.35 + 0.1 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0)
@@ -262,6 +315,13 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     return validate(out)
 
 
+def _cand_hits(q: str) -> list[tuple[dict, float]]:
+    """candidate 층 — 1위 대비 40% 이상, 점수 5 초과, 최대 6."""
+    hits = sindex.get().search_datasets(q, 6, tiers=("candidate",))
+    top = hits[0][1] if hits else 0
+    return [(d, s) for d, s in hits if s > 5 and s >= 0.4 * top]
+
+
 def _summary_rule(p: dict) -> str:
     n = len(p["datasets"])
     j = len(p["joins"])
@@ -281,10 +341,11 @@ def _schedule(datasets: list[dict]) -> dict | None:
 def _leads(goal: str, known: set[str], region: dict | None = None) -> list[dict]:
     out = []
     ix = sindex.get()
-    res = ix.search_catalog(goal, 10, exclude=known)
+    res = ix.search_catalog(goal, MAX_LEADS * 2, exclude=known)
     if region:
         res = [(r, s) for r, s in res if not rgn.mismatch({"agency_name": r["agency_name"], "title": r["title"]}, region)]
-    res = res[:5]
+    top0 = res[0][1] if res else 0
+    res = [(r, s) for r, s in res if s >= 0.35 * top0][:MAX_LEADS]
     top = res[0][1] if res else 1
     for r, s in res:
         out.append({"id": r["id"], "tier": "catalog", "title": r["title"], "agency": r["agency_name"], "kind": r.get("api_type") or r.get("list_type"),
@@ -373,7 +434,7 @@ def validate(p: dict) -> dict:
     for j in p["joins"]:
         if j["edge"] not in edge_ids:
             raise ProtocolError(f"선언되지 않은 조인 {j['edge']}")
-    if len(p["unverified_leads"]) > 5 or any(x["tier"] != "catalog" for x in p["unverified_leads"]):
+    if len(p["unverified_leads"]) > MAX_LEADS or any(x["tier"] != "catalog" for x in p["unverified_leads"]):
         raise ProtocolError("unverified_leads 규칙 위반")
     cand = {c["id"] for c in p["candidates"]}
     if any(j["left"] in cand or j["right"] in cand for j in p["joins"]):

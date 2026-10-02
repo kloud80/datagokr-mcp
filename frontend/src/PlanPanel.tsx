@@ -15,7 +15,7 @@ import type { OpenDataset } from './md'
 
 export type PlanTab = 'map' | 'data' | 'pipe' | 'code' | 'leads'
 
-const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', context: '참고' }
+const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', context: '참고 · 조인 없음' }
 
 function BadgeChip({ b }: { b: Badge }) {
   if (b.tone === 'warn') return <span className="pds-warn">⚠ {b.label}</span>
