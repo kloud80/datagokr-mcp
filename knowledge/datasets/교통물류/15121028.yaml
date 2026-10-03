@@ -1,0 +1,216 @@
+# Dataset 15121028 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121028'
+tier: verified
+title: 부산광역시_AVI 구간 속도
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121028/openapi.do
+synonyms:
+  - 교통
+  - AVI
+  - 속도
+  - ITS
+  - 교통정보
+  - 부산 교통 속도
+  - 구간 통행속도
+  - 실시간 교통정보
+  - 차량번호인식 구간속도
+  - 부산 도로 소통정보
+  - 정체 구간
+  - AVI 통행속도
+description_portal: '본 데이터는 부산광역시 교통정보서비스센터에서 운영하는 AVI(Automatic Vehicle Identification) 장치를 통해 생성시간, AVI 구간명, 속도 등의 정보를 제공합니다.AVI 장치는 도로에 설치된 인식기를 통해 차량을 식별하고, 차량의 특정 지점 통과 시간 차이를 이용해 구간 통행 속도를 계산합니다.이 데이터는 실시간 교통흐름 파악, 혼잡 구간 분석, 도로 운영 효율화를 위한 중요한 기초자료로 활용될 수 있습니다.<제공방식>형식: Open API응답 포맷: JSON (필요 시 XML 지원 가능)인코딩: UTF-8<활용안내>구간별 실시간 교통속도 파악 및 소통상황 관리혼잡 예측 및 교통운영 정책 수립 지원돌발상황 발생 시 신속한 우회 안내 및 대응체계 강화물류·여객 교통 효율성 개선을 위한 분석 자료민간 내비게이션·모바일 서비스 연계 활용'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /AVISectSpd
+    name: AVI 구간 속도
+    endpoint: https://apis.data.go.kr/6260000/BusanITSAVISect/AVISectSpd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statsDt
+      title: 생성시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03T18:00:00'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: aviSxnNm
+      title: AVI구간명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 오륜터널(회동IC방면) - 수영터널(본선-문현방면)
+        - 오륜터널(회동IC방면) - 문현IC(램프진출)
+        - 수영터널(본선-문현방면) - 황령터널(대연방면)
+      stats:
+        unique: 89
+    - name: spd
+      title: 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '32.54'
+        - '49.77'
+        - '49.82'
+      stats:
+        min: 5.17
+        p50: 40.935
+        max: 117.86
+        unique: 92
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5178
+  rank_in_sector: 2100
+  brm: 교통물류 - 도로
+  why: 부산 AVI 구간 속도 실시간 관측
+claims:
+  - id: c-15121028-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121028.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121028.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15121028-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121028-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121028.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121028-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121028.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121028-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121028-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121028-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121028.json
+  stats: probe/stats/15121028.json
+  data: probe/data/15121028/
+status: active
+summary_user: 부산광역시 교통정보서비스센터의 AVI(차량 자동 인식) 장치가 차량의 두 지점 통과 시간 차이로 계산한 구간 통행 속도를 생성시간·AVI 구간명·속도 단위로 담는 실시간 API다. 운전자나 교통 분석가가 지금 부산의 어느 AVI 구간이 막히는지 확인하는 데 쓰고, 응답을 계속 쌓으면 상습 정체 구간 분석의 이력 자료가 된다. 전역 조인 키가 없어 다른 링크 속도·돌발상황 데이터와는 구간명(aviSxnNm)을 이름으로 맞추거나 같은 기관 코드로만 이어 쓴다.
+limits: 구간 좌표나 표준 링크 ID 같은 공통 키가 없어 지도 표출이나 타 기관 도로 데이터와의 직접 결합이 어렵다. 실시간 조회 중심이라 과거 추세를 보려면 직접 호출해 이력을 적재해야 하며, 개발계정은 일 500회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15121028-01
+    - c-15121028-03
+    - c-15121028-06
+  dropped_citations: 0

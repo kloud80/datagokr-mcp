@@ -1,0 +1,226 @@
+# Dataset 15158721 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158721'
+tier: verified
+title: 여수광양항만공사_입항정보_GW
+sector: 교통물류/해운·항만/vessel-movements
+agency:
+  id: B552782
+  name: 여수광양항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158721/openapi.do
+synonyms:
+  - 여수광양항만운영
+  - 선박 입항정보
+  - 선박명
+  - 호출부호
+  - 입항일자
+  - 출항지
+  - 접안시설
+  - 항만운영효율화
+  - 선박 입항 이력
+  - 여수항 입항
+  - 광양항 입출항
+  - Port-MIS 입항신고
+  - 선박 접안 정보
+  - 입항 선박 조회
+  - 항만 입출항 현황
+description_portal: 「입항정보」 데이터는 선박의 입항 이력을 기록한 자료로, 항만명(PRT_NM), 호출부호(CALL_LETTER), 선박명(VSSL_NM), 입항연도(YR), 일련번호(SER_NO), 대리점(AGENT_NM), 구분(외항/내항), 입항일자(ARVL_DT), 출항지(DEP_PRT_NM), 차항지(NXT_PRT_NM), 접안 위치 코드(BERTH_PLC_CODE_1/2), 시설명(FACIL_NM) 등 총 18개 항목으로 구성되어 있습니다.이 데이터는 선박의 입항 경로 및 일정, 대리점 관리, 접안 시설 운영을 파악하는 데 중요한 기초 자료입니다. 특히 출발지·도착지와의 연계 정보는 국제 해운 네트워크 분석에 활용할 수 있으며, 입출항 정보와 결합하면 항만의 물동량 흐름과 운영 효율성을 종합적으로 평가할 수 있습니다.
+team:
+  dept: 경영지원부
+services:
+  - op: /getInfoVsslArvlF
+    name: 선박입항 정보 조회
+    endpoint: https://apis.data.go.kr/B552782/infoVsslArvlF/getInfoVsslArvlF
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: prt_at_code
+        required: true
+        desc: 항코드
+      - name: call_letter
+        required: true
+        desc: 호출부호 (대문자)
+      - name: yr
+        required: true
+        desc: 입항연도
+      - name: ser_no
+        required: true
+        desc: 입항회수
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: pageNo
+      title: 페이지번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5235
+  rank_in_sector: 108
+  brm: 교통물류 - 해운·항만
+  why: 여수광양항 선박별 입항 기록 API
+claims:
+  - id: c-15158721-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15158721.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15158721.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158721-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158721-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158721.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158721-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158721.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158721-06
+    kind: admin_note
+    value: "세부 부문 '입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)'의 가치: Port-MIS 입출항 신고와 AIS 위치는 선박 추적의 원천. 항만공사 4곳 API는 Port-MIS 아래 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vessel-movements
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158721-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158721-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158721-10
+    kind: pitfall
+    value: 필수 파라미터 call_letter, prt_at_code, ser_no는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15158721.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15158721.json
+  stats: probe/stats/15158721.json
+  data: probe/data/15158721/
+status: active
+summary_user: 여수광양항만공사가 제공하는 선박 입항 이력 API로, 입항 건별로 항만명·호출부호·선박명·입항연도·일련번호·대리점·외항/내항 구분·입항일자·출항지·차항지·접안 위치·시설명 등 18개 항목을 담는다. 해운 분석가나 대리점 실무자가 특정 선박이 언제 어디서 와서 어느 선석에 접안했고 다음에 어디로 가는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 Port-MIS 입출항 데이터와는 호출부호·선박명·항만 코드 같은 이름·코드 매핑으로만 연결한다.
+limits: 호출에 필요한 호출부호(call_letter)·항만 코드(prt_at_code)·일련번호(ser_no)는 다른 데이터에서 먼저 받아 넘겨야 하므로 이 API만으로 전체 입항 목록을 훑을 수 없다. 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158721-01
+    - c-15158721-03
+    - c-15158721-06
+    - c-15158721-10
+  dropped_citations: 0

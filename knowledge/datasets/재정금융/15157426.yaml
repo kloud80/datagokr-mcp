@@ -1,0 +1,348 @@
+# Dataset 15157426 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157426'
+tier: verified
+title: 한국예탁결제원_증권대차서비스_GW
+sector: 재정금융/금융/securities-market
+agency:
+  id: B552481
+  name: 한국예탁결제원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157426/openapi.do
+synonyms:
+  - 증권대차
+  - 주식대차
+  - 채권대차
+  - 종목별 대차 현황
+  - 주식대차 종목 순위
+  - 채권대차 종목 순위
+  - 대차 잔고
+  - 상환 금액
+  - 대차거래
+  - 대차잔고
+  - 공매도
+  - SLB
+  - 대차 체결 순위
+  - 증권대여
+description_portal: 한국예탁결제원을 통해 체결되는 주식과 채권의 종목별 대차거래현황 정보, 채권대차 체결 종목 순위, 주식 대차 체결 종목 순위에 대한 정보를 제공 증권대차업무(Securities Lending and Borrowing, SLB)는 주식이나 채권 등 유가증권을 소유한 투자자가 이를 필요한 다른 투자자에게 대여하는 금융 활동입니다. 대여자는 자산을 대출해주는 역할을 하며 차입자는 일정 기간 동안 해당 증권을 사용합니다. 이 과정에서 차입자는 대여자에게 차입에 따른 수수료를 지급하고, 대여자는 차입자로부터 현금이나 국채 등 담보를 제공받아 거래의 안전성을 보장합니다. 일반적으로 증권대차는 공매도와 같은 전략적 거래를 위해 활용되며, 대차 계약 체결 후 담보 제공과 증권 반환 등의 절차를 통해 이루어집니다. 거래 만료 시점에 차입자가 증권을 반환하고 거래가 종료됩니다. 주요 참여자로는 대여자(연기금, 보험사 등), 차입자(헤지펀드, 증권사 등), 그리고 중개기관이 있으며, 이를 통해 거래가 성사됩니다.
+team:
+  dept: 증권데이터부
+services:
+  - op: /getSlbDealingByIsin
+    name: 종목별대차거래현황
+    endpoint: https://apis.data.go.kr/B552481/SlbSvc/getSlbDealingByIsin
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: isin
+        required: true
+        desc: 종목코드(KR표준코드)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getSlbBondRank
+    name: 채권대차종목순위
+    endpoint: https://apis.data.go.kr/B552481/SlbSvc/getSlbBondRank
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: stdDt
+        required: true
+        desc: 기준일(YYYYMMDD)
+      - name: rankTpcd
+        required: false
+        desc: 순위조건(1:대차잔고금액, 2:체결금액, 3:상환금액)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getSlbStockRank
+    name: 주식대차종목순위
+    endpoint: https://apis.data.go.kr/B552481/SlbSvc/getSlbStockRank
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: stdDt
+        required: true
+        example: '20131231'
+        desc: 기준일(YYYYMMDD)
+      - name: rankTpcd
+        required: false
+        example: '1'
+        desc: 순위조건(1:대차잔고금액, 2:체결금액, 3:상환금액, 4:일잔고변동율)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: isin
+      title: 종목코드(표준코드)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - KR7005930003
+        - KR7005490008
+        - KR7066570003
+      stats:
+        unique: 100
+    - name: shotnIsin
+      title: KSD 자체 단축코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '005930'
+        - '005490'
+        - '066570'
+      stats:
+        min: 80
+        p50: 14195
+        max: 900140
+        unique: 100
+    - name: korSecnNm
+      title: 종목명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SK
+        - 삼성전자
+        - 포스코홀딩스
+      stats:
+        unique: 99
+    - name: matcQty
+      title: 대차 체결 주식수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '3071'
+        - '2800'
+      stats:
+        min: 0
+        p50: 0
+        max: 70000
+        unique: 9
+    - name: recallRedQty
+      title: 대차거래 중 리콜 상환 주수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: redQty
+      title: 대차 상환 주식수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2110'
+        - '44844'
+      stats:
+        min: 0
+        p50: 0
+        max: 525840
+        unique: 33
+    - name: slbTrRemQty
+      title: 대차 잔고 주식수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1812680'
+        - '7065845'
+        - '13139496'
+      stats:
+        min: 89250
+        p50: 1852169
+        max: 17417660
+        unique: 100
+    - name: remAmt
+      title: '잔고금액(단위: 백만원)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2545445882000'
+        - '2329405021000'
+        - '955082253900'
+      stats:
+        min: 36722585200
+        p50: 108534625075
+        max: 2545445882000
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.5411
+  rank_in_sector: 233
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 주식·채권 종목별 일별 대차거래 현황
+claims:
+  - id: c-15157426-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/3
+    evidence:
+      - type: measured
+        source: probe/runs/15157426.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/3
+      - type: measured
+        source: probe/apply/15157426.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157426-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157426-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157426.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157426-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157426.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157426-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157426-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157426-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157426-10
+    kind: pitfall
+    value: 필수 파라미터 isin, stdDt는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157426.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157426-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /getSlbDealingByIsin, /getSlbBondRank'
+    evidence:
+      - type: measured
+        source: probe/runs/15157426.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/3
+  run: probe/runs/15157426.json
+  stats: probe/stats/15157426.json
+  data: probe/data/15157426/
+status: active
+summary_user: 한국예탁결제원을 통해 체결된 주식·채권의 종목별 대차거래 현황(체결·상환·리콜 상환·잔고 주식수와 백만원 단위 잔고금액)과 주식·채권 대차 체결 종목 순위를 담는 전국 단위 API입니다. 투자자나 시장 분석가가 '특정 종목의 대차 잔고가 최근 얼마나 쌓였고 상환은 얼마나 됐나'처럼 공매도 수요와 대차 동향을 종목별로 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으나 종목코드(isin)와 예탁원 단축코드를 담고 있어, 종목코드 원장·일별 시세 등 같은 코드를 쓰는 증권 시장 데이터와 코드 매핑으로 이어 쓴다.
+limits: 종목별 조회 오퍼레이션은 종목코드(isin)와 기준일(stdDt)을 필수로 받으므로 다른 데이터에서 코드를 먼저 확보해 넘겨야 한다. 검증 시 3개 오퍼레이션 중 1개만 호출에 성공했고, 종목별 대차현황(/getSlbDealingByIsin)과 채권 대차 순위(/getSlbBondRank)는 최소 파라미터로 응답이 없었다. 개발계정은 하루 100회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157426-01
+    - c-15157426-03
+    - c-15157426-04
+    - c-15157426-06
+    - c-15157426-10
+    - c-15157426-11
+  dropped_citations: 0

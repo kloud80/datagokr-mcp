@@ -1,0 +1,368 @@
+# Dataset 15142633 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142633'
+tier: verified
+title: 기후에너지환경부 국립환경과학원_환경영향평가 해양환경정보
+sector: 환경기상/환경일반/eia
+agency:
+  id: '1482021'
+  name: 기후에너지환경부 국립환경과학원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142633/openapi.do
+synonyms:
+  - 환경영향평가
+  - 해양환경
+  - 해양동식물
+  - 조사지점
+  - 적용모델
+  - 해양환경영향평가
+  - 해양조사 수질
+  - 부유사 확산
+  - 잘피 서식
+  - 해수유동 모델
+  - 저서동물 출현종
+  - 해조류 조사
+  - EIA 해양
+description_portal: 환경부 국립환경과학원의 환경영향평가 사업의 해양조사시 적용모델, 조사, 동식물, 동식물명의 속성정보 제공 및 공간정보(조사지점) 등 에 대한 정보를 제공하는 서비스입니다.조회정보로는 조사속성조회, 동식물속성조회, 적용모델속성조회, 조사속성조회, 동식물명속성조회 정보를 제공햡니다.각서비스의 제공 정보에는 조사지점명, 주소, X/Y좌표정보,해양수질_화학적산소요구량(㎎/ℓ), 해양수질_총유기탄소(㎎/ℓ), 총질소(㎎/ℓ), 해초류(잘피) 서식여부, 해양수질 환경기준등급, 해수유동 적용모델, 부유사확산 면적(1㎎/ℓ) 저감대책 전(㎢), 부유사확산 면적(1㎎/ℓ) 저감대책 후(㎢), 조간대 저서동물 출현종 국문명, 해조류 출현종 국문명 등 다양한 조사정보를 제공합니다.조사지점에 대한 공간정보는 WMS 및 WFS 형태로 제공되며, 사용자는 좌표체계, 반환 이미지 타입, 배경 이미지 포함 여부, 이미지 너비/높이 등의 설정을 통해 특정 좌표 기준의  해양환경 조사지점 대한 포인트 이미지를 조회할 수 있습니다.
+team:
+  dept: 기후국토환경연구과
+services:
+  - op: /getIvstgWMS
+    name: 조사지점WMS조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getIvstgWMS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: srs
+        required: true
+        desc: 좌표 체계를 나타냅니다. 현재 EPSG:5179 좌표계를 지원합니다.
+      - name: format
+        required: true
+        desc: 반환 이미지 형식. png나 jpeg(jpg), gif 이미지 포맷을 지원
+      - name: transparent
+        required: true
+        desc: 반환 이미지 배경의 투명 여부
+      - name: width
+        required: true
+        desc: 반환 이미지의 너비(픽셀)
+      - name: height
+        required: true
+        desc: 반환 이미지의 높이(픽셀)
+      - name: bbox
+        required: true
+        desc: 크기(extent)를 정의하는 범위(bounding box). 값은 srs 좌표체계 형식에 맞춰 minx,miny,maxx,maxy 를 입력
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getModel
+    name: 적용모델속성조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getModel
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        desc: 환경영향평가 사업코드
+      - name: type
+        required: true
+        desc: 응답타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getIvstgWFS
+    name: 조사지점WFS조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getIvstgWFS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: srsName
+        required: true
+        desc: 좌표체계
+      - name: maxFeatures
+        required: false
+        desc: 요청에 대한 응답으로 WFS가 반환해야하는 피처의 최대 값
+      - name: resultType
+        required: false
+        desc: 요청에 대하여 WFS가 어떻게 응답할 것인지 정의. results 값은 요청된 모든 피처를 포함하는 완전한 응답이 생성되어야 함을 나타내며, hits 값은 피처의 개수만이 반환되어야 함을 의미
+      - name: bbox
+        required: false
+        desc: 좌표로 이루어진 사각형 안에 담겨 있는 (또는 부분적으로 걸쳐 있는) 피처를 검색. 좌표 순서는 사용되는 좌표 시스템을 따름
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getAmpltNm
+    name: 동식물명속성조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getAmpltNm
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        desc: 환경영향평가 사업코드
+      - name: type
+        required: false
+        desc: 응답받을 xml/json 타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getAmplt
+    name: 동식물속성조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getAmplt
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        desc: 환경영향평가 사업코드
+      - name: type
+        required: false
+        desc: 응답받을 xml/json 타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getIvstg
+    name: 조사속성조회
+    endpoint: https://apis.data.go.kr/1480523/MaritimeService/getIvstg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        example: ME2014E001
+        desc: 환경영향평가 사업코드
+      - name: ivstgSpotNm
+        required: false
+        example: SW-1
+        desc: 조사지점의 이름
+      - name: type
+        required: false
+        example: json
+        desc: 응답받을 xml/json 타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ivstgGb
+      title: 조사구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - IV11
+      stats:
+        unique: 1
+    - name: ivstgs
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "[{'ivstgSpotNm': 'SW-1', 'adres': '송라면 지경리 앞 해상 - 지경천 영향권', 'xcnts': '213930', '"
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5859
+  rank_in_sector: 193
+  brm: 환경기상 - 해양환경
+  sector_rule: env-eia-to-general
+  why: 전국 환경영향평가 해양조사 지점·속성 API, 좌표 포함
+claims:
+  - id: c-15142633-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/6
+    evidence:
+      - type: measured
+        source: probe/runs/15142633.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/6
+      - type: measured
+        source: probe/apply/15142633.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15142633-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142633-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142633.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142633-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15142633.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142633-06
+    kind: admin_note
+    value: "세부 부문 '환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)'의 가치: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#eia
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142633-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142633-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142633-10
+    kind: pitfall
+    value: 필수 파라미터 bbox, format, height, mgtNo, srs, srsName, transparent, width는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15142633.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142633-11
+    kind: pitfall
+    value: '오퍼레이션 5개는 최소 파라미터로 응답이 없었다: /getIvstgWMS, /getModel, /getIvstgWFS, /getAmpltNm'
+    evidence:
+      - type: measured
+        source: probe/runs/15142633.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/6
+  run: probe/runs/15142633.json
+  stats: probe/stats/15142633.json
+  data: probe/data/15142633/
+status: active
+summary_user: 환경영향평가 사업의 해양조사 결과를 조사지점(주소·좌표) 단위로 담은 건별 정보로, 해양수질(화학적산소요구량·총유기탄소·총질소), 잘피 서식 여부, 해수유동 적용모델, 부유사확산 면적, 출현 동식물 종명 등을 전국 범위로 제공한다. 해양 개발사업을 검토하는 사업자나 분석가가 "이 해역 사업의 환경영향평가에서 수질 등급과 부유사 확산 저감 효과는 어땠나" 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 사업 관리번호(mgtNo)를 다른 환경영향평가 데이터에서 먼저 받아 넘기거나 좌표·주소로 사업구역·토지이용규제 정보와 맞춰 쓴다.
+limits: 6개 오퍼레이션 중 실호출 성공은 1개뿐이고 WMS·WFS 공간조회, 적용모델, 동식물명 조회 등은 최소 파라미터로 응답이 없었다. 관리번호·좌표계·bbox 등 필수 파라미터를 다른 데이터에서 먼저 확보해야 하며, 평가 시점에 생성된 뒤 바뀌지 않는 이벤트성 데이터라 현재 해양 상태를 나타내지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15142633-01
+    - c-15142633-02
+    - c-15142633-03
+    - c-15142633-04
+    - c-15142633-06
+    - c-15142633-10
+    - c-15142633-11
+  dropped_citations: 0

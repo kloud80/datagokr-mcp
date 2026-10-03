@@ -1,0 +1,249 @@
+# Dataset 15142828 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142828'
+tier: verified
+title: 기후에너지환경부 국립환경과학원_환경영향평가 인구주거정보
+sector: 환경기상/환경일반/eia
+agency:
+  id: '1482021'
+  name: 기후에너지환경부 국립환경과학원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142828/openapi.do
+synonyms:
+  - 환경영향평가
+  - 인구
+  - 주거
+  - 상근인구
+  - 이용인구
+  - 인구주거조사
+  - 인구수
+  - 환경영향평가 인구
+  - 사업구역 인구 현황
+  - 주택보급률
+  - 사업 후 계획인구
+  - 상근인구 이용인구
+  - 가구수 주택수
+  - 개발사업 주변 인구
+description_portal: 환경부 국립환경과학원에서 제공하는 환경영향평가 관련 API는 특정 사업구역을 중심으로 예측 및 조사된 인구와 주거 속성 정보를 통해 해당 지역의 인구·주거 특성을 파악할 수 있게 하며, 인근 지역의 개발 현황(건수), 사업코드, 사업 후 상근인구, 사업 후 이용인구, 사업 후 주택계획인구 등을 조회할 수 있고, 환경영향평가 대상 사업구역을 기준으로 조사된 주택보급률(%), 환경영향평가 사업코드, 년도, 남녀별 인구수 및 전체 인구수, 총 가구수(가구), 총 주택수(호), 데이터 기준년도 배열, 시군구읍면동 명칭 등의 세부 정보를 함께 제공하는 서비스 입니다.
+team:
+  dept: 기후국토환경연구과
+services:
+  - op: /getPredict
+    name: 예측속성조회
+    endpoint: https://apis.data.go.kr/1480523/PopulationService/getPredict
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        desc: 환경영향평가 사업코드
+      - name: type
+        required: false
+        desc: 응답받을 xml/json 타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getIvstg
+    name: 조사속성조회
+    endpoint: https://apis.data.go.kr/1480523/PopulationService/getIvstg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: mgtNo
+        required: true
+        example: JJ2005E006
+        desc: 환경영향평가 사업코드
+      - name: type
+        required: false
+        example: json
+        desc: 응답받을 xml/json 타입
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sggemdNm
+      title: 시군구읍면동 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임실군
+        - 진안군
+      stats:
+        unique: 2
+    - name: years
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "[{'popltnYr': '2005', 'totPopltnMale': '16673', 'totPopltnFemale': '16493', 'tot"
+        - "[{'popltnYr': '2005', 'totPopltnMale': '15502', 'totPopltnFemale': '15375', 'tot"
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: event
+classification:
+  subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4124
+  rank_in_sector: 446
+  brm: 환경기상 - 환경일반
+  sector_rule: env-eia-to-general
+  why: 전국 환경영향평가 사업별 인구·주거 항목 API
+claims:
+  - id: c-15142828-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15142828.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15142828.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15142828-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142828-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142828.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142828-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15142828.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142828-06
+    kind: admin_note
+    value: "세부 부문 '환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)'의 가치: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#eia
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142828-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142828-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142828-10
+    kind: pitfall
+    value: 필수 파라미터 mgtNo는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15142828.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142828-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getPredict'
+    evidence:
+      - type: measured
+        source: probe/runs/15142828.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15142828.json
+  stats: probe/stats/15142828.json
+  data: probe/data/15142828/
+status: active
+summary_user: 환경영향평가 대상 사업구역을 기준으로 조사된 인구·주거 속성(남녀별·전체 인구수, 총 가구수, 총 주택수, 주택보급률, 기준년도, 시군구읍면동 명칭)과 사업 후 상근·이용·주택계획 인구 등 예측 정보를 사업 단위로 담으며, 범위는 전국이고 행정단위는 읍면동입니다. 개발사업 예정지 주변의 인구·주거 규모가 어느 정도이고 사업 후 인구가 얼마나 늘 것으로 예측됐는지 확인하려는 분석가나 사업자가 쓴다. 필수 파라미터인 환경영향평가 사업관리번호(mgtNo)를 다른 환경영향평가 데이터(협의 현황·사업구역 등)에서 먼저 받아 넘겨야 하며, 전역 조인 키는 없어 그 외 데이터와는 읍면동 명칭 매핑으로만 연결한다.
+limits: 사업관리번호(mgtNo) 없이는 조회할 수 없고, 사업 후 인구 예측 오퍼레이션(/getPredict)은 최소 파라미터 호출에서 응답이 없었다. 평가 시점에 한 번 생성된 뒤 바뀌지 않는 이벤트성 데이터라 현재 인구·주거 현황으로 쓰기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15142828-02
+    - c-15142828-03
+    - c-15142828-04
+    - c-15142828-10
+    - c-15142828-11
+  dropped_citations: 0

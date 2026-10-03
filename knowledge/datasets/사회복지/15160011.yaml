@@ -1,0 +1,290 @@
+# Dataset 15160011 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15160011'
+tier: verified
+title: 부산광역시_구군 독거노인 현황조회 서비스
+sector: 사회복지/노인·청소년/regional-statistics
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15160011/openapi.do
+synonyms:
+  - 독거노인
+  - 65세이상
+  - 80세이상
+  - 남성독거노인수
+  - 여성독거노인수
+  - 부산 독거노인
+  - 1인 가구 노인
+  - 홀몸노인
+  - 행정동별 독거노인 통계
+  - 노인 돌봄 대상
+  - 고령 1인가구
+description_portal: 부산광역시 구군별 독거노인 현황을 제공하는 데이터로, 지역별 독거노인 수와 성별·연령대 등 관련 통계 정보를 포함하고 있습니다. 이 데이터는 부산광역시 구군명, 행정동명, 독거노인수, 65세-79세 남성, 65세-79세 여성, 80세 이상 남성, 80세 이상 여성의 독거노인 수를 제공하고 있습니다. 이를 통해 고령화 추세 및 지역별 독거노인 분포 등을 파악할 수 있으며, 노인복지 정책 수립, 돌봄 서비스 지원, 복지 사각지대 발굴 및 지역 맞춤형 복지서비스 제공을 위한 기초자료로 활용할 수 있습니다.
+team:
+  dept: 빅데이터과
+services:
+  - op: /getLaSenior
+    name: 구군 독거노인 현황
+    endpoint: https://apis.data.go.kr/6260000/LaSeniorService/getLaSenior
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: gugun
+        required: true
+        desc: 구군명
+      - name: resultType
+        required: true
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gugun
+      title: 구군명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중구
+      stats:
+        unique: 1
+    - name: insttCode
+      title: 기관코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3250000'
+      stats:
+        min: 3250000
+        p50: 3250000
+        max: 3250000
+        unique: 1
+    - name: dongNm
+      title: 행정동명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중앙동
+        - 동광동
+        - 대청동
+      stats:
+        unique: 9
+    - name: laSeniorCnt
+      title: 독거노인수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '270'
+        - '506'
+        - '758'
+      stats:
+        min: 137
+        p50: 598
+        max: 1361
+        unique: 9
+    - name: age6579MalOdsnCnt
+      title: 연령65_79남성노인수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '119'
+        - '194'
+        - '235'
+      stats:
+        min: 45
+        p50: 206
+        max: 400
+        unique: 9
+    - name: age6579FmlOdsnCnt
+      title: 연령65_79여성노인수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '89'
+        - '190'
+        - '318'
+      stats:
+        min: 56
+        p50: 236
+        max: 601
+        unique: 9
+    - name: age80AbnmlMalOdsnCnt
+      title: 연령80이상남성노인수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18'
+        - '34'
+        - '40'
+      stats:
+        min: 10
+        p50: 35
+        max: 74
+        unique: 9
+    - name: age80AbnmlFmlOdsnCnt
+      title: 연령80이상여성노인수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '24'
+        - '44'
+        - '88'
+      stats:
+        min: 24
+        p50: 119
+        max: 286
+        unique: 8
+    - name: referenceDate
+      title: 데이터기준일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-04-30'
+      stats:
+        min: '2026-04-30'
+        max: '2026-04-30'
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 지역 연계 통계 (시군구 노인인구·독거노인·기초연금 수급·지역별 현황)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4403
+  rank_in_sector: 649
+  brm: 사회복지 - 노인·청소년
+  why: 행정동 단위 독거노인 집계로 지역에 이을 수 있음
+claims:
+  - id: c-15160011-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15160011.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15160011.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15160011-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160011-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15160011.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160011-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15160011.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160011-06
+    kind: admin_note
+    value: "세부 부문 '지역 연계 통계 (시군구 노인인구·독거노인·기초연금 수급·지역별 현황)'의 가치: 시군구·시도 단위로 인구·시설 데이터에 연결 (구름: 지역 연계 가능한 통계만)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15160011-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160011-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15160011.json
+  stats: probe/stats/15160011.json
+  data: probe/data/15160011/
+status: active
+summary_user: 부산광역시 구군·행정동(읍면동) 단위로 독거노인 수와 65~79세·80세 이상 남녀별 독거노인 수를 담은 집계 통계로, 데이터기준일자(referenceDate)가 함께 붙는다. 구청·복지 담당자나 분석가가 '우리 구에서 80세 이상 여성 독거노인이 가장 많은 동은 어디인가'처럼 돌봄 서비스 우선 지역을 고르는 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 구군명·행정동명 이름 매핑이나 같은 기관코드(insttCode)로만 시군구 노인인구·노인복지시설 데이터와 잇는다.
+limits: 행정동 코드 같은 표준 조인 키가 없어 다른 데이터와 연결할 때 구군·동 이름을 직접 맞춰야 하며, 범위는 부산광역시 한 시도에 한정된다. 개인 단위 정보는 없고 동별 집계 수치만 담는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15160011-03
+    - c-15160011-04
+    - c-15160011-06
+  dropped_citations: 0

@@ -1,0 +1,217 @@
+# Dataset 15158637 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158637'
+tier: verified
+title: 대전교통공사_초미세먼지측정정보 조회 서비스
+sector: 환경기상/대기/air-quality
+agency:
+  id: B554695
+  name: 대전교통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158637/openapi.do
+synonyms:
+  - 대전도시철도
+  - 지하철
+  - 역 환경
+  - 미세먼지
+  - 공기질
+  - PM2.5
+  - 지하철 미세먼지
+  - 대전 지하철 공기질
+  - 역사 실내공기질
+  - 대전도시철도 1호선
+  - 지하역사 미세먼지
+  - 실내 초미세먼지
+description_portal: 대전교통공사에서 운영 및 관리하고 있는 대전도시철도 1호선 전 역사에 설치된 미세먼지 측정장비를 통해 수집한 초미세먼지 측정 정보를 제공하는 데이터입니다.PM-2.5, 즉 입자 크기가 2.5µm 이하인 초미세먼지의 역별 실시간 측정값을 포함하며, 지하 역사 내 공기질 현황을 파악하는 데 활용할 수 있습니다.본 데이터를 활용하면 지하철 이용 시민을 위한 실내 공기질 안내 서비스, 환경 모니터링 앱, 대중교통 환경 개선 연구 등 다양한 분야에서 유용하게 사용할 수 있습니다.특히 호흡기 질환자나 건강 취약계층이 지하철 이용 전 역사 내 공기질을 미리 확인할 수 있어 시민 건강 보호에 기여할 수 있습니다.(본 데이터는 오픈API 형태로 제공되며, 데이터 활용을 위해서는 사전에 활용 신청을 완료하고 인증키를 발급받아야 합니다.)
+team:
+  dept: 디지털정보팀
+services:
+  - op: /getDustMeasure
+    name: 초미세먼지측정정보 조회
+    endpoint: https://apis.data.go.kr/B554695/DustMeasureSVC/getDustMeasure
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: sDate
+        required: true
+        desc: 조회 시작일자
+      - name: eDate
+        required: true
+        desc: 조회 종료일자
+      - name: stationNo
+        required: false
+        desc: 역 번호 [별첨2]
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 전체 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: indoor-air
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4733
+  rank_in_sector: 689
+  brm: 환경기상 - 대기
+  why: 대전 지하역사 초미세먼지 실시간 API, 역 단위
+claims:
+  - id: c-15158637-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15158637.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15158637.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158637-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158637-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158637.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158637-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158637.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158637-06
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158637-07
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15158637.json
+  stats: probe/stats/15158637.json
+  data: probe/data/15158637/
+status: active
+summary_user: 대전도시철도 1호선 역사에 설치된 측정장비로 수집한 초미세먼지(PM-2.5)의 역별 측정값을 오픈API로 제공하는 데이터입니다. 호흡기 질환자나 지하철 이용자가 "지금 내가 탈 역의 지하 역사 초미세먼지 농도가 어느 정도인가"를 확인하거나, 분석가가 역사 실내공기질을 모니터링하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 역 이름 매핑이나 같은 기관(대전교통공사)의 다른 역사 데이터로만 이어 쓸 수 있습니다.
+limits: 표준 역 코드 같은 공통 조인 키가 없어 에어코리아 실외 대기질 등과 결합하려면 역 이름을 직접 맞춰야 합니다. 범위는 전국·비공간으로 분류되어 있지만 실제 내용은 대전 1호선 역사에 한정되며 좌표 등 공간 정보는 확인되지 않았습니다. 개발계정은 하루 1,000회 호출 제한이 있습니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158637-01
+    - c-15158637-03
+    - c-15158637-04
+  dropped_citations: 0

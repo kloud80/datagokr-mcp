@@ -1,0 +1,373 @@
+# Dataset 15160195 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15160195'
+tier: verified
+title: 한국공항공사_실시간 항공기 운항정보 검색_GW
+sector: 교통물류/항공·공항/flight-operations
+agency:
+  id: B551178
+  name: 한국공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15160195/openapi.do
+synonyms:
+  - 실시간 운항정보
+  - 항공편 검색
+  - 항공기 운항
+  - 한국공항공사
+  - 김포공항 운항정보
+  - 김해공항 운항정보
+  - 제주공항 운항정보
+  - 항공편 조회
+  - 편명 검색
+  - 비행기 지연 결항
+  - 출도착 현황
+  - 제주공항 출발 도착
+  - 게이트 번호
+  - 항공편 상태
+description_portal: 한국공항공사는 인천국제공항을 제외한 김포, 김해, 제주, 대구 등 전국 14개 공항을 통합 관리하고 운영하는 대한민국의 대표적인 공공기관입니다. 본 API는 한국공항공사가 관할하는 운영하고 있는 공항의 실시간 항공기 운항정보의 항공편 검색기능를 제공합니다.기존 제공하던 "항공기 운항정보" API 에서 제공 한 실시간 운항정보의 제공 정보 중 원하는 항공편을 검색하는 기능을 제공합니다.schFln변수를 활용하여 항공편명을 검색 하실 수 있습니다.제공되는 주요 데이터 항목으로는 편명별 출도착 시각, 지연여부, 결항여부, 출도착 공항 등 이 상세히 포함되어 있습니다. 이를 통해 공항 실시간 운항정보 제공 서비스 등 다양한 목적의 데이터 활용이 가능합니다.제공되는 데이터에 대한 추가적인 요구사항이 있으시거나, 기능 개선 및 데이터 오류 등에 대한 의견이 있으신 분은 한국공항공사 담당 부서(02-2660-4803)로 연락해 주시면 친절하게 안내해 드리겠습니다.
+team:
+  dept: 데이터융합부
+services:
+  - op: /info
+    name: 항공기 운항정보 항공편 검색
+    endpoint: https://apis.data.go.kr/B551178/flight-search/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: schLineType
+        required: false
+        desc: '항공편종류(국내 : D, 국제 : I) (샘플 :I)'
+      - name: schIOType
+        required: false
+        desc: '운행 타입(도착 : I, 출발 : O) (샘플 :I)'
+      - name: schAirCode
+        required: false
+        desc: 공항 코드(ex 김포공항=GMP, 제주공항=CJU 등) (샘플 :GMP)
+      - name: schStTime
+        required: false
+        desc: 예정시간 (샘플 :0600)
+      - name: schEdTime
+        required: false
+        desc: 변경시간  (샘플 :1800)
+      - name: schFln
+        required: true
+        desc: '항공편명 (샘플 : KE1814)'
+      - name: type
+        required: false
+        desc: '응답 형식(JSON & XML), 기본값 : XML  (샘플 :xml)'
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: boardingKor
+      title: 출발공항 (국문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 타이페이/타오위안
+        - 서울/김포
+        - 청주
+      stats:
+        unique: 5
+    - name: boardingEng
+      title: 출발공항 (영문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - TAOYUAN
+        - GIMPO
+        - CHEONGJU
+      stats:
+        unique: 5
+    - name: arrivedKor
+      title: 도착공항 (국문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제주
+        - 부산/김해
+        - 타이페이/타오위안
+      stats:
+        unique: 5
+    - name: arrivedEng
+      title: 도착공항 (영문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - JEJU
+        - GIMHAE
+        - TAOYUAN
+      stats:
+        unique: 5
+    - name: airlineKorean
+      title: 항공사(국문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이스타항공
+        - 트리니티항공
+        - 에어서울
+      stats:
+        unique: 6
+    - name: airlineEnglish
+      title: 항공사(영문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - EASTAR JET
+        - TRINITY AIRWAYS
+        - AIR SEOUL
+      stats:
+        unique: 6
+    - name: airFln
+      title: 항공편명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ZE781A
+        - TW664
+        - RS901
+      stats:
+        unique: 10
+    - name: std
+      title: 예정시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0605'
+        - '0600'
+        - '0000'
+      stats:
+        min: 0
+        p50: 605
+        max: 605
+        unique: 4
+    - name: etd
+      title: 변경시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0613'
+        - '0619'
+        - '0014'
+      stats:
+        min: 14
+        p50: 613
+        max: 624
+        unique: 8
+    - name: io
+      title: 출/도착코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - O
+      stats:
+        unique: 2
+    - name: line
+      title: 국내국제구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국제
+        - 국내
+      stats:
+        unique: 2
+    - name: gate
+      title: 게이트번호
+      type: number
+      null_rate: 0.1
+      sample_values:
+        - '1'
+        - '2'
+        - '4'
+      stats:
+        min: 1
+        p50: 2
+        max: 13
+        unique: 5
+    - name: rmkKor
+      title: 항공편상태(국문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 도착
+        - 출발
+      stats:
+        unique: 2
+    - name: rmkEng
+      title: 항공편상태(영문)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 'ARRIVED   '
+        - DEPARTED
+      stats:
+        unique: 2
+    - name: city
+      title: 운항구간코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - TPE
+        - CJU
+        - CXR
+      stats:
+        unique: 4
+    - name: airport
+      title: 기준공항코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GMP
+        - CJJ
+        - PUS
+      stats:
+        unique: 5
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.47
+  rank_in_sector: 127
+  brm: 교통물류 - 항공·공항
+  why: KAC 14개 공항 실시간 운항편 검색
+claims:
+  - id: c-15160195-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15160195.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15160195.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15160195-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160195-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15160195.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 16개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160195-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15160195.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160195-06
+    kind: admin_note
+    value: "세부 부문 '운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)'의 가치: 편 단위 실시간 운항·결항·지연 — 모델이 절대 모르는 오늘의 사실. 공항공사·인천공항 두 체계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#flight-operations
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15160195-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160195-08
+    kind: admin_note
+    value: wave5 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160195-10
+    kind: pitfall
+    value: 필수 파라미터 schFln는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15160195.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15160195.json
+  stats: probe/stats/15160195.json
+  data: probe/data/15160195/
+status: active
+summary_user: 한국공항공사가 운영하는 인천공항 외 전국 공항의 실시간 운항정보에서 항공편명으로 특정 편을 찾아, 편별 출발·도착 공항, 항공사, 예정·변경 시각, 게이트, 지연·결항 같은 항공편 상태를 건별로 담는다. 공항 이용객이나 마중 나가는 사람이 '오늘 김포발 제주행 이 편이 지연되거나 결항됐는지, 몇 번 게이트인지'를 확인하는 데 쓴다. 전역 조인 키는 없어 기준공항코드(airport)·운항구간코드나 공항명·항공편명을 이름·코드 매핑으로 공항코드 데이터나 같은 기관의 항공기 운항정보 API와 이어 쓴다.
+limits: 검색에 필수인 항공편명(schFln)은 다른 데이터에서 먼저 받아 넘겨야 하므로, 편명을 모르면 기존 항공기 운항정보 API 등으로 먼저 조회해야 한다. 인천국제공항은 별도 체계라 이 API로 다루지 않으며, 개발계정은 하루 5,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15160195-01
+    - c-15160195-03
+    - c-15160195-04
+    - c-15160195-06
+    - c-15160195-10
+  dropped_citations: 0

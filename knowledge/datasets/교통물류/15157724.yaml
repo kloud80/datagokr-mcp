@@ -1,0 +1,408 @@
+# Dataset 15157724 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157724'
+tier: verified
+title: 인천항만공사_인천항 컨테이너 정보 조회 서비스
+sector: 교통물류/해운·항만/port-cargo
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157724/openapi.do
+synonyms:
+  - 인천항만정보
+  - 컨테이너터미널
+  - 선적정보
+  - 입항정보
+  - 항만운영정보
+  - OpenAPI
+  - 해양수산부
+  - 교통물류
+  - 인천항 컨테이너 조회
+  - 컨테이너 선적정보
+  - 컨테이너 입항정보
+  - 인천항 터미널
+  - IPA 컨테이너 API
+  - 항만 물류 컨테이너
+  - 선적 실적
+description_portal: 인천항 컨테이너 정보 조회 Open API 서비스는 컨테이너 단위의 선적정보, 입항정보, 분석항만정보 등을 조회할 수 있는 기능을 제공합니다. REST 방식의 API 형태로 제공되며, 선적년도, 선적수, 터미널 코드 등 다양한 파라미터를 통해 데이터를 호출할 수 있습니다. 항만물류 정보의 디지털화를 통해 교통물류의 효율성 제고와 항만운영의 스마트화를 지원하며, 연간 약 11,000건의 이상의 선적 데이터를 기준으로 분석이 가능합니다. 항만 정책 수립, 물류 흐름 분석, 민간 물류기업의 정보 활용 등에서 유용하게 활용될 수 있습니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getSinShipWorkInfo
+    name: 컨테이너터미널 본선작업정보 조회
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlIntegratInfo/getSinShipWorkInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: termCd
+        required: true
+        desc: 터미널코드
+      - name: berthNo
+        required: false
+        desc: 선석
+      - name: endRow
+        required: true
+        desc: 총 조회 수
+      - name: skipRow
+        required: true
+        desc: 조회시작 번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getSinVescallinfo
+    name: 컨테이너터미널 선석배정정보 조회
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlIntegratInfo/getSinVescallinfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: termCd
+        required: true
+        desc: 터미널코드
+      - name: scheEtbDtForm
+        required: true
+        desc: 접안예정 시작일시
+      - name: scheEtbDtTo
+        required: true
+        desc: 접안예정 종료일시
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getSinGateInfo
+    name: 컨테이너터미널 반출입예정정보
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlIntegratInfo/getSinGateInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: estDtFrom
+        required: true
+        desc: 반출입예정일자 시작
+      - name: estDtTo
+        required: true
+        desc: 반출입예정일자 종료
+      - name: cntrNo
+        required: true
+        desc: 컨테이너 번호
+      - name: termCd
+        required: true
+        desc: 터미널코드
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getSinShipWorkInfoYear
+    name: 컨테이너터미널 본선작업정보_연간 조회
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlIntegratInfo/getSinShipWorkInfoYear
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: termCd
+        required: true
+        desc: 터미널코드
+      - name: berthNo
+        required: false
+        desc: 선석
+      - name: searchYear
+        required: true
+        desc: 조회년도
+      - name: endRow
+        required: true
+        desc: 총 조회 수
+      - name: skipRow
+        required: true
+        desc: 조회시작 번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getSinVescallinfo
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지당 표출 데이터 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getSinVescallinfo
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getSinVescallinfo
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 데이터 총 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getSinVescallinfo
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getSinGateInfo
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지당 표출 데이터 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getSinGateInfo
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getSinGateInfo
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 데이터 총 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getSinGateInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4275
+  rank_in_sector: 189
+  brm: 교통물류 - 해운·항만
+  why: 인천항 컨테이너 반출입·작업 조회 API
+claims:
+  - id: c-15157724-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/4
+    evidence:
+      - type: measured
+        source: probe/runs/15157724.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/4
+      - type: measured
+        source: probe/apply/15157724.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157724-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157724-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157724.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157724-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157724.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157724-06
+    kind: admin_note
+    value: "세부 부문 '항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)'의 가치: 항만별 월간 물동량 = 해운 시황 지표, 반출입은 화물 건 단위"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#port-cargo
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157724-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157724-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157724-10
+    kind: pitfall
+    value: 필수 파라미터 cntrNo, endRow, scheEtbDtForm, skipRow, termCd는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157724.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157724-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /getSinShipWorkInfo, /getSinShipWorkInfoYear'
+    evidence:
+      - type: measured
+        source: probe/runs/15157724.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/4
+  run: probe/runs/15157724.json
+  stats: probe/stats/15157724.json
+  data: probe/data/15157724/
+status: active
+summary_user: 인천항 컨테이너 단위의 선적정보, 입항정보, 분석항만정보를 REST API로 조회하는 데이터로, 터미널 코드·컨테이너 번호·접안 예정일 등을 넣어 건별로 받는다. 물류기업이나 화주가 특정 컨테이너가 인천항 어느 터미널에서 언제 선적·입항되는지 확인하거나, 분석가가 인천항 물류 흐름을 살피는 데 쓴다. 응답 필드에서 전역 조인 키가 확인되지 않아 다른 데이터와는 터미널 코드나 컨테이너 번호 같은 이름·코드 매핑, 또는 같은 기관(인천항만공사) 코드로만 연결한다.
+limits: 컨테이너 번호(cntrNo), 터미널 코드(termCd), 접안 예정일 형식 등 필수 파라미터를 다른 데이터에서 먼저 받아 넘겨야 하며, 4개 오퍼레이션 중 2개(/getSinShipWorkInfo, /getSinShipWorkInfoYear)는 최소 파라미터로 호출 시 응답이 없었다. 개발계정은 일 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157724-01
+    - c-15157724-03
+    - c-15157724-10
+    - c-15157724-11
+  dropped_citations: 0

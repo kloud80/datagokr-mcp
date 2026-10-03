@@ -1,0 +1,588 @@
+# Dataset 15157414 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157414'
+tier: verified
+title: 한국예탁결제원_국제거래정보서비스_GW
+sector: 재정금융/금융/securities-market
+agency:
+  id: B552481
+  name: 한국예탁결제원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157414/openapi.do
+synonyms:
+  - 국제
+  - 해외증권
+  - 해외주식
+  - 국가코드
+  - 해외DR
+  - 미국주식
+  - KDR
+  - DR 전환
+  - 주식예탁증서
+  - ADR
+  - GDR
+  - 해외예탁증서 해지
+  - 미국주식 결제건수
+  - 국가코드 조회
+  - 원주 전환가능 주식수
+description_portal: 본 API 서비스는 국제에서 거래되는 종목들의 거래 정보를 확인할 수 있는 서비스입니다. 구체적으로 종목별 전환 가능 주식수, DR의 월별 전환 및 해지 현황 정보를 조회할 수 있습니다. 그리고 국가코드도 조회가 가능하며, DR 전환가능 대상 종목 또한 조회 가능합니다. 추가로 연도별 미국주식 결제처리 현황을 조회할 수 있습니다. DR의 월별 전환/해지 현황 정보는 조회 기준 연월과 DR전환건수, DR전환주수(원주), DR해지건수, DR해지주수(원주)를 알 수 있습니다. 국가코드 조회시, 한글 국가명과 영문 국가명을 결과 값으로 받을 수 있습니다. DR 전환 가능대상 종목 조회시, DR 전환 비율과 총 원주수, DR 종목코드, 발행회사명을 알 수 있습니다. 연도별 미국주식 결제처리 현황 조회에서는 미국시장 매수 및 매도 결제건수를 결과 값으로 받아보실 수 있습니다.
+team:
+  dept: 증권데이터부
+services:
+  - op: /getOvsDrSecnInfo
+    name: 해외DR 종목 기본정보 조회
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getOvsDrSecnInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: isin
+        required: true
+        example: US48241A1051
+        desc: DR ISIN 코드
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getConvPossDRInfo
+    name: DR 전환가능대상 종목 조회
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getConvPossDRInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: schStdDt
+        required: true
+        desc: 조회기준연월(YYYYMM)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getOvsStkSetlCount
+    name: 연도별 미국주식 결제처리 현황 조회
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getOvsStkSetlCount
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: schStdYy
+        required: true
+        desc: 조회기준연도(YYYY)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getDRMmbyConvStat
+    name: DR 월별 전환/해지 현황 정보 조회
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getDRMmbyConvStat
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: schBeginYearMm
+        required: true
+        desc: 조회시작연월(YYYYMM)
+      - name: schExpryYearMm
+        required: true
+        desc: 조회종료연월(YYYYMM)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getNationCdSch
+    name: 국가코드조회
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getNationCdSch
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: nationCd
+        required: false
+        desc: 국가코드(미선택 시 데이터 전체 조회)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getDrConvQtyList
+    name: '종목별전환가능주식수 조회 '
+    endpoint: https://apis.data.go.kr/B552481/OverseaSvc/getDrConvQtyList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: drStkmkCd
+      title: 거래시장(기술문서 첨부파일 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      op: /getOvsDrSecnInfo
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: bstkSecnCd
+      title: 원주종목코드(KR표준코드)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KR7105560007
+      op: /getOvsDrSecnInfo
+      stats:
+        unique: 1
+    - name: bstkSecnNm
+      title: 원주종목명(예:삼성전자)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KB금융지주
+      op: /getOvsDrSecnInfo
+      stats:
+        unique: 1
+    - name: bstkTpcd
+      title: 원주 종류(보통주, 우선주 등)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보통주
+      op: /getOvsDrSecnInfo
+      stats:
+        unique: 1
+    - name: drSecnCd
+      title: DR종목코드
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - US48241A1051
+      op: /getOvsDrSecnInfo
+      stats:
+        min: '4824-11-05'
+        max: '4824-11-05'
+        unique: 1
+    - name: drTpcd
+      title: 'DR 구분(1: ADR, 2: GDR, 3: PADR, 4: JDR)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getOvsDrSecnInfo
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: nationCd
+      title: '국가코드(예: DE)'
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - TC
+        - TD
+        - TF
+      op: /getNationCdSch
+      stats:
+        unique: 295
+    - name: nationNm
+      title: '국가명(예: 독일)'
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 터크스 케이커스 제도
+        - 차드
+        - 프랑스령 남부와 남극 지역
+      op: /getNationCdSch
+      stats:
+        unique: 295
+    - name: nationEngNm
+      title: '국가영문명(예: Germany)'
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '*DEL*SHINHAN BANK'
+        - HONG KONG
+        - Turks and Caicos Islands
+      op: /getNationCdSch
+      stats:
+        unique: 293
+    - name: repSecnNm
+      title: 발행회사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - LG전자
+        - 삼성전자
+        - 에스케이하이닉스
+      op: /getDrConvQtyList
+      stats:
+        unique: 21
+    - name: issucoCustno
+      title: '발행회사번호(기업정보서비스 참조, 예: 594)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8096'
+        - '593'
+        - '66'
+      op: /getDrConvQtyList
+      stats:
+        min: 66
+        p50: 3199
+        max: 38354
+        unique: 21
+    - name: stkKanm
+      title: 원주종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보통주
+        - 우선주
+      op: /getDrConvQtyList
+      stats:
+        unique: 2
+    - name: isin
+      title: 원주표준코드(주식정보서비스 참조)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KR7000660001
+        - KR7105560007
+        - KR7034220004
+      op: /getDrConvQtyList
+      stats:
+        unique: 23
+    - name: drSecnShotnCd
+      title: DR Ticker
+      type: code
+      null_rate: 0.0833
+      sample_values:
+        - KB
+        - LPL
+        - LGETN
+      op: /getDrConvQtyList
+      stats:
+        unique: 22
+    - name: drOvsTrIsin
+      title: DR 종목코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - US48241A1051
+        - US50186V1026
+        - US50186Q2021
+      op: /getDrConvQtyList
+      stats:
+        unique: 24
+    - name: drStdQtyBstkQty
+      title: 원주 대 DR비율
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1:1
+        - 1:2
+        - 1:4
+      op: /getDrConvQtyList
+      stats:
+        unique: 9
+    - name: drTpnm
+      title: DR구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GDR
+        - ADR
+      op: /getDrConvQtyList
+      stats:
+        unique: 2
+    - name: drStkmkNm
+      title: 거래시장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - NYSE(뉴욕증권거래소)
+        - LSE(런던증권거래소)
+        - LuxX(룩셈부르크증권거래소)
+      op: /getDrConvQtyList
+      stats:
+        unique: 6
+    - name: acNm
+      title: 예탁기관
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - CITIBANK.N.A[ADR DEPT]
+        - JP MORGAN CHASE BANK NA FBO HOLDERS OF DR
+        - CITIBANK.N.A(SKHYNIX ADR)
+      op: /getDrConvQtyList
+      stats:
+        unique: 4
+    - name: issuLmtStkqty
+      title: 총DR전환가능한도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '116583985'
+        - '68095700'
+        - '4383591'
+      op: /getDrConvQtyList
+      stats:
+        min: 774963
+        p50: 40520478.5
+        max: 914629300
+        unique: 24
+    - name: convPossQty
+      title: 현재DR전환가능주식수(원주->DR)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '93428467'
+        - '42038681'
+        - '3838953'
+      op: /getDrConvQtyList
+      stats:
+        min: 0
+        p50: 21105572
+        max: 734881225
+        unique: 24
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.57
+  rank_in_sector: 215
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: DR 종목별 전환·해지 정보, 종목코드로 조인
+claims:
+  - id: c-15157414-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 3/6
+    evidence:
+      - type: measured
+        source: probe/runs/15157414.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 3/6
+      - type: measured
+        source: probe/apply/15157414.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157414-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157414-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157414.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 21개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157414-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157414.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157414-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157414-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157414-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157414-10
+    kind: pitfall
+    value: 필수 파라미터 schBeginYearMm, schExpryYearMm, schStdDt, schStdYy는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157414.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157414-11
+    kind: pitfall
+    value: '오퍼레이션 3개는 최소 파라미터로 응답이 없었다: /getConvPossDRInfo, /getOvsStkSetlCount, /getDRMmbyConvStat'
+    evidence:
+      - type: measured
+        source: probe/runs/15157414.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 3/6
+  run: probe/runs/15157414.json
+  stats: probe/stats/15157414.json
+  data: probe/data/15157414/
+status: active
+summary_user: "한국예탁결제원이 관리하는 해외 주식예탁증서(DR) 관련 정보를 오퍼레이션별로 담는다: 원주 종목별 DR 종류(ADR·GDR 등)·전환 비율·총 전환가능 한도와 현재 전환 가능 주식수, DR 월별 전환·해지 건수와 주수, 국가코드표, 연도별 미국주식 매수·매도 결제건수. 투자자나 분석가가 '삼성전자 원주를 지금 DR로 몇 주까지 전환할 수 있나', '최근 DR 해지가 늘었나' 같은 질문을 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으나, 원주표준코드(isin)와 발행회사번호(issucoCustno)는 명세상 같은 기관의 주식정보·기업정보서비스를 참조하므로 이를 통해 종목·발행사 정보와 이어 쓴다."
+limits: 실호출에서 6개 오퍼레이션 중 3개만 성공했고, DR 전환가능 종목·미국주식 결제현황·DR 월별 전환현황은 최소 파라미터로 응답이 없었다. 조회 연월·기준일·기준연도 같은 필수 파라미터를 먼저 맞춰 넘겨야 하며, 개발계정은 하루 100회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157414-01
+    - c-15157414-03
+    - c-15157414-10
+    - c-15157414-11
+  dropped_citations: 0

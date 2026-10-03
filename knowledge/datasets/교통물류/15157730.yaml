@@ -1,0 +1,242 @@
+# Dataset 15157730 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157730'
+tier: verified
+title: 인천항만공사_인천항 터미널 혼잡도 정보 조회 서비스
+sector: 교통물류/해운·항만/port-cargo
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157730/openapi.do
+synonyms:
+  - 인천항
+  - 인천터미널
+  - 출항정보
+  - 정박시간
+  - 터미널 코드
+  - 혼잡도
+  - 트래픽 상태
+  - 항만물류
+  - 인천항 혼잡도
+  - 항만 터미널 혼잡
+  - 컨테이너 터미널 대기
+  - 인천항 교통 현황
+  - 항만 혼잡 API
+  - 터미널 반출입 혼잡
+description_portal: 해당 데이터는 인천항 터미널의 출항 정보를 담은 Open API 서비스에 대한 설명입니다. 주요 제공 항목에는 터미널 코드, 정박시간(trafficTime), ghswkqeh(traficStatus), 터미널명(termName), 자료구분(dataType), 최초 작성일자(regdate) 등이 있으며, 항만 교통 정보의 실시간 모니터링 및 물류 예측 시스템에 활용 될 수 있습니다. 특히 각 항만 터미널의 선박 혼잡 상황과 출항 현황을 데이터로 수집하여 항만 운영사 및 화주, 운송업체 등의 의사결정에 기여 할 수 있도록 설계 되었습니다. 해당 Open API는 REST 방식을 호출하여 XML 방식으로 데이터를 제공하고 있습니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getTrmnlCnf
+    name: 인천항 터미널 혼잡도 정보
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlCnf/getTrmnlCnf
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: endRow
+        required: true
+        desc: 총건수
+      - name: skipRow
+        required: true
+        desc: 시작번호
+      - name: numOfRows
+        required: true
+        desc: 줄수
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: regdate
+      title: 최초 작성일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03 19:28:47'
+        - '2026-10-03 19:28:42'
+        - '2026-10-03 19:26:57'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 5
+    - name: termCd
+      title: 터미널코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - IT001
+        - IT002
+        - IT003
+      stats:
+        unique: 5
+    - name: termName
+      title: 터미널명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 선광신컨테이너터미널
+        - E1컨테이너터미널
+        - 인천컨테이너터미널
+      stats:
+        unique: 5
+    - name: trafficStatus
+      title: 혼잡현황
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B
+      stats:
+        unique: 1
+    - name: trafficTime
+      title: 혼잡시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03 19:28:47'
+        - '2026-10-03 19:28:42'
+        - '2026-10-03 19:26:57'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 5
+    - name: dataType
+      title: 자료ID
+      type: code
+      null_rate: 0.8
+      sample_values:
+        - ICT04
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.466
+  rank_in_sector: 155
+  brm: 교통물류 - 해운·항만
+  why: 인천항 터미널 혼잡도 실시간 API
+claims:
+  - id: c-15157730-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157730.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157730.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157730-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157730-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157730.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157730-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157730.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157730-06
+    kind: admin_note
+    value: "세부 부문 '항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)'의 가치: 항만별 월간 물동량 = 해운 시황 지표, 반출입은 화물 건 단위"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#port-cargo
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157730-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157730-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157730.json
+  stats: probe/stats/15157730.json
+  data: probe/data/15157730/
+status: active
+summary_user: 인천항 각 터미널의 혼잡 현황을 터미널 단위로 담은 API로, 터미널코드·터미널명과 함께 혼잡 상태(trafficStatus), 혼잡 시간, 자료 구분, 최초 작성일자를 XML로 제공한다. 화주나 운송업체가 "지금 인천항 어느 터미널이 붐벼서 반출입 시간을 조정해야 하나"를 판단할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 터미널코드·터미널명을 이름으로 맞추거나 인천항만공사의 다른 서비스와 같은 기관 코드로만 잇는다.
+limits: 전국·비공간으로 분류되지만 내용은 인천항 터미널에 한정되며, 좌표나 행정구역 코드가 없어 지도·지역 단위 결합이 어렵다. 활용신청은 자동승인이고 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157730-01
+    - c-15157730-03
+    - c-15157730-04
+  dropped_citations: 0

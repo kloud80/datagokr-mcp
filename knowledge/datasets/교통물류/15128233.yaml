@@ -1,0 +1,223 @@
+# Dataset 15128233 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15128233'
+tier: verified
+title: 한국해양교통안전공단_실시간 교통정보 조회
+sector: 교통물류/해운·항만/vessel-movements
+agency:
+  id: B554035
+  name: 한국해양교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15128233/openapi.do
+synonyms:
+  - 실시간
+  - 해양교통정보
+  - 교통량
+  - 밀집도
+  - 해양격자4단계
+  - 해양 교통량
+  - 선박 밀집도
+  - 해역 선박 척수
+  - MTIS
+  - 해양격자 교통량
+  - 실시간 선박 통항량
+  - 해상 교통 혼잡도
+description_portal: '해양교통안전정보시스템(MTIS)에서 제공 중인 "실시간 해양교통정보" 서비스는해양수산부 공동활용체계 기준 해양격자 4단계를 기반으로 매 5분 단위의 실시간 해양 교통량 정보(선박척수)와 밀집도(%)를 제공합니다.주요 기능은 다음과 같습니다.1. 조건선택: 일자, 시간, 선박용도, 톤수 선택2. 격자 레벨(해양수산부 격자 단계)- 2단계(15분): 약 22.7x27.7km- 3단계(3분): 약 4.4x5.5km- 4단계(1분30초): 약 2.3x2.8km3. 시각화 및 분석결과 제공: 격자별 선박용도, 톤수별 교통량 통계 관련 시각화 및 엑셀 파일로 즉시 다운로드 가능'
+team:
+  dept: 해양안전실 디지털융합팀
+services:
+  - op: /get_realtime
+    name: 실시간 해양교통정보
+    endpoint: https://apis.data.go.kr/B554035/realtime/get_realtime
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: true
+        example: JSON
+        desc: 요청자료형식(XML/JSON)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: grid_id
+      title: 격자번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - GR4_G3B14_W4
+        - GR4_G3B33_L3
+        - GR4_F2K41_B4
+      stats:
+        unique: 1000
+    - name: vmtc
+      title: 교통량(선박 척수)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '4'
+      stats:
+        min: 2
+        p50: 3
+        max: 52
+        unique: 31
+    - name: dnsty
+      title: 밀집도(%)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '0.1'
+        - '0.2'
+      stats:
+        min: 0
+        p50: 0.2
+        max: 100
+        unique: 179
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.521
+  rank_in_sector: 111
+  brm: 교통물류 - 해운·항만
+  why: 전국 해양격자 5분 단위 실시간 교통량
+claims:
+  - id: c-15128233-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15128233.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15128233.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15128233-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15128233-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15128233.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15128233-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15128233.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15128233-06
+    kind: admin_note
+    value: "세부 부문 '입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)'의 가치: Port-MIS 입출항 신고와 AIS 위치는 선박 추적의 원천. 항만공사 4곳 API는 Port-MIS 아래 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vessel-movements
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128233-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128233-08
+    kind: admin_note
+    value: wave5 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15128233.json
+  stats: probe/stats/15128233.json
+  data: probe/data/15128233/
+status: active
+summary_user: 해양교통안전정보시스템(MTIS)이 해양수산부 해양격자(2~4단계)별로 5분 단위 해양 교통량(선박 척수)과 밀집도(%)를 집계해 담은 실시간 데이터이며, 범위는 전국 해역입니다. 해운·항만 분석가나 운항 관계자가 '지금 특정 해역 격자에 선박이 얼마나 몰려 있는가'를 선박용도·톤수별로 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았고, 격자번호(grid_id)를 해양수산부 해양격자 체계와 매핑하거나 같은 기관 자료와 이어 쓰는 방식으로만 연결된다.
+limits: 개별 선박의 위치·항적이나 입출항 기록이 아니라 격자 단위 집계값이므로 선박 추적에는 쓰지 못한다. 다른 데이터와 바로 붙일 공통 키가 없어 격자번호 매핑이 별도로 필요하며, 개발계정은 하루 500회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15128233-01
+    - c-15128233-03
+    - c-15128233-04
+  dropped_citations: 0

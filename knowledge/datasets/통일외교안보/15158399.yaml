@@ -1,0 +1,250 @@
+# Dataset 15158399 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158399'
+tier: verified
+title: 한국국제협력단_사업정보(분야,국가)조회
+sector: 통일외교안보/외교/oda-projects
+agency:
+  id: B260003
+  name: 한국국제협력단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158399/openapi.do
+synonyms:
+  - KOICA
+  - ODA
+  - 개발협력사업
+  - 사업정보
+  - 국가별현황
+  - 분야별현황
+  - KOICA 사업 목록
+  - ODA 국가별 사업
+  - 개발협력사업 조회
+  - 수원국별 지원 분야
+  - 코이카 협력사업
+  - 공적개발원조 사업
+description_portal: KOICA가 수행한 ODA 개발협력사업을 국가별, 분야별로 조회할 수 있는 API입니다. 각 수원국에서 어떤 분야의 개발협력사업이 수행되었는지, 연도별로 어떤 변화가 있었는지를 정량적으로 분석할 수 있도록 구성되어 있습니다. 보건, 교육, 행정, 농업 등 다양한 분야의 사업 유형을 비교하거나 특정 국가에 집중된 지원 성격을 확인하고자 할 때 활용할 수 있습니다. 해당 API는 인증키(serviceKey), 페이지 번호(pageNo), 페이지당 호출건수(numOfRows) 등 기본적인 요청변수를 사용하며 조회년도, 사업형태, 분야코드, 국가코드 등의 필터 파라미터를 추가로 설정할 수 있습니다. 출력결과에는 사업시작년도, 사업종료년도, 사업명, 사업번호, 사업형태, 코이카지역명, 국가명 등의 항목이 포함되며, 각 항목에 대한 데이터는 XML 형식으로 반환됩니다.
+team:
+  dept: 데이터팀
+services:
+  - op: /getBsnsInfoRealmList
+    name: ODA 분야별 사업목록
+    endpoint: https://apis.data.go.kr/B260003/BsnsAddService/getBsnsInfoRealmList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: P_YEAR
+        required: true
+        desc: 조회년도
+      - name: P_BSNS_TY_CD
+        required: true
+        desc: 사업의 형태. 문서 15페이지의 사업유형코드 참고
+      - name: P_SPORT_REALM_CD
+        required: true
+        desc: 분야코드. 문서 16페이지의 분야별코드 참고
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBsnsInfoNationList
+    name: ODA 국가별 사업목록
+    endpoint: https://apis.data.go.kr/B260003/BsnsAddService/getBsnsInfoNationList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: P_YEAR
+        required: true
+        desc: 조회년도
+      - name: P_BSNS_TY_CD
+        required: true
+        desc: 사업의 형태. 문서 15페이지의 사업유형코드 참고
+      - name: P_NATION_CD
+        required: true
+        desc: 국가코드. 문서 16페이지의 국가코드 참고
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ITEMS
+      type: code
+      null_rate: 1.0
+      op: /getBsnsInfoRealmList
+      stats:
+        unique: 0
+    - name: ITEMS
+      type: code
+      null_rate: 1.0
+      op: /getBsnsInfoNationList
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4821
+  rank_in_sector: 90
+  brm: 통일외교안보 - 외교
+  why: 국가·분야별 KOICA 사업 조회 API, 국가코드 연계
+claims:
+  - id: c-15158399-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15158399.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15158399.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158399-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158399-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158399.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158399-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158399.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158399-06
+    kind: admin_note
+    value: "세부 부문 'ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)'의 가치: 사업 단위 원장, KOICA 조달은 정부조달과 같은 개념"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#oda-projects
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158399-07
+    kind: admin_note
+    value: '[통일외교안보 · 외교] 해외안전·여행경보(실시간성), 재외공관·여권·국가 표준코드, 국제기구 공석, KOICA ODA 사업·조달, 재외동포 단체만. 국가별 정치·경제 개황은 모델이 아는 참고 텍스트, 코로나 입국조치는 종료 → 배제 (`diplomacy-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L697
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158399-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158399-10
+    kind: pitfall
+    value: 필수 파라미터 P_BSNS_TY_CD, P_NATION_CD, P_SPORT_REALM_CD는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15158399.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15158399.json
+  stats: probe/stats/15158399.json
+  data: probe/data/15158399/
+status: active
+summary_user: KOICA가 수행한 ODA 개발협력사업을 사업 단위로 담아 사업명·사업번호·사업형태·시작·종료년도·코이카지역명·국가명을 조회년도·사업형태·분야·국가 조건으로 돌려주는 API다. 분석가나 개발협력 관계자가 특정 수원국에서 어떤 분야(보건·교육·농업 등)의 사업이 어느 해에 진행됐는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 KOICA 데이터(발주계획·조달·봉사단 파견 등)와는 국가명·사업명 매핑이나 같은 기관의 국가·분야·사업형태 코드로만 이어 쓴다.
+limits: 필수 파라미터인 사업형태 코드(P_BSNS_TY_CD)·국가 코드(P_NATION_CD)·지원분야 코드(P_SPORT_REALM_CD)는 다른 데이터의 코드값이라 먼저 코드표를 받아 넘겨야 호출된다. 사업 목록 원장이며 사업비 등 재정 규모 분석에 쓸 항목은 설명에 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158399-03
+    - c-15158399-06
+    - c-15158399-10
+  dropped_citations: 0

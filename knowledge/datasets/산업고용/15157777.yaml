@@ -1,0 +1,203 @@
+# Dataset 15157777 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157777'
+tier: verified
+title: 한국수력원자력(주)_수력발전소 발전현황
+sector: 산업고용/에너지및자원개발/power-plants
+agency:
+  id: B552041
+  name: 한국수력원자력(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157777/openapi.do
+synonyms:
+  - 수력
+  - 발전소
+  - 발전현황
+  - 한국수력원자
+  - 수력발전소
+  - 수력발전량
+  - 수력발전 실시간 출력
+  - 한수원 수력
+  - 댐 발전량
+  - 수문자료
+  - 팔당 발전소 출력
+  - 발전소 현재출력
+description_portal: '위 API는 수력발전소 발전현황 API입니다.한국수력원자력에서 운영중인 수력발전소(안흥수력발전소, 춘천수력발전소, 의암수력발전소, 화천수력발전소, 청평수력발전소, 섬진강수력발전소, 보성강수력발전소, 팔당수력발전소, 괴산수력발전소)의 실시간 발전량 및 수문자료 조회 API 입니다.○ genName : AH:안흥 CH:춘천 UA:의암 HC:화천 CP:청평 SJ:섬진강 BS:보성강 PD:팔당 GS:괴산○ serviceKey : 공공데이터포털에서 받은 인증키○ code : 수력발전소 코드○ power: 현재출력(MW)○ time : 출력을 측정한 시간'
+team:
+  dept: AI혁신처 데이터혁신부
+services:
+  - op: /getwaterPwr
+    name: 수력발전소 실시간 발전현황 조회
+    endpoint: https://apis.data.go.kr/B552041/waterPwr/getwaterPwr
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: genName
+        required: true
+        desc: AH:안흥 CH:춘천 UA:의암 HC:화천 CP:청평 SJ:섬진강 BS:보성강 PD:팔당 GS:괴산
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: code
+      title: 수력발전소 코드 AH:안흥 CH:춘천 UA:의암 HC:화천 CP:청평 SJ:섬진강 BS:보성강 PD:팔당 GS:괴산
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - CH
+      stats:
+        unique: 1
+    - name: power
+      title: 현재출력(MW)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: time
+      title: 출력을 측정한 시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03 19:21:00'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: power-market-realtime
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4365
+  rank_in_sector: 1254
+  brm: 산업고용 - 에너지및자원개발
+  why: 한수원 수력발전소별 실시간 출력, 발전소 코드 단위
+claims:
+  - id: c-15157777-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157777.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157777.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157777-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157777-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157777.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157777-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157777.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157777-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157777-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157777-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157777.json
+  stats: probe/stats/15157777.json
+  data: probe/data/15157777/
+status: active
+summary_user: 한국수력원자력이 운영하는 9개 수력발전소(안흥·춘천·의암·화천·청평·섬진강·보성강·팔당·괴산)의 현재 출력(MW)을 발전소별로 측정 시각과 함께 담는 실시간 조회 API다. 분석가나 에너지 관심 이용자가 '지금 팔당·청평 수력발전소는 몇 MW를 내고 있나'처럼 오늘의 수력 발전 상황을 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 발전소 코드(code)의 이름 매핑으로 전력거래소 수급·발전원별 발전량 등 다른 발전소 데이터와 맞춰 쓴다.
+limits: 실측 응답에서 다른 데이터와 바로 붙일 공통 조인 키를 찾지 못해 발전소 이름·코드를 직접 매핑해야 한다. 개발계정은 하루 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157777-01
+    - c-15157777-03
+    - c-15157777-06
+  dropped_citations: 0

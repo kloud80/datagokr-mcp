@@ -1,0 +1,237 @@
+# Dataset 15156054 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15156054'
+tier: verified
+title: 한국농수산식품유통공사_전국 산지공판장 거래정보 조회
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B552845
+  name: 한국농수산식품유통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15156054/openapi.do
+synonyms:
+  - 농수산
+  - 농산품
+  - 수산품
+  - 식품
+  - 유통
+  - 산지공판장
+  - 거래
+  - 산지공판장 경락가격
+  - 산지 경매 낙찰가
+  - 농산물 산지가격
+  - 공판장 거래실적
+  - aT 산지 경매정보
+  - 농협 공판장 시세
+description_portal: 한국농수산식품유통공사의 도매시장 밖에 위치하며, 산지의 수집, 분산 기능을 담당하는 전국 산지공판장의 거래정보 데이터로,정산일자, 공판장코드, 도매시장명, 원표번호, 경매순서, 경매순서2, 경매장구분, 매매구분, 상품대분류코드, 상품대분류명, 상품중분류코드, 상품중분류명, 상품소분류코드, 상품소분류명, 법인상품코드, 법인상품품목명, 법인상품품종명, 단위코드, 단위명, 포장코드, 포장명, 크기코드, 크기명, 등급코드, 등급명, 물량, 낙찰가, 원산지코드, 원산지명, 출하구분, 단위총물량, 총가격, 단위중량, 원본등록일시, 낙찰일시를 제공합니다.★ API명세서 및 관련 코드정보가 첨부되어 있습니다.
+team:
+  dept: 도매시장부
+services:
+  - op: /dealings
+    name: 전국 산지공판장 거래정보
+    endpoint: https://apis.data.go.kr/B552845/originTrialHall/dealings
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호 (기본값: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수 (기본값: 10, 최대값: 1000)'
+      - name: cond[clcln_ymd::EQ]
+        required: true
+        example: '20251204'
+        desc: '검색값과 정산일자가 일치하는 데이터를 검색    '
+      - name: cond[trhl_cd::EQ]
+        required: true
+        example: '6228200903'
+        desc: 검색값과 공판장코드가 일치하는 데이터를 검색
+      - name: cond[gds_lclsf_cd::EQ]
+        required: false
+        example: '12'
+        desc: 검색값과 대분류코드가 일치하는 데이터를 검색
+      - name: cond[gds_mclsf_cd::EQ]
+        required: false
+        example: '13'
+        desc: 검색값과 중분류코드가 일치하는 데이터를 검색
+      - name: cond[gds_sclsf_cd::EQ]
+        required: false
+        example: '01'
+        desc: 검색값과 소분류코드가 일치하는 데이터를 검색
+      - name: returnType
+        required: true
+        example: XML
+        desc: '응답의 데이터 타입을 선택할 수 있습니다. (기본값: JSON) XML형태의 응답결과를 얻기 위해서는 XML(대문자) 값으로 설정'
+      - name: selectable
+        required: false
+        example: gds_lclsf_cd,gds_mclsf_cd
+        desc: 응답으로 받고 싶은 컬럼명을 선택하여 검색(구분자','로 다중선택)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gds_lclsf_cd
+      title: 상품대분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '12'
+      stats:
+        min: 10
+        p50: 10
+        max: 12
+        unique: 2
+    - name: gds_mclsf_cd
+      title: 상품중분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '13'
+      stats:
+        min: 10
+        p50: 10
+        max: 13
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5591
+  rank_in_sector: 107
+  brm: 농축수산 - 농업·농촌
+  why: 전국 산지공판장 경매 건별 거래 원장
+claims:
+  - id: c-15156054-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15156054.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15156054.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15156054-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15156054-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15156054.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15156054-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15156054.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15156054-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15156054-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156054-08
+    kind: admin_note
+    value: wave5 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15156054.json
+  stats: probe/stats/15156054.json
+  data: probe/data/15156054/
+status: active
+summary_user: 전국 산지공판장(도매시장 밖에서 산지 수집·분산을 맡는 공판장)의 경매 거래를 원표·경매순서 단위로 담은 건별 원천 데이터로, 정산일자·품목·규격·등급·물량·낙찰가·원산지 등을 제공한다. 산지 출하 농가나 유통업자가 '이번 주 특정 품목이 산지공판장에서 등급별로 얼마에 낙찰됐나'를 확인하거나, 분석가가 산지 가격과 도매·소매 가격을 비교하는 데 쓴다. 전역 조인 키는 없어 상품대분류·중분류 코드(gds_lclsf_cd 등)와 품목명을 KAMIS·도매시장 품목코드에 직접 매핑해 이어 써야 한다.
+limits: 다른 데이터와 바로 붙일 공통 키가 없고, 품목코드 체계가 KAMIS·도매시장·HS·KOSIS마다 달라 별도 매핑이 필요하다. 개발계정은 하루 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15156054-01
+    - c-15156054-03
+    - c-15156054-04
+    - c-15156054-06
+  dropped_citations: 0

@@ -1,0 +1,296 @@
+# Dataset 15125261 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125261'
+tier: verified
+title: 한국남부발전(주)_발전소별 공급능력 조회 서비스_GW
+sector: 산업고용/에너지및자원개발/power-plants
+agency:
+  id: B552520
+  name: 한국남부발전(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125261/openapi.do
+synonyms:
+  - 발전소
+  - 전력공급
+  - 전력공급량
+  - 공급능력 조회
+  - 일별 조회
+  - 발전원
+  - 전력생산
+  - 에너지
+  - 남부발전 공급능력
+  - 발전소 설비용량
+  - 일별 공급능력
+  - 전력 공급력
+  - 발전소별 발전능력
+  - 전일 대비 공급능력
+  - KOSPO 발전소
+description_portal: 한국남부발전은 친환경 에너지로 미래를 밝히는 글로벌 에너지 리더를 비전으로 하는 발전 공기업입니다.해당 API는 한국남부발전(주) 발전소별 공급능력 조회 서비스_GW 서비스입니다.해당 API를 통해 사용자는 조회를 원하는 날짜의 발전소별 공급능력을 조회할 수 있습니다.조회 결과는 각 날짜별로 발전소별 세부 발전량을 확인할 수 있습니다. 해당 내용을 바탕으로 일별 발전량 추이 분석 등을 수행할 수 있습니다.또한, 발전원별 전력생산량 비교 등 다른 데이터와 결합하여 다양한 분석의 기초자료로 활용 가능합니다.
+team:
+  dept: AI업무혁신부
+services:
+  - op: /getDataService
+    name: 발전소별 공급능력 조회 서비스
+    endpoint: https://apis.data.go.kr/B552520/GenPwrSupply/getDataService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: strSdate
+        required: true
+        example: '20231128'
+        desc: 조회 시작월
+      - name: strEdate
+        required: true
+        example: '20231128'
+        desc: 조회 종료월
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tradedt
+      title: 거래일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20231128'
+      stats:
+        min: 20231128
+        p50: 20231128
+        max: 20231128
+        unique: 1
+    - name: stationidx
+      title: 발전소 인덱스
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 113
+        max: 225
+        unique: 225
+    - name: statioinnm
+      title: 발전소명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 강릉
+        - 칠보
+        - 의암
+      stats:
+        unique: 225
+    - name: faccap
+      title: 설비용량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '500'
+        - '450'
+        - 1,000
+      stats:
+        min: 0
+        p50: 500
+        max: 144336
+        unique: 102
+    - name: supcap
+      title: 공급능력
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: remark
+      title: 비고
+      type: code
+      null_rate: 0.76
+      sample_values:
+        - (송전제약)
+        - 휴지(2001년 3월~)
+        - '#1(9/21~12/28)'
+      stats:
+        unique: 48
+    - name: tsupcap
+      title: 금일 공급능력
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '500'
+        - '360'
+      stats:
+        min: -2867
+        p50: 425
+        max: 95731
+        unique: 138
+    - name: ysupcap
+      title: 전일 공급능력
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '500'
+        - '360'
+      stats:
+        min: -2280
+        p50: 400
+        max: 93206
+        unique: 132
+    - name: tsupfluct
+      title: 전일 대비 공급능력
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '4'
+      stats:
+        min: -587
+        p50: 0
+        max: 2525
+        unique: 47
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: power-market-realtime
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5852
+  rank_in_sector: 507
+  brm: 산업고용 - 에너지및자원개발
+  why: 발전소별 일별 공급능력 API
+claims:
+  - id: c-15125261-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125261.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125261.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15125261-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125261-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125261.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125261-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125261.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125261-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125261-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125261-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125261.json
+  stats: probe/stats/15125261.json
+  data: probe/data/15125261/
+status: active
+summary_user: 한국남부발전(주)이 운영하는 발전소별로 거래일자 하루 단위의 설비용량, 공급능력, 금일·전일 공급능력과 전일 대비 증감을 담는 조회형 API이며, 범위는 전국·비공간입니다. 에너지 분석가가 '특정 날짜에 남부발전 각 발전소의 공급능력이 전날보다 얼마나 줄거나 늘었나'를 확인하거나 일별 공급능력 추이를 볼 때 쓴다. 전역 조인 키가 없어 다른 전력 수급·발전량 데이터와는 발전소명(statioinnm)이나 거래일자로 이름·날짜를 맞춰 연결하고, 발전소 인덱스는 같은 기관 데이터 안에서만 연결에 쓴다.
+limits: 표준 행정코드나 전역 발전소 코드가 없어 다른 기관 데이터와 붙일 때는 발전소명 수동 매핑이 필요하다. 개발계정은 하루 10,000회 호출로 제한되며 serviceKey를 쿼리로 넘겨야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15125261-01
+    - c-15125261-03
+    - c-15125261-04
+  dropped_citations: 0

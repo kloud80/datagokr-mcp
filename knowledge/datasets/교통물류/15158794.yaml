@@ -1,0 +1,232 @@
+# Dataset 15158794 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158794'
+tier: verified
+title: 대전교통공사_역간 소요시간/거리/요금 조회 서비스
+sector: 교통물류/철도/rail-realtime
+agency:
+  id: B554695
+  name: 대전교통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158794/openapi.do
+synonyms:
+  - 대전도시철도
+  - 지하철
+  - 역간 소요시간
+  - 역간 거리
+  - 역간 요금
+  - 대전 지하철 요금
+  - 대전도시철도 운임
+  - 지하철 구간 거리
+  - 대전 1호선 이동시간
+  - 도시철도 요금 조회
+description_portal: 대전교통공사에서 운영 및 관리하고 있는 대전도시철도 1호선 역 중 출발역과 도착역 두 역을 입력하면 해당 구간의 소요시간, 역간 거리, 운임 요금 정보를 제공하는 데이터입니다.본 데이터를 활용하면 원하는 두 역 사이의 이동 시간과 거리, 승차 요금을 손쉽게 확인할 수 있으며, 대중교통 길찾기 서비스, 교통 요금 안내 앱, 환승 경로 최적화 플랫폼, 대전 지역 교통 정보 통합 서비스 등 다양한 분야의 애플리케이션 개발에 활용할 수 있습니다. 민들이 지하철 이용 전 구간별 소요시간과 요금을 미리 파악할 수 있어 편리한 대중교통 이용 환경 조성과 교통 정보 접근성 향상에 기여합니다.(본 데이터는 오픈API 형태로 제공되며, 데이터 활용을 위해서는 사전에 활용 신청을 완료하고 인증키를 발급받아야 합니다.)
+team:
+  dept: 디지털정보팀
+services:
+  - op: /getTimeDist01
+    name: 역간 소요시간/거리/요금 조회
+    endpoint: https://apis.data.go.kr/B554695/TimeDistSVC/getTimeDist01
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: strstnno
+        required: true
+        desc: 조회 시작역
+      - name: endstnno
+        required: true
+        desc: 조회 끝역
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: distfloat
+      title: 역간 거리(km)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8.5'
+      stats:
+        min: 8.5
+        p50: 8.5
+        max: 8.5
+        unique: 1
+    - name: fee
+      title: 요금
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1400'
+      stats:
+        min: 1400
+        p50: 1400
+        max: 1400
+        unique: 1
+    - name: min
+      title: 소요시간(분)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '16'
+      stats:
+        min: 16
+        p50: 16
+        max: 16
+        unique: 1
+    - name: sec
+      title: 소요시간(초)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '40'
+      stats:
+        min: 40
+        p50: 40
+        max: 40
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 도착·시간표·운임 (조회 도구)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4577
+  rank_in_sector: 1351
+  brm: 교통물류 - 철도
+  why: 대전 1호선 역간 소요시간·거리·요금 조회 API
+claims:
+  - id: c-15158794-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15158794.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15158794.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158794-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158794-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158794.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158794-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158794.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158794-06
+    kind: admin_note
+    value: "세부 부문 '실시간 도착·시간표·운임 (조회 도구)'의 가치: 분석용이 아니라 서비스용 조회 — 전략 응답에서 access.mode realtime-query로 표시"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rail-realtime
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158794-07
+    kind: admin_note
+    value: '[교통물류 - 철도 · 결정] 대부분 유지(제외 규칙 없음). 세부: 건설 계획(event) · 승하차·혼잡 · 실시간·시간표(조회 도구) · 철도망·역·시설(cross-cutting) · 안전 · 화물 · 기타.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L463
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158794-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158794-10
+    kind: pitfall
+    value: 필수 파라미터 endstnno, strstnno는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15158794.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15158794.json
+  stats: probe/stats/15158794.json
+  data: probe/data/15158794/
+status: active
+summary_user: 대전도시철도 1호선에서 출발역과 도착역 두 역을 넣으면 해당 구간의 소요시간(분·초), 역간 거리(km), 운임 요금을 한 건으로 돌려주는 조회용 API다. 시민이나 길찾기·요금 안내 앱 개발자가 "이 역에서 저 역까지 몇 분 걸리고 요금은 얼마인가"를 이용 전에 확인하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없다. 다만 필수 입력인 출발·도착 역번호는 다른 데이터의 코드이므로, 대전교통공사의 역 정보 데이터에서 역번호를 먼저 받아 넘기는 방식으로 이어 쓴다.
+limits: 분석용 집계가 아니라 두 역 사이를 그때그때 묻는 서비스용 조회 도구라서, 전체 구간표를 한 번에 받을 수 없다. 필수 파라미터인 출발역·도착역 번호(strstnno, endstnno)는 이 API 밖의 코드여서 먼저 확보해야 한다. 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158794-01
+    - c-15158794-03
+    - c-15158794-06
+    - c-15158794-10
+  dropped_citations: 0

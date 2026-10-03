@@ -1,0 +1,527 @@
+# Dataset 15143003 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15143003'
+tier: verified
+title: 기후에너지환경부 국립환경과학원_환경영향평가 결정내용정보 서비스
+sector: 환경기상/환경일반/eia
+agency:
+  id: '1482021'
+  name: 기후에너지환경부 국립환경과학원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15143003/openapi.do
+synonyms:
+  - 환경영향평가
+  - 결정내용
+  - 진행결과
+  - 진행현황
+  - 사업목록
+  - 환경영향평가 결정
+  - 환경영향평가 공람
+  - 환경영향평가 협의
+  - 개발사업 환경평가
+  - 주민의견 수렴
+  - 환경평가 공고
+  - EIA 결정내용
+description_portal: 환경부 국립환경과학원 환경영향평가 결정내용에 대한 결정내용목록 정보(사업명, 협의기관명, 공람기간,넘버링, 한 페이지 결과 수, 페이지 번호 ,전체 결과 수, 결정내용코드  )를 조회, 결정내용 상세 정보(사업명, 승인기관, 부서명, 공고일, 공람기간시작일, 공람기간종료일,  의견 시작일, 의견종료일, 결정내용,  사업자, 결정내용코드)를 조회, 결정내용 파일 정보(표출파일명, 파일명, 파일사이즈, 확장자, 다운로드경로 등)를 조회,  공통코드 정보(공통코드, 구분상태, 순서일련번호 등)를 조회에 대한 서비스를 제곰합니다.
+team:
+  dept: 기후국토환경연구과
+services:
+  - op: /getFileInfoInqire
+    name: 파일 정보 조회
+    endpoint: https://apis.data.go.kr/1480523/EnvrnAffcEvlDecsnCnInfoInqireService/getFileInfoInqire
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: type
+        required: true
+        desc: '1: 결정내용 파일정보 2: 초안공람 전략환경영향평가 초안파일 3: 초안공람 환경영향평가 초안파일'
+      - name: resultCd
+        required: true
+        desc: 결정내용코드
+      - name: perCd
+        required: true
+        desc: 초안전략환경파일일련번호
+      - name: tbSeq
+        required: true
+        desc: 초안환경파일일련번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getDecsnCnListInfoInqire
+    name: 결정내용목록 정보 조회
+    endpoint: https://apis.data.go.kr/1480523/EnvrnAffcEvlDecsnCnInfoInqireService/getDecsnCnListInfoInqire
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: searchOrgan
+        required: false
+        desc: 협의기관
+      - name: searchValue
+        required: false
+        desc: 검색조건
+      - name: searchText
+        required: false
+        desc: 검색어
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getComCodeInfoInqire
+    name: 공통코드 정보 조회
+    endpoint: https://apis.data.go.kr/1480523/EnvrnAffcEvlDecsnCnInfoInqireService/getComCodeInfoInqire
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: jongCd
+        required: false
+        desc: 코드종류
+      - name: gubunFl
+        required: false
+        desc: 코드구분
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+    name: 결정내용 상세 정보 조회
+    endpoint: https://apis.data.go.kr/1480523/EnvrnAffcEvlDecsnCnInfoInqireService/getDecsnCnIngbtntOpinionDetailInfoInqire
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: resultCd
+        required: true
+        example: RE20130893
+        desc: 환경영향평가 코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bizNm
+      title: 사업명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 성남금토2 공공주택지구
+        - 주진천권역 지방하천 하천기본계획
+        - 영암군 공업지역 기본계획 수립
+      op: /getDecsnCnListInfoInqire
+      stats:
+        unique: 983
+    - name: discOrganNm
+      title: 협의기관명
+      type: code
+      null_rate: 0.003
+      sample_values:
+        - 한강유역환경청
+        - 금강유역환경청
+        - 영산강유역환경청
+      op: /getDecsnCnListInfoInqire
+      stats:
+        unique: 10
+    - name: drfopTmdt
+      title: 공람기간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2025.03.05~2025.03.18
+        - 2026.06.16~2026.06.30
+        - 2025.06.13~2025.06.27
+      op: /getDecsnCnListInfoInqire
+      stats:
+        min: '2024-07-17'
+        max: '2026-10-02'
+        unique: 682
+    - name: resultCd
+      title: 결정내용코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - RE20260447
+        - RE20260445
+        - RE20260444
+      op: /getDecsnCnListInfoInqire
+      stats:
+        unique: 1000
+    - name: rnum
+      title: 넘버링
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getDecsnCnListInfoInqire
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: cdNm
+      title: 코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기후에너지환경부
+        - 한강유역환경청
+        - 낙동강유역환경청
+      op: /getComCodeInfoInqire
+      stats:
+        unique: 12
+    - name: comCd
+      title: 공통코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ME
+        - HG
+        - ND
+      op: /getComCodeInfoInqire
+      stats:
+        unique: 12
+    - name: gubunFl
+      title: 구분상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A
+      op: /getComCodeInfoInqire
+      stats:
+        unique: 1
+    - name: jongCd
+      title: '01 : 협의기관 15 : 소분류 51 : 사업구분'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      op: /getComCodeInfoInqire
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: sortSeq
+      title: 소팅일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '3'
+      op: /getComCodeInfoInqire
+      stats:
+        min: 0
+        p50: 7.5
+        max: 13
+        unique: 12
+    - name: approvOrganTeam
+      title: 숭인기관
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경상남도
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: bizManTxt
+      title: 사업자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종포산단개발(주)
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: bizNm
+      title: 사업명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종포일반산업단지 조성사업 환경영향평가
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: discOrganNm
+      title: 협의기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 낙동강유역환경청
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: openOpnEndDt
+      title: 의견종료일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2013.10.29
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        min: '2013-10-29'
+        max: '2013-10-29'
+        unique: 1
+    - name: openOpnEtc
+      title: 결정내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 첨부파일 참조
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: openOpnStartDt
+      title: 의견시작일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2013.10.14
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        min: '2013-10-14'
+        max: '2013-10-14'
+        unique: 1
+    - name: openPclDt
+      title: 공고일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2013.10.14
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        min: '2013-10-14'
+        max: '2013-10-14'
+        unique: 1
+    - name: openTeamNm
+      title: 부서명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 사천시 도시과 공영개발담당
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+    - name: openTmdtEndDt
+      title: 공람기간종료일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2013.10.29
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        min: '2013-10-29'
+        max: '2013-10-29'
+        unique: 1
+    - name: openTmdtStartDt
+      title: 공람기간시작일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2013.10.14
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        min: '2013-10-14'
+        max: '2013-10-14'
+        unique: 1
+    - name: resultCd
+      title: 결정내용코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - RE20130893
+      op: /getDecsnCnIngbtntOpinionDetailInfoInqire
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.533
+  rank_in_sector: 293
+  brm: 공공행정 - 국정운영
+  sector_rule: govops-misfiled-environment
+  why: 전국 환경영향평가 결정내용 공고 원장
+claims:
+  - id: c-15143003-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 3/4
+    evidence:
+      - type: measured
+        source: probe/runs/15143003.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 3/4
+      - type: measured
+        source: probe/apply/15143003.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15143003-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15143003-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15143003.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 22개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15143003-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15143003.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15143003-06
+    kind: admin_note
+    value: "세부 부문 '환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)'의 가치: 개발사업 사업구역·협의 단계 = 개발 선행 지표, 토지이용규제·개발사업과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#eia
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15143003-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15143003-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15143003-10
+    kind: pitfall
+    value: 필수 파라미터 perCd, resultCd, tbSeq는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15143003.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15143003-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getFileInfoInqire'
+    evidence:
+      - type: measured
+        source: probe/runs/15143003.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 3/4
+  run: probe/runs/15143003.json
+  stats: probe/stats/15143003.json
+  data: probe/data/15143003/
+status: active
+summary_user: 환경영향평가 결정내용을 사업 건별로 담는 API로, 목록(사업명·협의기관·공람기간), 상세(승인기관·사업자·공고일·의견 제출기간·결정내용), 첨부파일 정보, 공통코드(협의기관·소분류·사업구분)를 전국 범위에서 조회한다. 개발사업 인근 주민이나 부동산·개발 분석가가 '이 사업의 환경영향평가 결정내용이 언제 공고됐고 의견 제출기간은 언제까지인가'를 확인할 때 쓴다. 전역 조인 키는 없어 다른 데이터와는 사업명·협의기관명 같은 이름 매핑으로만 잇고, 서비스 안에서는 공통코드 조회로 받은 코드와 목록의 결정내용코드(resultCd)를 상세·파일 조회에 넘겨 연결한다.
+limits: 상세·파일 조회의 필수 파라미터(perCd, resultCd, tbSeq)는 다른 오퍼레이션에서 먼저 받아 넘겨야 하며, 파일정보 조회(/getFileInfoInqire)는 최소 파라미터로 호출했을 때 응답이 없었다. 위치 정보가 없는 비공간 데이터이고 다른 데이터와 공통 키가 없어 이름 기반 매칭이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15143003-01
+    - c-15143003-03
+    - c-15143003-04
+    - c-15143003-06
+    - c-15143003-10
+    - c-15143003-11
+  dropped_citations: 0

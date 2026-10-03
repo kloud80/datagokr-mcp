@@ -1,0 +1,309 @@
+# Dataset 15157768 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157768'
+tier: verified
+title: 한국자산관리공사_차세대 온비드 코드 및 주소 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157768/openapi.do
+synonyms:
+  - 온비드
+  - 주소
+  - 용도 코드
+  - 상세주소
+  - 상위코드
+  - 온비드 용도코드
+  - 공매 물건 분류코드
+  - 온비드 카테고리
+  - 공매 소재지 조회
+  - 캠코 코드 조회
+  - 온비드 주소
+description_portal: 한국자산관리공사 온비드(Onbid) 홈페이지를 통해 용도별 코드와 온비드에 등록된 주소지를 조회할 수 있는 서비스입니다. 온비드의 코드와 주소 정보를 계층적으로 제공하여 물건 검색과 조건 설정에 필요한 분류 기준을 손쉽게 확인할 수 있도록 지원합니다. 온비드 용도 코드 조회, 온비드 주소 조회 2개의 오퍼레이션으로 구성되며 용도 코드 조회의 경우 공매 물건 검색 시  입력조건으로 사용되는 용도 코드 목록 전체를 다운받을 수 있습니다., 또한 온비드 주소 조회는 온비드에 물건의 소재지를  단순히 조회하는 용도로도 사용할 수 있습니다.
+team:
+  dept: 디지털시스템실
+services:
+  - op: /getOnbidUsgCodeInfo
+    name: 온비드 용도 코드 조회
+    endpoint: https://apis.data.go.kr/B010003/OnbidCodeSrvc/getOnbidUsgCodeInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 응답유형
+      - name: upCtgrId
+        required: false
+        desc: 상위 카테고리ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getOnbidDtlAddrInfo
+    name: 온비드 주소 조회
+    endpoint: https://apis.data.go.kr/B010003/OnbidCodeSrvc/getOnbidDtlAddrInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 응답유형
+      - name: sdnm
+        required: false
+        desc: 시도명
+      - name: sggnm
+        required: false
+        desc: 시군구명
+      - name: emdNm
+        required: false
+        desc: 읍면동명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ctgrId
+      title: 카테고리ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+        - '10100'
+        - '10101'
+      op: /getOnbidUsgCodeInfo
+      stats:
+        min: 10000
+        p50: 14551
+        max: 32005
+        unique: 422
+    - name: ctgrNm
+      title: 카테고리명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 토지
+        - NPL
+        - 기타권리및증권
+      op: /getOnbidUsgCodeInfo
+      stats:
+        unique: 410
+    - name: upCtgrId
+      title: 카테고리상위ID
+      type: number
+      null_rate: 0.0545
+      sample_values:
+        - '10300'
+        - '10100'
+        - '10200'
+      op: /getOnbidUsgCodeInfo
+      stats:
+        min: 10000
+        p50: 13200
+        max: 32004
+        unique: 74
+    - name: upCtgrNm
+      title: 카테고리상위명
+      type: string
+      null_rate: 0.0545
+      sample_values:
+        - 상가용및업무용건물
+        - 토지
+        - 주거용건물
+      op: /getOnbidUsgCodeInfo
+      stats:
+        unique: 71
+    - name: sdnm
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 부산광역시
+        - 강원특별자치도
+      op: /getOnbidDtlAddrInfo
+      stats:
+        unique: 8
+    - name: sggnm
+      title: 시군구명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 시흥시
+        - 양주시
+        - 강서구
+      op: /getOnbidDtlAddrInfo
+      stats:
+        unique: 97
+    - name: emdNm
+      title: 읍면동명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부전동
+        - 원천동
+        - 정왕동
+      op: /getOnbidDtlAddrInfo
+      stats:
+        unique: 452
+    - name: dtlAddr
+      title: 상세 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '105'
+        - '276'
+        - '1'
+      op: /getOnbidDtlAddrInfo
+      stats:
+        unique: 994
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5753
+  rank_in_sector: 108
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 온비드 용도코드·주소 계층, 공매 API 조인 기준
+claims:
+  - id: c-15157768-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15157768.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15157768.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157768-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157768-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157768.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157768-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15157768.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157768-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157768-07
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15157768.json
+  stats: probe/stats/15157768.json
+  data: probe/data/15157768/
+status: active
+summary_user: 온비드 공매 물건 검색에 쓰이는 용도 코드(카테고리ID·카테고리명과 상위 카테고리)를 계층 목록으로, 온비드에 등록된 물건 소재지를 시도·시군구·읍면동·상세주소 단위로 담는 코드·주소 조회 API이며, 용도 코드 조회와 주소 조회 2개 오퍼레이션으로 구성되고 범위는 전국이다. 온비드 공매 물건을 조회하려는 개발자·분석가가 '토지·주거용 건물 같은 용도로 물건을 걸러 검색하려면 어떤 용도 코드를 넣어야 하나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 온비드 물건·입찰 정보와는 용도 코드(ctgrId)나 시도·시군구·읍면동 이름을 매핑해 같은 기관 데이터끼리 연결한다.
+limits: 법정동코드나 PNU 같은 표준 조인 키가 없어 다른 기관 주소·지번 데이터와 바로 붙일 수 없고, 이름 매칭이 필요하다. 개발계정은 하루 1,000회까지 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157768-01
+    - c-15157768-03
+    - c-15157768-04
+  dropped_citations: 0

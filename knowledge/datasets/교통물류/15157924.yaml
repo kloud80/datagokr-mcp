@@ -1,0 +1,401 @@
+# Dataset 15157924 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157924'
+tier: verified
+title: 대전광역시_대전교통정보 서비스
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6300000'
+  name: 대전광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157924/openapi.do
+synonyms:
+  - 교통정보
+  - 도로소통정보
+  - 대중교통정보
+  - 경로안내
+  - 교통흐름관리
+  - 대전 도로 소통정보
+  - 대전 실시간 교통
+  - 링크별 통행속도
+  - 도로 혼잡도
+  - 정체 구간
+  - 대전 교통상황
+  - 통행시간 정보
+description_portal: 대전광역시 대전교통정보 자료는 도심 내 도로의 실시간 소통상태를 비롯하여 다양한 교통수단별 이동 경로 정보를 포함하고 있습니다. 주요 도로의 통행속도 통행시간 소통등급 등이 상세히 제공되며 승용차 버스 지하철 등 교통수단별 목적지까지 최적 경로 안내 기능도 포함되어 있습니다. 이 자료는 효과적인 교통 흐름 관리 및 교통 정책 수립에 기반이 되며 시민들의 출퇴근길 및 기타 이동 시 혼잡 최소화와 대중교통 이용 편의성 향상을 돕습니다. 또한 도로별 상행과 하행 방향 정보 통행시간 데이터를 통해 교통 상황 변화에 신속 대응하고 분석하기에 용이합니다.
+team:
+  dept: 교통국 버스정책과
+services:
+  - op: /getTrafficInfoAll
+    name: 전체 도로소통정보 조회
+    endpoint: https://apis.data.go.kr/6300000/rest/getTrafficInfoAll
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getTrafficInfo
+    name: 링크별 도로소통정보 조회
+    endpoint: https://apis.data.go.kr/6300000/rest/getTrafficInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: linkId
+        required: true
+        desc: 링크ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: congestion
+      title: 혼잡코드(0:정보없음 1:소통원활 2:지체 3:정체)
+      type: number
+      null_rate: 0.008
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 3
+    - name: endNodeID
+      title: 끝노드ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1830004000'
+        - '1830014100'
+        - '1830001803'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1830000100
+        p50: 1830018050
+        max: 2920042800
+        unique: 439
+    - name: endNodeName
+      title: 끝노드명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - 교차로
+        - 남대전IC
+      op: /getTrafficInfoAll
+      stats:
+        unique: 290
+    - name: linkCount
+      title: 정보제공 링트개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14452'
+      op: /getTrafficInfoAll
+      stats:
+        min: 14452
+        p50: 14452
+        max: 14452
+        unique: 1
+    - name: linkID
+      title: 링크ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1830000100'
+        - '1830000200'
+        - '1830000301'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1830000100
+        p50: 1830050150
+        max: 1840012600
+        unique: 1000
+    - name: linkLength
+      title: 링크의 길이(m)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '141.671362255'
+        - '145.293874194'
+        - '145.940446066'
+      op: /getTrafficInfoAll
+      stats:
+        min: 19.268838996
+        p50: 282.62351693200003
+        max: 11100.98913817816
+        unique: 999
+    - name: linkSqc
+      title: 링크정렬순번
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1
+        p50: 500.5
+        max: 14652
+        unique: 1000
+    - name: roadName
+      title: 도로명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 통영대전고속도로
+        - 옥천길
+        - 대전로
+      op: /getTrafficInfoAll
+      stats:
+        unique: 121
+    - name: speed
+      title: 통행속도(Km/h)
+      type: number
+      null_rate: 0.008
+      sample_values:
+        - '30'
+        - '17'
+        - '18'
+      op: /getTrafficInfoAll
+      stats:
+        min: 5
+        p50: 24.035
+        max: 100
+        unique: 341
+    - name: startNodeId
+      title: 시작노드ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1830004000'
+        - '1830014100'
+        - '1830001803'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1830000100
+        p50: 1830018050
+        max: 2920042900
+        unique: 436
+    - name: startNodeName
+      title: 시작노드명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - 교차로
+        - 남대전IC
+      op: /getTrafficInfoAll
+      stats:
+        unique: 290
+    - name: travelT
+      title: 통행시간(초)
+      type: number
+      null_rate: 0.008
+      sample_values:
+        - '3'
+        - '6'
+        - '2'
+      op: /getTrafficInfoAll
+      stats:
+        min: 0
+        p50: 12
+        max: 1972
+        unique: 89
+    - name: udType
+      title: 방향정보(0:정보없음, 1:상행, 2:하행)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '9'
+      op: /getTrafficInfoAll
+      stats:
+        min: 1
+        p50: 2
+        max: 9
+        unique: 3
+    - name: TRAFFIC-LIST
+      type: code
+      null_rate: 1.0
+      op: /getTrafficInfo
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5975
+  rank_in_sector: 1109
+  brm: 교통물류 - 도로
+  why: 대전 링크별 실시간 소통 API, 노드링크 조인
+claims:
+  - id: c-15157924-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15157924.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15157924.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157924-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157924-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157924.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 14개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157924-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157924.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157924-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157924-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157924-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157924-10
+    kind: pitfall
+    value: 필수 파라미터 linkId는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157924.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15157924.json
+  stats: probe/stats/15157924.json
+  data: probe/data/15157924/
+status: active
+summary_user: 대전 시내 도로를 링크 단위로 나눠 링크별 실시간 통행속도(km/h)·통행시간(초)·혼잡등급(원활·지체·정체)·상행/하행 방향과 시작·끝 노드, 링크 길이를 담는 실시간 소통 API입니다. 출퇴근 전에 "지금 계룡로 하행이 막히는지"를 확인하려는 시민이나, 조회 결과를 계속 쌓아 상습 정체 구간과 시간대를 찾으려는 교통 분석가가 씁니다. 전국 공통 조인 키는 없어 같은 기관 데이터의 링크ID·노드ID나 도로명·노드명 매핑으로만 다른 데이터와 잇고, 링크ID는 다른 데이터에서 먼저 받아 와야 합니다.
+limits: 필수 파라미터인 링크ID(linkId)는 이 API가 아닌 다른 데이터의 코드라서, 링크 목록을 먼저 받아 넘겨야 호출할 수 있습니다. 응답은 조회 시점의 상태라 과거 이력은 따로 쌓아야 하고, 다른 기관 데이터와 바로 묶을 전역 키가 없습니다. 개발계정 호출은 하루 10,000회로 제한됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157924-01
+    - c-15157924-03
+    - c-15157924-06
+    - c-15157924-10
+  dropped_citations: 0

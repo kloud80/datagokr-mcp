@@ -1,0 +1,710 @@
+# Dataset 15157741 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157741'
+tier: verified
+title: 인천항만공사_인천항여객터미널 이용 국내외 선박정보 조회 서비스
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157741/openapi.do
+synonyms:
+  - 인천항여객터미널
+  - 국내선
+  - 선박정보
+  - 항로
+  - 정박지
+  - 출항시간
+  - 선사명
+  - 여객터미널API
+  - 인천항 여객선 시간표
+  - 인천항 국제여객선
+  - 카페리 운항정보
+  - 여객선 운임
+  - 선사 정보
+  - 인천항 출항 입항 시간
+  - 여객터미널 선박
+description_portal: 해당 오픈 데이터는 인천항 여객 터미널의 국내선 이용 선박 정보를 조회할 수 있는 Open API로 API는 REST 방식으로 작동하며 XML 포맷으로 제공됩니다. 호출 시 선박 ID, 선박명, 운항정보, 출항시간, 정박지, 운임정보, 선사명, 터미널 코드 등 다양한 선박 운영 관련 정보가 반환됩니다. 주요 입력 파라미터는 인증키, 선박명, 선박ID 등이 있으며, 호출 결과로는 선박 개요, 선석 위치, 승선 요금, 최종 운항일, 터미널 위치 등을 확인할 수 있습니다. 이 API는 여객선 운항 정보 제공, 여객 안내 시스템 연동, 선사 운영정보 분석, 항로별 수요 예측 등 다양한 항만 운영 및 고객 서비스 개선에 활용 가능합니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getIpptIntrlShip
+    name: 국제선박 정보
+    endpoint: https://apis.data.go.kr/B551504/ipaIpptVsslUseInfo/getIpptIntrlShip
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: searchWtorcmpNm
+        required: true
+        desc: 조회 선사명
+      - name: searchShipNm
+        required: false
+        desc: 조회 선박명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getIpptIntrlNvg
+    name: 국내선박 정보
+    endpoint: https://apis.data.go.kr/B551504/ipaIpptVsslUseInfo/getIpptIntrlNvg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: searchDiv
+        required: false
+        desc: 조회 입출항구분(1:입항,2:출항)
+      - name: searchCode
+        required: false
+        desc: 조회 터미널코드
+      - name: searchDay
+        required: false
+        desc: 조회 요일
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: actFlag
+      title: 활성여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      op: /getIpptIntrlShip
+      stats:
+        unique: 1
+    - name: callLetter
+      title: 호출부호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - V7CI7
+        - 3FDF5
+        - 3FWL9
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: chnsntCychg
+      title: 중문_운임
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 115,000韩元 / 130,000韩元 / 150,000韩元 / 220,000韩元
+        - 169,000韩元 / 176,000韩元 / 209,000韩元 / 297,000韩元 / 446,000韩元
+        - 115,000韩元 / 130,000韩元 / 160,000韩元 / 180,000韩元 / 250,000韩元
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: chnsntGrad
+      title: 중문_등급
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Normal / First / Suite / Royal
+        - Business(no window) / Business(with window) / Royal / Royal Suite / VIP
+        - Economy / Business / Deluxe / Royal / Royal Suite
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: chnsntShipName
+      title: 중문_선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 紫丁香号
+        - HARMONY YUNGANG
+        - 天仁号
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: chnsntWtorcmpInfo
+      title: 중문_선사소개
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "<!-- 5 범영훼리(ARAFURA LILY), 잉커우 chn -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry/ima"
+        - "<!-- 4 연운항훼리(HARMONY YUNGANG), 롄원강 chn -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry"
+        - "<!-- 3 진천훼리(천인호), 텐진 chn -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry/images/conten"
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: chnsntWtorcmpName
+      title: 중문_선사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 威东航运
+        - 泛营轮渡
+        - 连云港轮渡
+      op: /getIpptIntrlShip
+      stats:
+        unique: 9
+    - name: cychg
+      title: 운임
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 115,000원 / 130,000원 / 150,000원 / 220,000원
+        - 169,000원 / 176,000원 / 209,000원 / 297,000원 / 446,000원
+        - 115,000원 / 130,000원 / 160,000원 / 180,000원 / 250,000원
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: engsntCychg
+      title: 영문_운임
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ￦115,000 / ￦130,000 / ￦150,000 / ￦220,000
+        - ￦169,000 / ￦176,000 / ￦209,000 / ￦297,000 / ￦446,000
+        - ￦115,000 / ￦130,000 / ￦160,000 / ￦180,000 / ￦250,000
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: engsntGrad
+      title: 영문_등급
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Normal / First / Suite / Royal
+        - Business(no window) / Business(with window) / Royal / Royal Suite / VIP
+        - Economy / Business / Deluxe / Royal / Royal Suite
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: engsntShipName
+      title: 영문_선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ARAFURA LILY
+        - HARMONY YUNGANG
+        - MV. TIAN REN
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: engsntWtorcmpInfo
+      title: 영문_선사소개
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "<!-- 5 범영훼리(ARAFURA LILY), 잉커우 eng -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry/ima"
+        - "<!-- 4 연운항훼리(HARMONY YUNGANG), 롄원강 eng -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry"
+        - "<!-- 3 진천훼리(천인호), 텐진 eng -->\r\n<ul>\r\n\t<li><img alt=\"\" src=\"/icferry/images/conten"
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: engsntWtorcmpName
+      title: 영문_선사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Weidong Ferry Co., Ltd.
+        - Pan Korea Yingkou Ferry Co., Ltd.
+        - LYG C-K Ferry Co., Ltd.
+      op: /getIpptIntrlShip
+      stats:
+        unique: 9
+    - name: frstOperDate
+      title: 등록_일시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 12:00:00.000 AM 08/05/2015
+        - 12:00:00.000 AM 08/04/2015
+      op: /getIpptIntrlShip
+      stats:
+        unique: 2
+    - name: grad
+      title: 등급
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반 / 퍼스트 / 스위트 / 로얄
+        - 비지니스(무창) / 비지니스(유창) /로얄 / 로얄 스위트 / VIP
+        - 이코노미 / 비지니스 / 디럭스 / 로얄 / 로얄 스위트
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: hmpgUrl
+      title: 홈페이지
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - http://www.weidong.com
+        - http://www.yingkouferry.co.kr
+        - http://www.lygferry.com
+      op: /getIpptIntrlShip
+      stats:
+        unique: 9
+    - name: lastOperDate
+      title: 수정_일시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 10:59:13.000 AM 08/13/2025
+        - 10:59:53.000 AM 08/13/2025
+        - 11:00:27.000 AM 08/13/2025
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: shipId
+      title: 선박아이디
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '7'
+        - '8'
+      op: /getIpptIntrlShip
+      stats:
+        min: 1
+        p50: 5.5
+        max: 10
+        unique: 10
+    - name: shipName
+      title: 선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ARAFURA LILY
+        - HARMONY YUNGANG
+        - 천인호
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: tel
+      title: 전화번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 032-770-8000
+        - 032-891-5858
+        - 032-770-3700
+      op: /getIpptIntrlShip
+      stats:
+        unique: 9
+    - name: trminlCode
+      title: 터미널_코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0003'
+      op: /getIpptIntrlShip
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: wtorcmpInfo
+      title: 선사소개
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "<!-- 5 범영훼리(ARAFURA LILY), 잉커우 -->\r\n<ul>\r\n\t<li><img alt=\"ARAFURA LILY 사진입니다.\" sr"
+        - "<!-- 4 연운항훼리(HARMONY YUNGANG), 롄원강 -->\r\n<ul>\r\n\t<li><img alt=\"HARMONY YUNGANG 사진입"
+        - "<!-- 3 진천훼리(천인호), 텐진 -->\r\n<ul>\r\n\t<li><img alt=\"천인호 사진입니다.\" src=\"/icferry/images/"
+      op: /getIpptIntrlShip
+      stats:
+        unique: 10
+    - name: wtorcmpName
+      title: 선사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 위동항운
+        - 범영훼리
+        - 연운항훼리
+      op: /getIpptIntrlShip
+      stats:
+        unique: 9
+    - name: brdngProcdrHour
+      title: 탑승수속_시
+      type: code
+      null_rate: 1.0
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 0
+    - name: brdngProcdrMin
+      title: 탑승수속_분
+      type: code
+      null_rate: 1.0
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 0
+    - name: chn
+      title: 중문
+      type: code
+      null_rate: 1.0
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 0
+    - name: dayofweek
+      title: 요일
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수요일
+        - 월요일
+        - 금요일
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 6
+    - name: div
+      title: 출항/입항
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 1
+        p50: 1.5
+        max: 2
+        unique: 2
+    - name: eng
+      title: 영문
+      type: code
+      null_rate: 1.0
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 0
+    - name: etc
+      title: 비고
+      type: date
+      null_rate: 0.9643
+      sample_values:
+        - '운항 재개 예정(화물 : 4/18, 여객 : 4.28)'
+      op: /getIpptIntrlNvg
+      stats:
+        min: '4184-02-08'
+        max: '4184-02-08'
+        unique: 1
+    - name: frstOperDate
+      title: 등록_일시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 12:00:00.000 AM 09/03/2015
+        - 12:00:00.000 AM 08/27/2015
+        - 12:00:00.000 AM 11/30/2024
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 8
+    - name: intrlNvgId
+      title: 국제입출항정보아이디
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50'
+        - '47'
+        - '45'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 10
+        p50: 44.5
+        max: 131
+        unique: 28
+    - name: lastOperDate
+      title: 수정_일시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 04:23:26.000 PM 09/21/2026
+        - 04:23:17.000 PM 09/21/2026
+        - 04:06:09.000 PM 09/21/2026
+      op: /getIpptIntrlNvg
+      stats:
+        unique: 28
+    - name: nvgStatus
+      title: 운항상태
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: reqreDay
+      title: 소요_일
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '00'
+        - '01'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: reqreHour
+      title: 소요_시
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '16'
+        - '15'
+        - '14'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 0
+        p50: 15.5
+        max: 23
+        unique: 5
+    - name: reqreMin
+      title: 소요_분
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '00'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: shipId
+      title: 선박아이디
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '1'
+        - '2'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 1
+        p50: 4
+        max: 10
+        unique: 5
+    - name: slocAlocCode
+      title: 출발지/도착지코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0007'
+        - '0006'
+        - '0005'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 3
+        p50: 6
+        max: 10
+        unique: 5
+    - name: tkoffEtryptHour
+      title: 출발/도착_시
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '09'
+        - '19'
+        - '10'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 4
+        p50: 16
+        max: 19
+        unique: 7
+    - name: tkoffEtryptMin
+      title: 출발/도착_분
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00'
+        - '30'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 0
+        p50: 0
+        max: 30
+        unique: 2
+    - name: tmnlCode
+      title: 터미널_코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0003'
+      op: /getIpptIntrlNvg
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5431
+  rank_in_sector: 80
+  brm: 교통물류 - 해운·항만
+  why: 인천항 여객선 선사·운임·운항상태 조회
+claims:
+  - id: c-15157741-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15157741.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15157741.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157741-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157741-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157741.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 42개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157741-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157741.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157741-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157741-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157741-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157741-10
+    kind: pitfall
+    value: 필수 파라미터 searchWtorcmpNm는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157741.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15157741.json
+  stats: probe/stats/15157741.json
+  data: probe/data/15157741/
+status: active
+summary_user: 인천항 여객터미널을 이용하는 국내외 여객선의 선박별 정보(선명·선사·등급·운임·호출부호, 영문·중문 표기 포함)와 요일별 출항·입항 시각, 소요시간, 운항상태를 건별로 담는 API이며, 2개 오퍼레이션 모두 실호출에 성공했다. 인천항에서 특정 선사의 배가 무슨 요일 몇 시에 출항하고 운임이 얼마인지 확인하려는 여행객이나, 여객 안내 시스템에 운항 시각표를 넣으려는 개발자가 쓴다. 두 오퍼레이션은 선박아이디(shipId)와 터미널 코드로 서로 이어 쓰지만, 다른 데이터셋과 맞출 전역 조인 키는 없어 선명·선사명 매핑이나 같은 기관 코드로만 연결한다.
+limits: 필수 파라미터인 선사명 검색값(searchWtorcmpNm)은 다른 데이터에서 받은 코드라 먼저 조회해 넘겨야 한다. 개발계정은 하루 10,000회로 호출이 제한된다. 일반 결항 여부를 확인하는 대표 출처는 해양교통안전공단의 운항상태·운항예보이며, 이 데이터는 인천항 한 곳에 한정된 사례다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157741-01
+    - c-15157741-03
+    - c-15157741-06
+    - c-15157741-10
+  dropped_citations: 0

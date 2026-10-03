@@ -1,0 +1,225 @@
+# Dataset 15120899 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15120899'
+tier: verified
+title: 부산광역시_링크현황정보
+sector: 교통물류/도로/road-network
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15120899/openapi.do
+synonyms:
+  - 교통
+  - 링크
+  - 공간정보
+  - 부산 도로 링크
+  - 표준노드링크
+  - 링크ID
+  - 도로 구간 정보
+  - 노드링크
+  - 부산 도로망
+  - 시점 종점
+description_portal: 부산광역시 내 링크 현황 정보에 대한 데이터로 부산광역시 내 링크 ID, 도로명, 시점명, 종점명 등의 대한 정보를 제공합니다.
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /LINKList
+    name: 링크현황정보
+    endpoint: https://apis.data.go.kr/6260000/BusanITSLINK/LINKList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lkId
+      title: 링크ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1390023301'
+        - '1390023302'
+        - '1390023401'
+      stats:
+        min: 1380002900
+        p50: 1380051451
+        max: 1390046900
+        unique: 1000
+    - name: roadNm
+      title: 도로명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 해운대로
+        - '-'
+        - 해운대해변로
+      stats:
+        unique: 108
+    - name: bgngNodeNm
+      title: 시점명
+      type: string
+      null_rate: 0.002
+      sample_values:
+        - 해운대온천사거리
+        - 주부산몽골영사관
+        - GS25장림하신점
+      stats:
+        unique: 337
+    - name: endNodeNm
+      title: 종점명
+      type: string
+      null_rate: 0.002
+      sample_values:
+        - 해운대온천사거리
+        - 주부산몽골영사관
+        - GS25장림하신점
+      stats:
+        unique: 338
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4666
+  rank_in_sector: 2869
+  brm: 교통물류 - 도로
+  why: 부산 링크ID 마스터, 소통정보 조인 키
+claims:
+  - id: c-15120899-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15120899.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15120899.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15120899-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15120899-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120899.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15120899-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120899.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15120899-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15120899-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120899-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15120899.json
+  stats: probe/stats/15120899.json
+  data: probe/data/15120899/
+status: active
+summary_user: 부산광역시 내 도로 링크별로 링크ID, 도로명, 시점명, 종점명을 담은 링크 현황 데이터로, 한 행이 링크 하나를 가리키는 API다. 교통 분석가나 개발자가 부산 교통 데이터에 나오는 링크ID가 어느 도로의 어느 구간(시점~종점)인지 확인할 때 쓴다. 링크ID(lkId)는 표준노드링크 체계의 링크 식별자와 대조해 볼 수 있으나, 실측 컬럼에서 전역 조인 키는 확인되지 않아 다른 데이터와는 도로명·지점명 매핑이나 같은 기관 코드로만 연결한다.
+limits: 좌표나 도로 형상 같은 공간 정보가 없어 지도에 바로 그릴 수 없고, 공간 기준이 필요하면 국토부 ITS 센터가 SHP 파일로 배포하는 표준노드링크를 함께 써야 한다. 개발계정은 하루 500회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15120899-01
+    - c-15120899-03
+    - c-15120899-04
+    - c-15120899-06
+  dropped_citations: 0

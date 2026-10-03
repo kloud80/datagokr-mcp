@@ -1,0 +1,298 @@
+# Dataset 15151809 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15151809'
+tier: verified
+title: 관세청_국가별 출항물동량 실적
+sector: 재정금융/무역및투자유치/trade-statistics
+agency:
+  id: '1220000'
+  name: 관세청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15151809/openapi.do
+synonyms:
+  - 목적지 국가별 출항물동량
+  - 출항 적재화물목록
+  - 운송수단별 출항물동량
+  - 세관별 출항물동량
+  - 전국 공항만 세관
+  - BL 건수
+  - 컨테이너 수량
+  - 수출 환적 화물 구분
+  - 출항화물 물동량
+  - 국가별 수출 물동량
+  - 적재화물목록 통계
+  - 컨테이너 TEU 실적
+  - 항만 공항 출항 실적
+  - 환적화물 통계
+description_portal: 세관에 신고하는 출항 적재화물목록을 기초로 수집한 BL건수, 컨테이너 수량 등 물동량 자료를 제공.통계제공 기준일은 출항일이며, 출항 적재화물목록상 목적지 국가를 기준으로 전국 공항만 세관별 물동량 자료임. 공표 주기는 1개월 단위이며 매월 15일경 출항 적재화물목록의 정정, 취하 등 변경내역을 반영하여 전월까지의 자료를 현행화하여 제공. 세관은 적재화물목록이 접수되는 전국 공항만 세관을 기준으로 하되, 부산세관은 부산신항/부산북항(감천항 포함)/부산세관(신항＋북항)으로 구분하여 집계됨. 출항화물은 수출(E), 환적(R) 화물로 구분 가능하며, 운송은 해상(10), 항공(40)으로 구분 가능함. BL건수는 최소단위 BL(Bill of Lading) 기준으로 집계되며 House BL이 있는 경우 House BL, 없는 경우 Master BL건수임. 중량은 총중량이며, 컨테이너 수량은 20피트 컨테이너 기준 1TEU임.
+team:
+  dept: 데이터담당관
+services:
+  - op: /getCntyPerPortGtqtyAcrs
+    name: 국가별 출항물동량실적
+    endpoint: https://apis.data.go.kr/1220000/cntyperportgtqtyacrs/getCntyPerPortGtqtyAcrs
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: strtYymm
+        required: true
+        example: '202501'
+        desc: 검색을 원하는 조회 시작날짜
+      - name: endYymm
+        required: true
+        example: '202501'
+        desc: 검색을 원하는 조회 종료날짜(10년이내)
+      - name: cargTpcd
+        required: false
+        example: R
+        desc: '화물구분(R : 수출, T : 환적)'
+      - name: seaFlghTpcd
+        required: false
+        example: '10'
+        desc: '운송구분(10 : 해상, 40 : 항공)'
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: arvlPlcNm
+      title: 목적지(국가)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 미국
+        - 중국
+        - 멕시코
+      stats:
+        unique: 165
+    - name: blCnt
+      title: 총B/L 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 10
+        max: 45265
+        unique: 145
+    - name: blWght
+      title: 총 중량(단위:통)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18'
+        - '6'
+        - '2'
+      stats:
+        min: 1
+        p50: 433
+        max: 989477
+        unique: 358
+    - name: dptrPlcNm
+      title: 출항지(항구/공항)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산신항
+        - 광양항
+        - 부산항
+      stats:
+        unique: 13
+    - name: teuEmcntnGcnt
+      title: EMPTY컨테이너수량(단위:TEU)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '9.0'
+        - '4.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 14645.6
+        unique: 30
+    - name: teuFclGcnt
+      title: 'FCL 컨테이너수량(단위: TEU)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '1.0'
+      stats:
+        min: 0
+        p50: 8
+        max: 121824.1
+        unique: 183
+    - name: teuGcnt
+      title: 컨테이너 수량합계(단위:TEU)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '1.0'
+      stats:
+        min: 0
+        p50: 8
+        max: 124552.3
+        unique: 182
+    - name: teuLclGcnt
+      title: LCL 컨테이터수량(단위:TEU)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '4.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 2686.2
+        unique: 35
+    - name: yyyymm
+      title: 기간(YYYYMM)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025.01'
+      stats:
+        min: 2025.01
+        p50: 2025.01
+        max: 2025.01
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 수출입 실적 (관세청 품목·국가·성질·시도·시군구·세관 × 월, 10일 속보, 입출항 물동량)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.3881
+  rank_in_sector: 49
+  brm: 재정금융 - 무역및투자유치
+  why: 국가×항구×월 출항 물동량, 적하목록 기반
+claims:
+  - id: c-15151809-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15151809.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15151809.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15151809-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15151809-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151809.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15151809-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15151809.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15151809-06
+    kind: admin_note
+    value: "세부 부문 '수출입 실적 (관세청 품목·국가·성질·시도·시군구·세관 × 월, 10일 속보, 입출항 물동량)'의 가치: 수출입 신고 원장에서 나온 HS 품목 × 국가 × 월 격자 — 시군구별은 지역 지표, 10일 속보는 시의성"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#trade-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151809-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 무역및투자유치] 관세청 수출입 실적(신고 원장 → 품목·국가·시도·시군구 × 월, 10일 속보)·무역 코드(부호·세관장확인·관세환율)·거래 상대(바이어·전략물자 거래업체·고비즈코리아). KOTRA 해외시장 동향·국가정보·사례(문서형), 글로벌ICT포털, Comtrade 재게시, 투자 동향 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L626
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151809-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15151809.json
+  stats: probe/stats/15151809.json
+  data: probe/data/15151809/
+status: active
+summary_user: 출항 적재화물목록을 기초로 출항일 기준 월별(yyyymm)·출항 공항만·목적지 국가별 BL 건수, 총중량, 컨테이너 수량(FCL·LCL·빈 컨테이너, TEU)을 집계한 전국 물동량 자료입니다. 물류·해운 분석가나 수출 기업이 특정 국가로 나가는 화물이 어느 항구·공항에서 월별로 얼마나 출항하는지 추이를 볼 때 쓴다. 전역 조인 키가 없어 다른 관세청 수출입 실적과는 기간(YYYYMM)과 국가명·항구명 같은 이름 매핑으로만 연결한다.
+limits: 실측 컬럼에 표준 국가코드나 세관코드 같은 조인 키가 없어 다른 데이터와 붙일 때 이름을 직접 맞춰야 한다. 품목(HS)이나 시도·시군구 단위 구분은 필드에 없어 지역·품목별 분석에는 쓸 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15151809-03
+    - c-15151809-04
+    - c-15151809-06
+  dropped_citations: 0

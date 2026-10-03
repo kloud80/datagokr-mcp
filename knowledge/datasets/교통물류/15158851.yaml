@@ -1,0 +1,241 @@
+# Dataset 15158851 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158851'
+tier: verified
+title: 한국공항공사_노선별 소요시간 및 거리 정보_GW
+sector: 교통물류/항공·공항/aviation-statistics
+agency:
+  id: B551178
+  name: 한국공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158851/openapi.do
+synonyms:
+  - 한국공항공사
+  - 노선별 소요시간
+  - 노선 거리
+  - 항공 노선
+  - 항공 거리
+  - 항공 노선 시간
+  - 항공 노선 거리
+  - 비행시간
+  - 공항 간 거리
+  - 운항거리
+  - 운항시간
+  - 국내선 국제선 소요시간
+  - 항공 노선 정보
+description_portal: '"한국공항공사는 인천국제공항을 제외한 김포, 김해, 제주, 대구 등 전국 14개 공항을 통합 관리하고 운영하는 대한민국의 대표적인 공공기관입니다. 본 API는노선별 소요시간 및 거리 정보 제공를 제공합니다.제공되는 주요 데이터 항목으로는 출발공항-도착공항의  거리와 소요시간 정보가 상세히 포함되어 있습니다. 이를 통해 항공편 스케줄 연구 등 다양하게 데이터를 활용하실 수 있습니다.제공되는 항공 노선의 데이터에 대한 추가적인 요구사항이 있으시거나, 기능 개선 및 데이터 오류 등에 대한 의견이 있으신 분은 한국공항공사 담당 부서(02-2660-4803)로 연락해 주시면 친절하게 안내해 드리겠습니다.'
+team:
+  dept: 데이터융합부
+services:
+  - op: /info
+    name: 노선별 소요시간 및 거리 정보
+    endpoint: https://apis.data.go.kr/B551178/flight-routes/info
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: '응답 형식(JSON & XML), 기본값 : XML (샘플 : xml)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ARP
+      title: 출발공항명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ICN
+        - CJU
+        - PUS
+      stats:
+        unique: 184
+    - name: ODP
+      title: 도착공항명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ICN
+        - CJU
+        - PUS
+      stats:
+        unique: 184
+    - name: TOF
+      title: 국내/국제구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I
+        - D
+      stats:
+        unique: 2
+    - name: KM
+      title: 운항거리
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1260.0'
+        - '1181.0'
+        - '1751.0'
+      stats:
+        min: 164
+        p50: 1410
+        max: 11512
+        unique: 336
+    - name: TIME
+      title: 운항시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '79.0'
+        - '76.0'
+        - '86.0'
+      stats:
+        min: 27
+        p50: 120
+        max: 878
+        unique: 226
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: flight-operations
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4117
+  rank_in_sector: 148
+  brm: 교통물류 - 항공·공항
+  why: 공항 간 노선 운항시간·거리 기준값
+claims:
+  - id: c-15158851-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15158851.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15158851.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158851-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158851-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158851.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158851-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158851.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158851-06
+    kind: admin_note
+    value: "세부 부문 '운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)'의 가치: 편 단위 실시간 운항·결항·지연 — 모델이 절대 모르는 오늘의 사실. 공항공사·인천공항 두 체계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#flight-operations
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158851-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158851-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15158851.json
+  stats: probe/stats/15158851.json
+  data: probe/data/15158851/
+status: active
+summary_user: 한국공항공사가 제공하는 출발공항-도착공항 노선별 운항거리(km)와 운항시간을 국내/국제 구분과 함께 노선 단위로 담은 전국 범위의 비공간 데이터다. 항공편 스케줄을 연구하는 분석가나 여행자가 '김포에서 제주까지 비행 거리와 소요시간이 얼마인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 운항 스케줄·항공통계 등 다른 데이터와는 공항명을 이름 매핑하거나 공항코드표로 변환해 연결해야 한다.
+limits: 공항이 코드가 아닌 공항명으로만 제공되어 다른 데이터와 직접 조인되지 않고 이름·코드 매핑이 필요하다. 편 단위 실시간 운항·결항·지연 정보는 담지 않는다. 개발계정 호출은 일 5,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158851-01
+    - c-15158851-03
+    - c-15158851-04
+    - c-15158851-06
+  dropped_citations: 0

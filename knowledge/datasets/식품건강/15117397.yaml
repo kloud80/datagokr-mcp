@@ -1,0 +1,240 @@
+# Dataset 15117397 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15117397'
+tier: verified
+title: 식품의약품안전처_공동급식소 등록 정보
+sector: 식품건강/식품의약안전/food-business-licenses
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15117397/openapi.do
+synonyms:
+  - 공동급식소
+  - 등록
+  - 학교
+  - 식중독 예방
+  - 식중독 대응
+  - 학교 공동급식
+  - 공동조리 급식소
+  - 학교급식 식중독
+  - 집단급식소
+  - 급식 주관학교
+  - 급식제공학교 수
+description_portal: 학교는 집단 급식 형태로 제한된 공간과 정해진 시간에 식품을 제공(섭취)함에 따라 식중독 발생 시 다수의 인원이 동시에 발생되어 대형 식중독으로 확대될 우려가 높고 납품받은 식재료에서 문제가 될 경우 다른 학교 또는 전국적으로 확산되어 발생될 수 있으므로 식중독과 관련된 철저한 관리와 주의 필요. 이에 학교 집단급식소 식중독 발생 시 신속 대응을 통한 확산방지와 식중독 예방 관리 강화를 위해 식품의약품안전처에서 보유한 공동급식소 등록 정보(주관 학교명, 주소, 지역, 급식제공학교 /시설수)를 제공
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getUnionCtrRegInfoService
+    name: 공동급식소 등록 정보
+    endpoint: https://apis.data.go.kr/1471000/UnionCtrRegInfoService/getUnionCtrRegInfoService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '3'
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: HOST_SCOL_NM
+        required: false
+        example: (주)경남도민프로축구단 클럽하우스
+        desc: 주관학교명
+      - name: HOST_SCOL_NM_ADDR
+        required: false
+        example: 경상남도 함안군 가야읍 도항리249-1
+        desc: 주소
+      - name: SGG_NM
+        required: false
+        example: 경상남도 함안군
+        desc: 지역
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: HOST_SCOL_NM
+      title: 주관학교명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 미원초등학교
+        - 기성초등학교
+        - 미곡초등학교
+      stats:
+        unique: 930
+    - name: HOST_SCOL_NM_ADDR
+      title: 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 전라북도 익산시
+        - 충청남도 논산시
+        - 전라북도 김제시
+      stats:
+        unique: 261
+    - name: SGG_NM
+      title: 지역
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 전라북도 익산시
+        - 충청남도 논산시
+        - 전라북도 김제시
+      stats:
+        unique: 235
+    - name: SCOL_CNT
+      title: 급식제공학교/시설수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 0
+        p50: 1
+        max: 5
+        unique: 5
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5324
+  rank_in_sector: 962
+  brm: 식품건강 - 식품의약안전
+  why: 전국 학교 공동급식소 등록 원장, 주소 보유
+claims:
+  - id: c-15117397-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15117397.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15117397.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15117397-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117397-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15117397.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117397-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15117397.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117397-06
+    kind: admin_note
+    value: "세부 부문 '식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)'의 가치: 전국 음식점·식품업소 전수에 가까운 원장 — 상권 분석의 기본, 인허가번호·사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#food-business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15117397-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15117397-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15117397.json
+  stats: probe/stats/15117397.json
+  data: probe/data/15117397/
+status: active
+summary_user: 학교 공동급식소의 등록 정보를 주관 학교 한 곳당 한 건으로 담으며, 주관 학교명·주소·지역(시군구)·급식을 받는 학교·시설 수가 들어 있고 범위는 전국이다. 학교 급식 식중독이 발생했을 때 같은 공동급식소에서 급식을 받는 학교가 몇 곳인지, 어느 지역 공동급식소가 몇 개 학교를 맡는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 식품 인허가·집단급식소 데이터와는 학교명·주소·시군구명을 맞춰 연결해야 한다.
+limits: 인허가번호나 학교 코드 같은 공통 키가 없어서 다른 데이터와는 이름·주소 매칭으로만 연결되므로 표기 차이 때문에 매칭 오류가 생길 수 있다. 급식을 받는 개별 학교 목록은 없고 수만 제공한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15117397-03
+    - c-15117397-04
+  dropped_citations: 0

@@ -1,0 +1,268 @@
+# Dataset 15125527 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125527'
+tier: verified
+title: 공정거래위원회_가맹정보_지역별 업종별 가맹점수 현황 제공 서비스
+sector: 공공행정/공정거래/franchise
+agency:
+  id: '1130000'
+  name: 공정거래위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125527/openapi.do
+synonyms:
+  - 가맹본부
+  - 본부
+  - 브랜드
+  - 가맹점 현황
+  - 프랜차이즈 지역별 점포수
+  - 업종별 가맹점 분포
+  - 프랜차이즈 통계
+  - 가맹사업 현황
+  - 시도별 가맹점 수
+  - 가맹점 비율
+description_portal: 지역별 업종별 가맹점수 현황에 대한 기준년도를 이용하여 지역별 업종별 가맹점수, 가맹점비율 등 정보 조회 서비스를 제공합니다.
+team:
+  dept: 정보화담당관실
+services:
+  - op: /getindutyfrcscntstats
+    name: 지역별 업종별 가맹점수 현황 조회
+    endpoint: https://apis.data.go.kr/1130000/FftcindutyfrcscntstatService/getindutyfrcscntstats
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: json
+        desc: ' 결과형식(xml/json)'
+      - name: jngBizCrtraYr
+        required: true
+        example: '2017'
+        desc: 가맹사업기준년도
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: jngBizCrtraYr
+      title: 가맹사업기준년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2017'
+      stats:
+        min: 2017
+        p50: 2017
+        max: 2017
+        unique: 1
+    - name: acntgYr
+      title: 회계년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2016'
+      stats:
+        min: 2016
+        p50: 2016
+        max: 2016
+        unique: 1
+    - name: indutyLclasNm
+      title: 업종대분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서비스
+        - 외식
+        - 도소매
+      stats:
+        unique: 3
+    - name: indutyMlsfcNm
+      title: 업종중분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한식
+        - 분식
+        - 중식
+      stats:
+        unique: 43
+    - name: areaNm
+      title: 지역명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+        - 부산
+        - 대구
+      stats:
+        unique: 17
+    - name: frcsCnt
+      title: 가맹점수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4'
+        - '2'
+      stats:
+        min: 0
+        p50: 74
+        max: 8441
+        unique: 364
+    - name: frcsRate
+      title: 가맹점비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '0.01'
+        - '0.02'
+      stats:
+        min: 0
+        p50: 0.01
+        max: 0.69
+        unique: 29
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 가맹사업
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4315
+  rank_in_sector: 159
+  brm: 산업고용 - 산업·중소기업일반
+  sector_rule: ftc-to-fairtrade
+  why: 지역×업종×연도 가맹점수 격자, 상권분석에 지역 조인 가능
+claims:
+  - id: c-15125527-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125527.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125527.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15125527-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125527-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125527.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125527-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125527.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125527-06
+    kind: admin_note
+    value: '[공정거래 · 결정] 공정위의 등록·지정·공시 4개 체인만 대상 — **기업집단 · 가맹사업 · 특수판매(통신판매·다단계·방문·후원방문·전화권유) · 상조(선불식할부)**. 나머지는 제외 (`exclusions.yaml` `ftc-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L60
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125527-07
+    kind: admin_note
+    value: '[공정거래 · 이유] 대중 수요는 셋 다 "이 사업자 믿어도 되나" — 창업 예정자(가맹 정보공개서), 소비자(통신판매·상조 등록 확인), 투자·언론(기업집단 지분·내부거래). 개방 데이터가 있는 곳도 등록·지정·공시 영역뿐이고, 네 체인 모두 **사업자등록번호·법인등록번호**로 묶인다. 하도급 실태조사·1372 상담통계·기업결합은 집계, 결정문·리콜은 사건·문서 단위라 연계 불가.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L62
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125527-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125527.json
+  stats: probe/stats/15125527.json
+  data: probe/data/15125527/
+status: active
+summary_user: 가맹사업 기준년도별로 지역(areaNm)과 업종 대·중분류 단위로 집계한 가맹점 수와 가맹점 비율을 담는 전국 범위의 집계 데이터이다. 창업 예정자나 분석가가 "우리 지역에 치킨·커피 같은 업종 가맹점이 얼마나 몰려 있고 비중은 어느 정도인가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 가맹사업 데이터와는 지역명·업종명 같은 이름 매핑으로만 이어 쓰며, 공정위 가맹 체인을 묶는 사업자등록번호는 이 데이터에 없다.
+limits: 지역·업종별 집계라 개별 가맹본부나 브랜드 단위 정보는 알 수 없고, 사업자등록번호가 없어 정보공개서 등 사업자 단위 데이터와 직접 연결되지 않는다. 지역은 이름(areaNm)으로만 제공되어 공간 좌표나 행정코드 기반 결합이 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15125527-03
+    - c-15125527-04
+    - c-15125527-07
+  dropped_citations: 0

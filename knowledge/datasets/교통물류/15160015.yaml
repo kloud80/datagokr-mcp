@@ -1,0 +1,491 @@
+# Dataset 15160015 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15160015'
+tier: verified
+title: 해양수산부_시설사용허가현황
+sector: 교통물류/해운·항만/port-facilities
+agency:
+  id: '1192000'
+  name: 해양수산부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15160015/openapi.do
+synonyms:
+  - 항구
+  - 요청시설
+  - 요청기간
+  - 지정시설
+  - 지정기간
+  - 허가유무
+  - 항만시설 사용허가
+  - 선석 배정
+  - 선석 지정
+  - Port-MIS 시설사용
+  - 부두 사용신청
+  - 항만시설 사용신고
+  - 선석 허가현황
+description_portal: 이 데이터는 해양수산부에서 시설사용의 허가현황을 확인하기 위한 데이터입니다. 항구, 검색(시작/종료)일자, 입항연도, 입항횟수, 호출부호, 부선호출부호 등 입력 파라미터를 이용하여 데이터를 호출하실 수 있으며, 본 데이터의 주요 내용은 시설사용허가현황에 대한 선박정보, 요청시설정보, 요청기간, 신고업체정보, 지정시설정보, 지정기간, 허가유무 등으로 구성되어 있습니다. 본 데이터는 해운업체가 항만시설의 지정 상태 및 사용기간, 허가현황 등을 조회하여 선박 운용 계획을 수립하는 데 활용될 수 있습니다. 또한 연구기관은 시설사용허가현황을 활용하여 해운 산업의 동향을 연구하고, 정부 및 관련 기관은 시설사용허가현황을 분석하여 해운 정책 수립 및 제도 개선을 위한 기초자료로 활용할 수 있습니다.
+team:
+  dept: 항만물류산업과
+services:
+  - op: /Status
+    name: 시설사용허가현황 조회
+    endpoint: https://apis.data.go.kr/1192000/FaclUsePrmisnFclty/Status
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: prtAgCd
+        required: true
+        desc: 검색하고자 하는 항만청 코드
+      - name: sde
+        required: true
+        desc: 검색을 원하는 조회 시작 날짜(신청일)
+      - name: ede
+        required: true
+        desc: 검색을 원하는 조회 종료 날짜(신청일)
+      - name: clsgn
+        required: false
+        desc: 검색을 원하는 조회 호출부호
+      - name: etryptYear
+        required: false
+        desc: 검색을 원하는 선박의 입항연도
+      - name: etryptCo
+        required: false
+        desc: 검색을 원하는 선박의 입항횟수
+      - name: bargeClsgn
+        required: false
+        desc: 검색을 원하는 조회 부선호출부호
+      - name: numOfRows
+        required: false
+        desc: 조회 결과 데이터 최대 개수(최대 50)
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prtAgCd
+      title: 항구청코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '020'
+      stats:
+        min: 20
+        p50: 20
+        max: 20
+        unique: 1
+    - name: prtAgNm
+      title: 항구청명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산
+      stats:
+        unique: 1
+    - name: clsgn
+      title: 호출부호
+      type: code
+      semantic_type: vessel_id
+      null_rate: 0.0
+      sample_values:
+        - '212838'
+        - '975783'
+        - '210039'
+      stats:
+        unique: 26
+    - name: vsslNm
+      title: 선박명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제8우진호
+        - 정우1호
+        - 씨엘에스코리아
+      stats:
+        unique: 26
+    - name: etryptYear
+      title: 입항년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026'
+        - '2023'
+      stats:
+        min: 2023
+        p50: 2026
+        max: 2026
+        unique: 2
+    - name: etryptCo
+      title: 입항횟수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '088'
+        - '011'
+        - '003'
+      stats:
+        min: 1
+        p50: 18.5
+        max: 98
+        unique: 19
+    - name: fcltyUseCo
+      title: 시설사용횟수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '001'
+        - '002'
+        - '003'
+      stats:
+        min: 1
+        p50: 3
+        max: 487
+        unique: 20
+    - name: realTn
+      title: 신고톤수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '297'
+        - '132'
+        - '118'
+      stats:
+        min: 53
+        p50: 298
+        max: 54592
+        unique: 26
+    - name: bargeClsgn
+      title: 부선호출부호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: bargeVsslNm
+      title: 부선선박명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: bargeClsgn2
+      title: 부선호출부호2
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: bargeVsslNm2
+      title: 부선선박명2
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: satmntEntrpsCd
+      title: 신고업체코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - BSB2772
+        - BSZ9740
+        - BSZ7033
+      stats:
+        unique: 25
+    - name: satmntEntrpsNm
+      title: 신고업체명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 거상해운
+        - 두성에너지
+        - 에이치씨해운(주)
+      stats:
+        unique: 25
+    - name: reqstFcltyCd
+      title: 요청시설코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - WAN
+        - MW5
+        - MSN
+      stats:
+        unique: 15
+    - name: reqstFcltySubCd
+      title: 요청시설서브코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '04'
+      stats:
+        min: 1
+        p50: 2
+        max: 7
+        unique: 9
+    - name: reqstFcltyNm
+      title: 요청시설명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 5물량장 1선석
+        - 남외항 N-2박지
+        - 신항 U-1 정박지
+      stats:
+        unique: 28
+    - name: beginPrrrnDt
+      title: 요청시작일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-10-02 20:00
+        - 2026-10-03 01:00
+        - 2026-10-02 23:00
+      stats:
+        min: '2026-09-29'
+        max: '2026-10-08'
+        unique: 42
+    - name: endPrrrnDt
+      title: 요청종료일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-10-03 20:00
+        - 2026-10-03 12:00
+        - 2026-10-02 12:05
+      stats:
+        min: '2026-10-01'
+        max: '2026-10-10'
+        unique: 43
+    - name: useFcltyCd
+      title: 지정시설코드
+      type: code
+      null_rate: 0.74
+      sample_values:
+        - WAN
+        - WAU
+        - MB6
+      stats:
+        unique: 3
+    - name: useFcltySubCd
+      title: 지정시설서브코드
+      type: number
+      null_rate: 0.74
+      sample_values:
+        - '01'
+        - '02'
+        - '04'
+      stats:
+        min: 1
+        p50: 2
+        max: 5
+        unique: 5
+    - name: useFcltyNm
+      title: 지정시설명
+      type: code
+      null_rate: 0.74
+      sample_values:
+        - 남외항 N-2박지
+        - 신항 U-1 정박지
+        - 남외항 N-4박지
+      stats:
+        unique: 8
+    - name: beginAppnDt
+      title: 지정시작일시
+      type: date
+      null_rate: 0.74
+      sample_values:
+        - 2026-10-02 23:00
+        - 2026-10-03 04:00
+        - 2026-10-02 20:00
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-03'
+        unique: 12
+    - name: endAppnDt
+      title: 지정종료일시
+      type: date
+      null_rate: 0.74
+      sample_values:
+        - 2026-10-03 20:00
+        - 2026-10-02 12:05
+        - 2026-10-03 12:00
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-05'
+        unique: 11
+    - name: usePurpsNm
+      title: 사용목적명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 양하
+        - 급유
+      stats:
+        unique: 9
+    - name: frcstDt
+      title: 신청일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-10-02 22:23
+        - 2026-10-02 20:48
+        - 2026-10-02 20:17
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-02'
+        unique: 42
+    - name: prmisnYn
+      title: 허가유무
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - clsgn
+      reference:
+        key: vessel_id
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: vessel-movements
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4468
+  rank_in_sector: 174
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-misfiled-port
+  why: 선박별 항만시설 사용허가 전국 API
+claims:
+  - id: c-15160015-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15160015.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15160015.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15160015-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160015-03
+    kind: key
+    value: '실측 조인 키: vessel_id(clsgn)'
+    evidence:
+      - type: measured
+        source: probe/stats/15160015.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 27개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160015-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15160015.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160015-06
+    kind: admin_note
+    value: "세부 부문 '입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)'의 가치: Port-MIS 입출항 신고와 AIS 위치는 선박 추적의 원천. 항만공사 4곳 API는 Port-MIS 아래 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vessel-movements
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15160015-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160015-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15160015.json
+  stats: probe/stats/15160015.json
+  data: probe/data/15160015/
+status: active
+summary_user: 해양수산부 Port-MIS의 항만시설 사용허가 신청을 선박 입항 건별로 담은 원천 데이터로, 선박·부선 정보, 요청시설과 요청기간, 신고업체, 지정시설과 지정기간, 허가 여부를 전국 범위로 제공한다. 해운업체나 대리점이 특정 선박이 어느 선석·시설을 언제부터 언제까지 배정받았고 허가가 났는지를 확인해 선박 운용 계획을 세우는 데 쓴다. 호출부호(clsgn)가 실측 조인 키여서 같은 키를 쓰는 Port-MIS 입출항 신고·선박 위치·선박 등록 데이터와 이어 쓰고, 항구청코드와 시설코드로 항만 시설 원장과 맞춰 본다.
+limits: 항구·검색 기간·입항연도·입항횟수·호출부호 같은 입력 파라미터를 넣어 조회하는 방식이라 전체 허가 내역을 한 번에 내려받기는 어렵고, 개발계정은 하루 10,000회로 호출이 제한된다. 공간 좌표가 없는 비공간 데이터라 시설 위치는 별도 시설 원장으로 보완해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15160015-01
+    - c-15160015-03
+    - c-15160015-04
+    - c-15160015-06
+  dropped_citations: 0

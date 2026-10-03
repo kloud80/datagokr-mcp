@@ -1,0 +1,217 @@
+# Dataset 15108096 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15108096'
+tier: verified
+title: 통일부_김정은 공개 활동 조회 서비스
+sector: 통일외교안보/통일/north-korea-trends
+agency:
+  id: '1250000'
+  name: 통일부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108096/openapi.do
+synonyms:
+  - 김정은
+  - 수행자
+  - 활동
+  - 김정은 동정
+  - 북한 최고지도자 활동
+  - 현지지도
+  - 북한 동향
+  - 수행 인물
+  - 북한 보도 기록
+description_portal: 김정은 공개활동 목록과 내용에 대한 데이터로 조회된 결과의 보도내용, 보도일자, 수행자, URL정보를 제공합니다.
+team:
+  dept: 정보화담당관
+services:
+  - op: /getOthbcact
+    name: 김정은 공개 활동 및 내용 조회
+    endpoint: https://apis.data.go.kr/1250000/othbcact/getOthbcact
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: keyword
+        required: false
+        example: 공연
+        desc: 김정은 활동 키워드
+      - name: excman
+        required: false
+        example: 리병철
+        desc: 수행자 키워드
+      - name: bgng_ymd
+        required: true
+        example: '20171010'
+        desc: 시작일자
+      - name: end_ymd
+        required: true
+        example: '20210230'
+        desc: 종료일자
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: nes_cn
+      title: 보도내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ' 제8차 당대회 경축공연 <당을 노래하노라> 관람(1.13.)'
+        - 제8차 당대회 경축공연 <당을 노래하노라> 관람(1.13.)
+        - "\n        제8차 당대회 경축공연 <당을 노래하노라> 관람(1.13.)\n      "
+      stats:
+        unique: 9
+    - name: nes_ymd
+      title: 보도일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20210114'
+        - '20201012'
+      stats:
+        min: 20201012
+        p50: 20210114
+        max: 20210114
+        unique: 2
+    - name: excman
+      title: 수행자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 최룡해,조용원,리병철,김덕훈
+        - 최룡해,리병철,김덕훈,박봉주
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 북한 동향 (일일·월별 동향·김정은 공개 활동)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5633
+  rank_in_sector: 5
+  brm: 통일외교안보 - 통일
+  why: 김정은 공개활동 건별 API, 보도일자 단위 이벤트
+claims:
+  - id: c-15108096-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15108096.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15108096.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15108096-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108096-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15108096.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108096-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15108096.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108096-06
+    kind: admin_note
+    value: '[통일외교안보 · 통일] 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만. 북한 개황·용어·도서·TV 편성표, 남북교역·개성공단·북한이탈주민 통계 배제 (`unification-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L699
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108096-07
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15108096.json
+  stats: probe/stats/15108096.json
+  data: probe/data/15108096/
+status: active
+summary_user: 김정은의 공개 활동을 보도 건별로 담은 API로, 보도내용(nes_cn)·보도일자·수행자를 제공한다. 북한 동향 분석가나 연구자가 특정 시기에 김정은이 어떤 현장을 찾았고 누가 수행했는지 확인하는 데 쓴다. 전역 조인 키는 없어서, 다른 북한 동향·북한 인물 데이터와는 보도일자나 수행자 이름을 맞춰 연결한다.
+limits: 표준 코드 형태의 조인 키가 없어 다른 데이터와는 이름·날짜 매칭으로만 잇는다. 공간 정보가 없는 비공간 데이터라 활동 장소를 지도·행정단위로 바로 집계할 수 없다. 갱신은 이벤트가 생길 때 이루어지고, 이미 생성된 기록은 바뀌지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15108096-02
+    - c-15108096-03
+    - c-15108096-04
+  dropped_citations: 0

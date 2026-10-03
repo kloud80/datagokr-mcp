@@ -1,0 +1,230 @@
+# Dataset 15157716 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157716'
+tier: verified
+title: 인천항만공사_인천항 예도선 통합 정보 조회 서비스
+sector: 교통물류/해운·항만/vessel-movements
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157716/openapi.do
+synonyms:
+  - 예도선 정보
+  - 인천항 예도선
+  - 예선일자
+  - 호출부호
+  - 도선계획
+  - 도선사명
+  - 선박명
+  - 도선구간
+  - 인천항 도선 일정
+  - 예선 계획
+  - 도선사 배정
+  - 선박 입출항 도선
+  - 파일럿 스케줄
+  - 항만 예인선
+  - Port-MIS 도선
+description_portal: 해당 데이터는 예선 일정 및 도선 업무에 필요한 데이터를 통합적으로 제공하는 Open API로서 요청변수로는 예선게획일자 범위(pltPlanDtFrom, pltPlanDtTo), 호출부호(callLetter) 등이 있으며, 응답 데이터에는 도선 상태(pltStatusNm), 도선 예정일자 및 시간(pltPlanDt, pltPlanTm), 도선사명(mainpltm), 선박명(vsslNm), 도선구간 정보(pltFromNm, pltToNm) 등이 포함됩니다. 이 API는 항만 내 입출항 도선 일정 조율, 선박 운항 지원, 도선사 배치 게획 수립 등에 활용되며, 항만운영시스템(POS), 예선사 및 해양안전관리기관에서 활용할 수 있는 실시간 운항 및 안전정보가 포함되어 있습니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getTugboatPilotboatUnity
+    name: 인천항 예도선 정보
+    endpoint: https://apis.data.go.kr/B551504/ipaTugboatUnity/getTugboatPilotboatUnity
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: pltPlanDtFrom
+        required: true
+        desc: 예정일자 from
+      - name: pltPlanDtTo
+        required: true
+        desc: 예정일자 to
+      - name: callLetter
+        required: false
+        desc: 호출부호
+      - name: endRow
+        required: true
+        desc: 마지막줄
+      - name: skipRow
+        required: true
+        desc: 시작줄
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지당 표출 데이터 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 데이터 총 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5287
+  rank_in_sector: 99
+  brm: 교통물류 - 해운·항만
+  why: 인천항 선박별 예선·도선 일정 API
+claims:
+  - id: c-15157716-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157716.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157716.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157716-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157716-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157716.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157716-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157716.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157716-06
+    kind: admin_note
+    value: "세부 부문 '입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)'의 가치: Port-MIS 입출항 신고와 AIS 위치는 선박 추적의 원천. 항만공사 4곳 API는 Port-MIS 아래 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vessel-movements
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157716-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157716-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157716.json
+  stats: probe/stats/15157716.json
+  data: probe/data/15157716/
+status: active
+summary_user: 인천항 도선·예선 일정을 건별로 담으며, 도선 상태, 도선 예정일시, 도선사명, 선박명, 도선 출발·도착 구간 등을 예선계획일자 범위와 호출부호로 조회한다. 선사·대리점이나 항만 물류 분석가가 '특정 선박의 인천항 입출항 도선이 언제 어느 구간에서 예정돼 있고 어느 도선사가 맡았는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 선박명·호출부호 같은 이름·코드 매핑으로만 이어 쓰며, Port-MIS 입출항 신고나 AIS 위치 데이터와 맞춰 보는 식으로 연결한다.
+limits: 전역 조인 키가 없어 다른 입출항·선박 데이터와 붙일 때 이름·코드 매핑에 의존해야 한다. 개발계정은 일 10,000회 호출 한도가 있고 serviceKey를 쿼리로 넘겨야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157716-01
+    - c-15157716-03
+    - c-15157716-06
+  dropped_citations: 0

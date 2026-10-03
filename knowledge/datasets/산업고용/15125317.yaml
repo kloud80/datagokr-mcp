@@ -1,0 +1,234 @@
+# Dataset 15125317 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125317'
+tier: verified
+title: 한국남부발전(주)_시간대별 발전량및송전량 정보조회_GW
+sector: 산업고용/에너지및자원개발/power-market-realtime
+agency:
+  id: B552520
+  name: 한국남부발전(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125317/openapi.do
+synonyms:
+  - 한국남부발전
+  - 발전소
+  - 시간대별
+  - 발전량
+  - 송전량
+  - API
+  - 화력발전
+  - 복합발전
+  - 남부발전 발전실적
+  - 호기별 발전량
+  - 시간별 송전량
+  - 발전소 시간대별 발전량
+  - 전력 생산량 시계열
+  - KOSPO 발전량
+description_portal: 본 API는 한국남부발전(주)의 시간대별 발전량 및 송전량 정보조회를 위한 API GW(Gateway) 서비스입니다.공공데이터포털을 통해 인증키를 발급 받으신 후, 조회 시작월, 조회 종료월, 발전소 코드와 호기 코드를 입력하시면 시간대별(1시간 단위) 해당 발전소와 호기의 세부 발전량과 송전량을 확인하실 수 있습니다. 각 발전소 및 호기 코드는 참고자료를 통해 확인 가능합니다. 해당 API를 통하여 시간대별 발전량 및 송전량 정보를 확인하여 국내 발전현황 및 송전현황을 확인할 수 있으며 시간대별 시계열 자료 분석을 통해 다양한 학습 및 분석에 활용 가능합니다.
+team:
+  dept: AI업무혁신부
+services:
+  - op: /getDataService
+    name: 발전량및송전량정보(시간대별)
+    endpoint: https://apis.data.go.kr/B552520/PwrGenTran/getDataService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: strSdate
+        required: true
+        example: '20231130'
+        desc: 조회 시작월
+      - name: strEdate
+        required: true
+        example: '20231130'
+        desc: 조회 종료월
+      - name: strOrgCd
+        required: false
+        example: '862'
+        desc: 발전소 코드
+      - name: strHoki
+        required: false
+        example: '1'
+        desc: 호기 코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pageNo
+      title: 페이지번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: numOfRows
+      title: 한페이지 출력건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: totalCnt
+      title: 총 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5719
+  rank_in_sector: 583
+  brm: 산업고용 - 에너지및자원개발
+  why: 호기별 시간대 발전·송전량 API
+claims:
+  - id: c-15125317-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125317.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125317.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15125317-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125317-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125317.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125317-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125317.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125317-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125317-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125317-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125317.json
+  stats: probe/stats/15125317.json
+  data: probe/data/15125317/
+status: active
+summary_user: 한국남부발전(주) 소속 발전소·호기별로 1시간 단위 발전량과 송전량을 조회 시작월~종료월 범위로 돌려주는 건별 시계열 API다. 발전사업 분석가나 연구자가 '특정 남부발전 발전소 호기가 시간대별로 얼마나 발전하고 실제로 얼마나 송전했는가'를 확인하거나 시계열 분석에 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 데이터와는 발전소·호기 코드(참고자료 코드표)나 발전소 이름 매핑으로만 이어 쓴다.
+limits: 남부발전 소속 발전소만 다루며 전력거래소 전체 수급이나 다른 발전사 실적은 담지 않는다. 다른 데이터와 공통 조인 키가 없어 발전소명·코드를 직접 매핑해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15125317-01
+    - c-15125317-03
+    - c-15125317-04
+  dropped_citations: 0

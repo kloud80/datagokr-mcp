@@ -1,0 +1,274 @@
+# Dataset 15142301 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142301'
+tier: verified
+title: 한국해양교통안전공단_운항항로 정보
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B554035
+  name: 한국해양교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142301/openapi.do
+synonyms:
+  - 연안여객선
+  - 교통정보
+  - 여객선
+  - 운항항로
+  - 면허항로
+  - 연안여객선 항로
+  - 여객선 노선
+  - 뱃길 소요시간
+  - 항로 거리
+  - 섬 가는 배
+  - KOMSA 항로
+description_portal: "해당 데이터는 한국해양교통안전공단(KOMSA)에서 국가중점데이터로 개방한 \"연안여객선 교통정보\" 관련 데이터 중 하나로공단의 운항관리 대상 연안여객선의 운항항로 정보를 포함하고 있습니다.면허항로코드, 운항항로코드, 운항항로명 등이 포함된 정보 입니다.여객선의 대중교통 편입('20.12.)에 따라 도서민, 여행객 등 여객선 이용객의 교통편의 증진을 위해 연안여객선 교통정보를 활용할 수 있습니다. * (참고)국가중점데이터: 국민, 기업 등 수요 중심으로 개방의 효과성, 시급성 등이 높은 분야를 선정하고 민간에서 활용하기 용이한 형태로 정체, 가공하여 개방된 양질의 대용량 데이터를 제공합니다."
+team:
+  dept: 해양안전실 디지털융합팀
+services:
+  - op: /get-oprt-rt-info-v3
+    name: 운항항로 정보 조회
+    endpoint: https://apis.data.go.kr/B554035/oprt-rt-info-v3/get-oprt-rt-info-v3
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '5'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: JSON
+        desc: 응답타입(JSON,XML)
+      - name: filters
+        required: false
+        desc: 응답에 포함할 칼럼(lcns_seawy_cd, nvg_seawy_cd 등)
+      - name: nvgSeawyNm
+        required: false
+        example: 인천대부
+        desc: 운항항로명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lcns_seawy_cd
+      title: 면허항로코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B03
+      stats:
+        unique: 1
+    - name: nvg_seawy_cd
+      title: 운항항로코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: nvg_seawy_nm
+      title: 운항항로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천대부
+      stats:
+        unique: 1
+    - name: seawy_se_cd
+      title: 항로구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: seawy_se_nm
+      title: 항로구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 편도항로
+      stats:
+        unique: 1
+    - name: fwd_nvg_req_hr
+      title: 정방향 운항소요시간(분)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: fwd_nvg_dist
+      title: 정방향 운항거리(km)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5.6'
+      stats:
+        min: 5.6
+        p50: 5.6
+        max: 5.6
+        unique: 1
+    - name: rev_nvg_req_hr
+      title: 역방향 운항소요시간(분)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: rev_nvg_dist
+      title: 역방향 운항거리(km)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5.6'
+      stats:
+        min: 5.6
+        p50: 5.6
+        max: 5.6
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5654
+  rank_in_sector: 69
+  brm: 교통물류 - 해운·항만
+  why: 전국 연안여객 운항항로 코드·거리 API
+claims:
+  - id: c-15142301-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142301.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142301.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15142301-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142301-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142301.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142301-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15142301.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142301-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142301-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142301-08
+    kind: admin_note
+    value: wave5 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15142301.json
+  stats: probe/stats/15142301.json
+  data: probe/data/15142301/
+status: active
+summary_user: 공단이 운항관리하는 전국 연안여객선의 운항항로를 항로 1건 단위로 담는 원장성 데이터로, 면허항로·운항항로 코드와 이름, 항로 구분, 정방향·역방향 운항 소요시간(분)과 거리(km)를 포함한다. 섬 주민이나 여행객이 '이 항로는 편도 몇 분, 몇 km 걸리나'를 확인하거나, 분석가가 항로별 소요시간·거리를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 같은 기관이 낸 연안여객선 교통정보(운항상태·스케줄·운임 등)와는 운항항로코드나 항로명을 맞춰 연결한다.
+limits: 결항 여부나 실시간 운항상태는 담지 않아 별도 운항상태 데이터가 필요하다. 행정구역·좌표 정보가 없는 비공간 데이터라 지역 단위 집계나 지도 표시는 바로 할 수 없다. 개발계정은 하루 100회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15142301-01
+    - c-15142301-03
+    - c-15142301-04
+    - c-15142301-06
+  dropped_citations: 0

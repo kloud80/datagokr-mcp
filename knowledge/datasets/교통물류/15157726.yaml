@@ -1,0 +1,289 @@
+# Dataset 15157726 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157726'
+tier: verified
+title: 인천항만공사_인천항 코드 정보 조회 서비스
+sector: 교통물류/해운·항만/port-facilities
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157726/openapi.do
+synonyms:
+  - 인천항
+  - 인천항 코드
+  - 항만시설 코드
+  - 시설제원
+  - 접안가능 척수
+  - 수심
+  - 항코드
+  - 시설제원명
+  - 인천항 시설코드
+  - 항만시설 제원
+  - 선석 정보
+  - 부두 수심
+  - 접안 능력
+  - 항코드 조회
+  - 인천항 접안시설
+description_portal: 해당 Open API는 인천항의 항만 시설에 대한 코드 정보를 조회할 수 있는 API로, 항코드(prtAtCode), 시설코드(facCode), 시설제원명(facKorNm) 등을 파라미터로 활용해 항만별 접안 가능 척수, 수심 정보, 시설제원 길이, 시설제원 부속 코드 등을 확인할 수 있습니다. 응답 데이터에는 전체 결과 수, 접안가능 척수, 수심(FR, TO), 시설 제원, 접안시설 수용 능력 등 다양한 시설 인프라 정보를 포함하고 있어 항만 시설의 활용도 분석, 항만 운영계획 수립, 항만 인프라 개선 정책 등의 기초자료로 유용하게 사용횝니다. 특히 물류 효율성 분석, 선박 접안 계획, 시설 확충 필요성 진단 등 해운 물류 정책 수립 시 활용도가 높은 구조화된 데이터입니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getHarborFcltyCode
+    name: 인천항 항만 시설 코드
+    endpoint: https://apis.data.go.kr/B551504/ipaCode/getHarborFcltyCode
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: prtAtCode
+        required: true
+        desc: 항코드
+      - name: facCode
+        required: true
+        desc: 시설제원코드
+      - name: facKorNm
+        required: true
+        desc: 시설제원명(한글명)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getShipagentCode
+    name: 인천항 선사 코드
+    endpoint: https://apis.data.go.kr/B551504/ipaCode/getShipagentCode
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: shipperId
+        required: false
+        desc: 선사ID
+      - name: shipperNm
+        required: false
+        desc: 선사명
+      - name: endRow
+        required: true
+        desc: 총 조회 수
+      - name: skipRow
+        required: true
+        desc: 조회시작 번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지당 표출 데이터 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 데이터 총 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4092
+  rank_in_sector: 199
+  brm: 교통물류 - 해운·항만
+  why: 인천항 시설코드·수심·접안능력 제원
+claims:
+  - id: c-15157726-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15157726.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15157726.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157726-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157726-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157726.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157726-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157726.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157726-06
+    kind: admin_note
+    value: "세부 부문 '항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)'의 가치: 항만코드(UN/LOCODE·해수부 내부 코드 병존, 매핑표 필요)가 입출항·물류를 잇는 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#port-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157726-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157726-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157726-10
+    kind: pitfall
+    value: 필수 파라미터 endRow, facCode, facKorNm, prtAtCode, skipRow는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157726.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157726-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getShipagentCode'
+    evidence:
+      - type: measured
+        source: probe/runs/15157726.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15157726.json
+  stats: probe/stats/15157726.json
+  data: probe/data/15157726/
+status: active
+summary_user: 인천항의 항만 시설을 항코드·시설코드 단위로 조회하는 API로, 시설별 접안 가능 척수, 수심 범위, 시설 제원 길이와 부속 코드 같은 시설 인프라 정보를 담는다. 선사·물류 분석가가 인천항의 특정 부두나 선석에 몇 척이 접안할 수 있고 수심이 얼마인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 항만코드(항코드)를 매개로 입출항·물류 데이터와 잇되 UN/LOCODE와 해수부 내부 코드가 섞여 있어 매핑표가 필요하다.
+limits: 항코드·시설코드·시설제원명 등 필수 파라미터는 다른 데이터에서 먼저 받아 넘겨야 하며, 오퍼레이션 2개 중 선박대리점 코드 조회(getShipagentCode)는 최소 파라미터로 응답이 없었다. 다른 데이터와 공통 조인 키가 없어 이름·코드 매핑으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157726-01
+    - c-15157726-03
+    - c-15157726-06
+    - c-15157726-10
+    - c-15157726-11
+  dropped_citations: 0

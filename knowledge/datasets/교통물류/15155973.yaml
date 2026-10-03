@@ -1,0 +1,441 @@
+# Dataset 15155973 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155973'
+tier: verified
+title: 전남광주통합특별시 광양시_버스 도착 예정 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '5800000'
+  name: 전남광주통합특별시 광양시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155973/openapi.do
+synonyms:
+  - 전라남도 광양시
+  - 버스 정보
+  - BIS
+  - 정류소
+  - 버스
+  - 노선
+  - 도착 예정 시간
+  - 남은 정류장
+  - 광양 버스 도착 정보
+  - 버스 실시간 도착
+  - 정류장 도착 예정 시간
+  - 광양 BIS
+  - 버스 몇 분 후 도착
+  - 시내버스 위치
+  - 광양시 버스 노선
+description_portal: 전라남도 광양시 특정 정류소에 도착 예정인 버스 노선의 운행 상태, 정류장 구성, 차량 도착 정보, 노선 특성 등을 종합적으로 제공하는 상세 운행 정보입니다. 제공되는 항목에는 노선 ID, 노선 명, 본선 구분, 노선 타입, 노선 방향, 노선 구간, 정류장 ID, 정류장 명, 모바일 ID, 기점명, 종점명, 차량 ID, 도착 예정 시간(초), 남은 정류장 수, 최근 정류장 명, 첫차·막차 시간, 1일 운행 횟수, 회차지 사용 여부 등이 포함됩니다.이 정보를 활용하면 특정 노선이 어떤 방향으로 운행되고 있는지, 현재 차량이 어느 정류장에 접근 중인지, 최종 목적지가 어디인지, 그리고 운행 패턴·운행 횟수와 같은 운영 특성까지 세부적으로 확인할 수 있습니다. 이러한 상세한 도착 예정 정보는 교통 안내 서비스 구축, 위치 기반 지도 서비스, 대중교통 모니터링, 스마트시티 교통 시스템 등 여러 분야에서 유용하게 활용될 수 있습니다
+team:
+  dept: 안전총괄과
+services:
+  - op: /getArrInfoByStopID
+    name: 정류장 버스 도착 정보 조회
+    endpoint: https://apis.data.go.kr/4840000/arrive/getArrInfoByStopID
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: busStopID
+        required: true
+        desc: 정류소ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getArrInfoByUid
+    name: 모바일 ID 별 버스 도착예정정보 조회
+    endpoint: https://apis.data.go.kr/4840000/arrive/getArrInfoByUid
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: arsId
+        required: true
+        example: '3280404'
+        desc: 모바일 ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: route_id
+      title: 노선 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '328000003'
+        - '328000020'
+        - '328000131'
+      stats:
+        min: 328000003
+        p50: 328000131
+        max: 328000143
+        unique: 5
+    - name: route_name
+      title: 노선 명
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '9'
+        - '990'
+      stats:
+        min: 2
+        p50: 270
+        max: 991
+        unique: 5
+    - name: route_subid
+      title: '본선 구분 (A : 본선, 나머지 분선)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A
+      stats:
+        unique: 1
+    - name: route_type
+      title: 노선 타입(11:직행좌석형시내 12:좌석형 시내 13:일반형 시내 21:직행좌석형 농어천 22:좌석형 농어촌 23:일반형 농어촌 30:마을버스 41:고속형 시외 42:좌석형 시외 43:일반형 시외 99:공항버스)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13 '
+      stats:
+        min: 13
+        p50: 13
+        max: 13
+        unique: 1
+    - name: route_direction
+      title: '노선 방향(1: 상행, 2: 하행, 3: 순환)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: route_explain
+      title: 노선 구간
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: stop_id
+      title: 정류장 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '328010404'
+      stats:
+        min: 328010404
+        p50: 328010404
+        max: 328010404
+        unique: 1
+    - name: stop_name
+      title: 정류장 명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 백운마트
+      stats:
+        unique: 1
+    - name: service_id
+      title: 모바일 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3280404'
+      stats:
+        min: 3280404
+        p50: 3280404
+        max: 3280404
+        unique: 1
+    - name: st_stop_name
+      title: 기점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 광양교통
+        - 서희아파트정문
+        - 중마터미널
+      stats:
+        unique: 4
+    - name: ed_stop_name
+      title: 종점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 세승
+        - 중마터미널(금호도행)
+        - 송보7차
+      stats:
+        unique: 5
+    - name: veh_id
+      title: 차량 ID
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: provide_type
+      title: 도착 예정정보 시간(초)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 19시 40분 출발 예정
+        - 19시 30분 출발 예정
+        - 19시 20분 출발 예정
+      stats:
+        unique: 3
+    - name: rstop
+      title: 현재 정류까지 남은 정류장 수
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기점
+      stats:
+        unique: 1
+    - name: last_stop_name
+      title: 최근 정류장 명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 광양교통
+        - 서희아파트정문
+        - 중마터미널
+      stats:
+        unique: 4
+    - name: start_time
+      title: 첫차 시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0720 '
+        - '0600'
+        - '0640'
+      stats:
+        min: 600
+        p50: 640
+        max: 720
+        unique: 3
+    - name: end_time
+      title: 막차 시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2100 '
+        - '2200'
+        - '2100'
+      stats:
+        min: 1940
+        p50: 2100
+        max: 2200
+        unique: 5
+    - name: alloc_time
+      title: 1일 운행 횟수
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1일  12회 운행
+        - 1일  29회 운행
+        - 1일  52회 운행
+      stats:
+        unique: 5
+    - name: turn_useflag
+      title: '회차지 사용 유무(0: 회차지 사용 안함, 1: 회자치 사용)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 1
+        unique: 2
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5588
+  rank_in_sector: 1567
+  brm: 교통물류 - 도로
+  why: 광양 버스 도착 예정 실시간 API
+claims:
+  - id: c-15155973-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15155973.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15155973.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15155973-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15155973-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15155973.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 19개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15155973-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15155973.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15155973-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155973-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155973-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155973-10
+    kind: pitfall
+    value: 필수 파라미터 busStopID는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15155973.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15155973-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getArrInfoByStopID'
+    evidence:
+      - type: measured
+        source: probe/runs/15155973.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15155973.json
+  stats: probe/stats/15155973.json
+  data: probe/data/15155973/
+status: active
+summary_user: 광양시 특정 정류소(정류장 ID 기준)에 도착 예정인 버스를 노선별로 한 건씩 담는 실시간 조회 API로, 남은 도착 시간(초)·남은 정류장 수·최근 통과 정류장과 노선 방향·유형·기점/종점·첫차/막차·1일 운행 횟수를 함께 준다. 광양시민이나 교통 안내 서비스 개발자가 '이 정류장에 다음 버스가 몇 분 뒤, 몇 정류장 전에 있는가'를 확인할 때 쓴다. 전역 조인 키는 없어 노선 ID·정류장 ID·정류장 명으로 같은 기관의 정류장·노선 데이터와 이어 쓰며, 필수 입력인 정류장 ID는 광양시 정류장 목록 데이터에서 먼저 받아 넘겨야 한다.
+limits: 필수 파라미터 정류장 ID(busStopID)는 다른 데이터의 코드라 먼저 조회해 넣어야 하고, 오퍼레이션 2개 중 /getArrInfoByStopID는 최소 파라미터로 호출했을 때 응답이 없었다. 범위는 광양시 한 곳이며 다른 시군과 공통으로 쓰는 전역 코드가 없어 지역 간 결합은 이름·코드 매핑에 의존한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15155973-01
+    - c-15155973-03
+    - c-15155973-04
+    - c-15155973-10
+    - c-15155973-11
+  dropped_citations: 0

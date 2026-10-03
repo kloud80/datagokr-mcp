@@ -1,0 +1,224 @@
+# Dataset 15157722 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157722'
+tier: verified
+title: 한국수력원자력(주)_원자력발전소 실시간 기상 정보
+sector: 산업고용/에너지및자원개발/power-plants
+agency:
+  id: B552041
+  name: 한국수력원자력(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157722/openapi.do
+synonyms:
+  - 원자력발전소
+  - 기상정보
+  - 원전
+  - 실시간
+  - 한국수력원자력
+  - 기상
+  - 원전 기상
+  - 원자력발전소 날씨
+  - 원전 주변 풍향 풍속
+  - 발전소 기상관측
+  - 고리 월성 한빛 한울 기상
+  - 한수원 기상정보
+description_portal: '해당 api는 한국수력원자력(주)_원자력발전소 실시간 기상 정보 API입니다.한국수력원자력에서 운영중인 원자력발전소(고리, 한빛, 월성, 한울, 새울)의 실시간 기상정보(온도, 습도, 강우량, 풍속, 풍향)를 제공중에 있습니다.요청 메시지 정보내에 발전소 구분값은 아래 내용을 참조하시면 됩니다. 그리고 응답값중 expl은 아이템 설명, name은 아이템 고유 태그명, time은 갱신시간,  value값은 온도(℃), 습도(%), 강우량(mm), 풍속(m/s), 풍향(방위각 ex) 0:N, 90:E, 45:NE)로 표기됨을 안내드립니다.○ 발전소 구분 WS : 월성 KR : 고리 YK : 한빛 UJ : 한울'
+team:
+  dept: AI혁신처 데이터혁신부
+services:
+  - op: /getweather
+    name: 원자력발전소 실시간 기상정보 조회
+    endpoint: https://apis.data.go.kr/B552041/weather/getweather
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: genName
+        required: true
+        desc: '발전소 구분 WS : 월성 KR : 고리 YK : 한빛 UJ : 한울'
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: pageNo
+      title: 페이지번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 전체 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: plant-emissions
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4213
+  rank_in_sector: 1304
+  brm: 산업고용 - 에너지및자원개발
+  why: 원전 5개 본부 실시간 기상 관측
+claims:
+  - id: c-15157722-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157722.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157722.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157722-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157722-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157722.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157722-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157722.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157722-06
+    kind: admin_note
+    value: "세부 부문 '발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)'의 가치: 발전소 단위 측정 — 환경기상과 cross-sector"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#plant-emissions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157722-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157722-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157722-10
+    kind: pitfall
+    value: 필수 파라미터 genName는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157722.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157722.json
+  stats: probe/stats/15157722.json
+  data: probe/data/15157722/
+status: active
+summary_user: "한국수력원자력이 운영하는 원자력발전소(고리·한빛·월성·한울·새울)별로 측정한 실시간 기상값(온도, 습도, 강우량, 풍속, 풍향)을 항목 설명·태그명·갱신시간과 함께 담는다. 원전 인근 주민이나 환경·안전 분석가가 '지금 특정 원전 주변의 풍향과 풍속은 어떤가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 발전소 구분값(예: 월성 WS, 고리 KR)이나 발전소 이름으로 맞춰 기상청 관측자료 등 환경기상 데이터와 함께 쓴다."
+limits: 요청할 때 발전소 구분 코드(genName)를 필수로 넘겨야 하므로 코드값을 먼저 확인해야 한다. 공통 조인 키가 없어서 다른 데이터와는 이름이나 코드를 직접 매핑해야 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157722-03
+    - c-15157722-06
+    - c-15157722-10
+  dropped_citations: 0

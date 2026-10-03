@@ -1,0 +1,237 @@
+# Dataset 15160017 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15160017'
+tier: verified
+title: 부산광역시_구군 불법 주정차 단속 현황조회 서비스
+sector: 교통물류/도로/road-regulations
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15160017/openapi.do
+synonyms:
+  - 불법주정차
+  - 주차단속
+  - 단속현황
+  - 도로안전
+  - 교통질서
+  - 부산 주정차 단속
+  - 불법주차 단속 내역
+  - 주정차 위반 단속
+  - 부산 구군별 주차단속
+  - 불법주차 단속 장소
+  - 주차위반 단속일자
+description_portal: 부산광역시 구·군별 불법 주정차 단속 현황을 제공하는 데이터로, 각 구군에서 실시한 불법 주정차 단속 현황을 보여주고 있습니다. 데이터에는 단속 일자, 단속지역 등의 정보가 포함되어 있으며, 지역별 불법 주정차 발생 특성과 단속 추이를 분석하는 데 활용할 수 있습니다. 또한 교통질서 확립, 주차정책 수립, 교통안전 개선 및 시민 불편 해소를 위한 기초자료로 활용 가능합니다. 연구기관, 공공기관, 민간기업 및 시민이 부산시의 교통행정 현황을 파악하고 정책 수립 및 서비스 개발에 활용할 수 있는 공공데이터 입니다.
+team:
+  dept: 빅데이터과
+services:
+  - op: /getUnlawPrntpCrdn01
+    name: 구군 불법 주정차 단속 현황
+    endpoint: https://apis.data.go.kr/6260000/UnlawPrntpCrdnService01/getUnlawPrntpCrdn01
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: gugun
+        required: true
+        desc: 구군명
+      - name: resultType
+        required: true
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gugun
+      title: 구군명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중구
+      stats:
+        unique: 1
+    - name: insttCode
+      title: 기관코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3250000'
+      stats:
+        min: 3250000
+        p50: 3250000
+        max: 3250000
+        unique: 1
+    - name: crdnYmd
+      title: 단속일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2024-04-07'
+        - '2024-04-13'
+        - '2024-04-14'
+      stats:
+        min: '2024-01-18'
+        max: '2024-04-21'
+        unique: 37
+    - name: crdnPlcAddr
+      title: 단속장소주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 남포사거리
+        - 흑교로(부평동)
+        - 민주공원
+      stats:
+        unique: 258
+    - name: referenceDate
+      title: 데이터기준일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-05-22'
+      stats:
+        min: '2026-05-22'
+        max: '2026-05-22'
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5257
+  rank_in_sector: 1989
+  brm: 교통물류 - 도로
+  why: 부산 단속 건별 일자·주소 API, 지역 조인 가능
+claims:
+  - id: c-15160017-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15160017.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15160017.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15160017-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160017-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15160017.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160017-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15160017.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160017-06
+    kind: admin_note
+    value: "세부 부문 '규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)'의 가치: 무인교통단속카메라·어린이보호구역은 제공표준(전국 통일 형식), 내비 기본 데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-regulations
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15160017-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160017-08
+    kind: admin_note
+    value: wave5 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15160017.json
+  stats: probe/stats/15160017.json
+  data: probe/data/15160017/
+status: active
+summary_user: 부산광역시 구·군이 실시한 불법 주정차 단속을 건별로 담으며, 구군명·단속일자·단속장소 주소가 들어 있다. 시민이나 분석가가 "우리 동네 어느 길에서 주정차 단속이 자주 일어나는가"를 알아보거나, 구군별 단속 추이를 비교해 주차정책 기초자료로 쓴다. 전국 공통 조인 키는 없어서 구군명이나 기관코드(insttCode), 단속장소 주소를 이름·주소 매핑해 다른 행정구역·주차장 데이터와 잇는다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 이름·주소 매핑이나 같은 기관 코드로만 연결된다. 범위는 부산시 한 곳이고, 위치는 좌표가 아니라 주소 문자열로 주어진다. 개발계정 호출 한도는 하루 10,000회다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15160017-01
+    - c-15160017-03
+    - c-15160017-04
+  dropped_citations: 0

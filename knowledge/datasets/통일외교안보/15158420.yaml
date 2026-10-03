@@ -1,0 +1,372 @@
+# Dataset 15158420 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15158420'
+tier: verified
+title: 방위사업청_해외입찰정보_GW
+sector: 통일외교안보/방위력개선/defense-procurement
+agency:
+  id: '1690000'
+  name: 방위사업청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15158420/openapi.do
+synonyms:
+  - 방산수출입지원시스템
+  - 방위사업청
+  - 해외입찰정보
+  - 해외입찰공고
+  - 방산수출
+  - 국방조달정보
+  - 발주기관
+  - 입찰기간
+  - 해외 방산 입찰
+  - 해외 조달공고
+  - 방산수출 입찰 모니터링
+  - 국외 국방조달
+  - DCAI 해외입찰
+  - 해외 군수 입찰
+description_portal: (해외입찰정보) 방위사업청 방산수출입지원시스템에서 제공하는 해외입찰정보 OpenAPI 서비스입니다. 본 데이터는 해외 방산·조달 관련 입찰공고 정보를 기간 조건으로 조회할 수 있으며, 공고명(국문/영문), 국가/권역, 입찰기간(시작일~종료일), 정보획득일자, 공고형태(입찰공고/조달계획/기타) 등의 항목을 포함합니다. 또한 상세 조회를 통해 발주기관, 품목명/품목구분, 수량·단위, 화폐단위 및 총금액, 담당자 정보, 원문 URL 등 입찰공고의 세부 내용을 확인할 수 있어 해외 시장 동향 분석, 입찰 모니터링, 방산수출 전략 수립 등 다양한 업무에 활용 가능합니다.
+team:
+  dept: 정보화데이터담당관실
+services:
+  - op: /getDCAIBidInfoList
+    name: 방산수출입지원시스템 해외입찰정보목록
+    endpoint: https://apis.data.go.kr/1690000/DCAIBidInfoService/getDCAIBidInfoList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: bidFrom
+        required: false
+        desc: 입찰기간 시작일
+      - name: bidTo
+        required: false
+        desc: 입찰기간 종료일
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getDCAIBidInfoDetail
+    name: 방산수출입지원시스템 해외입찰정보상세
+    endpoint: https://apis.data.go.kr/1690000/DCAIBidInfoService/getDCAIBidInfoDetail
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: seqn
+        required: true
+        desc: 순번
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: anucType
+      title: 공고형태 1:입찰공고 2:조달계획 3:기타
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: anucTypeNm
+      title: 공고형태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - ??
+      stats:
+        unique: 2
+    - name: bidNameEng
+      title: 입찰공고명_영문
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - 10--PARTS KIT,GUN
+        - 15--SKIN,AIRCRAFT
+        - 15--RADOME
+      stats:
+        unique: 921
+    - name: bidNameKor
+      title: 입찰공고명_국문
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - 탄약
+        - 군용 의복
+        - 축전지
+      stats:
+        unique: 872
+    - name: bidTo
+      title: 입찰기간 종료일
+      type: number
+      null_rate: 0.005
+      sample_values:
+        - '20151116'
+        - '20151105'
+        - '20151207'
+      stats:
+        min: 20150629
+        p50: 20151102
+        max: 20160630
+        unique: 173
+    - name: infoAcquireFrom
+      title: 정보획득일자 시작일
+      type: number
+      null_rate: 0.005
+      sample_values:
+        - '20151105'
+        - '20151127'
+        - '20151124'
+      stats:
+        min: 20150617
+        p50: 20151014
+        max: 20151203
+        unique: 103
+    - name: seqn
+      title: 순번
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 509.5
+        max: 1011
+        unique: 1000
+    - name: orgPlace
+      title: 국가코드
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - US
+        - PH
+        - IL
+      stats:
+        unique: 77
+    - name: orgPlaceNm
+      title: 국가명
+      type: string
+      null_rate: 0.001
+      sample_values:
+        - 미국
+        - 필리핀
+        - 이스라엘
+      stats:
+        unique: 77
+    - name: region
+      title: 권역코드
+      type: code
+      null_rate: 0.001
+      sample_values:
+        - F
+        - A
+        - C
+      stats:
+        unique: 9
+    - name: regionNm
+      title: 권역명
+      type: code
+      null_rate: 0.001
+      sample_values:
+        - 북아메리카
+        - 아시아
+        - 중동
+      stats:
+        unique: 9
+    - name: bidFrom
+      title: 입찰기간 시작일
+      type: number
+      null_rate: 0.813
+      sample_values:
+        - '20150908'
+        - '20150918'
+        - '20151013'
+      stats:
+        min: 20150625
+        p50: 20151008
+        max: 20160401
+        unique: 86
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5894
+  rank_in_sector: 25
+  brm: 통일외교안보 - 방위력개선
+  why: 해외 방산 입찰공고 건별 API, 국가코드로 외교 데이터와 연계
+claims:
+  - id: c-15158420-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15158420.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15158420.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15158420-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158420-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15158420.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 12개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158420-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15158420.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158420-06
+    kind: admin_note
+    value: "세부 부문 '군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)'의 가치: 나라장터와 별도인 국방전자조달 — 정부조달과 같은 개념, 사업자번호로 기업 축"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#defense-procurement
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15158420-07
+    kind: admin_note
+    value: '[통일외교안보 · 방위력개선] 군수품 조달(입찰공고·결과·계획·계약·해외입찰)과 방산업체 지정·DQ 인증·국방규격만 (`defense-*`). 국방전자조달은 나라장터와 별도 — context `public-procurement`.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L700
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158420-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15158420-10
+    kind: pitfall
+    value: 필수 파라미터 seqn는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15158420.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15158420-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getDCAIBidInfoDetail'
+    evidence:
+      - type: measured
+        source: probe/runs/15158420.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15158420.json
+  stats: probe/stats/15158420.json
+  data: probe/data/15158420/
+status: active
+summary_user: 방위사업청 방산수출입지원시스템이 수집한 해외 방산·조달 입찰공고를 공고 한 건 단위로 담으며, 공고명(국문·영문), 국가·권역, 입찰기간, 정보획득일자, 공고형태(입찰공고·조달계획·기타)를 기간 조건으로 조회한다. 방산 수출을 노리는 업체나 분석가가 "이번 달 중동 권역에 새로 올라온 무기체계·부품 입찰공고가 무엇이고 마감이 언제인가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국가명·권역명 같은 이름 매핑으로만 잇고, 목록의 순번(seqn)은 같은 서비스의 상세 조회에 넘기는 내부 키로 쓴다.
+limits: 상세 조회(/getDCAIBidInfoDetail)는 필수 파라미터 순번을 목록 조회에서 먼저 받아 넘겨야 하고, 최소 파라미터 검증 호출에서는 응답이 없었다. 개발계정은 하루 100회로 제한된다. 국내 국방전자조달 입찰·계약과 사업자번호로 직접 연결되는 키는 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15158420-01
+    - c-15158420-03
+    - c-15158420-10
+    - c-15158420-11
+    - c-15158420-07
+  dropped_citations: 0

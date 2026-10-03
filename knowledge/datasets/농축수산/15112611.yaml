@@ -1,0 +1,243 @@
+# Dataset 15112611 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15112611'
+tier: verified
+title: 해양수산부_지식정보 생산모델 파고 3분 격자 예측값 서비스
+sector: 농축수산/해양수산·어촌/ocean-observation
+agency:
+  id: '1192000'
+  name: 해양수산부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15112611/openapi.do
+synonyms:
+  - 해양수산
+  - 파고
+  - 예측값
+  - 해양안전
+  - 계획수립
+  - 모니터링
+  - 어업
+  - 파고 예보
+  - 파도 높이 예측
+  - 격자 파고
+  - 해양 예측 모델
+  - 물결 예보
+  - 바다 날씨
+  - 해상 파고
+description_portal: 이 데이터는 해양수산부에서 지식정보 생산모델을 활용하여 파고에 대한 3분 간격(3단계)의 격자별 예측값 정보를 제공하기 위해 수집된 데이터입니다.  격자번호, 예측시간 등 파라미터 입력을 통해 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 격자코드, 분석시간, 예측파고, 예측일자 정보로 구성되어 있습니다. 본 데이터는 관계 기관에서 해양 안전 관리, 해양 산업 계획 수립, 선박 운항 계획 수립 등 활동을 위한 기초 자료로 활용될 수 있습니다. 또한, 연구기관에서 해양 기상 등 관련 연구활동 수행을 위해 활용할 수 있습니다,
+team:
+  dept: 해양공간정책과
+services:
+  - op: /getOpnPrdnWv3
+    name: 지식정보 생산모델 파고 3분 격자 예측값 속성조회
+    endpoint: https://apis.data.go.kr/1192000/apVhdService_PrdnWv3/getOpnPrdnWv3
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: gridCd
+        required: true
+        example: GR3_G1H43_G
+        desc: 격자번호
+      - name: prdnHms
+        required: false
+        example: '03'
+        desc: 예측 시간
+      - name: type
+        required: false
+        example: xml
+        desc: 요청에 대하여 어떻게 응답할 것인지 정의 xml
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gridCd
+      title: 격자코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GR3_G1H43_G
+      stats:
+        unique: 1
+    - name: prdnYmd
+      title: 예측일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20230304'
+      stats:
+        min: 20230304
+        p50: 20230304
+        max: 20230304
+        unique: 1
+    - name: prdnHms
+      title: 예측시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03'
+        - '00'
+        - '12'
+      stats:
+        min: 0
+        p50: 10.5
+        max: 21
+        unique: 8
+    - name: prdnWvhgh
+      title: 예측파고
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.091'
+        - '0.108'
+        - '0.065'
+      stats:
+        min: 0.065
+        p50: 0.07100000000000001
+        max: 0.108
+        unique: 8
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4852
+  rank_in_sector: 272
+  brm: 농축수산 - 해양수산·어촌
+  why: 고해상도 격자 파고 예측 API
+claims:
+  - id: c-15112611-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15112611.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15112611.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15112611-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15112611-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15112611.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15112611-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15112611.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15112611-06
+    kind: admin_note
+    value: "세부 부문 '해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)'의 가치: 물때·파고는 낚시·레저 안전 필수, 고수온·적조 특보는 양식 피해 직결. KHOA(바다누리) 자체 키, 관측소코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#ocean-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15112611-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15112611-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15112611.json
+  stats: probe/stats/15112611.json
+  data: probe/data/15112611/
+status: active
+summary_user: 해양수산부 지식정보 생산모델이 계산한 파고 예측값을 3분 격자 단위로, 격자코드·예측일자·예측시간별 예측파고(prdnWvhgh)로 담는 전국 범위 모델 예측 데이터다. 낚시·해양레저 이용자나 선박 운항 담당자가 특정 해역 격자에서 어느 날 몇 시에 파고가 얼마나 높을지 확인해 출항·활동 여부를 판단하는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 없고, 격자코드(gridCd)를 위경도나 해역으로 바꾸는 매핑을 따로 갖춰야 관측소 실측값 등 다른 해양 관측·예보 데이터와 이어 쓸 수 있다.
+limits: 실측 컬럼에서 전역 조인 키를 찾지 못해, 격자코드의 위치 정보 없이는 행정구역이나 바다누리 관측소코드와 바로 연결할 수 없다. 포털 활용신청 후 serviceKey로 호출하며, 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15112611-01
+    - c-15112611-03
+    - c-15112611-04
+    - c-15112611-06
+  dropped_citations: 0

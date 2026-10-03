@@ -1,0 +1,212 @@
+# Dataset 15121022 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121022'
+tier: verified
+title: 부산광역시_DSRC구간 속도
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121022/openapi.do
+synonyms:
+  - 교통
+  - DSRC
+  - 속도
+  - ITS
+  - 교통정보
+  - 부산 구간속도
+  - DSRC 통행속도
+  - 부산 실시간 교통정보
+  - 부산 도로 소통정보
+  - 구간 평균속도
+  - 부산 교통정체
+description_portal: '본 데이터는 부산광역시 교통정보서비스센터에서 운영하는 DSRC(Dedicated Short-Range Communication) 장치를 통해 수집된 도로 구간별 평균 주행 속도 정보를 제공합니다.DSRC는 도로 인프라와 차량 간 단거리 무선통신을 이용해 차량의 통행 정보를 수집하는 기술로, 본 데이터셋은 구간별 교통흐름 분석, 실시간 교통관리, 돌발상황 대응 등에 활용할 수 있습니다.<제공방식>형식: Open API응답 포맷: JSON (필요 시 XML 지원 가능)인코딩: UTF-8<활용안내>DSRC 기반 구간 교통속도 및 소통상황 파악교통운영기관의 혼잡 관리 및 돌발상황 대응 지원도로 이용자에게 정확한 실시간 교통정보 제공민간 내비게이션·교통 서비스와 연계 활용교통 빅데이터 기반 ITS 및 스마트시티 연구 자료'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /DSRCSectSpd
+    name: DSRC구간 속도
+    endpoint: https://apis.data.go.kr/6260000/BusanITSDSRC/DSRCSectSpd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statsDt
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03T18:00:00'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: rseSxnNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 해운대역 - 장산역사거리
+        - 장산역사거리 - 해운대역
+        - 동대신교차로 - 괴정교차로
+      stats:
+        unique: 136
+    - name: spd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '22.25'
+        - '18.26'
+        - '17.22'
+      stats:
+        min: 8.59
+        p50: 26.48
+        max: 80.56
+        unique: 133
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5127
+  rank_in_sector: 2164
+  brm: 교통물류 - 도로
+  why: 부산 DSRC 구간 실시간 속도 API, 구간정보와 조인
+claims:
+  - id: c-15121022-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121022.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121022.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15121022-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121022-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121022.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121022-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121022.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121022-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121022-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121022-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121022.json
+  stats: probe/stats/15121022.json
+  data: probe/data/15121022/
+status: active
+summary_user: 부산광역시 교통정보서비스센터가 DSRC 장치로 수집한 도로 구간별 평균 주행 속도를 시각(statsDt)과 구간명(rseSxnNm)별로 담는 실시간 API다. 운전자나 교통 분석가가 지금 부산의 어느 DSRC 구간이 막히는지 확인하는 데 쓰고, 응답을 계속 쌓으면 상습 정체 구간 분석의 이력 자료가 된다. 실측 컬럼에 전역 조인 키가 없어 다른 링크·교통 데이터와는 구간 이름을 매핑하거나 같은 기관의 코드로만 이어 쓴다.
+limits: 표준 링크 ID 같은 공통 키가 없어 국가 표준 링크망이나 다른 기관 데이터와 바로 결합할 수 없고, 구간 이름 매핑이 필요하다. 응답은 실시간 값이라 추세를 보려면 직접 호출해 이력을 쌓아야 하며, 개발계정은 하루 500회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15121022-01
+    - c-15121022-03
+    - c-15121022-06
+  dropped_citations: 0

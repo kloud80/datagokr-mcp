@@ -1,0 +1,304 @@
+# Dataset 15121627 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121627'
+tier: verified
+title: 한국서부발전(주)_발전 실적 정보
+sector: 산업고용/에너지및자원개발/power-market-realtime
+agency:
+  id: B552522
+  name: 한국서부발전(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121627/openapi.do
+synonyms:
+  - 발전실적
+  - 발전
+  - 이용률
+  - 발전원
+  - 설비용량
+  - 발전량
+  - 발전열효율
+  - 서부발전 발전량
+  - 발전기별 발전실적
+  - 호기별 이용률
+  - 발전소 열효율
+  - 발전원별 설비용량
+  - 화력발전 실적
+  - WP 발전실적
+description_portal: 한국서부발전 발전기,발전원별 설비용량 및 발전량 데이터 정보 API 입니다. 발전기별 및 발전원료별 설비용량, 발전량, 열효율, 이용률 데이터를 종합하면 각 발전기의 성능과 운영효율성을 다각도로 파악할 수 있습니다. 설비용량은 해당 발전기가 최대 출력으로 생산할 수 있는 이론적 전력규모를 의미하며, 실제 발전량은 일정 기간 동안 생산된 전력량을 보여줍니다. 열효율은 투입된 연료 에너지가 전력으로 얼마나 전환되었는지를 나타내는 지표로, 설비의 기술수준과 운영 조건을 반영합니다. 이용률은 설비용량 대비 실제 운전 비율을 보여주어 발전기가 얼마나 안정적이고 지속적으로 가동되는지를 알 수 있습니다.
+team:
+  dept: 디지털운영부
+services:
+  - op: /getDevelopment
+    name: 발전 실적 정보
+    endpoint: https://apis.data.go.kr/B552522/pg/development/getDevelopment
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: startDate
+        required: true
+        example: '202301'
+        desc: 조회시작일자(mode=daily 면 YYYYMMDD, 없으면 YYYYMM)
+      - name: endDate
+        required: true
+        example: '202301'
+        desc: 조회종료일자(mode=daily 면 YYYYMMDD, 없으면 YYYYMM)
+      - name: mode
+        required: true
+        desc: 일검색=daily, 월검색=monthly
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: genNm
+      title: 발전소명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서인천-1
+        - 태안
+        - 평택
+      stats:
+        unique: 6
+    - name: fuelNm
+      title: 발전원
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - LNG
+        - 유연탄
+        - 중유
+      stats:
+        unique: 4
+    - name: hoki
+      title: 호기
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - CG1
+        - CG2
+        - '1'
+      stats:
+        unique: 28
+    - name: qcap
+      title: 설비용량(MW)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '150'
+        - '75'
+        - '500'
+      stats:
+        min: 0
+        p50: 233.3
+        max: 1050
+        unique: 12
+    - name: qvod
+      title: 발전량(MWh)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '440'
+        - '1780'
+      stats:
+        min: 0
+        p50: 768
+        max: 23180
+        unique: 575
+    - name: td11
+      title: 열효율(퍼센트)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '35.37'
+        - '38.98'
+      stats:
+        min: 0
+        p50: 0
+        max: 49.63
+        unique: 393
+    - name: td13
+      title: 이용률(퍼세트)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '12.22'
+        - '49.44'
+      stats:
+        min: 0
+        p50: 18.345
+        max: 121.67
+        unique: 547
+    - name: date
+      title: 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20230101'
+        - '20230102'
+        - '20230103'
+      stats:
+        min: 20230101
+        p50: 20230114
+        max: 20230127
+        unique: 27
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.548
+  rank_in_sector: 702
+  brm: 산업고용 - 에너지및자원개발
+  why: 서부발전 발전기·일자별 발전량 API, 일별 관측
+claims:
+  - id: c-15121627-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121627.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121627.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15121627-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121627-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121627.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121627-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121627.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121627-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121627-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121627-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121627-10
+    kind: pitfall
+    value: 필수 파라미터 mode는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15121627.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121627.json
+  stats: probe/stats/15121627.json
+  data: probe/data/15121627/
+status: active
+summary_user: 한국서부발전이 운영하는 발전소의 호기별·발전원별 설비용량(MW), 발전량(MWh), 열효율, 이용률을 일자 단위로 담은 발전 실적 API이며, 범위는 전국·비공간입니다. 에너지 분석가가 서부발전의 특정 발전소·호기가 일정 기간 얼마나 가동되고 효율이 어땠는지, 석탄·가스 등 발전원별 실적이 어떻게 다른지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명(genNm)·발전원 이름 매핑이나 같은 기관 코드로만 연결한다.
+limits: 필수 파라미터 mode에는 다른 데이터에서 받은 코드를 먼저 조회해 넘겨야 한다. 개발계정은 하루 100회로 호출이 제한된다. 전역 조인 키가 없어 전력거래소 수급·SMP 등 타 기관 데이터와는 이름 기준으로만 맞춰야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15121627-01
+    - c-15121627-03
+    - c-15121627-04
+    - c-15121627-10
+  dropped_citations: 0

@@ -1,0 +1,222 @@
+# Dataset 15140201 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15140201'
+tier: verified
+title: 한국무역보험공사_국별신용등급
+sector: 재정금융/무역및투자유치/trade-codes
+agency:
+  id: B552696
+  name: 한국무역보험공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15140201/openapi.do
+synonyms:
+  - 국가
+  - 신용등급
+  - 국별리스크
+  - 비상위험
+  - 전쟁
+  - 비상사태
+  - 환거래제한
+  - 대금미회수
+  - 국가신용등급
+  - 국가등급
+  - 컨트리리스크
+  - 국가위험도
+  - 무역보험 국가등급
+  - K-SURE 국가등급
+  - OECD 국가등급
+description_portal: 공사에서 자체 평가한 국가별 신용등급 자료입니다. 국가명, 국가등급 및 등급평가일 정보를 제공합니다. 국가등급은 국가별 신용도의 우열순으로 1~7등급으로 평가되었습니다. 무역보험에서 담보하고 있는 각종 비상위험*의 발생가능성을 국가별로 조사, 분석하고, OECD 등급 등을 고려하여 평가를 진행하고 있습니다.  * 수입국에서 수입을 금지하거나 수입 제한 조치를 하거나, 수입국 또는 제3국에서의 전쟁, 내란, 혁명, 폭동, 파업과 같은 비상사태 등 수출입계약 당사자에게 책임 지울 수 없는 사유로 인하여 수출이 불가능하거나 수출대금의 회수가 불가능해지거나 또는 해당국의 환거래 제한, 송금 제한 조치로 인하여 수출한 물품대금의 회수가 불가능할 때 수출자나 금융기관이 손실을 입을 위험
+team:
+  dept: AI디지털총괄실
+services:
+  - op: /credit-grade
+    name: 국별신용등급 조회
+    endpoint: https://apis.data.go.kr/B552696/countrygrade/credit-grade
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ctryCd
+      title: 국가코드
+      type: string
+      null_rate: 0.0541
+      sample_values:
+        - ES
+        - GH
+        - GA
+      stats:
+        unique: 243
+    - name: ctryNm
+      title: 국가명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 가나
+        - 가봉
+        - 가이아나
+      stats:
+        unique: 259
+    - name: evalGrd
+      title: 평가등급
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7'
+        - '3'
+        - '6'
+      stats:
+        min: 1
+        p50: 5
+        max: 7
+        unique: 7
+    - name: evalDd
+      title: 평가일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20251230'
+        - '20251017'
+        - '20250703'
+      stats:
+        min: 20230203
+        p50: 20251230
+        max: 20260206
+        unique: 7
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 무역 코드 (선사·항공사·특송·화물운송주선업자 부호, 세관장확인 대상, 관세환율, 국가·업종 등급)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.5041
+  rank_in_sector: 35
+  brm: 재정금융 - 무역및투자유치
+  why: 국가별 신용등급, 국가코드로 무역통계와 조인
+claims:
+  - id: c-15140201-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15140201.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15140201.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15140201-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15140201-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140201.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15140201-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15140201.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15140201-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 무역및투자유치] 관세청 수출입 실적(신고 원장 → 품목·국가·시도·시군구 × 월, 10일 속보)·무역 코드(부호·세관장확인·관세환율)·거래 상대(바이어·전략물자 거래업체·고비즈코리아). KOTRA 해외시장 동향·국가정보·사례(문서형), 글로벌ICT포털, Comtrade 재게시, 투자 동향 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L626
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140201-07
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15140201.json
+  stats: probe/stats/15140201.json
+  data: probe/data/15140201/
+status: active
+summary_user: 한국무역보험공사가 수입 제한·전쟁·송금 제한 같은 비상위험 발생 가능성과 OECD 등급 등을 고려해 자체 평가한 국가별 신용등급을 국가 한 곳당 한 행으로 담으며, 국가코드·국가명·평가등급(1~7등급, 숫자가 작을수록 신용도가 높음)·평가일자로 구성된다. 수출기업이나 무역금융 분석가가 "이 거래 상대국의 대금 회수 위험은 어느 등급이고 언제 평가됐나"를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 관세청 국가별 수출입 실적 같은 다른 데이터와는 국가코드(ctryCd)나 국가명을 매핑해서 잇는다.
+limits: 공사 자체 평가 등급이라 외부 신용평가사 등급이나 기업 단위 신용도를 대신하지 못한다. 국가코드가 다른 데이터의 국가코드와 바로 맞는지는 확인되지 않아 이름·코드 매핑이 필요하다. 개발계정 호출은 하루 5,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15140201-01
+    - c-15140201-03
+    - c-15140201-04
+    - c-15140201-06
+  dropped_citations: 0

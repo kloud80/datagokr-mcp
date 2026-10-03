@@ -1,0 +1,210 @@
+# Dataset 15142083 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142083'
+tier: verified
+title: 국토교통부_이용자유형
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142083/openapi.do
+synonyms:
+  - 이용자유형
+  - 교통카드이용자유형
+  - 대중교통이용자구분
+  - 승객유형구분
+  - 교통이용자특성
+  - 교통카드 이용자 구분
+  - 교통카드 사용자 유형 코드
+  - 대중교통 할인 대상 구분
+  - 어린이 청소년 경로 구분
+  - 교통카드 코드표
+  - 승객 유형
+description_portal: '교통카드 이용자 유형에 대한 정보를 의미하며, 이용자 유형은 아래와 같이 분류될 수 있습니다. - 경로(노인): 65세 이상 고령자, 요금 감면 또는 무임승차 혜택 제공이 가능함. / 국가유공자: 국가 헌신 인정받은 사람, 요금 면제 또는 할인 혜택 제공 가능. / 어린이: 6~12세, 대중교통 요금 50% 이상 할인. / 일반인: 할인 대상이 아닌 성인, 정가 요금 지불. / 장애인: 신체적/정신적 장애인, 요금 감면 또는 무임승차 혜택 및 이동권 보장 서비스 제공 가능. / 청소년: 13~18세, 요금 20~30% 할인, 경제적 부담 경감 정책 적용 대상임.'
+team:
+  dept: 생활교통복지과
+services:
+  - op: /getPublicTransportationUserType
+    name: 이용자유형 조회
+    endpoint: https://apis.data.go.kr/1613000/PublicTransportationUserType/getPublicTransportationUserType
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: true
+        example: JSON
+        desc: 데이터타입(JSON/XML)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: users_type_cd
+      title: 이용자 유형 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '02'
+        - '03'
+      stats:
+        min: 1
+        p50: 4.5
+        max: 8
+        unique: 8
+    - name: users_type_nm
+      title: 이용자 유형 코드 명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반인
+        - 어린이
+        - 청소년
+      stats:
+        unique: 8
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5882
+  rank_in_sector: 1203
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 교통카드 이용자유형 코드, 통행량 API와 조인
+claims:
+  - id: c-15142083-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142083.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142083.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15142083-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142083-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142083.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142083-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15142083.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142083-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142083-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142083-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15142083.json
+  stats: probe/stats/15142083.json
+  data: probe/data/15142083/
+status: active
+summary_user: 교통카드 이용자 유형(일반인·어린이·청소년·경로·장애인·국가유공자 등)의 코드와 이름을 짝지은 전국 단위 비공간 코드표입니다. 교통카드 승하차·이용 데이터를 분석하는 사람이 '이 유형 코드는 어떤 이용자 구분을 뜻하나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 다른 교통카드 데이터와는 이용자 유형 코드(users_type_cd)나 유형명을 이름·코드 매핑으로 맞춰 이어 쓴다.
+limits: 유형별 이용 건수나 요금 같은 실적 수치는 없고 코드와 명칭만 담는다. 전역 조인 키가 없어 다른 데이터와 붙일 때 코드·이름 대응을 직접 확인해야 하며, 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15142083-01
+    - c-15142083-03
+    - c-15142083-04
+  dropped_citations: 0

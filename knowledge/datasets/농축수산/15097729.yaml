@@ -1,0 +1,245 @@
+# Dataset 15097729 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15097729'
+tier: verified
+title: 해양수산부_시도생태경관보전지역
+sector: 농축수산/해양수산·어촌/marine-spatial
+agency:
+  id: '1192000'
+  name: 해양수산부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15097729/openapi.do
+synonyms:
+  - 시도
+  - 생태경관
+  - 보전지역
+  - 이미지
+  - 공간정보
+  - 생태경관보전지역
+  - 시도 보전지역
+  - 해양보호구역
+  - 보전지역 경계
+  - WFS 공간정보
+  - 해양공간계획
+  - 생태경관 지도
+description_portal: 이 데이터는 해양수산부에서 시도생태경관보전 대상으로 지정된 지역 정보를 제공하기 위해 수집한 데이터입니다.  본 데이터의 주요 내용은 WMS(웹 맵 서비스) 및 WFS(웹 피처 서비스) 형태로 구분되어 있습니다. WMS데이터는 반환 이미지 크기(픽셀), 검색 범위, 좌표체계 파라미터로 맵 이미지 파일을 조회할 수 있으며, WFS는 지역명을 파라미터로 시도생태경관보전지역의 텍스트 형태 공간정보와 지역명(국문, 영문), 조사년도, 관리기관, 지정년도 등 정보를 조회할 수 있습니다.본 데이터는 시도별 보전지역 현황 분석, 공간계획 수립, 행정기관의 생태경관보전정책 개발, 자연환경 및 생태계 관리 방안 연구에 활용될 수 있습니다.  또한 관련 지리정보시스템(GIS) 구축, 생태경관 보전지역 내 개발행위 사전 검토, 환경영향평가 자료 작성 등에도 활용될 수 있습니다.
+team:
+  dept: 해양공간정책과
+services:
+  - op: /getOpnSidoEcolandscapeV2WMS
+    name: 시도생태경관보전지역 WMS 조회
+    endpoint: https://apis.data.go.kr/1192000/apVhdService_SidoEcolandscapeV2/getOpnSidoEcolandscapeV2WMS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: srs
+        required: false
+        desc: 좌표체계 EPSG:5179 좌표계 지원
+      - name: bbox
+        required: true
+        desc: 요청 객체의 Bounding box xmin,ymin,xmax,ymax 순서
+      - name: width
+        required: true
+        desc: '반환 이미지의 너비(단위: 픽셀)'
+      - name: height
+        required: true
+        desc: '반환 이미지의 높이(단위: 피셀)'
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getOpnSidoEcolandscapeV2WFS
+    name: 시도생태경관보전지역 WFS 조회
+    endpoint: https://apis.data.go.kr/1192000/apVhdService_SidoEcolandscapeV2/getOpnSidoEcolandscapeV2WFS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: bbox
+        required: false
+        desc: 요청 객체의 Bounding box xmin,ymin,xmax,ymax 순서
+      - name: maxFeatures
+        required: false
+        desc: '출력되는 피처의 최대 개수(최대값 : 100)'
+      - name: sido_ecgy_scene_presv_area_krnm
+        required: false
+        desc: 시도생태경관보전지역한글명
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: '{http://www.opengis.net/gml}posList'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1014113.04947182 1680360.61903596 1013038.97940839 1676257.77599951 1011249.9406
+        - 947188.20193817 1954885.66776362 947198.33090606 1954880.51584327 947204.6532365
+        - 954919.11805225 1954356.64864496 954924.95941995 1954351.09164672 954926.3532235
+      stats:
+        unique: 11
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.544
+  rank_in_sector: 165
+  brm: 농축수산 - 해양수산·어촌
+  why: 시도 생태경관보전지역 구역 공간정보
+claims:
+  - id: c-15097729-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15097729.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15097729.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15097729-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15097729-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15097729.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15097729-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15097729.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15097729-06
+    kind: admin_note
+    value: "세부 부문 '해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)'의 가치: 해양공간계획 용도구역 = 해상풍력 등 입지 규제, 토지이용규제의 해양 대응물"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#marine-spatial
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15097729-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15097729-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15097729-10
+    kind: pitfall
+    value: 필수 파라미터 bbox, height, width는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15097729.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15097729-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getOpnSidoEcolandscapeV2WMS'
+    evidence:
+      - type: measured
+        source: probe/runs/15097729.json
+        observed_at: '2026-10-03'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15097729.json
+  stats: probe/stats/15097729.json
+  data: probe/data/15097729/
+status: active
+summary_user: 해양수산부가 시도생태경관보전지역으로 지정한 지역을 전국 범위로 담은 공간정보로, WFS로는 지역별 경계 좌표(posList)와 지역명(국문·영문)·조사년도·관리기관·지정년도를, WMS로는 지도 이미지를 돌려준다. 해상풍력이나 연안 개발을 검토하는 사업자·분석가가 '예정 부지가 시도생태경관보전지역에 걸리는가'를 사전 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양공간 데이터와는 지역명 매핑이나 좌표 기반 공간 중첩으로만 이어 쓴다.
+limits: WMS 오퍼레이션(getOpnSidoEcolandscapeV2WMS)은 최소 파라미터로 호출했을 때 응답이 없었고, 2026-10-03 실호출에서는 2개 오퍼레이션 중 1개만 성공했다. 필수 파라미터인 검색 범위(bbox)와 이미지 높이·너비는 미리 정해 넘겨야 하며, 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15097729-01
+    - c-15097729-03
+    - c-15097729-04
+    - c-15097729-06
+    - c-15097729-10
+    - c-15097729-11
+  dropped_citations: 0
