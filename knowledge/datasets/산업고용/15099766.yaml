@@ -1,0 +1,269 @@
+# Dataset 15099766 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099766'
+tier: verified
+title: 한국전력거래소_전력거래실적
+sector: 산업고용/에너지및자원개발/power-market-realtime
+agency:
+  id: B552115
+  name: 한국전력거래소
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15099766/openapi.do
+synonyms:
+  - 전력시장
+  - 거래실적
+  - 연료원
+  - 발전기
+  - 거래량
+  - 전력거래량
+  - 연료원별 설비용량
+  - 전력시장 거래실적
+  - 발전원별 거래량
+  - 전력 풀 거래
+  - KPX 거래실적
+description_portal: ㅇ 전력시장은 발전소에서 생산한 전기를 판매하기 위해 한 곳으로 모은다는 의미에서 풀(POOL)이라고도 부릅니다. ㅇ 전력거래소는 전력시장 운영규칙에 따라 입찰, 정산, 계량, 시장감시, 정보공개, 분쟁조정 등 공정하고 투명한 시장 운영업무를 맡고 있으며, 전력시장을 통해 전력을 판매하는 발전회사와 전력을 구매하는 판매회사, 구역전기사업자, 또는 대규모 소비자(직접구매자)가 참여하여 전력의 거래가격과 거래량을 결정합니다. 한국전력거래소 전력시장에서 전력을 거래하고 있는 연료별 설비용량과 전력거래량을 날짜 및 시간별로 조회할 수 있는 서비스전력시장에 참여하는 발전기의 연료원별 월별 설비용량, 거래량 합계를 제공합니다.(정산 기준 D-2월 실적만 제공)
+team:
+  dept: 전사AX총괄팀
+services:
+  - op: /getPowerTradingResultInfo1
+    name: 전력거래실적 정보 조회
+    endpoint: https://apis.data.go.kr/B552115/PowerTradingResultInfo1/getPowerTradingResultInfo1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '30'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: dataType
+        required: true
+        example: xml
+        desc: 응답메시지 형식(xml/json)
+      - name: tradeDay
+        required: false
+        example: '20220501'
+        desc: 거래일자 YYYYMMDD
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: mgo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '5.169'
+        - '63.346'
+      stats:
+        min: 0
+        p50: 67.46000000000001
+        max: 18160.371
+        unique: 441
+    - name: pcap
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '255.5'
+        - '1804.733'
+      stats:
+        min: 0
+        p50: 363.077
+        max: 41274.886
+        unique: 24
+    - name: fuel
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 해양에너지
+        - 풍력
+        - 폐기물
+      stats:
+        unique: 25
+    - name: time
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '23'
+        - '22'
+        - '21'
+      stats:
+        min: 0
+        p50: 11.5
+        max: 23
+        unique: 24
+    - name: rn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 300.5
+        max: 600
+        unique: 600
+    - name: tradeDay
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220501'
+      stats:
+        min: 20220501
+        p50: 20220501
+        max: 20220501
+        unique: 1
+    - name: rtotal
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '483816047.0'
+        - '190619.0'
+      stats:
+        min: 0
+        p50: 15789677.5
+        max: 3050075670
+        unique: 477
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7339
+  rank_in_sector: 31
+  brm: 산업고용 - 에너지및자원개발
+  why: 연료원별 거래일시 단위 전력거래 실적, 전국 시장 자료
+claims:
+  - id: c-15099766-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15099766.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15099766.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15099766-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099766-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099766.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099766-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099766.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099766-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099766-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099766-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15099766.json
+  stats: probe/stats/15099766.json
+  data: probe/data/15099766/
+status: active
+summary_user: 한국전력거래소 전력시장에 참여하는 발전기의 연료원별 설비용량과 전력거래량을 날짜·시간 단위로 담은 전국 단위 집계 API이며, 포털 설명상 정산 기준 D-2월 실적만 제공한다. 에너지 분석가나 발전사업자가 '최근 몇 달 사이 LNG·석탄·신재생 등 연료별 거래량 비중이 어떻게 바뀌었나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 연료원 이름이나 거래일(tradeDay) 같은 날짜를 맞춰 붙여야 하고, 같은 기관의 SMP·발전량 데이터와 함께 쓰는 것이 현실적이다.
+limits: 실시간·당일 수급이 아니라 정산 기준 D-2월 실적이므로 오늘이나 지난달의 거래량을 볼 수 없다. 지역별·발전소별로는 나눌 수 없는 전국·비공간 집계이며, 개발계정은 하루 100회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15099766-01
+    - c-15099766-03
+    - c-15099766-04
+  dropped_citations: 0

@@ -1,0 +1,244 @@
+# Dataset 15071221 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15071221'
+tier: verified
+title: 서울특별시_공동주택 운영보고서
+sector: 국토관리/주택/apartment-management
+domain: 국토관리/주택
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15071221/fileData.do
+synonyms:
+  - 공동주택
+  - 운영비
+  - 운영보고서
+  - 아파트 관리비
+  - 공동주택 관리비 내역
+  - 단지별 운영비용
+  - K-apt 관리비
+  - 서울 아파트 비용
+  - 공동주택관리정보
+  - 아파트 월별 관리비
+description_portal: 서울특별시 공동주택 통합정보마당에서 제공하는 공공주택운영보고서입니다. 아파트별, 년월별 비용에 대한 정보를 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 평생교육과
+services:
+  - op: OpenManagectSmOpr
+    name: OpenManagectSmOpr
+    endpoint: http://openapi.seoul.go.kr:8088/json/OpenManagectSmOpr/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: APT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 장미3차
+        - 잠원한신그린
+      stats:
+        unique: 2
+    - name: APT_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A13872504
+        - A13790701
+      stats:
+        unique: 2
+    - name: AMT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 복리후생비
+        - 퇴직급여
+        - 고용보험료
+      stats:
+        unique: 72
+    - name: YM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202402'
+      stats:
+        min: 202402
+        p50: 202402
+        max: 202402
+        unique: 1
+    - name: AMT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '110000.0'
+        - '300000.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 19149200
+        unique: 42
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공동주택 관리 (K-apt 단지 기본정보·관리비·장기수선·입찰)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.3662
+  rank_in_sector: 1047
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 서울 아파트별·년월별 운영비, 단지 단위로 이을 수 있는 광역 자료
+claims:
+  - id: c-15071221-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15071221.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15071221-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15071221-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15071221.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15071221-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15071221.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15071221-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15071221-06
+    kind: admin_note
+    value: "세부 부문 '공동주택 관리 (K-apt 단지 기본정보·관리비·장기수선·입찰)'의 가치: K-apt 단지코드 = 실거래 단지명·공시 동호·청약 단지를 잇는 매핑 마스터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#apartment-management
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15071221-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15071221-08
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15071221.json
+  stats: probe/stats/15071221.json
+  data: probe/data/15071221/
+status: active
+summary_user: 서울특별시 공동주택 통합정보마당의 운영보고서로, 아파트 단지별·연월별 비용 항목과 그 금액을 담습니다(단지명, 단지코드, 비용 항목명, 연월, 금액). 입주민이나 분석가가 '우리 단지의 비용 항목별 지출이 달마다 어떻게 바뀌었고 다른 단지와 비교하면 어떤가'를 확인하는 데 씁니다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 단지코드(APT_CD)나 단지명을 이름·코드 매핑으로 맞춘 뒤 K-apt 단지 기본정보, 실거래, 공시가격 데이터와 연결합니다.
+limits: 포털 활용신청과 별개로 서울 열린데이터광장(data.seoul.go.kr) 인증키를 경로 파라미터(KEY)로 넣어야 호출됩니다. 공통 조인 키가 없어 다른 주택 데이터와 바로 붙지 않으며, 단지명·코드 매핑을 직접 거쳐야 합니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15071221-01
+    - c-15071221-03
+    - c-15071221-04
+    - c-15071221-06
+  dropped_citations: 0

@@ -156,13 +156,19 @@ def _error_text(text: str) -> str | None:
 OVERRIDES = config.KNOWLEDGE / "probe_params.yaml"
 
 
+OVERRIDES_AUTO = config.KNOWLEDGE / "probe_params_auto.yaml"
+
+
 def overrides(dataset_id: str, op_path: str) -> dict:
-    """사람이 정한 파라미터 (knowledge/probe_params.yaml: {id: {'*' 또는 op path: {param: value}}})."""
-    if not OVERRIDES.exists():
-        return {}
+    """사람이 정한 파라미터 (knowledge/probe_params.yaml: {id: {'*' 또는 op path: {param: value}}})
+    + 자동 수리값 (probe_params_auto.yaml, pds.probe.repair — 사람 값으로 실패하고 호출로 확인된 것만 들어가므로 위에 덮는다)."""
     import yaml
-    d = (yaml.safe_load(OVERRIDES.read_text(encoding="utf-8")) or {}).get(str(dataset_id)) or {}
-    return {**(d.get("*") or {}), **(d.get(op_path) or {})}
+    out = {}
+    for f in (OVERRIDES, OVERRIDES_AUTO):
+        if f.exists():
+            d = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get(str(dataset_id)) or {}
+            out |= {**(d.get("*") or {}), **(d.get(op_path) or {})}
+    return out
 
 
 def refresh_dates(params: dict) -> dict:
@@ -273,7 +279,8 @@ def col_stats(df: pd.DataFrame) -> dict:
         else:
             dates = pd.to_datetime(nonnull.str.replace(r"[^\d]", "", regex=True).str[:8], format="%Y%m%d", errors="coerce")
             if len(nonnull) and dates.notna().mean() > 0.9:
-                info.update({"type": "date", "min": str(dates.min().date()), "max": str(dates.max().date())})
+                lo, hi = dates.min(), dates.max()
+                info.update({"type": "date", "min": str(lo)[:10], "max": str(hi)[:10]})  # 9999-12-31 같은 범위 밖 값도 문자열로
             else:
                 info["type"] = "code" if info["unique"] <= max(50, len(nonnull) * 0.05) else "text"
         out[str(c)] = info

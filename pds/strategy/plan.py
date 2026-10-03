@@ -175,7 +175,9 @@ def select(goal: str, rerank: bool = False) -> dict:
             excluded.append({"id": d["id"], "title": d["title"], "reason": why, "kind": "region", "evidence": []})
     scored = kept
     if scored:  # 1순위 대비 REL_MIN 미만은 관련이 약하다 — 허브(PNU·법정동)로 아무거나 이어 붙이지 않게
-        scored = [(d, s) for d, s in scored if s >= REL_MIN * scored[0][1]][:POOL_MAX]
+        top = scored[0][1]
+        keep = [(d, s) for d, s in scored if s >= REL_MIN * top]
+        scored = keep[:POOL_MAX] + [(d, s) for d, s in keep[POOL_MAX:] if d["id"] in pinned]  # 맥락이 지정한 데이터는 상한에 밀리지 않게
     reranked = None
     if rerank and scored:
         from pds.strategy.rerank import rerank as llm_rerank

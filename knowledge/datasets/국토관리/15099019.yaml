@@ -1,0 +1,259 @@
+# Dataset 15099019 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099019'
+tier: verified
+title: 한국수자원공사_토지 분양 정보
+sector: 국토관리/주택/subscription
+domain: 국토관리/주택
+agency:
+  id: B500001
+  name: 한국수자원공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15099019/openapi.do
+synonyms:
+  - 분양
+  - 사업지구
+  - 수변사업
+  - 공고
+  - 출시
+  - 토지
+  - 수공 토지분양
+  - 수자원공사 분양공고
+  - 수변 단지 토지 매각
+  - K-water 용지 분양
+  - 택지 분양 공고
+  - 사업지구 토지 입찰
+description_portal: '본 데이터는 한국수자원공사가 관리하는 수변(단지) 사업지구의 토지분양 공고 현황에 대한 정보이다. 가장 최신순으로 분양공고가 진행된 내역이 나와있으며, 공고명, 사업지구, 공고일, (입찰, 추첨 등 접수)마감일, 담당자 항목으로 구성되어있다. 이용자는 과거부터 현재까지의 분양공고 내역을 통해 특정 사업의 특정 용도 및 특정 시기의 공고를 확인하고자 할 경우 본 데이터를 활용할 수 있다. 다만, 해당 데이터에서 공고문 등 세부 정보를 확인하기는 어려우므로 한국수자원공사 온라인청약시스템(land.kwater.or.kr)의 판매공고에서 세부 정보를 확인하는 것을 권장한다. 데이터는 표준화된 CSV 형식으로 제공되며, 분양정보 제공 시스템(온라인청약시스템) 등 다양한 정보서비스와의 연계활용도 가능하다.변경전 : 토지분양 정보 조회 서비스(http://opendata.kwater.or.kr/openapi-data/service/pubd/lttot/process/list)변경후 : 토지 분양 정보(http://apis.data.go.kr/B500001/lttot/process/processlist)추후 기본정보 수정 예정'
+team:
+  dept: 디지털전환추진단
+services:
+  - op: /processlist
+    endpoint: https://apis.data.go.kr/B500001/lttot/process/processlist
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bidno
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '11'
+        - '10'
+      stats:
+        min: 1
+        p50: 6.5
+        max: 12
+        unique: 12
+    - name: bsnsdstrc
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산에코델타시티
+        - 구미하이테크밸리
+        - 인천물류단지
+      stats:
+        unique: 5
+    - name: charger
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임하은
+        - 이성우
+        - 김은지
+      stats:
+        unique: 7
+    - name: closde
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026/12/24
+        - 2026/11/30
+        - 2026/10/08
+      stats:
+        min: '2026-10-08'
+        max: '2026-12-29'
+        unique: 8
+    - name: pblancde
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026/04/06
+        - 2026/09/29
+        - 2026/09/09
+      stats:
+        min: '2026-03-10'
+        max: '2026-09-29'
+        unique: 11
+    - name: pblancnm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천터미널 물류단지 지원시설용지 분양 공고
+        - '[정정공고] 송산그린시티 국가산업단지 산업시설용지 분양공고'
+        - 부산에코델타시티 공장이주대책 산업시설용지(중소기업전용단지) 수의 분양 공고
+      stats:
+        unique: 12
+    - name: sttus
+      type: code
+      null_rate: 0.9167
+      sample_values:
+        - 정정공고
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: housing-sites
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.726
+  rank_in_sector: 48
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 수자원공사 수변 사업지구 토지분양 공고, 개발 공급 정보
+claims:
+  - id: c-15099019-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15099019.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15099019.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15099019-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099019-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099019.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099019-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099019.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099019-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15099019-06
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099019-07
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15099019.json
+  stats: probe/stats/15099019.json
+  data: probe/data/15099019/
+status: active
+summary_user: 한국수자원공사가 관리하는 수변(단지) 사업지구의 토지분양 공고를 공고 건별로 담으며, 공고명·사업지구·공고일·접수 마감일·담당자·진행 상태 항목을 최신순으로 제공한다. 토지 매입을 검토하는 사업자나 분석가가 특정 사업지구에서 어떤 용도의 토지가 언제 공고되고 언제 접수가 마감됐는지 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업지구 이름 매핑으로만 연결되며, 공고문 등 세부 내용은 한국수자원공사 온라인청약시스템(land.kwater.or.kr) 판매공고와 이어 본다.
+limits: 공고문·필지·가격 같은 세부 정보는 담지 않아 온라인청약시스템에서 따로 확인해야 한다. 공고가 날 때 생성되고 이후 바뀌지 않는 이벤트성 데이터이며, 다른 데이터와 공통 코드 키가 없어 사업지구명 등 이름 매칭에 기대야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15099019-02
+    - c-15099019-03
+    - c-15099019-04
+  dropped_citations: 0

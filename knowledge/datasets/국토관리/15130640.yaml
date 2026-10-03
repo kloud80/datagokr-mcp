@@ -1,0 +1,259 @@
+# Dataset 15130640 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15130640'
+tier: verified
+title: 부산도시공사_임대주택현황 조회 서비스
+sector: 국토관리/주택/housing-supply
+domain: 국토관리/주택
+agency:
+  id: B551922
+  name: 부산도시공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15130640/openapi.do
+synonyms:
+  - 임대주택
+  - 세대수
+  - 소재지
+  - 매입임대
+  - 행복주택
+  - 영구임대
+  - 부산 공공임대주택
+  - 부산 행복주택
+  - 국민임대 부산
+  - 영구임대주택
+  - 재개발임대
+  - 부산 임대주택 공급 세대수
+  - 주거복지
+description_portal: '본 서비스는 부산도시공사가 공급·운영 중인 다양한 임대주택 유형(예: 영구임대주택, 재개발임대, 행복주택, 국민임대 등)에 대한 정보를 제공합니다.사용자는 본 서비스를 통해 각 임대주택 유형별 공급 세대수를 확인할 수 있으며, 해당 주택이 위치한 구·군(지역구 기준)의 소재지를 함께 조회할 수 있습니다.이를 통해 시민들은 자신이 원하는 임대주택 유형과 희망 거주지역에 대한 정보를 한눈에 파악할 수 있으며, 또한 행정기관이나 연구기관 등에서는 본 서비스를 활용하여 주택 공급 현황 분석 및 주거복지 정책 수립 시 참고자료로 활용할 수 있습니다.'
+team:
+  dept: 경영지원실
+services:
+  - op: /HOUSELIST
+    name: 임대주택현황
+    endpoint: https://apis.data.go.kr/B551922/BMC_SERVICE/HOUSELIST
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MGMT_NM
+      title: 지구명
+      type: string
+      null_rate: 0.5197
+      sample_values:
+        - 다대5영구임대아파트
+        - 동삼2영구임대아파트
+        - 개금2영구임대아파트
+      stats:
+        unique: 181
+    - name: CNT
+      title: 세대
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '4'
+        - '5'
+      stats:
+        min: 1
+        p50: 5
+        max: 1920
+        unique: 72
+    - name: GB
+      title: 임대유형
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매입임대
+        - 영구임대
+        - 재개발임대
+      stats:
+        unique: 7
+    - name: LOCATE
+      title: 소재지
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '부산광역시 사하구 다대로381번길 99(다대동,다송아파트)  '
+        - '부산광역시 사상구 학장로 213-20(학장동,해동파크빌리지)  '
+        - 부산광역시 부산진구 백양관문로77번길 145  (개금동, 개금2지구 도개공영구임대아파트)
+      stats:
+        unique: 379
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: rental
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5703
+  rank_in_sector: 366
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 부산도시공사 광역 단위 임대주택 지구별 세대 API
+claims:
+  - id: c-15130640-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15130640.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15130640.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15130640-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15130640-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15130640.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15130640-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15130640.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15130640-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15130640-06
+    kind: admin_note
+    value: "세부 부문 '임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)'의 가치: 전세 사기 이후 수요 급증. 전월세 실거래와 병합 관계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rental
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15130640-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15130640-08
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15130640.json
+  stats: probe/stats/15130640.json
+  data: probe/data/15130640/
+status: active
+summary_user: 부산도시공사가 공급·운영하는 임대주택을 지구별로 담은 데이터로, 지구명·임대유형(영구임대·재개발임대·행복주택·국민임대 등)·공급 세대수·소재지(구·군)를 제공한다. 시민이 '내가 살고 싶은 구에 행복주택이나 국민임대 지구가 있는지, 몇 세대 규모인지'를 확인하거나, 분석가가 부산 구·군별 공공임대 공급 현황을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 소재지의 구·군 이름이나 지구명을 문자열로 맞춰 연결해야 한다.
+limits: 표준 행정코드나 단지 코드 같은 조인 키가 없어 전월세 실거래 등 다른 데이터와 자동으로 결합되지 않고, 이름 매핑으로만 연결된다. 개발계정은 하루 1,000회까지 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15130640-01
+    - c-15130640-03
+    - c-15130640-06
+  dropped_citations: 0

@@ -1,0 +1,332 @@
+# 자동 수리 파라미터 (pds.probe.repair) — LLM이 명세·오류를 보고 제안하고, 실제 호출로 행이 나온 값만. probe_params.yaml 위에 덮는다.
+# 국토교통부_마이홈포털 공공주택 모집공고 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /rsdtRcritNtcList: 지역 필터를 모두 빼고 최근 3개월 기간만 남겨 전국 단위로 조회해 NODATA 원인을 지역 제한에서 분리한다. / /ltRsdtRcritNtcList: 지역·주택유형 필터를 모두 빼고 모집공고월 범위를 1년 이상으로 넓혀 NODATA를 피하고 전국 데이터를 조회한다.
+'15108420':
+  /ltRsdtRcritNtcList: {brtcCode: null, houseTy: null, signguCode: null, yearMtBegin: '202504', yearMtEnd: '202609'}
+  /rsdtRcritNtcList: {brtcCode: null, houseTy: null, signguCode: null, suplyTy: null, yearMtBegin: '202607', yearMtEnd: '202609'}
+
+# 행정안전부_도로명별 주민등록 인구 및 세대현황 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /selectRnPpltnHhStus: 두 번 모두 타임아웃이라 부하를 줄이려고 조회월을 한 달 더 이전인 202608로 바꾸고 종로구 대표 코드 111100000000을 공백 없이 유지했습니다.
+'15108092':
+  /selectRnPpltnHhStus: {regSeCd: '1', roadNmCd: '111100000000', srchFrYm: '202608', srchToYm: '202608', type: json}
+
+# 한국자산관리공사_차세대 온비드 부동산 물건목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getRlstCltrList2: 필수 파라미터 prptDivCd가 빠져 오류였으므로 압류재산 0007을 추가하고, 최종수정일 필터는 좁히므로 제거하며 입찰기간을 앞으로 넓힘
+'15157207':
+  /getRlstCltrList2: {bidPrdYmdEnd: '20261103', bidPrdYmdStart: '20260903', mdfcnYmdEnd: null, mdfcnYmdStart: null, prptDivCd: '0007', pvctTrgtYn: N, resultType: json}
+
+# 기후에너지환경부 국립환경과학원_토양측정망 운영결과 DB — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getSgisSoList: 2025년 데이터가 없어 0건이므로 연도를 2023년으로 바꾸고, 기관 필터는 보내지 않아 범위를 넓힌다.
+'15000997':
+  /getSgisSoList: {resultType: json, search_instt: null, search_year: '2023'}
+
+# 성평등가족부_청소년쉼터 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getTeenRAreaListV2: 시설명·시군구·시도 선택 필터가 결과를 지나치게 좁혀 totalCount 0이므로 모두 제거해 전국 전체 조회로 넓힌다.
+'15109778':
+  /getTeenRAreaListV2: {ctpvNm: null, fcltNm: null, sggNm: null, type: json}
+
+# 재정경제부_공공기관 정보 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /brnch: instCd 1741000은 결과가 0건이라 다른 대표 기관코드(국민연금공단 B552015)로 바꿔 지점이 있는 기관을 시도한다. / /list: 서로 충돌하는 선택 필터(대전·부산과학관·유성구 등)가 결과를 0건으로 좁혔으므로 모두 제거하고 전체 목록을 조회한다.
+'15125287':
+  /brnch: {instCd: B552015, resultType: json}
+  /list: {ctpvNm: null, instCd: null, instClsf: null, instNm: null, instType: null, resultType: json, sggNm: null}
+
+# 국토교통부_토지이용규제정보서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /DTarLandUseInfo: 이전 시도는 HTTP_ERROR로 빈 응답이라 응답 형식을 json으로 지정하고, 대표 지역지구코드(UQA110 도시지역)와 일반적인 행위명(건축물의 건축)으로 바꿔 재시도 / /DTsearchLunCd: 이전 시도에서 HTTP_ERROR로 행이 없었으므로 필수 파라미터 pageNum과 landUseNm을 명세 예시값(1, 
+'15058410':
+  /DTarLandUseInfo: {areaCd: '11110', landUseNm: 건축물의 건축, type: json, ucodeList: UQA110}
+  /DTsearchLunCd: {_type: json, landUseNm: 공장, pageNum: '1', type: json}
+
+# 행정안전부_통계연보_지방자치단체 재정자립도 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getFinancialLocalGovernments: 명세상 필수 파라미터는 인증키·페이지뿐이라 응답 형식을 json으로 지정해 HTTP_ERROR 원인(형식 불일치)을 배제하고 재시도
+'15107356':
+  /getFinancialLocalGovernments: {_type: json, type: json}
+
+# 행정안전부_통계연보_지역별·세목별 지방세 규모 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getAmountTaxByRegiTaxCategory: 명세상 필수 파라미터가 인증키·페이지 정보뿐이라 추가 필터 없이 응답 형식만 json으로 지정해 HTTP_ERROR 원인(형식 불일치)을 배제하고 재시도한다.
+'15107409':
+  /getAmountTaxByRegiTaxCategory: {_type: json, resultType: json, type: json}
+
+# 국민연금공단_탈퇴사업장 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getDetailInfoSearchV2: 필수 파라미터 seq가 비어 있어 결과가 0건이므로, 식별번호의 대표값으로 1을 넣어 상세정보 조회를 시도한다. / /getBassInfoSearchV2: 필수 파라미터 wkplNm이 비어 결과가 0건이므로 대표 사업장명 '삼성전자'를 넣고 지역·사업자번호 선택 필터는 제외한다.
+'15020284':
+  /getBassInfoSearchV2: {bzowrRgstNo: null, dataType: json, ldongAddrMgplDgCd: null, ldongAddrMgplSgguCd: null, ldongAddrMgplSgguEmdCd: null, wkplNm: 삼성전자}
+  /getDetailInfoSearchV2: {dataType: json, seq: '1'}
+
+# 국토교통부_건축HUB_폐쇄말소대장정보 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getSrBasisOulnInfo: 번·지와 날짜 필터가 결과를 지나치게 좁혀 NODATA가 나왔으므로 모두 제거하고 시군구·법정동 코드만으로 조회한다. / /getSrRecapTitleInfo: 번·지와 날짜 범위가 결과를 지나치게 좁혀 NODATA가 나왔으므로 선택 필터를 모두 빼고 강남구 개포동(11680/10300) 전체로 조회한다. / /getS
+'15137093':
+  /getSrBasisOulnInfo: {_type: json, bun: null, endDate: null, ji: null, platGbCd: null, startDate: null}
+  /getSrRecapTitleInfo: {_type: json, bun: null, endDate: null, ji: null, platGbCd: null, startDate: null}
+  /getSrTitleInfo: {_type: json, bjdongCd: '10300', bun: null, endDate: null, ji: null, platGbCd: null, sigunguCd: '11680', startDate: null}
+
+# 경찰청_전국 보호구역 현황 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getdtllist: 변경기준일자 callDate가 오늘 날짜라 결과가 좁혀져 NODATA가 났으므로 제거하고, 필수값 sggCd는 명세 예시 11290(서울 성북구)으로 유지해 전체 목록을 조회한다.
+'15142010':
+  /getdtllist: {assignType: null, callDate: null, emdongCd: null, rprsPtznMngNo: null, sggCd: '11290'}
+
+# 한국환경공단_중소형 폐가전 수거함 거점 정보 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getlist: 예시값으로 좁혀진 선택 필터(생성일자·설치위치명·지역명)를 모두 빼서 전체 목록이 나오도록 함
+'15156650':
+  /getlist: {crtYmd: null, instlPstnNm: null, returnType: json, rgnNm: null}
+
+# 서울올림픽기념국민체육진흥공단_스포츠강좌이용권 등록시설 정보_GW — 자동 수리(claude-sonnet-5-5, 호출로 확인): /todz_api_facil_mng_i: city_cd 01과 local_cd 0101 같은 예시 코드로는 0건이어서 시도·시군구·종목 필터를 모두 빼고 전체 시설을 조회한다.
+'15107783':
+  /todz_api_facil_mng_i: {city_cd: null, local_cd: null, main_event_cd: null, resultType: json}
+
+# 한국자산관리공사_차세대 온비드 정부재산목록 국유일반재산 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getGvwsGnrPrptInf: 필수 파라미터 sdnm(소재지시도명)이 비어 NO_MANDATORY 오류가 나서 대표값 서울특별시를 채웠다.
+'15157719':
+  /getGvwsGnrPrptInf: {resultType: json, sdnm: 서울특별시}
+
+# 성평등가족부_청소년 지원시설 관심 지점 정보 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getYouthUseFcltPoiList: 시설명과 시군구 필터가 결과를 지나치게 좁혀 0건이 나왔으므로 두 필터를 제거하고 시도명만 서울특별시로 유지해 재시도
+'15125161':
+  /getYouthUseFcltPoiList: {ctpvNm: 서울특별시, fcltNm: null, sggNm: null, type: json}
+
+# 한국환경공단_그린리턴(고품질 재활용품 회수보상제) 거점 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getCmpnPositnInfo: 시도 1에서 거점명·지번·도로명주소·수집품목을 모두 예시값으로 동시에 걸어 결과가 0건이었으므로, 좁히는 선택 필터를 모두 빼고 지역명 마포구만 남겨 조회한다.
+'15140249':
+  /getCmpnPositnInfo: {clctItemCn: null, positnLotnoAddr: null, positnNm: null, positnRdnmAddr: null, positnRgnNm: 마포구, returnType: json}
+
+# 한국관광공사_웰니스관광정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /ldongCode: 필수 파라미터 langDivCd가 누락되어 KOR을 추가하고, 시도 전체 목록이 나오도록 lDongRegnCd는 빼고 코드조회(N)로 호출 / /areaBasedList: 필수 파라미터 langDivCd가 빠져 KOR을 추가하고, 시군구 코드는 시도 코드 없이는 무효라 제거한 뒤 서울 시도코드 11로 조회한다. / /locationBa
+'15144030':
+  /areaBasedList: {_type: json, lDongRegnCd: '11', lDongSignguCd: null, langDivCd: KOR}
+  /ldongCode: {MobileApp: PDS, MobileOS: ETC, _type: json, lDongListYn: N, lDongRegnCd: null, langDivCd: KOR}
+  /locationBasedList: {_type: json, contentTypeId: '12', lDongSignguCd: null, langDivCd: KOR, radius: '10000'}
+
+# 한국자산관리공사_차세대 온비드 물건 입찰결과목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getCltrBidRsltList2: 필수 파라미터 cltrTypeCd(부동산 0001)와 prptDivCd(압류재산 0007)가 빠져 오류가 나서 대표값으로 채우고 최근 한 달 개찰일 범위를 유지함
+'15157252':
+  /getCltrBidRsltList2: {cltrTypeCd: '0001', opbdDtEnd: '20261003', opbdDtStart: '20260903', prptDivCd: '0007', resultType: json}
+
+# 재정경제부_공공기관 시설정보 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /list: 예시값을 모두 AND로 걸어 결과가 0건이므로 선택 필터를 전부 빼고 전체 목록을 조회한다.
+'15125285':
+  /list: {chagfeeYn: null, ctpvNm: null, fcltTypeCd: null, hldyTmYn: null, indrSe: null, instClsf: null, instType: null, mngInstCd: null, resultType: json, satTmYn: null, sggNm: null, weekdaysTmYn: null}
+
+# 한국관광공사_의료관광정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /ldongCode: 필수 파라미터 langDivCd가 누락되어 ENG를 넣고, 시도 코드 목록이 나오도록 lDongListYn=N으로 지정하며 지역 필터는 제외함
+'15143913':
+  /ldongCode: {MobileApp: PDS, MobileOS: ETC, _type: json, lDongListYn: N, lDongRegnCd: null, langDivCd: ENG}
+
+# 한국자산관리공사_차세대 온비드 차량 물건목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getCarCltrList2: 필수 파라미터 prptDivCd와 pvctTrgtYn이 빠져 오류가 나서 대표값을 채우고, 좁히는 수정일 필터는 빼며 입찰기간은 넓혔다.
+'15157233':
+  /getCarCltrList2: {bidPrdYmdEnd: '20261103', bidPrdYmdStart: '20260903', mdfcnYmdEnd: null, mdfcnYmdStart: null, prptDivCd: '0007,0010,0005,0002,0003,0006,0008,0011,0013', pvctTrgtYn: N, resultType: json}
+
+# 한국자산관리공사_차세대 온비드 동산 물건목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMvastCltrList2: 필수 파라미터 prptDivCd(압류재산 0007)와 pvctTrgtYn(Y)이 빠져 오류가 났으므로 추가하고, 결과를 좁히는 수정일자 필터는 뺐다.
+'15157232':
+  /getMvastCltrList2: {bidPrdYmdEnd: '20261003', bidPrdYmdStart: '20260903', mdfcnYmdEnd: null, mdfcnYmdStart: null, prptDivCd: '0007', pvctTrgtYn: Y, resultType: json}
+
+# 식품의약품안전처_한약(생약)제제 회수·판매중지 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getHerbRtrvlSleStpgeInfo: 업체명·품목명·회수사유 필터가 모두 좁아 0건이므로 선택 필터를 전부 빼고 json 형식으로 전체 목록을 조회한다.
+'15106975':
+  /getHerbRtrvlSleStpgeInfo: {DISPS_CONT: null, ENTP_NAME: null, ITEM_NAME: null, type: json}
+
+# 서울올림픽기념국민체육진흥공단_스포츠강좌이용권 등록강좌 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /todz_api_facil_course_i: 사업자번호·시설번호·강좌명 필터가 결과를 지나치게 좁혀 0건이므로 제거하고 종목명 태권도만 남겨 재조회
+'15107784':
+  /todz_api_facil_course_i: {brno: null, course_nm: null, facil_sn: null, item_nm: 태권도, resultType: json}
+
+# 식품의약품안전처_검사부적합 현황(농산물) — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getPrsecImproptAgriprList01: 제품명 필터(시금치)가 결과를 좁히거나 오류를 유발할 수 있어 제거하고, 한 페이지 결과수를 10으로 줄여 재시도
+'15113321':
+  /getPrsecImproptAgriprList01: {PRDTNM: null, numOfRows: '10', type: json}
+
+# 식품의약품안전처_식품접객업 폐업정보 조회 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getFoodBusnssClsbizInfo01: 오늘 날짜로 둘 다 좁혀 NODATA였으므로 변경일자 필터는 빼고 폐업일자를 최근 1~2주 전 날짜(20260915)로 바꿔 재시도
+'15107371':
+  /getFoodBusnssClsbizInfo01: {CHNG_DT: null, CLSBIZ_DT: '20260915', LCNS_NO: null, type: json}
+
+# 식품의약품안전처_행정처분결과(수입식품업) — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getAdmmRsltIprtFoodService01: 세 선택 필터(최종수정일·인허가번호·처분확정일자)가 결과를 과도하게 좁혀 0건이 나왔으므로 모두 빼고 전체 조회로 행을 확보한다.
+'15125111':
+  /getAdmmRsltIprtFoodService01: {DSPS_DCSNDT: null, LAST_UPDT_DTM: null, LCNS_NO: null, type: json}
+
+# 서울올림픽기념국민체육진흥공단_장애인스포츠강좌이용권 등록강좌 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /TODZ_DVOUCHER_FACI_COURSE: 모든 선택 필터(사업자번호·강좌명·종목·금액범위)가 결과를 과도하게 좁혀 0건이므로 전부 제거하고 전체 조회를 시도한다.
+'15117341':
+  /TODZ_DVOUCHER_FACI_COURSE: {busi_reg_no: null, cntnt_fst: null, course_nm: null, endsettl_amt: null, resultType: json, startsettl_amt: null}
+
+# 한국농어촌공사_농산어촌지역개발 전원마을 분양정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /saleVill: 강원 원주(42130) 필터로 결과가 0건이라 지역 필터인 시도·시군구 코드를 모두 빼서 전국 데이터를 조회한다.
+'15104395':
+  /saleVill: {dataType: json, sggCode: null, sidoCode: null}
+
+# 울산항만공사_항내 선박위치정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getVslPstnInfo: 호출부호와 항차 필터가 너무 좁아 NODATA가 나왔으므로 두 필터를 빼고 입항연도만 올해(2026)로 바꿔 재시도한다.
+'15156631':
+  /getVslPstnInfo: {callsgn: null, ptentYr: '2026', resultType: json, vyg: null}
+
+# 해양수산부_무인도서 정보 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMngCard_v1: 필수 파라미터 format이 빠져 오류가 났고, 이 API에서 type은 관리유형 코드이므로 json 값을 빼고 format=json으로 지정함
+'15157215':
+  /getMngCard_v1: {format: json, type: null}
+
+# 행정안전부_법정동별(행정동 통반단위)성/연령별 사망말소자수 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /selectStdgSexdAgeErsr: 이전 시도는 2022년 10월의 특정 법정동이라 NODATA였으므로 최근 3개월(2026.07~09)과 대표 법정동 1111010100(종로구 청운동), 읍면동 단위(lv=3)로 바꿔 재시도
+'15108079':
+  /selectStdgSexdAgeErsr: {lv: '3', srchFrYm: '202607', srchToYm: '202609', stdgCd: '1111010100', type: json}
+
+# 국토교통부_공동주택 입찰공고 정보제공 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getHsmpNmSearchV3: 필수인 단지명이 비어 있어 0건이므로 대표 단지명 '래미안'을 넣고, 검색년도는 오늘 기준 올해인 2026으로 바꿔 재시도 / /getBidMethodSearchV3: 시도 1에서 필수 codeWay가 비어 있었고 연도도 지난해라 0건이어서, 전자입찰(01)과 올해(2026)로 채워 재시도한다. / /getBidPblAn
+'15058166':
+  /getBidMethodSearchV3: {codeWay: '01', searchYear: '2026'}
+  /getBidPblAncNmSearchV3: {bidTitle: 공사, searchYear: '2026'}
+  /getHsmpNmSearchV3: {bidKaptname: 래미안, searchYear: '2026', type: json}
+
+# 국토교통부_공동주택 입찰결과공지 정보제공 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getBidMethodSearchV3: 이전 시도는 codeWay가 비어 있고 2025년이라 0건이었으므로, 필수값 codeWay를 전자입찰(01)로 채우고 오늘(2026-10-03) 기준 연도인 2026으로 바꿨다. / /getBidPblAncNmSearchV3: bidTitle이 필수인데 비어 있어 0건이므로 흔한 키워드 '공사'를 넣고, 연도는 오늘
+'15059177':
+  /getBidMethodSearchV3: {codeWay: '01', searchYear: '2026'}
+  /getBidPblAncNmSearchV3: {bidTitle: 공사, searchYear: '2026'}
+
+# 행정안전부_법정동별(행정동 통반단위)성별 출생등록자수 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /selectStdgSexdBrthReg: 두 번 모두 타임아웃이라 서버 부하를 줄이려고 조회 기간을 최근 1개월(202609)로 좁히고, 법정동 1111010100에 읍면동 단위(lv=3)로 요청 범위를 줄여 재시도한다.
+'15108076':
+  /selectStdgSexdBrthReg: {lv: '3', srchFrYm: '202609', srchToYm: '202609', stdgCd: '1111010100', type: json}
+
+# 한국건강가정진흥원_아이돌봄교육기관 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getBabysitEdnstListV2: 지나치게 좁은 선택 필터(기관명·시도·시군구)를 모두 빼서 전국 대상으로 조회해 행이 나오게 한다.
+'15109775':
+  /getBabysitEdnstListV2: {ctpvNm: null, eduInstNm: null, sggNm: null, type: json}
+
+# 식품의약품안전처_도축업 인허가 대장 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getSlauPrmtRgstr01: 업소명·인허가번호·최종수정일시 필터가 모두 겹쳐 결과를 과도하게 좁히므로 선택 필터를 전부 빼고 json 형식으로 전체 대장을 조회한다.
+'15128096':
+  /getSlauPrmtRgstr01: {BSSH_NM: null, LAST_UPDT_DTM: null, LCNS_NO: null, type: json}
+
+# 국토교통부_최빈교통이용경로데이터 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getSeoulMostFrequentTransportationRouteDataMonthly: 202609는 아직 집계 전일 가능성이 높아 NO_DATA가 나왔으므로 운행연월을 더 이전인 202607로 바꿔 재시도한다. / /getIncheonMostFrequentTransportationRouteDataMonthly: 202609는 아직 미집계일 수 있어
+'15154303':
+  /getGyeonggiMostFrequentTransportationRouteDataMonthly: {dataType: json, dptre_ctpv_cd: '41', opr_ym: '202607'}
+  /getIncheonMostFrequentTransportationRouteDataMonthly: {dataType: json, dptre_ctpv_cd: '28', opr_ym: '202607'}
+  /getSeoulMostFrequentTransportationRouteDataMonthly: {dataType: json, dptre_ctpv_cd: '11', opr_ym: '202607'}
+
+# 국토교통부_사고다발지점 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /T_OD_ACDNT_PNTFR_BRN_INFO: 필수 파라미터 brnch_se_nm과 mtrpl_lcgv_nm이 빠져 오류가 났으므로 전체사고·서울을 넣고, 2025년 데이터 미등록 가능성에 대비해 기준년도는 2024로 바꾸며 시군구 선택 필터는 뺀다.
+'15124952':
+  /T_OD_ACDNT_PNTFR_BRN_INFO: {basic_lcgv_nm: null, brnch_se_nm: 전체사고, crtr_yr: '2024', mtrpl_lcgv_nm: 서울, resultType: json}
+
+# (주)에스알_SRT 승객이동유형 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /v1/station_passengers: RUN_YM 조건이 최소 하나 필요해 보여, 오늘(2026-10-03) 기준 최근 3개월(2025-07~2025-09 포함 범위 대신 확실한 데이터 구간)로 이상/이하 조건을 지정함 / /v1/daily_passengers: 운행일자 조건이 최소 한 개 필요하고 시도 1은 조건이 없어 0행이었으므로, 최근 2개월(
+'15108353':
+  /v1/daily_passengers: {'cond[RUN_YMD::GTE]': '20260801', 'cond[RUN_YMD::LTE]': '20260930', returnType: json}
+  /v1/monthly_distance: {'cond[RUN_YM::GTE]': '202401', 'cond[RUN_YM::LTE]': '202612', returnType: JSON}
+  /v1/station_passengers: {'cond[RUN_YM::GTE]': '202507', 'cond[RUN_YM::LTE]': '202509', returnType: json}
+
+# 서울교통공사_지하철알림정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getNtceList: 이례상황 시작일 필터와 과거 알림발생일(2025) 조합이 결과를 0건으로 좁혀서, 이례상황 필터는 빼고 알림발생일을 최근 1개월(2026-09-03~10-03)로 바꿈
+'15144070':
+  /getNtceList: {dataType: JSON, srchEndNoftOcrnYmd: '20261003', srchEndXcseSiteBgngYmd: null, srchStartNoftOcrnYmd: '20260903', srchStartXcseSiteBgngYmd: null}
+
+# 국토교통부_토지이용규제법령정보서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /DTluLawInfo: 이전 시도가 HTTP_ERROR로 행이 없었으므로 응답 형식을 json으로 지정하고 지역지구코드를 대표적인 용도지역 코드 UQA122로 바꿔 재시도
+'15057174':
+  /DTluLawInfo: {areaCd: '11110', type: json, ucodeList: UQA122}
+
+# (주)에스알_SRT 승차권 발권 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /v1/channel_sales: 운행일자 조건이 최소 하나 필요하므로 최근 2개월(2026-08-01~09-30) 범위를 YYYYMMDD 형식으로 지정한다. / /v1/srt_station_sales: 전체 건수는 211498인데 최근 1개월 조건에서 0건이라 데이터가 과거 시점일 가능성이 높아 2024년 전체로 기간을 넓혀 재시도 / /v1/yearly
+'15108354':
+  /v1/channel_sales: {'cond[RUN_YMD::GTE]': '20260801', 'cond[RUN_YMD::LTE]': '20260930', returnType: json}
+  /v1/srt_station_sales: {'cond[RUN_YMD::GTE]': '20240101', 'cond[RUN_YMD::LTE]': '20241231', returnType: json}
+  /v1/yearly_sales: {'cond[RUN_YR::GTE]': '2015', 'cond[RUN_YR::LTE]': '2026', returnType: json}
+
+# 식품의약품안전처_의료기기 임상실시기관정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMedqClncCndctInstInfoInq02: 이전 시도는 기관명·종별·지정구분("null" 문자열) 필터가 결과를 0건으로 좁혔으므로 선택 필터를 모두 빼고 전체 조회로 행을 확인한다.
+'15073903':
+  /getMedqClncCndctInstInfoInq02: {CARE_INST_DSGN_DIVS_CD: null, MEDC_INST_CLSFY_DIVS_CD: null, MEDC_INST_NM: null, type: json}
+
+# 한국자산관리공사_차세대 온비드 물건 입찰결과상세 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getCltrBidRsltDtl2: 필수 파라미터 cltrMngNo가 빠져 오류가 났으므로 물건관리번호 형식의 대표값을 넣고, 좁히는 선택 필터 pbctCdtnNo는 제외한다.
+'15157254':
+  /getCltrBidRsltDtl2: {cltrMngNo: 2025-0100-001234, pbctCdtnNo: null, resultType: json}
+
+# 식품의약품안전처_식품영양성분DB정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getFoodNtrCpntDbInq03: 과도하게 좁은 선택 필터(식품명·일자·업체명·수정일·기원명 등)를 모두 제거하고 대표 대분류 '밥류'만 남겨 행이 나오도록 넓힘.
+'15127578':
+  /getFoodNtrCpntDbInq03: {DB_CLASS_NM: null, FOOD_CAT1_NM: 밥류, FOOD_NM_KR: null, FOOD_OR_NM: null, MAKER_NM: null, RESEARCH_YMD: null, UPDATE_DATE: null, type: json}
+
+# 국민연금공단_수급현황 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getReciptSttusInfoSearchV2: 필수 파라미터인 시도코드(서울 11)와 기준연령(65세)이 비어 있어 0건이 나왔으므로 대표값을 채우고 급여구분은 전체(00)로 넣음 / /getReciptMaxValueInfoSearchV2: 필수값인 시도코드(서울 11)와 기준연령(65세)이 비어 있어 0건이었으므로 대표값을 넣고, 선택 필터는 빼고 
+'15010381':
+  /getReciptAgeInfoSearchV2: {crtrAge: '65', dataType: json, payClssCd: '00'}
+  /getReciptMaxValueInfoSearchV2: {crtrAge: '65', dataType: json, ldongAddrMgplDgCd: '11', ldongAddrMgplSgguCd: null, ldongAddrMgplSgguEmdCd: null, payClssCd: '00', sexDvcd: null}
+  /getReciptSttusInfoSearchV2: {crtrAge: '65', dataType: json, ldongAddrMgplDgCd: '11', payClssCd: '00'}
+
+# 국토교통부_사고누적지점 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /T_OD_ACDNT_CMPNT_BRN_INFO: 2025년 기준은 데이터가 아직 없을 수 있어 확정된 2024년으로 바꾸고, 시도는 서울을 유지하며 선택 필터는 보내지 않는다. / /T_OD_ACDNT_CMPNT_ACDNT_INFO: 시도2에서 plc_nm이 빠져 필수 파라미터 오류가 났으므로 plc_nm을 다시 넣되, %20 이중 인코딩을 피해 공백 문
+'15124951':
+  /T_OD_ACDNT_CMPNT_ACDNT_INFO: {basic_lcgv_nm: 강남구, crtr_yr: '2023', mtrpl_lcgv_nm: 서울, plc_nm: 학여울역 사거리, resultType: json}
+  /T_OD_ACDNT_CMPNT_BRN_INFO: {basic_lcgv_nm: null, crtr_yr: '2024', mtrpl_lcgv_nm: 서울, resultType: json}
+
+# 국토교통부_사업용자동차 사고다발지점 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /T_OD_BUSINESS_CAR_BRN_INFO: 필수 파라미터 mtrpl_lcgv_nm이 빠져 오류가 났으므로 시도명 '서울'(접미사 없이)을 넣고, 데이터가 확실한 2024년 기준년도로 바꾸며 선택 필터 basic_lcgv_nm은 뺀다.
+'15124956':
+  /T_OD_BUSINESS_CAR_BRN_INFO: {basic_lcgv_nm: null, crtr_yr: '2024', mtrpl_lcgv_nm: 서울, resultType: json}
+
+# 식품의약품안전처_수입식품 제품별 한글표시사항 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getIprtFoodPrdtKoreanLabelingItem: 예시값 전부 일치하는 조합이라 0건이므로 이름·업체·날짜 필터를 빼고 제품구분·수출국만 남기며 처리일자를 최근 3개월로 넓힘
+'15110214':
+  /getIprtFoodPrdtKoreanLabelingItem: {bsnOfcName: null, dclPrductSeCdNm: 가공식품, expirdeBeginDtmEnd: null, expirdeBeginDtmStart: null, expirdeEndDtmEnd: null, expirdeEndDtmStart: null, irdntNm: null, itmNm: null, mnfNtncdNm: null, ovsmnfstNm: null, prductKoreanNm: null, prductNm: null, procsDtmEnd: '20261003', procsDtmStart: '20260701', type: json, xportNtncdNm: 일본}
+
+# 기상청_기상청_생활기상지수 조회서비스(4.0) — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getUVIdxV5: 최근 1일 자료만 제공하므로 오늘(2026-10-03) 직전 발표 시각인 2026100218(18시 발표)로 바꿔 시도한다. / /getAirDiffusionIdxV5: APPLICATION_ERROR는 지점코드 형식 오류나 너무 오래된 발표시각 때문일 수 있어, 서울 전체지점 조회용 공백 areaNo와 어제 12시 발표(202610
+'15085288':
+  /getAirDiffusionIdxV5: {areaNo: '', dataType: json, time: '2026100212'}
+  /getUVIdxV5: {areaNo: '1100000000', dataType: json, time: '2026100218'}
+
+# 행정안전부_전국어린이놀이시설안전검사정보서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getSftyInsp4: 설치일자·설치장소·검사여부 필터가 너무 좁아 0건이므로 모두 제거하고 검사일자만 최근 3개월로 넓혀 재시도
+'15124524':
+  /getSftyInsp4: {inspBgngYmd: '20260703', inspEndYmd: '20261003', instlBgngYmd: null, instlEndYmd: null, instlInspYn: null, instlPlaceCd: null, sftyInspYn: null}
+
+# 식품의약품안전처_수입식품 수입신고별 한글표시사항 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getIprtFoodPrdtKoreanLabelingText: 예시값의 과도한 선택 필터와 과거 단일 날짜를 모두 제거하고 최근 3개월 처리일자 범위만 지정해 결과를 넓힘
+'15110213':
+  /getIprtFoodPrdtKoreanLabelingText: {bsnOfcName: null, dclPrductSeCdNm: null, expirdeEndDtmEnd: null, expirdeEndDtmStart: null, irdntNm: null, itmNm: null, mnfNtncdNm: null, ovsmnfstNm: null, prductKoreanNm: null, prductNm: null, procsDtmEnd: '20261003', procsDtmStart: '20260703', type: json, xportNtncdNm: null}
+
+# 한국전력거래소_지역별 시간별 태양광 발전량 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getPvAmountByLocHr: 20261003, 20260915, 20260825 날짜를 모두 시도했지만 0건이라 선택 필터인 tradeYmd를 빼고, 데이터가 있는 기본 최신 일자가 반환되는지 확인한다.
+'15103243':
+  /getPvAmountByLocHr: {dataType: json, tradeYmd: null}
+
+# 한국자산관리공사_차세대 온비드 공고목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getPbancList2: 필수 파라미터 cltrTypeCd(부동산 0001)와 prptDivCd(압류재산 0007)가 빠져 오류가 났으므로 추가하고, 개찰일 범위를 넓히며 좁히는 선택 날짜 필터는 뺀다.
+'15157216':
+  /getPbancList2: {bidPrdYmdEnd: null, bidPrdYmdStart: null, cltrTypeCd: '0001', opbdDtEnd: '20261103', opbdDtStart: '20260903', pbancYmdEnd: null, pbancYmdStart: null, prptDivCd: '0007', resultType: json}
+
+# 서울교통공사_역사내공사현황 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getInCstrnStts: 이전 시도에서 공사일자·공사코드·공사위치 필터를 동시에 걸어 결과가 0건이므로 모든 선택 필터를 제거해 전체 목록이 나오도록 한다.
+'15144071':
+  /getInCstrnStts: {cstrnCd: null, cstrnNm: null, cstrnPstn: null, dataType: json, selectFields: null, srchCstrnYmd: null}
+
+# 기상청_꽃가루농도위험지수 조회서비스(3.0) — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getWeedsPollenRiskndxV3: 최근 1일 자료만 제공되므로 time을 오늘(2026-10-03) 06시 발표분으로 바꿔 재시도하고, 서울 지점코드 1100000000은 유지함.
+'15085289':
+  /getWeedsPollenRiskndxV3: {areaNo: '1100000000', dataType: json, time: '2026100306'}
+
+# 식품의약품안전처_의료기기 표준코드별 제품정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMdeqStdCdPrdtInfoInq03: 모든 필터를 동시에 걸어 결과가 0건이었으므로, 명세 예시의 UDI-DI코드 하나만 남기고 나머지 선택 필터는 모두 제외해 조회 범위를 넓힌다.
+'15073875':
+  /getMdeqStdCdPrdtInfoInq03: {CLSF_NO_GRAD_CD: null, FOML_INFO: null, MDEQ_CLSF_NO: null, MNFT_IPRT_ENTP_NM: null, PERMIT_NO: null, PRDLST_NM: null, UDIDI_CD: 08800070231883, type: json}
+
+# 부산광역시_도시계획정보시스템(UPIS) 입안결정 계획관리 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getUpisInitPlanMng: 계획작성일자 필터가 너무 좁아 NODATA가 나왔으므로 날짜를 빼고, useYn은 'Y,N' 대신 단일값 Y로 바꿔 시도
+'15143073':
+  /getUpisInitPlanMng: {planWrtYmd: null, resultType: json, useYn: Y}
+
+# 부산광역시_구군 유휴 공유재산 현황 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getIdlShrnProy01: 필수 파라미터 gugun이 비어 INVALID_REQUEST_PARAMETER_ERROR가 났으므로 대표 구군명인 해운대구를 넣고 응답 형식은 json으로 유지한다.
+'15160019':
+  /getIdlShrnProy01: {gugun: 해운대구, resultType: json}
+
+# 국토교통부_규제안내서서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /DTebGuideBookList: 명세에 필수 파라미터가 serviceKey뿐이라 응답 형식을 json으로 지정해 HTTP_ERROR 해소를 시도함
+'15057263':
+  /DTebGuideBookList: {_type: json, resultType: json, type: json}
+
+# 부산광역시_도시계획정보시스템(UPIS) 용도지역 승인 및 결정조서 내역 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getUpisAreaUseAprv: 이전 시도에서 면적증감코드명에 예시 문자열 전체(증가,감소,동일)와 특정 생성일자를 같이 넣어 지나치게 좁혀져 NODATA가 나왔으므로, 선택 필터를 모두 빼고 전체 조회를 시도한다.
+'15143075':
+  /getUpisAreaUseAprv: {areaIcdcCdNm: null, crtYmd: null, resultType: json}
+
+# 식품의약품안전처_의약품 낱알식별 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMdcinGrnIdntfcInfoList03: 시도 1은 선택 필터를 모두 채우고 edi_code에 문자열 'null'을 넣어 결과가 0건이었으므로, 모든 선택 필터를 빼고 type=json만 남겨 전체 목록이 나오게 한다.
+'15057639':
+  /getMdcinGrnIdntfcInfoList03: {bizrno: null, edi_code: null, entp_name: null, img_regist_ts: null, item_name: null, item_seq: null, type: json}
+
+# 한국환경공단_순환자원정보센터 유통지원 정보 조회 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getRtlSprtInfo: 선택 필터를 모두 좁게 지정해 0건이 나왔으므로 모든 선택 필터를 제거하고 전체 조회로 시도
+'15141609':
+  /getRtlSprtInfo: {addr: null, brno: null, bzentyNm: null, cmdtyLclsfNm: null, cmdtyMclsfNm: null, cmdtySclsfNm: null, returnType: json}
+
+# 식품의약품안전처_의약외품 제품 허가 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getQdrgPrdtPrmsnInfoInq03: 예시값을 모두 AND로 걸어 결과가 0건이므로 선택 필터를 전부 제거하고 전체 목록을 조회한다.
+'15095679':
+  /getQdrgPrdtPrmsnInfoInq03: {bizrno: null, class_no: null, entp_name: null, entp_no: null, entp_seq: null, item_name: null, item_seq: null, type: json}
+
+# 금융위원회_서민금융상품기본정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getOrdinaryFinanceInfo: 기준일자 4개 필터를 모두 202609로 좁혀 0건이 나왔으므로 날짜 필터를 전부 빼고 전체 데이터를 조회한다.
+'15094787':
+  /getOrdinaryFinanceInfo: {basYm: null, beginBasYm: null, endBasYm: null, likeBasYm: null, resultType: json}
+
+# 식품의약품안전처_의료기기 행정처분 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getMdeqAdmmInfoService1: 업체명·업종·위반일자·사업자번호('null' 문자열 포함) 필터가 결과를 지나치게 좁혀 0건이므로 모두 제거하고 json 형식만 유지해 전체 목록을 조회
+'15117141':
+  /getMdeqAdmmInfoService1: {BIZ_IPLA_NM: null, BRNO: null, INDT_NM: null, VMTER_DT: null, type: json}
+
+# 식품의약품안전처_수입식품 해외작업장 품목 및 중단정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getIprtFoodOvseaWkshInfoInq02: 이전 시도는 SUSP_DT가 문자열 'null'로 전달되고 이름·국가·품목 필터가 과도하게 겹쳐 0건이었으므로, 좁은 선택 필터를 모두 빼고 대표 값인 중단기준코드명 '등록'만 남깁니다.
+'15073923':
+  /getIprtFoodOvseaWkshInfoInq02: {INDUTY_RNDR_STLE_NM: null, NATN_NM: null, OCTR_WKSH_DIVS_NM: null, OCTR_WKSH_NM: null, PRDLST_SCLS_NM: null, RTRCN_SUSP_CD_NM: 등록, SUSP_DT: null, type: json}
+
+# 국토교통부_한국건설기술연구원 교통량 통계 데이터 정보조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /itmsh_daily: pageNo는 0부터 시작하고 numOfRows는 1~100 범위이므로 0과 10으로 바꾸고, 2026년 통계가 아직 없을 수 있어 완결된 2025년 9월 데이터로 시도한다. / /vt_yearly: 필수 파라미터 spot_id와 dtype이 빠져 있어 전체 지점(all)과 고속도로(1)를 채우고 output을 json으로 지정함
+'15097077':
+  /itmsh_daily: {dtype: '1', month: 09, numOfRows: '10', output: json, pageNo: '0', spot_id: all, year: '2025'}
+  /vt_yearly: {dtype: '1', output: json, spot_id: all, year: '2025'}
+
+# 금융위원회_자금조달 공시정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getPrplcCptUseInfo: 2025 사업연도는 보고서가 아직 적어 0건이라 직전 완료 연도인 2024로 바꾸고, endBizYr가 '작은' 조건이라 같은 값이면 배제되므로 범위 필터를 모두 뺀다. / /getDbscIssuPrfmncInfo: 2025 사업연도 보고서는 아직 제출 전일 가능성이 높아 NODATA였으므로 사업연도를 2024로 바꾸고
+'15139255':
+  /getCcbNrpRmInfo: {beginBizYr: null, bizYr: '2024', endBizYr: null, likeBizYr: null, resultType: json}
+  /getDbscIssuPrfmncInfo: {beginBizYr: null, bizYr: '2024', endBizYr: null, likeBizYr: null, resultType: json}
+  /getPrplcCptUseInfo: {beginBizYr: null, bizYr: '2024', endBizYr: null, likeBizYr: null, resultType: json}
+
+# 세종특별자치시_세종특별자치시 주차장정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /sj_00000949: 유형구분 '공영' 검색이 0건이라 선택 필터인 searchCondition과 searchKeyword를 제거해 전체 주차장 목록을 조회한다.
+'15098491':
+  /sj_00000949: {dataTy: json, pageIndex: '1', pageUnit: '20', searchCondition: null, searchKeyword: null}
+
+# 식품의약품안전처_학교 위탁급식업체 식재료 공급업체 정보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getScolCnsgSlunchEntpIngrSuplyEntpInfoService: 이전 시도는 이름 뒤 공백이 붙은 파라미터와 과도하게 좁은 필터 조합 때문에 0건이어서, 모든 선택 필터를 빼고 type=json만 남겨 전체 조회를 시도한다.
+'15117410':
+  /getScolCnsgSlunchEntpIngrSuplyEntpInfoService: {BIZ_IPLA_NM: null, 'BIZ_IPLA_NM ': null, ETPN_DIVS_NM: null, 'ETPN_DIVS_NM ': null, FOOD_NM: null, SCOL_CD: null, SCOL_NM: null, SCOL_UNIQ_NO: null, type: json}
+
+# 식품의약품안전처_용기.포장류제조업 폐업정보 조회 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getConPckMnftBsshClsbizInfo01: 단일 폐업일자 필터는 너무 좁아 NODATA이므로 CLSBIZ_DT를 빼고, 변경일자를 최근 1개월 이전(20260901)으로 넓혀 재시도한다.
+'15107374':
+  /getConPckMnftBsshClsbizInfo01: {CHNG_DT: '20260901', CLSBIZ_DT: null, LCNS_NO: null, type: json}
+
+# 기후에너지환경부 국립환경과학원_환경영향평가 수질정보 서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getIvstgWFS: 필수 파라미터 srsName이 빠져 오류가 났으므로 EPSG:4326을 넣고, resultType은 WFS 규격상 results로 바꾸며, 좁히는 bbox 필터는 제외함
+'15142627':
+  /getIvstgWFS: {bbox: null, maxFeatures: '10', resultType: results, srsName: 'EPSG:4326'}
+
+# 한국자산관리공사_차세대 온비드 공고 입찰결과목록 조회서비스 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /getPbancBidRsltList2: 필수 파라미터 cltrTypeCd(부동산 0001)와 prptDivCd(압류재산 0007)가 누락되어 추가하고, 선택 공고일 필터는 결과를 좁히므로 제외함
+'15157222':
+  /getPbancBidRsltList2: {cltrTypeCd: '0001', opbdDtEnd: '20261003', opbdDtStart: '20260903', pbancYmdEnd: null, pbancYmdStart: null, prptDivCd: '0007', resultType: json}
+
+# 한국해양교통안전공단_내일의_운항예보 — 자동 수리(claude-sonnet-5-5, 호출로 확인): /get_tmr-forecast: '내일의 운항예보'이므로 오늘(2026-10-03) 기준 내일인 20261004로 일자를 바꾸고, 결과를 좁히는 선택 필터(여객선명·기항지명)는 제외한다.
+'15131259':
+  /get_tmr-forecast: {gicdName: null, ilja: '20261004', ygnm: null}

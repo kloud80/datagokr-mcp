@@ -1,0 +1,233 @@
+# Dataset 15051741 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15051741'
+tier: verified
+title: 서울특별시_버스정류소 좌표 데이터
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15051741/fileData.do
+synonyms:
+  - 버스
+  - 정류장
+  - 버스정류소
+  - 좌표
+  - 정류소
+  - 버스정류장 위치
+  - 정류장 좌표
+  - ARS 번호
+  - 서울 버스 정류소 목록
+  - 버스정류장 위경도
+  - 정류소 ID
+  - 대중교통 정류장
+description_portal: '서울특별시 교통정보과에서 제공하는 서울특별시 버스정류소 위치정보입니다.(2022.04 기준)실시간 버스정보와 연계하여 사용하시면 됩니다.정류소ID가 동일한 두 정류장의 정류소ID는 A,B로 구분되어있습니다.16614A 김포공항국내선 / 16614B 서울식물원.숲문화학교CSV 파일 특성으로 첫자리 "0"이 표현이 안됩니다. 정류소 코드 (ARS-ID) 는 5자리이고,(예시) "10123" - 정상, "1234" 4자리인 경우 앞자리에 "0"을 첨부하여 01234로 변환하여 사용하시기 바랍니다.좌표계: WGS84 (EPSG-5179)'
+accrual_periodicity: 수시
+team:
+  dept: 미래첨단교통과
+services:
+  - op: busStopLocationXyInfo
+    name: busStopLocationXyInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/busStopLocationXyInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: STOPS_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '123000689'
+        - '104000315'
+        - '103000517'
+      stats:
+        min: 100000001
+        p50: 100000055.5
+        max: 123000689
+        unique: 100
+    - name: STOPS_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울역사박물관.경희궁앞
+        - 광화문역
+        - 종로1가
+      stats:
+        unique: 76
+    - name: XCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.084778'
+        - '127.0664722'
+        - '127.0180556'
+      stats:
+        min: 126.8441111
+        p50: 126.9713945134
+        max: 127.084778
+        unique: 100
+    - name: YCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.518944'
+        - '37.5286945'
+        - '37.53875'
+      stats:
+        min: 37.518944
+        p50: 37.576600815649996
+        max: 37.6115844138
+        unique: 100
+    - name: NODE_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00001'
+        - '00002'
+        - '00003'
+      stats:
+        min: 1
+        p50: 1116.5
+        max: 1172
+        unique: 100
+    - name: STOPS_TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반차로
+        - 중앙차로
+        - 한강선착장
+      stats:
+        unique: 3
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6194
+  rank_in_sector: 919
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 서울 버스정류소 좌표, 전국 정류장과 일부 겹침
+claims:
+  - id: c-15051741-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15051741.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15051741-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15051741-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15051741.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15051741-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15051741.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15051741-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051741-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051741-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15051741.json
+  stats: probe/stats/15051741.json
+  data: probe/data/15051741/
+status: active
+summary_user: 서울시 버스정류소 한 곳마다 정류소번호(ARS-ID), 정류소명, 경도·위도 좌표, 노드ID, 정류소 유형을 담은 건별 위치 원장이며, 포털 설명상 2022년 4월 기준 자료다. 지도 위에 정류장을 찍거나 특정 주소·시설에서 가장 가까운 버스정류소를 찾으려는 앱 개발자·교통 분석가가 쓴다. 전역 조인 키는 실측에서 확인되지 않아, 실시간 버스도착 정보 등과는 정류소번호(STOPS_NO)나 노드ID, 정류소명 매핑으로 이어 써야 한다.
+limits: 인증키를 data.seoul.go.kr에서 따로 받아야 하며, 포털 활용신청과는 별개다. CSV에서는 5자리 정류소번호의 앞자리 0이 빠지므로 4자리 값은 앞에 0을 붙여 맞춰야 하고, 같은 번호를 쓰는 두 정류장은 A·B 접미로 구분된다. 다른 데이터와 공통으로 쓰는 표준 코드 키는 확인되지 않았다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15051741-01
+    - c-15051741-03
+    - c-15051741-04
+  dropped_citations: 0

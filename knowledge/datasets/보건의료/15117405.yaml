@@ -1,0 +1,269 @@
+# Dataset 15117405 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15117405'
+tier: verified
+title: 식품의약품안전처_의료기기 유통업체 정보
+sector: 보건의료/보건의료/drugs-devices
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15117405/openapi.do
+synonyms:
+  - 의료기기
+  - 유통업체
+  - 유통업체 폐업일자
+  - 유통업체 사업장기본주소
+  - 인허가일자
+  - 업종구분
+  - 의료기기 판매업
+  - 의료기기 임대업
+  - 의료기기 업체 조회
+  - 의료기기 판매업 신고
+  - 의료기기 인허가
+  - 의료기기 업체 폐업
+description_portal: 해당 공공데이터는 식품의약품안전처에서 제공하는 의료기기 유통업체 관련 정보입니다. 전국 의료기기 유통업체의 사업장명, 업종 구분, 기본주소 및 상세주소, 인허가일자, 허가기관, 사업자등록번호, 폐업일자 등의 항목이 포함되어 있으며, 의료기기 유통업체의 인허가 이력과 운영 여부 등을 종합적으로 확인할 수 있도록 구성되어 있습니다. 본 데이터를 통해 의료기기 유통업체의 지역 분포 현황은 물론, 폐업 추이 등을 분석할 수 있어서 업계 종사자나 연구자에게도 참고자료로 제공될 수 있습니다.
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getMdeqCircEntpInfoService
+    name: 의료기기 유통업체 정보
+    endpoint: https://apis.data.go.kr/1471000/MdeqCircEntpInfoService/getMdeqCircEntpInfoService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '3'
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: BIZ_IPLA_NM
+        required: false
+        example: (A)강남실버케어
+        desc: 사업장명
+      - name: INDT_DIVS_CD_NM
+        required: false
+        example: 판매(임대)업
+        desc: 업종구분
+      - name: PRMT_YMD
+        required: false
+        example: '20150304'
+        desc: 인허가일자
+      - name: BRNO
+        required: false
+        desc: 사업자등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: BIZ_IPLA_NM
+      title: 사업장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (A)강남실버케어
+      stats:
+        unique: 1
+    - name: INDT_DIVS_CD_NM
+      title: 업종구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 판매(임대)업
+      stats:
+        unique: 1
+    - name: BIZ_IPLA_BASC_ADDR
+      title: 사업장기본주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강남구
+      stats:
+        unique: 1
+    - name: BIZ_IPLA_DTL_ADDR
+      title: 사업장상세주소
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: PRMT_YMD
+      title: 인허가일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20150304'
+      stats:
+        min: 20150304
+        p50: 20150304
+        max: 20150304
+        unique: 1
+    - name: PRMSN_INST
+      title: 허가기관
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 식품의약품안전처
+      stats:
+        unique: 1
+    - name: BRNO
+      title: 사업자등록번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CLSBIZ_YMD
+      title: 폐업일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20150512'
+      stats:
+        min: 20150512
+        p50: 20150512
+        max: 20150512
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7515
+  rank_in_sector: 62
+  brm: 식품건강 - 식품의약안전
+  sector_rule: drugs-to-health
+  why: 전국 유통업체 인허가 원장, 주소·사업자번호 키
+claims:
+  - id: c-15117405-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15117405.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15117405.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15117405-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117405-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15117405.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117405-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15117405.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15117405-06
+    kind: admin_note
+    value: "세부 부문 '의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)'의 가치: 식약처 품목기준코드·의약품 표준코드로 심평원 약가·급여 목록(건강보험)과 연결. DUR 병용·연령금기는 처방 안전"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#drugs-devices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15117405-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15117405-08
+    kind: admin_note
+    value: wave4 나머지 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15117405.json
+  stats: probe/stats/15117405.json
+  data: probe/data/15117405/
+status: active
+summary_user: 전국 의료기기 유통업체를 사업장 한 곳당 한 건으로 담은 건별 원천 데이터로, 사업장명·업종 구분·주소·인허가일자·허가기관·사업자등록번호·폐업일자를 포함한다. 우리 지역에서 영업 중인 의료기기 판매·임대업체가 어디인지, 특정 업체가 정식 인허가를 받았고 폐업하지 않았는지를 확인하는 데 쓰며, 분석가는 지역별 분포와 폐업 추이를 보는 데 쓴다. 실측 컬럼에 전역 조인 키는 없고, 사업자등록번호(BRNO)나 사업장명·주소를 매칭해 다른 사업자·의료기기 데이터와 이어 쓴다.
+limits: 공통 코드로 바로 붙는 조인 키가 없어 다른 데이터와는 이름·주소·사업자번호 매핑으로만 연결된다. 좌표 필드가 없어 지도 분석에는 주소를 좌표로 바꾸는 작업이 따로 필요하다. 개발계정 호출 한도는 하루 10,000회이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15117405-01
+    - c-15117405-03
+    - c-15117405-04
+  dropped_citations: 0

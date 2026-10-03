@@ -1,0 +1,253 @@
+# Dataset 15124599 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15124599'
+tier: verified
+title: 한국토지주택공사_분양임대공고문 조회 서비스(사전청약)
+sector: 국토관리/주택/subscription
+domain: 국토관리/주택
+agency:
+  id: B552555
+  name: 한국토지주택공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124599/openapi.do
+synonyms:
+  - 공고정보
+  - 분양임대
+  - 사전청약
+  - LH 사전청약
+  - 사전청약 공고
+  - LH 청약 공고
+  - 공공분양 사전청약
+  - 분양 공고 조회
+  - 임대주택 공고
+  - LH 분양임대 공고
+description_portal: 한국토지주택공사에서 관리하는 공고세부유형명, 공고명, 지역명, 공고게시일, 공고마감일, 공고상세URL 등의 사전청약 공고 정보를 조회할 수 있는 서비스입니다.
+team:
+  dept: IT운영처 데이터운영팀
+services:
+  - op: /lhLeaseNoticeBfhInfo1
+    name: 분양임대공고문 조회(사전청약)
+    endpoint: https://apis.data.go.kr/B552555/lhLeaseNoticeBfhInfo1/lhLeaseNoticeBfhInfo1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: PG_SZ
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: PAGE
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: PAN_NM
+        required: false
+        desc: 공고명으로 조회
+      - name: PAN_SS
+        required: false
+        desc: 공고상태코드
+      - name: PAN_ST_DT
+        required: true
+        example: '20230101'
+        desc: 기간검색 게시일-시작일(초기값:현재일-2개월)
+      - name: PAN_ED_DT
+        required: true
+        example: '20231017'
+        desc: 기간검색 게시일-종료일(초기값:현재일)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dsSch
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'PAN_ED_DT': '20231017', 'PG_SZ': '10', 'PAN_ST_DT': '20230101', 'PAGE': '1'}]"
+      stats:
+        min: '2023-10-17'
+        max: '2023-10-17'
+        unique: 1
+    - name: dsList
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'PAN_NT_ST_DT': '2023.09.26', 'PAN_ID': '0000000054', 'UPD_DTTM': '2023-09-26 "
+      stats:
+        min: '2023-09-26'
+        max: '2023-09-26'
+        unique: 1
+    - name: resHeader
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'RS_DTTM': '20261003095525', 'SS_CODE': 'Y'}]"
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 시도
+cycle: event
+classification:
+  subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7479
+  rank_in_sector: 38
+  brm: 국토관리 - 주택
+  sector_rule: land-restructure-주택
+  why: LH 사전청약 공고 목록, 일반 공고와 별개 사업
+claims:
+  - id: c-15124599-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15124599.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15124599.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15124599-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124599-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124599.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124599-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 시도
+    evidence:
+      - type: measured
+        source: probe/runs/15124599.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124599-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15124599-06
+    kind: admin_note
+    value: "세부 부문 '청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)'의 가치: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#subscription
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124599-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124599-08
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15124599.json
+  stats: probe/stats/15124599.json
+  data: probe/data/15124599/
+status: active
+summary_user: LH가 관리하는 사전청약 공고를 공고 한 건 단위로 담으며, 공고세부유형명·공고명·지역명(시도 단위)·게시일·마감일·상세 URL을 전국 범위로 조회한다. 사전청약을 준비하는 국민이 "지금 우리 시도에 접수 중인 LH 사전청약 공고가 있고 마감일이 언제인가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 청약·분양 데이터(마이홈, 청약홈 경쟁률 등)와는 지역명·공고명 같은 이름 매핑이나 LH의 다른 공고 서비스와의 기관 내 코드로만 연결한다.
+limits: 공고는 이벤트 때 생성된 뒤 바뀌지 않는 형태라 경쟁률·당첨 결과는 이 데이터에 없고, 지역은 시도 단위까지만 구분된다. 다른 데이터와 붙일 공통 키가 없어 이름 매칭에 기대야 하며, 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15124599-01
+    - c-15124599-02
+    - c-15124599-03
+    - c-15124599-04
+    - c-15124599-06
+  dropped_citations: 0

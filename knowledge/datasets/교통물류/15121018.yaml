@@ -1,0 +1,242 @@
+# Dataset 15121018 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121018'
+tier: verified
+title: 부산광역시_AVI 교통량
+sector: 교통물류/도로/traffic-volume
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121018/openapi.do
+synonyms:
+  - 교통
+  - AVI
+  - 교통량
+  - ITS
+  - 교통정보
+  - 부산 교통량
+  - AVI 지점 교통량
+  - 차량자동인식 교통량
+  - 부산 구간별 통행량
+  - 부산 도로 혼잡
+  - 부산 교통정보센터 교통량
+description_portal: '본 데이터는 부산광역시 교통정보서비스센터에서 운영하는 AVI(Automatic Vehicle Identification) 장치를 통해 생성일시, AVI 지점명, 경도, 위도, 수집된 구간별 교통량 정보를 제공합니다.이 데이터를 활용하여 교통량·통행 시간·통행 패턴 등을 산출할 수 있습니다.본 데이터셋은 시간대별·구간별 교통량 분석, 혼잡 예측, 도로 운영 효율화를 위한 기초자료로 활용 가능합니다.<제공방식>형식: Open API응답 포맷: JSON (필요 시 XML 지원 가능)인코딩: UTF-8<활용안내>구간별 시간대별 교통량 파악혼잡 예측 및 도로 운영 최적화 지원돌발상황 발생 시 교통 분산·우회 경로 안내물류·대중교통 수송 효율성 분석 근거자료민간 교통정보 서비스 및 연구기관 데이터 분석 활용'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /AVIList
+    name: AVI 교통량
+    endpoint: https://apis.data.go.kr/6260000/BusanITSAVI/AVIList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statsDt
+      title: 생성시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03T09:00:00'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: aviSpotNm
+      title: AVI지점명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 감전IC(램프진입)
+        - 감전IC(램프진출)
+        - 감전IC(본선-낙동IC방면)
+      stats:
+        unique: 75
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '129.165089'
+        - '128.979685'
+        - '128.98215'
+      stats:
+        min: 128.973857
+        p50: 129.109837
+        max: 129.209967
+        unique: 74
+    - name: lat
+      title: 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.176662'
+        - '35.240931'
+        - '35.150968'
+      stats:
+        min: 35.082097
+        p50: 35.181141
+        max: 35.296473
+        unique: 73
+    - name: vol
+      title: 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '634.0'
+        - '1036.0'
+        - '655.0'
+      stats:
+        min: 21
+        p50: 846
+        max: 3803
+        unique: 72
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7364
+  rank_in_sector: 245
+  brm: 교통물류 - 도로
+  why: 부산 AVI 지점별 교통량 실시간, 좌표 기반 연계 가능
+claims:
+  - id: c-15121018-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121018.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121018.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15121018-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121018-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121018.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121018-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15121018.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121018-06
+    kind: admin_note
+    value: "세부 부문 '교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)'의 가치: 조사지점·영업소 단위 교통량 = 상권·입지 분석의 표준 입력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-volume
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121018-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121018-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121018.json
+  stats: probe/stats/15121018.json
+  data: probe/data/15121018/
+status: active
+summary_user: 부산광역시 교통정보서비스센터가 운영하는 AVI(차량자동인식) 장치 지점별로 생성시간, 지점명, 경도·위도, 수집된 교통량을 담은 건별 관측 데이터로, 범위는 부산시 전역이고 위치는 개별 좌표로 표시된다. 교통 분석가나 물류·연구기관이 '부산의 특정 도로 구간은 어느 시간대에 교통량이 몰리는가'를 파악해 혼잡 예측이나 우회 안내, 상권·입지 분석의 입력으로 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 데이터와는 AVI 지점명을 이름으로 맞추거나 경도·위도 좌표로 공간 매칭해 이어 쓴다.
+limits: 표준 지점 코드나 행정코드 같은 조인 키가 없으므로 다른 교통량·도로 데이터와 연결하려면 지점명 매핑이나 좌표 기반 매칭이 필요하다. 개발계정은 하루 500회 호출로 제한되므로 장기간·전 지점 수집에는 호출량을 계획해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15121018-01
+    - c-15121018-03
+    - c-15121018-04
+    - c-15121018-06
+  dropped_citations: 0

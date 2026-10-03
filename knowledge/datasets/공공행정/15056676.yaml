@@ -1,0 +1,415 @@
+# Dataset 15056676 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15056676'
+tier: verified
+title: 부산광역시_엄궁농산물도매시장 실시간 경락정보
+sector: 공공행정/정부자원관리/misfiled
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15056676/openapi.do
+synonyms:
+  - 엄궁
+  - 반여
+  - 경락가격
+  - 도매시장
+  - 경락
+  - 엄궁시장 경락가
+  - 부산 농산물 경매가격
+  - 도매시장 경락정보
+  - 농산물 도매가격
+  - 청과 경매 시세
+  - 엄궁 공판장 시세
+description_portal: 엄궁농산물도매시장내에서 경매일자별로 거래되는 농산물의 실시간 경락정보로서데이터 항목으로는 경매일자, 도매법인, 품목, 단위, 등급, 경락가(원), 수량, 산지가 제공됨
+team:
+  dept: 엄궁농산물도매시장 운영팀
+services:
+  - op: /getGoodsCodeList2
+    name: 품종 목록
+    endpoint: https://apis.data.go.kr/6260000/EgMarketAuction2/getGoodsCodeList2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getAuction2
+    name: 실시간 경락정보
+    endpoint: https://apis.data.go.kr/6260000/EgMarketAuction2/getAuction2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: cmpName
+        required: false
+        example: 항도청과(주)
+        desc: 도매법인
+      - name: goodName
+        required: false
+        example: 단감(단감)
+        desc: 품목(품종)
+      - name: nak_time
+        required: false
+        example: '20250110'
+        desc: 경매시각
+      - name: resultType
+        required: false
+        example: xml
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: goodName
+      title: 품목(품종)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 사용불가
+        - 천혜향
+      op: /getGoodsCodeList2
+      stats:
+        unique: 966
+    - name: mid
+      title: 중분류
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '04'
+        - '01'
+        - '02'
+      op: /getGoodsCodeList2
+      stats:
+        min: 1
+        p50: 6
+        max: 99
+        unique: 75
+    - name: large
+      title: 대분류
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '06'
+        - '10'
+        - '08'
+      op: /getGoodsCodeList2
+      stats:
+        min: 1
+        p50: 7
+        max: 10
+        unique: 8
+    - name: small
+      title: 소분류
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '00'
+        - '99'
+      op: /getGoodsCodeList2
+      stats:
+        unique: 105
+    - name: manageCd
+      title: 관리코드
+      type: number
+      null_rate: 0.006
+      sample_values:
+        - '01'
+        - '02'
+      op: /getGoodsCodeList2
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: bigo
+      title: 비고
+      type: string
+      null_rate: 0.636
+      sample_values:
+        - 15년도 표준코드개정 신규
+        - 2025 신규
+        - (2004년 추가분)
+      op: /getGoodsCodeList2
+      stats:
+        unique: 115
+    - name: gubn
+      title: 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+        - y
+      op: /getGoodsCodeList2
+      stats:
+        unique: 3
+    - name: saledate
+      title: 경매날짜
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-02'
+      op: /getAuction2
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-02'
+        unique: 1
+    - name: nakTime
+      title: 경매시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261002043434'
+        - '20261002043428'
+        - '20261002043416'
+      op: /getAuction2
+      stats:
+        min: 20261002043004
+        p50: 20261002043242
+        max: 20261002043434
+        unique: 27
+    - name: cmpName
+      title: 도매법인
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 항도청과(주)
+      op: /getAuction2
+      stats:
+        unique: 1
+    - name: goodName
+      title: 품목(품종)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 단감(단감)
+      op: /getAuction2
+      stats:
+        unique: 1
+    - name: dan
+      title: 단위
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '                         10.00kg상자'
+        - '                          5.00kg상자'
+      op: /getAuction2
+      stats:
+        unique: 2
+    - name: lvName
+      title: 등급
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 상
+        - 특
+        - 등외
+      op: /getAuction2
+      stats:
+        unique: 4
+    - name: cost
+      title: 경락가(원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '25600.00'
+        - '45000.00'
+        - '18000.00'
+      op: /getAuction2
+      stats:
+        min: 14000
+        p50: 25600
+        max: 45000
+        unique: 22
+    - name: qty
+      title: 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.00'
+        - '6.00'
+        - '2.00'
+      op: /getAuction2
+      stats:
+        min: 1
+        p50: 6
+        max: 37
+        unique: 15
+    - name: sanName
+      title: 산지정보
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 밀양
+        - 김해
+      op: /getAuction2
+      stats:
+        unique: 2
+    - name: small
+      title: 소분류
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      op: /getAuction2
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 오분류(타 부문 성격)
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.6308
+  rank_in_sector: 56
+  brm: 공공행정 - 정부자원관리
+  why: 농산물 경락가 실시간 데이터, 농수산 부문 성격
+claims:
+  - id: c-15056676-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15056676.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15056676.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15056676-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15056676-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056676.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 17개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15056676-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056676.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15056676-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056676-07
+    kind: admin_note
+    value: wave4 나머지 p2 · 이동 제안 → 농축수산 - 농산물 유통 · 새 세부 부문 도매시장경락
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15056676.json
+  stats: probe/stats/15056676.json
+  data: probe/data/15056676/
+status: active
+summary_user: 부산 엄궁농산물도매시장에서 경매일자별로 거래된 농산물의 경락 내역을 품목·단위·등급·도매법인·산지와 함께 경락가(원)와 수량으로 담은 건별 API 데이터다. 상인이나 소비자, 유통 분석가가 "오늘 엄궁시장에서 특정 품목 상품(上品) 한 상자의 경락가가 얼마였고 어느 산지 물량이 들어왔나"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 도매시장 경락 데이터나 산지 통계와는 품목명·산지명 같은 이름 매핑으로만 이어 붙인다.
+limits: 실측 컬럼에 표준 품목코드나 지역코드 같은 공통 조인 키가 없어 이름 기준 매핑이 필요하다. 개발계정은 하루 10,000회 호출로 제한된다. 포털에서는 공공행정 부문으로 분류돼 있으나 성격상 농산물 유통 데이터이므로 해당 부문으로 이동이 제안된 상태다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15056676-01
+    - c-15056676-03
+    - c-15056676-07
+  dropped_citations: 0

@@ -1,0 +1,703 @@
+# Dataset 15124951 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15124951'
+tier: verified
+title: 국토교통부_사고누적지점 조회 서비스
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124951/openapi.do
+synonyms:
+  - 교통사고
+  - 결과보고서
+  - 원인조사
+  - 지자체별
+  - 연도별
+  - 교통사고 다발지역
+  - 사고 잦은 곳
+  - 교통사고원인조사
+  - 위험 교차로
+  - 사고다발지점
+  - 교통사고 상세현황
+  - TAAS
+description_portal: '교통사고원인조사 대상 사고누적지점에 대해 기준년도, 광역지자체명, 기초지자체명, 지점명(상세정보) 조회조건으로 교통사고원인조사 대상 사고누적지점 정보 및 지점별 교통사고 상세 현황 정보 조회할 수 있습니다. 교통사고원인조사 대상 지점을 선정합니다. 선정기준 : 과거 3년간(기준년도 포함)교차로 후방 150m 이내, 사망사고 3건 이상이거나, 중상이상사고 10건 이상 발생한 지자체 내의 모든 지점 주요제공정보 : 교통사고원인조사 대상 사고누적지점 정보(광역지자체명,지점명,발생건수 등)등'
+team:
+  dept: 교통안전정책과
+services:
+  - op: /T_OD_ACDNT_CMPNT_BRN_INFO
+    name: 사고누적지점_지점정보
+    endpoint: https://apis.data.go.kr/1613000/ACDNT_CMPNT/T_OD_ACDNT_CMPNT_BRN_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: mtrpl_lcgv_nm
+        required: true
+        desc: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주서울특별시(X), 제주도(X), 세종특별자치시(X)
+      - name: basic_lcgv_nm
+        required: false
+        desc: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+    name: 사고누적지점_사고정보
+    endpoint: https://apis.data.go.kr/1613000/ACDNT_CMPNT/T_OD_ACDNT_CMPNT_ACDNT_INFO
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        example: xml
+        desc: 결과형식 ( xml/json ) - 소문자로 입력
+      - name: crtr_yr
+        required: true
+        example: '2021'
+        desc: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      - name: mtrpl_lcgv_nm
+        required: true
+        example: 서울
+        desc: 교통사고 발생 구간 법정동 시도에 해당하는 주소 예)서울, 세종, 경북, 전북, 제주서울특별시(X), 제주도(X), 세종특별자치시(X)
+      - name: basic_lcgv_nm
+        required: true
+        example: 강남구
+        desc: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      - name: plc_nm
+        required: true
+        example: 학여울역%20사거리
+        desc: '교통사고 원인조사 대상 사고누적지점명* 교통사고 원인조사 대상 사고누적지점 : 교차로 후방 150m 이내에서 사망사고가 3건 이상이거나 중상이상사고가 10건 이상 발생한 지점'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: cnsld_index
+      title: 교통안전지표중 하나로, 다발도 및 심각도를 함께 고려하는 교통사고 통합지표(다발도 * 0.4 + 심각도*0.6)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2.57'
+        - '2.33'
+        - '2.98'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 0.7
+        p50: 3.27
+        max: 7.55
+        unique: 150
+    - name: acdnt_pnt_x
+      title: EPGS Code 5181 * 중심원점(GRS80)-false Y:50000
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '197952'
+        - '198497'
+        - '198498'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 184698
+        p50: 201730
+        max: 213464
+        unique: 239
+    - name: acdnt_pnt_y
+      title: EPGS Code 5181 * 중심원점(GRS80)-false Y:50000
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '454807'
+        - '443595'
+        - '452852'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 439090
+        p50: 447611
+        max: 463439
+        unique: 237
+    - name: crtr_yr
+      title: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2024'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 2024
+        p50: 2024
+        max: 2024
+        unique: 1
+    - name: mtrpl_lcgv_nm
+      title: 교통사고 발생 지점 법정동 시도에 해당하는 주소 예) 서울, 세종, 경북, 전북, 제주(O)서울특별시(X), 제주도(X), 세종특별자치시(X)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        unique: 1
+    - name: dth_nocs
+      title: 해당 지점에서 발생한 사망사고 건수*  교통사고 발생 일로부터 30일 이내에 사망한 경우에 해당
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 3
+    - name: plc_nm
+      title: '교통사고 원인조사 대상 사고누적지점명* 교통사고 원인조사 대상 사고누적지점 : 교차로 후방 150m 이내에서 사망사고가 3건 이상이거나 중상이상사고가 10건 이상 발생한 지점'
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 광화문 앞 삼거리
+        - 공평아트센터 앞 사거리
+        - 안국동사거리
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        unique: 239
+    - name: basic_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+        - 송파구
+        - 동대문구
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        unique: 25
+    - name: ocrn_nocs
+      title: 해당 지점에서 발생한 사고 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '10'
+        - '11'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 3
+        p50: 12
+        max: 24
+        unique: 16
+    - name: row_num
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /T_OD_ACDNT_CMPNT_BRN_INFO
+      stats:
+        min: 1
+        p50: 120
+        max: 239
+        unique: 239
+    - name: prptr_sexdstn
+      title: '가해운전자 성별 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 여
+        - 남
+        - '-'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 3
+    - name: crtr_yr
+      title: 교통사고원인조사 기준년도-기준년도 포함 과거 3년간의 교통사고 데이터를 포함
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 2023
+        p50: 2023
+        max: 2023
+        unique: 1
+    - name: mtrpl_lcgv_nm
+      title: 교통사고 발생 지점 법정동 시도에 해당하는 주소 예) 서울, 세종, 경북, 전북, 제주(O)서울특별시(X), 제주도(X), 세종특별자치시(X)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: acdnt_sclsf
+      title: 사고 유형 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 차대차-기타
+        - 측면직각충돌
+        - 정면충돌
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 3
+    - name: acdnt_plc
+      title: 사고 발생장소 상세
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강남구 대치동 학여울역 사거리
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: prptr_vhtyp
+      title: '가해운전자가 탑승한 차량의 종류 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+        - 이륜
+        - 기타
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 3
+    - name: prptr_vhusg
+      title: '가해운전자가 탑승한 차량의 용도(사업용/비사업용)* 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 비사업용
+        - '-'
+        - 사업용
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 3
+    - name: row_num
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 1
+        p50: 5.5
+        max: 10
+        unique: 10
+    - name: sufrer_vhtyp
+      title: '피해자 차량 종류 * 피해자 : 가해운전자 이외의 교통사고 관련자, 보행자 포함'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 승용
+        - 이륜
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 2
+    - name: acdnt_tm
+      title: 사고 발생 시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '08'
+        - '15'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 0
+        p50: 12
+        max: 22
+        unique: 8
+    - name: dcsd_cnt
+      title: '사망자 수 '
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: acdnt_grd
+      title: 사고등급 * 사망사고, 중상사고,경상사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중상사고
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: road_type
+      title: 도로종류* 사고발생  지점 도로종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 특별광역시도
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: acdnt_frm
+      title: 사고 형태* 단독사고, 진출회전사고, 진입회전사고, 보행횡단사고, 주정차사고, 일직선사고, 기타사고
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 진입회전사고
+        - 기타사고
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 2
+    - name: wrvhl_vltn
+      title: 가해차량 법규위반사항
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신호위반
+        - 안전운전불이행
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 2
+    - name: wthr_stts
+      title: 사고발생 일의 기상상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 맑음
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: acdnt_dt
+      title: 사고 발생 일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '29'
+        - '08'
+        - '13'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 4
+        p50: 19.5
+        max: 29
+        unique: 10
+    - name: prptr_drnkn
+      title: '가해운전자 음주 여부 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 아니요
+        - 예
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 2
+    - name: prptr_nmyex
+      title: '가해운전자 경력년수 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 15년이상
+        - 15년미만
+        - 10년미만
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 4
+    - name: plc_nm
+      title: '교통사고 원인조사 대상 사고누적지점명* 교통사고 원인조사 대상 사고누적지점 : 교차로 후방 150m 이내에서 사망사고가 3건 이상이거나 중상이상사고가 10건 이상 발생한 지점'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 학여울역 사거리
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: min_inry_cnt
+      title: 경상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 3
+    - name: acdnt_dw
+      title: 사고 발생 요일
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 화요일
+        - 목요일
+        - 월요일
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 5
+    - name: basic_lcgv_nm
+      title: 교통사고 발생 구간 법정동 시군구명에 해당하는 주소 예) 서울특별시중구(X), 중구(0)단, 세종특별자치시와 같이 하위 시군구가 없는 광역지자체명과 동일하게 세종으로  표시
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: acdnt_octm
+      title: 사고발생시간대* 새벽(05~06시), 출퇴근(07~08, 18~20시), 주간(09~17시), 심야(21~04)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주간(09~17)
+        - 심야시간대(21~04)
+        - 출·퇴근시간대(07~08,18~20)
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 3
+    - name: acdnt_lclsf
+      title: 사고유형(대분류)* 차대사람, 차대차, 차량단독, 건널목
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 차대차
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 1
+    - name: srs_inry_cnt
+      title: 중상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: inry_cnt
+      title: 부상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: acdnt_yr
+      title: 사고 발생 년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2022'
+        - '2021'
+        - '2023'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 2021
+        p50: 2022
+        max: 2023
+        unique: 3
+    - name: acdnt_mm
+      title: 사고 발생 월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '01'
+        - '11'
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        min: 1
+        p50: 8.5
+        max: 12
+        unique: 7
+    - name: prptr_age
+      title: '가해운전자 연령 * 가해운전자 : 교통사고에 관계한 사람 가운데 과실이 무거운 쪽, 동일 과실일 경우 피해가 가벼운 쪽'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 60세
+        - 31세
+        - 66세
+      op: /T_OD_ACDNT_CMPNT_ACDNT_INFO
+      stats:
+        unique: 9
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7116
+  rank_in_sector: 359
+  brm: 교통물류 - 도로
+  why: 사고누적지점 좌표·상세 현황, 유사 서비스와 인접
+claims:
+  - id: c-15124951-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15124951.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15124951.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15124951-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124951-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124951.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 40개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124951-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15124951.json
+        observed_at: '2026-10-03'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15124951-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124951-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124951-08
+    kind: admin_note
+    value: wave3 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-03'
+  channel: portal
+  rows: 0
+  ops_ok: 2/2
+  latency_ms: 337
+  run: probe/runs/15124951.json
+  stats: probe/stats/15124951.json
+  data: probe/data/15124951/
+status: active
+summary_user: 교통사고원인조사 대상으로 선정된 사고누적지점(과거 3년간 교차로 후방 150m 이내 사망사고 3건 이상 또는 중상이상사고 10건 이상)의 지점 목록과 지점별 개별 사고 상세(사고 일시·유형·등급·가해운전자 특성·기상 등)를 전국 범위로 담는다. 지자체 교통안전 담당자나 분석가가 "우리 시군구에서 원인조사 대상이 된 사고누적지점은 어디이고, 그곳 사고는 주로 어떤 형태·시간대에 나는가"를 확인하는 데 쓴다. 전역 조인 키는 없어 시도·시군구명(약칭 표기)과 지점명으로 다른 사고 통계와 이름 매칭하거나, 좌표(EPSG:5181)로 도로교통공단 다발지역 공간 자료와 공간 결합한다.
+limits: 검증 호출에서 0행이 수신돼 실제 응답 내용·규모는 확인되지 않았으며, 기준년도·지자체 조회조건을 맞춰 호출해야 한다. 공통 코드 키가 없어 시도명이 '서울·경북'처럼 약칭으로 표기되는 점을 감안해 이름 매핑이 필요하다. 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15124951-01
+    - c-15124951-03
+    - c-15124951-04
+    - c-15124951-06
+  dropped_citations: 0

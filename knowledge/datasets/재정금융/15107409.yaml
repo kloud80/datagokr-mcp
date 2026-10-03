@@ -1,7 +1,6 @@
-# Dataset 15107409 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+# Dataset 15107409 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15107409'
-tier: candidate
+tier: verified
 title: 행정안전부_통계연보_지역별·세목별 지방세 규모
 sector: 재정금융/세제/regional-tax
 agency:
@@ -16,6 +15,13 @@ synonyms:
   - 세목별
   - 현년도
   - 과년도
+  - 지방세 세수
+  - 시도별 지방세
+  - 세목별 세입
+  - 지방재정 통계
+  - 행정안전 통계연보
+  - 취득세 지방소득세 규모
+  - 지역 세수 비교
 description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방재정' 중 '지방세', '지역별·세목별 지방세 규모'에 관한 통계입니다. 서울, 부산, 대구, 인천, 광주, 대전 등을 기준으로 지역별·세목별 지방세 규모를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
 team:
   dept: 데이터정보화담당관
@@ -46,10 +52,25 @@ services:
     traffic:
       dev: 10000
     format:
-      - xml
+      - json
     error_style: http200_body_code
-    verified_ok: false
-schema: {}
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 428}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RES"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '1998', 'seq': 1, 'cls': '계', 'tot': '171497', 'seoul': '49444', "
+      stats:
+        unique: 1
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -66,12 +87,12 @@ classification:
 claims:
   - id: c-15107409-01
     kind: access
-    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
     evidence:
       - type: measured
         source: probe/runs/15107409.json
-        observed_at: '2026-09-30'
-        detail: ops_ok 0/1
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
       - type: measured
         source: probe/apply/15107409.json
         observed_at: '2026-09-30'
@@ -82,7 +103,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15107409-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -93,33 +114,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15107409-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15107409.json
-        observed_at: '2026-09-30'
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15107409-04
     kind: coverage
     value: 검증 수신 0행 · 범위 전국 · 행정단위 전국·비공간
     evidence:
       - type: measured
         source: probe/runs/15107409.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-03'
         detail: total None, rows 0
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15107409-06
     kind: admin_note
     value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
@@ -142,26 +163,39 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-  - id: c-15107409-10
-    kind: pitfall
-    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getAmountTaxByRegiTaxCategory'
+  - id: c-15107409-08
+    kind: admin_note
+    value: ' · 파라미터 자동 수리'
     evidence:
       - type: measured
-        source: probe/runs/15107409.json
-        observed_at: '2026-09-30'
-        detail: ok=false
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
 verification:
-  verdict: 승인대기
-  probed_at: '2026-09-30'
+  verdict: 성공(승인대기)
+  probed_at: '2026-10-03'
   channel: portal
   rows: 0
-  ops_ok: 0/1
+  ops_ok: 1/1
   latency_ms: 51
   run: probe/runs/15107409.json
   stats: probe/stats/15107409.json
   data: probe/data/15107409/
 status: active
+summary_user: 행정안전 통계연보 '지방재정-지방세' 편에 실린 지역별·세목별 지방세 규모를 담은 집계 통계로, 서울·부산 등 지역을 기준으로 세목별 금액을 제공한다. 지역 분석가나 연구자가 "우리 시도의 지방세는 어떤 세목 중심으로 걷히고 다른 지역과 규모가 어떻게 다른가"를 비교할 때 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 시도·시군구 지역 지표와는 지역 이름 매핑으로 이어 쓴다.
+limits: 검증 호출에서 수신된 행이 0건이라 실제 응답 구조와 수록 연도 범위를 아직 확인하지 못했다. 표준 지역코드 같은 조인 키가 없어 지역명 표기를 직접 맞춰야 한다. 포털 활용신청 승인 후 serviceKey로 호출하며 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15107409-01
+    - c-15107409-03
+    - c-15107409-04
+    - c-15107409-06
+    - c-15107409-07
+  dropped_citations: 0

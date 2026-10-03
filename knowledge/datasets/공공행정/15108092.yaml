@@ -1,7 +1,6 @@
-# Dataset 15108092 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+# Dataset 15108092 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15108092'
-tier: candidate
+tier: verified
 title: 행정안전부_도로명별 주민등록 인구 및 세대현황
 sector: 공공행정/지방행정·재정지원/population-registry
 agency:
@@ -16,6 +15,13 @@ synonyms:
   - 세대수
   - 주민등록
   - 주민등록통계
+  - 도로명 인구
+  - 도로명별 세대수
+  - 주민등록 인구통계
+  - 도로별 인구현황
+  - 세대당 인구
+  - 남녀 성비
+  - 월별 인구 집계
 description_portal: 시군구 행정기관과 통계년월을 기준으로 시도명, 시군구명, 도로명, 총인구수, 세대수, 세대당 인구, 남자인구수, 여자인구수, 남녀비율을 조회하기 위한 서비스입니다.주민등록 데이터는 통계의 기본이 되는 인구 데이터로써, 주민의 신고에 따라 주민등록법 제6조의 규정에 근거하여 개인·세대별 주민등록표를 기반으로 매월 말일 집계하고 있으며 거주자, 거주불명자, 재외국민을 포함하고 있습니다.활용가치가 큰 주민등록 데이터의 제공 단위를 통반 단위, 도로명 등으로 확대하여 오픈API 방식으로 제공함으로써, 주민등록 데이터를 활용한 국가정책수립, 민간·공공서비스 개발, 창업 지원 및 일자리 창출 등 다양한 분야의 디지털 전환 및 국민 삶의 질 향상에 기여할 목적으로 작성되었습니다.
 team:
   dept: 주민과
@@ -68,8 +74,126 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
-schema: {}
+    verified_ok: true
+schema:
+  fields:
+    - name: hhCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '7'
+        - '23'
+      stats:
+        min: 1
+        p50: 72
+        max: 1842
+        unique: 140
+    - name: ctpvNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      stats:
+        unique: 1
+    - name: maleNmprCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '5'
+        - '1'
+      stats:
+        min: 0
+        p50: 63.5
+        max: 2011
+        unique: 131
+    - name: roadNmCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '111102100001'
+        - '111102100002'
+        - '111103000008'
+      stats:
+        min: 111102100001
+        p50: 111104100074.5
+        max: 111104100177
+        unique: 200
+    - name: sggNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+      stats:
+        unique: 1
+    - name: hhNmpr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '1.5'
+        - '1.62'
+      stats:
+        min: 1
+        p50: 1.68
+        max: 3.17
+        unique: 110
+    - name: femlNmprCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '24'
+        - '5'
+      stats:
+        min: 0
+        p50: 64
+        max: 2357
+        unique: 129
+    - name: maleFemlRate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '0.84'
+        - '0.86'
+      stats:
+        min: 0
+        p50: 0.95
+        max: 8
+        unique: 97
+    - name: roadNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 삼일대로
+        - 필운대로
+        - 통일로
+      stats:
+        unique: 200
+    - name: totNmprCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '21'
+        - '72'
+      stats:
+        min: 1
+        p50: 128.5
+        max: 4368
+        unique: 160
+    - name: statsYm
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202609'
+      stats:
+        min: 202609
+        p50: 202609
+        max: 202609
+        unique: 1
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -87,12 +211,12 @@ classification:
 claims:
   - id: c-15108092-01
     kind: access
-    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
     evidence:
       - type: measured
         source: probe/runs/15108092.json
-        observed_at: '2026-09-30'
-        detail: ops_ok 0/1
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
       - type: measured
         source: probe/apply/15108092.json
         observed_at: '2026-09-30'
@@ -103,7 +227,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15108092-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -114,33 +238,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15108092-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15108092.json
-        observed_at: '2026-09-30'
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-03'
+        detail: 컬럼 11개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15108092-04
     kind: coverage
     value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
     evidence:
       - type: measured
         source: probe/runs/15108092.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-03'
         detail: total None, rows 0
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15108092-06
     kind: admin_note
     value: "세부 부문 '주민등록 인구·세대'의 가치: 행정동·법정동·통반 × 월 시계열. 집계지만 공간 결합의 기본 축 (구름 \"집계여도 주요 데이터\")"
@@ -163,26 +287,38 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-  - id: c-15108092-10
-    kind: pitfall
-    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /selectRnPpltnHhStus'
+  - id: c-15108092-08
+    kind: admin_note
+    value: ' · 파라미터 자동 수리'
     evidence:
       - type: measured
-        source: probe/runs/15108092.json
-        observed_at: '2026-09-30'
-        detail: ok=false
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
 verification:
-  verdict: 응답0행
-  probed_at: '2026-09-30'
+  verdict: 성공(응답0행)
+  probed_at: '2026-10-03'
   channel: portal
   rows: 0
-  ops_ok: 0/1
+  ops_ok: 1/1
   latency_ms: 225
   run: probe/runs/15108092.json
   stats: probe/stats/15108092.json
   data: probe/data/15108092/
 status: active
+summary_user: 행정안전부 주민등록 자료를 시군구와 통계년월 기준으로 도로명별 총인구·세대수·세대당 인구·남녀 인구와 성비로 집계해 담는다(거주자·거주불명자·재외국민 포함, 범위 전국). 분석가나 사업자가 '이 도로명 주소 일대의 인구와 세대 규모가 월별로 어떻게 바뀌었나'를 확인하는 데 쓴다. 실측에서 전역 조인 키는 확인되지 않았으므로, 다른 데이터와는 시도·시군구명, 도로명, 도로명코드(roadNmCd) 같은 이름·코드 매핑으로 잇고, 월 시계열은 통계년월로 맞춘다.
+limits: 검증 호출에서 받은 행이 0건이라 실제 응답 내용과 규모는 확인되지 않았고, 이를 근거로 데이터가 없거나 오래됐다고 단정하지 않는다. 공통 조인 키가 없어 이름·코드 매핑으로만 연결해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15108092-01
+    - c-15108092-03
+    - c-15108092-04
+    - c-15108092-06
+  dropped_citations: 0

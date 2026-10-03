@@ -1,0 +1,461 @@
+# Dataset 15108275 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15108275'
+tier: verified
+title: 한국조폐공사_지류_가맹점기본정보
+sector: 재정금융/재정·금융/local-currency
+agency:
+  id: B190001
+  name: 한국조폐공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108275/openapi.do
+synonyms:
+  - 지역화폐
+  - 가맹점
+  - 상품권가맹점
+  - 지역사랑상품권
+  - 지류상품권
+  - 지역화폐 가맹점
+  - 종이 상품권 가맹점
+  - 지역사랑상품권 사용처
+  - 온누리 지역상품권 가게
+  - 지역상품권 가맹점 위치
+  - 소상공인 가맹점 목록
+description_portal: '지역사랑상품권 운영대행사들로부터 수집한 데이터로,지류 가맹점에 대한 가맹점명, 대표전화번호, 주소, 위경도, 사업자 상태, 표준산업분류코드 등을 제공한다.아래는 데이터 사용시 참고바랍니다:1) 제공기관코드:코나아이: I0000001한국간편결제진흥원: I0000002신한카드: I0000003한국조폐공사: I0000004KT: I0000005농협은행: I0000006광주은행: I0000007대구은행: I0000008ITS&G: I0000009NICE 정보통신: I0000010KIS 정보통신: I0000011인조이웍스: I0000012부산은행: I0000014비즈플레이:I00000152) 사용처지역코드(5자리):- 행정안전부에서 제공하는 법정동코드(지역코드 10자리) 중, 앞 5자리(시도코드 2자리 + 시군구코드 3자리)를 사용하고 있습니다.- 코드 정보는 참고문서를 확인바랍니다.3) 읍면동코드(8자리):- 행정안전부에서 제공하는 법정동코드(지역코드 10자리)의 앞 8자리(시도 코드 2자리 + 시군구 코드 3자리 + 읍면동 코드 3자리)를 사용하고 있습니다.- 법정동코드는 행정안전부_행정표준코드_법정동코드 API(https://www.data.go.kr/data/15077871/openapi.do)를 활용하여 조회할 수 있습니다.'
+team:
+  dept: 지급결제운영부
+services:
+  - op: /paperV4
+    name: 지류_가맹점정보
+    endpoint: https://apis.data.go.kr/B190001/paperFranchisesV4/paperV4
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: perPage
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: cond[pvsn_inst_cd::EQ]
+        required: false
+        example: I0000004
+        desc: 제공기관코드
+      - name: cond[crtr_ymd::EQ]
+        required: false
+        example: '20230502'
+        desc: 기준일자(yyyymmdd)
+      - name: cond[emd_cd::EQ]
+        required: false
+        example: '11680108'
+        desc: 읍면동코드(법정동코드중 앞8자리)
+      - name: returnType
+        required: false
+        example: JSON
+        desc: 응답 데이터 포맷설정(JSON 또는 XML, default:"JSON")
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: alt_text
+      title: 개방용으로 생성되는 가맹점 구분값
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0012845a4582d373bd84e6566bdd29f0
+        - 0015492da8ed096476d7f7ef1e0ee4b4
+        - 001da2ee6467e94dd55c098dec08a019
+      stats:
+        unique: 100
+    - name: bk_awa_perf_hd_yn
+      title: 도서 및 공연 취급여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: brno
+      title: 사업자등록번호
+      type: number
+      semantic_type: bizno
+      null_rate: 0.0
+      sample_values:
+        - '8965800305'
+        - '4011177163'
+        - '3322000827'
+      stats:
+        min: 1376700284
+        p50: 4010932786.5
+        max: 8968600521
+        unique: 100
+    - name: bzmn_stts
+      title: '사업자상태코드 (사업자 상태, 01: 계속사업자,  02: 휴업자,  03: 폐업자)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+    - name: bzmn_stts_nm
+      title: 사업자상태코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 계속사업자
+        - 폐업자
+      stats:
+        unique: 2
+    - name: crtr_ymd
+      title: 제공기관 가맹점 정보 생성, 변경, 해지 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20190829'
+      stats:
+        min: 20190829
+        p50: 20190829
+        max: 20190829
+        unique: 1
+    - name: emd_cd
+      title: 읍면동코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '52130144'
+        - '52130141'
+        - '52130134'
+      stats:
+        min: 52130000
+        p50: 52130141
+        max: 52130400
+        unique: 35
+    - name: emd_nm
+      title: 읍면동명
+      type: code
+      null_rate: 0.03
+      sample_values:
+        - 나운동
+        - 수송동
+        - 조촌동
+      stats:
+        unique: 34
+    - name: frcs_addr
+      title: 가맹점주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 전북특별자치도 군산시 하포로 29(수송동)
+        - 전북특별자치도 군산시 계산로 71(지곡동, 지곡 쌍용 예가)
+        - 전북특별자치도 군산시 백토로 117(나운동, 군산나운주공5단지아파트)
+      stats:
+        unique: 99
+    - name: frcs_dtl_addr
+      title: 가맹점상세주소
+      type: code
+      null_rate: 0.95
+      sample_values:
+        - 상가동 104호
+        - 4층 401호
+        - 2층 203, 204, 205호
+      stats:
+        unique: 5
+    - name: frcs_nm
+      title: 가맹점명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 좋은날
+        - 재호유통
+        - 비노짐킥복싱
+      stats:
+        unique: 100
+    - name: frcs_reg_se
+      title: '01: 신규 02: 변경 03: 해지'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '02'
+        - '01'
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 2
+    - name: frcs_reg_se_nm
+      title: '코드에 해당하는 명칭:  신규, 변경, 해제'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 변경
+        - 신규
+      stats:
+        unique: 2
+    - name: frcs_rprs_telno
+      title: 가맹점대표전화번호
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: frcs_zip
+      title: 가맹점우편번호(- 없는 연속된 숫자)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '54029'
+        - '54077'
+        - '54140'
+      stats:
+        min: 54000
+        p50: 54077
+        max: 54176
+        unique: 74
+    - name: ksic_cd
+      title: 표준산업분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '470'
+        - '560'
+        - '960'
+      stats:
+        min: 100
+        p50: 470
+        max: 960
+        unique: 6
+    - name: ksic_cd_nm
+      title: 표준산업분류코드명(한국표준산업분류코드 중분류설명)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 소매업; 자동차 제외
+        - 음식점 및 주점업
+        - 기타 개인 서비스업
+      stats:
+        unique: 6
+    - name: lat
+      title: 위도(가맹점주소에 해당하는 위도값)
+      type: number
+      null_rate: 0.03
+      sample_values:
+        - '35.956501087'
+        - '35.9529217486'
+        - '35.9682396598'
+      stats:
+        min: 35.8013668022
+        p50: 35.9699079823
+        max: 35.99398528
+        unique: 96
+    - name: lot
+      title: 경도(가맹점주소에 해당하는 경도값)
+      type: number
+      null_rate: 0.03
+      sample_values:
+        - '126.7238269324'
+        - '126.7120602028'
+        - '126.708349391'
+      stats:
+        min: 126.4382081805
+        p50: 126.7135678723
+        max: 126.8777904304
+        unique: 96
+    - name: onl_dlvy_ent_use_yn
+      title: 온라인 배달업체 사용여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: pos_use_yn
+      title: POS 사용여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ppr_frcs_aply_yn
+      title: 지류가맹점 신청여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: pvsn_inst_cd
+      title: 제공기관(운영대행사)코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - I0000004
+      stats:
+        unique: 1
+    - name: qr_reg_conm
+      title: QR 등록 상호명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: sale_base_excs_frcs_yn
+      title: 매출기준초과 가맹점여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: te_gds_hd_yn
+      title: 면세상품취급여부
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: usage_rgn_cd
+      title: 사용처지역코드(- 제외 숫자 5자리)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '52130'
+      stats:
+        min: 52130
+        p50: 52130
+        max: 52130
+        unique: 1
+  foreign_keys:
+    - fields:
+        - brno
+      reference:
+        key: bizno
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9201
+  rank_in_sector: 2
+  brm: 재정금융 - 재정·금융
+  why: 지류 가맹점 원장, 좌표·사업자 포함
+claims:
+  - id: c-15108275-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15108275.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15108275.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15108275-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108275-03
+    kind: key
+    value: '실측 조인 키: bizno(brno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15108275.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 27개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108275-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15108275.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15108275-06
+    kind: admin_note
+    value: "세부 부문 '지역사랑상품권 가맹점 (조폐공사 통합·지류·모바일·카드, 지자체 지역화폐 가맹점)'의 가치: 가맹점 = 지역 소상공인 사업장 목록(주소·업종), 지역 상권과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#local-currency
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15108275-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108275-08
+    kind: admin_note
+    value: wave4 나머지 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15108275.json
+  stats: probe/stats/15108275.json
+  data: probe/data/15108275/
+status: active
+summary_user: 지역사랑상품권 운영대행사들에서 모은 지류(종이) 상품권 가맹점을 가맹점 한 곳 단위로 담으며, 가맹점명·주소·위경도·대표전화·사업자 상태·업종(표준산업분류 중분류)과 신규·변경·해지 구분을 전국 범위로 제공한다. 주민이 우리 동네에서 종이 지역상품권을 받는 가게를 찾거나, 분석가가 시군구별 가맹 소상공인 업종 분포와 상권을 살피는 데 쓴다. 사업자등록번호(brno)로 다른 사업자 데이터와 잇고, 사용처지역코드(5자리)·읍면동코드(8자리)는 법정동코드 앞자리이므로 행정안전부 법정동코드와 맞춰 지역 통계와 붙인다.
+limits: 가맹점 목록일 뿐 상품권 발행액·사용액 같은 거래 실적은 담지 않는다. 사업자 상태와 등록 구분(해지 포함)이 섞여 있어 현재 영업 중인 가맹점만 보려면 걸러 써야 하고, 여러 운영대행사 데이터를 모은 것이라 제공기관코드로 출처를 구분해 해석해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15108275-03
+    - c-15108275-04
+    - c-15108275-06
+  dropped_citations: 0

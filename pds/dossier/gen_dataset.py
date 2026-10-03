@@ -220,6 +220,12 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
                "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
         issuer = {"www.vworld.kr": "vworld.kr", "www.law.go.kr": "open.law.go.kr", "openapi.seoul.go.kr:8088": "data.seoul.go.kr"}.get(site, site)
         for o in run.get("ops") or []:
+            if str(o.get("op") or "").startswith("vworld 다운로드"):  # pds/probe/vworld_files — 로그인 후 시도별 파일 (키 아님)
+                fmt = str(o["op"]).split()[-1].lower()
+                out.append({"op": "download", "name": f"공간정보 다운로드 ({o.get('file') or fmt})", "endpoint": run.get("link"),
+                            "method": "GET", "security": {"scheme": "session", "in": "header", "name": "브이월드 로그인", "issuer": "vworld.kr"},
+                            "approval": "external", "format": [fmt], "verified_ok": bool(o.get("ok"))})
+                continue
             if not o.get("url"):
                 continue
             out.append({"op": o.get("op"), "name": o.get("op"), "endpoint": o["url"], "method": "GET", "security": sec | {"issuer": issuer},

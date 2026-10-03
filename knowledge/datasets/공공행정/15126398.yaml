@@ -1,0 +1,280 @@
+# Dataset 15126398 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15126398'
+tier: verified
+title: 한국자산관리공사_체납 압류재산 공매 용도별 지역별 낙찰가율 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15126398/openapi.do
+synonyms:
+  - 압류재산
+  - 용도별
+  - 낙찰가율
+  - 지역별
+  - 감정가격
+  - 낙찰가격
+  - 공매 낙찰가율
+  - 온비드 공매 통계
+  - 압류재산 공매
+  - 캠코 낙찰가율
+  - 감정가 대비 낙찰가
+  - 체납재산 매각 실적
+  - 지역별 공매 낙찰률
+description_portal: 체납으로 압류된 재산의 공매 결과를 분석한 자료로, 감정가격 대비 실제 낙찰가격의 비율인 '낙찰가율' 데이터를 제공합니다. 본 자료는 최근 1년간의 낙찰일 기준 데이터를 기반으로 하며, 재산의 용도(주거용 건물, 근린생활시설, 토지 등) 및 지역(서울, 경기, 부산 등)별로 구분해 제공됩니다. 낙찰가율은 공매 시장의 활황 또는 침체 여부를 판단할 수 있는 핵심 지표이자, 부동산 경기를 가늠해볼 수 있는 참고 자료로 활용됩니다. 또한, 체납재산이 실제로 어느 수준에서 매각되었는지, 얼마나 효율적으로 회수되었는지를 한 눈에 파악할 수 있는 유용한 지표이기도 합니다.
+team:
+  dept: 조세채권관리처
+services:
+  - op: /scfbPrcRto
+    name: 체납 압류재산 낙찰가율
+    endpoint: https://apis.data.go.kr/B010003/szrPrptPbctPbct/scfbPrcRto
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 호출방식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CRTR_YMD
+      title: 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261002'
+      stats:
+        min: 20261002
+        p50: 20261002
+        max: 20261002
+        unique: 1
+    - name: SDNM
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 충청남도
+        - 경상북도
+      stats:
+        unique: 18
+    - name: SGGNM
+      title: 시군구명
+      type: string
+      null_rate: 0.014
+      sample_values:
+        - 제주시
+        - 화성시
+        - 당진시
+      stats:
+        unique: 203
+    - name: PRPT_ITEM_NM
+      title: 재산항목명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임야
+        - 전
+        - 출자증권
+      stats:
+        unique: 48
+    - name: SCFB_YR
+      title: 낙찰연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2025
+        unique: 1
+    - name: SCFB_MT
+      title: 낙찰월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '11'
+      stats:
+        min: 10
+        p50: 10
+        max: 11
+        unique: 2
+    - name: APSL_EVL_AMT
+      title: 감정평가금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '166000000'
+        - '49000000'
+        - '130000000'
+      stats:
+        min: 946697
+        p50: 37020000
+        max: 113727240000
+        unique: 906
+    - name: DSPL_AMT
+      title: 매각금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35039000'
+        - '33950000'
+        - '2500000'
+      stats:
+        min: 501000
+        p50: 12200000
+        max: 25521000000
+        unique: 898
+    - name: SCFB_PRC_RTO
+      title: 낙찰가격비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10.0'
+        - '15.1'
+        - '80.0'
+      stats:
+        min: 0.25
+        p50: 34.44
+        max: 323.6
+        unique: 853
+coverage:
+  spatial: 전국
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6286
+  rank_in_sector: 58
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 시군구·월별 용도별 낙찰가율 지역 연결 가능
+claims:
+  - id: c-15126398-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15126398.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15126398.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15126398-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126398-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126398.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126398-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15126398.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126398-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126398-07
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15126398.json
+  stats: probe/stats/15126398.json
+  data: probe/data/15126398/
+status: active
+summary_user: 체납으로 압류된 재산의 공매 결과를 낙찰연도·낙찰월, 시도·시군구, 재산 용도(재산항목명)별로 묶어 감정평가금액·매각금액과 감정가 대비 낙찰가 비율(낙찰가율)을 담은 집계 자료로, 범위는 전국 시군구 단위다. 투자자나 부동산 분석가가 "최근 1년간 서울 주거용 건물 공매는 감정가의 몇 % 수준에서 낙찰됐나" 같은 질문으로 지역·용도별 공매 시장 흐름을 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도명·시군구명 같은 이름 매핑이나 같은 기관(한국자산관리공사) 자료 기준으로만 이어 쓴다.
+limits: 개별 물건 단위가 아닌 용도·지역별 집계이므로 특정 공매 물건의 낙찰 내역은 알 수 없다. 행정코드 등 공통 조인 키가 없어 다른 지역 통계와 연결하려면 시도·시군구 이름을 코드로 직접 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15126398-03
+    - c-15126398-04
+  dropped_citations: 0

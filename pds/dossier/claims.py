@@ -162,8 +162,13 @@ def make(rec: dict, target: dict, run: dict, apply: dict | None, catalog_row) ->
     if rec["channel"] == "external":
         iss = next((s["security"]["issuer"] for s in svcs), None) or "외부 사이트"
         sec = next((s["security"] for s in svcs), {})
-        val = (f"외부 사이트 {iss} 인증키 필요 ({sec.get('in', '?')} 파라미터 {sec.get('name', '?')}) — 포털 활용신청과 별개. "
-               f"{ver.get('probed_at')} 실호출 {ver.get('ops_ok') or ''} 성공")
+        if sec.get("scheme") == "session":  # 브이월드 공간정보 다운로드 — 키 없이 로그인만
+            fm = ", ".join(next((s.get("format") for s in svcs), []) or []).upper()
+            val = (f"{iss} 로그인 후 공간정보 다운로드 페이지에서 시도별 파일({fm}) — 인증키 불필요, 포털 활용신청과 별개. "
+                   f"{ver.get('probed_at')} 한 시도 파일 다운로드·파싱 성공")
+        else:
+            val = (f"외부 사이트 {iss} 인증키 필요 ({sec.get('in', '?')} 파라미터 {sec.get('name', '?')}) — 포털 활용신청과 별개. "
+                   f"{ver.get('probed_at')} 실호출 {ver.get('ops_ok') or ''} 성공")
         ev = [_ev_measured(run_src, observed, f"ops_ok {ver.get('ops_ok')}"),
               {"type": "admin_review", "source": "knowledge/key_issuers.yaml", "by": "구름", "detail": f"발급처 {iss}"}]
     elif rec["kind"] in ("FILE", "STD") and rec.get("distributions"):

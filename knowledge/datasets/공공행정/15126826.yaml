@@ -1,0 +1,246 @@
+# Dataset 15126826 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15126826'
+tier: verified
+title: 한국자산관리공사_수탁 비업무용 자산 매각정보 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15126826/openapi.do
+synonyms:
+  - 수탁재산
+  - 비업무용자산
+  - 부동산
+  - 온비드
+  - 공매
+  - 금융기관
+  - 공공기관
+  - 저축은행
+  - 캠코 수탁재산 공매
+  - 온비드 공매 물건
+  - 비업무용 부동산 매각
+  - 금융기관 위탁 부동산
+  - 공매 최저가
+  - 수탁재산 매각 목록
+description_portal: 한국자산관리공사 설립 등에 관한 법률(제2조1호, 26조 제1항제2호) 및 한국자산관리공사 설립 등에 관한 법률 시행령에 따라 한국자산관리공사는 한국자산관리공사법상 기재되어 있는 금융기관등(은행, 저축은행, 신용협동조합 등), 각종 공공기관(공단, 공사 등)으로부터 부동산 매각을 위탁받아 온비드에서 수탁재산 공매 매각 업무를 진행하고 있습니다.(포함정보) 현재 한국자산관리공사에서 수탁재산 공매를 진행하고 있는 금융기관, 공공기관의 목록(위임기관), 물건의 소재지(주소), 공매를 진행한 일시(공고월)이 포함되어 있습니다.
+team:
+  dept: AI데이터팀
+services:
+  - op: /dsplInf
+    name: 위탁 매각 재산 정보
+    endpoint: https://apis.data.go.kr/B010003/kamcoTrstNbppDspl/dsplInf
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 호출방식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CRTR_YMD
+      title: 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260930'
+      stats:
+        min: 20260930
+        p50: 20260930
+        max: 20260930
+        unique: 1
+    - name: PBANC_NSQ
+      title: 공고회차
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00'
+        - '01'
+        - '02'
+      stats:
+        min: 0
+        p50: 1
+        max: 30
+        unique: 20
+    - name: CLTRNO
+      title: 물건번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 1972-00002-001
+        - 1977-00003-001
+        - 1980-00008-001
+      stats:
+        unique: 1000
+    - name: DLGT_ORG_NM
+      title: 위임기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신한은행(조흥)
+        - SC은행
+        - 국민은행
+      stats:
+        unique: 40
+    - name: CLTR_ADR
+      title: 물건주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 봉모리산57외4개지역
+        - 서울특별시영등포구여의도동1-537 -538 동북빌딩 102
+        - 서울특별시영등포구여의도동1-537 -538 동북빌딩내 100
+      stats:
+        unique: 988
+    - name: LOWST_DEAL_PRC
+      title: 최저매매가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000000'
+        - '7000000'
+      stats:
+        min: 0
+        p50: 9954500
+        max: 7653486600
+        unique: 485
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6806
+  rank_in_sector: 28
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 캠코 수탁 비업무용 자산 매각 물건, 주소 포함
+claims:
+  - id: c-15126826-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15126826.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15126826.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15126826-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126826-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126826.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126826-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15126826.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126826-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126826-07
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15126826.json
+  stats: probe/stats/15126826.json
+  data: probe/data/15126826/
+status: active
+summary_user: 한국자산관리공사가 금융기관·공공기관으로부터 매각을 위탁받아 온비드 공매에 부친 비업무용 부동산을 물건별로 담으며, 기준일자·공고회차·물건번호·위임기관명·물건주소·최저매매가격을 전국 범위의 개별 주소 단위로 제공한다. 공매 투자를 검토하는 개인·사업자가 특정 지역에 어떤 은행·공단이 내놓은 수탁 부동산이 얼마의 최저가로 나와 있는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 물건주소(CLTR_ADR)를 주소·지번 매칭하거나 위임기관명을 이름으로 맞춰 연결해야 한다.
+limits: 공통 조인 키가 없어 국유재산 PNU나 행정표준코드와 바로 결합되지 않으며, 주소 문자열 정제·매칭을 거쳐야 한다. 개발계정은 일 10,000회 호출 한도가 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15126826-01
+    - c-15126826-03
+    - c-15126826-04
+  dropped_citations: 0

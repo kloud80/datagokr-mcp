@@ -1,0 +1,193 @@
+# Dataset 15091910 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15091910'
+tier: verified
+title: 공정거래위원회_기업집단포털_사용 가능 공개년월 조회 서비스
+sector: 공공행정/공정거래/business-group
+agency:
+  id: '1130000'
+  name: 공정거래위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15091910/openapi.do
+synonyms:
+  - 기업집단포털
+  - 기업집단 지정
+  - 지주회사 공개
+  - 사용 가능
+  - 공개년월
+  - 기업집단 공개년월
+  - 지정년월 조회
+  - 대기업집단 지정
+  - 지주회사 공개년월
+  - 공시대상기업집단
+  - 상호출자제한기업집단
+  - 기업집단포털 API 파라미터
+description_portal: 매년 5월 1일 보도자료를 통해 공식적으로 지정된 기업집단의 사용 가능한 공개 년월에 대한 정보 조회 및 지주회사의 공개 년월에 대한 정보 조회로 기업집단포털의 기업집단 및 지주회사 정보제공 API에서 공통적으로 활용하기 위한 조회 서비스.※ 기업집단포털에서 제공 중인 API에서 공통적으로 사용하는 파라미터값인 요청년월(공개년월 또는 지정년월)에 대한 정보를 제공하는 서비스 ※ 기업집단포털에서 제공 중인 API 활용 시 해당 API를 활용하여 사용 가능한 년월을 확인 후 필요한  API 서비스를 이용하시기 바랍니다.
+team:
+  dept: 정보화담당관
+services:
+  - op: /publicYmListApi
+    endpoint: https://apis.data.go.kr/1130000/publicYmList/publicYmListApi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: othbcYm
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2007'
+        - '202605'
+        - '202505'
+      stats:
+        min: 1997
+        p50: 201757
+        max: 202606
+        unique: 43
+    - name: jobSeCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+        - '0003'
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기업집단
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6059
+  rank_in_sector: 57
+  brm: 공공행정 - 공정거래
+  sector_rule: ftc-to-fairtrade
+  why: 기업집단 API 호출에 필요한 공개년월 기준 코드
+claims:
+  - id: c-15091910-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15091910.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15091910.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15091910-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15091910-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15091910.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15091910-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15091910.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15091910-06
+    kind: admin_note
+    value: '[공정거래 · 결정] 공정위의 등록·지정·공시 4개 체인만 대상 — **기업집단 · 가맹사업 · 특수판매(통신판매·다단계·방문·후원방문·전화권유) · 상조(선불식할부)**. 나머지는 제외 (`exclusions.yaml` `ftc-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L60
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15091910-07
+    kind: admin_note
+    value: '[공정거래 · 이유] 대중 수요는 셋 다 "이 사업자 믿어도 되나" — 창업 예정자(가맹 정보공개서), 소비자(통신판매·상조 등록 확인), 투자·언론(기업집단 지분·내부거래). 개방 데이터가 있는 곳도 등록·지정·공시 영역뿐이고, 네 체인 모두 **사업자등록번호·법인등록번호**로 묶인다. 하도급 실태조사·1372 상담통계·기업결합은 집계, 결정문·리콜은 사건·문서 단위라 연계 불가.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L62
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15091910-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15091910.json
+  stats: probe/stats/15091910.json
+  data: probe/data/15091910/
+status: active
+summary_user: 기업집단포털의 다른 API를 호출할 때 공통 파라미터로 쓰는 요청년월(공개년월·지정년월) 가운데 실제로 사용 가능한 년월 목록을 담는 조회 서비스로, 매년 5월 1일 지정된 기업집단과 지주회사의 공개년월(othbcYm)을 업무 구분(jobSeCode)별로 돌려준다. 기업집단 지분·내부거래 정보를 보려는 분석가·언론·투자자가 "지금 조회할 수 있는 최신 공개년월이 언제인가"를 확인한 뒤 기업집단·지주회사 정보제공 API를 부르는 데 쓴다. 실측 컬럼에 사업자등록번호 같은 전역 조인 키가 없어 다른 데이터와 직접 결합하지 않고, 받은 년월 값을 기업집단포털 다른 API의 요청 파라미터로 넘겨 이어 쓴다.
+limits: 년월 목록만 담으며 기업집단·지주회사의 실제 내용(소속회사, 지분, 내부거래)은 들어 있지 않아 다른 기업집단포털 API를 따로 호출해야 한다. 전역 조인 키가 없어 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15091910-01
+    - c-15091910-03
+    - c-15091910-07
+  dropped_citations: 0

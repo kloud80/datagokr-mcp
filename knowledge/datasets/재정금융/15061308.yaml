@@ -1,0 +1,281 @@
+# Dataset 15061308 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15061308'
+tier: verified
+title: 금융위원회_금융통계신용카드사정보
+sector: 재정금융/금융/financial-institutions
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15061308/openapi.do
+synonyms:
+  - 금융통계
+  - 신용카드
+  - 현황
+  - 재무현황
+  - 경영지표
+  - 영업활동
+  - 신용카드사
+  - 카드사 재무제표
+  - 카드사 경영지표
+  - 카드사 연체율
+  - 카드 이용금액
+  - 카드사 점유율
+  - 여신전문금융회사 통계
+  - 카드사 ROA ROE
+description_portal: '금융통계신용카드사정보는 기준년월과 카드사명을 기준으로 신용카드사의 일반현황, 재무구조, 경영성과 및 주요 영업활동 정보를 제공하는 데이터입니다. 카드사의 시장 점유율, 수익성, 건전성 등을 종합적으로 분석할 수 있습니다.이 데이터는 4개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 신용카드사 일반현황 조회 : 설립일, 본점 소재지, 카드 발급사 현황 등 카드사 기본 정보를 제공합니다.② 신용카드사 재무현황 조회 : 자산, 부채, 자기자본 등 재무상태 항목을 조회할 수 있습니다.③ 신용카드사 주요경영지표 조회 : ROA, ROE, 총자산이익률 등 경영성과 지표를 제공합니다.④ 신용카드사 주요영업활동 조회 : 이용금액, 가맹점 수, 카드대금 연체율 등 카드사 영업실적을 제공합니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getCredCardCompGeneInfo
+    endpoint: https://apis.data.go.kr/1160100/service/GetCredCardCompInfoService/getCredCardCompGeneInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basYm
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202006'
+        - '201312'
+        - '201612'
+      stats:
+        min: 200612
+        p50: 201812
+        max: 202512
+        unique: 29
+    - name: crno
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.109
+      sample_values:
+        - '1101110377203'
+        - '1101110641434'
+        - '1101110356695'
+      stats:
+        min: 1101110346901
+        p50: 1101110412926
+        max: 1101115505354
+        unique: 9
+    - name: fncoCd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '0010225'
+        - '0010226'
+        - '0010227'
+      stats:
+        unique: 11
+    - name: fncoNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 현대카드㈜
+        - 롯데카드㈜
+        - 비씨카드㈜
+      stats:
+        unique: 11
+    - name: xcsmCnt
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '7'
+        - '8'
+        - '25'
+      stats:
+        min: 0
+        p50: 263
+        max: 12449
+        unique: 297
+    - name: xcsmDcd
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - A
+        - A1
+        - A23
+      stats:
+        unique: 10
+    - name: xcsmDcdNm
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - 총임직원
+        - 임원
+        - 직원_정규직원
+      stats:
+        unique: 10
+    - name: bzopStrCnt
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '0'
+        - '3'
+        - '1'
+      stats:
+        min: 0
+        p50: 17
+        max: 300
+        unique: 84
+    - name: bzopStrDcd
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - A
+        - A1
+        - A2
+      stats:
+        unique: 8
+    - name: bzopStrDcdNm
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - 국내
+        - 국내_지점
+        - 국내_출장소
+      stats:
+        unique: 8
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.8468
+  rank_in_sector: 24
+  brm: 재정금융 - 금융
+  why: 카드사 월별 경영 통계, 회사 단위 원장 집계
+claims:
+  - id: c-15061308-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15061308.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15061308.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15061308-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15061308-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno)'
+    evidence:
+      - type: measured
+        source: probe/stats/15061308.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15061308-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15061308.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15061308-06
+    kind: admin_note
+    value: "세부 부문 '금융회사 원장 (금융회사 기본·재무·지배구조, 업권별 금융통계, 부보·영업정지·파산, 영업점)'의 가치: 금융회사 단위 원장 — 퇴직연금·금융상품의 공급자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#financial-institutions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15061308-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15061308-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15061308.json
+  stats: probe/stats/15061308.json
+  data: probe/data/15061308/
+status: active
+summary_user: 신용카드사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요경영지표·주요영업활동을 담은 업권별 금융통계로, 금융회사 단위 원장이며 범위는 전국입니다. 분석가가 "어느 카드사의 자산·자기자본 규모와 연체율이 어떻게 변해 왔나"처럼 카드사 간 수익성·건전성·시장 점유율을 비교하는 질문에 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융위원회 기업기본정보·기업재무정보 등 법인등록번호를 가진 다른 금융회사·기업 데이터와 이어 쓴다.
+limits: 실호출 검증은 오퍼레이션 1개만 성공했으므로 나머지 오퍼레이션의 응답은 따로 확인이 필요하다. 개발계정은 하루 10,000회로 제한된다. 지역 단위로 나뉘지 않는 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15061308-01
+    - c-15061308-03
+    - c-15061308-04
+    - c-15061308-06
+  dropped_citations: 0

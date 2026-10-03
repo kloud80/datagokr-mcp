@@ -1,0 +1,272 @@
+# Dataset 15160376 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15160376'
+tier: verified
+title: 한국토지주택공사_건설임대 당첨 합격점수(커트라인) 조회 서비스
+sector: 국토관리/주택/subscription
+domain: 국토관리/주택
+agency:
+  id: B552555
+  name: 한국토지주택공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15160376/openapi.do
+synonyms:
+  - 공공임대주택
+  - 건설임대
+  - 당청정보
+  - 합격점수정보
+  - 경쟁률
+  - LH 임대 커트라인
+  - 공공임대 당첨점수
+  - 국민임대 합격점수
+  - 건설임대 경쟁률
+  - 임대주택 당첨 기준
+  - LH 청약 결과
+  - 영구임대 커트라인
+description_portal: 한국토지주택공사(LH)에서 제공하는 공공임대주택 유형 중 건설임대 당첨자 합격 점수(커트라인) 조회 서비스입니다.□(주요내용) 공고명, 단지명, 시군구명, 시도명, 모집공고일을 기준으로 공고명, 공급유형, 단지명, 시도명, 시군구명, 추첨형명, 기본 임대보증금, 기본 월임대료, 당첨합격점수내용, 경쟁률, 신청유형명, 공급호수, 신청자수 등의 정보를 조회하는 기능□(조회 범위) 조회일 기준 최대 5년 범위 내의 데이터 조회 가능,  한번 조회 시 최대 1년 범위 데이터 조회 가능□ API 응답 파라미터 설명 ㅇ (커트라인) 공공임대 당첨자 선정 기준에는 정량적 기준(배점) 외에 정성적 기준도 존재하여 텍스트 형태로 커트라인 제공.    - 공급호수가 5호 미만일 경우에는 커트라인 데이터를 통해 소득 등이 특정될 수 있으므로 커트라인 데이터 미제공. (커트라인 외의 정보는 모두 제공)     - 건설임대 공급 유형 중 행복주택은 100% 추첨으로 당첨자를 선정하여 커트라인이 부존재하므로 미제공. (커트라인 외의 정보는 모두 제공)     - 다른 공급유형은 모두 커트라인 포함 데이터 제공. ㅇ (임대조건) 임대 신분과 계약시기에 따라 임대보증금과 임대료에 차이가 있음. 각 공급 유형별로 보편적이라 생각되는 자격의 임대료와 임대보증금을 제공.    - 단, 임대신분과 신청유형이 일치하는 행복주택은 신청유형별 임대료 및 임대보증금 정보 제공.    - 계약일이 아닌 모집공고일 기준 임대보증금 및 임대료 정보 제공.
+team:
+  dept: IT운영처
+services:
+  - op: /getCsrLsPwiPneScrInfo
+    name: 건설임대 당첨 합격점수 조회 서비스
+    endpoint: https://apis.data.go.kr/B552555/lhCsrLsPwiPneScrInfo/getCsrLsPwiPneScrInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: CNP_NM
+        required: true
+        desc: 시도명 - 광역시도명(정확하게 입력)
+      - name: SBD_LGO_NM
+        required: false
+        desc: 단지명 - 단지명 일부만 입력하여도 조회가능
+      - name: PAN_NM
+        required: false
+        desc: 공고명 - 공고명 일부만 입력하여도 조회가능
+      - name: SGG_NM
+        required: false
+        desc: 시군구 - 시군구명 일부만 입력하여도 조회가능
+      - name: SRCH_BGNG_YMD
+        required: false
+        desc: 조회 시작일 - 조회 시작일(모집공고일)
+      - name: SRCH_END_YMD
+        required: false
+        desc: 조회 종료일 - 조회 종료일(모집공고일)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dsSch
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'SRCH_END_YMD': '20261003', 'SRCH_BGNG_YMD': '20260903'}]"
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: resultCode
+      title: 메시지코드
+      type: number
+      null_rate: 0.5
+      sample_values:
+        - '11'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: resHeader
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'RS_DTTM': '20261003095812', 'SS_CODE': 'Y'}]"
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: resultMsg
+      title: 메시지
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - 필수값이 존재하지 않습니다.
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4148
+  rank_in_sector: 936
+  brm: 국토관리 - 주택
+  sector_rule: land-restructure-주택
+  why: LH 건설임대 당첨 커트라인 API, 시군구 단위 연결
+claims:
+  - id: c-15160376-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15160376.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15160376.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15160376-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160376-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15160376.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160376-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15160376.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15160376-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15160376-06
+    kind: admin_note
+    value: "세부 부문 '청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)'의 가치: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#subscription
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15160376-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160376-08
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160376-10
+    kind: pitfall
+    value: 필수 파라미터 CNP_NM는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15160376.json
+        observed_at: '2026-10-03'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15160376.json
+  stats: probe/stats/15160376.json
+  data: probe/data/15160376/
+status: active
+summary_user: LH 건설임대 공고별로 단지·공급유형·신청유형 단위의 당첨 합격점수(커트라인)를 담는다. 함께 담는 항목은 기본 임대보증금·월임대료, 경쟁률, 공급호수, 신청자수이며 전국 범위이다. 공공임대 청약을 준비하는 사람이 "우리 시군구 국민임대 단지는 지난 공고에서 몇 점이 커트라인이었고 경쟁률은 얼마였나"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 단지명·시도·시군구 이름 매핑이나 같은 기관(LH) 코드로만 잇는다. 필수 파라미터(CNP_NM)는 다른 데이터에서 먼저 받아 넘겨야 한다.
+limits: 필수 파라미터 CNP_NM은 다른 데이터의 코드라 먼저 조회해 넘겨야 호출된다. 포털 설명에 따르면 공급호수 5호 미만 단지와 100% 추첨인 행복주택은 커트라인이 없다. 커트라인은 정성 기준을 포함한 텍스트라 점수로 바로 비교하기 어렵다. 조회는 최근 5년, 한 번에 1년 범위까지만 된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15160376-03
+    - c-15160376-04
+    - c-15160376-10
+    - c-15160376-01
+  dropped_citations: 0

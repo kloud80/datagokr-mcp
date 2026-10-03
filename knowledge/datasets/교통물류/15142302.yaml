@@ -1,0 +1,433 @@
+# Dataset 15142302 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142302'
+tier: verified
+title: 한국해양교통안전공단_운항 스케줄 정보
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B554035
+  name: 한국해양교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142302/openapi.do
+synonyms:
+  - 연안여객선
+  - 교통정보
+  - 운항일정
+  - 여객선출항정보
+  - 출항통제정보
+  - 연안여객선 시간표
+  - 여객선 결항
+  - 배 운항 여부
+  - 여객선 운항통제
+  - 섬 배편
+  - 가보고싶은섬
+  - 카페리 출항시각
+description_portal: "해당 데이터는 한국해양교통안전공단(KOMSA)에서 국가중점데이터로 개방한 \"연안여객선 교통정보\" 관련 데이터 중 하나로공단의 운항관리 대상 연안여객선의 운항 스케줄 정보를 포함하고 있습니다.여객선명, 여객선코드, 일자, 출항시각, 출항지명, 면허항로명, 운항항로명, 통제사유, 여객정원수 등이 포함된 정보 입니다.여객선의 대중교통 편입('20.12.)에 따라 도서민, 여행객 등 여객선 이용객의 교통편의 증진을 위해 연안여객선 교통정보를 활용할 수 있습니다. * (참고)국가중점데이터: 국민, 기업 등 수요 중심으로 개방의 효과성, 시급성 등이 높은 분야를 선정하고 민간에서 활용하기 용이한 형태로 정체, 가공하여 개방된 양질의 대용량 데이터를 제공합니다."
+team:
+  dept: 해양안전실 디지털융합팀
+services:
+  - op: /get-oprt-schd-info-v2
+    name: 운항 스케줄 정보 조회
+    endpoint: https://apis.data.go.kr/B554035/oprt-schd-info-v2/get-oprt-schd-info-v2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '5'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: JSON
+        desc: 응답타입(JSON,XML)
+      - name: filters
+        required: false
+        desc: 응답에 포함할 칼럼(psnshp_cd,psnshp_nm 등)
+      - name: rlvtYmd
+        required: true
+        example: '20240101'
+        desc: 해당일자
+      - name: psnshpNm
+        required: true
+        example: 섬사랑12호
+        desc: 여객선명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rlvt_ymd
+      title: 해당일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20240101'
+      stats:
+        min: 20240101
+        p50: 20240101
+        max: 20240101
+        unique: 1
+    - name: sail_tm
+      title: 출항시각
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '730'
+        - '840'
+        - '1030'
+      stats:
+        min: 730
+        p50: 1165
+        max: 1540
+        unique: 6
+    - name: psnshp_cd
+      title: 여객선코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F67
+      stats:
+        unique: 1
+    - name: psnshp_nm
+      title: 여객선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 섬사랑12호
+      stats:
+        unique: 1
+    - name: oport_cd
+      title: 출항지코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F119
+        - F053
+      stats:
+        unique: 2
+    - name: oport_nm
+      title: 출항지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 향화
+        - 상낙월
+      stats:
+        unique: 2
+    - name: dest_cd
+      title: 도착지코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F053
+        - F119
+      stats:
+        unique: 2
+    - name: dest_nm
+      title: 도착지명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 상낙월
+        - 향화
+      stats:
+        unique: 2
+    - name: lcns_seawy_cd
+      title: 면허항로코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F33
+      stats:
+        unique: 1
+    - name: lcns_seawy_nm
+      title: 면허항로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 향화-낙월
+      stats:
+        unique: 1
+    - name: nvg_seawy_cd
+      title: 운항항로코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: nvg_seawy_nm
+      title: 운항항로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 향화낙월
+      stats:
+        unique: 1
+    - name: nvg_drc_cd
+      title: 운항방향코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1.5
+        max: 2
+        unique: 2
+    - name: nvg_drc_nm
+      title: 운항방향명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정방향
+        - 역방향
+      stats:
+        unique: 2
+    - name: nvg_se_cd
+      title: 운항구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: nvg_se_nm
+      title: 운항구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정상
+      stats:
+        unique: 1
+    - name: nvg_stts_cd
+      title: 운항상태코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: nvg_stts_nm
+      title: 운항상태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 완료
+      stats:
+        unique: 1
+    - name: cntrl_rsn_cd
+      title: 통제사유코드
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '01'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: cntrl_rsn_nm
+      title: 통제사유명
+      type: code
+      null_rate: 0.3333
+      sample_values:
+        - 풍랑주의보
+      stats:
+        unique: 1
+    - name: nnavi_rsn_cd
+      title: 비운항사유코드
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: nnavi_rsn_nm
+      title: 비운항사유명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: vsl_no
+      title: 선박번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MPR146203
+      stats:
+        unique: 1
+    - name: cnls_etc_rsn
+      title: 결항기타사유
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: seawy_se_cd
+      title: 항로구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: seawy_se_nm
+      title: 항로구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 편도항로
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6275
+  rank_in_sector: 31
+  brm: 교통물류 - 해운·항만
+  why: 전국 연안여객선 운항 스케줄·상태 API
+claims:
+  - id: c-15142302-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142302.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142302.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15142302-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142302-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142302.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 26개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142302-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15142302.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15142302-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142302-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142302-08
+    kind: admin_note
+    value: wave4 나머지 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15142302.json
+  stats: probe/stats/15142302.json
+  data: probe/data/15142302/
+status: active
+summary_user: 공단이 운항관리하는 전국 연안여객선의 운항 스케줄을 일자·출항시각별 운항편 단위로 담으며, 여객선·출항지·도착지·면허항로·운항항로와 운항상태, 통제·비운항·결항 사유를 함께 싣는다. 도서 주민이나 여행객이 '내일 아침 이 항로 배가 뜨는지, 통제됐다면 이유가 무엇인지'를 확인하거나, 분석가가 항로별 결항·통제 빈도를 살피는 데 쓴다. 전역 조인 키는 없어 여객선코드·항로코드·출항지/도착지코드나 이름을 같은 공단의 항로·선사·여객터미널 데이터와 맞춰 잇는다.
+limits: 실측 컬럼에서 다른 기관 데이터와 바로 붙일 공통 키가 확인되지 않아 이름·코드 매핑이나 같은 공단 코드로만 연결한다. 비공간 데이터라 좌표가 없고, 개발계정은 하루 100회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15142302-01
+    - c-15142302-03
+    - c-15142302-04
+    - c-15142302-06
+  dropped_citations: 0

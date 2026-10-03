@@ -1,0 +1,450 @@
+# Dataset 15131259 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15131259'
+tier: verified
+title: 한국해양교통안전공단_내일의_운항예보
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B554035
+  name: 한국해양교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15131259/openapi.do
+synonyms:
+  - 해상기상
+  - 여객선운항
+  - 항로정보
+  - 기상예보
+  - 해양안전
+  - 운항통제
+  - 예보데이터
+  - 선박운항현황
+  - 여객선 결항 예보
+  - 내일 배 뜨나
+  - 연안여객선 운항 여부
+  - 여객선 통제 예정
+  - 섬 배편 결항
+  - 가보고싶은섬 운항예보
+  - 해상 운항 통제 사유
+description_portal: 해당 데이터는 한국해양교통안전공단에서 제공하는 여객선 운항 예보자료로, 기상 상황과 항로별 운항 여부를 종합적으로 분석하여 다음 날의 운항계획을 사전에 안내하고자 제공된다. 본 데이터는 주요 항로별 운항 가능 여부, 통제 예정 현황, 기상 특이사항 등을 포함하며, 국민과 관계기관이 이를 바탕으로 안전한 해상교통 이용계획을 수립할 수 있도록 지원한다. 해당 정보는 매일 갱신되며, 해상안전 확보 및 운항 불편 최소화를 목적으로 한다. 이용자는 항로별 통제 가능성 여부를 미리 파악함으로써 일정 조정 및 대체 교통수단 확보에 참고할 수 있다. 공단은 기상정보와 선박 운항이력 등을 기반으로 예보 정확도 제고를 위해 지속적으로 데이터를 고도화하고 있으며, 이를 통해 사고 예방과 해양교통 안전 수준 향상에 기여하고자 한다.
+team:
+  dept: 연안교통혁신실
+services:
+  - op: /get_tmr-forecast
+    name: 내일의 운항예보
+    endpoint: https://apis.data.go.kr/B554035/tmr-forecast/get_tmr-forecast
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: ilja
+        required: true
+        example: '20240806'
+        desc: 일자(YYYYMMDD)
+      - name: ygnm
+        required: false
+        example: 장보고
+        desc: 여객선명
+      - name: gicdName
+        required: false
+        example: 금남
+        desc: 기항지명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: jbcd
+      title: 지사코드(C:부산,D:인천,E:완도,F:목포,G:제주,H:여수,I:창원,J:군산,K:보령,L:통영,M:포항,N:동해,O:거제,Q:고흥)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F
+        - L
+        - D
+      stats:
+        unique: 10
+    - name: jbnm
+      title: 지사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 목포
+        - 통영
+        - 인천
+      stats:
+        unique: 10
+    - name: ilja
+      title: 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261004'
+      stats:
+        min: 20261004
+        p50: 20261004
+        max: 20261004
+        unique: 1
+    - name: chtm
+      title: 출항시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0700'
+        - '1300'
+        - '1500'
+      stats:
+        min: 100
+        p50: 1200
+        max: 2330
+        unique: 132
+    - name: ygcd
+      title: 여객선코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - H80
+        - H83
+        - D51
+      stats:
+        unique: 125
+    - name: ygnm
+      title: 여객선명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 한림페리9호
+        - 태평양3호
+        - 세종9호
+      stats:
+        unique: 125
+    - name: mhcd
+      title: 면허항로코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - G03
+        - H04
+        - D22
+      stats:
+        unique: 86
+    - name: mhcdnm
+      title: 면허항로명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 모슬포-마라
+        - 여수-둔병
+        - 장봉-삼목
+      stats:
+        unique: 86
+    - name: uhcd
+      title: 운항항로코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+        - '03'
+        - '02'
+      stats:
+        min: 1
+        p50: 2
+        max: 91
+        unique: 31
+    - name: uhcdnm
+      title: 운항항로명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 장봉-삼목(직항)
+        - 모슬포-가파도
+        - 도산-사량
+      stats:
+        unique: 149
+    - name: chjc
+      title: 출항지코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - L000
+        - F000
+        - D000
+      stats:
+        unique: 105
+    - name: chjcnm
+      title: 출항지명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 통영
+        - 목포
+        - 인천
+      stats:
+        unique: 103
+    - name: uhgb
+      title: 운항구분코드(1:운항,2:증선,3:증회,4:비운항,5:통제,6:대기/지연)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '4'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 4
+        unique: 4
+    - name: uhgbnm
+      title: 운항구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정상
+        - 비운
+        - 증회
+      stats:
+        unique: 4
+    - name: tjsu
+      title: 통제사유코드((01:풍랑주의보,02:기상악화,03:시계제한,04:풍량경보,05:태풍주의보,06:태풍경보,07:해일주의보,08:정원초과,09:회항,10:기타,11:출항정지,13:항로장애,14:유빙,15:이물질걸림)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: tjsunm
+      title: 통제사유명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: busu
+      title: '비운항사유코드(01:선박검사,02:선박정비,03:휴업/휴항,04:여객없음,05:선박직원부재,06:유류수급,07:기종점지변경,08:회항,09:기타,10:출항정지,12:항로장애,13:유빙,14:이물질걸림,15:조석차, '
+      type: number
+      null_rate: 0.9083
+      sample_values:
+        - '09'
+        - '03'
+        - '01'
+      stats:
+        min: 1
+        p50: 9
+        max: 15
+        unique: 5
+    - name: busunm
+      title: 비운항사유명
+      type: code
+      null_rate: 0.9083
+      sample_values:
+        - 기타
+        - 휴항(30일 미만)
+        - 선박검사
+      stats:
+        unique: 5
+    - name: wdsu
+      title: 대기지연사유코드(1:기타,2:시계제한)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: wdsunm
+      title: 대기지연사유명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: uhyn
+      title: 운항유무
+      type: code
+      null_rate: 0.1385
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: wdyn
+      title: 대기지연유무
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: examyn
+      title: 검토유무
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: cancelyn
+      title: 통제(결항)유무
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: outyn
+      title: 비운항유무
+      type: code
+      null_rate: 0.9155
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: gicdName
+      title: 기항지명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 장봉,삼목
+        - 모슬포,가파도
+        - 가오치,사량
+      stats:
+        unique: 143
+    - name: bigo
+      title: 비고
+      type: code
+      null_rate: 0.955
+      sample_values:
+        - 예비선
+        - 휴업(30일 이상)
+        - 어항시설점사용 불가
+      stats:
+        unique: 7
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.603
+  rank_in_sector: 40
+  brm: 교통물류 - 해운·항만
+  why: 전국 항로별 익일 운항 예보 API
+claims:
+  - id: c-15131259-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15131259.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15131259.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15131259-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15131259-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15131259.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 27개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15131259-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15131259.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15131259-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15131259-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15131259-08
+    kind: admin_note
+    value: wave4 나머지 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15131259.json
+  stats: probe/stats/15131259.json
+  data: probe/data/15131259/
+status: active
+summary_user: 한국해양교통안전공단이 내는 다음 날 연안여객선 운항 예보를 출항 편(일자·출항시간·여객선·운항항로·출항지) 단위로 담고, 운항·증선·비운항·통제·대기/지연 구분과 통제·비운항·지연 사유를 함께 준다. 섬 주민이나 여행객이 내일 타려는 배가 풍랑주의보나 기상악화로 통제될지 미리 확인하고 일정을 바꿀지 판단하는 데 쓴다. 전역 조인 키는 없어서 지사코드·여객선코드·항로코드 같은 공단 내부 코드나 항로명·선박명으로 같은 기관의 운항상태 데이터와 맞춰 잇는다.
+limits: 예보이므로 실제 당일 운항 결과와 다를 수 있다. 실측 컬럼에 다른 기관 데이터와 바로 붙는 공통 키가 없어 이름 매핑이 필요하고, 개발계정은 하루 500회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15131259-01
+    - c-15131259-03
+    - c-15131259-04
+    - c-15131259-06
+  dropped_citations: 0

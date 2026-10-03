@@ -1,7 +1,6 @@
-# Dataset 15157207 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+# Dataset 15157207 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15157207'
-tier: candidate
+tier: verified
 title: 한국자산관리공사_차세대 온비드 부동산 물건목록 조회서비스
 sector: 공공행정/정부자원관리/state-property
 agency:
@@ -16,6 +15,13 @@ synonyms:
   - 입찰금액
   - 감정평가금액
   - 입찰일자
+  - 온비드 부동산 공매
+  - 캠코 공매 물건
+  - 압류재산 공매
+  - 국유재산 매각 입찰
+  - 공매 부동산 목록
+  - 부동산 입찰 예정 물건
+  - 수의계약 공매
 description_portal: '한국자산관리공사에서 운영하는 온비드(Onbid)에 등록된 공매 물건목록 중 물건유형이 부동산으로 분류되며 현재 입찰 중이거나 입찰예정인 부동산 공매물건 목록을 조회할 수 있는 서비스입니다. 서비스를 활용하여 부동산 공매 정보를 한 번에 수집할 수 있으며 입찰 진행 상태(입찰 중 / 입찰 예정)를 기준으로 투자 시점 판단이 가능하고 물건 유형, 지역, 입찰일정 중심의 데이터 기반 분석 및 서비스 개발이 용이합니다. 본 서비스에서 조회된 물건관리번호(cltrMngNo), 공매조건번호(pbctCdtnNo)로 온비드 부동산 물건상세 조회 서비스를 조회하시면 더 상세한 정보를 조회 가능합니다. 필수 검색 조건 : 재산유형코드(prptDivCd), 수의계약가능여부(pvctTrgtYn)'
 team:
   dept: 디지털시스템실
@@ -145,8 +151,629 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
-schema: {}
+    verified_ok: true
+schema:
+  fields:
+    - name: onbidCltrno
+      title: 온비드물건번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1608854'
+        - '1557869'
+        - '2012971'
+      stats:
+        min: 1500279
+        p50: 1928191
+        max: 2057809
+        unique: 1000
+    - name: cltrMngNo
+      title: 물건관리번호(물건 상세정보나 입찰정보 조회시 공매조건번호와 함께 입력 필요)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2019-16172-005
+        - 2020-08474-005
+        - 2020-11444-007
+      stats:
+        unique: 1000
+    - name: pbctCdtnNo
+      title: 공매조건번호(물건 상세정보나 입찰정보 조회시 물건관리번호와 함께 입력 필요)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6056584'
+        - '6058109'
+        - '6159609'
+      stats:
+        min: 6048341
+        p50: 6119526.5
+        max: 6219341
+        unique: 1000
+    - name: onbidPbancNo
+      title: 온비드공고번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '903818'
+        - '895313'
+        - '902194'
+      stats:
+        min: 893317
+        p50: 901010.5
+        max: 906809
+        unique: 105
+    - name: pbctNo
+      title: 공매번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10074233'
+        - '10074315'
+        - '10074329'
+      stats:
+        min: 10074018
+        p50: 10074277
+        max: 10074329
+        unique: 12
+    - name: pbctNsq
+      title: 회차
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '039'
+      stats:
+        min: 39
+        p50: 39
+        max: 39
+        unique: 1
+    - name: pbctsn
+      title: 차수(2026.1.1 이후 확정된 공고는 차수 표시되지 않음)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: prptDivCd
+      title: '재산유형코드 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 0011'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0007'
+      stats:
+        min: 7
+        p50: 7
+        max: 7
+        unique: 1
+    - name: prptDivNm
+      title: '재산유형코드명 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 001'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 압류재산
+      stats:
+        unique: 1
+    - name: dspsMthodCd
+      title: '처분방식코드 (0001 : 매각0002 : 임대)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: dspsMthodNm
+      title: '처분방식명 (0001 : 매각0002 : 임대)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매각
+      stats:
+        unique: 1
+    - name: bidDivCd
+      title: 입찰구분코드 (0001:인터넷, 0002:현장)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: bidDivNm
+      title: 입찰구분코드명 (0001:인터넷, 0002:현장)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전자입찰
+      stats:
+        unique: 1
+    - name: bidMthodCd
+      title: '세부입찰방식코드(0001 : 최고가방식, 0002 : 호가방식, 0003 : 평가방식, 0004 : 추첨방식, 0005 : 시담방식, 0006:적정최고가방식, 0007:제한적최고가방식)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: bidMthodNm
+      title: '세부입찰방식코드명(0001 : 최고가방식, 0002 : 호가방식, 0003 : 평가방식, 0004 : 추첨방식, 0005 : 시담방식, 0006:적정최고가방식, 0007:제한적최고가방식)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 최고가방식
+      stats:
+        unique: 1
+    - name: cptnMthodCd
+      title: '입찰방식코드(0001 : 일반경쟁, 0002 : 제한경쟁, 0003 : 지명경쟁, 0004 : 수의계약)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: cptnMthodNm
+      title: '입찰방식코드명(0001 : 일반경쟁, 0002 : 제한경쟁, 0003 : 지명경쟁, 0004 : 수의계약)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반경쟁
+      stats:
+        unique: 1
+    - name: totalamtUnpcDivCd
+      title: '총액/단가구분코드(0001 : 총액, 0002 : 단가)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalamtUnpcDivNm
+      title: '총액/단가구분명(0001 : 총액, 0002 : 단가)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 총액
+      stats:
+        unique: 1
+    - name: cltrUsgLclsCtgrId
+      title: 용도대분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+      stats:
+        min: 10000
+        p50: 10000
+        max: 10000
+        unique: 1
+    - name: cltrUsgMclsCtgrId
+      title: 용도중분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10100'
+        - '10200'
+        - '10300'
+      stats:
+        min: 10100
+        p50: 10100
+        max: 10500
+        unique: 5
+    - name: cltrUsgSclsCtgrId
+      title: 용도소분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10102'
+        - '10301'
+        - '10103'
+      stats:
+        min: 10101
+        p50: 10104
+        max: 10503
+        unique: 37
+    - name: cltrUsgLclsCtgrNm
+      title: 용도대분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부동산
+      stats:
+        unique: 1
+    - name: cltrUsgMclsCtgrNm
+      title: 용도중분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 토지
+        - 주거용건물
+        - 상가용및업무용건물
+      stats:
+        unique: 5
+    - name: cltrUsgSclsCtgrNm
+      title: 용도소분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임야
+        - 근린생활시설
+        - 전
+      stats:
+        unique: 37
+    - name: onbidCltrNm
+      title: 물건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 전라남도 영암군 시종면 봉소리 7  (토지),  9 (토지, 건물)
+        - 강원특별자치도 횡성군 우천면 상대리 38 제1동호,제2동호,제3동호
+        - '세종특별자치시 연서면 와촌리 1084-4  '
+      stats:
+        unique: 1000
+    - name: usbdNft
+      title: 유찰횟수(회)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '4'
+      stats:
+        min: 0
+        p50: 0
+        max: 20
+        unique: 19
+    - name: bidPrgnNft
+      title: 입찰진행횟수(회)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: pvctTrgtYn
+      title: '수의계약가능여부(수의계약 가능 : Y, 수의계약 불가능 : N)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: batcBidYn
+      title: '일괄입찰여부(일괄입찰 : Y, 일괄입찰아님 : N) Y인 경우 물건상세 부동산 정보의 일괄입찰물건목록 참고'
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: cltrBidBgngDt
+      title: 입찰시작일시(yyyyMMddHHmm)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202611021400'
+      stats:
+        min: 202611021400
+        p50: 202611021400
+        max: 202611021400
+        unique: 1
+    - name: cltrBidEndDt
+      title: 입찰종료일시(yyyyMMddHHmm)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202611041700'
+      stats:
+        min: 202611041700
+        p50: 202611041700
+        max: 202611041700
+        unique: 1
+    - name: apslEvlAmt
+      title: 감정평가금액(원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '59000000'
+        - '50000000'
+        - '7550000'
+      stats:
+        min: 1338750
+        p50: 78400000
+        max: 73400000000
+        unique: 887
+    - name: lowstBidPrcIndctCont
+      title: 최저입찰가격표시내용(원) (최저입찰가격이 표시되거나 비공개로 표시)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2265000'
+        - '29300000'
+        - '29900000'
+      stats:
+        min: 605000
+        p50: 23996000
+        max: 41706530000
+        unique: 905
+    - name: frstBidPrc
+      title: '[재산유형 : 캠코국유] 최초예정가액'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: apslPrcCtrsLowstBidRto
+      title: 감정평가금액 대비 현재 최저입찰가격
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: frstCtrsLowstBidPrcRto
+      title: 최초최저입찰가격 대비 현재 최저입찰가격
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: feeRate
+      title: 할인율(%)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ltnoPnu
+      title: 지번PNU코드
+      type: number
+      null_rate: 0.005
+      sample_values:
+        - '2771026522004900001'
+        - '5113011500004380000'
+        - '4148011700007270000'
+      stats:
+        min: 1111013300001270016
+        p50: 4148011700007269888
+        max: 5279039021000670208
+        unique: 828
+    - name: rdnmPnu
+      title: 도로명PNU코드
+      type: number
+      null_rate: 0.519
+      sample_values:
+        - '2771033410060400006800000'
+        - '5113032190180200003000003'
+        - '4148044189420100006800000'
+      stats:
+        min: 1111041001450200012685312
+        p50: 4127343730160099831840768
+        max: 5221032720270100025835520
+        unique: 318
+    - name: lctnSdnm
+      title: 소재지지번주소(시도)
+      type: code
+      null_rate: 0.005
+      sample_values:
+        - 경기도
+        - 전남광주통합특별시
+        - 강원특별자치도
+      stats:
+        unique: 16
+    - name: lctnSggnm
+      title: 소재지지번주소(시군구)
+      type: string
+      null_rate: 0.016
+      sample_values:
+        - 울주군
+        - 달성군
+        - 당진시
+      stats:
+        unique: 192
+    - name: lctnEmdNm
+      title: 소재지지번주소(읍면동)
+      type: string
+      null_rate: 0.005
+      sample_values:
+        - 현풍읍
+        - 무실동
+        - 남면
+      stats:
+        unique: 551
+    - name: rqstOrgNm
+      title: '[압류재산] 의뢰기관명'
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 달성군청
+        - 서울특별시
+        - 시흥시청
+      stats:
+        unique: 194
+    - name: orgNm
+      title: 공고기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한국자산관리공사
+      stats:
+        unique: 1
+    - name: eltrGrprUseYn
+      title: '전자보증서 가능 : Y, 불가능 : N'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: collbBidPsblYn
+      title: '공동입찰 가능 : Y, 불가능 : N'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: twtmGthrBidPsblYn
+      title: '2회이상 입찰가능 : Y, 불가능 : N'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: subtBidPsblYn
+      title: '대리입찰가능 : Y, 불가능 : N'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: evcRsbyTrgtCont
+      title: 낙찰 후 인도/인수 책임
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매수인
+        - 매수자
+      stats:
+        unique: 2
+    - name: landSqms
+      title: 토지면적(m2)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '1.489'
+        - '51.65'
+      stats:
+        min: 0
+        p50: 134
+        max: 93077
+        unique: 845
+    - name: bldSqms
+      title: 건물면적(m2)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '5.0'
+        - '41.895'
+      stats:
+        min: 0
+        p50: 0
+        max: 27509.23
+        unique: 367
+    - name: alcYn
+      title: 지분물건여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: dtbtRqrEdtmCont
+      title: 배분요구종기
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026/08/18
+        - 2026/09/14
+        - 2026/09/28
+      stats:
+        min: '2021-05-17'
+        max: '2026-10-19'
+        unique: 82
+    - name: rentMthodNm
+      title: '[처분방식 : 임대] 임대방식(1년미만(임대),고정형 임대,변동형 임대,매출연동 임대)'
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: rentPerdCont
+      title: '[처분방식 : 임대] 임대기간내용'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: thnlImgUrlAdr
+      title: 물건 썸네일 이미지 URL주소
+      type: string
+      null_rate: 0.005
+      sample_values:
+        - https://www.onbid.co.kr/op/cm/syc/filemng/filemngprcs/FileMngPrcsController/dnld
+        - https://www.onbid.co.kr/op/cm/syc/filemng/filemngprcs/FileMngPrcsController/dnld
+        - https://www.onbid.co.kr/op/cm/syc/filemng/filemngprcs/FileMngPrcsController/dnld
+      stats:
+        unique: 995
+    - name: mdfcnDt
+      title: 최종수정일시(yyyyMMddHHmmss)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260821000000'
+        - '20260723000000'
+        - '20260806000000'
+      stats:
+        min: 20260624175436
+        p50: 20260821000000
+        max: 20260930000000
+        unique: 161
+    - name: crtnYn
+      title: '정정여부(정정내역있음 : Y, 정정내역없음 : N) 물건 항목에 대한 정정이 있었는지 여부를 나타냄. Y인 경우 물건 상세의 정정내역 항목 참고'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+    - name: pbctStatCd
+      title: '입찰결과구분코드 (0001 : 입찰준비중, 0002 : 입찰진행중, 0003 : 입찰마감, 0006 : 개찰중, 0009 : 수의계약가능, 0010 : 낙찰, 0011 : 유찰, 0012 : 취소)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: pbctStatNm
+      title: '입찰결과구분코드명 (0001 : 입찰준비중, 0002 : 입찰진행중, 0003 : 입찰마감, 0006 : 개찰중, 0009 : 수의계약가능, 0010 : 낙찰, 0011 : 유찰, 0012 : 취소)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 입찰준비중
+      stats:
+        unique: 1
+    - name: cltrStatMngCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0002'
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -164,12 +791,12 @@ classification:
 claims:
   - id: c-15157207-01
     kind: access
-    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 0/1
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
     evidence:
       - type: measured
         source: probe/runs/15157207.json
-        observed_at: '2026-09-30'
-        detail: ops_ok 0/1
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
       - type: measured
         source: probe/apply/15157207.json
         observed_at: '2026-09-30'
@@ -180,7 +807,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15157207-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -191,33 +818,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15157207-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15157207.json
-        observed_at: '2026-09-30'
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-03'
+        detail: 컬럼 62개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15157207-04
     kind: coverage
     value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
     evidence:
       - type: measured
         source: probe/runs/15157207.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-03'
         detail: total None, rows 0
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15157207-06
     kind: admin_note
     value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
@@ -229,38 +856,38 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-  - id: c-15157207-10
-    kind: pitfall
-    value: 필수 파라미터 prptDivCd는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+  - id: c-15157207-07
+    kind: admin_note
+    value: ' · 파라미터 자동 수리'
     evidence:
       - type: measured
-        source: probe/runs/15157207.json
-        observed_at: '2026-09-30'
-        detail: needs_params
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
-  - id: c-15157207-11
-    kind: pitfall
-    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getRlstCltrList2'
-    evidence:
-      - type: measured
-        source: probe/runs/15157207.json
-        observed_at: '2026-09-30'
-        detail: ok=false
-    qualifiers:
-      generated_by: pds.dossier.claims
-    rank: normal
-    valid_until: '2027-04-01'
 verification:
-  verdict: 파라미터부족
-  probed_at: '2026-09-30'
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-03'
   channel: portal
   rows: 0
-  ops_ok: 0/1
+  ops_ok: 1/1
   latency_ms: 81
   run: probe/runs/15157207.json
   stats: probe/stats/15157207.json
   data: probe/data/15157207/
 status: active
+summary_user: 온비드에 등록된 공매 물건 가운데 부동산으로 분류되고 현재 입찰 중이거나 입찰 예정인 물건을 물건·공매조건 단위로 한 건씩 담은 목록이며, 범위는 전국이고 위치는 시도·시군구·읍면동 주소와 PNU로 개별 표시된다. 부동산 공매에 참여하려는 개인이나 사업자가 "우리 지역에서 감정가 대비 최저입찰가가 많이 떨어진 압류·국유재산 중 이번 주에 입찰이 끝나는 물건은 무엇인가"를 찾는 데 쓴다. 물건관리번호와 공매조건번호를 함께 넣어 온비드 부동산 물건상세 조회 서비스와 잇고, 명세상 지번PNU코드(ltnoPnu)로 필지 단위 토지·건물 정보와 연결하며, 재산유형·용도분류·입찰방식은 코드표로 해석한다.
+limits: 검증 호출에서 0행을 받아 실제 값과 PNU 같은 키의 채움 상태는 실측으로 확인되지 않았고, 실측 컬럼에서 전역 조인 키도 찾지 못했으므로 PNU 연계는 실제 응답으로 먼저 확인해야 한다. 재산유형코드와 수의계약가능여부가 필수 검색 조건이며 개발계정은 하루 1,000회로 호출이 제한된다. 0행 수신은 검증 호출 조건 때문일 수 있어 물건이 없다고 단정하지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157207-01
+    - c-15157207-03
+    - c-15157207-04
+    - c-15157207-06
+  dropped_citations: 0

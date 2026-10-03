@@ -1,0 +1,292 @@
+# Dataset 15145193 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15145193'
+tier: verified
+title: 제주특별자치도_상수도 원격 통합검침 데이터
+sector: 국토관리/수자원/water-supply
+domain: 국토관리/기반시설
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15145193/openapi.do
+synonyms:
+  - 상수도
+  - 수도
+  - 검침
+  - 제주 수도 사용량
+  - 스마트 수도 검침
+  - 원격검침 AMI
+  - 수도계량기 검침값
+  - 상수도 사용량 행정동별
+  - 제주 물 사용량
+description_portal: 제주특별자치도 관할 행정동별 수용가에 설치된 수도 계량기를 원격으로 검침해 측정된 상수도 사용량 데이터를 제공합니다.
+team:
+  dept: 디지털혁신과
+services:
+  - op: /getListByDate
+    name: 상수도 원격 통합검침 데이터 목록
+    endpoint: https://apis.data.go.kr/6500000/remoteWaterMeteringService/getListByDate
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: page
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: pageSize
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: startDate
+        required: true
+        example: '20250807'
+        desc: 검색시작일자
+      - name: endDate
+        required: true
+        example: '20250807'
+        desc: 검색종료일자
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: fcltId
+      title: 수용가 번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 33-112-0215-0000
+        - 73-340-0015-0000
+        - 56-104-0119-0000
+      stats:
+        unique: 994
+    - name: areaName
+      title: 행정동명
+      type: string
+      null_rate: 0.02
+      sample_values:
+        - 안덕면
+        - 삼도이동
+        - 서홍동
+      stats:
+        unique: 65
+    - name: meterNo
+      title: 계량기 일련번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 71-000001
+        - 20-000001
+        - 0-000000
+      stats:
+        unique: 978
+    - name: msrNo
+      title: 단말기 일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0071555281'
+        - '2212013235'
+        - '2212016688'
+      stats:
+        min: 1002307
+        p50: 2212019855.5
+        max: 9806976238
+        unique: 994
+    - name: msrValue
+      title: 검침값
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '571.143'
+        - '920.44'
+        - '162.716'
+      stats:
+        min: 0
+        p50: 567.6645
+        max: 98930.52
+        unique: 995
+    - name: msrError
+      title: 검침 에러값
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: timestamp
+      title: 검침시간
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-02 23:57:00'
+        - '2026-10-02 23:58:00'
+        - '2026-10-02 23:59:00'
+      stats:
+        min: '2026-10-02'
+        max: '2026-10-02'
+        unique: 180
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.507
+  rank_in_sector: 594
+  brm: 환경기상 - 상하수도·수질
+  sector_rule: water-core-scattered
+  why: 제주 행정동별 수용가 원격검침 API, 동 단위 연결 가능
+claims:
+  - id: c-15145193-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15145193.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15145193.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15145193-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15145193-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15145193.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15145193-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15145193.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15145193-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15145193-06
+    kind: admin_note
+    value: "세부 부문 '상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)'의 가치: 정수장별 월 수질검사 = 시민 상시 수요, 정수장코드·지자체 상수도사업본부 다수"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#water-supply
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15145193-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15145193-08
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15145193.json
+  stats: probe/stats/15145193.json
+  data: probe/data/15145193/
+status: active
+summary_user: 제주특별자치도 관할 행정동별 수용가 수도 계량기를 원격으로 검침한 상수도 사용량을 수용가·계량기·단말기 단위의 검침 시각별 값(검침값과 검침 에러값 포함)으로 담는 건별 원천 데이터이며, 범위는 제주도 한 시도의 읍면동 단위입니다. 상수도 수요를 분석하는 분석가나 행정 담당자가 '제주의 어느 행정동에서 시간대별 물 사용량이 많고 검침 오류가 잦은가'를 확인하는 데 쓴다. 전역 조인 키가 없어 행정동명(areaName)을 이름 매칭해 행정구역 코드나 다른 지역 통계와 붙여 쓰며, 수용가 번호·계량기 번호는 이 데이터 안에서만 통하는 식별자다.
+limits: 실측 컬럼에 공통 조인 키가 없어 다른 데이터와는 행정동명 같은 이름 매핑이나 같은 기관 코드로만 연결된다. 범위가 제주특별자치도 읍면동에 한정되어 다른 시도와 비교할 수 없다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15145193-01
+    - c-15145193-03
+    - c-15145193-04
+  dropped_citations: 0

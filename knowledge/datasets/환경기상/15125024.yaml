@@ -1,0 +1,265 @@
+# Dataset 15125024 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125024'
+tier: verified
+title: 한국환경공단_지하역사 실내공기질 자동측정망 측정데이터 초미세먼지 월별 확정 정보
+sector: 환경기상/대기/air-quality
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125024/openapi.do
+synonyms:
+  - 지하역사
+  - 실내공기질
+  - 자동측정망
+  - 초미세먼지
+  - 오염도
+  - 지하철
+  - 시민
+  - 지하철역 미세먼지
+  - 지하역사 PM2.5
+  - 지하철 공기질
+  - 역사 초미세먼지 농도
+  - 실내공기질 측정망
+  - 지하철 실내 미세먼지
+description_portal: '- 전국 지하역사의 실내공기질 자동측정망으로부터 수집된 초미세먼지 월별 확정 정보를 개방하고 있습니다.- 측정장비의 동작불량, 점검 등에 따른 이상 측정값을 선별하여 제외하고, 정상적으로 측정된 측정값을 확정한 자료입니다.- 2021년 4월 1일부터 지하역사의 초미세먼지 농도를 측정하고 공개하도록 법이 시행되면서 시민들이 평소에 이용하는 지하역사의 초미세먼지 측정 결과에 대한 보다 더 정확한 정보 제공을 위해 이상 자료를 선별하여 확정된 자료를 제공하고 있습니다.- 해당 자료는 각 철도운영기관에서 생산하여 확정한 자료이며, 데이터 검증을 위한 확정 과정에서 약 2개월의 시간차가 있습니다.'
+team:
+  dept: 생활환경안전처 생활환경지원부
+services:
+  - op: /getUlfdInfo
+    name: 지하역사 실내공기질 측정데이터 초미세먼지 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/udgdScnAutoMntnwUlfdInfoService/getUlfdInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: slineNm
+        required: false
+        desc: 호선명
+      - name: msrmtDt
+        required: false
+        desc: 측정일시
+      - name: returnType
+        required: true
+        example: json
+        desc: 데이터 타입
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: brnchNm
+      title: 지점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고덕
+        - 대청
+        - 당곡
+      stats:
+        unique: 16
+    - name: operInstNm
+      title: 운영기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울교통공사
+        - 남서울경전철주식회사
+        - 부산보건환경연구원
+      stats:
+        unique: 5
+    - name: slineNm
+      title: 호선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3호선
+        - 5호선
+        - 신림선
+      stats:
+        unique: 6
+    - name: pstnNm
+      title: 위치명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+        - 부산
+        - 인천
+      stats:
+        unique: 4
+    - name: msrmtVlNumv
+      title: 측정값수치
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6.0'
+        - '2.0'
+        - '5.0'
+      stats:
+        min: 0
+        p50: 14
+        max: 103.9
+        unique: 412
+    - name: msinSttsIndctSeNm
+      title: 측정기상태표시구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정상
+      stats:
+        unique: 1
+    - name: msrmtDt
+      title: 측정일시
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023092913'
+        - '2023092914'
+        - '2023092915'
+      stats:
+        min: 2023090100
+        p50: 2023091020
+        max: 2023093023
+        unique: 563
+    - name: artclNm
+      title: 항목명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - PM2.5
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: indoor-air
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.754
+  rank_in_sector: 60
+  brm: 환경기상 - 대기
+  why: 전국 지하역사 측정망 월별 확정, 역 단위 연결
+claims:
+  - id: c-15125024-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125024.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125024.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15125024-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125024-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125024.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125024-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125024.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15125024-06
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125024-07
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125024.json
+  stats: probe/stats/15125024.json
+  data: probe/data/15125024/
+status: active
+summary_user: 전국 지하역사 실내공기질 자동측정망에서 수집한 초미세먼지 측정값을 역(지점)·운영기관·호선·측정 위치별로 월 단위 확정해 담으며, 장비 이상·점검 시 값을 걸러낸 확정 자료다. 시민이나 분석가가 '내가 타는 노선의 지하역사 초미세먼지 농도는 달마다 어땠나' 같은 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 역명·호선명·운영기관명 같은 이름 매칭으로만 잇는다.
+limits: 공통 코드 키가 없어 역사 위치나 다른 대기질 자료와 이을 때는 역명·호선명 문자열 매핑이 필요하다. 개발계정은 일 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15125024-01
+    - c-15125024-03
+    - c-15125024-04
+  dropped_citations: 0

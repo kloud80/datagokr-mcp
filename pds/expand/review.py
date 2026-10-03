@@ -12,16 +12,17 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
 
 from pds import config
-from pds.expand import OUT
+from pds.expand import OUT, WAVE
 from pds.schema import store
 
-MODEL = "claude-sonnet-5-5"
+MODEL = os.environ.get("PDS_REVIEW_MODEL") or "claude-opus-5-5"  # 한 번만 하는 지식 구축 — 비용보다 판단 품질
 BATCH = 40
 TARGET = ("keep-core", "keep-variant", "review")
 USAGE: list[tuple[int, int]] = []
@@ -45,8 +46,7 @@ SCHEMA = {
 }
 
 SYSTEM = """당신은 한국 공공데이터포털(data.go.kr) 데이터를 부문별로 검토하는 데이터 큐레이터입니다.
-목표: 사용자 목표(상권 분석, 입지 비교, 시설 찾기 등)에 맞춰 여러 공공데이터를 조인해 쓰는 전략 시스템에 '2차로 편입할 데이터'를 고릅니다.
-후보는 모두 조인 키(필지·좌표·법정동·사업자번호·기관코드·주소 등)를 가진 것으로 이미 걸러졌습니다.
+목표: 사용자 목표(상권 분석, 입지 비교, 시설 찾기 등)에 맞춰 여러 공공데이터를 조인해 쓰는 전략 시스템에 '새로 편입할 데이터'를 고릅니다.
 
 판정 원칙
 - keep (유지): 그 분야의 핵심 — 개체 단위 원장(시설·업소·필지·거래·차량·선박 하나가 한 행), 등록·인허가 대장, 실시간·일별 관측. 전국 범위면 더 좋다.
@@ -58,6 +58,18 @@ SYSTEM = """당신은 한국 공공데이터포털(data.go.kr) 데이터를 부�
 - subsector: 아래 세부 부문 목록에서 고르고, 맞는 게 없으면 'new:<이름>'.
 - reason: 한국어 한 줄, 판단 근거만 짧게.
 모든 후보에 판정을 하나씩 돌려줍니다 (id를 빠뜨리지 않는다)."""
+
+# 차수별 추가 기준 — 차수마다 무엇을 넓히고 좁히는지
+WAVE_RULES = {
+    "wave2": "이번 후보는 모두 조인 키(필지·좌표·법정동·사업자번호·기관코드·주소 등)를 가진 것으로 이미 걸러졌습니다.",
+    "wave4": """이번 차수는 도시·부동산(이 시스템을 쓰는 회사의 주력 분야)을 먼저 넓힙니다. 아래 기준이 위 원칙보다 우선합니다.
+- 도시·부동산 데이터(가격·거래·공급·분양·임대, 토지·필지·지적·건축물, 용도지역·도시계획·지구단위, 개발·정비·재생사업, 공유·국유재산, 산업단지·지식산업센터)는
+  통계·집계라도 시군구·읍면동·단지·월 단위로 다른 데이터에 이을 수 있으면 keep (priority 2). 전국 원장이면 priority 1.
+- 광역(시도) 자치단체가 낸 도시·부동산 원장(개발사업·정비구역·공유재산·건축 인허가 등)은 keep.
+- 한 시군구만 낸 소규모 목록(시설 몇십 건, 한 해치 표, 단순 안내)은 defer — 같은 내용의 전국판이 있으면 overlap_with에 그 id.
+- 브이월드·서울 열린데이터광장 등 기관 사이트 링크형(API_LINK·FILE_LINK)도 같은 기준으로 판정한다 (접근 경로는 따로 검증한다).
+- 이전 차수에서 미룬 것(설명에 '이전 차수 미룸')은 위 도시·부동산 기준으로 다시 본다.""",
+}
 
 
 def _client():
@@ -100,7 +112,8 @@ def _unit_line(r) -> str:
 
 def _ask(sector_top: str, ctx: str, rows: pd.DataFrame) -> list[dict]:
     from pds.service.llm import FALLBACK, _text
-    msg = f"부문: {sector_top}\n\n{ctx}\n\n후보 {len(rows)}개:\n" + "\n".join(_unit_line(r) for _, r in rows.iterrows())
+    extra = WAVE_RULES.get(WAVE)
+    msg = (f"[이번 차수 기준]\n{extra}\n\n" if extra else "") + f"부문: {sector_top}\n\n{ctx}\n\n후보 {len(rows)}개:\n" + "\n".join(_unit_line(r) for _, r in rows.iterrows())
     for attempt in range(3):
         try:
             r = _client().beta.messages.create(

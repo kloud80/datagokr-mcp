@@ -1,0 +1,472 @@
+# Dataset 15020284 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15020284'
+tier: verified
+title: 국민연금공단_탈퇴사업장 정보
+sector: 사회복지/공적연금/pension-workplaces
+agency:
+  id: B552015
+  name: 국민연금공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15020284/openapi.do
+synonyms:
+  - 국민연금자격사업장
+  - 탈퇴사업장
+  - 사업자
+  - 국민연금
+  - 사업장
+  - 국민연금 탈퇴 사업장
+  - 폐업 사업장
+  - 국민연금 사업장 탈퇴일
+  - 사업장 이탈 현황
+  - 법정동별 사업장
+  - 국민연금 사업장 내역
+description_portal: '국민연금공단의 법정동단위 지역별, 국민연금 탈퇴 사업장 정보를 제공합니다.(사업장 주소, 사업장명, 주소, 업종, 등록일, 탈퇴일 등)* 단, 개인사업장 정보 미제공1) 기본정보조회(출력값): 사업자등록번호, 자료생성년월, 법정동주소광역시도코드,  법정동주소시군구코드, 법정동주소읍면동코드, 식별번호, 사업장명, 사업자도로명상세주소2) 상세정보조회(출력값): 사업장등록일, 사업자등록번호, 자료생성년월, 주소코드, 사업장탈퇴일, 식별번호, 사업업종코드명, 사업업종코드, 사업장명, 사업장도로명상세주소, 사업장형태구분코드자세한 내용은 참고문서(국민연금공단_오픈API활용가이드_탈퇴사업장 정보_v2.0.hwp)를 활용하시기 바랍니다.'
+team:
+  dept: 가입지원실
+services:
+  - op: /getDetailInfoSearchV2
+    name: 상세정보조회
+    endpoint: https://apis.data.go.kr/B552015/NpsScsnBplcInfoInqireServiceV2/getDetailInfoSearchV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: seq
+        required: true
+        desc: '응답 메시지의 식별번호(seq) '
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답자료형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBassInfoSearchV2
+    name: 기본정보조회
+    endpoint: https://apis.data.go.kr/B552015/NpsScsnBplcInfoInqireServiceV2/getBassInfoSearchV2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: ldongAddrMgplDgCd
+        required: false
+        desc: 시도(행정자치부 법정동 주소코드 참조)
+      - name: ldongAddrMgplSgguCd
+        required: false
+        desc: 시군구(행정자치부 법정동 주소코드 참조)(ldongAddrMgplDgCd 항목값이 설정된 경우만 설정가능)
+      - name: ldongAddrMgplSgguEmdCd
+        required: false
+        desc: 읍면동(행정자치부 법정동 주소코드 참조)(ldongAddrMgplDgCd, ldongAddrMgplSgguCd 항목이 설정된 경우만 설정가능)
+      - name: wkplNm
+        required: true
+        desc: 사업장명
+      - name: bzowrRgstNo
+        required: false
+        desc: 사업자등록번호(앞에서 6자리)
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 응답자료형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: acptDt
+      title: 사업장등록일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160718'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 20160718
+        p50: 20160718
+        max: 20160718
+        unique: 1
+    - name: bzowrRgstNo
+      title: 사업자등록번호(앞에서 6자리)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 313811****
+      op: /getDetailInfoSearchV2
+      stats:
+        min: '3138-01-01'
+        max: '3138-01-01'
+        unique: 1
+    - name: dataCrtYm
+      title: 자료생성년월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '201610'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 201610
+        p50: 201610
+        max: 201610
+        unique: 1
+    - name: ldongAddrMgplDgCd
+      title: 시도(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '44'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 44
+        p50: 44
+        max: 44
+        unique: 1
+    - name: ldongAddrMgplSgguCd
+      title: 시군구(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '270'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 270
+        p50: 270
+        max: 270
+        unique: 1
+    - name: ldongAddrMgplSgguEmdCd
+      title: 읍면동(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '390'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 390
+        p50: 390
+        max: 390
+        unique: 1
+    - name: scsnDt
+      title: 사업장탈퇴일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160906'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 20160906
+        p50: 20160906
+        max: 20160906
+        unique: 1
+    - name: seq
+      title: 식별번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: vldtVlKrnNm
+      title: 사업장업종코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 건설 / 상하수도설비및시설물유지공사
+      op: /getDetailInfoSearchV2
+      stats:
+        unique: 1
+    - name: wkplIntpCd
+      title: '사업장업종코드(국세청 업종코드 검색 참조 - www.nts.go.kr/cal/cal_04_01.asp) ※ ‘999999’: 업종코드 없는 경우'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '452111'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 452111
+        p50: 452111
+        max: 452111
+        unique: 1
+    - name: wkplNm
+      title: 사업장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '  (주)디아이공영-(일용)-당산초등학교 외벽보수 및 기타공사'
+      op: /getDetailInfoSearchV2
+      stats:
+        unique: 1
+    - name: wkplRoadNmDtlAddr
+      title: 사업장도로명상세주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충청남도 당진시 송산면 당산2로
+      op: /getDetailInfoSearchV2
+      stats:
+        unique: 1
+    - name: wkplStylDvcd
+      title: 1:법인, 2:개인
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getDetailInfoSearchV2
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: bzowrRgstNo
+      title: 사업자등록번호(앞에서 6자리)
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 124815****
+        - 124810****
+        - 106818****
+      op: /getBassInfoSearchV2
+      stats:
+        unique: 69
+    - name: dataCrtYm
+      title: 자료생성년월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202509'
+        - '202506'
+        - '202503'
+      op: /getBassInfoSearchV2
+      stats:
+        min: 202503
+        p50: 202509
+        max: 202606
+        unique: 6
+    - name: ldongAddrMgplDgCd
+      title: 시도(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41'
+        - '11'
+        - '47'
+      op: /getBassInfoSearchV2
+      stats:
+        min: 11
+        p50: 41
+        max: 52
+        unique: 17
+    - name: ldongAddrMgplSgguCd
+      title: 시군구(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '110'
+        - '220'
+        - '200'
+      op: /getBassInfoSearchV2
+      stats:
+        min: 110
+        p50: 260
+        max: 940
+        unique: 104
+    - name: ldongAddrMgplSgguEmdCd
+      title: 읍면동(행정자치부 법정동 주소코드 참조)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '250'
+        - '101'
+        - '105'
+      op: /getBassInfoSearchV2
+      stats:
+        min: 101
+        p50: 118
+        max: 440
+        unique: 77
+    - name: seq
+      title: 식별번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1456564'
+        - '1457260'
+        - '1458262'
+      op: /getBassInfoSearchV2
+      stats:
+        min: 1277147
+        p50: 1353296.5
+        max: 1484515
+        unique: 1000
+    - name: wkplNm
+      title: 사업장명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)다우건축/일용/[삼성전자(주)]호암관 환경개선공사
+        - (주)동화공조-(일용)2025년 시스템냉난방기 보수 단가계약(삼성전자)
+        - (주)삼일건설/일용/24,25년도삼성전자digital city상주공사
+      op: /getBassInfoSearchV2
+      stats:
+        unique: 1000
+    - name: wkplRoadNmDtlAddr
+      title: 사업장도로명상세주소
+      type: string
+      null_rate: 0.066
+      sample_values:
+        - 경기도 화성시 병점구 삼성전자로
+        - 경기도 평택시 삼성로
+        - 경기도 용인시 기흥구 삼성로
+      op: /getBassInfoSearchV2
+      stats:
+        unique: 730
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9146
+  rank_in_sector: 2
+  brm: 사회복지 - 공적연금
+  why: 국민연금 탈퇴 사업장 원장, 사업자번호 조인 가능
+claims:
+  - id: c-15020284-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15020284.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15020284.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15020284-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15020284-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15020284.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 21개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15020284-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15020284.json
+        observed_at: '2026-10-03'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15020284-06
+    kind: admin_note
+    value: "세부 부문 '국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)'의 가치: 사업장별 가입자 수·월 납부액 = 기업 규모·급여 수준을 추정하는 거의 유일한 공개 원장 (구름: 사업장 단위라 필수). 사업자번호로 기업 축(국세청·공정위·R&D·조달) 전체와 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#pension-workplaces
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15020284-07
+    kind: admin_note
+    value: wave2 p1 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-03'
+  channel: portal
+  rows: 0
+  ops_ok: 2/2
+  latency_ms: 58
+  run: probe/runs/15020284.json
+  stats: probe/stats/15020284.json
+  data: probe/data/15020284/
+status: active
+summary_user: 국민연금에서 탈퇴한 사업장을 한 곳씩 담은 건별 원천 데이터로, 전국을 법정동 단위로 조회하며 사업장명·도로명주소·업종·등록일·탈퇴일·법인/개인 구분을 담는다. 분석가나 사업자가 '특정 읍면동에서 최근 국민연금을 탈퇴한 법인 사업장은 어디이고 어떤 업종인가'처럼 지역별 폐업·이탈 동향을 볼 때 쓴다. 전역 조인 키는 없고, 시도·시군구·읍면동 법정동 코드로 지역 통계와, 국세청 업종코드(wkplIntpCd)로 업종 분류와, 같은 기관의 가입 사업장 데이터와는 사업장명·주소 매핑으로 이어 쓴다.
+limits: 개인사업장 정보는 제공하지 않고, 사업자등록번호는 앞 6자리만 있어 국세청·조달 등 기업 데이터와 번호로 바로 붙일 수 없다. 탈퇴 사업장 데이터에는 가입자 수·월 납부액 같은 규모 정보가 없다. 검증 호출에서는 0행이 수신되었으니 조회 조건(법정동 코드·자료생성년월)을 맞춰 호출해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15020284-01
+    - c-15020284-03
+    - c-15020284-04
+    - c-15020284-06
+  dropped_citations: 0

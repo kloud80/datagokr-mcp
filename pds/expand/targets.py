@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 
 import pandas as pd
@@ -14,7 +15,7 @@ import pandas as pd
 from pds import config
 from pds.expand import OUT, ROUND, WAVE
 
-PRIORITY_MAX = 3
+PRIORITY_MAX = int(os.environ.get("PDS_PRIORITY_MAX", "3"))  # 4차는 2 (3순위는 한 시군 소규모 등 약한 것)
 
 
 def build() -> list[dict]:

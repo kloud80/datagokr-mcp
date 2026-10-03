@@ -1,0 +1,272 @@
+# Dataset 15121039 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121039'
+tier: verified
+title: 부산광역시_연계소통정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121039/openapi.do
+synonyms:
+  - 교통
+  - 소통정보
+  - ITS
+  - 연계소통정보
+  - 교통정보
+  - 부산 교통소통정보
+  - 부산 도로 소통속도
+  - 링크별 속도
+  - 부산 교통량
+  - 실시간 교통정보
+  - 부산 정체 구간
+  - 유관기관 연계 교통정보
+description_portal: '본 데이터는 부산광역시 교통정보서비스센터와 연계된 유관기관에서 제공하는 도로 소통정보입니다.제공되는 주요 항목은 수집일시, 링크ID, 도로명, 시점명, 종점명, 수집원명, 속도, 교통량 등으로, 센터 고유 수집 데이터 외에도 기관 간 협력체계를 통해 확보된 교통정보를 포함하고 있습니다.이 데이터는 부산시 전역의 교통흐름 현황을 보다 폭넓게 파악할 수 있도록 지원합니다.<제공방식>형식: Open API응답 포맷: JSON (필요 시 XML 지원 가능)인코딩: UTF-8<활용안내>기관 간 연계 교통정보 융합을 통한 종합 교통상황 관리도로 구간별 실시간 소통속도·교통량 분석돌발상황 대응 및 혼잡 관리 체계 강화민간 교통정보 서비스(내비게이션·지도 등)와 연계 활용교통 빅데이터 기반 정책 수립 및 연구 지원'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /EXLTraffic
+    name: 연계소통정보
+    endpoint: https://apis.data.go.kr/6260000/BusanITSEXL/EXLTraffic
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statsDt
+      title: 수집일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-03T09:00:00'
+      stats:
+        min: '2026-10-03'
+        max: '2026-10-03'
+        unique: 1
+    - name: lkId
+      title: 링크ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1310016300'
+        - '1310016400'
+        - '1310017900'
+      stats:
+        min: 1310016300
+        p50: 1400295051
+        max: 3870326400
+        unique: 70
+    - name: roadNm
+      title: 도로명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 거가대로
+        - '-'
+        - 을숙도대로
+      stats:
+        unique: 11
+    - name: bgngNodeNm
+      title: 시점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 을숙도대교
+        - 천마터널
+        - '-'
+      stats:
+        unique: 33
+    - name: endNodeNm
+      title: 종점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 을숙도대교
+        - 천마터널
+        - '-'
+      stats:
+        unique: 33
+    - name: collKindNm
+      title: 수집원명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 산성터널
+        - 거가대교
+        - 천마산터널
+      stats:
+        unique: 4
+    - name: spd
+      title: 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '81.7'
+        - '73.24'
+        - '67.02'
+      stats:
+        min: 35.37
+        p50: 73
+        max: 82.85
+        unique: 46
+    - name: vol
+      title: 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '4250.0'
+        - '4400.0'
+      stats:
+        min: 0
+        p50: 2370
+        max: 10150
+        unique: 27
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6365
+  rank_in_sector: 794
+  brm: 교통물류 - 도로
+  why: 부산 링크별 속도·교통량 실시간 API
+claims:
+  - id: c-15121039-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121039.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121039.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15121039-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121039-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121039.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121039-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121039.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15121039-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121039-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121039-08
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121039.json
+  stats: probe/stats/15121039.json
+  data: probe/data/15121039/
+status: active
+summary_user: 부산광역시 교통정보서비스센터와 연계된 유관기관이 수집한 도로 소통정보를 링크(도로 구간) 단위 건별로 담으며, 수집일시·도로명·시점·종점·수집원과 함께 속도와 교통량을 제공한다. 교통 분석가나 내비게이션 사업자가 "지금 부산 특정 도로 구간의 속도와 교통량은 얼마인가"를 확인하는 데 쓰고, 이력을 쌓으면 상습 정체 구간 분석의 원장으로 쓴다. 실측 컬럼에 전역 조인 키가 없어 링크ID(lkId)나 도로명·시점·종점 이름을 매핑하거나 부산광역시의 다른 교통 데이터와 같은 기관 코드 기준으로만 연결한다.
+limits: 표준 노드링크 같은 전역 키로 다른 기관 데이터와 바로 조인할 수 없어 이름·코드 매핑이 필요하다. 실시간 조회형이라 과거 추이를 보려면 직접 호출해 이력을 적재해야 하고, 개발계정은 하루 500회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15121039-01
+    - c-15121039-03
+    - c-15121039-06
+  dropped_citations: 0

@@ -1,0 +1,255 @@
+# Dataset 15126829 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15126829'
+tier: verified
+title: 한국자산관리공사_비축부동산 명세 현황 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15126829/openapi.do
+synonyms:
+  - 국유부동산
+  - 비축토지
+  - 국유재산
+  - 매입연도
+  - 소재지
+  - 부동산
+  - 국유부동산 목록
+  - 캠코 비축부동산
+  - 토지비축
+  - 국유재산 매입 현황
+  - 공공 비축용지
+description_portal: 한국자산관리공사에서 관리 중인 국유재산(국유부동산) 비축토지 명세에 대한 정보를 제공합니다.(2023년도 이후 데이터 제공)매입연도를 기준으로 특정 연도에 취득된 자산을 필터링할 수 있고, 소재지명을 사용하면 시·군·구 등 행정 구역 단위로 자산 위치를 파악할 수 있습니다. 또한 부동산 종류명으로 아파트, 상가, 토지 등의 유형을 확인하며 면적 정보를 통해 규모를 비교할 수 있습니다. 담당부서를 통해 관리 책임 부서를 파악함으로써 문의나 절차 확인에도 유용합니다.거주지역 주변 자산 현황 탐색이나 관심 있는 구매연도 자산 규모 파악에 활용할 수 있고, 지도 기반 자산 분포 시각화, 통계 분석, 연도별 변화 추세 모델링 등에 응용할 수 있습니다.
+team:
+  dept: AI데이터팀
+services:
+  - op: /stmnPscd
+    name: 비축부동산 조회
+    endpoint: https://apis.data.go.kr/B010003/kamcoRlgStmn/stmnPscd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 호출방식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CRTR_YMD
+      title: 기준일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250113'
+      stats:
+        min: 20250113
+        p50: 20250113
+        max: 20250113
+        unique: 1
+    - name: API_DAT_KEY
+      title: API 데이터키
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '7'
+        - '8'
+      stats:
+        min: 1
+        p50: 43.5
+        max: 86
+        unique: 86
+    - name: RSPB_DEPT_NM
+      title: 담당부서명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대전충남지역본부
+        - 경기지역본부
+        - 인천지역본부
+      stats:
+        unique: 11
+    - name: BUY_YR
+      title: 매입연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2020'
+        - '2023'
+        - '2022'
+      stats:
+        min: 1995
+        p50: 2020
+        max: 2024
+        unique: 17
+    - name: LCTN_NM
+      title: 소재지명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경기도 파주시 탄현면 법흥리
+        - 경상북도 김천시 율곡동
+        - 대전광역시 유성구 원신흥동
+      stats:
+        unique: 64
+    - name: RLST_KIND_NM
+      title: 부동산종류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 토지
+      stats:
+        unique: 1
+    - name: RLST_SQMS
+      title: 부동산면적
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '16500.0'
+        - '2000.0'
+        - '1000.0'
+      stats:
+        min: 1000
+        p50: 4198.8
+        max: 60305.2
+        unique: 83
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6077
+  rank_in_sector: 71
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 비축토지 명세 소재지·면적 전국 국유재산
+claims:
+  - id: c-15126829-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15126829.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15126829.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15126829-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126829-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126829.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126829-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15126829.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15126829-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126829-07
+    kind: admin_note
+    value: wave4 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15126829.json
+  stats: probe/stats/15126829.json
+  data: probe/data/15126829/
+status: active
+summary_user: 한국자산관리공사가 관리하는 국유부동산 비축토지를 자산 한 건씩 담은 원천 목록으로, 전국을 대상으로 매입연도·소재지·부동산 종류·면적·담당부서를 제공한다(포털 설명상 2023년도 이후 데이터). 우리 동네 주변에 공사가 비축해 둔 국유 토지·건물이 어디에 얼마나 있는지, 특정 연도에 사들인 자산 규모가 어느 정도인지 알고 싶은 주민·분석가가 쓴다. 전역 조인 키(필지고유번호 등)가 없어 다른 국유재산 데이터와는 소재지명(LCTN_NM)을 주소로 맞추거나 같은 기관 데이터끼리 이름으로 매핑해 연결해야 한다.
+limits: 실측 컬럼에 PNU 같은 공통 조인 키가 없어 필지 단위로 토지대장·공시지가 데이터와 바로 붙일 수 없고, 소재지 문자열 매칭에 의존해야 한다. 개발계정은 하루 10,000회까지 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15126829-01
+    - c-15126829-03
+    - c-15126829-04
+    - c-15126829-06
+  dropped_citations: 0

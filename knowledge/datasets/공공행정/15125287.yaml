@@ -1,7 +1,6 @@
-# Dataset 15125287 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+# Dataset 15125287 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15125287'
-tier: candidate
+tier: verified
 title: 재정경제부_공공기관 정보 조회 서비스
 sector: 공공행정/일반행정/civic-facilities
 agency:
@@ -16,6 +15,13 @@ synonyms:
   - 정부부처산하기관
   - 공공정보조회
   - 기관현황
+  - 공공기관 목록
+  - 공공기관 지사
+  - 공공기관 지점 주소
+  - 공기업 준정부기관
+  - 기관유형 주관부처
+  - 공공기관 연락처
+  - 공공기관 지정 현황
 description_portal: 본 데이터는 공공기관의 주요 정보와 해당 기관의 지점 및 지사에 대한 정보를 종합적으로 제공하는 서비스입니다. 공공기관으로 지정된 기관들의 명칭, 유형, 소속 부처, 지역별 지점 현황 등 다양한 항목을 실시간으로 조회할 수 있습니다. 이를 통해 이용자는 특정 기관의 본부뿐 아니라 각 지역에 설치된 지사 또는 분소의 위치 및 관련 정보를 쉽게 파악할 수 있으며, 정책 수립, 지역 기반 행정서비스 개선, 기관 간 협력 체계 구축 등 다양한 행정 목적에도 활용될 수 있습니다. 또한, 실시간 업데이트를 통해 공공기관 지정 변동 사항이나 신규 기관 정보도 반영되므로 최신 정보 확보에 용이한 자료입니다. 해당 데이터는 국민 누구나 접근 가능하며 공공행정 투명성 제고에 기여합니다.
 team:
   dept: 경영관리과
@@ -52,7 +58,7 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
+    verified_ok: true
   - op: /list
     name: 공공기관 정보 목록조회
     endpoint: https://apis.data.go.kr/1051000/public_inst/list
@@ -109,8 +115,421 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
-schema: {}
+    verified_ok: true
+schema:
+  fields:
+    - name: brnchSn
+      title: 지점일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2008'
+        - '2009'
+        - '2010'
+      op: /brnch
+      stats:
+        min: 2008
+        p50: 2083.5
+        max: 2159
+        unique: 152
+    - name: instCd
+      title: 기관코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C0028
+      op: /brnch
+      stats:
+        unique: 1
+    - name: instNm
+      title: 기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국민연금공단
+      op: /brnch
+      stats:
+        unique: 1
+    - name: pbadmsStdInstCd
+      title: 행정표준기관코드
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - B552015
+      op: /brnch
+      stats:
+        min: '5520-01-05'
+        max: '5520-01-05'
+        unique: 1
+    - name: brnchNm
+      title: 지점명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 국민연금공단 서울북부지역본부
+        - 국민연금공단 종로중구지사
+        - 국민연금공단 동대문중랑지사
+      op: /brnch
+      stats:
+        unique: 152
+    - name: roadNmAddr
+      title: 도로명주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 강원도 홍천군 홍천읍 홍천로 364
+        - 인천광역시 강화군 강화읍 강화대로404번길 7 (그랑프리)
+        - 경상남도 김해시 가락로 58 (부원동)
+      op: /brnch
+      stats:
+        unique: 149
+    - name: daddr
+      title: 상세주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 3층
+        - 4층
+        - 국민연금 충정로사옥 9층
+      op: /brnch
+      stats:
+        unique: 147
+    - name: telno
+      title: 전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-2176-9902
+        - 02-397-9524
+        - 02-920-0511
+      op: /brnch
+      stats:
+        unique: 152
+    - name: fxno
+      title: 팩스번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 051-910-8060
+        - 02-3485-2840
+        - 02-3485-2700
+      op: /brnch
+      stats:
+        unique: 151
+    - name: eml
+      title: 이메일
+      type: code
+      null_rate: 1.0
+      op: /brnch
+      stats:
+        unique: 0
+    - name: siteUrl
+      title: 사이트URL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - http://pensioner.nps.or.kr/jsppage/hqCenter/hq/index.jsp?areaCd=111B
+        - http://pensioner.nps.or.kr/jsppage/hqCenter/hq/index.jsp?areaCd=2110
+        - http://pensioner.nps.or.kr/jsppage/hqCenter/hq/index.jsp?areaCd=4110
+      op: /brnch
+      stats:
+        unique: 8
+    - name: ctpvNm
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 서울특별시
+        - 경상북도
+      op: /brnch
+      stats:
+        unique: 17
+    - name: sggNm
+      title: 시군구명
+      type: string
+      null_rate: 0.0066
+      sample_values:
+        - 중구
+        - 북구
+        - 강남구
+      op: /brnch
+      stats:
+        unique: 136
+    - name: lotnoAddr
+      title: 지번주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 강원도 홍천군 홍천읍 신장대리 55-13
+        - 인천광역시 강화군 강화읍 관청리 175-1 그랑프리
+        - 경상남도 김해시 부원동 830-1 김해부원동우체국
+      op: /brnch
+      stats:
+        unique: 149
+    - name: frgnYn
+      title: 외국여부 [Y/N]
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      op: /brnch
+      stats:
+        unique: 1
+    - name: instCd
+      title: 기관코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - C0001
+        - C0002
+        - C0003
+      op: /list
+      stats:
+        unique: 355
+    - name: pbadmsStdInstCd
+      title: 행정표준기관코드
+      type: string
+      null_rate: 0.0028
+      sample_values:
+        - B550402
+        - B552130
+        - B552632
+      op: /list
+      stats:
+        unique: 354
+    - name: instNm
+      title: 기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 88관광개발(주)
+        - 가축위생방역지원본부
+        - 강원대학교치과병원
+      op: /list
+      stats:
+        unique: 355
+    - name: laygInstYn
+      title: 부설기관여부 [Y/N]
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      op: /list
+      stats:
+        unique: 2
+    - name: sprvsnInstCd
+      title: 주관부처코드
+      type: code
+      null_rate: 0.0507
+      sample_values:
+        - A1025
+        - A1011
+        - A1022
+      op: /list
+      stats:
+        unique: 37
+    - name: sprvsnInstNm
+      title: 주관부처명
+      type: code
+      null_rate: 0.0507
+      sample_values:
+        - 기후에너지환경부
+        - 문화체육관광부
+        - 국토교통부
+      op: /list
+      stats:
+        unique: 37
+    - name: instType
+      title: 기관유형
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A2005
+        - A2004
+        - A2002
+      op: /list
+      stats:
+        unique: 5
+    - name: instTypeNm
+      title: 기관유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타공공기관
+        - 준정부기관(위탁집행형)
+        - 공기업(준시장형)
+      op: /list
+      stats:
+        unique: 5
+    - name: roadNmAddr
+      title: 도로명주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 세종특별자치시 시청대로 370 (반곡동)
+        - 부산광역시 남구 문현금융로 40 (문현동)
+        - 서울특별시 광진구 능동로 400(중곡동)
+      op: /list
+      stats:
+        unique: 330
+    - name: daddr
+      title: 상세주소
+      type: string
+      null_rate: 0.0113
+      sample_values:
+        - 5층
+        - 9층
+        - 부산국제금융센터
+      op: /list
+      stats:
+        unique: 340
+    - name: rprsTelno
+      title: 대표전화번호
+      type: string
+      null_rate: 0.0085
+      sample_values:
+        - 02-410-1114
+        - 000-1588-2504
+        - 031-287-8811
+      op: /list
+      stats:
+        unique: 350
+    - name: custCntrTelno
+      title: 고객센터전화번호
+      type: string
+      null_rate: 0.7042
+      sample_values:
+        - 1588-2504
+        - 1577-8811
+        - 258-2000
+      op: /list
+      stats:
+        unique: 104
+    - name: rprsFxno
+      title: 대표팩스번호
+      type: string
+      null_rate: 0.4789
+      sample_values:
+        - 031-287-8833
+        - 033-640-3113
+        - 055-750-8025
+      op: /list
+      stats:
+        unique: 185
+    - name: rprsEml
+      title: 대표이메일
+      type: string
+      null_rate: 0.6563
+      sample_values:
+        - plan-gwnudh@naver.com
+        - webmaster@high1.com
+        - kijo@gnuh.co.kr
+      op: /list
+      stats:
+        unique: 122
+    - name: siteUrl
+      title: 사이트URL
+      type: string
+      null_rate: 0.0085
+      sample_values:
+        - http://www.88countryclub.co.kr
+        - http://www.lhca.or.kr
+        - http://www.knudh.or.kr
+      op: /list
+      stats:
+        unique: 352
+    - name: fndnYmd
+      title: 설립일자 [YYYYMMDD]
+      type: number
+      null_rate: 0.0028
+      sample_values:
+        - '20010402'
+        - '20090504'
+        - '20050701'
+      op: /list
+      stats:
+        min: 19051027
+        p50: 20040710.5
+        max: 20250407
+        unique: 330
+    - name: ctpvNm
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+        - 경기도
+        - 세종특별자치시
+      op: /list
+      stats:
+        unique: 18
+    - name: sggNm
+      title: 시군구명
+      type: string
+      null_rate: 0.0563
+      sample_values:
+        - 중구
+        - 동구
+        - 강남구
+      op: /list
+      stats:
+        unique: 81
+    - name: lotnoAddr
+      title: 지번주소
+      type: string
+      null_rate: 0.2197
+      sample_values:
+        - 세종특별자치시 반곡동 736 나라키움 세종국책연구단지
+        - 서울특별시 광진구 중곡동 30-80 보건복지행정타운
+        - 서울특별시 송파구 방이동 88 올림픽공원
+      op: /list
+      stats:
+        unique: 253
+    - name: instClsf
+      title: 기관분류
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '08'
+        - '99'
+        - '04'
+      op: /list
+      stats:
+        min: 1
+        p50: 6
+        max: 99
+        unique: 9
+    - name: instClsfNm
+      title: 기관분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 연구교육
+        - 기타
+        - 고용보건복지
+      op: /list
+      stats:
+        unique: 9
+    - name: dsgnYn
+      title: 지정여부 [Y/N]
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      op: /list
+      stats:
+        unique: 1
+    - name: frgnYn
+      title: 외국여부 [Y/N]
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      op: /list
+      stats:
+        unique: 1
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -127,12 +546,12 @@ classification:
 claims:
   - id: c-15125287-01
     kind: access
-    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-09-30 실호출 성공 오퍼레이션 0/2
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 2/2
     evidence:
       - type: measured
         source: probe/runs/15125287.json
-        observed_at: '2026-09-30'
-        detail: ops_ok 0/2
+        observed_at: '2026-10-03'
+        detail: ops_ok 2/2
       - type: measured
         source: probe/apply/15125287.json
         observed_at: '2026-09-30'
@@ -143,7 +562,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15125287-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -154,33 +573,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15125287-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15125287.json
-        observed_at: '2026-09-30'
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-03'
+        detail: 컬럼 38개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15125287-04
     kind: coverage
     value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
     evidence:
       - type: measured
         source: probe/runs/15125287.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-03'
         detail: total None, rows 0
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-04'
   - id: c-15125287-06
     kind: admin_note
     value: "세부 부문 '생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)'의 가치: 좌표 있는 생활 시설 원장 — 공공시설 개방·무인민원은 표준데이터"
@@ -203,38 +622,37 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-  - id: c-15125287-10
-    kind: pitfall
-    value: 필수 파라미터 instCd는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+  - id: c-15125287-08
+    kind: admin_note
+    value: ' · 파라미터 자동 수리'
     evidence:
       - type: measured
-        source: probe/runs/15125287.json
-        observed_at: '2026-09-30'
-        detail: needs_params
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
-  - id: c-15125287-11
-    kind: pitfall
-    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /brnch, /list'
-    evidence:
-      - type: measured
-        source: probe/runs/15125287.json
-        observed_at: '2026-09-30'
-        detail: ok=false
-    qualifiers:
-      generated_by: pds.dossier.claims
-    rank: normal
-    valid_until: '2027-04-01'
 verification:
-  verdict: 파라미터부족
-  probed_at: '2026-09-30'
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-03'
   channel: portal
   rows: 0
-  ops_ok: 0/2
+  ops_ok: 2/2
   latency_ms: 308
   run: probe/runs/15125287.json
   stats: probe/stats/15125287.json
   data: probe/data/15125287/
 status: active
+summary_user: 공공기관 지정 기관의 기본정보(기관명·유형·분류·주관부처·설립일·지정 여부·대표 연락처·주소)와 각 기관의 지점·지사별 주소·연락처를 기관 1건, 지점 1건 단위로 담는 전국 범위 조회 API다. 특정 공공기관의 소속 부처와 유형을 확인하거나, 내 지역(시도·시군구)에 어떤 공공기관 지사가 있는지 찾는 질문에 쓴다. 두 오퍼레이션은 기관코드(instCd)로 서로 이어지고, 행정표준기관코드·주관부처코드·주소를 통해 다른 데이터와 맞출 수 있으나, 실측에서 전역 조인 키는 확인되지 않아 외부 연계는 이름·코드 매핑에 의존한다.
+limits: 검증 호출에서 수신된 행이 0건이어서 실제 건수와 값의 채움 정도는 확인되지 않았다. 필드에 좌표가 없어 위치 분석에는 주소를 지오코딩해야 하며, 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15125287-01
+    - c-15125287-03
+    - c-15125287-04
+  dropped_citations: 0

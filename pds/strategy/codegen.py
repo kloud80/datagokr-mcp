@@ -332,6 +332,11 @@ def render(p: dict) -> str:
                 L.append(f"{v} = fetch_each({s['url']!r}, {params!r}, {pname!r}, {_var(src)}[{scol!r}].dropna(), {kw})")
             else:
                 L.append(f"{v} = fetch({s['url']!r}, {params!r}, {kw})")
+        elif str((d.get("access") or {}).get("scheme") or "").startswith("session"):  # 브이월드 공간정보 다운로드 — 로그인 후 시도별 파일
+            page = (d.get("fetch") or {}).get("endpoint") or d.get("portal_url")
+            L.append(title)
+            L.append("#   브이월드 로그인 후 공간정보 다운로드 페이지에서 시도별 CSV를 받는다 (인증키 불필요, 압축을 풀어 아래 이름으로 저장)")
+            L.append(f"{v} = read_file({(i + '.csv')!r}, {page!r})")
         elif (d.get("access") or {}).get("channel") == "external":
             iss = (d.get("access") or {}).get("issuer") or "외부 사이트"
             L.append(title)

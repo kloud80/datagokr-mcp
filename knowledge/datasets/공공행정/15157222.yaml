@@ -1,0 +1,396 @@
+# Dataset 15157222 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157222'
+tier: verified
+title: 한국자산관리공사_차세대 온비드 공고 입찰결과목록 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157222/openapi.do
+synonyms:
+  - 공매
+  - 부동산
+  - 입찰결과
+  - 입찰일시
+  - 공매공고
+  - 온비드 입찰결과
+  - 공매 개찰결과
+  - 캠코 공매
+  - 압류재산 공매
+  - 국유재산 매각 입찰
+  - 공매 공고 조회
+  - Onbid
+description_portal: '한국자산관리공사에서 운영하는 온비드(Onbid) 홈페이지에 등록된 공고에 속하는 입찰 결과 목록를 조회하는 서비스입니다. 이용자는 물건유형코드, 재산유형코드, 처분방식코드, 입찰구분코드, 공고일자, 개찰일자 등 입찰 진행 일정과 집행 상태를 기준으로 공고에 속하는 공매 물건의 입찰 결과 목록을 조회할 수 있습니다. 필수 입력 조건 : 물건유형코드(cltrTypeCd), 재산유형코드(prptDivCd), 개찰일_시작일자opbdDtStart), 개찰일 종료일자(opbdDtEnd)'
+team:
+  dept: 디지털시스템실
+services:
+  - op: /getPbancBidRsltList2
+    name: 공고 입찰결과 목록조회
+    endpoint: https://apis.data.go.kr/B010003/OnbidPbancBidRsltListSrvc2/getPbancBidRsltList2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 응답유형
+      - name: cltrTypeCd
+        required: true
+        desc: '물건유형코드 (0001 : 부동산, 0002 : 자동차, 0003 : 동산)'
+      - name: prptDivCd
+        required: true
+        desc: '재산유형코드(복수 요청일 경우 쉼표(,)로 구분자) (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 0011 : 공공개발재산, 0013: 파산자산)'
+      - name: bidDivCd
+        required: false
+        desc: '입찰구분코드 (0001 : 인터넷, 0002 : 현장)'
+      - name: dspsMthodCd
+        required: false
+        desc: '처분방식코드 (0001 : 매각, 0002 : 임대)'
+      - name: pbancYmdStart
+        required: false
+        desc: 검색할 공고일 시작일자 입력(yyyyMMdd)
+      - name: pbancYmdEnd
+        required: false
+        desc: 검색할 공고일 종료일자 입력(yyyyMMdd)
+      - name: opbdDtStart
+        required: true
+        desc: 검색할 개찰일 시작일자 입력(yyyyMMdd)
+      - name: opbdDtEnd
+        required: true
+        desc: 검색할 개찰일 종료일자 입력 (yyyyMMdd)
+      - name: exctStatCd
+        required: false
+        desc: '집행상태코드 (0001 : 개찰준비중, 0002 : 개찰중, 0003 : 개찰완료)'
+      - name: onbidPbancNm
+        required: false
+        desc: 공고명
+      - name: orgNm
+        required: false
+        desc: 기관명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: onbidPbancNo
+      title: 온비드공고번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '891115'
+        - '889039'
+        - '889127'
+      stats:
+        min: 886933
+        p50: 893374.5
+        max: 904478
+        unique: 134
+    - name: pbctNo
+      title: 공매번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10064908'
+        - '10060558'
+        - '10060557'
+      stats:
+        min: 10060290
+        p50: 10060557
+        max: 10064908
+        unique: 36
+    - name: pbancMngNo
+      title: 공고관리번호
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 202606-17411-00
+        - 202605-15351-00
+        - 202605-15439-00
+      stats:
+        min: '2026-05-13'
+        max: '2026-09-30'
+        unique: 134
+    - name: pbctNsq
+      title: 회차
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '034'
+        - '033'
+        - '032'
+      stats:
+        min: 32
+        p50: 33
+        max: 34
+        unique: 3
+    - name: pbctsn
+      title: 차수(2026.1.1이후확정된 공고는 표시되지 않음)
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: pbancKindCd
+      title: '공고유형코드 (0001 : 일반공고, 0002 : 재공고, 0003 : 정정공고, 0004 : 연기공고, 0005 : 취소공고, 0006 : 긴급공고)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: pbancKindNm
+      title: '공고유형코드명 (0001 : 일반공고, 0002 : 재공고, 0003 : 정정공고, 0004 : 연기공고, 0005 : 취소공고, 0006 : 긴급공고)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반공고
+      stats:
+        unique: 1
+    - name: prptDivCd
+      title: '재산유형코드 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 0011'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0007'
+      stats:
+        min: 7
+        p50: 7
+        max: 7
+        unique: 1
+    - name: prptDivNm
+      title: '재산유형코드명 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 001'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 압류재산
+      stats:
+        unique: 1
+    - name: dspsMthodCd
+      title: '처분방식코드 (0001 : 매각, 0002 : 임대)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: dspsMthodNm
+      title: '처분방식코드명 (0001 : 매각, 0002 : 임대)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매각
+      stats:
+        unique: 1
+    - name: onbidPbancNm
+      title: 공고명
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - (서울동부지역본부) 2026년 제013차 압류재산 공매공고
+        - (대전충남지역본부) 2026년 제013차 압류재산 공매공고
+        - (부산지역본부) 2026년 제011차 압류재산 공매공고
+      stats:
+        min: '2026-01-01'
+        max: '2026-05-09'
+        unique: 134
+    - name: orgNm
+      title: 공고기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한국자산관리공사
+      stats:
+        unique: 1
+    - name: rspbSbrNm
+      title: 담당부점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대구경북지역본부
+        - 충북지역본부
+        - 경기지역본부
+      stats:
+        unique: 12
+    - name: pbancYmd
+      title: 공고일자(yyyyMMdd)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260610'
+        - '20260527'
+        - '20260708'
+      stats:
+        min: 20260513
+        p50: 20260624
+        max: 20260907
+        unique: 34
+    - name: cltrOpbdDt
+      title: 개찰일시(yyyyMMddHHmm)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610011100'
+        - '202609171100'
+        - '202609031100'
+      stats:
+        min: 202609031100
+        p50: 202609171100
+        max: 202610011100
+        unique: 3
+    - name: exctStatCd
+      title: '집행상태코드 (0001 : 개찰준비중, 0002 : 개찰중, 0003 : 개찰완료)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0003'
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: exctStatNm
+      title: '집행상태코드명 (0001 : 개찰준비중, 0002 : 개찰중, 0003 : 개찰완료)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 개찰완료
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6065
+  rank_in_sector: 72
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 온비드 입찰결과 목록, 전국 공매 건 단위
+claims:
+  - id: c-15157222-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157222.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157222.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15157222-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157222-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157222.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 18개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157222-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157222.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15157222-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157222-07
+    kind: admin_note
+    value: wave4 나머지 p2 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157222.json
+  stats: probe/stats/15157222.json
+  data: probe/data/15157222/
+status: active
+summary_user: 온비드에 등록된 공매 공고별 입찰 결과 목록을 공고 1건 단위로 담으며, 공고번호·회차·공고유형·재산유형·처분방식(매각/임대)·공고기관·공고일자·개찰일시·집행상태(개찰준비중·개찰중·개찰완료)를 포함하고 범위는 전국이다. 공매 투자자나 분석가가 특정 기간에 개찰된 압류재산·국유재산 공고가 어느 기관에서 몇 건 나왔고 개찰이 끝났는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없으므로 다른 온비드 서비스와는 온비드공고번호·공매번호를 이름 그대로 맞추거나 공고기관명으로만 연결한다.
+limits: 전역 조인 키가 없어 지번(PNU)이나 행정표준코드로 다른 데이터와 직접 붙일 수 없고, 이름·코드 매핑이 필요하다. 호출할 때 물건유형코드·재산유형코드·개찰 시작·종료일자를 반드시 넣어야 하며, 개발계정은 하루 1,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15157222-01
+    - c-15157222-03
+    - c-15157222-04
+  dropped_citations: 0

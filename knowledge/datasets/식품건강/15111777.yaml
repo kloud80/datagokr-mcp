@@ -1,0 +1,263 @@
+# Dataset 15111777 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15111777'
+tier: verified
+title: 식품의약품안전처_수입식품 원료정보
+sector: 식품건강/식품의약안전/imported-food
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15111777/openapi.do
+synonyms:
+  - 수입식품
+  - 안전관리
+  - 식품원료
+  - 명칭
+  - 수입식품정보
+  - 식품원료 목록
+  - 수입식품 원료 식용 여부
+  - 원료 학명 조회
+  - 식품 사용 가능 원료
+  - 식용 불가 원료
+  - 원료 이명
+description_portal: ME?
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getIprtFoodIngdInfoService
+    name: 수입식품 원료정보조회
+    endpoint: https://apis.data.go.kr/1471000/IprtFoodIngdInfoService/getIprtFoodIngdInfoService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 데이터 타입
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: INGD_SN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: INGD_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 가는가래
+        - 가는기린초
+        - 가는대나물
+      stats:
+        unique: 1000
+    - name: NKNM_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - 청각
+        - 지누아리
+      stats:
+        unique: 867
+    - name: SCNNM_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Potamogeton cristatus Regel et Maack
+        - Sedum aizoon L. / Sedum aizoon var. typica Nakai.
+        - Gypsophila pacifica Kom
+      stats:
+        unique: 1000
+    - name: DRNM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: EDIBLE_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가능
+      stats:
+        unique: 1
+    - name: EDIBLE_USE_CONT
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 잎
+        - 열매
+        - 자실체
+      stats:
+        unique: 148
+    - name: CHRTR_INFO_CONT
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ANML_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 식물성
+      stats:
+        unique: 1
+    - name: EDIBLE_Y
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - o
+      stats:
+        unique: 1
+    - name: EDIBLE_N
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - x
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 수입식품 (수입신고·해외제조업소·수입업체)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6739
+  rank_in_sector: 216
+  brm: 식품건강 - 식품의약안전
+  why: 수입식품 원료 허용 여부 전국 기준 정보
+claims:
+  - id: c-15111777-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-03 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15111777.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15111777.json
+        observed_at: '2026-10-03'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15111777-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15111777-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15111777.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15111777-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15111777.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15111777-06
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15111777-07
+    kind: admin_note
+    value: wave4 나머지 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15111777.json
+  stats: probe/stats/15111777.json
+  data: probe/data/15111777/
+status: active
+summary_user: 수입식품에 쓰이는 원료를 원료 하나당 한 건으로 담고, 원료명·이명·학명과 식용 가능 여부, 식용 부위·용도, 특성 정보를 함께 제공하며 범위는 전국 단위의 비공간 데이터다. 수입업체나 분석가가 특정 원료가 식품 원료로 쓸 수 있는지, 어느 부위를 먹을 수 있는지를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 수입식품·식품안전 데이터와는 원료명이나 학명 같은 이름 매핑으로만 연결한다.
+limits: 다른 데이터와 공통으로 쓰는 조인 키가 없어 원료명 표기가 다르면 연결이 어긋날 수 있다. 개발계정 호출은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15111777-01
+    - c-15111777-03
+    - c-15111777-04
+  dropped_citations: 0
