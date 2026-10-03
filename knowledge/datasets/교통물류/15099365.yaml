@@ -1,0 +1,212 @@
+# Dataset 15099365 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099365'
+tier: verified
+title: 서울특별시_따릉이대여소 마스터 정보
+sector: 교통물류/도로/bike-pm
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099365/fileData.do
+synonyms:
+  - 공공자전거
+  - 따릉이
+  - 대여소
+  - 자전거 대여소
+  - 따릉이 정류소 위치
+  - 서울 자전거 대여소 좌표
+  - 대여소 ID
+description_portal: '서울특별시 따릉이대여소 마스터 정보입니다.서울특별시 따릉이대여소에 대한 대여소 ID, 역 주소, 좌표 정보를 확인할 수 있습니다.부서 : 교통정보과 (02-2133-4958)'
+accrual_periodicity: 수시
+team:
+  dept: 미래첨단교통과
+services:
+  - op: bikeStationMaster
+    name: bikeStationMaster
+    endpoint: http://openapi.seoul.go.kr:8088/json/bikeStationMaster/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: RNTLS_ID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ST-10
+        - ST-100
+        - ST-1000
+      stats:
+        unique: 100
+    - name: ADDR1
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 마포구 양화로 93
+        - 서울특별시 광진구 아차산로 262
+        - 서울특별시 양천구 신정동 236
+      stats:
+        unique: 100
+    - name: ADDR2
+      type: string
+      null_rate: 0.27
+      sample_values:
+        - '427'
+        - 더샵스타시티 C동 앞
+        - 서부식자재마트 건너편
+      stats:
+        unique: 73
+    - name: LAT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '37.552746'
+        - '37.536667'
+      stats:
+        min: 0
+        p50: 37.5395355
+        max: 37.645851
+        unique: 91
+    - name: LOT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '126.918617'
+        - '127.073593'
+      stats:
+        min: 0
+        p50: 126.9326135
+        max: 127.177612
+        unique: 91
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5292
+  rank_in_sector: 1942
+  brm: 교통물류 - 도로
+  why: 따릉이 대여소ID 마스터, 이용 데이터 조인 키
+claims:
+  - id: c-15099365-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099365.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15099365-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099365-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099365.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099365-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099365.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099365-06
+    kind: admin_note
+    value: "세부 부문 '자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)'의 가치: 공공자전거 대여소·실시간 잔여(지자체별 비표준), 자전거도로 노선 GIS"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bike-pm
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099365-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099365-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099365.json
+  stats: probe/stats/15099365.json
+  data: probe/data/15099365/
+status: active
+summary_user: 서울시 공공자전거 따릉이 대여소별로 대여소 ID, 주소, 위도·경도 좌표를 담은 대여소 기준 마스터 목록이다. 특정 동네 근처에 따릉이 대여소가 어디 있는지 찾거나, 분석가가 대여소 분포를 지도에 올려 공백 지역을 살피는 데 쓴다. 전역 조인 키는 없어 같은 서울시 따릉이 대여 이력·실시간 현황 데이터와 대여소 ID(RNTLS_ID)로 맞추거나, 좌표·주소로 다른 공간 데이터와 겹쳐 쓴다.
+limits: 호출에는 포털 활용신청과 별도로 서울 열린데이터광장(data.seoul.go.kr) 인증키가 필요하다. 표준 코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 이름·주소 매핑이나 좌표로만 연결된다. 실시간 잔여 자전거 수는 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15099365-01
+    - c-15099365-03
+    - c-15099365-06
+  dropped_citations: 0

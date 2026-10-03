@@ -77,6 +77,17 @@ def _client():
     return anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY) if config.ANTHROPIC_API_KEY else anthropic.Anthropic()
 
 
+_VER: list[dict] = []
+
+
+def _verified() -> list[dict]:
+    """검증 데이터 목록 — 부문마다 3천 개 YAML을 다시 읽지 않게 한 번만 (id·제목·부문만)."""
+    if not _VER:
+        _VER.extend({"id": d["id"], "title": d["title"], "sector": d.get("sector", "")}
+                    for d, _ in store.iter_raw("dataset") if d.get("tier") == "verified")
+    return _VER
+
+
 def _sector_context(sector_top: str) -> str:
     import yaml
     subs = yaml.safe_load((config.KNOWLEDGE / "sectors" / "subsectors.yaml").read_text(encoding="utf-8"))
@@ -87,7 +98,7 @@ def _sector_context(sector_top: str) -> str:
         lines.append(f"[{s['sector']}]")
         for x in s.get("subsectors") or []:
             lines.append(f"  {x['slug']} · {x['name']} · {x.get('depth', '')}")
-    ver = [d for d in store.load("dataset") if str(d.get("sector", "")).split("/")[0] == sector_top and d.get("tier") == "verified"]
+    ver = [d for d in _verified() if str(d.get("sector", "")).split("/")[0] == sector_top]
     lines.append(f"\n이 부문에서 이미 검증된 데이터 {len(ver)}개 (겹침 판단용):")
     lines += [f"  {d['id']} {d['title']}" for d in ver[:120]]
     return "\n".join(lines)
@@ -132,7 +143,7 @@ def _ask(sector_top: str, ctx: str, rows: pd.DataFrame) -> list[dict]:
     return []
 
 
-def run(sectors: list[str] | None = None, workers: int = 6) -> pd.DataFrame:
+def run(sectors: list[str] | None = None, workers: int = int(os.environ.get("PDS_REVIEW_WORKERS", "6"))) -> pd.DataFrame:
     sys.stdout.reconfigure(encoding="utf-8")
     q = pd.read_parquet(OUT / "queue.parquet")
     cat = pd.read_parquet(config.PROCESSED / "catalog.parquet", columns=["id", "description", "output_cols"])

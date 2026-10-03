@@ -1,0 +1,205 @@
+# Dataset 15099367 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099367'
+tier: verified
+title: 서울특별시_역사마스터 정보
+sector: 교통물류/도로/road-other
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099367/fileData.do
+synonyms:
+  - 대중교통
+  - 지하철
+  - 호선명
+  - 지하철역 목록
+  - 지하철역 좌표
+  - 역사 코드
+  - 서울 지하철 호선별 역
+  - 역 위경도
+  - 전철역 마스터
+description_portal: '서울시 역사 마스터 정보입니다.서울시 역사에 대한 역사 ID, 역사명, 호선명, 좌표 정보를 확인할 수 있습니다.부서 : 교통정보과 (02-2133-4958)'
+accrual_periodicity: 수시
+team:
+  dept: 미래첨단교통과
+services:
+  - op: subwayStationMaster
+    name: subwayStationMaster
+    endpoint: http://openapi.seoul.go.kr:8088/json/subwayStationMaster/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: BLDN_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0150'
+        - '0151'
+        - '0152'
+      stats:
+        min: 150
+        p50: 240.5
+        max: 411
+        unique: 100
+    - name: BLDN_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 시청
+        - 종로3가
+        - 신설동
+      stats:
+        unique: 95
+    - name: ROUTE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2호선
+        - 3호선
+        - 1호선
+      stats:
+        unique: 5
+    - name: LAT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.556228'
+        - '37.565715'
+        - '37.570161'
+      stats:
+        min: 37.476538
+        p50: 37.548745499999995
+        max: 37.7205
+        unique: 100
+    - name: LOT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.972135'
+        - '126.977088'
+        - '126.982923'
+      stats:
+        min: 126.852912
+        p50: 127.011075
+        max: 127.2034
+        unique: 100
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: rail-network
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.4878
+  rank_in_sector: 2520
+  brm: 교통물류 - 도로
+  why: 서울 역사 ID·좌표 마스터, 철도 역 데이터
+claims:
+  - id: c-15099367-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099367.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15099367-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099367-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099367.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099367-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099367.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15099367-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099367-07
+    kind: admin_note
+    value: wave5 p2 · 이동 제안 → 교통물류 - 철도
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099367.json
+  stats: probe/stats/15099367.json
+  data: probe/data/15099367/
+status: active
+summary_user: 서울시 지하철·철도 역사를 역사 한 곳(호선별)당 한 행으로 담은 마스터 목록으로, 역사 ID(BLDN_ID), 역사명, 호선명, 위도·경도 좌표를 담는다. 분석가나 서비스 개발자가 '이 역은 어느 호선이고 지도상 어디에 있나'를 확인하거나, 역 단위 승하차·혼잡 데이터를 지도에 올릴 때 기준표로 쓴다. 실측상 전역 조인 키는 없어서 다른 데이터와는 역사명·호선명을 맞추거나 서울시의 같은 역사 ID 체계를 쓰는 데이터와 이어 쓰고, 좌표로 공간 결합한다.
+limits: data.seoul.go.kr 인증키가 따로 필요하며, 이는 공공데이터포털 활용신청과 별개다. 전역 공통 코드가 없어 국토부·코레일 등 다른 기관 역 코드와 바로 연결되지 않고 이름 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15099367-01
+    - c-15099367-03
+    - c-15099367-07
+  dropped_citations: 0

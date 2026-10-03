@@ -4,12 +4,13 @@ register  logs/wave4_targets.json을 knowledge/targets.json에 덧붙인다 (sta
 status    4차 대상과 이번에 수리한 대상의 상태를 실측 기록(probe/runs)으로 맞춘다 — 행이 나왔으면 verified, 실행했는데 0행이면 failed
 """
 import json
+import os
 import sys
 
 from pds import config
 
 PATH = config.KNOWLEDGE / "targets.json"
-W4 = config.ROOT / "logs" / "wave4_targets.json"
+W4 = config.ROOT / "logs" / os.environ.get("PDS_TARGETS_LOG", "wave4_targets.json")
 
 
 def register() -> int:

@@ -2,13 +2,14 @@
 import asyncio
 import datetime as dt
 import json
+import os
 import sys
 
 from pds import config
 from pds.probe.files import run_files
 
 sys.stdout.reconfigure(encoding="utf-8")
-t = json.loads((config.ROOT / "logs" / "wave4_targets.json").read_text(encoding="utf-8"))
+t = json.loads((config.ROOT / "logs" / os.environ.get("PDS_TARGETS_LOG", "wave4_targets.json")).read_text(encoding="utf-8"))
 today = dt.date.today().isoformat()
 todo = []
 for x in t:

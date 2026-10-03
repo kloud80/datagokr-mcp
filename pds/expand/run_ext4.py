@@ -1,5 +1,6 @@
 """4차 확대 링크형 검증 — 키 보유 사이트(브이월드·서울·법제처·나이스)만, 실측 기록(probe/runs)만 남긴다 (targets 갱신은 나중에 일괄)."""
 import json
+import os
 import sys
 from urllib.parse import urlparse
 
@@ -10,7 +11,7 @@ from pds import config
 from pds.probe import external_sites as ex
 
 sys.stdout.reconfigure(encoding="utf-8")
-t = json.loads((config.ROOT / "logs" / "wave4_targets.json").read_text(encoding="utf-8"))
+t = json.loads((config.ROOT / "logs" / os.environ.get("PDS_TARGETS_LOG", "wave4_targets.json")).read_text(encoding="utf-8"))
 links = pd.read_parquet(config.KNOWLEDGE / "expansion" / "site_links.parquet", columns=["id", "link"]).drop_duplicates("id")
 link = dict(zip(links["id"], links["link"]))
 todo = [{"id": x["id"], "link": link.get(x["id"]), "title": x["title"]} for x in t if x["round"] == "external" and link.get(x["id"])]

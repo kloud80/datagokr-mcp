@@ -102,6 +102,7 @@ const TIMELINE: { d: string; t: string; s: string }[] = [
   { d: '2026-10-03', t: '사이트 커버리지 · Docs', s: '포털 링크형 21,988건의 제공처를 모두 조회해 1,309개 사이트로 묶고, 키 보유·검증 여부를 정리했다. 이 문서(Docs)를 만들었다.' },
   { d: '2026-10-03', t: '검색 개선 — 고정 개수에서 기준값으로', s: '검색 상위 20개·참고 3개 제한을 없애고 BM25 + 의미 임베딩(e5)으로 넓게 찾아 기준값으로 자른다. 채팅은 Haiku 재순위. 정답표 32문항: 전략 재현율 0.74 → 0.98(LLM 없이) · 0.94(재순위, 데이터 평균 6개) · 1순위 적중 0.78 → 0.91. 맥락 “회사 상태 조기 신호” 추가(42개).' },
   { d: '2026-10-03', t: '4차 확대 — 도시·부동산 우선, 3,000건', s: '키를 새로 받지 않고 도시·부동산 6,777건(5,407단위)과 나머지 부문 점수 상위 5,000단위를 부문 검토 → 1,864건 검증. 도시·부동산 989 · 나머지 450 · 실패 API 파라미터 자동 수리 59 → 검증 1,583 → 3,080. 브이월드 공간정보 일괄 다운로드(개별공시지가·토지특성 등) 118건 포함. 조인 2,089 → 3,378.' },
+  { d: '2026-10-03', t: '5차 확대 — 나머지 부문 전부', s: '남은 나머지 부문 20,096단위를 Opus로 부문 검토(유지 2,466 · 이동 373) → 1,716건 검증 대상. 포털 파일 920 · 링크형 152 · 택지정보시스템 15(새 검증기) → 검증 3,081 → 4,172. 조인 4,491 (실측 1,627). 포털 API 317건은 활용신청 대기.' },
   { d: '2026-10-03', t: '원격 MCP · 사용 통계', s: '이 서버의 /mcp로 원격 MCP를 열고(읽기 전용·인증 없음) 연결 가이드를 만들었다. Google Analytics 4로 방문·질문 수를 수집한다.' },
 ]
 
@@ -317,7 +318,7 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
             <Section id="scope" n={5} title="데이터 대상과 커버리지"
               lead="포털 전체에서 출발해, 점수와 부문 검토로 대상을 고르고, 실제 호출로 검증된 것만 지식이 된다.">
               <div className="doc-funnel">
-                {([['포털 전체 목록', T.catalog], ['검토 단위 (1~4차 + 외부)', 331 + (d.waves.wave2?.units ?? 0) + (d.waves.wave3?.units ?? 0) + (d.waves.wave4?.units ?? 0) + (d.waves.wave4r?.units ?? 0) + 521],
+                {([['포털 전체 목록', T.catalog], ['검토 단위 (1~5차 + 외부)', 331 + (d.waves.wave2?.units ?? 0) + (d.waves.wave3?.units ?? 0) + (d.waves.wave4?.units ?? 0) + (d.waves.wave4r?.units ?? 0) + (d.waves.wave5?.units ?? 0) + 521],
                   ['검증 대상', Object.values(d.rounds).reduce((a, r) => a + Object.values(r).reduce((x, y) => x + y, 0), 0)],
                   ['검증 통과 (지식 체계)', T.verified], ['조인으로 연결된 데이터', T.datasets_with_edge]] as [string, number][]).map(([k, v], i, arr) => (
                   <div key={k} className="doc-funnel-row">
@@ -371,7 +372,7 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
               <h3 className="doc-h3">검증 라운드</h3>
               <AgentTable caption="라운드별 검증" columns={[{ key: 'r', label: '라운드' }, { key: 'what', label: '대상' }, { key: 'v', label: '통과', numeric: true }, { key: 'f', label: '실패', numeric: true }, { key: 'p', label: '대기', numeric: true }]}
                 rows={Object.entries(d.rounds).map(([r, c]) => ({
-                  key: r, r, what: ({ '1': '1차 대표 데이터(상위)', '2': '1차 대표 데이터(나머지)', '3': '1차 보강', '4': '2차 확대 — 조인 키 기준', '5': '3차 확대 — 점수 상위', '6': '4차 확대 — 도시·부동산 우선 + 나머지 상위', external: '외부 사이트' } as Record<string, string>)[r] ?? r,
+                  key: r, r, what: ({ '1': '1차 대표 데이터(상위)', '2': '1차 대표 데이터(나머지)', '3': '1차 보강', '4': '2차 확대 — 조인 키 기준', '5': '3차 확대 — 점수 상위', '6': '4차 확대 — 도시·부동산 우선 + 나머지 상위', '7': '5차 확대 — 나머지 부문 전부', external: '외부 사이트' } as Record<string, string>)[r] ?? r,
                   v: n(c.verified), f: n(c.failed), p: n(c.pending) }))} />
               <h3 className="doc-h3">확대 차수별 부문 검토</h3>
               {Object.entries(d.waves).map(([w, c]) => (

@@ -289,7 +289,7 @@ class Target(Strict):
     prelim_score: float
     usage: int
     url: str
-    round: Literal["1", "2", "3", "4", "5", "6", "external"]  # 4·5·6 = 2·3·4차 확대 (knowledge/expansion/wave2·3·4)
+    round: Literal["1", "2", "3", "4", "5", "6", "7", "external"]  # 4·5·6·7 = 2·3·4·5차 확대 (knowledge/expansion/wave2·3·4·5)
     why: str
     status: Literal["pending", "verified", "failed"]
     probe: dict[str, Any] | None = None

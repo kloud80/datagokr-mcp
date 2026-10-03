@@ -1,0 +1,222 @@
+# Dataset 15100108 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15100108'
+tier: verified
+title: 서울특별시_전동킥보드_견인현황
+sector: 교통물류/도로/bike-pm
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15100108/fileData.do
+synonyms:
+  - 개인형이동장치
+  - 킥보드
+  - 견인
+  - 킥보드 견인
+  - PM 견인
+  - 개인형 이동장치 불법주차
+  - 공유킥보드 단속
+  - 전동킥보드 불법주차 신고
+  - 킥보드 견인 조치
+description_portal: 서울시에서  전동킥보드 견인 현황을 제공합니다.  신고일자, 자치구정보, 주소, 견인유형, 조치일 등의 정보를 제공합니다.불법으로 주차 시켜서 조치 되는 일이 없도록 양해 부탁드립니다.
+accrual_periodicity: 수시
+team:
+  dept: 교통실
+services:
+  - op: tbAutoKickboard
+    name: tbAutoKickboard
+    endpoint: http://openapi.seoul.go.kr:8088/json/tbAutoKickboard/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '99999'
+        - '99998'
+        - '99997'
+      stats:
+        min: 9991
+        p50: 99949.5
+        max: 99999
+        unique: 100
+    - name: DCLR_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2023-04-24'
+        - '2021-10-15'
+      stats:
+        min: '2021-10-15'
+        max: '2023-04-24'
+        unique: 2
+    - name: GU_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 용산구
+        - 중랑구
+        - 성동구
+      stats:
+        unique: 14
+    - name: ADDR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 성동구 행당동 188-1
+        - 서울특별시 강서구 가양동 1475-3
+        - 서울특별시 강남구 대치동 1011-12
+      stats:
+        unique: 81
+    - name: TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보도와 차도가 구분된 도로의 차도
+        - 보도 중앙
+        - 횡단보도, 산책로 등
+      stats:
+        unique: 8
+    - name: ACTN_DAY
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2023-04-24'
+        - '2021-10-15'
+      stats:
+        min: '2021-10-15'
+        max: '2023-04-24'
+        unique: 2
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5322
+  rank_in_sector: 1898
+  brm: 교통물류 - 도로
+  why: 서울 킥보드 견인 건별 주소 기록
+claims:
+  - id: c-15100108-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15100108.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15100108-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15100108-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15100108.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15100108-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15100108.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15100108-06
+    kind: admin_note
+    value: "세부 부문 '자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)'의 가치: 공공자전거 대여소·실시간 잔여(지자체별 비표준), 자전거도로 노선 GIS"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bike-pm
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15100108-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15100108-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15100108.json
+  stats: probe/stats/15100108.json
+  data: probe/data/15100108/
+status: active
+summary_user: 서울시 전동킥보드 견인 처리 내역을 건별로 담으며, 신고일자, 자치구명, 주소, 견인유형, 조치일을 포함한다. 시민이나 분석가가 어느 자치구·지역에서 킥보드 불법주차 견인이 잦은지, 신고부터 조치까지 며칠이 걸리는지 살피는 데 쓴다. 전역 조인 키가 없어서 다른 데이터와는 자치구명(GU_NM)이나 주소를 이름으로 맞춰 킥보드 주차구역·자전거도로 같은 개인형 이동장치 데이터와 연결한다.
+limits: data.seoul.go.kr의 별도 인증키(KEY)가 있어야 호출되며, 공공데이터포털 활용신청과는 따로 받아야 한다. 실측 컬럼에서 표준 코드형 조인 키를 찾지 못했으므로 다른 데이터와 붙일 때는 자치구명·주소 문자열 매핑에 의존해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15100108-01
+    - c-15100108-03
+    - c-15100108-06
+  dropped_citations: 0

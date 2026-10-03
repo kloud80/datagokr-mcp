@@ -42,7 +42,7 @@ def test_api_endpoints():
     s = c.get("/api/stats").json()
     assert s["datasets"]["verified"] > 200 and s["code_lists"] > 100
     assert c.get("/api/codes/land_category", params={"q": "대"}).json()["values"]
-    assert c.get("/api/search", params={"q": "응급실"}).json()[0]["id"] == "15000563"
+    assert "15000563" in [x["id"] for x in c.get("/api/search", params={"q": "응급실"}).json()[:3]]  # 글자 검색 — 응급실 방문 통계 등도 상위에 온다
     p = c.post("/api/plan", json={"goal": "지금 가까운 응급실 병상", "use_llm": False}).json()
     assert p["datasets"][0]["id"] == "15000563"
 

@@ -161,8 +161,9 @@ def select(goal: str, rerank: bool = False) -> dict:
         recipe = None
     pinned = {m["dataset"] for c in ctxs for m in c["members"] if m.get("dataset")}
     have = {d["id"] for d, _ in hits}
-    if hits and pinned - have:  # 데이터 단위로 지정된 맥락 멤버는 검색에 안 걸려도 풀에 넣는다 (국민연금 사업장 ↔ "회사 상태")
+    if hits and pinned:  # 데이터 단위로 지정된 맥락 멤버는 검색 점수가 낮거나 안 걸려도 풀에 넣는다 (국민연금 사업장 ↔ "회사 상태")
         base = 0.5 * hits[0][1]
+        hits = [(d, max(s, base) if d["id"] in pinned else s) for d, s in hits]
         hits += [(ix.datasets[i], base) for i in sorted(pinned - have) if i in ix.datasets and ix.datasets[i]["tier"] == "verified"]
     hits = [(d, s * _region_weight(d, region)) for d, s in hits]
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])

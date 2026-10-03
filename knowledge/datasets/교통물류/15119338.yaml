@@ -1,0 +1,229 @@
+# Dataset 15119338 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15119338'
+tier: verified
+title: 서울특별시_노선별 지하철역 정보
+sector: 교통물류/철도/rail-network
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15119338/fileData.do
+synonyms:
+  - 지하철
+  - 교통
+  - 노선
+  - 지하철역 목록
+  - 역코드
+  - 서울 지하철 노선
+  - 외부코드
+  - 전철역 명칭
+  - 서울교통공사 역
+  - 호선별 역
+description_portal: 서울교통공사에서 제공하는 1~8호선, 9호선 2~3단계(언주~중앙보훈병원) 노선별 지하철역을 제공하는 서비스 입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SearchSTNBySubwayLineInfo
+    name: SearchSTNBySubwayLineInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/SearchSTNBySubwayLineInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: STATION_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1707'
+        - '1709'
+        - '1815'
+      stats:
+        min: 150
+        p50: 1718.5
+        max: 1919
+        unique: 100
+    - name: STATION_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 명학
+        - 군포
+        - 부개
+      stats:
+        unique: 100
+    - name: STATION_NM_ENG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Myeonghak
+        - Gunpo
+        - Bugae
+      stats:
+        unique: 100
+    - name: LINE_NUM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 01호선
+      stats:
+        unique: 1
+    - name: FR_CODE
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - P148
+        - P150
+        - '151'
+      stats:
+        unique: 100
+    - name: STATION_NM_CHN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 鸣鹤
+        - 军浦
+        - 富开
+      stats:
+        unique: 100
+    - name: STATION_NM_JPN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - タンジョン
+        - ミョンハク
+        - クンポ
+      stats:
+        unique: 99
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 철도망·역·출입구·시설
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4813
+  rank_in_sector: 1192
+  brm: 교통물류 - 철도
+  why: 서울 노선별 역 목록, 역 코드 조인 기준
+claims:
+  - id: c-15119338-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-03 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15119338.json
+        observed_at: '2026-10-03'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-04'
+  - id: c-15119338-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15119338-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15119338.json
+        observed_at: '2026-10-03'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15119338-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15119338.json
+        observed_at: '2026-10-03'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-04'
+  - id: c-15119338-06
+    kind: admin_note
+    value: "세부 부문 '철도망·역·출입구·시설'의 가치: 역 좌표·출입구·환승 — 역세권 판정의 기준. transit_node_cd 매핑 마스터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rail-network
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15119338-07
+    kind: admin_note
+    value: '[교통물류 - 철도 · 결정] 대부분 유지(제외 규칙 없음). 세부: 건설 계획(event) · 승하차·혼잡 · 실시간·시간표(조회 도구) · 철도망·역·시설(cross-cutting) · 안전 · 화물 · 기타.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L463
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15119338-08
+    kind: admin_note
+    value: wave5 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-03'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-03'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15119338.json
+  stats: probe/stats/15119338.json
+  data: probe/data/15119338/
+status: active
+summary_user: 서울교통공사가 운영하는 1~8호선과 9호선 2~3단계(언주~중앙보훈병원) 구간의 지하철역을 역 단위로 담은 역 목록 마스터로, 역코드·역명(국문·영문·중문·일문)·호선·외부코드(FR_CODE)를 담는다. 교통·부동산 분석가가 "이 역은 몇 호선이고 외부 역번호는 무엇인가"를 확인하거나, 역세권 판정·환승역 집계를 위해 역명과 노선을 표준화할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 승하차·혼잡·시간표 등 다른 철도 데이터와는 역명이나 같은 기관의 역코드(STATION_CD)·외부코드 매핑으로만 이어 쓴다.
+limits: 역 좌표·주소 같은 공간 정보가 없는 비공간 목록이라 이것만으로 거리 기반 역세권 판정은 하지 못하고, 다른 기관 데이터와는 역명 매칭으로 연결해야 한다. 호출에는 포털 활용신청과 별개로 서울 열린데이터광장(data.seoul.go.kr) 인증키를 경로 파라미터로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-03'
+  batch: sync
+  cited_claims:
+    - c-15119338-01
+    - c-15119338-03
+    - c-15119338-04
+    - c-15119338-06
+  dropped_citations: 0
