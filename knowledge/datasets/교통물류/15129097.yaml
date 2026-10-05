@@ -1,0 +1,230 @@
+# Dataset 15129097 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15129097'
+tier: verified
+title: 관세청_해상수출입 운송비용
+sector: 교통물류/해운·항만/port-cargo
+agency:
+  id: '1220000'
+  name: 관세청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15129097/openapi.do
+synonyms:
+  - 해상 수출
+  - 해상 수입
+  - 운송비용
+  - 해상운임
+  - 컨테이너 운임
+  - 수출입 물류비
+  - 40피트 컨테이너 운송비
+  - 국가별 해상운송비
+  - FCL 운임
+  - 해운 운임 지수
+description_portal: 기업이 세관에 수출입 신고하는 과정에서 생산된 운임정보를 화물정보와 연계하여 컨테이너당 평균 수출입 운송비용을 산출·공표하는 데이터로,거래조건은 운임을 포함하는 대표적 정형거래조건(국제상업회의소 제정)인 CIF(Cost, Insurance and Freight)와 CFR(Cost and Frieght)을 거래조건으로 하는 수출신고 건과 운임을 포함하지 않는 대표적 정형거래조건(국제상업회의소 제정)인 FOB(Free On Board)를 거래조건으로 하는 수입신고 건이다.단일 화주의 물품만 적재되는 FCL(Full Container Load) 형태만 선별, 40피트(2TEU) 일반화물 운송용(GP, Genaral Purpose) 컨테이너 조건이다.
+team:
+  dept: 데이터담당관
+services:
+  - op: /getSeaImexTrnpCst
+    name: 해상수출입 운송비용
+    endpoint: https://apis.data.go.kr/1220000/seaimextrnpcst/getSeaImexTrnpCst
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: strtYymm
+        required: true
+        example: '201901'
+        desc: 시작년월(2019년 이후)
+      - name: endYymm
+        required: true
+        example: '202401'
+        desc: 종료년월
+      - name: imexTpcd
+        required: true
+        example: '1'
+        desc: 수출입구분코드(수출 :1, 수입 :2)
+      - name: cntyCd
+        required: false
+        example: JP
+        desc: 국가코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: imexTrnpCst
+      title: 해상수출입 운송비용
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 1,081
+        - '970'
+        - 1,045
+      stats:
+        min: 620
+        p50: 1041
+        max: 1385
+        unique: 57
+    - name: statCd
+      title: 국가코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - JP
+      stats:
+        unique: 1
+    - name: statCdCntnKor1
+      title: 국가명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일본
+      stats:
+        unique: 1
+    - name: year
+      title: 기간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019.01'
+        - '2019.02'
+        - '2019.03'
+      stats:
+        min: 2019.01
+        p50: 2021.07
+        max: 2024.01
+        unique: 61
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5191
+  rank_in_sector: 114
+  brm: 교통물류 - 해운·항만
+  why: 국가·기간별 평균 운송비용 집계로 개체 원장이 아님
+claims:
+  - id: c-15129097-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15129097.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15129097.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15129097-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15129097-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15129097.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15129097-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15129097.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15129097-06
+    kind: admin_note
+    value: "세부 부문 '항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)'의 가치: 항만별 월간 물동량 = 해운 시황 지표, 반출입은 화물 건 단위"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#port-cargo
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15129097-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15129097-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15129097.json
+  stats: probe/stats/15129097.json
+  data: probe/data/15129097/
+status: active
+summary_user: 관세청 수출입 신고 운임정보를 화물정보와 연계해 산출한 40피트 일반화물 컨테이너(FCL) 1개당 평균 해상 수출입 운송비용을 국가별·기간별로 담은 집계 데이터이다. 수출은 CIF·CFR, 수입은 FOB 거래조건 신고 건 기준이다. 화주나 물류 분석가가 '특정 국가와 거래할 때 컨테이너 한 개 해상운임이 기간에 따라 얼마나 변했나'를 확인하는 데 쓴다. 전역 조인 키는 없고, 국가코드(statCd)와 국가명으로 다른 국가별 무역·물동량 통계와 이름·코드 매핑으로 이어 쓴다.
+limits: 전국 단위의 비공간 집계라 항만별·화물 건별 운임은 알 수 없다. 실측 컬럼에 전역 조인 키가 없어 국가코드·국가명 매핑으로만 다른 데이터와 연결된다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15129097-01
+    - c-15129097-03
+    - c-15129097-04
+  dropped_citations: 0

@@ -1,0 +1,538 @@
+# Dataset 15128423 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15128423'
+tier: verified
+title: 건강보험심사평가원_진료행위정보서비스
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B551182
+  name: 건강보험심사평가원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15128423/openapi.do
+synonyms:
+  - 행위코드
+  - 수가코드
+  - 행위통계
+  - 진료행위 통계
+  - EDI 행위코드
+  - 수가코드별 환자수
+  - 의료행위 진료금액
+  - 심평원 행위 통계
+  - 연령별 진료행위
+  - 입원 외래 진료행위
+description_portal: 건강보험심사평가원에서 관리하는 진료행위 정보 조회(연령군별·입원외래별·요양기관종별·요양기관소재지별 진료행위 통계)
+team:
+  dept: 빅데이터실
+services:
+  - op: /getMdlrtActionByGenderAgeStats
+    name: 행위성별연령10세구간별통계
+    endpoint: https://apis.data.go.kr/B551182/mdlrtActionInfoService/getMdlrtActionByGenderAgeStats
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: year
+        required: true
+        example: '2022'
+        desc: 연도
+      - name: stdType
+        required: true
+        example: '1'
+        desc: '행위구분(1: 양방, A: 한방, X: 약국)'
+      - name: st5Cd
+        required: true
+        example: MM302
+        desc: 행위코드(5단)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getMdlrtActionByClassesStats
+    name: 행위요양기관종별통계
+    endpoint: https://apis.data.go.kr/B551182/mdlrtActionInfoService/getMdlrtActionByClassesStats
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: year
+        required: true
+        desc: 연도
+      - name: stdType
+        required: true
+        desc: '행위구분(1: 양방, A: 한방, X: 약국)'
+      - name: st5Cd
+        required: true
+        desc: 행위코드(5단)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getMdlrtActionByAreaStats
+    name: 행위요양기관소재지별통계
+    endpoint: https://apis.data.go.kr/B551182/mdlrtActionInfoService/getMdlrtActionByAreaStats
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: year
+        required: true
+        desc: 연도
+      - name: stdType
+        required: true
+        desc: '행위구분(1: 양방, A: 한방, X: 약국)'
+      - name: st5Cd
+        required: true
+        desc: 행위코드(5단)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getMdlrtActionByGenderIpatOpatStats
+    name: 행위성별입원외래별통계
+    endpoint: https://apis.data.go.kr/B551182/mdlrtActionInfoService/getMdlrtActionByGenderIpatOpatStats
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: year
+        required: true
+        desc: 연도
+      - name: stdType
+        required: true
+        desc: '행위구분(1: 양방, A: 한방, X: 약국)'
+      - name: st5Cd
+        required: true
+        desc: 행위코드(5단)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: unknown
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ageCdNm
+      title: 연령구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 소계
+        - 0_9세
+        - 10_19세
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        unique: 11
+    - name: diagAmt
+      title: '진료금액(단위: 천 원)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '74789020'
+        - '41509823'
+        - '958985'
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        min: 371946
+        p50: 3627953
+        max: 74789020
+        unique: 21
+    - name: ptntCnt
+      title: 환자수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '64621'
+        - '36339'
+        - '1432'
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        min: 475
+        p50: 3200
+        max: 64621
+        unique: 21
+    - name: sexCdNm
+      title: 성별
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남
+        - 여
+        - 계
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        unique: 3
+    - name: st5Cd
+      title: 행위코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MM302
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        unique: 1
+    - name: st5CdNm
+      title: 행위코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 재활기능치료-보행치료
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        unique: 1
+    - name: totUseQty
+      title: 총사용량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4419892'
+        - '2452070'
+        - '54848'
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        min: 21551
+        p50: 213821
+        max: 4419892
+        unique: 21
+    - name: year
+      title: 연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2022'
+      op: /getMdlrtActionByGenderAgeStats
+      stats:
+        min: 2022
+        p50: 2022
+        max: 2022
+        unique: 1
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getMdlrtActionByClassesStats
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getMdlrtActionByClassesStats
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getMdlrtActionByClassesStats
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getMdlrtActionByClassesStats
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getMdlrtActionByAreaStats
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getMdlrtActionByAreaStats
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getMdlrtActionByAreaStats
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getMdlrtActionByAreaStats
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getMdlrtActionByGenderIpatOpatStats
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getMdlrtActionByGenderIpatOpatStats
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getMdlrtActionByGenderIpatOpatStats
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getMdlrtActionByGenderIpatOpatStats
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6784
+  rank_in_sector: 26
+  brm: 보건의료 - 건강보험
+  why: 진료행위 통계 API, 코드 마스터가 아닌 집계
+claims:
+  - id: c-15128423-01
+    kind: access
+    value: 포털 활용신청 승인유형 미기록, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 4/4
+    evidence:
+      - type: measured
+        source: probe/runs/15128423.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 4/4
+      - type: measured
+        source: probe/apply/15128423.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 None
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15128423-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15128423-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15128423.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 20개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15128423-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15128423.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15128423-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128423-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128423-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128423-10
+    kind: pitfall
+    value: 필수 파라미터 st5Cd는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15128423.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 4/4
+  run: probe/runs/15128423.json
+  stats: probe/stats/15128423.json
+  data: probe/data/15128423/
+status: active
+summary_user: 건강보험 진료행위(행위코드 st5Cd)별로 연도·연령군·성별·입원외래·요양기관종별·소재지별 환자수, 총사용량, 진료금액(천 원)을 담은 전국 단위 집계 통계를 조회하는 API이다. 보건의료 분석가나 의료기관·사업자가 '특정 검사·처치 행위가 어느 연령대와 지역에서 얼마나 시행되고 진료비는 얼마인가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 행위코드·행위코드명을 기준으로 EDI 행위 코드 마스터 같은 다른 급여 코드 데이터와 이름·코드 매핑으로 이어 쓴다.
+limits: 필수 파라미터인 행위코드(st5Cd)는 다른 데이터에서 먼저 받아 넘겨야 하므로 코드 목록 없이 단독 조회가 어렵다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 코드·이름 매핑으로만 연결된다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15128423-01
+    - c-15128423-03
+    - c-15128423-04
+    - c-15128423-06
+    - c-15128423-10
+  dropped_citations: 0

@@ -1,0 +1,456 @@
+# Dataset 15140045 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15140045'
+tier: verified
+title: 중앙선거관리위원회_후보자 통합검색
+sector: 공공행정/국정운영/election
+agency:
+  id: '9760000'
+  name: 중앙선거관리위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15140045/openapi.do
+synonyms:
+  - 선거
+  - 후보자
+  - 당선
+  - 대통령
+  - 국회의원
+  - 전국동시지방
+  - 재보궐
+  - 후보자정보
+  - 후보자 검색
+  - 선거 후보자 이력
+  - 출마 이력 조회
+  - 당선자 조회
+  - 정치인 경력
+  - 선거 출마자 명단
+  - 동명이인 후보자
+description_portal: '후보자 통합검색은 성명 기반의 검색으로 후보자 관련 기초정보 및 기호, 정당명,  직업, 학력, 경력, 선거명, 당선여부등의 정보를 조회할 수 있습니다. ※ 검색 결과에 동명이인(同名異人)의 후보자가 포함될 수 있습니다.◆◇◆ 제공 범위 (2026년 기준) ◆◇◆· 대 통 령 선 거 : 제13대 ~ 제21대· 국 회 의 원 선 거 : 제14대 ~ 제22대· 전국동시지방선거: 제3회 ~ 제8회· 재 보 궐 선 거 : 2010년 이후 실시 선거◆◇◆ 후보자 정보조회와 후보자 통합검색 차이점  ◆◇◆【후보자 정보조회】 선거ID와 선거종류코드를 입력받아 특정 선거에 출마한 후보자의 성명, 생년월일, 성별, 선거구, 학력, 경력, 등록상태 등 상세 정보를 제공합니다.　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　【후보자 통합검색】 한글 성명을 입력받아 후보자를 검색할 수 있는 서비스입니다. 동명이인(同名異人)을 포함한 모든 후보자를 통합적으로 조회하며, 특정 선거에 국한되지 않고 여러 선거의 후보자 정보를 확인할 수 있습니다.'
+team:
+  dept: 선거정보과
+services:
+  - op: /getCndaSrchInqire
+    name: 후보자 통합검색
+    endpoint: https://apis.data.go.kr/9760000/CndaSrchService/getCndaSrchInqire
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수(페이지 크기)
+      - name: name
+        required: true
+        example: 홍길동
+        desc: 한글 성명
+      - name: resultType
+        required: false
+        example: xml
+        desc: '결과 형식 (xml/json) default : xml'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: num
+      title: 결과순서
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 11
+        max: 21
+        unique: 21
+    - name: sgId
+      title: 선거ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20100602'
+        - '20180613'
+        - '20060531'
+      stats:
+        min: 19960411
+        p50: 20180613
+        max: 20260603
+        unique: 12
+    - name: sgTypecode
+      title: 선거종류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '2'
+        - '1'
+      stats:
+        min: 1
+        p50: 4
+        max: 6
+        unique: 6
+    - name: elctNm
+      title: 선거명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제5회 전국동시지방선거
+        - 제7회 전국동시지방선거
+        - 제4회 전국동시지방선거
+      stats:
+        unique: 12
+    - name: huboid
+      title: 후보자ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100160115'
+        - '100153692'
+        - '10030258'
+      stats:
+        min: 10030258
+        p50: 100125818
+        max: 100160115
+        unique: 19
+    - name: sggName
+      title: 선거구명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대한민국
+        - 성남시
+        - 진천군제1선거구
+      stats:
+        unique: 13
+    - name: sdName
+      title: 시도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 충청북도
+        - 인천광역시
+      stats:
+        unique: 6
+    - name: wiwName
+      title: 구시군명
+      type: code
+      null_rate: 0.1905
+      sample_values:
+        - 진천군
+        - 강동구
+        - 계양구
+      stats:
+        unique: 10
+    - name: giho
+      title: 기호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '6'
+      stats:
+        min: 1
+        p50: 2
+        max: 9
+        unique: 6
+    - name: gihoSangse
+      title: 기호상세
+      type: code
+      null_rate: 0.9048
+      sample_values:
+        - 가
+      stats:
+        unique: 1
+    - name: jdName
+      title: 정당명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 더불어민주당
+        - 무소속
+        - 국민의힘
+      stats:
+        unique: 10
+    - name: name
+      title: 한글성명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이재명
+      stats:
+        unique: 1
+    - name: hanjaName
+      title: 한자성명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 李在明
+        - 李載明
+      stats:
+        unique: 2
+    - name: gender
+      title: 성별
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남
+      stats:
+        unique: 1
+    - name: birthday
+      title: 생년월일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '19641222'
+        - '19631206'
+        - '19510622'
+      stats:
+        min: 19480213
+        p50: 19641222
+        max: 19830825
+        unique: 7
+    - name: age
+      title: 연령
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '54'
+        - '62'
+        - '60'
+      stats:
+        min: 34
+        p50: 53
+        max: 62
+        unique: 17
+    - name: addr
+      title: 주소
+      type: code
+      null_rate: 0.619
+      sample_values:
+        - 인천광역시 계양구 형제봉길
+        - 충청북도 진천군 진천읍 대학로
+        - 충청북도 진천군 진천읍 장관2길
+      stats:
+        unique: 5
+    - name: jobId
+      title: 직업Id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '74'
+        - '77'
+        - '75'
+      stats:
+        min: 1
+        p50: 75
+        max: 225
+        unique: 9
+    - name: job
+      title: 직업
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정당인
+        - 진천군의회의원
+        - 변호사
+      stats:
+        unique: 12
+    - name: eduId
+      title: 학력Id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '68'
+        - '765'
+        - '10'
+      stats:
+        min: 4
+        p50: 68
+        max: 765
+        unique: 7
+    - name: edu
+      title: 학력
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충북대학교 농공학과 졸업
+        - 중앙대학교 법과대학 법학과 졸업
+        - 중앙대학교 법학과 졸업
+      stats:
+        unique: 12
+    - name: career1
+      title: 경력1
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (현)제9대 진천군의회의원 (의장)
+        - (전)경기도지사
+        - 대우그룹기획조정실 사장
+      stats:
+        unique: 19
+    - name: career2
+      title: 경력2
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (전)우석대학교 객원교수
+        - (전)더불어민주당 당대표
+        - 14대 국회의원
+      stats:
+        unique: 19
+    - name: status
+      title: 등록상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 등록
+      stats:
+        unique: 1
+    - name: elcoYn
+      title: 당선여부
+      type: code
+      null_rate: 0.0952
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 선거
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8326
+  rank_in_sector: 10
+  brm: 공공행정 - 국정운영
+  sector_rule: nec-to-election
+  why: 후보자 성명 검색판, 후보자 정보와 중복
+claims:
+  - id: c-15140045-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15140045.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15140045.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15140045-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140045-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140045.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 25개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140045-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15140045.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140045-06
+    kind: admin_note
+    value: '[국정운영 · 결정] 정책영역 하나에 선거·지방의회·관보·대통령기록·정책자료가 섞여 있어 세부 부문 8개로 재분류 (`subsectors.yaml`). 심층(앞)은 **선거** 하나.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L390
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140045-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15140045.json
+  stats: probe/stats/15140045.json
+  data: probe/data/15140045/
+status: active
+summary_user: 한글 성명으로 검색한 후보자 한 명·한 선거 출마 건마다 선거명, 선거구·시도·구시군, 기호, 정당명, 직업, 학력, 경력, 등록상태, 당선여부를 담는 건별 원천 데이터로, 대통령선거 제13~21대, 국회의원선거 제14~22대, 전국동시지방선거 제3~8회, 2010년 이후 재보궐선거를 전국 범위로 다룬다. 유권자나 기자가 특정 인물이 과거 어떤 선거에 어느 정당으로 나와 당선됐는지 출마 이력을 한 번에 확인하는 데 쓴다. 전역 조인 키는 실측에서 확인되지 않았고, 응답의 선거ID(sgId)·선거종류코드와 후보자ID를 같은 기관의 후보자 정보조회·선거 결과 데이터와 맞춰 연결한다.
+limits: 검색 결과에 동명이인이 섞이므로 생년월일·한자성명 등으로 사람을 구분해야 한다. 선거 때 생성된 뒤 바뀌지 않는 이벤트성 데이터이며, 다른 기관 데이터와는 공통 키가 없어 이름·코드 매핑으로만 이을 수 있다. 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15140045-01
+    - c-15140045-02
+    - c-15140045-03
+    - c-15140045-04
+  dropped_citations: 0

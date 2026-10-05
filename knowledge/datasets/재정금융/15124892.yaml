@@ -1,0 +1,360 @@
+# Dataset 15124892 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15124892'
+tier: verified
+title: 금융위원회_생명보험가입정보
+sector: 재정금융/금융/financial-products
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15124892/openapi.do
+synonyms:
+  - 생명보험
+  - 개인연금
+  - 보험
+  - 생명보험가입정보
+  - 개인연금보험가입정보
+  - 우리나라국민보험가입현황
+  - 보험가입현황
+  - 보장성보험
+  - 개인연금보험 가입 통계
+  - 연금보험 가입건수
+  - 세제적격 연금
+  - 생명보험 가입률
+  - 보험 가입 현황
+  - 연령별 보험 가입
+description_portal: "생명보험가입정보는 국내 국민의 생명보험 가입 현황 및 개인연금보험 가입 관련 정보를 제공하는 데이터입니다. 연령대별, 성별, 보험상품 유형별 가입 건수 및 보험료 통계를 통해 생명보험 시장의 구조와 연금보험 수요를 파악할 수 있습니다.이 데이터는 2개 오퍼레이션으로 구성되어 있습니다.오퍼레이션은 다음과 같습니다.① 우리나라 국민 보험가입 현황 : 우리나라 국민 보험가입 현황의 \uFEFF기준년도, 지역, 성, 도달연령, 보험종류, 가입건수, 가입율 정보 제공② \uFEFF개인연금보험 가입정보 : 개인연금보험 가입정보의 \uFEFF기준년도, 도달연령, 세제적격, 납입방법, 모집형태, 납입기간, 가입건수 정보 제공"
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getLifeInsuJoinStatus
+    name: 우리나라 국민 보험가입 현황
+    endpoint: https://apis.data.go.kr/1160100/service/GetFPLifeInsuJoinInfoService/getLifeInsuJoinStatus
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        desc: 결과형식
+      - name: sttsAccmlTrgtYr
+        required: false
+        desc: 통계집적대상년도
+      - name: beginSttsAccmlTrgtYr
+        required: false
+        desc: 통계집적대상년도보다크거나같은데이터
+      - name: endSttsAccmlTrgtYr
+        required: false
+        desc: 통계집적대상년도보다작은데이터
+      - name: likeSttsAccmlTrgtYr
+        required: true
+        desc: 통계집적대상년도값이검색값을포함하는데이터
+      - name: areaNm
+        required: false
+        desc: 지역명
+      - name: sexNm
+        required: false
+        desc: 성별명
+      - name: rchnAggr
+        required: false
+        desc: 도달연령대
+      - name: isuKindNm
+        required: false
+        desc: 보험종류명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getIndividualAnnuityInsuInfo
+    name: "\uFEFF개인연금보험 가입정보"
+    endpoint: https://apis.data.go.kr/1160100/service/GetFPLifeInsuJoinInfoService/getIndividualAnnuityInsuInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 결과형식
+      - name: sttsAccmlTrgtYr
+        required: false
+        example: '2021'
+        desc: 통계집적대상년도
+      - name: beginSttsAccmlTrgtYr
+        required: false
+        example: '2021'
+        desc: 통계집적대상년도보다크거나같은데이터
+      - name: endSttsAccmlTrgtYr
+        required: false
+        example: '2022'
+        desc: 통계집적대상년도보다작은데이터
+      - name: likeSttsAccmlTrgtYr
+        required: true
+        example: '2021'
+        desc: 통계집적대상년도값이검색값을포함하는데이터
+      - name: rchnAggr
+        required: false
+        example: 20대
+        desc: 도달연령대
+      - name: taxPrqlYn
+        required: false
+        example: Y
+        desc: 세제적격여부
+      - name: pymtMthNm
+        required: false
+        example: 일시납
+        desc: 납입방법명
+      - name: offrTyNm
+        required: false
+        example: 설계사
+        desc: 모집형태명
+      - name: yerUnitPymtTerm
+        required: false
+        example: '80'
+        desc: 년단위납입기간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sttsAccmlTrgtYr
+      title: 통계집적대상년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: rchnAggr
+      title: 도달연령대
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 20대
+      stats:
+        unique: 1
+    - name: taxPrqlYn
+      title: 세제적격여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: pymtMthNm
+      title: 납입방법명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일시납
+      stats:
+        unique: 1
+    - name: offrTyNm
+      title: 모집형태명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 설계사
+      stats:
+        unique: 1
+    - name: yerUnitPymtTerm
+      title: 년단위납입기간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '80'
+      stats:
+        min: 80
+        p50: 80
+        max: 80
+        unique: 1
+    - name: joinCnt
+      title: 가입건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+      stats:
+        min: 5
+        p50: 5
+        max: 5
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6374
+  rank_in_sector: 149
+  brm: 재정금융 - 금융
+  why: 생명보험 가입 통계 집계
+claims:
+  - id: c-15124892-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15124892.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15124892.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15124892-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15124892-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124892.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15124892-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15124892.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15124892-06
+    kind: admin_note
+    value: "세부 부문 '금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)'의 가치: 상품 단위 비교 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#financial-products
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124892-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124892-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124892-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getLifeInsuJoinStatus'
+    evidence:
+      - type: measured
+        source: probe/runs/15124892.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15124892.json
+  stats: probe/stats/15124892.json
+  data: probe/data/15124892/
+status: active
+summary_user: 생명보험 가입 현황을 기준년도·도달연령대·세제적격 여부·납입방법·모집형태·납입기간별 가입건수로 담은 전국 단위 집계 통계이며, 개인 계약 단위의 원천 기록은 아니다. 분석가나 연구자가 '연령대별로 세제적격 개인연금보험 가입이 얼마나 되고, 어떤 모집 경로와 납입기간이 많은가'와 같은 연금보험 수요 질문에 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키가 없어서, 기준년도나 연령대 같은 이름을 맞춰 매핑하거나 같은 기관 데이터와 나란히 놓고 비교하는 방식으로만 이어 쓴다.
+limits: 두 오퍼레이션 중 국민 보험가입 현황(/getLifeInsuJoinStatus)은 최소 파라미터로 호출했을 때 응답이 없었다. 실호출로 확인된 것은 개인연금보험 가입정보 쪽이다. 범위는 전국 단위의 비공간 통계이므로 시군구 같은 세부 지역 분석에는 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15124892-01
+    - c-15124892-03
+    - c-15124892-04
+    - c-15124892-10
+  dropped_citations: 0

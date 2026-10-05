@@ -1,0 +1,326 @@
+# Dataset 15002118 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15002118'
+tier: verified
+title: 한국교육학술정보원_급식식단정보
+sector: 교육/유아및초·중등교육/school-daily
+agency:
+  id: B550629
+  name: 한국교육학술정보원
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15002118/fileData.do
+synonyms:
+  - 급식
+  - 학교급식
+  - 급식식단
+  - 영양정보
+  - 급식현황
+  - 학교 급식 메뉴
+  - 급식표
+  - 학교 식단표
+  - 나이스 급식
+  - 알레르기 식재료
+  - 급식 영양정보
+  - 급식 원산지
+  - 오늘 급식
+summary_user: 전국 17개 시도교육청 관할 학교가 나이스(NEIS)에 입력한 급식 식단을 학교·급식일자·끼니(조식·중식·석식) 단위로 담으며, 요리명과 알레르기 유발 식재료, 원산지, 칼로리, 영양 정보가 함께 들어 있다. 학부모나 학생이 "우리 아이 학교의 이번 주 점심 메뉴와 알레르기 식재료는 무엇인가"를 확인하거나, 분석가가 학교별 식단의 영양 구성을 비교하는 데 쓴다. 나이스 학교코드(SD_SCHUL_CODE)를 키로 학사일정·시간표·학급 정보 같은 다른 나이스 일상 정보와 학교 기본정보에 이어 쓰고, 시도교육청 코드로 교육청 단위 묶음도 가능하다.
+description_portal: 제공하는 데이터는 전국 17개 시도교육청 관할 학교에서 실제로 제공하는 급식의 요리명, 원산지 정보, 칼로리 정보, 영양 정보 등 일자별 급식 현황을 체계적으로 수집·제공하는 공공데이터입니다. 각 학교는 나이스(NEIS) 시스템을 통해 급식식단 정보를 입력·관리하며, 학교별 급식 운영 일정이나 식단 변경이 있을 때마다 수시로 데이터가 갱신됩니다. 데이터에는 알레르기 유발 식재료 정보도 포함되어 있어, 학생 건강 및 안전 관리에 활용될 수 있습니다. 데이터의 보유 및 제공 근거는 「초·중등교육법」에 따라 국가 교육정보화와 학교 행정 지원을 담당하는 한국교육학술정보원의 법적·행정적 역할에 기반합니다. 이 데이터는 학교 급식 운영 현황 분석, 영양 관리, 식단 개선, 교육 정책 수립, 지역별 급식 수준 비교, 학부모 및 학생 대상 정보 제공, 공공 건강 연구, 데이터 기반 급식 서비스 개발 등 다양한 분야에서 활용될 수 있습니다
+accrual_periodicity: 수시
+team:
+  dept: 데이터서비스부
+services:
+  - op: mealServiceDietInfo
+    name: mealServiceDietInfo
+    endpoint: https://open.neis.go.kr/hub/mealServiceDietInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: KEY
+      issuer: open.neis.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+      - name: ATPT_OFCDC_SC_CODE
+        required: true
+        example: B10
+      - name: SD_SCHUL_CODE
+        required: true
+        example: '       '
+      - name: MLSV_YMD
+        required: true
+        example: '20261001'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ATPT_OFCDC_SC_CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B10
+      stats:
+        unique: 1
+    - name: ATPT_OFCDC_SC_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시교육청
+      stats:
+        unique: 1
+    - name: SD_SCHUL_CODE
+      type: code
+      semantic_type: neis_school_cd
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: SCHUL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울솔가람유치원분원
+      stats:
+        unique: 1
+    - name: MMEAL_SC_CODE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+      stats:
+        min: 2
+        p50: 2.5
+        max: 3
+        unique: 2
+    - name: MMEAL_SC_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중식
+        - 석식
+      stats:
+        unique: 2
+    - name: MLSV_YMD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+      stats:
+        min: 20261001
+        p50: 20261001
+        max: 20261001
+        unique: 1
+    - name: MLSV_FGR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '53.0'
+        - '43.0'
+      stats:
+        min: 43
+        p50: 48
+        max: 53
+        unique: 2
+    - name: DDISH_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 닭칼국수 (5.6.9.15)<br/>갈비만두 (2.5.6.10.16.18)<br/>배추김치 (9)<br/>아이스홍시 <br/>스프링치즈샐러드 (
+        - 핫도그(케찹)* (1.2.5.6.10.12.16)<br/>마시는요구르트(간) (2)
+      stats:
+        unique: 2
+    - name: ORPLC_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '쇠고기(종류) : 국내산(한우)<br/>쇠고기 식육가공품 : 국내산<br/>돼지고기 : 국내산<br/>돼지고기 식육가공품 : 국내산<br/>닭고'
+      stats:
+        unique: 1
+    - name: CAL_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 511.6 Kcal
+        - 265.7 Kcal
+      stats:
+        unique: 2
+    - name: NTR_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '탄수화물(g) : 69.1<br/>단백질(g) : 22.6<br/>지방(g) : 15.7<br/>비타민A(R.E) : 76.4<br/>티아민(m'
+        - '탄수화물(g) : 37.8<br/>단백질(g) : 10.0<br/>지방(g) : 8.4<br/>비타민A(R.E) : 34.7<br/>티아민(mg'
+      stats:
+        unique: 2
+    - name: MLSV_FROM_YMD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+      stats:
+        min: 20261001
+        p50: 20261001
+        max: 20261001
+        unique: 1
+    - name: MLSV_TO_YMD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+      stats:
+        min: 20261001
+        p50: 20261001
+        max: 20261001
+        unique: 1
+    - name: LOAD_DTM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261004'
+      stats:
+        min: 20261004
+        p50: 20261004
+        max: 20261004
+        unique: 1
+  foreign_keys:
+    - fields:
+        - SD_SCHUL_CODE
+      reference:
+        key: neis_school_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 나이스 일상 정보 (급식·학사일정·시간표·학급)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.587
+  rank_in_sector: 97
+  brm: 교육 - 유아및초·중등교육
+  why: 나이스 급식식단정보 FILE판, 검증 API와 중복
+claims:
+  - id: c-15002118-01
+    kind: access
+    value: 외부 사이트 open.neis.go.kr 인증키 필요 (query 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15002118.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.neis.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15002118-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15002118-03
+    kind: key
+    value: '실측 조인 키: neis_school_cd(SD_SCHUL_CODE)'
+    evidence:
+      - type: measured
+        source: probe/stats/15002118.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15002118-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15002118.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15002118-06
+    kind: admin_note
+    value: "세부 부문 '나이스 일상 정보 (급식·학사일정·시간표·학급)'의 가치: 급식 식단(알레르기 포함)·학사일정은 매일·매주 갱신 — 학부모 수요 최상위, 모델은 모름"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#school-daily
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15002118-07
+    kind: admin_note
+    value: '[교육 · 유아·초중등] 기관·학생·학교 단위는 대부분 유지, 지역별 통계 배제 (`k12-regional-stats`). 세부: 나이스 일상 정보(daily) · 유치원 · 학교 공시 · 돌봄 · 고입 · 특수.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L458
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15002118-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15002118.json
+  stats: probe/stats/15002118.json
+  data: probe/data/15002118/
+limits: 포털 활용신청과 별개로 open.neis.go.kr에서 발급한 인증키(KEY 파라미터)가 있어야 호출된다. 지역별 통계가 아니라 학교 단위 원천 식단이라서, 지역 비교를 하려면 직접 집계해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15002118-01
+    - c-15002118-03
+    - c-15002118-04
+    - c-15002118-06
+    - c-15002118-07
+  dropped_citations: 0
+status: active

@@ -1,0 +1,208 @@
+# Dataset 15073901 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15073901'
+tier: verified
+title: 식품의약품안전처_의료기기 동등제품정보
+sector: 보건의료/보건의료/drugs-devices
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15073901/openapi.do
+synonyms:
+  - 의료기기 동등제품허가번호
+  - 의료기기 동등공고유형번
+  - 의료기기 동등공고제품
+  - 동증제품 공고정보
+  - 동일성제품여부
+  - 의료기기 동등성
+  - 동등공고
+  - 동일성 제품
+  - 의료기기 품목허가
+  - 의료기기 허가번호
+  - 동등제품 공고
+  - 의료기기 비교 검토
+description_portal: 식품의약품안전처에서 제공하는 의료기기 동등제품정보 데이터는 동등제품제조수입구분, 동등제품허가년, 동등제품허가번호, 동등제품허가일련번호, 동등공고번호, 동등공고품목명, 동등공고유형번호, 동등공고날짜, 동일성제품여부, 동일성제품허가번호, 동등공고제품, 의료기기품목번호, 기관지역구분, 업종, 허가신고구분, 의료기기품목허가번호, 품목명, 허가일자, 취소취하구분, 취소취하일자, 제품명 정보를 포함하며, 의료기기 간 동등성 판단과 품목 간 비교 검토 시 참고자료로 활용됩니다.
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getMdeqEqvlPrdtInfoInq02
+    name: 의료기기동등제품정보조회
+    endpoint: https://apis.data.go.kr/1471000/MdeqEqvlPrdtInfoService02/getMdeqEqvlPrdtInfoInq02
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '3'
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: EQL_PBANC_PRDLST_NM
+        required: false
+        example: 'null'
+        desc: 동등공고품목명
+      - name: PRDLST_NM
+        required: false
+        example: 범용주입-배액용튜브카테터
+        desc: 품목명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: item
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - "{'EQL_PRDT_DIVS_NM': '허가', 'EQL_PRDT_PRMSN_YR': '1988', 'EQUAL_MEDDEV_ITEM_NO': "
+        - "{'EQL_PRDT_DIVS_NM': '허가', 'EQL_PRDT_PRMSN_YR': '1994', 'EQUAL_MEDDEV_ITEM_NO': "
+        - "{'EQL_PRDT_DIVS_NM': '허가', 'EQL_PRDT_PRMSN_YR': '1995', 'EQUAL_MEDDEV_ITEM_NO': "
+      stats:
+        unique: 1000
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7719
+  rank_in_sector: 42
+  brm: 식품건강 - 식품의약안전
+  sector_rule: drugs-to-health
+  why: 동등제품 부속 정보
+claims:
+  - id: c-15073901-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15073901.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15073901.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15073901-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15073901-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15073901.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15073901-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15073901.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15073901-06
+    kind: admin_note
+    value: "세부 부문 '의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)'의 가치: 식약처 품목기준코드·의약품 표준코드로 심평원 약가·급여 목록(건강보험)과 연결. DUR 병용·연령금기는 처방 안전"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#drugs-devices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15073901-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15073901-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15073901.json
+  stats: probe/stats/15073901.json
+  data: probe/data/15073901/
+status: active
+summary_user: 식약처가 공고한 의료기기 동등제품 정보를 품목 건별로 담으며, 동등공고번호·공고품목명·공고일자, 동등제품 허가번호, 동일성제품 여부, 의료기기 품목허가번호·품목명·허가일자, 취소·취하 여부 같은 항목을 포함한다. 의료기기 제조·수입업체나 인허가 담당자가 "새로 허가받으려는 제품과 동등하다고 공고된 기존 허가 제품은 무엇이고 지금도 유효한가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 다른 식약처 의료기기 품목허가 데이터와는 품목허가번호·품목명 같은 이름·번호 매칭으로만 잇는다.
+limits: 다른 데이터와 공통으로 쓰는 표준 조인 키가 없어 연계 때 허가번호나 품목명 문자열 매칭에 의존해야 한다. 전국 단위의 비공간 데이터이므로 지역별 분석에는 맞지 않는다. 개발계정은 하루 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15073901-01
+    - c-15073901-03
+    - c-15073901-04
+  dropped_citations: 0

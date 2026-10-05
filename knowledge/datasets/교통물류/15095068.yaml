@@ -1,0 +1,259 @@
+# Dataset 15095068 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15095068'
+tier: verified
+title: 인천국제공항공사_화물편 운항현황(다국어)
+sector: 교통물류/항공·공항/flight-operations
+agency:
+  id: B551177
+  name: 인천국제공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095068/openapi.do
+synonyms:
+  - 인천공항
+  - 여객
+  - 화물
+  - 항공편
+  - 운항상태
+  - 인천공항 화물기 도착
+  - 화물편 지연 결항
+  - 항공화물 운항정보
+  - 인천공항 화물터미널
+  - 카고 항공편 현황
+  - 화물기 실시간 운항
+description_portal: '인천공항 화물편의 운항현황에 대한 데이터입니다. 조회시간, 출발지 공항(IATA),편명,항공사(IATA),언어구분을 기준으로 항공사,편명,예정시간,변경시간,출발공항,탑승구,현황(도착,결항,지연,회항,착륙),출발공항코드(IATA),터미널(P0:제1터미널,P02:탑승동,P03:제2터미널,C01: 화물터미널 남측, C02: 화물터미널 북측,C03:제 2화물터미널)데이터를 제공합니다. 조회당일에 대한 데이터를 조회하실 수 있습니다. 개발 계정 일 1000 트래픽, 운영 계정 신청 시 일 1000000 트래픽을 제공합니다.'
+team:
+  dept: 인프라DX팀
+services:
+  - op: /getCargoArrivals
+    endpoint: https://apis.data.go.kr/B551177/StatusOfCargoFlights/getCargoArrivals
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: airline
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대한항공
+        - 에어제타
+        - 아틀라스항공
+      stats:
+        unique: 18
+    - name: flightId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - KJ998
+        - LH8385
+        - 3S582
+      stats:
+        unique: 68
+    - name: scheduleDateTime
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0945'
+        - '0025'
+        - '0110'
+      stats:
+        min: 15
+        p50: 987.5
+        max: 2355
+        unique: 58
+    - name: estimatedDateTime
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0831'
+        - '1730'
+        - '1735'
+      stats:
+        min: 5
+        p50: 1216.5
+        max: 2342
+        unique: 64
+    - name: airport
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 로스앤젤레스
+        - 시카고/오헤어
+        - 프랑크푸르트
+      stats:
+        unique: 33
+    - name: gatenumber
+      type: number
+      null_rate: 0.0147
+      sample_values:
+        - '626'
+        - '624'
+        - '649'
+      stats:
+        min: 601
+        p50: 626
+        max: 676
+        unique: 36
+    - name: remark
+      type: code
+      null_rate: 0.2794
+      sample_values:
+        - 도착
+        - 지연
+      stats:
+        unique: 2
+    - name: airportCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - LAX
+        - ORD
+        - FRA
+      stats:
+        unique: 33
+    - name: terminalId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C01
+        - C02
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6975
+  rank_in_sector: 16
+  brm: 교통물류 - 항공·공항
+  why: 화물편 운항현황 다국어판, 중복
+claims:
+  - id: c-15095068-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095068.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15095068.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15095068-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095068-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095068.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095068-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095068.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095068-06
+    kind: admin_note
+    value: "세부 부문 '운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)'의 가치: 편 단위 실시간 운항·결항·지연 — 모델이 절대 모르는 오늘의 사실. 공항공사·인천공항 두 체계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#flight-operations
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095068-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095068-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15095068.json
+  stats: probe/stats/15095068.json
+  data: probe/data/15095068/
+status: active
+summary_user: 인천공항 화물편의 조회 당일 운항현황을 편 단위로 담으며, 항공사·편명·예정시간·변경시간·상대 공항과 공항코드(IATA)·탑승구·터미널·현황(도착·결항·지연·회항·착륙)을 언어별로 제공한다. 물류업체나 화주가 "오늘 인천에 들어오는 특정 화물편이 지연·결항됐는지, 어느 화물터미널로 오는지"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어 공항코드(airportCode, IATA)나 편명·항공사명을 이름·코드로 맞춰 공항코드 정보나 인천공항 여객편 운항현황 등과 연결한다.
+limits: 조회 당일 데이터만 제공해 과거 운항 이력이나 통계 분석에는 쓸 수 없다. 개발계정은 일 1,000회 호출 제한이 있다. 다른 데이터와 직접 이을 공통 키가 없어 이름·코드 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15095068-01
+    - c-15095068-03
+    - c-15095068-06
+  dropped_citations: 0

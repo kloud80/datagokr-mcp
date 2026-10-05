@@ -1,0 +1,219 @@
+# Dataset 15144476 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15144476'
+tier: verified
+title: 한국무역보험공사_업종등급목록
+sector: 재정금융/무역및투자유치/trade-codes
+agency:
+  id: B552696
+  name: 한국무역보험공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15144476/openapi.do
+synonyms:
+  - 농업
+  - 임업
+  - 금속광업
+  - 재배업
+  - 축산업
+  - 제조업
+  - 가구제조업
+  - 목재가구제조업
+  - 업종코드
+  - 한국표준산업분류
+  - KSIC
+  - 산업분류 코드표
+  - 무역보험 업종분류
+  - 업종 대분류 중분류
+  - 상위업종
+description_portal: 한국무역보험공사에서 보유한 업종의 등급별 목록 자료입니다. 업종목록은 4단계 업종클래스 및 상위업종으로 분류되며 각 업종코드, 업종명으로 구성됩니다. 업종 데이터는 제 11차 한국표준산업분류코드(KSIC)를 따릅니다. 업종코드를 구성하는 숫자 데이터를 통해 대분류, 중분류, 소분류를 구별할 수 있습니다. 본 API를 통해 각 대분류 업종 별 상세 업종코드 데이터를 수집하고, 이를 수출결제정보 및 FIND BUYER SYSTEM 조회에 활용할 수 있습니다. 또한, 업종클래스별 업종코드, 상위업종별 업종코드 등 업종 그룹화를 통해 여러 유사 업종에 대한 데이터를 확인할 수 있습니다.
+team:
+  dept: AI디지털총괄실
+services:
+  - op: /getIndustryLevelList
+    name: 업종 등급별 조회
+    endpoint: https://apis.data.go.kr/B552696/industryLevel/getIndustryLevelList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: industryLevel
+        required: true
+        example: '3'
+        desc: 업종 등급 (1 ~ 4)
+      - name: industryCd
+        required: false
+        example: '011'
+        desc: 상위 업종 코드
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: industryCd
+      title: 업종 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0111'
+        - '0112'
+        - '0113'
+      stats:
+        min: 111
+        p50: 113
+        max: 115
+        unique: 5
+    - name: parentIndustryCd
+      title: 상위 업종 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '011'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: industryNm
+      title: 업종 명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 곡물 및 기타 식량작물 재배업
+        - 채소, 화훼작물 및 종묘 재배업
+        - 과실, 음료용 및 향신용 작물 재배업
+      stats:
+        unique: 5
+    - name: industryClass
+      title: 업종 등급
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 무역 코드 (선사·항공사·특송·화물운송주선업자 부호, 세관장확인 대상, 관세환율, 국가·업종 등급)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.5242
+  rank_in_sector: 31
+  brm: 재정금융 - 무역및투자유치
+  why: KSIC 기반 업종등급, 표준산업분류와 중복
+claims:
+  - id: c-15144476-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15144476.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15144476.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15144476-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15144476-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15144476.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15144476-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15144476.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15144476-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 무역및투자유치] 관세청 수출입 실적(신고 원장 → 품목·국가·시도·시군구 × 월, 10일 속보)·무역 코드(부호·세관장확인·관세환율)·거래 상대(바이어·전략물자 거래업체·고비즈코리아). KOTRA 해외시장 동향·국가정보·사례(문서형), 글로벌ICT포털, Comtrade 재게시, 투자 동향 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L626
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15144476-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15144476.json
+  stats: probe/stats/15144476.json
+  data: probe/data/15144476/
+status: active
+summary_user: 한국무역보험공사가 보유한 업종 목록을 업종 코드·업종명·상위 업종 코드·업종 등급(4단계 업종클래스) 단위로 담은 코드표이며, 포털 설명상 제11차 한국표준산업분류(KSIC)를 따르고 범위는 전국·비공간입니다. 수출 기업이나 분석가가 "특정 대분류 업종 아래 어떤 세부 업종코드가 있는가"를 확인해 무역보험공사의 수출결제정보·FIND BUYER 조회 조건으로 쓰는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 업종 코드나 업종명을 KSIC 기반 다른 데이터와 이름·코드로 매핑하거나 같은 기관의 코드로만 연결한다.
+limits: 다른 데이터셋과 바로 붙는 공통 조인 키가 확인되지 않아 KSIC 코드·업종명 매핑을 직접 해야 한다. 개발계정은 하루 5,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15144476-01
+    - c-15144476-03
+    - c-15144476-04
+  dropped_citations: 0

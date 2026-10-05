@@ -1,0 +1,239 @@
+# Dataset 15063977 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15063977'
+tier: verified
+title: 한국마사회_지사좌석정원정보
+sector: 농축수산/임업·산촌/forest-recreation
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15063977/openapi.do
+synonyms:
+  - 지사
+  - 좌석
+  - 구매요일
+  - 구매시간
+  - 경마요일
+  - 경마장 좌석 예매
+  - 경마공원 입장권 구매시간
+  - 마사회 지사 좌석
+  - 렛츠런파크 예약
+  - 장외발매소 좌석
+  - 경마 온라인 예매 일정
+description_portal: 한국마사회 서울, 제주, 부산경남 경마공원을 포함한 지사의 경마요일에 따른 좌석구매요일과 구매시간 정보를 제공합니다. (제공정보는 사업장명(branchName), 경마요일(raceDay), 구매요일(purchaseDay), 온라인구매시작시간(onlineStartTime), 온라인구매종료시간(onlineEndTime) 자료입니다.) - 요청메세지에 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다. - 사업장 항목에는 강동, 강북, 광명, 광주, 구리, 대구, 대전, 도봉, 동대문, 부산동구, 부산연제, 부천, 분당, 서울파크, 선릉, 수원, 시흥, 안산, 영등포, 용산, 의정부, 인천남구, 인천부평, 인천연수, 인천중구, 일산, 제주파크, 종로, 중랑, 창원, 천안, 청담 자료 입니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /SeatCapacity_1
+    name: 지사좌석정원정보
+    endpoint: https://apis.data.go.kr/B551015/API212_1/SeatCapacity_1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: _type
+        required: false
+        example: xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: branchName
+      title: 사업장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울파크
+        - 강동
+        - 강북
+      stats:
+        unique: 32
+    - name: onlineEndTime
+      title: 온라인구매종료시간
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 22:00
+        - 23:00
+        - 21:00
+      stats:
+        unique: 4
+    - name: onlineStartTime
+      title: 온라인구매시작시간
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 17:00
+        - 09:00
+        - 08:00
+      stats:
+        unique: 4
+    - name: purchaseDay
+      title: 구매일자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일
+        - 토
+        - 금
+      stats:
+        unique: 7
+    - name: raceDay
+      title: 경주일자
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금
+        - 토
+        - 일
+      stats:
+        unique: 3
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6165
+  rank_in_sector: 49
+  brm: 농축수산 - 임업·산촌
+  why: 마사회 좌석 구매 정보, 임업 무관
+claims:
+  - id: c-15063977-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15063977.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15063977.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15063977-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15063977-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15063977.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15063977-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15063977.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15063977-06
+    kind: admin_note
+    value: "세부 부문 '산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)'의 가치: 등산·휴양 인구 수요, 시설코드·등산로ID·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#forest-recreation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15063977-07
+    kind: admin_note
+    value: '[농축수산 - 임업·산촌 · 결정] 산지 구분·산림 자원·산림 복지/휴양·임산물 품목까지만. 산불·산사태·병해충·임도·국유림·산촌·직불·임업인·산림항공·기관 운영 배제 (`forestry-deferred`, `forestry-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L553
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15063977-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave4r 판정 move
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15063977.json
+  stats: probe/stats/15063977.json
+  data: probe/data/15063977/
+status: active
+summary_user: 한국마사회 경마공원(서울·제주·부산경남)과 장외 지사 등 사업장별로 경마요일에 따른 좌석 구매요일과 온라인 구매 시작·종료 시간을 담는 비공간 기준정보이다. 경마장이나 지사 좌석을 온라인으로 예매하려는 이용자가 '이번 주 토요일 경주 좌석은 어느 요일 몇 시부터 살 수 있나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업장명(branchName)을 이름으로 맞추거나 같은 기관의 다른 데이터와만 연결한다.
+limits: 표준 지역코드나 좌표가 없어 행정구역·위치 기반 결합은 사업장명 매핑에 의존해야 한다. 좌석 정원·잔여석 같은 수량 정보는 필드에 없고, 산림 휴양 부문으로 분류돼 있으나 내용은 경마 좌석 예매 일정이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15063977-01
+    - c-15063977-03
+    - c-15063977-04
+  dropped_citations: 0

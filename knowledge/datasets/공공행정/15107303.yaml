@@ -1,0 +1,200 @@
+# Dataset 15107303 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107303'
+tier: verified
+title: 행정안전부_통계연보_지역별 주민등록인구
+sector: 공공행정/지방행정·재정지원/population-registry
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107303/openapi.do
+synonyms:
+  - 지역
+  - 인구수
+  - 세대수
+  - 주민등록인구
+  - 통계연보
+  - 시도별 인구
+  - 주민등록 인구통계
+  - 세대수 통계
+  - 남녀 인구수
+  - 행정안전 통계연보
+  - 지역별 인구 현황
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방행정/지역발전' 중 '인구', '지역별 주민등록인구' 에 관한 통계입니다. 지역, 인구수 계, 세대수, 남자 인구 수, 여자 인구 수 지역별 주민등록인구 등 정보를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getRegistrationPopulationByRegion
+    name: 지역별 주민등록인구 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/RegistrationPopulationByRegion/getRegistrationPopulationByRegion
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 320}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RES"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2008', 'seq': 1, 'regi': '계', 'population_tot': '49540367', 'pop"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 주민등록 인구·세대
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.735
+  rank_in_sector: 59
+  brm: 공공행정 - 국가통계
+  sector_rule: registry-to-local
+  why: 통계연보 시도별 인구 집계, 행정동 데이터와 중복
+claims:
+  - id: c-15107303-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107303.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107303.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107303-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107303-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107303.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107303-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107303.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107303-06
+    kind: admin_note
+    value: "세부 부문 '주민등록 인구·세대'의 가치: 행정동·법정동·통반 × 월 시계열. 집계지만 공간 결합의 기본 축 (구름 \"집계여도 주요 데이터\")"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#population-registry
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107303-07
+    kind: admin_note
+    value: '[지방행정·재정지원 · 결정] 지방재정 공시·국고/지방보조금·주민등록(집계여도 주요 데이터)만 대상. 나머지는 목록 정도(지방공기업·출자출연 명부·경영공시, 전국 표준데이터 목록)만 남기고 자잘한 것은 모두 제거 (`local-admin-minor`, 801건).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L418
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107303-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107303.json
+  stats: probe/stats/15107303.json
+  data: probe/data/15107303/
+status: active
+summary_user: 행정안전 통계연보 '지방행정/지역발전' 편에 실린 지역별 주민등록인구 통계를 오픈API로 담으며, 지역별 인구수 합계·세대수·남녀 인구수를 담은 전국 범위의 집계표다. 지역 간 인구 규모와 세대 수, 성별 구성을 연보 기준으로 비교하려는 분석가나 행정 담당자가 '어느 시도의 인구와 세대가 가장 많은가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 지역 이름을 매핑하거나 같은 기관(행정안전부) 통계끼리만 이어 쓴다.
+limits: 행정코드 같은 공통 키가 없어 공간 데이터나 다른 기관 통계와 바로 결합하기 어렵고, 지역 이름 매핑이 필요하다. 행정단위가 전국·비공간으로 분류돼 있어 행정동·법정동 단위의 세부 공간 분석에는 맞지 않을 수 있다. 개발계정 호출은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107303-01
+    - c-15107303-03
+    - c-15107303-04
+  dropped_citations: 0

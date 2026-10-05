@@ -1,0 +1,387 @@
+# Dataset 15000827 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15000827'
+tier: verified
+title: 외교부_여행경보제도
+sector: 통일외교안보/외교/travel-safety
+agency:
+  id: '1262000'
+  name: 외교부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15000827/openapi.do
+synonyms:
+  - 해외안전정보
+  - 안전여행
+  - 국가정보
+  - 해외 치안
+  - 여행 알림
+  - 여행 금지
+  - 출국 권고
+  - '0404'
+  - 여행경보 단계
+  - 해외여행 위험국가
+  - 여행금지국가
+  - 철수권고
+  - 출국권고
+  - 해외안전여행
+  - 국가별 여행경보
+description_portal: 여행경보제도는 특정 국가(지역) 여행·체류시 특별한 주의가 요구되는 국가 및 지역에 경보를 지정하여 위험수준과 이에 따른 안전대책(행동지침)의 기준을 안내하는 제도입니다. 우리국민의 안전에 대한 위험(위협)을 중요한 기준으로 해당 국가(지역)의 치안정세와 기타 위험요인을 종합적으로 판단하여 안전대책의 기준을 판단할 수 있도록 중·장기적 관점에서 여행경보를 지정·공지하고 있습니다.외교부 해외안전여행(https://www.0404.go.kr/)의 여행경보제도를 서비스하며, 발령 대상 국가(지역)의 위험 수준에 따라 1~4단계(여행유의, 여행자제, 출국권고, 여행금지)로 구분됩니다.
+team:
+  dept: 정보화담당관실
+services:
+  - op: /getTravelWarningListV3
+    name: 여행경보제도 목록조회
+    endpoint: https://apis.data.go.kr/1262000/TravelWarningServiceV3/getTravelWarningListV3
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: cond[country_name::EQ]
+        required: false
+        desc: 한글 국가명(ISO국가코드와 중복조회 할 수 없음)
+      - name: cond[country_en_name::EQ]
+        required: false
+        desc: 영문 국가명(ISO국가코드와 중복조회 할 수 없음)
+      - name: cond[iso_code::EQ]
+        required: false
+        desc: ISO 국가코드
+      - name: returnType
+        required: false
+        example: JSON
+        desc: 응답 데이터포맷 설정(JSON 또는 XML)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: attention
+      title: 여행유의
+      type: code
+      null_rate: 0.8071
+      sample_values:
+        - 여행유의
+      stats:
+        unique: 1
+    - name: attention_note
+      title: 여행유의 내용
+      type: code
+      null_rate: 0.5431
+      sample_values:
+        - 전 지역
+        - 2단계 지정 지역을 제외한 지역
+        - 3단계 지정 지역을 제외한 지역
+      stats:
+        unique: 19
+    - name: attention_partial
+      title: 여행유의(일부)
+      type: code
+      null_rate: 0.8883
+      sample_values:
+        - 여행유의(일부)
+      stats:
+        unique: 1
+    - name: ban_note
+      title: 여행금지
+      type: code
+      null_rate: 0.8782
+      sample_values:
+        - 전 지역
+        - 이스라엘 북부 레바논 접경지역(국경으로부터 4km), 가자지구
+        - 아제르바이잔 접경 5km 구간
+      stats:
+        unique: 14
+    - name: ban_yn_partial
+      title: 여행금지(일부)
+      type: code
+      null_rate: 0.9289
+      sample_values:
+        - 여행금지(일부)
+      stats:
+        unique: 1
+    - name: ban_yna
+      title: 여행금지 내용
+      type: code
+      null_rate: 0.9492
+      sample_values:
+        - 여행금지
+      stats:
+        unique: 1
+    - name: continent
+      title: 대륙
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 유럽
+        - 아프리카
+        - 아주
+      stats:
+        unique: 5
+    - name: control
+      title: 여행자제
+      type: code
+      null_rate: 0.8528
+      sample_values:
+        - 여행자제
+      stats:
+        unique: 1
+    - name: control_note
+      title: 여행자제 내용
+      type: code
+      null_rate: 0.5736
+      sample_values:
+        - 전 지역
+        - 3단계 지정 지역을 제외한 지역
+        - 1, 3단계 지정 지역을 제외한 지역
+      stats:
+        unique: 24
+    - name: control_partial
+      title: 여행자제(일부)
+      type: code
+      null_rate: 0.8071
+      sample_values:
+        - 여행자제(일부)
+      stats:
+        unique: 1
+    - name: country_en_name
+      title: 영문 국가명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Afghanistan
+        - Albania
+        - Algeria
+      stats:
+        unique: 197
+    - name: country_name
+      title: 국가명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 아프가니스탄
+        - 알바니아
+        - 알제리
+      stats:
+        unique: 197
+    - name: id
+      title: 인덱스
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '8'
+        - '12'
+      stats:
+        min: 4
+        p50: 428
+        max: 894
+        unique: 197
+    - name: img_url
+      title: 국기 이미지 경로
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://opendata.mofa.go.kr:8444/fileDownload/images/country_images/flags/142/20
+        - https://opendata.mofa.go.kr:8444/fileDownload/images/country_images/flags/144/20
+        - https://opendata.mofa.go.kr:8444/fileDownload/images/country_images/flags/145/20
+      stats:
+        unique: 197
+    - name: img_url_2
+      title: 여행위험지도 경로
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://www.0404.go.kr/files/image/COUNTRY_284/3
+        - https://www.0404.go.kr/files/image/COUNTRY_300/3
+        - https://www.0404.go.kr/files/image/COUNTRY_150/3
+      stats:
+        unique: 197
+    - name: iso_code
+      title: ISO 국가코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - AF
+        - AL
+        - DZ
+      stats:
+        unique: 197
+    - name: limita
+      title: 철수권고
+      type: code
+      null_rate: 0.9492
+      sample_values:
+        - 철수권고
+      stats:
+        unique: 1
+    - name: limita_note
+      title: 철수권고 내용
+      type: code
+      null_rate: 0.6904
+      sample_values:
+        - 전 지역
+        - 4단계 지정 지역을 제외한 지역
+        - 2단계 지정 지역을 제외한 지역
+      stats:
+        unique: 49
+    - name: limita_partial
+      title: 철수권고(일부)
+      type: code
+      null_rate: 0.7462
+      sample_values:
+        - 철수권고(일부)
+      stats:
+        unique: 1
+    - name: wrt_dt
+      title: 등록일
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 해외안전·여행경보 (국가별 여행경보·특별여행주의보·안전공지·사건사고·입국허가요건·현지연락처·의료/치안환경)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.716
+  rank_in_sector: 13
+  brm: 통일외교안보 - 외교
+  why: 여행경보 구판 API, 검증 데이터와 중복
+claims:
+  - id: c-15000827-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15000827.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15000827.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15000827-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000827-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15000827.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 20개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000827-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15000827.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000827-06
+    kind: admin_note
+    value: "세부 부문 '해외안전·여행경보 (국가별 여행경보·특별여행주의보·안전공지·사건사고·입국허가요건·현지연락처·의료/치안환경)'의 가치: 해외여행객 필수, 경보 조정은 모델이 모르는 시의성. 국가·지역 표준코드가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#travel-safety
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15000827-07
+    kind: admin_note
+    value: '[통일외교안보 · 외교] 해외안전·여행경보(실시간성), 재외공관·여권·국가 표준코드, 국제기구 공석, KOICA ODA 사업·조달, 재외동포 단체만. 국가별 정치·경제 개황은 모델이 아는 참고 텍스트, 코로나 입국조치는 종료 → 배제 (`diplomacy-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L697
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15000827-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15000827.json
+  stats: probe/stats/15000827.json
+  data: probe/data/15000827/
+status: active
+summary_user: 외교부 해외안전여행의 여행경보를 국가별 한 행으로 담은 API로, 국가명·영문명·ISO 국가코드·대륙과 함께 여행유의·여행자제·철수권고·여행금지 단계별 지정 여부, 일부 지역 지정 여부, 내용 설명, 국기·여행위험지도 이미지 경로, 등록일을 제공한다. 해외여행객이나 여행·출장 담당자가 '이 나라(또는 그 일부 지역)에 지금 몇 단계 경보가 걸려 있는가'를 출국 전에 확인하는 데 쓴다. 공식 전역 조인 키는 실측에서 확인되지 않았으므로, ISO 국가코드(iso_code)나 국가명을 매핑해 같은 외교부의 국가별 안전공지·입국허가요건·재외공관 정보 등과 이어 쓴다.
+limits: 실측 컬럼에서 전역 조인 키가 확인되지 않아 다른 데이터와는 국가명·코드 매핑으로만 연결된다. 갱신 주기는 이벤트형으로 분류돼 있으나 경보 조정은 시의성이 중요하므로 호출 시점의 등록일을 확인해야 한다. 개발계정은 일 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15000827-01
+    - c-15000827-02
+    - c-15000827-03
+    - c-15000827-06
+  dropped_citations: 0

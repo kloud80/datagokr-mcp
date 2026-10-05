@@ -1,0 +1,345 @@
+# Dataset 15143840 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15143840'
+tier: verified
+title: 서울교통공사_빠른하차정보
+sector: 교통물류/철도/metro-ridership
+agency:
+  id: B553766
+  name: 서울교통공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15143840/openapi.do
+synonyms:
+  - 서울지하철
+  - 지하철 하차정보
+  - 열차칸 출입문 위치
+  - 역내 이동 설비
+  - 교통약자
+  - 빠른하차
+  - 지하철 하차 위치
+  - 엘리베이터 가까운 칸
+  - 환승 빠른 칸
+  - 출구 가까운 문
+  - 교통약자 동선
+  - 지하철 칸 번호
+description_portal: 서울교통공사 빠른하차정보 API는 지하철의 하차역 기준으로 계단, 엘리베이터 등 이동 설비와 가장 가까운 열차 칸 출입문 위치를 조회하는 API입니다. 하차 시 빠르게 이동할 수 있는 하차칸(문) 번호와 연결된 이동 설비의 위치 정보 등을 제공하며, 호선과 역코드, 지하철 역명 검색어 검색조건을 제공합니다. 빠른하차정보 API는 수시로 갱신되는 데이터를 Rest API 방식으로 제공되며, 교통약자 및 일반 이용자의 하차 동선 최적화 서비스 등에 활용될 수 있습니다. 데이터는 수시로 갱신됩니다.
+team:
+  dept: 데이터팀
+services:
+  - op: /getFstExit
+    name: 빠른하차정보 조회
+    endpoint: https://apis.data.go.kr/B553766/inout/getFstExit
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: JSON
+        desc: 결과 유형 (JSON/XML, default:XML)
+      - name: selectFields
+        required: false
+        desc: '응답으로 받고 싶은 컬럼 명을 선택하여 검색(구분자‘,’로 다중선택) - 예:  upbdnbSe,drtnInfo,plfmCmgFac'
+      - name: lineNm
+        required: false
+        example: 1호선
+        desc: '지하철 호선 검색어(검색기준: 포함)'
+      - name: stnCd
+        required: false
+        example: '0150'
+        desc: '역코드(검색기준: 일치)'
+      - name: stnNm
+        required: false
+        example: 서울역
+        desc: '지하철 역명 검색어(검색기준: 포함)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: qckgffMngNo
+      title: 빠른하차 정보 관리아이디
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '726'
+        - '727'
+        - '519'
+      stats:
+        min: 166
+        p50: 1100.5
+        max: 2198
+        unique: 14
+    - name: lineNm
+      title: 해당 지하철 호선명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1호선
+      stats:
+        unique: 1
+    - name: stnCd
+      title: 해당 지하철 역코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0150'
+      stats:
+        min: 150
+        p50: 150
+        max: 150
+        unique: 1
+    - name: stnNm
+      title: 해당 지하철 역명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울역
+      stats:
+        unique: 1
+    - name: stnNo
+      title: 해당 지하철 역번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '133'
+      stats:
+        min: 133
+        p50: 133
+        max: 133
+        unique: 1
+    - name: crtrYmd
+      title: '기준일자 (일자형식: YYYYMMDD)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20241231'
+      stats:
+        min: 20241231
+        p50: 20241231
+        max: 20241231
+        unique: 1
+    - name: upbdnbSe
+      title: 상하행구분 (상행/하행/외선/내선)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 하행
+        - 상행
+      stats:
+        unique: 2
+    - name: drtnInfo
+      title: 방면정보 (해당 지하철 방면으로 다음역)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남영
+        - 시청
+      stats:
+        unique: 2
+    - name: qckgffVhclDoorNo
+      title: 빠른 하차를 위한 지하철 하차칸(문) 번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 10-4
+        - 1-1
+        - 2-3
+      stats:
+        unique: 12
+    - name: plfmCmgFac
+      title: 승강장 정차위치별 출입설비
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 계단
+        - 에스컬레이터
+        - 엘리베이터
+      stats:
+        unique: 3
+    - name: facNo
+      title: 설비번호
+      type: number
+      null_rate: 0.5714
+      sample_values:
+        - '1143969'
+        - '1143970'
+        - '1145284'
+      stats:
+        min: 1143969
+        p50: 1143970
+        max: 1145284
+        unique: 3
+    - name: elvtrNo
+      title: 승강기번호
+      type: code
+      null_rate: 0.5714
+      sample_values:
+        - 1806-600
+        - 1806-599
+        - 0074-205
+      stats:
+        unique: 3
+    - name: fwkPstnNm
+      title: 기능위치명
+      type: code
+      null_rate: 0.5714
+      sample_values:
+        - 서울역(1) B2
+      stats:
+        unique: 1
+    - name: facPstnNm
+      title: 설비위치명
+      type: code
+      null_rate: 0.5714
+      sample_values:
+        - 남영 방면2-3, 시청 방면9-2
+        - 시청 방면9-3, 남영 방면2-2
+        - 시청 방면5-1, 남영 방면4-4
+      stats:
+        unique: 3
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 승하차·혼잡·통행
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7419
+  rank_in_sector: 31
+  brm: 교통물류 - 철도
+  why: 역사 내 이동설비 보조 안내 API, 서울 한정
+claims:
+  - id: c-15143840-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15143840.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15143840.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15143840-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15143840-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15143840.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 14개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15143840-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15143840.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15143840-06
+    kind: admin_note
+    value: "세부 부문 '승하차·혼잡·통행'의 가치: 역별 시간대별 승하차 = 유동인구의 가장 정직한 대체 지표, 교통카드 OD = 상권 배후지"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#metro-ridership
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15143840-07
+    kind: admin_note
+    value: '[교통물류 - 철도 · 결정] 대부분 유지(제외 규칙 없음). 세부: 건설 계획(event) · 승하차·혼잡 · 실시간·시간표(조회 도구) · 철도망·역·시설(cross-cutting) · 안전 · 화물 · 기타.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L463
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15143840-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15143840.json
+  stats: probe/stats/15143840.json
+  data: probe/data/15143840/
+status: active
+summary_user: 서울교통공사 지하철역별로 하차역 기준 계단·엘리베이터 등 이동 설비와 가장 가까운 열차 칸(문) 번호를 상하행·방면별로 담은 건별 조회 API입니다. 지하철 이용자나 교통약자 안내 서비스 개발자가 '이 역에서 엘리베이터로 가장 빨리 가려면 몇 번째 칸 몇 번 문에서 내려야 하나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 역코드(stnCd)·역명·호선명을 서울교통공사의 다른 역·승하차 데이터와 이름·코드로 맞춰 이어 쓴다.
+limits: 전역 공통 조인 키가 없어 다른 기관 데이터와는 역명·코드 매핑으로만 연결된다. 승하차 인원이나 혼잡도 같은 이용량 수치는 담지 않는다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15143840-01
+    - c-15143840-03
+  dropped_citations: 0

@@ -1,0 +1,247 @@
+# Dataset 15099688 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099688'
+tier: verified
+title: 충청남도_노인복지시설 조회
+sector: 사회복지/노인·청소년/elderly-facilities
+agency:
+  id: '6440000'
+  name: 충청남도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15099688/openapi.do
+synonyms:
+  - 충청남도
+  - 노인
+  - 복지시설
+  - 충남 경로당
+  - 충남 노인복지관
+  - 노인시설 주소
+  - 재가노인복지시설
+  - 주간보호센터
+  - 치매안심센터
+  - 노인요양시설 연락처
+description_portal: 시설명, 시설상세주소, 전화번호 등의 입력 파라미터를 이용하여 충청남도 내에 있는 노인복지시설의 정보를 조회 할 수 있는 API
+team:
+  dept: AI정보화담당관
+services:
+  - op: /welfareinfo
+    name: 노인복지시설 정보 조회
+    endpoint: https://apis.data.go.kr/6440000/getWelfare/welfareinfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 자료요청형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: DVS
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 노인요양시설
+        - 노인요양공동생활가정
+        - 경로식당
+      stats:
+        unique: 18
+    - name: BLDG_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서천노인복지센터
+        - 천안시노인종합복지관부설 천안노인복지센터
+        - 보령노인복지센터
+      stats:
+        unique: 487
+    - name: INST_DADDR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 충청남도 서천군 서천읍 구암신송로 138-16
+        - 충청남도 서산시 지곡면 도성로 369-7
+        - 충청남도 천안시 동남구 광덕면 차령로 4267
+      stats:
+        unique: 577
+    - name: TELNO
+      type: number
+      null_rate: 0.0011
+      sample_values:
+        - '0419523500'
+        - '0415710286'
+        - '0413342901'
+      stats:
+        min: 413310017
+        p50: 416659694.5
+        max: 7086275100
+        unique: 472
+    - name: PVSN_INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 아산시
+        - 천안시
+        - 논산시
+      stats:
+        unique: 17
+    - name: CRTR_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2020-07-31'
+      stats:
+        min: '2020-07-31'
+        max: '2020-07-31'
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.579
+  rank_in_sector: 320
+  brm: 사회복지 - 노인·청소년
+  why: 충남 한정 시설 API, 전국 시설정보와 겹침
+claims:
+  - id: c-15099688-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15099688.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15099688.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15099688-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099688-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099688.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099688-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15099688.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099688-06
+    kind: admin_note
+    value: "세부 부문 '노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)'의 가치: 고령화로 가장 빠르게 커지는 생활 수요, 건강보험 장기요양기관과 related. 사회복지시설 시설코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#elderly-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099688-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099688-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15099688.json
+  stats: probe/stats/15099688.json
+  data: probe/data/15099688/
+status: active
+summary_user: 충청남도 안의 노인복지시설을 시설 한 곳씩 담은 건별 목록으로, 시설 구분·건물(시설)명·상세주소·전화번호·제공기관명·기준일자를 담는다. 충남에 사는 가족이나 사회복지 분석가가 "우리 시군 근처에 어떤 노인복지시설이 있고 연락처는 무엇인가"를 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시설명·주소 문자열 매칭이나 같은 기관 코드로만 잇는다. 이렇게 맞춘 뒤 건강보험 장기요양기관 목록이나 시군구 단위 지역 통계와 함께 본다.
+limits: 충청남도만 다루므로 전국이나 다른 시도 시설은 이 데이터로 볼 수 없다. 사회복지시설 시설코드 같은 공통 키가 없어 다른 데이터와 붙일 때 이름·주소 매칭 오류에 주의해야 한다. 개발계정 호출은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15099688-01
+    - c-15099688-03
+    - c-15099688-04
+    - c-15099688-06
+    - c-15099688-07
+  dropped_citations: 0

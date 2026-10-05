@@ -1,0 +1,244 @@
+# Dataset 15150143 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15150143'
+tier: verified
+title: 성평등가족부_청소년활동 신고 활동기간 정보
+sector: 사회복지/노인·청소년/youth-facilities-programs
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15150143/openapi.do
+synonyms:
+  - 청소년활동
+  - 신고
+  - 활동기간
+  - 관리
+  - 기록
+  - 청소년활동 신고제
+  - 청소년 프로그램 운영기간
+  - 청소년활동 일정
+  - 신고 청소년활동 기간
+  - 청소년 체험활동 신고
+  - 활동 시작일 종료일
+description_portal: 청소년활동 신고 활동기간 정보는 청소년 활동 관련 단체나 기관이 운영하는 프로그램을 정부에 신고할 때, 해당 활동이 실제로 진행되는 기간에 대한 데이터를 관리하는 것을 의미합니다. 행정기관은 활동기간 정보를 기반으로 청소년활동의 운영 적정성을 검토하고, 청소년들의 참여 가능 여부, 안전관리, 일정 충돌 방지 등을 체계적으로 관리할 수 있습니다. 아울러 활동기간 정보는 향후 정책 평가나 통계 분석에도 중요한 자료로 활용되며, 청소년 활동이 단발적 이벤트가 안닌 지속적, 체계적 프로그램으로 자리 잡는 데 기여합니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getDeclareActivePeriodList
+    name: 청소년활동 신고 활동기간 정보 조회
+    endpoint: https://apis.data.go.kr/1383000/yhis/DeclareActivePeriodService/getDeclareActivePeriodList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 데이터타입
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dclrMngNo
+      title: 신고관리번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10055'
+        - '10056'
+        - '10057'
+      stats:
+        min: 1
+        p50: 10056
+        max: 10119
+        unique: 135
+    - name: dclrNo
+      title: 신고번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 3
+        max: 100
+        unique: 17
+    - name: actvPrdSeq
+      title: 활동기간번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 34
+        unique: 34
+    - name: bgngYmd
+      title: 시작일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160625'
+        - '20160727'
+        - '20160702'
+      stats:
+        min: 20140808
+        p50: 20160725
+        max: 20161125
+        unique: 97
+    - name: endYmd
+      title: 종료일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20161231'
+        - '20160729'
+        - '20160625'
+      stats:
+        min: 20140809
+        p50: 20160805
+        max: 20161231
+        unique: 94
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4971
+  rank_in_sector: 510
+  brm: 사회복지 - 노인·청소년
+  why: 신고 프로그램의 활동기간 보조 테이블
+claims:
+  - id: c-15150143-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15150143.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15150143.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15150143-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15150143-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15150143.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15150143-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15150143.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15150143-06
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15150143-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15150143.json
+  stats: probe/stats/15150143.json
+  data: probe/data/15150143/
+status: active
+summary_user: 청소년 활동 단체·기관이 정부에 신고한 청소년활동 프로그램별로 실제 활동이 진행되는 기간(시작일자·종료일자)을 신고번호와 활동기간 순번 단위로 담은 전국 범위의 건별 신고 데이터다. 학부모나 청소년 활동 담당자가 특정 신고 활동이 언제부터 언제까지 운영되는지, 일정이 겹치는지를 확인하는 데 쓴다. 전역 조인 키는 없으며, 같은 기관의 청소년활동 신고 관련 데이터와 신고관리번호(dclrMngNo)·신고번호로 맞춰 이어 쓰는 방식만 가능하다.
+limits: 필드가 신고번호와 기간 정보뿐이라 활동명·장소·운영기관 등은 이 데이터만으로 알 수 없고, 다른 데이터와의 연결도 같은 기관의 신고번호나 이름 매핑에 의존한다. 지역 구분 없는 전국·비공간 데이터라 시군구·시도별 분석에 바로 쓰기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15150143-03
+    - c-15150143-04
+    - c-15150143-01
+  dropped_citations: 0

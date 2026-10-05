@@ -1,0 +1,223 @@
+# Dataset 15057999 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15057999'
+tier: verified
+title: 한국토지주택공사_분양임대공고별 상세정보 조회 서비스
+sector: 국토관리/주택/subscription
+domain: 국토관리/주택
+agency:
+  id: B552555
+  name: 한국토지주택공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057999/openapi.do
+synonyms:
+  - 분양
+  - 홈페이지
+  - 안내문
+  - 임대
+  - 토지
+  - LH 분양공고
+  - LH 임대공고
+  - 공고 상세
+  - 주택형 목록
+  - 청약 일정
+  - 상가 입찰
+  - 토지 분양 필지
+  - 공공임대 모집공고
+description_portal: 한국토지주택공사에서 제공하는 분양임대공고별 상세정보 조회 서비스입니다. 입력하시는 파라미터에 따라 주택형, 필지, 상가 호 목록 정보를 조회할 수 있습니다.공급정보구분코드, 고객센터연계시스템구분코드, 공고아이디, 상위매물유형코드를 입력하시면 응답 메세지로 접수처 정보와 입찰일정, 추첨일정 등을 포함한 토지정보, 또는 단지정보와 접수처 정보를 포함한 분양주택 정보 또는 임대주택 정보를 받아보실 수 있습니다.활용 신청 후 API 서비스 키와 함꼐 이용하실 수 있으며, 자세한 내용은 OPEN API 활용 가이드를 참고해주시길 바랍니다.
+team:
+  dept: IT운영처 데이터운영팀
+services:
+  - op: /getLeaseNoticeDtlInfo1
+    endpoint: https://apis.data.go.kr/B552555/lhLeaseNoticeDtlInfo1/getLeaseNoticeDtlInfo1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dsSch
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - '[{}]'
+      stats:
+        unique: 1
+    - name: resHeader
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'RS_DTTM': '20261004115910', 'SS_CODE': 'Y'}]"
+      stats:
+        min: '2026-10-04'
+        max: '2026-10-04'
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8094
+  rank_in_sector: 25
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: LH 공고 상세 중 계약장소 주소만, 공고 데이터와 중복
+claims:
+  - id: c-15057999-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15057999.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15057999.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15057999-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057999-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057999.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057999-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15057999.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057999-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15057999-06
+    kind: admin_note
+    value: "세부 부문 '청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)'의 가치: 청약 대기자 수요, 시즌마다 폭증. 마이홈(국토부 통합)이 대표 후보"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#subscription
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057999-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057999-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15057999.json
+  stats: probe/stats/15057999.json
+  data: probe/data/15057999/
+status: active
+summary_user: 한국토지주택공사(LH)의 분양·임대 공고 한 건을 지정해 그 공고의 상세 정보(토지는 접수처·입찰일정·추첨일정, 분양·임대주택은 단지정보·접수처, 주택형·필지·상가 호 목록)를 조회하는 공고 단위 API로, 범위는 전국이고 위치는 개별 주소·좌표 수준이다. 청약 대기자나 분석가가 '이 LH 공고의 주택형별 공급 내역과 접수·추첨 일정이 어떻게 되나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 공고아이디·공급정보구분코드 같은 LH 자체 코드로 같은 기관의 공고 목록 API와 잇거나 단지명·주소 매핑으로만 다른 데이터와 연결한다.
+limits: 공고가 나올 때 생성된 뒤 바뀌지 않는 이벤트성 데이터라 시계열 변화나 경쟁률·당첨 결과를 담지 않는다. 공고아이디 등 입력 파라미터가 있어야 호출되므로 공고 목록을 먼저 확보해야 하며, 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15057999-01
+    - c-15057999-02
+    - c-15057999-03
+    - c-15057999-04
+  dropped_citations: 0

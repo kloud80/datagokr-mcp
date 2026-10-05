@@ -1,0 +1,535 @@
+# Dataset 15088914 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15088914'
+tier: verified
+title: 서울특별시_병의원 위치 정보
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15088914/fileData.do
+synonyms:
+  - 병원
+  - 의원
+  - 병의원
+  - 보건의료서비스접근성
+  - 응급의료
+  - 서울 병원 위치
+  - 서울 의원 좌표
+  - 응급실 운영 병원
+  - 병의원 진료시간
+  - 의료기관 지도
+  - 야간진료 병원
+  - 서울 의료기관 목록
+summary_user: 서울특별시 병의원을 기관 한 곳당 한 행으로 담으며, 기관명·주소·대표전화, 병원분류, 응급의료기관 구분과 응급실 운영 여부, 요일별 진료 시작·종료 시간, 위도·경도를 포함한다. 시민이나 분석가가 '우리 동네에서 지금 진료 중이거나 응급실을 운영하는 병의원은 어디인가', '구별 의료기관 접근성은 어떤가' 같은 질문에 지도 기반으로 답할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 기관명 매칭이나 같은 기관 코드 체계(HPID)를 쓰는 데이터와의 연결에 그치고, 좌표로 공간 결합하는 방식도 함께 고려해야 한다.
+description_portal: 이 데이터셋은 서울특별시 내 병원 및 의원의 위치 정보를 담고 있으며, 주소, 병원분류 및 병원분류명, 응급의료기관 코드 및 명칭, 응급실 운영 여부, 상세 기관 설명, 간이약도, 기관명, 대표전화, 진료시간, 위도·경도 등의 항목을 제공하고 있습니다. 매월 1회 갱신됩니다. 이 데이터는 위치기반 분석, 보건의료 서비스 접근성 평가, 응급실 이용 가능기관 매핑, 지도 시각화 및 AI학습데이터로의 활용 가능성이 높습니다. 다만 ‘파일내려받기’ 항목이 바로 나타나지 않을 수 있고, 모든 정보가 항상 최신 상태일 수 있으므로 분석 전에 갱신일자와 자료 구조를 확인하는 것이 좋습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: TbHospitalInfo
+    name: TbHospitalInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/TbHospitalInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: HPID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - A1120837
+        - A1104130
+        - A1117873
+      stats:
+        unique: 100
+    - name: DUTYADDR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강동구 올림픽로 664, 306호 (천호동, 대우 한강 베네시티)
+        - 서울특별시 금천구 벚꽃로 286, 삼성리더스타워 111~114호 (가산동)
+        - 서울특별시 강남구 도산대로 118 (논현동, 신사빌딩 2층)
+      stats:
+        unique: 99
+    - name: DUTYDIV
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C
+        - G
+        - N
+      stats:
+        unique: 4
+    - name: DUTYDIVNAM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의원
+        - 한의원
+        - 치과의원
+      stats:
+        unique: 4
+    - name: DUTYEMCLS
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - G099
+      stats:
+        unique: 1
+    - name: DUTYEMCLSNAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 응급의료기관 이외
+      stats:
+        unique: 1
+    - name: DUTYERYN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+      stats:
+        min: 2
+        p50: 2
+        max: 2
+        unique: 1
+    - name: DUTYETC
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 점심시간 13:00~14:00
+        - 휴게시간 13:00~14:00
+        - 점심시간 13:00-14:00
+      stats:
+        unique: 70
+    - name: DUTYINF
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 안녕하세요. 김미경산부인과입니다. 항상 원칙을 어긋나지 않는 마음과 함께, 진정성 있는 진료로 다가서는 것을 최우선의 가치로 삼고 있습니다.
+        - 서울시 송파구 문정동 장지동 법조단지 위례 가락동 가락시장역 위치, 삼성서울병원 외래교수 출신 구강외과 전문의 진료, 진료과목 - 임플란트, 치
+        - 토요일이 공휴일인 경우 진료함
+      stats:
+        unique: 77
+    - name: DUTYMAPIMG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 방이역 1번출구 바로옆 굿모닝 신한증권 뒷건물
+        - 압구정역 2번출구
+        - 구의역 1번 출구
+      stats:
+        unique: 95
+    - name: DUTYNAME
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경희예가한의원
+        - 굿모닝의원
+        - 고운이치과의원
+      stats:
+        unique: 97
+    - name: DUTYTEL1
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-549-7778
+        - 02-6267-2580
+        - 02-516-3650
+      stats:
+        unique: 99
+    - name: DUTYTEL3
+      type: code
+      null_rate: 0.05
+      sample_values:
+        - 02-2276-2114
+        - 02-2626-1550
+        - 02-920-5374
+      stats:
+        unique: 17
+    - name: DUTYTIME1C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1800'
+        - '1900'
+        - '1830'
+      stats:
+        min: 1600
+        p50: 1830
+        max: 2100
+        unique: 11
+    - name: DUTYTIME2C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1800'
+        - '1900'
+        - '1830'
+      stats:
+        min: 1230
+        p50: 1830
+        max: 2100
+        unique: 14
+    - name: DUTYTIME3C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1800'
+        - '1900'
+        - '1830'
+      stats:
+        min: 1300
+        p50: 1830
+        max: 2100
+        unique: 14
+    - name: DUTYTIME4C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1900'
+        - '1800'
+        - '1830'
+      stats:
+        min: 1230
+        p50: 1830
+        max: 2100
+        unique: 14
+    - name: DUTYTIME5C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1800'
+        - '1900'
+        - '1830'
+      stats:
+        min: 1600
+        p50: 1830
+        max: 2100
+        unique: 11
+    - name: DUTYTIME6C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1300'
+        - '1400'
+        - '1500'
+      stats:
+        min: 1130
+        p50: 1400
+        max: 1900
+        unique: 13
+    - name: DUTYTIME7C
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1300'
+        - '1400'
+        - '1600'
+      stats:
+        min: 1000
+        p50: 1500
+        max: 2300
+        unique: 19
+    - name: DUTYTIME8C
+      type: number
+      null_rate: 0.01
+      sample_values:
+        - '1500'
+        - '1300'
+        - '1400'
+      stats:
+        min: 1000
+        p50: 1500
+        max: 2400
+        unique: 19
+    - name: DUTYTIME1S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0900'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1100
+        unique: 11
+    - name: DUTYTIME2S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0900'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1100
+        unique: 11
+    - name: DUTYTIME3S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0900'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1400
+        unique: 12
+    - name: DUTYTIME4S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0900'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1400
+        unique: 13
+    - name: DUTYTIME5S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0930'
+        - '0900'
+      stats:
+        min: 800
+        p50: 930
+        max: 1400
+        unique: 12
+    - name: DUTYTIME6S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000'
+        - '0900'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1100
+        unique: 9
+    - name: DUTYTIME7S
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0900'
+        - '1000'
+        - '0930'
+      stats:
+        min: 800
+        p50: 930
+        max: 1500
+        unique: 11
+    - name: DUTYTIME8S
+      type: number
+      null_rate: 0.01
+      sample_values:
+        - '0900'
+        - '1000'
+        - '0930'
+      stats:
+        min: 0
+        p50: 920
+        max: 1500
+        unique: 11
+    - name: POSTCDN1
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '060'
+        - '053'
+        - '061'
+      stats:
+        min: 12
+        p50: 60
+        max: 110
+        unique: 46
+    - name: POSTCDN2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '29'
+        - '20'
+      stats:
+        min: 1
+        p50: 33
+        max: 310
+        unique: 58
+    - name: WGS84LON
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.888807280468'
+        - '127.124975762766'
+        - '126.88412249700781'
+      stats:
+        min: 126.8110813709
+        p50: 127.02242874914396
+        max: 127.1738171036809
+        unique: 98
+    - name: WGS84LAT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.495860314768'
+        - '37.540555377209'
+        - '37.4803938036867'
+      stats:
+        min: 37.4724775165
+        p50: 37.524290434801046
+        max: 37.6723293932498
+        unique: 98
+    - name: WORK_DTTM
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-02-07 15:10:36.0'
+        - '2024-02-07 14:56:07.0'
+        - '2025-02-07 15:10:37.0'
+      stats:
+        min: '2020-12-07'
+        max: '2026-09-07'
+        unique: 56
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5485
+  rank_in_sector: 894
+  brm: 보건의료 - 보건의료
+  why: 서울 병의원 위치, 전국 병의원 찾기 지역판
+claims:
+  - id: c-15088914-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15088914.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15088914-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15088914-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15088914.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 34개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15088914-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15088914.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15088914-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15088914-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15088914-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15088914.json
+  stats: probe/stats/15088914.json
+  data: probe/data/15088914/
+limits: 포털 활용신청과 별개로 서울 열린데이터광장(data.seoul.go.kr) 인증키를 받아 경로에 넣어 호출해야 한다. 전역 조인 키가 없어 인허가(LOCALDATA)나 건강보험 데이터와 바로 붙일 수 없고, 이름·코드 매핑을 거쳐야 한다. 범위 메타데이터가 '시도·전국·비공간'으로 기록되어 있어 실제 수록 범위는 호출 결과로 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15088914-01
+    - c-15088914-03
+    - c-15088914-04
+  dropped_citations: 0
+status: active

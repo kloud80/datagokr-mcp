@@ -1,0 +1,238 @@
+# Dataset 15099679 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15099679'
+tier: verified
+title: 충청남도_경로당 현황
+sector: 사회복지/노인·청소년/elderly-facilities
+agency:
+  id: '6440000'
+  name: 충청남도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15099679/openapi.do
+synonyms:
+  - 충청남도
+  - 경로당
+  - 노인
+  - 경로당 위치
+  - 노인정
+  - 충남 경로당 목록
+  - 노인여가복지시설
+  - 경로당 주소 전화번호
+  - 마을 경로당
+description_portal: 시설명, 종류, 전화번호, 주소 등의 입력 파라미터를 이용하여 충청남도 내에 있는 경로당의 정보를 조회 할 수 있는 API
+team:
+  dept: AI정보화담당관
+services:
+  - op: /silverhallinfo
+    name: 경로당 현황 조회
+    endpoint: https://apis.data.go.kr/6440000/getSilverhall/silverhallinfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: xml
+        desc: 자료요청형식
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: BLDG_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 회룡경로당
+        - 교천리
+        - 동평2리
+      stats:
+        unique: 999
+    - name: DVS
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보령시
+        - 아산시
+        - 공주시
+      stats:
+        unique: 4
+    - name: TELNO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: INST_DADDR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 충청남도 보령시 주공로 65 (명천동)
+        - 충청남도 공주시 하선길 30-4
+        - 충청남도 공주시 버드나무1길 36
+      stats:
+        unique: 984
+    - name: STTY_EMD_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: PVSN_INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충청남도
+      stats:
+        unique: 1
+    - name: CRTR_YMD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6486
+  rank_in_sector: 142
+  brm: 사회복지 - 노인·청소년
+  why: 달성군 경로당, 전국 경로당 표준데이터와 겹침
+claims:
+  - id: c-15099679-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15099679.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15099679.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15099679-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099679-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099679.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099679-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15099679.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099679-06
+    kind: admin_note
+    value: "세부 부문 '노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)'의 가치: 고령화로 가장 빠르게 커지는 생활 수요, 건강보험 장기요양기관과 related. 사회복지시설 시설코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#elderly-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099679-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099679-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15099679.json
+  stats: probe/stats/15099679.json
+  data: probe/data/15099679/
+status: active
+summary_user: 충청남도 내 경로당을 시설 한 곳당 한 건으로 담으며, 시설명·종류·전화번호·주소와 법정 읍면동명, 제공기관명, 기준일자를 포함한다. 노인 주민이나 가족이 '우리 동네(읍면동)에 있는 경로당은 어디이고 연락처는 무엇인가'를 찾거나, 분석가가 충남 시군·읍면동별 경로당 분포를 살펴볼 때 쓴다. 전역 조인 키는 없어서 다른 데이터와는 주소·읍면동명(STTY_EMD_NM)이나 시설명 매핑으로 이어 쓰며, 같은 부문의 노인복지시설·장기요양기관 데이터나 시군구·시도 단위 지역 통계와 붙일 때도 이 방식을 쓴다.
+limits: 공통 시설코드나 행정코드 같은 전역 조인 키가 없어서 다른 데이터와 연결하려면 이름·주소 문자열을 매핑해야 한다. 범위는 충청남도에 한정되어 전국 비교에는 다른 시도 자료가 필요하다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회까지 쓸 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15099679-01
+    - c-15099679-03
+    - c-15099679-04
+    - c-15099679-06
+    - c-15099679-07
+  dropped_citations: 0

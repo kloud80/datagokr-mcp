@@ -1,0 +1,200 @@
+# Dataset 15107543 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107543'
+tier: verified
+title: 행정안전부_통계연보_공무원 통근버스 운행
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107543/openapi.do
+synonyms:
+  - 공무원
+  - 통근버스
+  - 예산
+  - 운행대수
+  - 청사명
+  - 공무원 통근버스
+  - 정부청사 통근버스
+  - 행정안전 통계연보
+  - 정부서무 통계
+  - 청사 셔틀버스
+  - 세종청사 통근버스
+  - 통근버스 운행대수
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '행정관리' 중 '정부서무', '공무원 통근버스 운행'에 관한 통계입니다. 정부청사(대전, 과천, 서울, 세종), 운행대수 등 공무원 통근버스 운행 관련 정보를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getPublicOfficialBusOperation
+    name: 공무원 통근버스 운행 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/PublicOfficialBusOperation/getPublicOfficialBusOperation
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 35}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RESU"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '1991', 'seq': 1, 'budget': '2647720', 'rnng_num': '343', 'govern"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6557
+  rank_in_sector: 652
+  brm: 교통물류 - 도로
+  why: 행안부 통계연보 통근버스, 기관 운영 자료
+claims:
+  - id: c-15107543-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107543.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107543.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107543-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107543-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107543.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107543-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107543.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107543-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107543-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107543-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107543.json
+  stats: probe/stats/15107543.json
+  data: probe/data/15107543/
+status: active
+summary_user: 행정안전 통계연보의 '행정관리·정부서무' 중 공무원 통근버스 운행 통계를 담은 집계 데이터로, 정부청사(대전·과천·서울·세종)별 운행대수 등 운행 현황을 제공하는 전국 단위 비공간 통계다. 정책 분석가나 연구자가 '정부청사별로 공무원 통근버스가 몇 대 운행되고 연도별로 어떻게 달라졌는가'를 확인할 때 쓴다. 실측 컬럼에서 공통 조인 키가 확인되지 않아, 다른 데이터와는 청사명 같은 이름 매핑이나 같은 기관의 다른 통계연보 항목과 맞춰 이어 쓴다.
+limits: 청사 단위 연보 집계라 노선·정류장·실시간 도착 같은 개별 운행 정보는 담지 않는다. 전역 조인 키가 없어 다른 교통 데이터와 자동 연결이 어렵다. 호출에는 활용신청 후 받은 serviceKey가 필요하며 개발계정은 일 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107543-01
+    - c-15107543-03
+    - c-15107543-04
+  dropped_citations: 0

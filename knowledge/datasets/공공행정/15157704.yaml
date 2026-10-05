@@ -1,0 +1,464 @@
+# Dataset 15157704 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157704'
+tier: verified
+title: 한국자산관리공사_차세대 온비드 순위물건목록 조회수 순위 조회서비스
+sector: 공공행정/정부자원관리/state-property
+agency:
+  id: B010003
+  name: 한국자산관리공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157704/openapi.do
+synonyms:
+  - 온비드
+  - 공매
+  - 공매물건정보
+  - 공매조회수
+  - 감정평가금액
+  - 온비드 인기물건
+  - 공매 조회수 순위
+  - 온비드 공매 물건
+  - 캠코 공매
+  - 압류재산 공매
+  - 국유재산 매각 입찰
+  - 공매 자동차
+  - 인기 경매 물건
+description_portal: "한국자산관리공사에서 운영하는 온비드(Onbid) 홈페이지에 등록된 물건 중 전일 기준 클릭수가 가장 많은 상위 20개 물건 정보입니다. 물건 유형(부동산, 동산, 자동차)에 따라 전일(어제)를 기준으로 조회수가 높은 상위 20개의 물건에 대해 입찰종료일자, 최저입찰가격, 감정평가금액 등 주요 물건 정보를 조회할 수 있습니다. 조회수는 '로그인한 회원이 물건을 조회한 횟수'를 의미하며 동일한 물건에 대해 한 명의 회원이 여러 번 물건을 조회하더라도  조회수는 1일 1회만 증가합니다.  순위물건은 입찰마감 전인 (입찰 준비중이거나 입찰 진행 중) 물건만 조회됩니다. 순위물건의 순위는 참고용으로만 활용하시기 바랍니다. 필수 입력 조건 : 물건유형구분(cltrDivNm) (부동산|동산|자동차 중 입력)"
+team:
+  dept: 디지털시스템실
+services:
+  - op: /getInqRnkClg
+    name: 순위물건목록 조회수순위 정보
+    endpoint: https://apis.data.go.kr/B010003/OnbidInqRnkClgSrvc/getInqRnkClg
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: true
+        desc: 응답유형
+      - name: cltrDivNm
+        required: true
+        desc: 물건유형 구분 (부동산|동산|자동차 중 입력)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: totDt
+      title: 기준일자(yyyyMMdd)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261004'
+      stats:
+        min: 20261004
+        p50: 20261004
+        max: 20261004
+        unique: 1
+    - name: sn
+      title: 순위
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '17'
+        - '1'
+      stats:
+        min: 1
+        p50: 10.5
+        max: 20
+        unique: 16
+    - name: cltrDivNm
+      title: 물건유형 구분 (부동산|동산|자동차 중 입력)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부동산
+      stats:
+        unique: 1
+    - name: cltrMngNo
+      title: 물건관리번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2025-09238-001
+        - 2025-08413-001
+        - 2026-14169-002
+      stats:
+        unique: 20
+    - name: pbctCdtnNo
+      title: 공매조건번호(물건 입찰정보 조회시 물건관리번호와 함께 입력 필요)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6157629'
+        - '6194171'
+        - '6161466'
+      stats:
+        min: 6129739
+        p50: 6160230
+        max: 6198169
+        unique: 20
+    - name: cltrBidBgngDt
+      title: 입찰시작일시(yyyyMMddHHmm)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610121400'
+        - '202610010900'
+        - '202610261400'
+      stats:
+        min: 202610010900
+        p50: 202610121400
+        max: 202610261400
+        unique: 5
+    - name: cltrBidEndDt
+      title: 입찰종료일시(yyyyMMddHHmm)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610141700'
+        - '202610301000'
+        - '202610281700'
+      stats:
+        min: 202610071700
+        p50: 202610141700
+        max: 202610301000
+        unique: 5
+    - name: prptDivCd
+      title: '재산유형코드 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 0011'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0007'
+        - '0010'
+      stats:
+        min: 7
+        p50: 7
+        max: 10
+        unique: 2
+    - name: prptDivNm
+      title: '재산유형코드명 (0007 : 압류재산, 0010 : 국유재산, 0005 : 기타일반재산, 0004 : 불용품, 0002 : 공유재산, 0003 : 금융권담보재산, 0006 : 유입재산, 0008 : 수탁재산, 001'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 압류재산
+        - 국유재산
+      stats:
+        unique: 2
+    - name: dspsMthodCd
+      title: '처분방식코드 (0001 : 매각, 0002 : 임대)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+        - '0002'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: dspsMthodNm
+      title: '처분방식명 (0001 : 매각, 0002 : 임대)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매각
+        - 임대
+      stats:
+        unique: 2
+    - name: cltrUsgLclsCtgrId
+      title: 용도대분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10000'
+      stats:
+        min: 10000
+        p50: 10000
+        max: 10000
+        unique: 1
+    - name: cltrUsgMclsCtgrId
+      title: 용도중분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10200'
+        - '10100'
+        - '10300'
+      stats:
+        min: 10100
+        p50: 10200
+        max: 10300
+        unique: 3
+    - name: cltrUsgSclsCtgrId
+      title: 용도소분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10102'
+        - '10201'
+        - '10204'
+      stats:
+        min: 10102
+        p50: 10201
+        max: 10302
+        unique: 9
+    - name: cltrUsgLclsCtgrNm
+      title: 용도대분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부동산
+      stats:
+        unique: 1
+    - name: cltrUsgMclsCtgrNm
+      title: 용도중분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주거용건물
+        - 토지
+        - 상가용및업무용건물
+      stats:
+        unique: 3
+    - name: cltrUsgSclsCtgrNm
+      title: 용도소분류코드명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임야
+        - 아파트
+        - 단독주택
+      stats:
+        unique: 9
+    - name: onbidCltrNm
+      title: 물건명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '경기도 양평군 양동면 금왕리 698-1  '
+        - '경기도 이천시 설성면 제요리 8-41  '
+        - '서울특별시 종로구 구기동 248-8  '
+      stats:
+        unique: 20
+    - name: apslEvlAmt
+      title: 감정평가금액(원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '80370000'
+        - '56516000'
+        - '3825000'
+      stats:
+        min: 0
+        p50: 238500000
+        max: 36959391000
+        unique: 20
+    - name: lowstBidPrcIndctCont
+      title: 최저입찰가격(원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8037000'
+        - '5652000'
+        - '3825000'
+      stats:
+        min: 3825000
+        p50: 35049400
+        max: 36959391000
+        unique: 20
+    - name: apslPrcCtrsLowstBidRto
+      title: 감정평가금액 대비 현재 최저입찰가격
+      type: number
+      null_rate: 0.6
+      sample_values:
+        - '10.0'
+        - '70.0'
+        - '2.0'
+      stats:
+        min: 1
+        p50: 10
+        max: 80
+        unique: 5
+    - name: frstCtrsLowstBidPrcRto
+      title: 최초의 최저입찰가격 대비 현재 최저입찰가격
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: feeRate
+      title: 할인율(%)
+      type: number
+      null_rate: 0.6
+      sample_values:
+        - '90.0'
+        - '30.0'
+        - '98.0'
+      stats:
+        min: 20
+        p50: 90
+        max: 99
+        unique: 5
+    - name: thnlImgUrlAdr
+      title: 물건 썸네일 이미지 URL주소
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: pbctStatCd
+      title: '입찰결과구분코드 (0001 : 입찰준비중, 0002 : 입찰진행중, 0003 : 입찰마감, 0006 : 개찰중, 0009 : 수의계약가능, 0010 : 낙찰, 0011 : 유찰, 0012 : 취소)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0001'
+        - '0002'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: pbctStatNm
+      title: '입찰결과구분코드명 (0001 : 입찰준비중, 0002 : 입찰진행중, 0003 : 입찰마감, 0006 : 개찰중, 0009 : 수의계약가능, 0010 : 낙찰, 0011 : 유찰, 0012 : 취소)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 입찰준비중
+        - 입찰진행중
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 국유·공유재산
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5764
+  rank_in_sector: 105
+  brm: 재정금융 - 재정·금융
+  sector_rule: kamco-state-property
+  why: 조회수 상위 20건 순위, 보조 정보
+claims:
+  - id: c-15157704-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157704.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157704.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15157704-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157704-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157704.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 26개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157704-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15157704.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157704-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157704-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157704.json
+  stats: probe/stats/15157704.json
+  data: probe/data/15157704/
+status: active
+summary_user: 온비드에 등록된 물건 중 전일 기준 로그인 회원 조회수가 높은 상위 20개를 물건유형(부동산·동산·자동차)별로 담으며, 물건마다 순위·입찰기간·감정평가금액·최저입찰가격·재산유형·처분방식(매각·임대) 등을 건별로 제공한다. 공매 참여를 고민하는 국민이나 사업자가 "어제 가장 관심을 많이 받은 입찰 진행 중인 부동산·자동차 공매 물건은 무엇이고 감정가 대비 최저입찰가는 얼마인가"를 확인하는 데 쓴다. 실측상 전역 조인 키는 없으나, 물건관리번호(cltrMngNo)와 공매조건번호를 함께 넘기면 같은 기관의 온비드 물건 입찰정보 조회와 이어 쓸 수 있고, 재산유형·용도분류 코드로 다른 온비드 목록과 맞춰 볼 수 있다.
+limits: 조회수 순위는 참고용이며 입찰마감 전 물건만 나오므로 낙찰·유찰 결과나 과거 인기 추이는 이 데이터로 알 수 없다. 물건유형구분(cltrDivNm)은 필수 입력이고 개발계정은 일 1,000회로 제한된다. 공통 행정코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15157704-01
+    - c-15157704-03
+    - c-15157704-04
+  dropped_citations: 0

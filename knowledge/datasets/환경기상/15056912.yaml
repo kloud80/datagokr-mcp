@@ -1,0 +1,327 @@
+# Dataset 15056912 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15056912'
+tier: verified
+title: 기상청_관광코스별 관광지 상세 날씨 조회서비스
+sector: 환경기상/대기/weather-forecast
+agency:
+  id: '1360000'
+  name: 기상청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15056912/openapi.do
+synonyms:
+  - 관광코스별 동네예보
+  - 기상지수예보
+  - 시군구별관광기후지수
+  - 관광기후
+  - 관광기후지수
+  - 관광지 날씨
+  - 여행 날씨 예보
+  - 관광코스 예보
+  - TCI
+  - 캠핑 날씨
+description_portal: 관광코스별 관광지의 동네예보, 기상지수예보, 시군구별 관광기후지수 정보를 조회하는 서비스(참고-예시) 관광코스 -관광지남호고택에서의 하룻밤 - 봉화천년의 비밀을 지닌 고찰에서 캠핑을하다 - 영동밝고 청정한 영양의 산천을 찾아서 - 영양켜켜이 쌓인 세월의 아름다움을 찾아서 - 보은속리산이 그려낸 즐거운 나날 -- 괴산, 보은청주의 자연에서 배우면서 뒹굴자 - 청주캠핑을 즐기며 여유롭게 돌아보는 태안 - 태안캠핑에 문화와 예술을 더하다 - 계룡, 논산백제 땅에 캠핑하다 - 논산서해다바에 안기고 체험마을에 머물다 - 보령, 서천충청남도의 보물 같은 마을 풍경 - 예산충청남도의 자연에 풍덩 빠져 즐기다 - 서산
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: /getTourStnVilageFcst1
+    name: 동네예보조회
+    endpoint: https://apis.data.go.kr/1360000/TourStnInfoService1/getTourStnVilageFcst1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        desc: 요청자료형식(XML/JSON)
+      - name: CURRENT_DATE
+        required: true
+        desc: 2016-12-01 01시부터 조회
+      - name: HOUR
+        required: true
+        desc: CURRENT_DATE부터 24시간 후까지의 자료 호출
+      - name: COURSE_ID
+        required: true
+        desc: 관광 코스ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getCityTourClmIdx1
+    name: 시군구별관광기후지수조회
+    endpoint: https://apis.data.go.kr/1360000/TourStnInfoService1/getCityTourClmIdx1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: false
+        example: XML
+        desc: 요청자료형식(XML/JSON)
+      - name: CURRENT_DATE
+        required: true
+        example: '2018123110'
+        desc: 2018-12-31 00시부터 조회
+      - name: DAY
+        required: true
+        example: '3'
+        desc: CURRENT_DATE부터 입력값까지의 자료 호출
+      - name: CITY_AREA_ID
+        required: false
+        example: '5013000000'
+        desc: 시군구 아이디
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tm
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2019-01-03 00:00
+        - 2019-01-02 00:00
+        - 2019-01-01 00:00
+      stats:
+        min: '2019-01-01'
+        max: '2019-01-03'
+        unique: 3
+    - name: totalCityName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제주 서귀포시
+      stats:
+        unique: 1
+    - name: doName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제주
+      stats:
+        unique: 1
+    - name: cityName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서귀포시
+      stats:
+        unique: 1
+    - name: cityAreaId
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5013000000'
+      stats:
+        min: 5013000000
+        p50: 5013000000
+        max: 5013000000
+        unique: 1
+    - name: kmaTci
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '57.3'
+        - '50.06'
+        - '43.88'
+      stats:
+        min: 43.88
+        p50: 50.06
+        max: 57.3
+        unique: 3
+    - name: TCI_GRADE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보통
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8721
+  rank_in_sector: 7
+  brm: 과학기술 - 과학기술연구
+  sector_rule: weather-to-environment
+  why: 관광코스 한정 예보, 보조 자료
+claims:
+  - id: c-15056912-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15056912.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15056912.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15056912-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056912-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056912.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056912-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15056912.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056912-06
+    kind: admin_note
+    value: "세부 부문 '기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)'의 가치: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-forecast
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056912-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056912-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056912-10
+    kind: pitfall
+    value: 필수 파라미터 COURSE_ID, HOUR는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15056912.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056912-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getTourStnVilageFcst1'
+    evidence:
+      - type: measured
+        source: probe/runs/15056912.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15056912.json
+  stats: probe/stats/15056912.json
+  data: probe/data/15056912/
+status: active
+summary_user: 관광코스별 관광지의 동네예보·기상지수예보와 시군구별 관광기후지수를 조회하는 API로, 전국 시군구 단위의 예보 값(관광기후지수와 그 등급 등)을 담는다. 여행객이나 관광 사업자가 '이번 주말 특정 관광코스나 시군구의 관광 날씨가 괜찮은가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 시군구명·지역 ID(cityAreaId) 같은 이름·코드 매핑으로 다른 지역 데이터와 연결해야 한다.
+limits: 필수 파라미터인 관광코스 ID(COURSE_ID)와 시각(HOUR)은 다른 데이터의 코드라 먼저 확보해 넘겨야 한다. 오퍼레이션 2개 중 관광지 동네예보(getTourStnVilageFcst1)는 최소 파라미터로 호출했을 때 응답이 없었다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15056912-01
+    - c-15056912-03
+    - c-15056912-04
+    - c-15056912-10
+    - c-15056912-11
+  dropped_citations: 0

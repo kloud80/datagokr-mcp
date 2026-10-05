@@ -1,0 +1,281 @@
+# Dataset 3045279 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '3045279'
+tier: verified
+title: 서울특별시 대중교통 분실물 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/3045279/fileData.do
+synonyms:
+  - 버스
+  - 지하철
+  - 택시
+  - 분실물
+  - 유실물
+  - 습득물
+  - 분실물센터
+  - 지하철 분실물
+  - 버스 분실물
+  - 택시 분실물
+  - 잃어버린 물건 찾기
+  - 대중교통 유실물
+summary_user: 서울특별시 대중교통(버스·지하철·택시)에서 승객이 두고 내린 습득물을 건별로 담으며, 분실물명·종류·처리 상태·등록일자·수령일자·보관 장소·상세 내용 등을 관리번호(LOST_MNG_NO) 단위로 제공한다. 지하철·버스·택시에 물건을 두고 내린 시민이 "내 지갑이 어느 분실물센터에 보관돼 있고 아직 찾아갈 수 있는 상태인가"를 확인하거나, 분석가가 분실물 종류·발생 빈도를 살펴보는 데 쓴다. 실측 컬럼에 다른 데이터와 이을 전역 조인 키가 없어, 경찰청 유실물 정보 등과는 분실물명·보관 장소 이름이나 같은 기관 기준으로만 맞춰 써야 한다.
+description_portal: '서울특별시 대중교통(버스, 택시, 지하철) 습득물 정보입니다.대중교통통합분실물센터 홈페이지를 통해 분실물명, 분실물상태, 등록일자, 수령일자, 수령장소, 유실물상세내용, 분실장소 등의 정보를 제공합니다.*용어설명- 대중교통 분실물센터는 버스·지하철·택시 등 대중교통을 이용하는 과정에서 승객이 두고 내린 물건을 접수·보관하고, 주인을 찾아주는 서비스 기관, 대한민국에서는 서울을 비롯해 각 지자체가 운영하는 시민서비스 센터 혹은 경찰청 유실물 통합센터와 연계- 지하철: 각 노선 별 고객센터·역무실에서 접수 → 일정 기간 후 서울메트로 분실물센터(종로3가역 등) 이관.- 버스: 버스 차고지나 운수회사에서 접수·보관 → 서울버스공제조합 분실물센터로 이관.- 택시: 택시기사에게 직접 연락하거나, 서울택시조합 분실물센터(ARS 또는 홈페이지)에서 조회 가능.'
+accrual_periodicity: 수시
+team:
+  dept: 버스정책과
+services:
+  - op: lostArticleInfo
+    name: lostArticleInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/lostArticleInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: LOST_MNG_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '61720518'
+        - '61720527'
+        - '61720532'
+      stats:
+        min: 1270123
+        p50: 61719744.5
+        max: 108417886
+        unique: 100
+    - name: LOST_STTS
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 수령
+        - 보관
+      stats:
+        unique: 2
+    - name: REG_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2020-03-16'
+        - '2020-05-20'
+        - '2020-05-21'
+      stats:
+        min: '2008-11-06'
+        max: '2020-05-30'
+        unique: 25
+    - name: RCV_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2020-03-14 00:00:00.0'
+        - '2020-05-20 00:00:00.0'
+        - '2020-03-18 00:00:00.0'
+      stats:
+        min: '2008-10-23'
+        max: '2020-05-28'
+        unique: 52
+    - name: LGS_DTL_CN
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 저희 중부운수에서는 2020년 05월 15일 핸드폰을(를) 습득/보관 하(였습니다.)고 있습니다.<br>분실하신 분께서는 본인을 증명할 수 있는
+        - '저희 삼이택시에서는 2020년 05월 20일 기타을(를) 습득/보관 하(였습니다.)고 있습니다.<br>분실하신 분께서는 본인을 증명할 수 있는 '
+        - 저희 중부운수에서는 2020년 03월 13일 핸드폰을(를) 습득/보관 하(였습니다.)고 있습니다.<br>분실하신 분께서는 본인을 증명할 수 있는
+      stats:
+        min: '2008-10-23'
+        max: '2020-05-28'
+        unique: 95
+    - name: CSTD_PLC
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 회사내 분실센터
+        - 부산역
+        - 여수EXPO
+      stats:
+        unique: 8
+    - name: LOST_RGTR_ID
+      type: code
+      null_rate: 0.07
+      sample_values:
+        - 중부운수
+        - kyoungil10
+        - krcars
+      stats:
+        unique: 14
+    - name: LOST_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 핸드폰
+        - 휴대폰(본인수령함)
+        - 휴대폰
+      stats:
+        unique: 78
+    - name: LOST_KND
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 핸드폰
+        - 기타
+        - 지갑
+      stats:
+        unique: 9
+    - name: RCPL
+      type: code
+      null_rate: 0.07
+      sample_values:
+        - 중부운수
+        - 경일운수
+        - 고려운수
+      stats:
+        unique: 14
+    - name: INQ_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '4'
+      stats:
+        min: 0
+        p50: 6
+        max: 172
+        unique: 38
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5854
+  rank_in_sector: 1230
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 서울 대중교통 분실물, 입지 분석 활용 낮음
+claims:
+  - id: c-3045279-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/3045279.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-3045279-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3045279-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3045279.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3045279-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/3045279.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3045279-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3045279-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3045279-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/3045279.json
+  stats: probe/stats/3045279.json
+  data: probe/data/3045279/
+limits: 서울 열린데이터광장(data.seoul.go.kr) 인증키를 경로 파라미터로 따로 받아야 하며, 공공데이터포털 활용신청과는 별개다. 공통 조인 키가 없어 다른 유실물·교통 데이터와 정확한 건별 연결은 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-3045279-01
+    - c-3045279-03
+    - c-3045279-04
+  dropped_citations: 0
+status: active

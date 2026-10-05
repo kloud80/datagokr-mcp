@@ -1,0 +1,227 @@
+# Dataset 15120466 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15120466'
+tier: verified
+title: 성평등가족부_e새일 훈련직종 코드정보
+sector: 산업고용/고용노동/vocational-training
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15120466/openapi.do
+synonyms:
+  - e새일
+  - 훈련직종
+  - 직종코드
+  - 경단녀
+  - 경력단절여성
+  - 직업훈련
+  - 새일센터 직종코드
+  - 경력단절여성 직업훈련 분류
+  - 경단녀 훈련직종
+  - 직업교육 직종 대분류 중분류
+  - 여성 직업훈련 코드표
+  - e새일 코드
+description_portal: 경력단절여성등의 경제활동 촉진법 제13조 제1항과 관련하여 e새일의 직업교육 및 직업훈련과정의 직종 코드 정보를 제공하는 오픈 API형 데이터입니다. 해당 개방데이터는 대분류와 중분류로 나뉘어져 있으며 대분류 및 중분류의 코드와 명칭, 코드값, 예시 직종 정보를 확인할 수 있습니다.경력단절여성 대상 직업교육 및 직업훈련 과정의 체계적인 분류와 관리를 가능하게 하여 교육 과정의 표준화 및 효율적인 운영에 기여하며, 데이터 기반의 정책 수립과 수요 맞춤형 프로그램 개발에도 효과적으로 활용될 수 있습니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getCareerEducationCodeList
+    name: e새일 훈련직종 코드정보
+    endpoint: https://apis.data.go.kr/1383000/nwis/CareerEducationCodeService/getCareerEducationCodeList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 결과타입
+      - name: lclNm
+        required: false
+        example: 건설분야
+        desc: 대분류명
+      - name: mclNm
+        required: false
+        example: 토목
+        desc: 중분류명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lclCd
+      title: 대분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '06'
+      stats:
+        min: 6
+        p50: 6
+        max: 6
+        unique: 1
+    - name: lclNm
+      title: 대분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 건설분야
+      stats:
+        unique: 1
+    - name: mclCd
+      title: 중분류코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: mclNm
+      title: 중분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 토목
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 직업훈련 과정 (국민내일배움카드·사업주·컨소시엄·일학습병행·NCS 훈련)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5003
+  rank_in_sector: 244
+  brm: 산업고용 - 고용노동
+  why: e새일 훈련직종 코드표, 훈련정보 조인용
+claims:
+  - id: c-15120466-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15120466.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15120466.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15120466-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120466-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120466.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120466-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120466.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120466-06
+    kind: admin_note
+    value: '[산업고용 · 고용노동] 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(KECO·NCS 코드 마스터)·정부지원 일자리사업·산업재해(중대재해 일별·재해사례·산재 판례/판정)·노동조합(표준데이터 활용 25,609)·고용 서비스 기관/강소기업·지역 고용동향(시도×월) (`labor-deferred`, `labor-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L641
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120466-07
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15120466.json
+  stats: probe/stats/15120466.json
+  data: probe/data/15120466/
+status: active
+summary_user: e새일(경력단절여성 대상 직업교육·직업훈련)의 훈련 직종 분류를 대분류와 중분류 단위로 코드와 명칭으로 담은 전국 단위 코드표 API이다. 경력단절여성 훈련과정을 다루는 분석가나 개발자가 '이 훈련과정의 직종 코드는 어떤 분야에 속하는가'를 풀어 쓸 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관(e새일)의 훈련과정 데이터에 있는 직종 코드(대분류코드·중분류코드)나 이름 매칭으로만 이어 쓴다.
+limits: 훈련과정·수강생·개설 현황 같은 실적은 담지 않고 분류 코드만 담으며, NCS·KECO 같은 다른 직업분류와 직접 연결되는 키가 없다. 한 번 만들어진 뒤 바뀌지 않는 이벤트성 데이터로 분류되어 있어 수시 갱신을 기대하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15120466-01
+    - c-15120466-02
+    - c-15120466-03
+    - c-15120466-04
+  dropped_citations: 0

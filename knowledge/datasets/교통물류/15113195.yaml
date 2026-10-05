@@ -1,0 +1,303 @@
+# Dataset 15113195 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15113195'
+tier: verified
+title: 인천광역시_택시 운행 통계 조회 서비스
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6280000'
+  name: 인천광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15113195/openapi.do
+synonyms:
+  - 승차
+  - 택시
+  - 통계
+  - 교통
+  - 운행시간
+  - 인천 택시 O-D
+  - 택시 이동패턴
+  - 택시 승차 집중지역
+  - 택시 기종점 통계
+  - 행정동별 택시 이동
+  - 택시 수요 분석
+  - 택시 평균 이동거리
+description_portal: 인천광역시가 제공하는 택시 운행 통계 조회 서비스 API는 관내를 운행하는 택시의 운행 실적 및 관련 통계 데이터를 제공합니다. 이 API는 택시 운송 서비스의 운영 효율성을 분석하고, 수요-공급 예측 및 교통 정책 수립의 기초 자료로 활용되어 시민들의 택시 이용 편의를 개선하는 데 목적이 있습니다.택시 자치구별 이동패턴(O-D) TOP50, 택시 승차 집중지역 TOP50 등의 서비스를 제공합니다.교통 정보의 투명성을 높이고 도시 교통 효율성을 강화하는 핵심 데이터 소스로 활용됩니다.
+team:
+  dept: 교통정보운영과
+services:
+  - op: /TaxiIntensiveAreaInfo
+    name: 택시 승차 집중지역 TOP50
+    endpoint: https://apis.data.go.kr/6280000/ICTaxiStat/TaxiIntensiveAreaInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: YMD
+        required: true
+        desc: 연월일
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /TaxiBusinessInfo
+    name: 택시 자치구별 이동패턴(O-D) TOP50
+    endpoint: https://apis.data.go.kr/6280000/ICTaxiStat/TaxiBusinessInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: YMD
+        required: true
+        example: '20220701'
+        desc: 연월일
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rideDate
+      title: 승차 연월일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220701'
+      stats:
+        min: 20220701
+        p50: 20220701
+        max: 20220701
+        unique: 1
+    - name: rideDongName
+      title: 승차 행정동명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천광역시 미추홀구 주안동
+        - 인천광역시 남동구 간석동
+        - 인천광역시 남동구 구월동
+      stats:
+        unique: 23
+    - name: dropDongName
+      title: 하차 행정동명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천광역시 미추홀구 주안동
+        - 인천광역시 연수구 송도동
+        - 인천광역시 부평구 부평동
+      stats:
+        unique: 25
+    - name: cnt
+      title: 이동횟수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '302'
+        - '198'
+        - '164'
+      stats:
+        min: 162
+        p50: 244.5
+        max: 1629
+        unique: 45
+    - name: avgMovementMinute
+      title: 평균 이동시간(분)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7'
+        - '8'
+        - '6'
+      stats:
+        min: 5
+        p50: 8
+        max: 13
+        unique: 8
+    - name: avgMovementDistance
+      title: 평균 이동거리(Km)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.9'
+        - '3.2'
+        - '1.7'
+      stats:
+        min: 1.3
+        p50: 2.3499999999999996
+        max: 9
+        unique: 27
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6244
+  rank_in_sector: 880
+  brm: 교통물류 - 도로
+  why: 인천 택시 운행 통계 API, 한 지역 집계
+claims:
+  - id: c-15113195-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15113195.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15113195.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15113195-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15113195-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15113195.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15113195-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15113195.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15113195-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15113195-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15113195-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15113195-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /TaxiIntensiveAreaInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15113195.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15113195.json
+  stats: probe/stats/15113195.json
+  data: probe/data/15113195/
+status: active
+summary_user: 인천광역시 관내 택시의 승차일별 승차·하차 행정동 쌍마다 이동횟수, 평균 이동시간(분), 평균 이동거리(km)를 담은 집계 통계로, 범위는 시도 단위이고 읍면동(행정동) 단위로 나뉜다. 교통 분석가나 정책 담당자가 '인천에서 어느 동에서 어느 동으로 택시 이동이 가장 많고, 평균 몇 분·몇 km를 가는가' 같은 택시 수요 흐름(O-D)과 승차 집중지역을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 승차·하차 행정동명(rideDongName)을 행정동 이름 매핑으로 맞추거나 같은 기관 데이터와만 연결해 쓴다.
+limits: 두 오퍼레이션 중 승차 집중지역 조회(/TaxiIntensiveAreaInfo)는 최소 파라미터로 호출했을 때 응답이 없었으므로 호출 조건을 따로 확인해야 한다. 행정동 코드 같은 공통 키가 없어 다른 데이터와는 동 이름 문자열로만 이어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15113195-01
+    - c-15113195-03
+    - c-15113195-04
+    - c-15113195-10
+  dropped_citations: 0

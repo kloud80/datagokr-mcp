@@ -1,0 +1,257 @@
+# Dataset 15110442 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15110442'
+tier: verified
+title: 대구광역시 서구_임대주택 현황
+sector: 국토관리/주택/housing-supply
+domain: 국토관리/주택
+agency:
+  id: '3430000'
+  name: 대구광역시 서구
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15110442/openapi.do
+synonyms:
+  - 매입임대
+  - 임대주택
+  - 주택현황
+  - 민간임대
+  - 주거복지
+  - 주택정책
+  - 부동산정보
+  - 민간임대주택
+  - 등록임대주택
+  - 임대사업자 등록 현황
+  - 매입임대주택
+  - 장기일반민간임대
+  - 대구 서구 임대주택
+  - 다가구 다세대 임대
+description_portal: 대구광역시_서구_임대주택 현황의 영업 구분, 사업자 구분,   임대 주소, 임대 주택 구분, 임대 주택 종류, 임대 주택 유형 항목 정보를 제공합니다.본 데이터는 대구광역시 서구 내 임대사업자로 등록된 민간 임대주택의 현황을 수록한 자료이다. 임대주택의 주소, 임대 구분, 주택 종류 및 유형 등 주요 정보를 포함하고 있으며, 등록 상태가 '영업중'인 매입임대주택을 대상으로 한다. 특히 장기일반민간임대주택(10년)을 중심으로 단독주택, 다가구주택, 다세대주택 등 다양한 유형이 포함되어 있어 주거정책 수립 및 민간 활용 목적의 기초자료로 유용하다. 해당 자료는 주거복지 실현과 공공임대 공급 현황 파악, 지역 기반의 주택정보 제공을 위한 기초 인프라로서 활용 가치가 높다.
+team:
+  dept: 문화홍보과
+services:
+  - op: /getRentalHousing
+    name: 대구광역시 서구_임대주택 현황 데이터 조회
+    endpoint: https://apis.data.go.kr/3430000/rentalHousingService/getRentalHousing
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: RENT_HOUSE_TY
+        required: false
+        example: 연립주택
+        desc: 임대주택 현황의 임대 주택 유형
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: BSN_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 등록영업중
+      stats:
+        unique: 1
+    - name: BSNM_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 임대사업자
+      stats:
+        unique: 1
+    - name: RENT_ADRES
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '대구광역시 서구 원대로17길 9 (원대동2가, 우성빌라) 502호 '
+      stats:
+        min: '1792-05-02'
+        max: '1792-05-02'
+        unique: 1
+    - name: RENT_HOUSE_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 매입임대주택
+      stats:
+        unique: 1
+    - name: RENT_HOUSE_KND
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 단기민간임대주택
+      stats:
+        unique: 1
+    - name: RENT_HOUSE_TY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 연립주택
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 공급·인허가·착공·준공·미분양·주택 현황
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6489
+  rank_in_sector: 170
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 북구 등록임대주택 2500건 원장, 주소 지오코딩 필요
+claims:
+  - id: c-15110442-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15110442.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15110442.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15110442-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15110442-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15110442.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15110442-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15110442.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15110442-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15110442-06
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15110442-07
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave2 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15110442.json
+  stats: probe/stats/15110442.json
+  data: probe/data/15110442/
+status: active
+summary_user: 대구광역시 서구에 임대사업자로 등록된 민간 임대주택을 주소 단위로 한 건씩 담으며, 영업 구분·사업자 구분·임대 주소·임대주택 구분·종류·유형을 제공한다. 서구에서 영업 중인 매입임대주택, 특히 장기일반민간임대주택(10년)이 어느 동네에 어떤 주택 유형(단독·다가구·다세대 등)으로 분포하는지 파악하려는 주거정책 담당자나 분석가가 쓴다. 전역 조인 키가 없어 다른 데이터와는 임대 주소(RENT_ADRES)를 지오코딩하거나 주소 문자열로 맞춰 잇거나, 같은 기관 자료끼리만 연결한다.
+limits: 표준 행정코드·건물 식별번호 같은 조인 키가 없어 실거래·공시가격 등 다른 주택 데이터와 바로 결합하기 어렵다. 범위가 대구 서구 한 시군구에 한정되며, 포털 설명상 '영업중' 매입임대주택만 대상이라 말소·건설임대 현황은 알 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15110442-03
+    - c-15110442-04
+    - c-15110442-01
+  dropped_citations: 0

@@ -1,0 +1,213 @@
+# Dataset 15142082 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15142082'
+tier: verified
+title: 국토교통부_정산사업자
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142082/openapi.do
+synonyms:
+  - 교통카드정산사업자
+  - 교통카드정산기관
+  - 대중교통운영기관
+  - 교통요금정산
+  - 교통카드시스템운영
+  - 교통카드 정산사
+  - 정산기관 코드
+  - 교통카드 정산사업자 목록
+  - 대중교통 요금 정산
+  - 정산사 ID
+  - 교통카드사업자
+description_portal: 교통카드 정산사업자는 대중교통 이용 과정에서 발생하는 결제 데이터를 수집, 처리, 검증하여 카드 발급사, 대중교통 운영기관, 지방자치단체 간 요금을 정확하게 정산하고 분배하는 역할을 수행하는 기관입니다. 주요 업무는 결제 데이터 처리, 요금 정산 및 분배, 교통 이용 데이터 통계 제공, 시스템 유지 관리이며, 이를 통해 대중교통 운영의 투명성과 효율성을 높이고, 다양한 교통 정책 수립을 위한 기초 자료를 제공합니다. 또한 이용자 편의를 위한 서비스 품질 개선에도 기여합니다. 정류장, 노선 등의 정보를 정산사 자체적으로 관리하고 있습니다.
+team:
+  dept: 생활교통복지과
+services:
+  - op: /getPublicTransportationFareSettlementOperator
+    name: 정산사업자 조회
+    endpoint: https://apis.data.go.kr/1613000/PublicTransportationFareSettlementOperator/getPublicTransportationFareSettlementOperator
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: true
+        example: JSON
+        desc: 데이터타입(JSON/XML)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: clcln_bzmn_id
+      title: 정산사업자ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03'
+        - '08'
+        - '11'
+      stats:
+        min: 3
+        p50: 16
+        max: 30
+        unique: 10
+    - name: clcln_bzmn_nm
+      title: 정산사업자명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 마이비
+        - 티머니
+        - 이동의즐거움
+      stats:
+        unique: 10
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6737
+  rank_in_sector: 545
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 정산사업자 코드표, 보조 자료
+claims:
+  - id: c-15142082-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142082.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142082.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15142082-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15142082-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142082.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15142082-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15142082.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15142082-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15142082-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142082-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15142082.json
+  stats: probe/stats/15142082.json
+  data: probe/data/15142082/
+status: active
+summary_user: 전국 교통카드 정산사업자의 식별자(정산사업자ID)와 이름(정산사업자명)을 담은 코드성 목록 API로, 건별 결제·이용 기록이 아니라 기관 목록이다. 대중교통 승하차·교통카드 데이터를 분석하는 분석가가 "이 정류장·노선 정보는 어느 정산사가 관리하는가"를 확인하거나 정산사 코드를 이름으로 풀어 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 같은 기관(국토교통부)의 교통카드·정류장·노선 데이터에 있는 정산사업자ID 또는 이름으로 매핑해 이어 쓴다.
+limits: 정산사업자 ID와 이름만 있어 요금 정산액, 이용 통계, 정류장·노선 정보 자체는 이 데이터에 없다. 다른 데이터와는 공통 전역 키 없이 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 개발계정은 하루 1,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15142082-01
+    - c-15142082-03
+    - c-15142082-04
+  dropped_citations: 0

@@ -1,0 +1,288 @@
+# Dataset 15058172 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058172'
+tier: verified
+title: 법제처_모바일 행정심판례 목록 조회
+sector: 공공행정/법제/case-law
+agency:
+  id: '1170000'
+  name: 법제처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058172/openapi.do
+synonyms:
+  - 앱행심권익위원회
+  - 법제지원
+  - 판례검색
+  - 판례분석
+  - 행정심판
+  - 사례조회
+  - 모바일접속
+  - 심판례
+  - 행정심판 재결례
+  - 재결례 검색
+  - 행정심판 판례
+  - 국가법령정보센터 행정심판
+  - 중앙행정심판위원회 재결
+  - 행정심판 결정례
+  - 처분 불복 사례
+summary_user: 법제처 국가법령정보센터의 행정심판 재결례를 건별 목록으로 담으며, 사건명·사건번호·처분청·재결청·처분일자·의결일자·재결구분(인용·기각 등)과 상세 링크를 전국 범위로 제공한다. 행정처분에 불복하려는 국민이나 법률 자문가가 '비슷한 처분에 대해 행정심판에서 어떤 재결이 나왔는가'를 찾을 때 쓴다. 실측 컬럼에 전역 조인 키는 없으므로, 행정심판재결례일련번호로 같은 기관의 행정심판례 본문(상세) 조회와 잇고, 다른 데이터와는 처분청·재결청 이름이나 사건명 매핑으로만 연결한다.
+description_portal: 국가법령정보센터에서 제공하는 행정심판례정보를 모바일 앱 환경에서 사용할 수 있도록 하는 데이터로  다양한 행정심판 관련 판례를 모바일 환경에서 손쉽게 검색하고 열람할 수 있도록 구성되어 있습니다. 각 사례는 행정심판의 처분명, 사건번호, 심리기관, 판정결과, 결정·재결일 등의 주요 정보를 포함합니다. 이를 통해 이용자는 행정심판의 판례 경향을 분석하고 유사사례를 참고하여 법적 대응 전략을 수립할 수 있습니다. 또한, 모바일 최적화된 인터페이스를 통해 접근성을 높였으며, 법률 전문가뿐만 아니라 일반 국민도 손쉽게 활용할 수 있도록 설계하였습니다. 해당 데이터는 행정법 연구, 법률 자문, 판례 교육 등에 유용하게 활용 가능합니다. 이용자는 장소와 시간에 구애받지 않고 필요한 심판례 정보를 즉시 확인할 수 있습니다
+team:
+  dept: 법제처
+services:
+  - op: lawSearch:decc
+    name: lawSearch:decc
+    endpoint: https://www.law.go.kr/DRF/lawSearch.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: OC
+      issuer: open.law.go.kr
+    params:
+      - name: target
+        required: true
+        example: decc
+      - name: type
+        required: true
+        example: JSON
+      - name: display
+        required: true
+        example: '100'
+      - name: page
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: 재결청
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국민권익위원회
+        - 경기도행정심판위원회
+        - 서울특별시행정심판위원회
+      stats:
+        unique: 4
+    - name: 처분청
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: 사건번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2008행심제11호
+        - 서행심 2013-597
+        - 서행심 2013-596
+      stats:
+        unique: 97
+    - name: 행정심판례상세링크
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - /DRF/lawService.do?OC=***&target=decc&ID=263735&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=decc&ID=272441&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=decc&ID=272301&type=HTML&mobileYn=
+      stats:
+        unique: 100
+    - name: 재결구분코드
+      type: number
+      null_rate: 0.64
+      sample_values:
+        - '429152'
+        - '429045'
+        - '429144'
+      stats:
+        min: 429022
+        p50: 429152
+        max: 429152
+        unique: 6
+    - name: 행정심판재결례일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '263735'
+        - '272441'
+        - '272301'
+      stats:
+        min: 3087
+        p50: 252863
+        max: 273725
+        unique: 100
+    - name: 의결일자
+      type: date
+      null_rate: 0.01
+      sample_values:
+        - 2017.06.13
+        - 2019.04.22
+        - 2019.05.27
+      stats:
+        min: '1998-07-10'
+        max: '2026-02-10'
+        unique: 70
+    - name: 처분일자
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: 재결구분명
+      type: code
+      null_rate: 0.64
+      sample_values:
+        - 국민권익위원회
+        - 가입대상 사업.사업주(원수급차,상시근로자 1인이상,연면적 330㎡)
+        - 구별없음
+      stats:
+        unique: 4
+    - name: 사건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2016년 제27회 공인중개사 자격시험 불합격처분 취소청구
+        - 2004학년도중등교사신규임용시험불합격처분취소청구
+        - 2002년도관세사자격시험제1차시험불합격처분취소청구
+      stats:
+        unique: 86
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6455
+  rank_in_sector: 126
+  brm: 공공행정 - 일반행정
+  sector_rule: moleg-to-law
+  why: 모바일판 행정심판례 목록, 중복
+claims:
+  - id: c-15058172-01
+    kind: access
+    value: 외부 사이트 open.law.go.kr 인증키 필요 (query 파라미터 OC) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058172.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.law.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15058172-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15058172-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058172.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15058172-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058172.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15058172-06
+    kind: admin_note
+    value: "세부 부문 '사법 판단 (판례·헌재·법령해석·행정심판·결정문)'의 가치: 시의성 + 희소성 — 판례·결정례·해석례는 등록 시점 이후만 가치"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#case-law
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058172-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058172-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058172.json
+  stats: probe/stats/15058172.json
+  data: probe/data/15058172/
+limits: open.law.go.kr의 별도 인증키(OC 파라미터)가 필요하며 포털 활용신청과는 별개다. 목록 조회라 재결 이유 등 본문은 담지 않으며, 다른 데이터와 묶을 공통 코드 키가 없어 이름 기반 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15058172-01
+    - c-15058172-03
+    - c-15058172-04
+  dropped_citations: 0
+status: active

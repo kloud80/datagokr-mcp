@@ -1,0 +1,247 @@
+# Dataset 15074871 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15074871'
+tier: verified
+title: 해양수산부_전남-특성평가격자
+sector: 농축수산/해양수산·어촌/marine-spatial
+agency:
+  id: '1192000'
+  name: 해양수산부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15074871/openapi.do
+synonyms:
+  - 전라남도
+  - 해양특성평가
+  - 해양용도구역 격자
+  - 이미지
+  - 공간정보
+  - 전남 해양공간계획 격자
+  - 해양공간 특성평가
+  - 전라남도 해역 격자
+  - 해양용도구역
+  - 해상풍력 입지
+  - 해양공간 WFS
+  - 해양 격자번호
+description_portal: 이 데이터는 해양수산부에서 전라남도 해역의 특성평가 격자 정보를 제공하기 위해 수집한 데이터입니다.본 데이터의 주요 내용은 WMS(웹 맵 서비스) 및 WFS(웹 피처 서비스) 형태로 구분되어 있습니다. WMS데이터는 반환 이미지 크기(픽셀), 좌표체계, 검색 범위 파라미터로 맵 이미지 파일을 조회할 수 있으며, WFS는 특성평가격자의 텍스트 형태 공간정보와 격자번호 정보를 제공받을 수 있습니다.본 데이터는 지자체 및 관계 기관에서 해양공간계획 수립, 해양환경 모니터링, 해양자원 관리 등 업무를 위한 기초 자료로 활용될 수 있습니다.
+team:
+  dept: 해양공간정책과
+services:
+  - op: /getOpnJnGridV2WMS
+    name: 전남-특성평가격자 WMS 조회
+    endpoint: https://apis.data.go.kr/1192000/apVhdService_JnGridV2/getOpnJnGridV2WMS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: srs
+        required: false
+        desc: 좌표체계 EPSG:5179 좌표계 지원
+      - name: bbox
+        required: true
+        desc: 요청 객체의 Bounding box xmin,ymin,xmax,yamx 순서
+      - name: width
+        required: true
+        desc: '변환 이미지의 너비 (단위: 픽셀)'
+      - name: height
+        required: true
+        desc: '변환 이미지의 높이 (단위: 픽셀)'
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getOpnJnGridV2WFS
+    name: 전남-특성평가격자 WFS 조회
+    endpoint: https://apis.data.go.kr/1192000/apVhdService_JnGridV2/getOpnJnGridV2WFS
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: bbox
+        required: false
+        desc: 요청 객체의 Bounding box xmin,ymin,xmax,yamx 순서
+      - name: maxFeatures
+        required: false
+        desc: '출력되는 피처의 최대개수(최대값 : 100)'
+      - name: msp_id
+        required: false
+        desc: 격자번호
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: '{http://www.opengis.net/gml}posList'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 868735.4043811 1740282.64146081 870998.73931311 1740249.53828799 870958.54726674
+        - 868694.50676496 1737509.65604006 870958.54726674 1737476.56269504 870918.3798425
+        - 870958.54726674 1737476.56269504 873222.57980398 1737444.04523826 873183.1174947
+      stats:
+        unique: 10
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5462
+  rank_in_sector: 159
+  brm: 농축수산 - 해양수산·어촌
+  why: 전남 해역 특성평가 격자, 보조 자료
+claims:
+  - id: c-15074871-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15074871.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15074871.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15074871-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15074871-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15074871.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15074871-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15074871.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15074871-06
+    kind: admin_note
+    value: "세부 부문 '해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)'의 가치: 해양공간계획 용도구역 = 해상풍력 등 입지 규제, 토지이용규제의 해양 대응물"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#marine-spatial
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15074871-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15074871-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15074871-10
+    kind: pitfall
+    value: 필수 파라미터 bbox, height, width는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15074871.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15074871-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getOpnJnGridV2WMS'
+    evidence:
+      - type: measured
+        source: probe/runs/15074871.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15074871.json
+  stats: probe/stats/15074871.json
+  data: probe/data/15074871/
+status: active
+summary_user: 전라남도 해역을 나눈 해양공간 특성평가 격자를 WMS 지도 이미지와 WFS 공간정보(격자 좌표 목록·격자번호)로 담는다. 지자체·관계기관 담당자나 분석가가 해상풍력 등 입지를 검토할 때 '이 해역은 어느 특성평가 격자에 속하는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 격자 좌표(posList)를 이용한 공간 중첩이나 이름·기관 코드 매핑으로만 잇는다.
+limits: WMS 오퍼레이션(/getOpnJnGridV2WMS)은 최소 파라미터로 호출하면 응답이 없었고, 검색 범위(bbox)·이미지 높이·너비 같은 필수 값을 먼저 정해 넘겨야 한다. 행정코드 같은 공통 키가 없어 표 형태의 통계와 바로 결합되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15074871-01
+    - c-15074871-03
+    - c-15074871-06
+    - c-15074871-10
+    - c-15074871-11
+  dropped_citations: 0

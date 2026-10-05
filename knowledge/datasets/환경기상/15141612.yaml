@@ -1,0 +1,250 @@
+# Dataset 15141612 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15141612'
+tier: verified
+title: 한국환경공단_생산자책임재활용제도 분리배출표시 지정승인 신청 조회 서비스
+sector: 환경기상/폐기물/waste-business
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141612/openapi.do
+synonyms:
+  - 분리배출표시
+  - 포장재
+  - 지정승인
+  - EPR 분리배출표시
+  - 자율 분리배출표시 신청
+  - 포장재 분리배출표시 승인
+  - 재활용의무대상 외 포장재
+  - 포장재 재질 표시
+  - 생산자책임재활용
+description_portal: 생산자책임재활용제도(EPR)에서 정한 재활용의무대상이 아닌 포장재에 대해 의무생산자(제조·수입·판매업자)가 자율적으로 분리배출표시를 하고자 한국환경공단에 지정승인을 신청한 정보를 조회하는 서비스입니다.
+team:
+  dept: 생활폐기물처 포장재EPR운영부
+services:
+  - op: /getSprEmsnDsgnAprvAplyInfo
+    name: 생산자책임재활용제도 분리배출표시 지정승인 신청 정보
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/sprEmsnDsgnAprvAplyInfoService/getSprEmsnDsgnAprvAplyInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: true
+        example: json
+        desc: 데이터 반환타입(json/xml)
+      - name: trgtItemSeNm
+        required: false
+        example: 음식료품
+        desc: 대상품목구분명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prdctSpcfctNm
+      title: 규격명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 190*260
+        - 250*360
+        - 110*190*30
+      stats:
+        unique: 123
+    - name: packngWght
+      title: 포장재중량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '15.0'
+        - '170.0'
+        - '18.0'
+      stats:
+        min: 1.5
+        p50: 35.3
+        max: 1700
+        unique: 107
+    - name: trgtItemSeNm
+      title: 대상품목구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 음식료품
+      stats:
+        unique: 1
+    - name: prdctPackngMqltClsfNm
+      title: 제품포장재재질분류명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종이
+      stats:
+        unique: 1
+    - name: pckgnUsgNm
+      title: 포장용도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 포장상자
+        - 포장필름
+        - 기타
+      stats:
+        unique: 6
+    - name: prdctPackngMqltDtlCn
+      title: 제품포장재재질세부내용
+      type: string
+      null_rate: 0.0452
+      sample_values:
+        - 종이
+        - 고상
+        - 상자
+      stats:
+        unique: 60
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.585
+  rank_in_sector: 478
+  brm: 환경기상 - 폐기물
+  why: 전국 EPR 분리배출표시 지정승인 신청 원장 API
+claims:
+  - id: c-15141612-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15141612.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15141612.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15141612-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141612-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15141612.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141612-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15141612.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141612-06
+    kind: admin_note
+    value: "세부 부문 '폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)'의 가치: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#waste-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141612-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 폐기물] 생활폐기물 배출·수거 지점(대형폐기물·수거함·종량제 판매소) · 폐기물 처리업·배출자. 발생량·처리현황 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L683
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141612-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15141612.json
+  stats: probe/stats/15141612.json
+  data: probe/data/15141612/
+status: active
+summary_user: 생산자책임재활용제도(EPR)상 재활용의무대상이 아닌 포장재에 대해 제조·수입·판매업자가 자율적으로 분리배출표시를 하려고 한국환경공단에 지정승인을 신청한 내역을 신청 건별로 담으며, 규격명·포장재 중량·대상품목 구분·포장재 재질 분류와 세부 내용·포장 용도를 포함하고 범위는 전국이다. 포장재를 다루는 사업자나 분석가가 "어떤 재질·용도의 의무대상 외 포장재가 분리배출표시 지정승인을 신청했는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 재질 분류명·대상품목 구분명 같은 이름 매핑으로만 이어 쓴다.
+limits: 사업자번호 등 공통 키가 없어 폐기물 처리업·배출자 원장과 직접 결합할 수 없고, 이름이나 코드 매핑으로만 연결된다. 행정구역 단위가 없는 전국·비공간 데이터라 지역별 분석에는 쓸 수 없다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15141612-01
+    - c-15141612-03
+    - c-15141612-04
+  dropped_citations: 0

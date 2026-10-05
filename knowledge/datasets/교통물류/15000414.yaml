@@ -1,0 +1,238 @@
+# Dataset 15000414 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15000414'
+tier: verified
+title: 서울특별시_대중교통환승경로 조회 서비스
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15000414/openapi.do
+synonyms:
+  - 출발지목적지
+  - 버스이용경로
+  - 버스지하철환승경로
+  - 서울 대중교통 길찾기
+  - 환승 경로 검색
+  - 버스 지하철 경로 안내
+  - 대중교통 경로탐색
+  - POI 좌표 검색
+  - 서울 교통 길안내 API
+description_portal: 목적지로의 이동 경로에 대한 정보 제공
+team:
+  dept: 미래첨단교통과
+services:
+  - op: /getLocationInfo
+    endpoint: http://ws.bus.go.kr/api/rest/pathinfo/getLocationInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: gpsX
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.059951'
+        - '127.0520250488'
+        - '127.1480886874'
+      stats:
+        min: 126.4125980726
+        p50: 126.9881472437
+        max: 127.6433031545
+        unique: 24106
+    - name: gpsY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.555741'
+        - '37.557387'
+        - '37.4892113897'
+      stats:
+        min: 36.7769435217
+        p50: 37.5383061775
+        max: 38.2129884286
+        unique: 24098
+    - name: poiId
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '233000729'
+        - '233000769'
+        - '215000059'
+      stats:
+        min: 100000001
+        p50: 168000673
+        max: 288500110
+        unique: 24117
+    - name: poiNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부대앞
+        - 현대아파트
+        - 성원아파트
+      stats:
+        unique: 15262
+    - name: posX
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '204600.40934998816'
+        - '213086.81941506264'
+        - '212754.36198411314'
+      stats:
+        min: 148053.68670410407
+        p50: 198950.26769298775
+        max: 257166.27174366548
+        unique: 24113
+    - name: posY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '443314.07338476786'
+        - '448529.76499491325'
+        - '450442.81022759946'
+      stats:
+        min: 364276.6563086547
+        p50: 448769.5810216451
+        max: 523647.9183040876
+        unique: 24113
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8493
+  rank_in_sector: 13
+  brm: 교통물류 - 도로
+  why: 서울 경로탐색 도구형 API, 원장 아님
+claims:
+  - id: c-15000414-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15000414.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15000414.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15000414-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000414-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15000414.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000414-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15000414.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000414-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15000414-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15000414-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15000414.json
+  stats: probe/stats/15000414.json
+  data: probe/data/15000414/
+status: active
+summary_user: 서울특별시의 대중교통 환승경로 조회 서비스로, 목적지까지의 이동 경로 정보를 API로 제공하며 실측 응답에는 장소(POI) 식별자·이름(poiNm)과 좌표(gpsX/gpsY, posX/posY)가 개별 지점 단위로 담긴다. 서울에서 대중교통으로 이동하려는 시민이나 서비스 개발자가 '출발지에서 목적지까지 어떤 경로로 환승해 가야 하나'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 장소 이름 매칭이나 좌표 기반 근접 연결, 같은 서울시 교통 데이터의 코드로만 이어 쓴다.
+limits: 응답 컬럼에 전역 조인 키가 없어 정류장·노선 원장 등과 직접 결합하기 어렵고 이름·좌표 매핑이 필요하다. 개발계정은 하루 1,000회로 호출이 제한되며, 범위는 서울특별시에 한정된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15000414-01
+    - c-15000414-03
+    - c-15000414-04
+  dropped_citations: 0

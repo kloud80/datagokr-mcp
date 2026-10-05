@@ -117,9 +117,10 @@ async def run_files(items: list[tuple[str, str]]) -> list[dict]:
                 raw, name = await download(page, dsid, url)
                 df = _read(raw, name)
                 run.update({"file": name, "bytes": len(raw), "rows": len(df), "columns": list(map(str, df.columns)), "ok_ops": 1})
-                df.astype(str).to_parquet(P / "data" / dsid / f"file_{dt.date.today():%Y%m%d}.parquet")  # 날짜·혼합형 열도 저장되게
+                sample = df.head(100000)  # 큰 파일은 앞 10만 행으로 저장·통계 (전체 행 수는 rows에)
+                sample.astype(str).to_parquet(P / "data" / dsid / f"file_{dt.date.today():%Y%m%d}.parquet")  # 날짜·혼합형 열도 저장되게
                 (P / "stats").mkdir(parents=True, exist_ok=True)
-                (P / "stats" / f"{dsid}.json").write_text(json.dumps({"file": col_stats(df)}, ensure_ascii=False, indent=1, default=str),
+                (P / "stats" / f"{dsid}.json").write_text(json.dumps({"file": col_stats(sample)}, ensure_ascii=False, indent=1, default=str),
                                                           encoding="utf-8")
                 run["ops"] = [{"op": "file", "ok": True, "rows": len(df), "total_count": len(df), "columns": run["columns"],
                                "attempts": [{"bytes": len(raw)}]}]

@@ -1,0 +1,207 @@
+# Dataset 15125001 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125001'
+tier: verified
+title: 한국환경공단_행정지역별 악취측정 데이터 확인 서비스
+sector: 환경기상/대기/air-quality
+agency:
+  id: B552584
+  name: 한국환경공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125001/openapi.do
+synonyms:
+  - 악취측정
+  - 악취측정항목유무
+  - 지역별악취
+  - 악취 측정 여부
+  - 악취 측정 항목
+  - 지역별 악취
+  - 악취 대행 측정
+  - 악취 관리
+  - 복합악취 지정악취
+description_portal: 측정 년도, 행정구역명, 악취 대행 항목 명을 기준으로 악취 측정 항목 유무를 조회하는 행정 지역별 악취측정 데이터 확인 서비스
+team:
+  dept: 사업장대기처 측정대행관리부
+services:
+  - op: /getBsmDataTpYn
+    name: 지역별 악취 측정항목 유무
+    endpoint: https://apis.data.go.kr/B552584/kecoapi/TpYnEmaService/getBsmDataTpYn
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: returnType
+        required: true
+        example: json
+        desc: 데이터 타입
+      - name: msrmtYr
+        required: true
+        example: '2021'
+        desc: 측정연도
+      - name: admdstNm
+        required: true
+        example: 경기도
+        desc: 행정구역명
+      - name: msrmtArtclNm
+        required: true
+        example: 암모니아
+        desc: 측정항목 명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: msrmtYn
+      title: 측정유무
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5147
+  rank_in_sector: 599
+  brm: 환경기상 - 대기
+  why: 악취 측정 항목 유무 확인용 보조 서비스
+claims:
+  - id: c-15125001-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125001.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125001.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15125001-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125001-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125001.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125001-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125001.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125001-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125001-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125001-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125001.json
+  stats: probe/stats/15125001.json
+  data: probe/data/15125001/
+status: active
+summary_user: 측정 연도, 행정구역명, 악취 측정 대행 항목명을 조건으로 해당 지역에서 그 악취 항목을 측정했는지 여부(측정유무)를 돌려주는 전국 범위의 비공간 조회 데이터이며, 측정 농도값이 아니라 항목별 측정 여부를 담는다. 지자체 환경 담당자나 분석가가 '우리 시군구에서 올해 특정 악취 항목을 측정했는가'를 확인할 때 쓴다. 응답에 전역 조인 키가 없어 다른 데이터와는 행정구역명·항목명 같은 이름 매핑이나 같은 기관(한국환경공단) 코드로만 이어 쓴다.
+limits: 측정 여부만 확인되고, 실측 컬럼에 행정구역코드 같은 공통 키가 없어 다른 데이터와 직접 조인되지 않으므로 이름 매핑이 필요하다. 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15125001-01
+    - c-15125001-03
+    - c-15125001-04
+  dropped_citations: 0

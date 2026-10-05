@@ -1,0 +1,215 @@
+# Dataset 15051737 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15051737'
+tier: verified
+title: 서울특별시_버스정류장 다국어 정보 (영어)
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15051737/fileData.do
+synonyms:
+  - 서울버스
+  - 버스정류소
+  - 서울버스정류장
+  - 정류장
+  - 다국어
+  - 버스정류소 영문명
+  - 정류장 영어 이름
+  - 외국인 버스 안내
+  - bus stop English name
+  - 서울 정류소 ID
+  - 다국어 교통정보
+summary_user: 서울 시내 버스정류장별로 정류소 ID와 영어 정류소명, 행정시·구·동 위치를 한 행씩 담은 정류장 원장 데이터다. 외국인 대상 지도·교통 안내 앱 개발자가 "이 정류소 ID의 영어 이름과 소재 구·동은 무엇인가"를 확인할 때 쓴다. 실측상 전역 조인 키는 확인되지 않아, 서울시 버스 노선·도착 정보 등 같은 기관 데이터와는 정류소 ID(STOPS_ID)나 정류소명·행정구역 이름 매핑으로 연결한다.
+description_portal: 서울시 버스정류장 다국어 정보(영어) 데이터는 서울 시내 버스정류장을 외국인 이용자가 보다 쉽고 편리하게 활용할 수 있도록 설계된 공공 교통 정보입니다. 이 데이터는 각 정류장을 구분하는 연번(SN)과 정류소ID(STOPS_ID), 그리고 영어로 표기된 정류소명(STOPS_NM)을 핵심 요소로 포함합니다. 또한 행정시(CTY_NM), 행정구(GU), 행정동(DONG) 정보가 함께 제공되어 정류장의 행정적 위치를 명확히 파악할 수 있습니다. 특히 영어 기반 데이터는 관광객, 주재 외국인, 국제행사 방문객 등이 대중교통을 쉽게 이용할 수 있도록 도와 서울시의 글로벌 접근성을 강화하는 데 중요한 역할을 합니다. 지도 서비스, 교통 안내 시스템, 외국어 모바일 앱 등 다양한 플랫폼에서 활용될 수 있으며, 국제 도시로서의 서울의 편의성과 접근성을 높이는 핵심 기반 자료로 활용됩니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SebcBusStopEng
+    name: SebcBusStopEng
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcBusStopEng/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - "\tBE LiST25-0001\t"
+        - "\tBE LiST25-0002\t"
+        - "\tBE LiST25-0003\t"
+      stats:
+        unique: 100
+    - name: STOPS_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - "\t01001\t"
+        - "\t01002\t"
+        - "\t01003\t"
+      stats:
+        min: 1001
+        p50: 1129.5
+        max: 9310
+        unique: 100
+    - name: STOPS_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - "\tGwanghwamun\t"
+        - "\tJongno 1-ga\t"
+        - "\tJongno 2-ga\t"
+      stats:
+        unique: 70
+    - name: CTY_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: GU
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: DONG
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5895
+  rank_in_sector: 1193
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 서울 정류소 영문판, 검증 정류소 원장과 중복
+claims:
+  - id: c-15051737-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15051737.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15051737-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051737-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15051737.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051737-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15051737.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051737-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051737-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051737-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15051737.json
+  stats: probe/stats/15051737.json
+  data: probe/data/15051737/
+limits: 외부 사이트(data.seoul.go.kr) 인증키를 별도로 받아 호출해야 하며 포털 활용신청과는 별개다. 좌표가 없는 비공간 자료라 지도에 바로 찍을 수 없고, 다른 기관 데이터와 잇는 공통 코드가 없어 이름·코드 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15051737-01
+    - c-15051737-03
+    - c-15051737-04
+  dropped_citations: 0
+status: active

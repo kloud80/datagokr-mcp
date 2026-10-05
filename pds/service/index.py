@@ -19,6 +19,7 @@ from pds.schema import GROUNDED
 from pds.schema import store
 
 CACHE = config.PROCESSED / "service_index.pkl"
+GRADE_WEIGHT = {"보조": 0.6, "3순위": 0.85, "가족판": 0.9}  # facets.grade (6차 확대) — plan.py와 같은 값
 TOKEN = re.compile(r"[가-힣]+|[A-Za-z]+|\d+")
 
 
@@ -77,9 +78,15 @@ class Index:
     stamp: float = 0.0
 
     # ─────────── 검색
-    def search_datasets(self, q: str, k: int = 8, tiers: tuple[str, ...] = ("verified", "candidate")) -> list[tuple[dict, float]]:
+    def search_datasets(self, q: str, k: int = 8, tiers: tuple[str, ...] = ("verified", "candidate"),
+                        graded: bool = True) -> list[tuple[dict, float]]:
+        """BM25 × 등급 가중치 — 6차 보조·가족판(시군구판)이 같은 이름의 핵심 원장을 밀어내지 않게."""
         allow = {i for i, d in enumerate(self.ds_ids) if self.datasets[d]["tier"] in tiers}
-        return [(self.datasets[self.ds_ids[i]], s) for i, s in self.ds_bm25.search(q, k, allow)]
+        hits = [(self.datasets[self.ds_ids[i]], s) for i, s in self.ds_bm25.search(q, k * 4, allow)]
+        if not graded:  # 전략 플래너는 관련도를 합친 뒤 등급을 한 번만 곱한다
+            return hits[:k]
+        hits = [(d, s * GRADE_WEIGHT.get(((d.get("facets") or {}).get("grade") or [""])[0], 1.0)) for d, s in hits]
+        return sorted(hits, key=lambda x: -x[1])[:k]
 
     def search_contexts(self, q: str, k: int = 3) -> list[tuple[dict, float]]:
         return [(self.contexts[i], s) for i, s in self.ctx_bm25.search(q, k)]

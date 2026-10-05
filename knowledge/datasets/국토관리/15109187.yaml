@@ -1,0 +1,548 @@
+# Dataset 15109187 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15109187'
+tier: verified
+title: 대구광역시_가로수조회서비스
+sector: 국토관리/도시계획시설·공원녹지/urban-facilities
+domain: 국토관리/계획·규제
+agency:
+  id: '6270000'
+  name: 대구광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15109187/openapi.do
+synonyms:
+  - 수목
+  - 도시숲
+  - 공기정화
+  - 가로수
+  - 자연
+  - 대구 가로수
+  - 가로수 현황
+  - 도시 수목 정보
+  - 가로수 위치
+  - 흉고직경
+  - 수목 관리번호
+  - 도시녹지
+  - 가로수 보호틀
+description_portal: WGS84 위경도 좌표를 중심으로 좌표로부터 반경거리(km단위) 내에 존재하는 대구광역시 가로수의 목록과 기본정보를 조회할 수 있는 서비스입니다. 조회 항목은 기본정보(수목 관리번호, 수목명, 수목구분, 수목특성, 수목관리기관 정보 등), 도로, 위치(식재지 도로명 및 지번 주소, 행정동 등), 생육(지표면 1.2m 높이에서의 지름, 수목나이 등), 상태(보호틀 덮개 재질 및 종류, 수목과 간섭 발생 시설물 등), 이미지 정보를 제공합니다. 가로수 식재 및 생육 정보를 바탕으로 도시 녹지 관리 정책을 수립하거나, 미세먼지 저감 효과를 분석하여 도시 환경 개선, 가로수 관리 최적화, 연구 및 데이터 분석, 스마트 도시 구축 등에 활용될 수 있습니다.
+team:
+  dept: 산림녹지과
+services:
+  - op: /getRoadsideTree
+    name: 좌표기반 가로수 리스트 조회
+    endpoint: https://apis.data.go.kr/6270000/dgRoadsideTree/getRoadsideTree
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 데이터 타입(xml, json)
+      - name: lat
+        required: true
+        example: '35.843739166065'
+        desc: WGS84 위도 좌표
+      - name: lot
+        required: true
+        example: '128.52419828467'
+        desc: WGS84 경도 좌표
+      - name: radius
+        required: true
+        example: '3'
+        desc: 좌표로부터의 반경 거리. 단위 km
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getRoadsideTreeItem
+    name: 가로수 항목 조회[상세정보]
+    endpoint: https://apis.data.go.kr/6270000/dgRoadsideTree/getRoadsideTreeItem
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: type
+        required: true
+        desc: 데이터 타입(xml, json)
+      - name: id
+        required: true
+        desc: 가로수 상세정보 조회를 위 한 아이디(리스트 조회 기능에서 확인 가능)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '115457'
+        - '115458'
+        - '115502'
+      stats:
+        min: 115457
+        p50: 120499.5
+        max: 163812
+        unique: 1000
+    - name: mngNo
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 03-새방로-가-0016
+        - 03-새방로-가-0021
+        - 03-와룡로-가-0284
+      stats:
+        unique: 1000
+    - name: treeNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 양버즘나무
+        - 느티나무
+        - 은행나무
+      stats:
+        unique: 4
+    - name: treeGb
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가로수
+      stats:
+        unique: 1
+    - name: treeType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 교목
+      stats:
+        unique: 1
+    - name: plantingYmd
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2000-09-17'
+        - '1992-03-16'
+        - '2014-10-20'
+      stats:
+        min: '1965-09-17'
+        max: '2020-09-17'
+        unique: 182
+    - name: mngInstTel
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 053-663-2854
+      stats:
+        unique: 1
+    - name: mngInstNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 서구청
+      stats:
+        unique: 1
+    - name: crtrYmd
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2022-12-20'
+      stats:
+        min: '2022-12-20'
+        max: '2022-12-20'
+        unique: 1
+    - name: roadNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 평리로
+        - 당산로
+        - 와룡로
+      stats:
+        unique: 9
+    - name: roadType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 광역시도
+      stats:
+        unique: 1
+    - name: roadBgng
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 달서구 용산동 926-1
+        - 대구광역시 달서구 본리동 210-1
+        - 대구광역시 달서구 본동 1135-4
+      stats:
+        unique: 9
+    - name: roadEnd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 서구 내당동 950-3
+        - 대구광역시 서구 평리동 576-58
+        - 대구광역시 달서구 죽전동 365-4
+      stats:
+        unique: 9
+    - name: treeLocation
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 그린웨이 앞
+        - 대구의료원 앞
+        - 중리광명맨션 앞
+      stats:
+        unique: 267
+    - name: treeLat
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.85879135'
+        - '35.85888712'
+        - '35.85880123'
+      stats:
+        min: 35.85468675
+        p50: 35.86184405
+        max: 35.87019313
+        unique: 992
+    - name: treeLot
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.5376282'
+        - '128.5376434'
+        - '128.5372772'
+      stats:
+        min: 128.5268268
+        p50: 128.53932225
+        max: 128.5533905
+        unique: 979
+    - name: roadNmAddr
+      type: code
+      null_rate: 0.998
+      sample_values:
+        - 대구광역시 서구 평리로 221
+        - 대구광역시 서구 새방로29길 12-41
+      stats:
+        unique: 2
+    - name: lotNoAddr
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 서구 중리동 774
+        - 대구광역시 서구 이현동 45-14
+        - 대구광역시 서구 내당동 433
+      stats:
+        unique: 105
+    - name: dongNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 상중이동
+        - 내당4동
+      stats:
+        unique: 2
+    - name: cityNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서구
+      stats:
+        unique: 1
+    - name: diameterBreast
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.32'
+        - '0.27'
+        - '0.28'
+      stats:
+        min: 0.07
+        p50: 0.31
+        max: 0.54
+        unique: 48
+    - name: diameterRoot
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.35'
+        - '0.32'
+        - '0.42'
+      stats:
+        min: 0.09
+        p50: 0.38
+        max: 0.67
+        unique: 59
+    - name: ageOfTree
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35'
+        - '30'
+        - '27'
+      stats:
+        min: 7
+        p50: 31
+        max: 62
+        unique: 48
+    - name: cover
+      type: code
+      null_rate: 0.804
+      sample_values:
+        - 인조잔디
+        - 주철
+        - 아스콘
+      stats:
+        unique: 5
+    - name: frame
+      type: code
+      null_rate: 0.005
+      sample_values:
+        - 사각형
+        - 대상형
+      stats:
+        unique: 2
+    - name: frameBreakage
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: rootUplift
+      type: code
+      null_rate: 0.565
+      sample_values:
+        - 낮음
+        - 보통
+        - 높음
+      stats:
+        unique: 3
+    - name: irrigationYn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: obstacle1
+      type: code
+      null_rate: 0.13
+      sample_values:
+        - 전깃줄
+        - 고압선
+        - 전신주
+      stats:
+        unique: 8
+    - name: obstacle2
+      type: code
+      null_rate: 0.238
+      sample_values:
+        - 고압선
+        - 전깃줄
+        - 가로등
+      stats:
+        unique: 8
+    - name: viewImage
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 03-새방로-가-0016-001.jpg
+        - 03-새방로-가-0021-001.jpg
+        - 03-와룡로-가-0284-001.jpg
+      stats:
+        unique: 1000
+    - name: coverImage
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 03-새방로-가-0016-002.jpg
+        - 03-새방로-가-0021-002.jpg
+        - 03-와룡로-가-0284-002.jpg
+      stats:
+        unique: 1000
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 도시·군계획시설 (결정·집행·장기미집행)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6923
+  rank_in_sector: 22
+  brm: 환경기상 - 자연
+  sector_rule: env-urban-green-to-parks
+  why: 대구 가로수 API, 파일판과 중복
+claims:
+  - id: c-15109187-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15109187.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15109187.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15109187-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15109187-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15109187.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 32개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15109187-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15109187.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15109187-20
+    kind: legal_basis
+    value: "법 체계 층 '국토·도시 계획과 토지이용규제 (국토계획법)': 국토의 계획 및 이용에 관한 법률 — 도시·군기본계획 §18~§23, 도시·군관리계획 §24~§35, 용도지역·지구·구역 §36~§42, 도시·군계획시설 §43~§48, 지구단위계획 §49~§55, 개발행위허가 §56~§65"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/계획·규제
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:009294#1
+        detail: 국토의 계획 및 이용에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15109187-06
+    kind: admin_note
+    value: '[국토관리 재구성 — 국토기본법 계층 · 결정] BRM 지역및도시·주택을 법 체계에 따라 다시 나눔. 부문 위에 계층(domain)을 새로 둠 — `sector_tree.yaml`, KG `domain` 노드·`in_domain`/`domain_of`/`related_sector` 엣지 (스키마 변경 없음, ARCHITECTURE §2 표에 추가).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L527
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15109187-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15109187-10
+    kind: pitfall
+    value: 필수 파라미터 id는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15109187.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15109187-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getRoadsideTreeItem'
+    evidence:
+      - type: measured
+        source: probe/runs/15109187.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15109187.json
+  stats: probe/stats/15109187.json
+  data: probe/data/15109187/
+status: active
+summary_user: 대구광역시 가로수를 한 그루 단위로 담은 건별 원천 데이터로, 위경도 좌표 중심 반경(km) 안의 수목 목록과 수목명·관리기관·식재 도로와 주소·흉고직경·수령·보호틀 상태·간섭 시설물·이미지 정보를 조회한다. 구청이나 연구자가 '이 지점 반경 1km 안 가로수는 어떤 수종이고 보호틀 파손이나 뿌리 들림이 있는가'를 확인해 녹지 관리나 정비 대상을 고르는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 도로명·지번 주소, 행정동명, 좌표(treeLat·treeLot)로 맞춰 이어 써야 한다.
+limits: 상세 조회 오퍼레이션(/getRoadsideTreeItem)은 최소 파라미터로 응답이 없었고, 필수 파라미터 id는 목록 조회에서 먼저 받아 넘겨야 한다. 2026-10-04 실호출에서 두 오퍼레이션 중 하나만 성공했으며, 개발계정은 하루 1,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15109187-01
+    - c-15109187-03
+    - c-15109187-04
+    - c-15109187-10
+    - c-15109187-11
+  dropped_citations: 0

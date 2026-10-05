@@ -1,0 +1,225 @@
+# Dataset 15052465 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15052465'
+tier: verified
+title: 서울특별시_서울시 도로굴착 예정지 위치정보 (좌표계 ITRF2000)
+sector: 교통물류/도로/road-construction
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15052465/fileData.do
+synonyms:
+  - 도로
+  - 도로예정지
+  - 굴착예정지
+  - 도로굴착
+  - 위치정보
+  - 굴착공사 예정지
+  - 도로 굴착 허가
+  - 도로점용 공사
+  - 서울 도로공사 위치
+  - 굴착 예정 좌표
+  - 도로 파기 공사
+summary_user: 서울시 도로굴착 예정지를 한 곳씩 일련번호, 입력년도, X·Y 좌표(ITRF2000 좌표계)로 담은 건별 공간정보로, 범위는 서울시 한 개 시도이다. 시민·사업자·분석가가 '우리 동네 도로에 굴착 공사가 예정돼 있는가', '연도별 굴착 예정지가 어디에 몰려 있는가'를 확인하는 데 쓰고, 굴착은 지역 공사 이벤트의 신호로 볼 수 있다. 전역 조인 키는 없어 좌표를 기준으로 행정구역 경계·도로 공간정보와 공간 결합하거나 서울시 다른 데이터와 이름·코드 매핑으로만 이어 쓴다.
+description_portal: '해당 데이터는 서울시 도로굴착 예정지 위치정보 (좌표계: ITRF2000) 데이터 입니다. 서울시 도로굴착 예정지의 공간정보로 예정지 일련번호, 입력년도, 좌표(X,Y)등의 정보를 제공하는 서비스 입니다. ※ 서울의 모든 공간정보는 공간정보담당관(2133-2842)을 경유하여 서울 열린데이터 광장에 제공됩니다.※ Shape 파일의 기본 인코딩 셋팅은 UTF-8로 설정되어 있습니다.(ArcGIS 10.2.1 version 기준)※ 바로가기 클릭 시 서울 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: RoadExcDest
+    name: RoadExcDest
+    endpoint: http://openapi.seoul.go.kr:8088/json/RoadExcDest/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SNO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '297'
+        - '298'
+        - '299'
+      stats:
+        min: 262
+        p50: 418
+        max: 500
+        unique: 100
+    - name: EXCA_PLDS_SN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - SVR001200512280019
+        - SVR001200601230116
+        - SVR001200512290011
+      stats:
+        unique: 100
+    - name: INPT_YR
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: XCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '185647.7'
+        - '192374.7'
+        - '185599.5'
+      stats:
+        min: 183162.6
+        p50: 195017.15
+        max: 211956.95
+        unique: 100
+    - name: YCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '447582.05'
+        - '438987.1'
+        - '447677.2'
+      stats:
+        min: 438987.1
+        p50: 451891.225
+        max: 459470.95
+        unique: 100
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: event
+classification:
+  subsector_name: 도로 건설·계획·점용 (사업 단계·개통 예정·점용/굴착 허가·용지 보상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4856
+  rank_in_sector: 2553
+  brm: 교통물류 - 도로
+  why: 서울 굴착 예정지 공간파일, 속성 빈약
+claims:
+  - id: c-15052465-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15052465.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15052465-02
+    kind: cadence
+    value: 명세상 수시 · 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052465-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15052465.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052465-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15052465.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052465-06
+    kind: admin_note
+    value: "세부 부문 '도로 건설·계획·점용 (사업 단계·개통 예정·점용/굴착 허가·용지 보상)'의 가치: 도로 개통 계획 = 지역 접근성 변화의 선행 지표, 점용·굴착 허가는 공사 이벤트"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-construction
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15052465-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15052465-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15052465.json
+  stats: probe/stats/15052465.json
+  data: probe/data/15052465/
+limits: 원본은 서울 열린데이터광장에 있어 포털 활용신청과 별개로 data.seoul.go.kr 인증키가 필요하다. 갱신은 명세상 수시이고 행정코드 같은 공통 키가 없으므로, 다른 데이터와는 좌표 기반 공간 결합이나 이름 매칭에 의존해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15052465-01
+    - c-15052465-02
+    - c-15052465-03
+    - c-15052465-04
+    - c-15052465-06
+  dropped_citations: 0
+status: active

@@ -1,0 +1,199 @@
+# Dataset 15107460 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107460'
+tier: verified
+title: 행정안전부_통계연보_연도별 내수면 유·도선 안전사고
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107460/openapi.do
+synonyms:
+  - 연도별유도선안전사고
+  - 합계안전사고
+  - 대형사고안전사고
+  - 내수면
+  - 연도별
+  - 유선 도선 사고
+  - 유람선 사고 통계
+  - 나룻배 사고
+  - 내수면 선박 사고
+  - 수상 안전사고
+  - 행정안전 통계연보
+  - 생활안전 통계
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '안전정책/생활안전' 중 '내수면 유·도선 및 안전사고', '연도별 내수면 유·도선 안전사고'에 관한 통계입니다. 합계(안전사고, 사망), 대형사고(안전사고, 사망), 소형사고(안전사고, 사망) 등 연도별 내수면 유·도선 안전사고를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getInlandWaterSafetyAccidentsYear
+    name: 연도별 내수면 유·도선 안전사고 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/InlandWaterSafetyAccidentsYear/getInlandWaterSafetyAccidentsYear
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 19}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RESU"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2007', 'seq': 1, 'tot_satety_acdnt': '0', 'tot_death': '0', 'big"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5116
+  rank_in_sector: 2179
+  brm: 교통물류 - 도로
+  why: 연도별 유도선 사고 통계, 도로 부문 아님
+claims:
+  - id: c-15107460-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107460.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107460.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107460-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107460-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107460.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107460-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107460.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107460-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107460-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107460-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107460.json
+  stats: probe/stats/15107460.json
+  data: probe/data/15107460/
+status: active
+summary_user: 행정안전 통계연보 '안전정책/생활안전' 편에 수록된 내수면 유·도선 안전사고를 연도별·전국 단위로 집계한 통계로, 합계·대형사고·소형사고별 안전사고 건수와 사망자 수를 담는다. 안전정책 담당자나 분석가가 '강·호수 유람선·도선 사고와 사망자가 연도별로 어떻게 변했고 대형사고 비중은 어떤가'를 확인하는 데 쓴다. 실측 컬럼에 공통 조인 키가 없어 다른 데이터와는 연도를 기준으로 맞추거나 같은 기관(행정안전부) 통계연보의 다른 생활안전 통계와 이름 대응으로만 이어 쓴다.
+limits: 전국 단위 비공간 집계라 시도·시군구별이나 사고 지점별 분석은 할 수 없다. 전역 조인 키가 없어 다른 사고 통계와 결합할 때는 연도·항목명을 직접 맞춰야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107460-03
+    - c-15107460-04
+  dropped_citations: 0

@@ -1,0 +1,186 @@
+# Dataset 15052669 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15052669'
+tier: verified
+title: 울산광역시 BIS 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6310000'
+  name: 울산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15052669/openapi.do
+synonyms:
+  - 정류장
+  - 버스
+  - BIS
+  - 울산 버스정류장
+  - 울산 시내버스
+  - 버스전용차로
+  - 정류소 위치
+  - 울산 버스정보시스템
+  - 울산 대중교통
+description_portal: 울산광역시 시내버스 정보(정류소위치, 전용차로) 제공
+team:
+  dept: 울산광역시 교통기획과
+services:
+  - op: /AllRouteDetailInfo.xo
+    endpoint: http://openapi.its.ulsan.kr/UlsanAPI/AllRouteDetailInfo.xo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: resultMsg
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SERVICE KEY IS NOT REGISTERED ERROR.
+      stats:
+        unique: 1
+    - name: resultCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '30'
+      stats:
+        min: 30
+        p50: 30
+        max: 30
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8181
+  rank_in_sector: 40
+  brm: 교통물류 - 도로
+  why: 울산 지역판 BIS, 전국 데이터로 대체 가능
+claims:
+  - id: c-15052669-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15052669.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15052669.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15052669-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052669-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15052669.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052669-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15052669.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15052669-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15052669-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15052669-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15052669.json
+  stats: probe/stats/15052669.json
+  data: probe/data/15052669/
+status: active
+summary_user: 울산광역시 시내버스의 정류소 위치와 버스전용차로 정보를 개별 주소·좌표 단위로 담는 API이다. 울산에서 버스를 타려는 시민이나 교통 분석가가 '이 근처 정류소가 어디이고 전용차로는 어느 구간에 있는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 정류소·노선 이름 매핑이나 같은 기관(울산광역시) 코드로만 연결한다.
+limits: 실측 필드에서 공통 조인 키가 확인되지 않아 TAGO 등 전국 버스 데이터와 바로 붙이기 어렵다. 개발계정은 하루 1,000회 호출로 제한되며, 범위는 울산광역시 한 곳뿐이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15052669-01
+    - c-15052669-03
+    - c-15052669-04
+  dropped_citations: 0

@@ -1,0 +1,192 @@
+# Dataset 15051743 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15051743'
+tier: verified
+title: 서울특별시_버스노선ID 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15051743/fileData.do
+synonyms:
+  - 교통카드
+  - 버스정류소
+  - 버스노선
+  - 서울 버스 노선번호
+  - 노선ID 조회
+  - 버스노선 코드
+  - 서울시 버스 노선 목록
+  - RTE_ID
+  - 버스번호 매핑
+summary_user: 서울특별시에서 운영 중인 버스 노선마다 버스번호(RTE_NM)와 고유 노선ID(RTE_ID)를 짝지어 담은 노선 단위 매핑표이며, 범위는 시도 단위의 비공간 데이터다. 개발자나 분석가가 '이 버스번호의 노선ID는 무엇인가'를 확인해 서울 버스 노선·정류장·도착정보 API를 호출할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 서울시가 낸 다른 버스 데이터와는 노선ID나 버스번호를 이름·코드로 맞춰 연결해야 한다.
+description_portal: 서울특별시 버스노선ID 정보 데이터로 서울특별시에서 현재 운영중인 버스 노선에 대한 고유 ID 정보를 제공합니다. 버스번호, 버스노선 ID 항목을 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 미래첨단교통과
+services:
+  - op: busRoute
+    name: busRoute
+    endpoint: http://openapi.seoul.go.kr:8088/json/busRoute/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: RTE_NM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0017'
+        - 01A
+        - 01B
+      stats:
+        min: 17
+        p50: 1125
+        max: 2230
+        unique: 100
+    - name: RTE_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100100124'
+        - '100100001'
+        - '106000004'
+      stats:
+        min: 100100001
+        p50: 100100150.5
+        max: 110000009
+        unique: 100
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.604
+  rank_in_sector: 1054
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 서울 노선ID 매핑, 노선정보 서비스와 중복
+claims:
+  - id: c-15051743-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15051743.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15051743-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051743-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15051743.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051743-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15051743.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15051743-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051743-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051743-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15051743.json
+  stats: probe/stats/15051743.json
+  data: probe/data/15051743/
+limits: data.seoul.go.kr의 별도 인증키(경로 파라미터 KEY)가 필요하며, 공공데이터포털 활용신청과는 따로 받아야 한다. 노선번호와 ID 외의 운행·정류장 정보는 없고, 공통 표준 키가 없어 서울 외 지역이나 전국 데이터와 바로 결합할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15051743-01
+    - c-15051743-03
+    - c-15051743-04
+  dropped_citations: 0
+status: active

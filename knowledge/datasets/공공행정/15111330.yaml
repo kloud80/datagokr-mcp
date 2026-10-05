@@ -1,0 +1,209 @@
+# Dataset 15111330 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15111330'
+tier: verified
+title: 법제처_법령정보지식베이스 일상용어 조회
+sector: 공공행정/법제/docs-guides
+agency:
+  id: '1170000'
+  name: 법제처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15111330/openapi.do
+synonyms:
+  - 국가법령정보센터
+  - 지능형법령정보지식베이스
+  - 일상용어
+  - 용어해설
+  - 의미도출
+  - 언어변환
+  - 개념연결
+  - 법률이해
+  - 생활용어 법률용어 변환
+  - 법령용어 사전
+  - 일상어 법률어 연계
+  - 법률 용어 풀이
+  - open.law.go.kr 일상용어 API
+  - 법령정보 지식베이스
+summary_user: 법제처 지능형 법령정보 지식베이스에서 일상용어 목록을 용어 단위로 담고, 일상용어마다 출처와 연관 법령용어로 이어지는 관계 링크를 XML로 제공하는 전국 범위의 비공간 데이터다. 국민이나 행정 실무자가 '전세금을 법률에서는 어떤 용어로 부르는가'처럼 익숙한 표현에 해당하는 법령용어와 그 정의·관련 조문을 찾을 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 일상용어명이나 용어간관계링크를 통한 이름 매핑, 또는 같은 법제처 법령용어 조회 서비스와의 연계로만 이어 쓴다.
+description_portal: 지능형 법령정보 지식베이스 일상용어 목록을 XML 데이터로 제공 받으실 수 있는 일상용어 정보 목록 조회 서비스입니다. 이 데이터는 일상용어를 입력하면 해당 용어와 연관된 법령용어를 제시하고, 각각의 정의, 설명, 사용 사례 및 연결된 조문 정보를 함께 제공합니다. 이를 통해 이용자는 익숙한 일상 표현을 기반으로 법률 용어의 의미와 용례를 자연스럽게 습득할 수 있습니다. 또한 유사한 의미를 가진 다수의 법령용어를 비교하고, 관련 조문 간의 맥락을 파악하는 데 유용하게 활용됩니다. 본 데이터는 법령 접근성 향상, 용어 해석의 정확성 제고, 법제 교육 및 행정 실무 지원 등에 효과적으로 사용됩니다.
+team:
+  dept: 법제처
+services:
+  - op: lawSearch:dlytrm
+    name: lawSearch:dlytrm
+    endpoint: https://www.law.go.kr/DRF/lawSearch.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: OC
+      issuer: open.law.go.kr
+    params:
+      - name: target
+        required: true
+        example: dlytrm
+      - name: type
+        required: true
+        example: JSON
+      - name: display
+        required: true
+        example: '100'
+      - name: page
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: 용어간관계링크
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - /DRF/lawService.do?OC=***&target=dlytrmRlt&type=XML&MST=344373
+        - /DRF/lawService.do?OC=***&target=dlytrmRlt&type=XML&MST=348901
+        - /DRF/lawService.do?OC=***&target=dlytrmRlt&type=XML&MST=349577
+      stats:
+        unique: 100
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: 일상용어명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 방한귀덮개
+        - 공중보건의료정책
+        - 구제조치
+      stats:
+        unique: 100
+    - name: 출처
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 조약·영문·생활법령·용어·해설서
+  depth: back
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.5006
+  rank_in_sector: 406
+  brm: 공공행정 - 일반행정
+  sector_rule: moleg-to-law
+  why: 일상용어 조회 API, 용어 보조 자료
+claims:
+  - id: c-15111330-01
+    kind: access
+    value: 외부 사이트 open.law.go.kr 인증키 필요 (query 파라미터 OC) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15111330.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.law.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15111330-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15111330-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15111330.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15111330-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15111330.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15111330-06
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15111330-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15111330.json
+  stats: probe/stats/15111330.json
+  data: probe/data/15111330/
+limits: 포털 활용신청과 별개로 외부 사이트 open.law.go.kr의 인증키(OC 파라미터)가 있어야 호출된다. 공통 코드나 키가 없어서 다른 데이터와 붙일 때는 용어명을 문자열로 맞춰야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15111330-01
+    - c-15111330-03
+    - c-15111330-04
+  dropped_citations: 0
+status: active

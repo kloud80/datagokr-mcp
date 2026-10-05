@@ -1,0 +1,231 @@
+# Dataset 15120847 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15120847'
+tier: verified
+title: 부산광역시_교통전광판(VMS) 설치 현황정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15120847/openapi.do
+synonyms:
+  - 교통
+  - VMS
+  - 공간정보
+  - 설치위치
+  - ITS 시설물 현황
+  - 도로전광표지
+  - 가변정보표지판
+  - 교통정보 전광판
+  - 부산 전광판 위치
+  - ITS 시설물
+  - 도로 안내 전광판
+description_portal: '부산광역시 교통정보서비스센터에서 운영하는 교통전광판(VMS, Variable Message Sign)의  설치유형(타입), 설치위치, 경도, 위도 등의 현황 정보를 제공하는 오픈 API입니다.<제공방식>형식: Open API (RESTful)출력 포맷: JSON, XML인코딩: UTF-8접근: 공공데이터포털(Open API 키 발급 후 사용 가능)<활용안내>실시간 도로 운영 상황에 따른 신속한 교통 안내 및 안전 관리 강화민간 내비게이션·지도 서비스와 연계하여 시민 맞춤형 교통정보 제공ITS 기반 교통인프라 연구 및 스마트시티 정책 수립 지원긴급 상황 시 교통통제·우회 안내 체계 구축 자료로 활용'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /VMSList
+    name: 부산광역시 교통전광판(VMS) 현황정보
+    endpoint: https://apis.data.go.kr/6260000/BusanITSVMS/VMSList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: vmsType
+      title: VMS 유형
+      type: code
+      null_rate: 0.124
+      sample_values:
+        - 2단10열
+        - 12단16열
+        - 3단10열
+      stats:
+        unique: 4
+    - name: instlPos
+      title: 설치위치
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 원동IC
+        - 안락교차로
+        - 경부 T/G
+      stats:
+        unique: 120
+    - name: lot
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '129.121002'
+        - '129.007996'
+        - '129.037003'
+      stats:
+        min: 0
+        p50: 129.0615717
+        max: 129.212507
+        unique: 118
+    - name: lat
+      title: 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.189899'
+        - '35.202037'
+        - '35.264599'
+      stats:
+        min: 0
+        p50: 35.161082
+        max: 35.265899
+        unique: 121
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6157
+  rank_in_sector: 944
+  brm: 교통물류 - 도로
+  why: 부산 VMS 위치 목록, 지역 한정이며 전국 VMS와 일부 겹침
+claims:
+  - id: c-15120847-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15120847.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15120847.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15120847-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120847-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120847.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120847-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15120847.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120847-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15120847-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120847-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave4r 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15120847.json
+  stats: probe/stats/15120847.json
+  data: probe/data/15120847/
+status: active
+summary_user: 부산광역시 교통정보서비스센터가 운영하는 교통전광판(VMS)을 한 기기당 한 건으로, 유형·설치위치·경도·위도를 담는 설치 현황 데이터이며 범위는 부산 시 전역이고 위치는 주소·좌표 단위로 제공된다. 교통 분석가나 내비게이션·지도 서비스 사업자가 '부산 시내 어느 도로 구간에 어떤 유형의 전광판이 설치돼 있는가'를 지도에 표시하거나 우회 안내 지점을 검토할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 좌표 기반 공간 결합이나 설치위치 이름 매핑, 같은 기관(부산시) 교통 데이터끼리로만 이어 쓴다.
+limits: 설치 현황 정보만 담고 전광판에 표출되는 실시간 메시지 내용은 필드에 없다. 공통 조인 키가 없어 링크 속도·돌발상황 등 다른 실시간 소통 데이터와는 좌표·이름으로 직접 매핑해야 한다. 개발계정은 하루 500회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15120847-01
+    - c-15120847-03
+    - c-15120847-04
+  dropped_citations: 0

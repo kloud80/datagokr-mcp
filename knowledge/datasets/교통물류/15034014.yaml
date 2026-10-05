@@ -1,0 +1,241 @@
+# Dataset 15034014 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15034014'
+tier: verified
+title: 부산광역시_버스정보안내기 현황
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15034014/openapi.do
+synonyms:
+  - 도착정보
+  - 교통정보
+  - 정류장
+  - 버스정보
+  - 버스도착
+  - 안내기
+  - BIT
+  - 버스도착안내단말기
+  - 버스정보시스템 안내기
+  - 정류장 전광판
+  - 버스도착정보 표시기
+  - 부산 버스정류장 안내판
+  - BIS 단말기
+description_portal: 부산광역시 전역에 설치되어 있는 버스정보안내기(BIT) 현황에 관한 자료입니다. 부산광역시 교통정보서비스센터에서 통합 관리하고 있으며 총 2,200여대 정도 설치되어 있고, 승객들에게 실시간 버스 도착 정보를 안내하여 시민들의 대중교통 이용 편리성을 크게 향상시키고 있으며, 교통정보의 신뢰성과 접근성을 높이는 중요한 역할을 하고 있습니다. 정류장 위치에 따른 정류장 번호 5자리와, 지번주소 또는 도로명주소, 좌표정보(위도, 경도), 설치연도 또는 교체연도를 조회할 수 있는 서비스입니다.
+team:
+  dept: 빅데이터과
+services:
+  - op: /getTblBusinfoeqStusInfo
+    endpoint: https://apis.data.go.kr/6260000/BusanTblBusinfoeqStusService/getTblBusinfoeqStusInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: stationNum
+      type: number
+      null_rate: 0.066
+      sample_values:
+        - '11010'
+        - '11012'
+        - '11013'
+      stats:
+        min: 8037
+        p50: 10155.5
+        max: 92443
+        unique: 934
+    - name: stationLoc
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 금정초등학교
+        - 코오롱아파트
+        - 덕천교차로
+      stats:
+        unique: 616
+    - name: lat
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.1808055'
+        - '35.35161667'
+        - '35.27407542'
+      stats:
+        min: 35.01260928
+        p50: 35.192753905000004
+        max: 35.37049018
+        unique: 998
+    - name: lng
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.9569478'
+        - '128.97721'
+        - '129.0924562'
+      stats:
+        min: 128.8128534
+        p50: 129.06739894999998
+        max: 129.2790284
+        unique: 998
+    - name: addr
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부산 금정구 구서동 262
+        - 부산 사하구 하단동 491
+        - 부산 금정구 남산동 136-1
+      stats:
+        unique: 849
+    - name: insYear
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: dataDay
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-06-09'
+      stats:
+        min: '2026-06-09'
+        max: '2026-06-09'
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8332
+  rank_in_sector: 23
+  brm: 교통물류 - 도로
+  why: 부산 한정 정보안내기 목록, 소규모 지역 자료
+claims:
+  - id: c-15034014-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15034014.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15034014.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15034014-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15034014-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15034014.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15034014-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15034014.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15034014-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15034014-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15034014-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15034014.json
+  stats: probe/stats/15034014.json
+  data: probe/data/15034014/
+status: active
+summary_user: 부산광역시 전역에 설치된 버스정보안내기(BIT)를 한 대씩 담은 현황으로, 정류장 번호 5자리, 정류장 위치명, 지번·도로명 주소, 위도·경도, 설치 또는 교체연도를 담는다. 교통 분석가나 시민이 '우리 동네 어느 정류장에 도착 안내 전광판이 있고 언제 설치·교체됐는가'를 확인하거나 안내기 설치 공백 지역을 찾는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 부산 버스정류장·실시간 도착 정보와는 정류장 번호(stationNum)나 정류장 이름을 맞춰 보거나 좌표로 겹쳐 이어 쓴다.
+limits: 표준 조인 키가 없어 다른 정류장·노선 데이터와는 이름·번호 매핑이나 좌표 근접으로만 연결되며, 매칭 정확도를 따로 확인해야 한다. 범위는 부산광역시 한 곳이며, 안내기 위치·연도만 담고 실시간 도착 정보 자체는 담지 않는다. 호출에는 포털 활용신청 후 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15034014-01
+    - c-15034014-03
+    - c-15034014-04
+  dropped_citations: 0

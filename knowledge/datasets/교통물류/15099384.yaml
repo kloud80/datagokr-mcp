@@ -1,0 +1,257 @@
+# Dataset 15099384 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15099384'
+tier: verified
+title: 서울특별시_대중교통 이용패턴 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099384/fileData.do
+synonyms:
+  - 대중교통
+  - 이용사슬
+  - 승객
+  - 대중교통 환승 패턴
+  - 버스 지하철 환승 이용
+  - 교통카드 이용자유형
+  - 서울 대중교통 이용객 통계
+  - 경로 장애인 대중교통 이용
+  - 환승 유형별 이용자 수
+summary_user: 서울시 대중교통 이용을 하루 단위(기준일, CRTR_DD)로 버스-지하철, 버스-버스-지하철 같은 환승 이용패턴별로 묶어, 전체 이용자 수와 일반·어린이·청소년·경로·장애인 등 사용자유형별 이용자 수를 담은 집계 데이터다. 교통 분석가나 정책 담당자가 '어떤 환승 조합이 가장 많이 쓰이고, 경로·장애인 이용자는 어떤 패턴에 몰리는가'를 날짜별로 비교하는 데 쓴다. 실측 컬럼에 정류장·노선 ID 같은 전역 조인 키가 없어 다른 데이터와는 기준일 날짜나 이용패턴 이름으로만 맞춰 이어 쓴다.
+description_portal: '서울시 1일 사용자유형별(일반, 어린이, 경로, 장애인 등) 대중교통 이용패턴(버스-지하철, 버스-버스-지하철 등)을 확인할 수 있습니다.* 데이터 적재는 매일 5일전 데이터를 갱신합니다.부서 : 교통정보과(02-2133-4958)'
+accrual_periodicity: 수시
+team:
+  dept: 미래첨단교통과
+services:
+  - op: ksccPatternStation
+    name: ksccPatternStation
+    endpoint: http://openapi.seoul.go.kr:8088/json/ksccPatternStation/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CRTR_DD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260928'
+      stats:
+        min: 20260928
+        p50: 20260928
+        max: 20260928
+        unique: 1
+    - name: PRPS_PTRN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ①[지하철] → ②[지하철] → ③[지하철] → ④[지하철] → ⑤[지하철]
+        - ①[지하철] → ②[지하철] → ③[지하철] → ④[지하철] → ⑤[버스]
+        - ①[지하철] → ②[지하철] → ③[지하철] → ④[지하철]
+      stats:
+        unique: 100
+    - name: TNOPE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2.0'
+        - '9.0'
+        - '3.0'
+      stats:
+        min: 1
+        p50: 27
+        max: 5138287
+        unique: 68
+    - name: TNOPE_GNRL
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2.0'
+        - '1.0'
+        - '3.0'
+      stats:
+        min: 1
+        p50: 25.5
+        max: 3814457
+        unique: 66
+    - name: TNOPE_KID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '1.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 56798
+        unique: 21
+    - name: TNOPE_YOUTH
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '1.0'
+        - '2.0'
+      stats:
+        min: 0
+        p50: 1
+        max: 86749
+        unique: 27
+    - name: TNOPE_ELDR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '1.0'
+        - '2721.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 1016779
+        unique: 6
+    - name: TNOPE_PWDBS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '1.0'
+        - '394.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 150177
+        unique: 6
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5097
+  rank_in_sector: 2204
+  brm: 교통물류 - 도로
+  why: 사용자유형별 이용패턴 집계, 지역 연결 약함
+claims:
+  - id: c-15099384-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099384.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15099384-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099384-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099384.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099384-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099384.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099384-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099384-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099384-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099384.json
+  stats: probe/stats/15099384.json
+  data: probe/data/15099384/
+limits: data.seoul.go.kr 외부 사이트 인증키(경로 파라미터 KEY)가 따로 필요하며 공공데이터포털 활용신청과는 별개다. 패턴별 일 집계라 정류장·노선·지역 단위 분석은 이 데이터만으로 하지 못하고, 다른 데이터와 공통 코드로 정확히 조인할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15099384-01
+    - c-15099384-03
+  dropped_citations: 0
+status: active

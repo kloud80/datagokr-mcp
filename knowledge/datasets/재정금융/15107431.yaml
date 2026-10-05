@@ -1,0 +1,200 @@
+# Dataset 15107431 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107431'
+tier: verified
+title: 행정안전부_통계연보_지역별 세외수입징수실적
+sector: 재정금융/세제/regional-tax
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107431/openapi.do
+synonyms:
+  - 지역별
+  - 세외수입징수
+  - 계
+  - 연도별
+  - 재정지표
+  - 세외수입
+  - 지방세외수입
+  - 세외수입 징수액
+  - 행정안전 통계연보
+  - 지방재정 통계
+  - 시도별 세외수입
+  - 지역별 징수실적
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방재정' 중 '지방세외수입', '지역별 세외수입징수실적'에 관한 통계입니다. 서울, 부산, 대구, 인천, 광주, 대전 등을 기준으로 지역별 세외수입징수실적을 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getRegionNonTaxRevenueCollection1
+    name: 지역별 세외수입징수실적 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/RegionNonTaxRevenueCollection1/getRegionNonTaxRevenueCollection1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 20}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RESU"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2005', 'seq': 1, 'tot': '58288433', 'seoul': '9798374', 'busan':"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4774
+  rank_in_sector: 3
+  brm: 재정금융 - 세제
+  why: 시도×연도 세외수입 집계, 지역 조인 가능한 통계연보
+claims:
+  - id: c-15107431-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107431.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107431.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107431-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107431-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107431.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107431-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107431.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107431-06
+    kind: admin_note
+    value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-tax
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107431-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107431-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107431.json
+  stats: probe/stats/15107431.json
+  data: probe/data/15107431/
+status: active
+summary_user: 행정안전 통계연보의 '지방재정' 중 '지역별 세외수입징수실적'을 서울·부산·대구 등 지역 단위로 담은 연보 집계 통계로, 범위는 전국이며 공간 정보는 없다. 지역 재정 분석가나 지자체 담당자가 "시도별로 세외수입이 얼마나 징수됐고 지역 간 차이는 어떤가"를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 지역 지표와는 지역명 매핑으로만 이어 쓴다.
+limits: 공식 지역코드 같은 조인 키가 없어 다른 데이터와 붙이려면 지역명을 직접 코드로 매핑해야 한다. 연보 수록 집계라 건별 부과·징수 내역은 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107431-03
+    - c-15107431-04
+    - c-15107431-06
+  dropped_citations: 0

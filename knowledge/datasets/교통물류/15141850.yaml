@@ -1,0 +1,955 @@
+# Dataset 15141850 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15141850'
+tier: verified
+title: 대구광역시 수성구_주차장 정보 조회서비스
+sector: 교통물류/물류등기타/parking
+agency:
+  id: '3460000'
+  name: 대구광역시 수성구
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141850/openapi.do
+synonyms:
+  - 주차장정보
+  - 주소정보
+  - 요금체계
+  - 운영시간
+  - 실시간현황
+  - 교통혼잡완화
+  - 교통복지정책
+  - 주차면수
+  - 수성구 주차장
+  - 대구 공영주차장
+  - 주차요금
+  - 주차장 위치
+  - 장애인 주차면
+  - 전기차 주차면
+  - 노상주차장
+description_portal: 본 데이터는 대구광역시 수성구 관내에서 제공되는 공영 및 민영 주차장 정보 조회 서비스에 관련된 현황을 체계적으로 정리한 자료로, 주차장명, 주차장 유형(공영·민영·복합 등), 도로명 주소 및 위도·경도, 총 주차면 수, 장애인·노약자·전기차 전용 면 수, 이용 요금(시·분 단위), 운영 시간, 운영 주체(구청·개인 사업자 등), 실시간 이용 가능 여부, 데이터 기준일자 등의 항목을 포함한다. 본 자료는 주민과 차량 이용자가 근거리 주차장 위치, 요금, 빈자리 여부 등을 한눈에 확인할 수 있도록 구성되어 있으며, 주차 편의성 향상, 교통 혼잡 완화, 모바일·웹 기반 안내 서비스 제공, 민원 대응 등에 활용 가능하다. 또한 장애인·전기차 전용 면 정보는 교통복지 정책, 환경 친화적 인프라 평가, 공공자원 배분 효율화 등에 기초자료로 유용하며, 수성구청은 이용 실적 및 운영 변경 시 데이터를 정기적으로 갱신하여 최신 정보를 반영하고 있다. 해당 데이터는 도시교통 부서, 스마트시티 기획자, 교통 연구기관, 일반 주민·운전자 등의 주차 정책 수립과 교통 서비스 개선을 위한 핵심 기반자료로 폭넓게 활용될 수 있습니다.
+team:
+  dept: 행정국 정보통신과
+services:
+  - op: /parkingLotInfo
+    name: 주차장 정보 조회
+    endpoint: https://apis.data.go.kr/3460000/ParkingLotInfoService/parkingLotInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: prkPlceId
+        required: false
+        desc: 주차장 ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /parkingLotRtSttus
+    name: 주차장 현황 조회
+    endpoint: https://apis.data.go.kr/3460000/ParkingLotInfoService/parkingLotRtSttus
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: prkPlceId
+        required: false
+        example: 155-2-000063
+        desc: 주차장 ID
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: prkPlceId
+      title: 주차장 ID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 155-2-000065
+        - 155-2-000063
+        - 155-2-000046
+      op: /parkingLotInfo
+      stats:
+        unique: 329
+    - name: prkPlceNm
+      title: 주차장이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 수성구 무료 공영주차장
+        - 수성구 무료공영주차장
+        - 두산레포츠센터주차장
+      op: /parkingLotInfo
+      stats:
+        unique: 316
+    - name: prkPlceKnd
+      title: '주차장종류(1: 공용노상, 2:공용노외, 3: 부설)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /parkingLotInfo
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 3
+    - name: locplcAddr
+      title: 소재지 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 대구광역시 수성구 두산동 산 7-2
+        - 대구광역시 수성구 상동 44-5
+        - 대구광역시 수성구 범어동 320
+      op: /parkingLotInfo
+      stats:
+        unique: 322
+    - name: prkPlceEntrcNm
+      title: 주차장입구 위치 입구 명
+      type: code
+      null_rate: 0.9119
+      sample_values:
+        - 대구광역시 수성구 두산동 산 7-2
+        - 대구광역시 수성구 상동 469-6
+        - 대구광역시 수성구 두산동 696-3
+      op: /parkingLotInfo
+      stats:
+        unique: 29
+    - name: prkPlceEntrcLa
+      title: 주차장입구 위치 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.823076'
+        - '35.828919'
+        - '35.825944'
+      op: /parkingLotInfo
+      stats:
+        min: 35.810172
+        p50: 35.845832
+        max: 35.939708
+        unique: 329
+    - name: prkPlceEntrcLo
+      title: 주차장입구 위치 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.615756'
+        - '128.621909'
+        - '128.613521'
+      op: /parkingLotInfo
+      stats:
+        min: 128.608189
+        p50: 128.629843
+        max: 128.71756
+        unique: 328
+    - name: parkingUs
+      title: '이용형태(0: 자주식, 1: 기계식, 9: 기타)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '9'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 2
+    - name: arLevelSe
+      title: '급지구분(0: 1급지, 1: 2급지, 2: 3급지, 3: 4급지, 4: 5급지, 9: 기타)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '1'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 2
+        max: 9
+        unique: 5
+    - name: sysNe
+      title: 시스템명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주차정보공유 시스템
+        - 주차정보공유시스템
+      op: /parkingLotInfo
+      stats:
+        unique: 2
+    - name: prkCmprtCo
+      title: 총주차구 획수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '10'
+        - '9'
+      op: /parkingLotInfo
+      stats:
+        min: 2
+        p50: 14
+        max: 642
+        unique: 76
+    - name: cmptInstNm
+      title: 관할기관 명칭
+      type: code
+      null_rate: 0.003
+      sample_values:
+        - 수성구청 교통과
+        - 대구광역시 교통정책과
+        - 대구광역시청
+      op: /parkingLotInfo
+      stats:
+        unique: 10
+    - name: noDrvDayOpertnAt
+      title: '주차부제시행 여부(0: 미시행, 1: 2부제, 2: 5부제, 3: 10부제, 4: 승용차요일제, 9: 기타)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 4
+        unique: 2
+    - name: sunOpertnStartTime
+      title: 일요일운용시작 시간
+      type: code
+      null_rate: 0.1793
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 2
+    - name: sunOpertnEndTime
+      title: 일요일운용종료 시간
+      type: code
+      null_rate: 0.1793
+      sample_values:
+        - 24:00:00
+        - 00:00:00
+        - 21:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 4
+    - name: monOpertnStartTime
+      title: 월요일운용시작 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 09:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 6
+    - name: monOpertnEndTime
+      title: 월요일운용종료 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 24:00:00
+        - 21:00:00
+        - 20:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 11
+    - name: tuesOpertnStartTime
+      title: 화요일운용시작 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 09:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 6
+    - name: tuesOpertnEndTime
+      title: 화요일운용종료 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 24:00:00
+        - 21:00:00
+        - 20:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 11
+    - name: wedOpertnStartTime
+      title: 수요일운용시작 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 09:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 6
+    - name: wedOpertnEndTime
+      title: 수요일운용종료 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 24:00:00
+        - 21:00:00
+        - 20:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 11
+    - name: thurOpertnStartTime
+      title: 목요일운용시작 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 09:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 6
+    - name: thurOpertnEndTime
+      title: 목요일운용종료 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 24:00:00
+        - 21:00:00
+        - 20:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 11
+    - name: friOpertnStartTime
+      title: 금요일운용시작 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 09:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 6
+    - name: friOpertnEndTime
+      title: 금요일운용종료 시간
+      type: code
+      null_rate: 0.1459
+      sample_values:
+        - 24:00:00
+        - 21:00:00
+        - 20:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 11
+    - name: satOpertnStartTime
+      title: 토요일운용시작 시간
+      type: code
+      null_rate: 0.155
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 10:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 4
+    - name: satOpertnEndTime
+      title: 토요일운용종료 시간
+      type: code
+      null_rate: 0.155
+      sample_values:
+        - 24:00:00
+        - 20:00:00
+        - 21:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 8
+    - name: hldyOpertnStartTime
+      title: 휴일운용시작 시간
+      type: code
+      null_rate: 0.1702
+      sample_values:
+        - 00:00:00
+        - 08:00:00
+        - 07:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 3
+    - name: hldyOpertnEndTime
+      title: 휴일운용종료 시간
+      type: code
+      null_rate: 0.1702
+      sample_values:
+        - 24:00:00
+        - 00:00:00
+        - 21:00:00
+      op: /parkingLotInfo
+      stats:
+        unique: 7
+    - name: opertnBsFreeTime
+      title: 기본무료 시간
+      type: code
+      null_rate: 0.9119
+      sample_values:
+        - 00:00:00
+        - 00:30:00
+      op: /parkingLotInfo
+      stats:
+        unique: 2
+    - name: parkingChrgeBsTime
+      title: 기본주차 시간(분단위)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '30'
+        - '120'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 120
+        unique: 3
+    - name: parkingChrgeBsChrge
+      title: 기본주차요금(원)
+      type: number
+      null_rate: 0.0274
+      sample_values:
+        - '0'
+        - '600'
+        - '1000'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 2000
+        unique: 5
+    - name: parkingChrgeAditUnitTime
+      title: 추가단위 시간(분단위)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10'
+        - '60'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 60
+        unique: 3
+    - name: parkingChrgeAditUnitChrge
+      title: 추가단위요금(원)
+      type: number
+      null_rate: 0.0274
+      sample_values:
+        - '0'
+        - '300'
+        - '200'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 2000
+        unique: 7
+    - name: parkngCo
+      title: 총주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '6'
+        - '10'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 11
+        max: 642
+        unique: 77
+    - name: gnrlCo
+      title: 일반용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '6'
+        - '10'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 11
+        max: 552
+        unique: 74
+    - name: pwnmCo
+      title: 임산부용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '4'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 7
+        unique: 4
+    - name: dspsnCo
+      title: 장애인용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 27
+        unique: 9
+    - name: lghvhclCo
+      title: 경차용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '4'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 24
+        unique: 11
+    - name: elctyvhcleCo
+      title: 전기차량용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '3'
+        - '1'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 32
+        unique: 9
+    - name: femaleCo
+      title: 여성용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /parkingLotInfo
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: prkPlceLa
+      title: 주차장 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.823177'
+        - '35.837675'
+        - '35.828918'
+      op: /parkingLotInfo
+      stats:
+        min: 35.810172
+        p50: 35.845832
+        max: 35.939708
+        unique: 327
+    - name: prkPlceLo
+      title: 주차장 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.621338'
+        - '128.615566'
+        - '128.615756'
+      op: /parkingLotInfo
+      stats:
+        min: 128.608189
+        p50: 128.629843
+        max: 128.71756
+        unique: 326
+    - name: remark
+      title: 비고
+      type: code
+      null_rate: 0.9878
+      sample_values:
+        - 직영, 10:00∼21:00 (월요일무료)
+      op: /parkingLotInfo
+      stats:
+        unique: 1
+    - name: useYn
+      title: '사용여부(Y: 사용, N: 미사용)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      op: /parkingLotInfo
+      stats:
+        unique: 1
+    - name: prkPlceId
+      title: 주차장 ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 155-2-000063
+      op: /parkingLotRtSttus
+      stats:
+        unique: 1
+    - name: prkPlceNm
+      title: 주차장이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수성못공영주차장
+      op: /parkingLotRtSttus
+      stats:
+        unique: 1
+    - name: parkngCo
+      title: 총주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '105'
+      op: /parkingLotRtSttus
+      stats:
+        min: 105
+        p50: 105
+        max: 105
+        unique: 1
+    - name: gnrlCo
+      title: 일반용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '91'
+      op: /parkingLotRtSttus
+      stats:
+        min: 91
+        p50: 91
+        max: 91
+        unique: 1
+    - name: pwnmCo
+      title: 임산부용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /parkingLotRtSttus
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: dspsnCo
+      title: 장애인용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      op: /parkingLotRtSttus
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: lghvhclCo
+      title: 경차용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+      op: /parkingLotRtSttus
+      stats:
+        min: 5
+        p50: 5
+        max: 5
+        unique: 1
+    - name: elctyvhcleCo
+      title: 전기차량용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+      op: /parkingLotRtSttus
+      stats:
+        min: 6
+        p50: 6
+        max: 6
+        unique: 1
+    - name: femaleCo
+      title: 여성용주차 면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /parkingLotRtSttus
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: mrgnParkngCo
+      title: 총 여유 주차면 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37'
+      op: /parkingLotRtSttus
+      stats:
+        min: 37
+        p50: 37
+        max: 37
+        unique: 1
+    - name: mrgnGnrlCo
+      title: 일반 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '27'
+      op: /parkingLotRtSttus
+      stats:
+        min: 27
+        p50: 27
+        max: 27
+        unique: 1
+    - name: mrgnDspsnCo
+      title: 장애인 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      op: /parkingLotRtSttus
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: mrgnElctyvhcleCo
+      title: 전기차 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+      op: /parkingLotRtSttus
+      stats:
+        min: 4
+        p50: 4
+        max: 4
+        unique: 1
+    - name: mrgnFemaleCo
+      title: 여성 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /parkingLotRtSttus
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: mrgnPwnmCo
+      title: 임산부 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /parkingLotRtSttus
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: mrgnLghvhclCo
+      title: 경차 여유 주차면수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      op: /parkingLotRtSttus
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5839
+  rank_in_sector: 133
+  brm: 교통물류 - 도로
+  sector_rule: logistics-core-scattered
+  why: 해운대구 한정 주차장 목록
+claims:
+  - id: c-15141850-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15141850.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15141850.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15141850-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141850-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15141850.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 61개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141850-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15141850.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141850-06
+    kind: admin_note
+    value: "세부 부문 '주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)'의 가치: 전국주차장정보표준데이터(주차장관리번호·좌표·요금·면수)가 원장이고, 실시간 주차 가능 대수는 지자체·공단별 비표준 API. 두 층(표준 원장 / 지자체 실시간)을 도시에에서 따로 적어야 한다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#parking
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141850-07
+    kind: admin_note
+    value: '[교통물류 - 물류등기타 · 결정] 물류시설·화물운송·생활물류·주차장만 남김. 통계는 우선 배제 (`logistics-stats`), 나머지 배제 (`logistics-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L478
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141850-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15141850.json
+  stats: probe/stats/15141850.json
+  data: probe/data/15141850/
+status: active
+summary_user: 대구광역시 수성구 관내 주차장을 주차장 한 곳 단위로 담는다. 주차장 종류(공용노상·공용노외·부설), 주소와 좌표, 요일별 운영시간, 기본·추가 요금, 총 면수와 장애인·임산부·경차·전기차용 면수가 포함된다. 운전자가 "수성구에서 가까운 주차장의 요금과 운영시간, 장애인·전기차 전용 면이 있는지"를 확인하거나, 분석가가 구내 주차 공급과 교통약자 면 배치를 살피는 데 쓴다. 실측 컬럼에는 다른 데이터와 맞물리는 전역 조인 키가 없다. 다른 데이터와는 주차장 이름이나 주소·좌표로 매칭하거나 같은 기관 코드로만 연결하며, 원장 성격의 전국주차장정보표준데이터와 대조할 때도 같은 방식으로 맞춘다.
+limits: 범위는 수성구 한 곳이며, 전국 주차장관리번호 같은 공통 키가 없어 다른 지자체·표준데이터와 붙일 때 이름·좌표 매칭이 필요하다. 실시간 주차 가능 대수는 지자체별 비표준 API로 따로 제공되는 층이므로, 이 데이터의 면수를 실시간 빈자리로 해석하면 안 된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15141850-01
+    - c-15141850-03
+    - c-15141850-04
+    - c-15141850-06
+  dropped_citations: 0

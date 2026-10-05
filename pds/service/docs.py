@@ -115,7 +115,7 @@ def _build(stamp: float) -> dict:
     for x in t:
         rounds[x["round"]][x["status"]] += 1
     waves = {}
-    for w in ("wave2", "wave3", "wave4", "wave4r", "wave5"):
+    for w in ("wave2", "wave3", "wave4", "wave4r", "wave5"):  # 6차는 새 검토 없이 기존 판정을 넓힘
         f = config.KNOWLEDGE / "expansion" / w / "queue.parquet"
         if f.exists():
             import pandas as pd

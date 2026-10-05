@@ -1,0 +1,281 @@
+# Dataset 15155771 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155771'
+tier: verified
+title: 부산광역시_자율주행버스 배터리 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155771/openapi.do
+synonyms:
+  - 전기차
+  - 배터리 상태
+  - 차량관리
+  - 자율주행 셔틀 배터리
+  - 전기버스 배터리 잔량
+  - 부산 자율주행차 운행기록
+  - 배터리 온도
+  - 주행가능거리
+  - SOC
+  - 자율주행 대중교통
+description_portal: '이 데이터는 자율주행 차량 운행 중 배터리 상태 및 사용 이력을 기록한 정보입니다. 배터리 온도, 남은 용량, 주행 가능 거리, 노선번호 등 배터리 성능과 관련된 주요 지표를  제공하며, 차량 운행 기록과 연계하여 배터리 관리, 안전 모니터링, 운행 효율 분석에 활용할 수 있습니다.  (참고) logDate형식: 2025091610'
+team:
+  dept: 빅데이터과
+services:
+  - op: /Battery
+    name: 자율주행버스 배터리 정보 조회
+    endpoint: https://apis.data.go.kr/6260000/autonomous_Battery/Battery
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: logDate
+        required: true
+        example: '2025091610'
+        desc: 기록일시
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rnum
+      title: 행번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 450
+        max: 899
+        unique: 899
+    - name: remainCapacity
+      title: 남은 용량(%)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '80'
+        - '81'
+        - '82'
+      stats:
+        min: 76
+        p50: 81
+        max: 87
+        unique: 12
+    - name: vehicleNo
+      title: 차량번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A04
+        - A01
+        - A02
+      stats:
+        unique: 3
+    - name: logDate
+      title: 기록 일시
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250916100840'
+        - '20250916100850'
+        - '20250916100900'
+      stats:
+        min: 20250916100000
+        p50: 20250916102750
+        max: 20250916105950
+        unique: 362
+    - name: drivingDistance
+      title: 주행가능거리(km)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '77'
+        - '88'
+        - '86'
+      stats:
+        min: 30
+        p50: 85
+        max: 111
+        unique: 55
+    - name: batteryTemperature
+      title: 배터리 온도(℃)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: terminalId
+      title: 단말기 ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - AVEH000004
+        - AVEH000001
+        - AVEH000002
+      stats:
+        unique: 3
+    - name: routeNo
+      title: 노선번호
+      type: code
+      null_rate: 0.0423
+      sample_values:
+        - B
+        - A
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5371
+  rank_in_sector: 1838
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 부산 자율주행버스 배터리 상태, 특수 용도
+claims:
+  - id: c-15155771-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15155771.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15155771.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15155771-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155771-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15155771.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155771-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15155771.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155771-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155771-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155771-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15155771.json
+  stats: probe/stats/15155771.json
+  data: probe/data/15155771/
+status: active
+summary_user: 부산광역시 자율주행버스의 운행 중 배터리 상태를 차량·기록 일시별로 담은 건별 기록으로, 남은 용량(%), 주행가능거리(km), 배터리 온도(℃), 노선번호, 단말기 ID를 포함한다. 교통 분석가나 운영 담당자가 "특정 노선 자율주행버스의 배터리 잔량과 온도가 운행 중 어떻게 변하는가"를 확인해 배터리 관리·안전 모니터링에 쓴다. 실측 컬럼에는 전역 조인 키가 없어서, 다른 데이터와는 노선번호(routeNo)나 차량번호를 이름으로 맞추거나 같은 기관 데이터끼리만 연결한다.
+limits: 표준 조인 키가 없어서 국토부·TAGO 노선·정류장 데이터와 바로 결합하지 못하고, 노선번호·차량번호를 수동으로 매핑해야 한다. 개발계정은 하루 1,000회까지 호출할 수 있고, 기록 일시(logDate)는 '2025091610'처럼 연월일시 10자리 형식으로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15155771-01
+    - c-15155771-03
+    - c-15155771-04
+  dropped_citations: 0

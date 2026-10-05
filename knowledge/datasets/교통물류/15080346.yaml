@@ -1,0 +1,597 @@
+# Dataset 15080346 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15080346'
+tier: verified
+title: 경기도_버스도착정보 조회
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15080346/openapi.do
+synonyms:
+  - 정류소
+  - 실시간
+  - 버스노선
+  - 경기 버스 도착 예정 시간
+  - 실시간 버스 위치
+  - 정류장 버스 도착 안내
+  - BIS 버스정보
+  - 버스 빈자리 수
+  - 버스 혼잡도
+  - 저상버스 도착
+description_portal: 경기도 버스의 실시간 운행정보를 수집하여 이용자에게 제공하는 시스템입니다. 해당 정류소(정류소 ID)에 정차하는 버스노선들의 도착정보와 특정 버스노선(노선ID)들의 도착정보 등을 제공합니다
+team:
+  dept: 교통정보과
+services:
+  - op: /getBusArrivalListv2
+    name: 버스도착정보목록조회
+    endpoint: https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalListv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: stationId
+        required: true
+        desc: 정류소아이디
+      - name: format
+        required: true
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBusArrivalItemv2
+    name: 버스도착정보항목조회
+    endpoint: https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalItemv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: stationId
+        required: true
+        example: '200000177'
+        desc: 정류소아이디
+      - name: routeId
+        required: true
+        example: '200000037'
+        desc: 노선아이디
+      - name: staOrder
+        required: true
+        example: '19'
+        desc: 노선의 정류소 순번
+      - name: format
+        required: true
+        example: json
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: crowded1
+      title: ' 첫번째차량 차내혼잡도 (1:여유, 2:보통, 3:혼잡, 4:매우혼잡) 차내혼잡도 제공노선유형 (13:일반형시내버스, 15:따복형시내버스, 23:일반형농어촌버스)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '1'
+        - '2'
+        - '4'
+      stats:
+        min: 1
+        p50: 1
+        max: 4
+        unique: 4
+    - name: crowded2
+      title: ' 두번째차량 차내혼잡도 (1:여유, 2:보통, 3:혼잡, 4:매우혼잡) 차내혼잡도 제공노선유형 (13:일반형시내버스, 15:따복형시내버스, 23:일반형농어촌버스)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '1'
+        - '2'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 2
+        unique: 3
+    - name: flag
+      title: ' 상태구분(RUN:운행중 PASS:운행중 STOP:운행종료 WAIT:회차지대기)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - PASS
+      stats:
+        unique: 1
+    - name: locationNo1
+      title: ' 첫번째차량 위치 정보 (몇번째전 정류소)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '9'
+        - '15'
+        - '2'
+      stats:
+        min: 2
+        p50: 9
+        max: 61
+        unique: 9
+    - name: locationNo2
+      title: ' 두번째차량 위치 정보 (몇번째전 정류소)'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '14'
+        - '9'
+        - '10'
+      stats:
+        min: 7
+        p50: 14
+        max: 111
+        unique: 8
+    - name: lowPlate1
+      title: ' 첫번째차량 특수차량여부 (0: 일반버스, 1: 저상버스, 2: 2층버스, 5: 전세버스, 6: 예약버스, 7: 트롤리)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 1
+        unique: 2
+    - name: lowPlate2
+      title: ' 두번째차량 특수차량여부 (0: 일반버스, 1: 저상버스, 2: 2층버스, 5: 전세버스, 6: 예약버스, 7: 트롤리)'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: plateNo1
+      title: ' 첫번째차량 차량번호'
+      type: code
+      null_rate: 0.1333
+      sample_values:
+        - 경기70바6077
+        - 경기70바3993
+        - 경기70사1711
+      stats:
+        unique: 13
+    - name: plateNo2
+      title: ' 두번째차량 차량번호'
+      type: code
+      null_rate: 0.3333
+      sample_values:
+        - 경기70바6072
+        - 경기70바3994
+        - 경기70사1172
+      stats:
+        unique: 10
+    - name: predictTime1
+      title: ' 첫번째차량 도착예상시간 (몇 분후 도착예정. 분단위)'
+      type: number
+      null_rate: 0.2
+      sample_values:
+        - '12'
+        - '11'
+        - '13'
+      stats:
+        min: 3
+        p50: 12
+        max: 86
+        unique: 9
+    - name: predictTime2
+      title: ' 두번째차량 도착예상시간 (몇 분후 도착예정. 분단위)'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '36'
+        - '21'
+        - '14'
+      stats:
+        min: 10
+        p50: 23
+        max: 153
+        unique: 10
+    - name: remainSeatCnt1
+      title: ' 첫번째 차량 차내빈자리수 (-1:정보없음, 0~:빈자리 수) 차내빈자리수 제공노선유형 (11: 직행좌석형시내버스, 12:좌석형시내버스, 14: 광역급행형시내버스, 16: 경기순환버스, 17: 준공영제직행좌석시내버스'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '0'
+        - '40'
+        - '45'
+      stats:
+        min: 0
+        p50: 0
+        max: 45
+        unique: 5
+    - name: remainSeatCnt2
+      title: ' 두번째 차량 차내빈자리수 (-1:정보없음, 0~:빈자리 수) 차내빈자리수 제공노선유형 (11: 직행좌석형시내버스, 12:좌석형시내버스, 14: 광역급행형시내버스, 16: 경기순환버스, 17: 준공영제직행좌석시내버스'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '0'
+        - '40'
+        - '48'
+      stats:
+        min: 0
+        p50: 0
+        max: 48
+        unique: 5
+    - name: routeDestId
+      title: ' 진행방향 마지막 정류소아이디'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000164'
+        - '121001315'
+        - '121000921'
+      stats:
+        min: 119000004
+        p50: 200000164
+        max: 209000135
+        unique: 8
+    - name: routeDestName
+      title: ' 진행방향 마지막 정류소명 ( 예. '
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이목동차고지
+        - 사당역(중)
+        - 강남역나라빌딩앞
+      stats:
+        unique: 8
+    - name: routeId
+      title: ' 노선아이디'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000283'
+        - '200000284'
+        - '200000337'
+      stats:
+        min: 200000006
+        p50: 200000104
+        max: 233000031
+        unique: 15
+    - name: routeName
+      title: ' 노선명'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3000(예약)
+        - 7770(예약)
+        - '9100'
+      stats:
+        unique: 15
+    - name: routeTypeCd
+      title: ' 노선유형코드 (11: 직행좌석형시내버스, 12:좌석형시내버스, 13:일반형시내버스, 14: 광역급행형시내버스, 15: 따복형시내버스, 16: 경기순환버스, 21: 직행좌석형농어촌버스, 22: 좌석형농어촌버스, 23'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '11'
+      stats:
+        min: 11
+        p50: 13
+        max: 13
+        unique: 2
+    - name: staOrder
+      title: ' 정류소순번 (요청변수 정류소가 노선의 몇번째 정류소인지 나타냄)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+        - '18'
+        - '39'
+      stats:
+        min: 5
+        p50: 39
+        max: 118
+        unique: 12
+    - name: stationId
+      title: ' 정류소아이디 (요청변수 정류소 아이디)'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000078'
+      stats:
+        min: 200000078
+        p50: 200000078
+        max: 200000078
+        unique: 1
+    - name: stationNm1
+      title: ' 첫번째차량 위치 정류소명'
+      type: code
+      null_rate: 0.1333
+      sample_values:
+        - 글로벌청소년드림센터
+        - 화서문로터리
+        - 수원역7번출구.AK플라자
+      stats:
+        unique: 10
+    - name: stationNm2
+      title: ' 두번째차량 위치 정류소명'
+      type: code
+      null_rate: 0.3333
+      sample_values:
+        - 수원은혜교회.한양수자인파크원
+        - 세평지하차도(미정차)
+        - 가족여성회관.이춘택병원.수원
+      stats:
+        unique: 10
+    - name: taglessCd1
+      title: ' 첫번째 차량 태그리스 서비스 제공여부 (0:일반차량, 1:태그리스차량)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: taglessCd2
+      title: ' 두번째 차량 태그리스 서비스 제공여부 (0:일반차량, 1:태그리스차량)'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: turnSeq
+      title: ' 노선의 회차점 순번'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20'
+        - '17'
+        - '29'
+      stats:
+        min: 17
+        p50: 44
+        max: 87
+        unique: 15
+    - name: vehId1
+      title: ' 첫번째 차량 차량아이디'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '200011694'
+        - '200000102'
+        - '200011547'
+      stats:
+        min: 200000102
+        p50: 200011503
+        max: 200011773
+        unique: 13
+    - name: vehId2
+      title: ' 두번째 차량 차량아이디'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '200011689'
+        - '200000103'
+        - '233000062'
+      stats:
+        min: 200000103
+        p50: 200011569
+        max: 233000062
+        unique: 10
+    - name: predictTimeSec1
+      title: ' 첫번째차량 도착예상시간 (몇 초후 도착예정. 초단위)'
+      type: number
+      null_rate: 0.2
+      sample_values:
+        - '755.0'
+        - '696.0'
+        - '809.0'
+      stats:
+        min: 233
+        p50: 759.5
+        max: 5203
+        unique: 11
+    - name: predictTimeSec2
+      title: ' 두번째차량 도착예상시간 (몇 초후 도착예정. 초단위)'
+      type: number
+      null_rate: 0.3333
+      sample_values:
+        - '2182.0'
+        - '1280.0'
+        - '1163.0'
+      stats:
+        min: 611
+        p50: 1415
+        max: 9207
+        unique: 10
+    - name: stateCd1
+      title: ' 첫번째차량 상태코드 (0:교차로통과, 1:정류소 도착, 2:정류소 출발)'
+      type: number
+      null_rate: 0.1333
+      sample_values:
+        - '0.0'
+        - '1.0'
+        - '2.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 3
+    - name: stateCd2
+      title: ' 두번째차량 상태코드 (0:교차로통과, 1:정류소 도착, 2:정류소 출발)'
+      type: number
+      null_rate: 0.2667
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '1.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 2
+        unique: 3
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8134
+  rank_in_sector: 46
+  brm: 교통물류 - 도로
+  why: 경기도 도착정보 API, 지역판이며 키 정보 부족
+claims:
+  - id: c-15080346-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15080346.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15080346.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15080346-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080346-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15080346.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 31개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080346-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15080346.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080346-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15080346-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15080346-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15080346-10
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /getBusArrivalItemv2'
+    evidence:
+      - type: measured
+        source: probe/runs/15080346.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15080346.json
+  stats: probe/stats/15080346.json
+  data: probe/data/15080346/
+status: active
+summary_user: 경기도 버스의 실시간 도착정보를 정류소(정류소ID) 또는 노선(노선ID) 기준으로 조회하는 API로, 곧 도착할 버스 두 대의 도착예상시간(분·초), 몇 번째 전 정류소인지, 차량번호, 저상·2층버스 여부, 빈자리 수, 차내혼잡도를 담는다. 버스 이용자나 교통 앱 개발자가 '이 정류장에 내 버스가 몇 분 뒤에 오고 빈자리가 있는가'를 확인하는 데 쓴다. 응답에 정류소아이디(stationId)·노선아이디(routeId)가 있지만 실측상 전역 조인 키는 확인되지 않아, 경기도 정류소·노선 정보와는 같은 기관 ID나 정류소명·노선명 매핑으로 이어 쓴다.
+limits: 오퍼레이션 2개 중 버스도착정보 항목 조회(getBusArrivalItemv2)는 최소 파라미터 호출에서 응답이 없었으므로 정류소·노선 ID 등 요청변수를 갖춰 호출해야 한다. 개발계정은 하루 1,000회로 제한되며, 다른 기관 데이터와 공통으로 쓸 전역 코드가 없어 경기도 밖 정류소와 바로 연결되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15080346-01
+    - c-15080346-03
+    - c-15080346-04
+    - c-15080346-10
+  dropped_citations: 0

@@ -1,0 +1,179 @@
+# Dataset 15059038 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059038'
+tier: verified
+title: 과학기술정보통신부 우정사업본부_영문우편번호조회서비스
+sector: 과학기술/우정/postal-delivery
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059038/openapi.do
+synonyms:
+  - 경제/경영
+  - 마케팅
+  - 물류/유통관리
+  - 영문주소 변환
+  - 영문 주소 조회
+  - English address
+  - 영문 우편번호
+  - 시도 영문명
+  - 해외배송 주소 영문
+description_portal: '도로명주소/지번주소 및 우편번호를 영문으로 조회하는 OPEN API 서비스 입니다. ㅇ 출력하는 항목(사용자가 응답 받게 되는 데이터) : 영문주소조회  광역시/도 목록(광역시/도 영문명)'
+team:
+  dept: 우정사업정보센터 인터넷우체국팀
+services:
+  - op: /getStateList
+    endpoint: http://openapi.epost.go.kr/postal/retrieveEngAddressService/retrieveEngAddressService/getStateList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: stateEngName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Busan
+        - Chungcheongbuk-do
+        - Chungcheongnam-do
+      stats:
+        unique: 16
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 우편번호·배달
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7612
+  rank_in_sector: 8
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-postal-to-postal
+  why: 영문 주소 조회 API, 도로명주소 영문판
+claims:
+  - id: c-15059038-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15059038.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15059038.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15059038-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059038-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059038.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059038-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15059038.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059038-06
+    kind: admin_note
+    value: "세부 부문 '우편번호·배달'의 가치: 우편번호(기초구역) 단위 택배·배달 물량, 소포 종적 — 지역 소비·물류 신호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#postal-delivery
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059038-07
+    kind: admin_note
+    value: '[과학기술 - 우정 · 결정] 우편번호·배달·주소만 남기고 나머지 전부 제외 (`postal-non-address`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L435
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059038-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15059038.json
+  stats: probe/stats/15059038.json
+  data: probe/data/15059038/
+status: active
+summary_user: 도로명·지번 주소와 우편번호를 영문으로 조회하는 API로, 실제 호출에서 확인된 응답은 전국 광역시/도의 영문명 목록(stateEngName)입니다. 해외 배송 서류나 영문 주소 입력 양식을 만드는 사업자·개발자가 국내 시·도 이름을 영문으로 어떻게 적어야 하는지 확인할 때 씁니다. 실측 컬럼에는 전역 조인 키가 없어, 다른 주소·우편번호 데이터와는 시·도 이름 매핑으로만 이어 쓸 수 있습니다.
+limits: 실호출에서 성공한 오퍼레이션은 1개(광역시/도 영문명 목록)뿐이라 개별 주소의 영문 변환이나 우편번호 조회 결과는 확인되지 않았습니다. 조인 키가 없어 다른 데이터와는 이름 매칭으로 연결해야 하며, 개발계정은 하루 10,000회 호출로 제한됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15059038-01
+    - c-15059038-03
+    - c-15059038-04
+  dropped_citations: 0

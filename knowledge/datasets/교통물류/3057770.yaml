@@ -1,0 +1,187 @@
+# Dataset 3057770 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '3057770'
+tier: verified
+title: 울산광역시 교통정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6310000'
+  name: 울산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3057770/openapi.do
+synonyms:
+  - 교통정보
+  - 교통HUB
+  - 교통
+  - 울산 실시간 교통
+  - 울산 도로 소통정보
+  - 울산 교통 정체
+  - 구간 통행속도
+  - 울산 ITS
+  - 도로 혼잡도
+description_portal: 울산 지역내 도로 구간별 실시간 교통정보 자료 제공
+team:
+  dept: 교통정책과
+services:
+  - op: /Gugan4Volume.xo
+    endpoint: http://openapi.its.ulsan.kr/UlsanAPI/Gugan4Volume.xo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: resultMsg
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SERVICE KEY IS NOT REGISTERED ERROR.
+      stats:
+        unique: 1
+    - name: resultCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '30'
+      stats:
+        min: 30
+        p50: 30
+        max: 30
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7812
+  rank_in_sector: 99
+  brm: 교통물류 - 도로
+  why: 울산 한정 구간 교통정보, 혼합 항목 지역판
+claims:
+  - id: c-3057770-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/3057770.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/3057770.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-3057770-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3057770-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3057770.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3057770-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/3057770.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-3057770-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3057770-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3057770-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/3057770.json
+  stats: probe/stats/3057770.json
+  data: probe/data/3057770/
+status: active
+summary_user: 울산광역시 도로 구간(링크)별 실시간 교통 소통 정보를 API로 담으며, 범위는 울산 시 단위이고 위치는 읍면동 수준까지 나타낸다. 울산 시민이나 물류 사업자가 지금 어느 도로 구간이 막히는지 확인하거나, 분석가가 호출 결과를 날마다 쌓아 상습 정체 구간을 찾는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 도로·구간 이름을 맞추거나 같은 기관(울산시) 코드로만 이어 쓴다.
+limits: 실시간 조회용이라 과거 이력은 직접 호출해 쌓아 두어야 정체 추이를 분석할 수 있다. 공통 조인 키가 없어 전국 표준 링크 체계나 다른 시도 데이터와 바로 붙이기 어렵다. 개발계정은 하루 1,000회까지만 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-3057770-01
+    - c-3057770-03
+    - c-3057770-04
+    - c-3057770-06
+  dropped_citations: 0

@@ -1,0 +1,681 @@
+# Dataset 15106693 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15106693'
+tier: verified
+title: 전남광주통합특별시 순천시_교통정보 조회서비스
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '5790000'
+  name: 전남광주통합특별시 순천시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15106693/openapi.do
+synonyms:
+  - 순천시
+  - ITS
+  - 교통정보
+  - 주차장정보
+  - 스마트교차로
+  - 전라남도
+  - 도로소통정보
+  - 교통정보센터
+  - 순천 교통량
+  - 순천 도로 소통
+  - 스마트교차로 통계
+  - 순천 주차장 정보
+  - 구간 통행속도
+  - 실시간 교통 정보
+  - 교차로 회전 교통량
+description_portal: 순천시 교통정보센터에서 현장장비를 통해 수집 및 가공한 도로별 소통 정보, 순천시 관내 주차장 주차장 운영 정보, 스마트교차로 수집 정보 등을 API를 통해 제공합니다.1. 스마트 교차로 교통 통계 조회교차로에 설치된 CCTV를 통해 수집된 교통 통계 정보를 조회하기 위해 인증키와 페이지번호, 한페이지의 결과 수, 데이터 수집 시간을 이용하여 교차로ID, 카메라ID, 수집일시, 데이터 수집 위치(교차로명(방향)), 방향별(직,좌,우회전) 교통량, 방향별(직,좌,우회전) 평균속도, 차량별(소,중,대) 교통 통계를 1시간 단위로 조회하는 스마트 교차로 교통 통계 조회 기능.2. 주차장 운영정보 조회인증키와 페이지번호, 한페이지의 결과 수를 이용하여 주차장의 주차장 관리번호, 주차장 명칭, 주차장구분, 유형, 주소, 주차구획수, 부제시행구분, 운영요일, 평일시작,종료시간, 공휴일시작,종료시간, 요금정보, 요금정보 상세설명, 관리기관명, 전화번호, 주차장 위도,경도, 주차장 등록일자를 조회하는 주차장 운영정보 조회 서비스3. 도로 소통정보 조회인증키와 페이지 결과수, 페이지 번호를 이용하여 실시간으로 도로명, 도로의 시점명, 도로의 종점명, 시점명부터 종점명까지의 구간을 통과하는 차량들의 평균속도, 차량들의 평균 통행시간(초)을 조회하는 도로 소통정보 조회 서비스.
+team:
+  dept: 디지털정책과
+services:
+  - op: /SmartCrossInfoPage
+    name: 스마트교차로 교통 통계 조회
+    endpoint: https://apis.data.go.kr/4820000/SCOpenApi/SmartCrossInfoPage
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: clctDT
+        required: false
+        desc: 데이터 수집 시간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /ParkingOperInfoPage
+    name: 주차장 운영정보 조회
+    endpoint: https://apis.data.go.kr/4820000/SCOpenApi/ParkingOperInfoPage
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /TrafficInfoPage
+    name: 도로 소통정보 조회
+    endpoint: https://apis.data.go.kr/4820000/SCOpenApi/TrafficInfoPage
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ixrId
+      title: 교차로 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3260048000'
+        - '3260008200'
+        - '3260013100'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 3260004400
+        p50: 3260042300
+        max: 3269900001
+        unique: 41
+    - name: cmraId
+      title: 카메라 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '78'
+        - '76'
+        - '79'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 1
+        p50: 77
+        max: 154
+        unique: 153
+    - name: clctDt
+      title: 수집 일시(yyyyMMddhhmmss)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261004100000'
+        - '20261004110000'
+        - '20261004090000'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 20261004050000
+        p50: 20261004080000
+        max: 20261004110000
+        unique: 7
+    - name: istlLctn
+      title: 설치위치
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - NC백화점사거리(남)
+        - NC백화점사거리(동)
+        - NC백화점사거리(북)
+      op: /SmartCrossInfoPage
+      stats:
+        unique: 153
+    - name: thTfvl
+      title: 직진 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '33'
+        - '4'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 139.5
+        max: 1307
+        unique: 472
+    - name: ltTfvl
+      title: 좌회전 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5'
+        - '3'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 45
+        max: 482
+        unique: 232
+    - name: rtTfvl
+      title: 우회전 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 36
+        max: 473
+        unique: 220
+    - name: thSped
+      title: 직진 차량 평균 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '39'
+        - '40'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 28
+        max: 61
+        unique: 61
+    - name: ltSped
+      title: 좌회전 차량 평균 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 0
+        max: 48
+        unique: 44
+    - name: rtSped
+      title: 우회전 차량 평균 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 0
+        max: 48
+        unique: 39
+    - name: hvvhTfvl
+      title: 대형교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '7'
+        - '4'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 30
+        max: 142
+        unique: 107
+    - name: mdvhTfvl
+      title: 중형교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: smltTfvl
+      title: 소형교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '102'
+        - '208'
+        - '183'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 1
+        p50: 248.5
+        max: 1453
+        unique: 575
+    - name: lat
+      title: X좌표
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '34.972089'
+        - '34.95803'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 34.954865
+        max: 34.992615
+        unique: 146
+    - name: lng
+      title: Y좌표
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '127.483549'
+        - '127.522011'
+      op: /SmartCrossInfoPage
+      stats:
+        min: 0
+        p50: 127.51389
+        max: 127.551966
+        unique: 146
+    - name: statNo
+      title: 관리번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 1
+        p50: 19
+        max: 37
+        unique: 35
+    - name: stationName
+      title: 시설명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 왕지 제1공영주차장
+        - 왕지 제2공영주차장
+        - 수매골 공영주차장
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 35
+    - name: parkingType
+      title: 주차장유형(노상, 노외, 부설)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 노외
+        - 노상
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 2
+    - name: addr
+      title: 주차장 주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 순천시 연향동 1423
+        - 순천시 연향동 1427
+        - 순천시 왕지동 852-1
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 29
+    - name: parkingSize
+      title: 주차구획수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '21'
+        - '25'
+        - '10'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 8
+        p50: 27
+        max: 136
+        unique: 30
+    - name: wdayStart
+      title: 평일시작시간(시분초)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '080000'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 80000
+        p50: 80000
+        max: 80000
+        unique: 1
+    - name: wdayEnd
+      title: 평일종료시간(시분초)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 200000
+        p50: 200000
+        max: 200000
+        unique: 1
+    - name: payInfo
+      title: 요금정보 (유료,무료,혼합)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 유료
+        - 무료
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 2
+    - name: payInfoDetail
+      title: 요금정보 상세설명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 30분당 500원
+        - 무료
+        - 1시간 무료 후 30분당 500원
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 4
+    - name: manNm
+      title: 관리기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한맥아이피에스
+        - 다래파크텍
+        - 한양공영
+      op: /ParkingOperInfoPage
+      stats:
+        unique: 4
+    - name: lat
+      title: X좌표
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34.97005'
+        - '34.97'
+        - '34.95638'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 34.933917
+        p50: 34.95248744
+        max: 34.97005
+        unique: 35
+    - name: lng
+      title: Y좌표
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.5238922'
+        - '127.5250082'
+        - '127.5331'
+      op: /ParkingOperInfoPage
+      stats:
+        min: 127.4807305
+        p50: 127.51840295
+        max: 127.5331
+        unique: 35
+    - name: DATE
+      title: 데이터 제공일시 년-월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202610041342'
+      op: /TrafficInfoPage
+      stats:
+        min: 202610041342
+        p50: 202610041342
+        max: 202610041342
+        unique: 1
+    - name: ROAD_NM
+      title: 도로의 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 순천완주고속도로
+        - 남해고속도로
+        - 순천로
+      op: /TrafficInfoPage
+      stats:
+        unique: 54
+    - name: STRT_ROAD_NM
+      title: 도로의 구간 시작 지점 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 순천JC
+        - 순천만IC
+        - 팔마사거리
+      op: /TrafficInfoPage
+      stats:
+        unique: 183
+    - name: END_ROAD_NM
+      title: 도로의 구간 종료 지점 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 순천JC
+        - 순천만IC
+        - 팔마사거리
+      op: /TrafficInfoPage
+      stats:
+        unique: 183
+    - name: AVRG_SPED
+      title: 구간을 지나간 차량들의 평균 통행속도(km/h)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '101'
+        - '98'
+        - '43'
+      op: /TrafficInfoPage
+      stats:
+        min: 8
+        p50: 52
+        max: 105
+        unique: 91
+    - name: AVRG_PASS_TIME
+      title: 구간을 지나간 차량들의 평균 통행시간(초)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '75'
+        - '36'
+        - '64'
+      op: /TrafficInfoPage
+      stats:
+        min: 21
+        p50: 111.5
+        max: 554
+        unique: 216
+    - name: DATA_DATE
+      title: 데이터 제공일시 년월일시분초
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261004134000'
+      op: /TrafficInfoPage
+      stats:
+        min: 20261004134000
+        p50: 20261004134000
+        max: 20261004134000
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6228
+  rank_in_sector: 892
+  brm: 교통물류 - 도로
+  why: 강릉 ITS 혼합 서비스, 지역 한정
+claims:
+  - id: c-15106693-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 3/3
+    evidence:
+      - type: measured
+        source: probe/runs/15106693.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 3/3
+      - type: measured
+        source: probe/apply/15106693.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15106693-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15106693-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15106693.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 34개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15106693-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15106693.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15106693-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15106693-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15106693-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 3/3
+  run: probe/runs/15106693.json
+  stats: probe/stats/15106693.json
+  data: probe/data/15106693/
+status: active
+summary_user: 순천시 교통정보센터가 현장장비로 수집한 정보를 세 가지 오퍼레이션으로 제공하며, 스마트교차로 카메라별 1시간 단위 방향별(직진·좌회전·우회전) 교통량·평균속도와 차종별 교통량, 관내 주차장의 유형·구획수·운영시간·요금·좌표, 도로 구간(시점~종점)별 실시간 평균 속도와 통행시간을 담는다. 순천 시내에서 지금 어느 도로 구간이 막히는지, 특정 교차로에서 좌회전 차량이 시간대별로 얼마나 몰리는지, 목적지 근처 무료 주차장이 어디인지 알고 싶은 시민·교통 분석가가 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 주차장·교차로는 위경도 좌표로, 도로 구간은 도로명·시종점 명칭 매핑으로만 다른 교통·지도 데이터와 연결한다.
+limits: 도로 소통정보는 실시간 현재값이므로 상습 정체 분석에 쓰려면 직접 호출해 이력을 쌓아야 한다. 범위는 순천시 관내뿐이고 표준 링크 ID 같은 공통 키가 없어 국가 교통망 데이터와 바로 붙지 않는다. 개발계정은 하루 1,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15106693-01
+    - c-15106693-03
+    - c-15106693-04
+    - c-15106693-06
+  dropped_citations: 0

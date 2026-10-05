@@ -1,0 +1,241 @@
+# Dataset 15095264 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15095264'
+tier: verified
+title: 부산광역시_자동심장충격기현황정보서비스
+sector: 보건의료/보건의료/emergency-medical
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095264/openapi.do
+synonyms:
+  - 자동
+  - 심장충격기
+  - 자동심장충격기
+  - 긴급상황
+  - '119'
+  - AED
+  - 자동제세동기
+  - 심장충격기 위치
+  - 제세동기 설치장소
+  - 심정지 응급장비
+  - 부산 AED 위치
+description_portal: 부산광역시 부산 자동심장충격기현황 정보(모델명, 설치기관, 주소, 전화번호, 좌표 등)를 제공하는 서비스입니다. 자동심장충격기는 심정지 환자에게 전기 충격을 가해 심장의 정상적인 리듬을 회복시켜주는 응급 의료 장비이며 누구나 쉽게 사용할 수 있도록 설계되어 있고, 공공장소나 다중이용시설에 비치되어 있습니다. 위 데이터를 통해 자동심장충격기 설치 현황에 대해 알 수 있고, 기기가 비교적 부족한 지역을 파악하여 다양한 의료 정책을 수립하는데 도움을 줄 수 있습니다. 긴급 상황 시에 자동심장충격기의 위치를 신속히 파악할 수 있는 데에도 도움을 줄 수 있습니다.
+team:
+  dept: 빅데이터과
+services:
+  - op: /getAedsList
+    name: 부산 자동심장충격기현황정보
+    endpoint: https://apis.data.go.kr/6260000/BusanAedsService/getAedsList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: resultType
+        required: false
+        example: json
+        desc: JSON방식으로 호출 시 파라미터 resultType=json 입력
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: model_nm
+      title: 모델명
+      type: string
+      null_rate: 0.008
+      sample_values:
+        - NT-381.C
+        - HR-501
+        - HR-501-B
+      stats:
+        unique: 279
+    - name: addrs
+      title: 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 서구 아미동1가 부산대학병원 현장진료소
+        - 부산광역시 동구 구청로 1, 동구보건소 (수정동) 4층 보건행정과(무료대여용)
+        - 부산광역시 동래구 명륜로187번길 56, 동래구보건소 (명륜동) 3층 의약계 보관
+      stats:
+        unique: 991
+    - name: product_nm
+      title: 설치기관
+      type: string
+      null_rate: 0.01
+      sample_values:
+        - (주)나눔테크
+        - 나눔테크
+        - (주)라디안
+      stats:
+        unique: 133
+    - name: biz_tel
+      title: 전화번호
+      type: string
+      null_rate: 0.021
+      sample_values:
+        - 051-440-2288
+        - '512407776'
+        - 051-974-3537
+      stats:
+        unique: 772
+    - name: geom
+      title: 좌표
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - POINT(129.0450624 35.11760617)
+        - POINT(128.9457991 35.1728758)
+        - POINT(129.0192221 35.10105418)
+      stats:
+        unique: 852
+facets:
+  grade:
+    - 가족판
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7356
+  rank_in_sector: 90
+  brm: 공공행정 - 일반행정
+  sector_rule: general-admin-to-emergency
+  why: 경남 AED 4800여 건, 좌표 포함 광역 목록
+claims:
+  - id: c-15095264-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095264.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15095264.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15095264-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095264-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095264.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095264-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15095264.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095264-06
+    kind: admin_note
+    value: "세부 부문 '응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)'의 가치: 즉시성 수요의 정점, hpid·좌표. E-Gen 실시간은 트래픽 제한 가능"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#emergency-medical
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095264-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095264-08
+    kind: admin_note
+    value: wave6 · 등급:가족판 · wave2 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15095264.json
+  stats: probe/stats/15095264.json
+  data: probe/data/15095264/
+status: active
+summary_user: 부산광역시에 설치된 자동심장충격기(AED)를 한 대씩 설치기관·모델명·주소·전화번호·좌표로 담은 개별 위치 데이터이며, 범위는 부산 시 전역입니다. 시민이 '지금 내 주변에서 가장 가까운 자동심장충격기가 어디 있나'를 찾거나, 분석가가 기기가 부족한 동네를 가려낼 때 씁니다. 전역 조인 키가 없어서 다른 데이터와는 주소 문자열이나 좌표(geom)를 기준으로 공간 매칭해 붙입니다. 예를 들어 응급의료기관 위치나 인구 분포와 겹쳐 봅니다.
+limits: 기관 코드 같은 공통 식별자가 없어 다른 데이터와 정확히 1:1로 조인되지 않습니다. 그래서 이름·주소 매핑이나 좌표 근접으로만 연결합니다. 호출에는 serviceKey가 필요하고, 개발계정은 하루 10,000회로 제한됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15095264-01
+    - c-15095264-03
+    - c-15095264-04
+    - c-15095264-06
+  dropped_citations: 0

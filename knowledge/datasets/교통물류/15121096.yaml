@@ -1,0 +1,249 @@
+# Dataset 15121096 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15121096'
+tier: verified
+title: 부산광역시_스마트교차별 서비스수준 정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121096/openapi.do
+synonyms:
+  - 교통
+  - 스마트교차로
+  - 서비스수준
+  - 지체시간
+  - ITS
+  - 부산 교차로 서비스수준
+  - 교차로 LOS
+  - 교차로 지체시간
+  - 교차로 교통량
+  - 부산 교통혼잡
+  - 신호교차로 정체
+description_portal: '본 데이터는 부산광역시에서 제공하는 스마트교차로 단위의 교통 서비스 수준(LOS, Level of Service) 정보입니다.제공되는 주요 항목은 수집일시, 교차로명, 서비스수준, 지체시간, 교통량 등이며, 교차로 운영 상태와 혼잡 정도를 종합적으로 나타냅니다.이 데이터는 교차로 지체 수준 분석, 혼잡 구간 파악, 신호운영 최적화 등에 활용할 수 있습니다.<제공방식>형식: Open API응답 포맷: JSON (필요 시 XML 지원 가능)인코딩: UTF-8<활용안내>교차로 단위의 교통혼잡 수준 파악 및 지체 분석신호 운영 효율성 평가 및 신호 최적화 정책 수립서비스수준(LOS) 기반 교차로 성능 진단교통 빅데이터를 활용한 도시 교통운영 연구 및 정책 지원민간 교통 서비스와 연계한 실시간 교통안내 고도화'
+team:
+  dept: 교통정보서비스센터
+services:
+  - op: /SRVCLV
+    name: 스마트교차별 서비스수준 정보
+    endpoint: https://apis.data.go.kr/6260000/BusanITSSINTSRVC/SRVCLV
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: yyyyMMdd
+        required: true
+        example: '20230828'
+        desc: 조회 기준 일자
+      - name: hour
+        required: true
+        example: '17'
+        desc: 조회 기준 시간
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 500
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: clctDt
+      title: 수집일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2023-08-28T17:00:00'
+      stats:
+        min: '2023-08-28'
+        max: '2023-08-28'
+        unique: 1
+    - name: ixrNm
+      title: 교차로명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 송정삼거리
+        - 송정1호교
+        - 올랜드아울렛
+      stats:
+        unique: 181
+    - name: srvcLvl
+      title: 서비스수준
+      type: number
+      null_rate: 0.4365
+      sample_values:
+        - '1.0'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: delyHh
+      title: 지체시간
+      type: number
+      null_rate: 0.4365
+      sample_values:
+        - '0.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: tfvl
+      title: 교통량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4207'
+        - '4069'
+      stats:
+        min: 0
+        p50: 3330
+        max: 6984
+        unique: 156
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5177
+  rank_in_sector: 2103
+  brm: 교통물류 - 도로
+  why: 교차로 단위 서비스수준 관측, 부산 한정
+claims:
+  - id: c-15121096-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 500회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121096.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121096.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '500'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15121096-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15121096-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121096.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15121096-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121096.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15121096-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121096-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121096-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121096.json
+  stats: probe/stats/15121096.json
+  data: probe/data/15121096/
+status: active
+summary_user: 부산광역시 스마트교차로별로 수집일시, 교차로명, 서비스수준(LOS), 지체시간, 교통량을 담는 실시간 소통 API다. 교통 분석가나 신호운영 담당자가 "지금 부산에서 지체가 심한 교차로는 어디이고, 반복해서 막히는 시간대는 언제인가"를 확인하는 데 쓰며, 결과를 계속 쌓아 두면 상습 정체를 분석하는 이력 자료가 된다. 전역 조인 키가 없어 다른 교통 데이터와는 교차로명(ixrNm) 같은 이름 매핑이나 부산시 자체 코드로만 연결한다.
+limits: 공통 조인 키나 좌표가 확인되지 않아 지도 위치나 다른 링크·도로 데이터와 바로 붙일 수 없고, 교차로명 기준으로 직접 대응시켜야 한다. 실시간 조회값이라 과거 추세를 보려면 이력을 따로 쌓아야 하며, 개발계정은 하루 500회까지만 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15121096-01
+    - c-15121096-03
+    - c-15121096-04
+    - c-15121096-06
+  dropped_citations: 0

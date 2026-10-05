@@ -1,0 +1,261 @@
+# Dataset 15126389 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15126389'
+tier: verified
+title: 경기도 양주시_대기정보
+sector: 환경기상/대기/air-quality
+agency:
+  id: '5590000'
+  name: 경기도 양주시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15126389/openapi.do
+synonyms:
+  - 대기환경정보
+  - 날씨예보
+  - 미세먼지
+  - 양주 미세먼지
+  - 양주시 초미세먼지
+  - PM2.5 농도
+  - PM10 농도
+  - 대기질 실시간
+  - 미세먼지 등급
+  - 측정소별 대기오염
+description_portal: 양주시 대기 정보를 요청한 데이터 간격으로 초미세먼지(PM2.5) 농도, 미세먼지(PM10) 농도, 초미세먼지(PM2.5) 1시간 등급, 미세먼지(PM10) 1시간 등급을 측정소와 발표시간으로 데이터를 제공
+team:
+  dept: 스마트정보담당관
+services:
+  - op: /getAirQualityList
+    name: 대기 정보 운영결과 DB
+    endpoint: https://apis.data.go.kr/5590000/AirQualityService/getAirQualityList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: searchDate
+        required: true
+        example: '20231030'
+        desc: 검색 날짜
+      - name: dataType
+        required: false
+        example: JSON
+        desc: 요청자료형식(XML, JSON)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pm25Grade1h
+      title: PM2.5 상태 문구
+      type: code
+      null_rate: 0.004
+      sample_values:
+        - 좋음
+        - 보통
+        - 나쁨
+      stats:
+        unique: 4
+    - name: pm10Grade1h
+      title: PM10 상태 문구
+      type: code
+      null_rate: 0.004
+      sample_values:
+        - 보통
+        - 좋음
+        - 나쁨
+      stats:
+        unique: 4
+    - name: pm10Value
+      title: PM10 값
+      type: number
+      null_rate: 0.004
+      sample_values:
+        - '26'
+        - '0'
+        - '44'
+      stats:
+        min: 0
+        p50: 35
+        max: 196
+        unique: 106
+    - name: dataTime
+      title: 데이터 일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2023-10-30 00
+        - 2023-10-30 01
+        - 2023-10-30 10
+      stats:
+        min: '2023-10-30'
+        max: '2023-10-30'
+        unique: 24
+    - name: stationName
+      title: 측정소 명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 65사단입구(지평슈퍼 앞)
+        - L마트 근처
+        - 가납 제4어린이공원
+      stats:
+        unique: 42
+    - name: pm25Value
+      title: PM2.5 값
+      type: number
+      null_rate: 0.004
+      sample_values:
+        - '9'
+        - '10'
+        - '0'
+      stats:
+        min: 0
+        p50: 14
+        max: 80
+        unique: 51
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5876
+  rank_in_sector: 379
+  brm: 환경기상 - 대기
+  why: 양주시 한 곳 측정값, 에어코리아로 대체 가능
+claims:
+  - id: c-15126389-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15126389.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15126389.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15126389-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15126389-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126389.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15126389-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126389.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15126389-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126389-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126389-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15126389.json
+  stats: probe/stats/15126389.json
+  data: probe/data/15126389/
+status: active
+summary_user: 경기도 양주시 측정소별로 발표시간마다 미세먼지(PM10)·초미세먼지(PM2.5) 농도와 1시간 등급 상태 문구를 담은 대기질 API로, 범위는 양주시 한 시군구다. 양주시 주민이나 생활 서비스 개발자가 '지금 우리 동네 측정소의 미세먼지 등급이 나쁨인가'를 확인하는 데 쓴다. 전역 조인 키가 없어 측정소명(stationName)과 데이터 일시(dataTime)를 기준으로 에어코리아 측정소 정보 같은 다른 대기질 데이터와 이름 매칭으로 이어 쓴다.
+limits: 측정소코드 같은 공통 조인 키가 없어 다른 데이터와는 측정소명 매핑으로만 연결된다. 양주시 범위만 담아 다른 지역과의 비교에는 별도 데이터가 필요하다. 개발계정은 하루 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15126389-01
+    - c-15126389-03
+    - c-15126389-04
+    - c-15126389-06
+  dropped_citations: 0

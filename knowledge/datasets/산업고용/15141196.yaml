@@ -1,0 +1,258 @@
+# Dataset 15141196 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15141196'
+tier: verified
+title: 한국전력거래소_자발적DR 입낙찰 현황
+sector: 산업고용/에너지및자원개발/power-market-realtime
+agency:
+  id: B552115
+  name: 한국전력거래소
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15141196/openapi.do
+synonyms:
+  - 자발적DR
+  - 입찰량
+  - 낙찰량
+  - 현황
+  - 수요반응자원
+  - 수요반응
+  - DR 입찰량
+  - DR 낙찰량
+  - 수요자원시장
+  - 경제성DR
+  - 피크수요DR
+  - 미세먼지DR
+  - 수요감축
+description_portal: 'ㅁ 수요자원시장이란전기 사용자가 전기시장가격이 높을 때 또는 전력계통 위기시 아낀 전기를 전력시장에 판매하고 금전으로 보상받는 제도입니다. 수요반응자원 참여고객은 비상대응 의무감축과 자발적 수요감축을 통하여 수요자원시장에 참여 가능합니다.ㅁ 자발적 수요감축 (자발적 DR 이란)전력거래소의 수요감축요청 없이 참여고객이 자발적으로 경제성DR, 피크수요DR, 미세먼지DR에 참여하여 수요를 감축합니다.해당 데이터는 한국전력거래소 수요자원거래시스템 자발적 DR 입낙찰량 현황과 동일한 데이터이며,경제성DR, 피크수요DR, 미세먼지DR의 데이터를 모두 포함한 데이터입니다.ㅇ 링크 : https://dr.kmos.kr/nx/nxIndex.doㅇ 갱신주기 : 1일 1회 (02시 10분)'
+team:
+  dept: 전사AX총괄팀
+services:
+  - op: /getBidTradeSraSsr
+    name: 자발적DR 입낙찰 현황 조회
+    endpoint: https://apis.data.go.kr/B552115/BidTradeSraSsr/getBidTradeSraSsr
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: dataType
+        required: true
+        example: xml
+        desc: 응답메시지 형식(xml/json)
+      - name: tradeDay
+        required: false
+        example: '20250120'
+        desc: 거래일자(YYYYMMDD)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sra
+      title: 입찰량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '19.0'
+        - '18.0'
+      stats:
+        min: 1
+        p50: 58
+        max: 332.8
+        unique: 18
+    - name: ssr
+      title: 낙찰량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '22.0'
+        - '25.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 26
+        unique: 5
+    - name: rn
+      title: rn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 12.5
+        max: 24
+        unique: 24
+    - name: tradeDay
+      title: 거래일자(YYYYMMDD)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250120'
+      stats:
+        min: 20250120
+        p50: 20250120
+        max: 20250120
+        unique: 1
+    - name: tradeTm
+      title: 거래시간(24h)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9'
+        - '8'
+        - '7'
+      stats:
+        min: 1
+        p50: 12.5
+        max: 24
+        unique: 24
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6642
+  rank_in_sector: 139
+  brm: 산업고용 - 에너지및자원개발
+  why: 자발적DR 입낙찰 집계, 보조 자료
+claims:
+  - id: c-15141196-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15141196.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15141196.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15141196-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141196-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15141196.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141196-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15141196.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15141196-06
+    kind: admin_note
+    value: "세부 부문 '전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)'의 가치: 전력거래소 실시간·일별 — 모델이 모르는 오늘의 수급"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-market-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15141196-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15141196-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15141196.json
+  stats: probe/stats/15141196.json
+  data: probe/data/15141196/
+status: active
+summary_user: 한국전력거래소 수요자원거래시스템의 자발적 수요감축(경제성DR·피크수요DR·미세먼지DR) 입찰량과 낙찰량을 거래일자·거래시간별로 담는 전국 단위 비공간 데이터다. 수요자원 사업자나 에너지 분석가가 특정 날짜·시간대에 자발적 DR이 얼마나 입찰되고 낙찰됐는지 확인하는 데 쓴다. 전역 조인 키는 없으며, 거래일자(tradeDay)·거래시간(tradeTm)을 기준으로 같은 기관의 SMP·전력수급 등 시간별 데이터와 맞춰 쓴다.
+limits: 지역·사업자별 구분 없이 전국 단위만 제공해 지역 분석에는 쓸 수 없다. 개발계정은 하루 100회 호출로 제한되며, 다른 데이터와는 공통 코드 키가 없어 날짜·시간 매칭으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15141196-01
+    - c-15141196-03
+    - c-15141196-04
+  dropped_citations: 0

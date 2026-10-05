@@ -1,0 +1,192 @@
+# Dataset 15107453 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107453'
+tier: verified
+title: 행정안전부_통계연보_지역별 내수면 유·도선 보유
+sector: 교통물류/도로/traffic-safety
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107453/openapi.do
+synonyms:
+  - 지역별유도선보유
+  - 선박수(척)유선
+  - 선박수(척)도선
+  - 내수면
+  - 지역별
+  - 유선
+  - 도선
+  - 내수면 선박
+  - 유도선장
+  - 선착장 현황
+  - 행정안전 통계연보
+  - 수상 안전
+  - 내수면 안전
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '안전정책/생활안전' 중 '내수면 유·도선 및 안전사고', '지역별 내수면 유·도선 보유'에 관한 통계입니다. 선박 수(척)(소계, 유선, 도선), 규모별(척)(무동력, 동력선 소계, 동력선 5t미만, 동력선 5100t, 동력선 101t 이상, 모터보트), 유·도선장(개소)(소계, 유선장, 도선장) 등 지역별 내수면 유·도선 보유 정보를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getOwnInlandWaterLinesRegion1
+    name: 지역별 내수면 유·도선 보유 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/OwnInlandWaterLinesRegion1/getOwnInlandWaterLinesRegion1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 168}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RES"
+      stats:
+        unique: 1
+    - name: row
+      type: date
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2016', 'seq': 1, 'regi': '합계', 'ships_cnt_tot': '1132', 'ships_c"
+      stats:
+        min: '2016-11-13'
+        max: '2016-11-13'
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 교통안전 (안전지수·교통문화·안전시설·교육)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.4848
+  rank_in_sector: 2569
+  brm: 교통물류 - 도로
+  why: 통계연보 유·도선 보유 집계, 도로 부문 아님
+claims:
+  - id: c-15107453-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107453.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107453.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107453-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107453-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107453.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107453-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107453.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107453-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107453-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107453.json
+  stats: probe/stats/15107453.json
+  data: probe/data/15107453/
+status: active
+summary_user: 행정안전 통계연보 '안전정책/생활안전' 중 지역별 내수면 유·도선 보유 현황을 담은 집계 통계로, 지역별 선박 수(유선·도선), 규모별 척수(무동력·동력선 톤급·모터보트), 유·도선장 개소 수를 제공한다. 지자체 안전 담당자나 분석가가 "어느 시도에 내수면 유선·도선과 선착장이 많아 안전관리 수요가 큰가"를 따질 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 지역명 매핑이나 같은 기관(행정안전부) 통계연보의 내수면 유·도선 안전사고 통계와 이름 기준으로만 이어 쓴다.
+limits: 표준 행정구역 코드 같은 조인 키가 없어 지역명을 직접 맞춰야 하며, 공간 좌표가 없는 비공간 집계라 개별 선박·선착장 위치는 알 수 없다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107453-01
+    - c-15107453-03
+    - c-15107453-04
+  dropped_citations: 0

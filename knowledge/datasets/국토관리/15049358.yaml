@@ -1,0 +1,251 @@
+# Dataset 15049358 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15049358'
+tier: verified
+title: 서울특별시_물재생센터 하수처리량
+sector: 국토관리/수자원/sewerage
+domain: 국토관리/기반시설
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15049358/fileData.do
+synonyms:
+  - 하수
+  - 하수처리장
+  - 수질관리
+  - 하수처리
+  - 처리장
+  - 하수처리장 처리량
+  - 물재생센터 일별 처리량
+  - 서울 하수처리 실적
+  - 1차 2차 처리량
+  - 하수도 처리 현황
+  - 중랑 탄천 서남 난지 물재생센터
+summary_user: 서울시 각 물재생센터가 일자별로 처리한 하수량을 센터명·처리장 구분별로 1차·2차 처리량으로 나눠 담은 건별 일자료입니다. 분석가나 정책 담당자가 '특정 물재생센터의 하루 하수처리량이 기간에 따라 어떻게 달라졌나'처럼 시설별 가동 현황과 처리 추이를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 하수도·방류수 수질 자료와는 물재생센터 이름(WRCT_NM)과 측정일자를 직접 맞춰 이어 써야 한다.
+description_portal: 서울시 물재생센터 하수처리량 데이터는 서울시 각 물재생센터에서 일자별로 처리한 하수의 양을 정리한 자료입니다. 측정일자를 통해 특정 시점의 하수처리 현황을 확인할 수 있으며, 물재생센터명칭과 처리장구분 항목을 통해 어떤 시설에서 어떤 종류의 처리공정이 운영되는지 파악할 수 있습니다. 1차하수처리량과 2차하수처리량 정보는 물리적 처리와 생물학적 처리 등 단계별 정화 과정을 통해 얼마나 많은 하수가 처리되었는지를 수량으로 보여줍니다. 이 데이터는 서울시의 하수처리 능력과 시설 가동 현황을 분석하고, 물환경 관리, 수질 개선 정책, 기반시설 계획 수립 등에 활용할 수 있는 중요한 기초 환경행정 자료입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: ViewTreQty
+    name: ViewTreQty
+    endpoint: http://openapi.seoul.go.kr:8088/json/ViewTreQty/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MSRMT_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026/08/31
+        - 2026/08/30
+        - 2026/08/29
+      stats:
+        min: '2026-08-24'
+        max: '2026-08-31'
+        unique: 8
+    - name: WRCT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중랑물재생센터
+        - 난지물재생센터
+        - 서남물재생센터
+      stats:
+        unique: 4
+    - name: PRCS_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제2처리장
+        - 제1처리장
+        - 제4처리장
+      stats:
+        unique: 7
+    - name: SEWAGE_PRCS_QY_1
+      type: number
+      null_rate: 0.14
+      sample_values:
+        - '0.00'
+        - '88833.00'
+        - '101500.00'
+      stats:
+        min: 0
+        p50: 0
+        max: 216850
+        unique: 30
+    - name: SEWAGE_PRCS_QY_2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '426967.00'
+        - '552600.00'
+        - '132690.00'
+      stats:
+        min: 2510
+        p50: 306483.5
+        max: 904240
+        unique: 100
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 하수도 (하수처리장·처리구역·방류수·분뇨·정화조)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.4922
+  rank_in_sector: 652
+  brm: 환경기상 - 상하수도·수질
+  sector_rule: water-core-scattered
+  why: 서울 물재생센터 처리량, 도시·부동산과 거리 멀고 소규모
+claims:
+  - id: c-15049358-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15049358.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15049358-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15049358-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15049358.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15049358-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15049358.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15049358-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15049358-06
+    kind: admin_note
+    value: "세부 부문 '하수도 (하수처리장·처리구역·방류수·분뇨·정화조)'의 가치: 하수처리장·처리구역 원장과 방류수 수질(TMS), 지자체·환경공단"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#sewerage
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15049358-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15049358-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15049358.json
+  stats: probe/stats/15049358.json
+  data: probe/data/15049358/
+limits: 서울 data.seoul.go.kr의 별도 인증키(경로의 KEY)가 필요하며 공공데이터포털 활용신청과 별개다. 공통 코드 키가 없어 다른 데이터와는 이름 매핑으로만 연결되고, 범위는 서울시 단위로 공간 좌표가 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15049358-01
+    - c-15049358-03
+    - c-15049358-04
+  dropped_citations: 0
+status: active

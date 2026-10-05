@@ -1,0 +1,221 @@
+# Dataset 15056611 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15056611'
+tier: verified
+title: 한국교통안전공단_자동차 종합정보 변경등록정보 서비스
+sector: 교통물류/도로/vehicles
+agency:
+  id: B553881
+  name: 한국교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15056611/openapi.do
+synonyms:
+  - 자동차
+  - 변경등록
+  - 등록정보
+  - 자동차종합정보
+  - 통계
+  - 기간별
+  - 자동차 이전등록 통계
+  - 중고차 거래 건수
+  - 자동차 명의이전
+  - 차량 소유권 이전
+  - 중고차 매매 통계
+  - 상속 증여 차량 이전
+description_portal: 자동차정보API 서비스로 자동차 등록년(YYYY),등록월(MM),차종코드(경형,소형,중형,대형,다목적,기타),등록지역코드(서울,부산,대구,인천 등 광역시도 구분코드)),사용연료코드(CNG,경유,수소,엘피지,전기,하이브리드,휘발유),차명코드(별도코드표 제공),용도구분명(자가용,영업용,관용),성별구분, 연령대(10대~80대),이전등록구분명(매매업자거래이전, 당사자거래이전, 상속이전, 촉탁이전, 증여이전, 기타이전)을 입력하여 기간별 변경 등록 통계정보를 조회하는  서비스 입니다. *매월1일부터 말일까지의 데이터는 익월2일에 조회 및 활용 가능합니다. *인증키는 공공데이터포털에서 자동발급 됩니다.
+team:
+  dept: AI혁신처
+services:
+  - op: /changeRegistlnfoService
+    name: 변경등록 통계 조회
+    endpoint: https://apis.data.go.kr/B553881/changeRegistlnfoService_01/changeRegistlnfoService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: registYy
+        required: true
+        example: '2017'
+        desc: 등록된 년도(YYYY)
+      - name: registMt
+        required: true
+        example: '11'
+        desc: 등록된 월(MM)
+      - name: vhctyAsortCode
+        required: true
+        example: '1'
+        desc: 차량의 종류별 구분
+      - name: registGrcCode
+        required: true
+        example: '1'
+        desc: 광역시도 구분 코드
+      - name: useFuelCode
+        required: true
+        example: '1'
+        desc: 연료 종류 구분 코드
+      - name: cnmCode
+        required: true
+        example: '000004'
+        desc: 차명 구분 위한 코드
+      - name: prposSeNm
+        required: true
+        example: '1'
+        desc: 차량 유형 코드
+      - name: sexdstn
+        required: true
+        example: 남자
+        desc: 성별구분
+      - name: agrde
+        required: true
+        example: '3'
+        desc: 등록자 연령대
+      - name: transrRegistSeNm
+        required: true
+        example: '5'
+        desc: 이전 등록 구분 코드
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dtaCo
+      title: 통계 건수
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6589
+  rank_in_sector: 633
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 자동차 변경등록 통계 API, 집계 건수만 제공
+claims:
+  - id: c-15056611-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15056611.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15056611.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15056611-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056611-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056611.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056611-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056611.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056611-06
+    kind: admin_note
+    value: "세부 부문 '자동차 등록·검사·정비·렌터카·운전면허'의 가치: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vehicles
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056611-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056611-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15056611.json
+  stats: probe/stats/15056611.json
+  data: probe/data/15056611/
+status: active
+summary_user: 자동차 이전(변경)등록을 등록연월·차종·광역시도·사용연료·차명·용도·성별·연령대·이전등록구분(매매업자·당사자·상속·증여 등)별 조건으로 조회한 통계 건수(dtaCo)를 담는 전국 단위 집계 데이터다. 분석가나 중고차 사업자가 '특정 지역에서 지난달 전기차 당사자거래 이전등록이 몇 건이었나' 같은 중고차 거래·명의이전 추세를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 지역·차종·연료 같은 코드나 이름을 매핑하거나 같은 기관의 자동차 등록 통계와 같은 조건으로 맞춰 이어 쓴다.
+limits: 건별 차량·소유자 원천이 아니라 입력 조건에 따른 통계 건수만 돌려주므로 개별 차량 추적이나 시군구 이하 분석에는 쓸 수 없다. 공용 조인 키가 없어 다른 데이터와 붙이려면 코드·이름 매핑이 필요하며, 개발계정은 하루 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15056611-01
+    - c-15056611-03
+    - c-15056611-04
+  dropped_citations: 0

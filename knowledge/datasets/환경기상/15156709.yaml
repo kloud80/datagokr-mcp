@@ -1,0 +1,312 @@
+# Dataset 15156709 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15156709'
+tier: verified
+title: 한국서부발전(주)_기상관측 정보 조회 서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: B552522
+  name: 한국서부발전(주)
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15156709/openapi.do
+synonyms:
+  - 환경온도
+  - 모듈온도
+  - 풍향
+  - 풍속
+  - 강수량
+  - 일사량
+  - 습도
+  - 신재생
+  - 태양광 일사량
+  - 발전소 기상관측
+  - 모듈 온도
+  - 경사면 일사량
+  - 서부발전 기상 데이터
+  - 설비 기상 센서
+  - 풍속 풍향 관측
+description_portal: 한국서부발전에서 제공하는 기상관측 정보 조회 서비스는 설비 아이디, 측정시간, 설비상태코드, 알람상세, 환경온도, 모듈온도, 풍향, 풍속, 강수량, 습도, 경사면 일사량, 누적경사면 일사량, 수평면 일사량, 누적수평면 일사량, 로컬 시간으로 구성됩니다. 이 데이터는 설비가 위치한 환경의 기상 조건을 기록하며, 온도, 풍향, 풍속, 강수량, 습도, 일사량 등 기상 요소를 측정합니다. 설비상태코드와 알람상세는 관측 장비의 운전 상태와 이상 여부를 확인하는 데 사용됩니다. 측정시간과 로컬 시간 정보를 통해 각 관측 값의 시점을 파악할 수 있습니다.
+team:
+  dept: 디지털운영부
+services:
+  - op: /getWeatherObservationService
+    name: 기상관측 정보 조회
+    endpoint: https://apis.data.go.kr/B552522/WeatherObservationService/getWeatherObservationService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: 'serviceKey '
+        required: true
+        desc: 공공데이터포털에서 받은 인증키
+      - name: fromDate
+        required: true
+        example: '2023-09-14'
+        desc: 시작날짜
+      - name: toDate
+        required: true
+        example: '2023-09-15'
+        desc: 종료날짜
+      - name: plantNm
+        required: true
+        example: SJ6
+        desc: 발전소명
+      - name: equip
+        required: true
+        example: 1f4db148-0f01-4854-b34c-df0fc8f30059
+        desc: 장비명
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '20'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        example: JSON
+        desc: 응답데이터 포맷
+      - name: clsf_cd
+        required: true
+        example: W0
+        desc: 분류 코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lctime
+      title: 로컬 시간
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20230915000123'
+        - '20230915000019'
+        - '20230914235916'
+      stats:
+        min: 20230914090058
+        p50: 20230914164356.5
+        max: 20230915000123
+        unique: 862
+    - name: modl_tp
+      title: 모듈 온도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '22.5'
+        - '22.3'
+        - '22.200000000000003'
+      stats:
+        min: 21.9
+        p50: 27.9
+        max: 41.3
+        unique: 182
+    - name: eqpm_id
+      title: 설비 아이디
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1f4db148-0f01-4854-b34c-df0fc8f30059
+      stats:
+        unique: 1
+    - name: envr_tp
+      title: 환경 온도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '22.700000000000003'
+        - '22.5'
+        - '22.6'
+      stats:
+        min: 22.5
+        p50: 24.200000000000003
+        max: 27.6
+        unique: 52
+    - name: hpln_srqty
+      title: 수평면 일사량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '23.625'
+        - '29.3125'
+      stats:
+        min: 0
+        p50: 115.28125
+        max: 997.0625
+        unique: 419
+    - name: msrmt_hr
+      title: 측정 시각
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2023-09-14T06:01:23.260+00:00'
+        - '2023-09-14T06:00:19.668+00:00'
+        - '2023-09-14T05:59:16.068+00:00'
+      stats:
+        min: '2023-09-13'
+        max: '2023-09-14'
+        unique: 862
+    - name: slop_srqty
+      title: 경사면 일사량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '356.5625'
+        - '283.5'
+      stats:
+        min: 0
+        p50: 111.34375
+        max: 1000.5625
+        unique: 422
+    - name: eqpm_stts_cd
+      title: 설비 상태
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6044
+  rank_in_sector: 318
+  brm: 환경기상 - 대기
+  why: 발전사 태양광 설비 관측, 기상 관측망 아님
+claims:
+  - id: c-15156709-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15156709.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15156709.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15156709-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15156709-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15156709.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15156709-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15156709.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15156709-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15156709-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156709-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15156709.json
+  stats: probe/stats/15156709.json
+  data: probe/data/15156709/
+status: active
+summary_user: 한국서부발전 설비(태양광 발전 설비로 보이는 모듈 온도·경사면 일사량 포함)가 위치한 곳의 기상 관측값을 설비 아이디와 측정 시각 단위로 담은 건별 관측 API로, 환경 온도·모듈 온도·풍향·풍속·강수량·습도·경사면/수평면 일사량과 설비 상태·알람 정보를 제공한다. 발전량 분석가나 에너지 사업자가 '특정 설비 위치의 일사량과 모듈 온도가 시간대별로 어떻게 변했고 장비 이상은 없었나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 기상청 관측지점 자료 등과는 설비 아이디(eqpm_id)·측정 시각을 기준으로 이름·위치 매핑을 거치거나 같은 기관 자료끼리만 연결한다.
+limits: 전역 조인 키가 없어 기상청 ASOS·AWS 관측지점번호나 행정구역 코드로 바로 붙일 수 없고, 범위가 전국·비공간으로 표기되어 있어 설비 위치 좌표는 이 데이터만으로 알 수 없다. 개발계정은 하루 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15156709-01
+    - c-15156709-03
+    - c-15156709-04
+  dropped_citations: 0

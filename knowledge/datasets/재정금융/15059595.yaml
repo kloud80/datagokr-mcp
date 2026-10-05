@@ -1,0 +1,1192 @@
+# Dataset 15059595 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059595'
+tier: verified
+title: 금융위원회_채권권리행사정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059595/openapi.do
+synonyms:
+  - 채권
+  - 권리행사
+  - 옵션
+  - 조기상환
+  - 옵션부채권
+  - 채권옵션
+  - 권리조정
+  - 콜옵션 채권
+  - 풋옵션 채권
+  - 채권 조기상환
+  - 전환사채 행사가 조정
+  - 리픽싱
+  - CB BW 권리행사
+  - 신주인수권 행사
+description_portal: '채권권리행사정보는 기준일자, 법인등록번호, 채권발행인명을 기준으로 채권 관련 권리행사 내역을 조회할 수 있는 데이터입니다.<데이터 조회 시 유의사항>파라미터 없이 조회 시 데이터 조회 시간이 오래걸려 timeout이 발생하게 되어 필수 파라미터를 지정하였습니다.- 파라미터 조건 : 조회 시 아래의 필수 파라미터 중 최소 1개 이상을 반드시 입력해야 합니다.- 기본값 안내 : 필수 파라미터를 입력하지 않은 경우, 기준일자(basDt)는 자동으로 가장 최신 날짜로 설정되어 조회됩니다.[서비스별 필수 파라미터 목록]- 조기행사옵션조회 : basDt, isinCd, crno- 옵션부채권조기상환조회, 옵션행사가조정내역조회, 옵션행사내역조회 : 없음총 4가지 오퍼레이션 정보가 제공되며, 각각 다음과 같은 내용을 포함합니다.1. 조기행사 옵션 조회 : 기준일자, 법인등록번호, 채권발행인명을 통하여 옵션유형코드, 옵션행사시작일자, 옵션행사금액등을 조회하는 조기행사옵션조회 기능2. 옵션 부채권 조기 상환 조회 : 옵션부채권조기상환일자, 법인등록번호, 옵션부채권발행인명을 통하여 옵션부채권발행금액, 옵션부채권이자지급금액, 채권발행금액, 옵션행사비율등을 조회하는 옵션부채권조기상환조회 기능3. 옵션 행사가 조정내역 조회 : 준일자, 법인등록번호를 통하여 옵션행사가, 납입구분코드, 권리행사가격조정일자, 권리변경전행사가등을 조회하는 옵션행사가조정내역조회 기능4. 옵션행사 내역조회 : 기준일자, 법인등록번호를 통하여 옵션행사가, 행사가격, 행사금액, 행사주식수, 상장일자등을 조회하는 옵션행사내역조회 기능※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getEarlExerOpti_V2
+    name: 조기행사옵션조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondRedeInfoService_V2/getEarlExerOpti_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: bondIsurNm
+        required: false
+        desc: 채권을 발행한 발행 회사의 명칭
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getBondWithOptiCallRede_V2
+    name: 옵션부채권조기상환조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondRedeInfoService_V2/getBondWithOptiCallRede_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: opbdClrdDt
+        required: false
+        desc: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 중도상환일자
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: opbdIsurNm
+        required: false
+        desc: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 발행회사 명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getOptiExerPricAdju_V2
+    name: 옵션행사가조정내역조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondRedeInfoService_V2/getOptiExerPricAdju_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getOptiExer_V2
+    name: 옵션행사내역조회
+    endpoint: https://apis.data.go.kr/1160100/GetBondRedeInfoService_V2/getOptiExer_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261003'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 20261003
+        p50: 20261003
+        max: 20261003
+        unique: 1
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101710029402'
+        - '1801110002997'
+        - '1101110012809'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 1101110012809
+        p50: 1101710029402
+        max: 1801110002997
+        unique: 9
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: code
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR3544097W35
+        - KR3544097WC6
+        - KR3544107062
+      op: /getEarlExerOpti_V2
+      stats:
+        unique: 36
+    - name: bondIsurNm
+      title: 채권을 발행한 발행 회사의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한국주택금융공사
+        - 부산은행
+        - 신한은행
+      op: /getEarlExerOpti_V2
+      stats:
+        unique: 9
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한국주택금융공사MBS2009-2(1-1)(변/콜)
+        - 한국주택금융공사MBS2009-13(1-1)변/콜
+        - 한국주택금융공사MBS2010-6(1-1)(변/콜)
+      op: /getEarlExerOpti_V2
+      stats:
+        unique: 36
+    - name: optnTcd
+      title: Call, Put 등 옵션의 유형을 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9401'
+        - '9402'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 9401
+        p50: 9401
+        max: 9402
+        unique: 2
+    - name: optnTcdNm
+      title: Call, Put 등 옵션의 유형을 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - CALL
+        - PUT
+      op: /getEarlExerOpti_V2
+      stats:
+        unique: 2
+    - name: optnExertSttgDt
+      title: 옵션 행사의 행사 시작 일자
+      type: number
+      null_rate: 0.995
+      sample_values:
+        - '20020429'
+        - '20060625'
+        - '20031002'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 20020429
+        p50: 20031002
+        max: 20060625
+        unique: 4
+    - name: optnExertRto
+      title: 옵션 행사의 행사 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.17'
+        - '1.28'
+        - '1.47'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 0
+        p50: 1.58
+        max: 100
+        unique: 335
+    - name: optnExertEdDt
+      title: 옵션 행사의 행사 종료 일자
+      type: number
+      null_rate: 0.996
+      sample_values:
+        - '20020529'
+        - '20031102'
+        - '20040529'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 20020529
+        p50: 20025815.5
+        max: 20040529
+        unique: 3
+    - name: clrdDt
+      title: 만기 전 조기상환한 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160325'
+        - '20160425'
+        - '20151025'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 0
+        p50: 20140677.5
+        max: 20160525
+        unique: 171
+    - name: optnExertAmt
+      title: 옵션 행사의 행사 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3400000000'
+        - '3900000000'
+        - '3000000000'
+      op: /getEarlExerOpti_V2
+      stats:
+        min: 0
+        p50: 4700000000
+        max: 298237660000
+        unique: 922
+    - name: opbdClrdDt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 중도상환일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160608'
+        - '20190310'
+        - '20090724'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 20080115
+        p50: 20150418.5
+        max: 20261002
+        unique: 865
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110012809'
+        - '1101110013419'
+        - '1101110023393'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 0
+        p50: 1101110014103.5
+        max: 1101110172447
+        unique: 124
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR6001441130
+        - KR6023441AC5
+        - KR6004871AA0
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 765
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 대한전선152(분리신/풋)
+        - 제일제강공업 2(분리신/풋)
+        - 티웨이홀딩스24(분리신/풋)
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 765
+    - name: opbdIsurNm
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 발행회사 명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 신한은행
+        - 한국스탠다드차타드은행
+        - 우리은행
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 128
+    - name: bondIssuFrmtNm
+      title: 채권 발행 형태에 대한 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 공사채등록
+        - 전자증권
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 2
+    - name: bondIssuAmt
+      title: 채권 발행 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1341260000'
+        - '3160000000'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 884000000000
+        unique: 32
+    - name: optnTcd
+      title: Call, Put 등 옵션의 유형을 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9401'
+        - '9402'
+        - '9999'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 9401
+        p50: 9401
+        max: 9999
+        unique: 3
+    - name: opbdIssuDt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)을 발행한 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20110127'
+        - '20090529'
+        - '20091104'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 20030227
+        p50: 20130167.5
+        max: 20260409
+        unique: 644
+    - name: opbdExprDt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 만기 혹은 상환일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '99991231'
+        - '20121104'
+        - '20150321'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 20090115
+        p50: 20211213
+        max: 99991231
+        unique: 690
+    - name: optnTcdNm
+      title: Call, Put 등 옵션의 유형을 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.002
+      sample_values:
+        - CALL
+        - PUT
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 2
+    - name: opbdIssuAmt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 최초 발행 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50000000000'
+        - '20000000000'
+        - '100000000000'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 25000000
+        p50: 30000000000
+        max: 1020000000000
+        unique: 111
+    - name: opbdPamtPayAmt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 원금 지급액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50000000000'
+        - '20000000000'
+        - '100000000000'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 12000
+        p50: 20000000000
+        max: 500000000000
+        unique: 385
+    - name: optnExertRto
+      title: 옵션 행사의 행사 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+        - '0'
+        - '10'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 0
+        p50: 69.56848500000001
+        max: 100
+        unique: 366
+    - name: opbdIntPayAmt
+      title: 옵션부채권(채권을 발행할 때 발행 채권의 일부 또는 전부에 대해 만기일 이전에 정해진 조건으로 상환할 수 있는 조건이 첨부된 채권)의 이자 지급액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4500000000'
+        - '2500000000'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 0
+        p50: 133919074
+        max: 61518044506
+        unique: 648
+    - name: intCmpuMcd
+      title: 이자 산정시 산출 방법을 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '9'
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        min: 1
+        p50: 1
+        max: 9
+        unique: 2
+    - name: intCmpuMcdNm
+      title: 이자 산정시 산출 방법을 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정형
+        - 해당없음
+      op: /getBondWithOptiCallRede_V2
+      stats:
+        unique: 2
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20170613'
+        - '20180716'
+        - '20180411'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 20080624
+        p50: 20171024
+        max: 20180719
+        unique: 261
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.006
+      sample_values:
+        - '1201110234469'
+        - '1101111261405'
+        - '1101110122731'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 1101110002694
+        p50: 1201110111989
+        max: 2850110209804
+        unique: 301
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR6042671786
+        - KR6064091848
+        - KR6054632874
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 384
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 현대두산인프라코어 31(분리신/풋)
+        - 에프앤리퍼블릭 20(사모/전/풋)
+        - 에이디칩스 1(사모/신/풋)
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 384
+    - name: scrsIsurNm
+      title: 유가증권 발행사의 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 현대두산인프라코어
+        - 에이디칩스
+        - 에이프로젠케이아이씨
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 307
+    - name: trgtStckIsinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      null_rate: 0.005
+      sample_values:
+        - KR7054630009
+        - KR7034020008
+        - KR7007460009
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 305
+    - name: trgtStckIsinCdNm
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: string
+      null_rate: 0.005
+      sample_values:
+        - 에이디칩스
+        - 두산에너빌리티
+        - 에이프로젠케이아이씨
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 306
+    - name: optnExertPrc
+      title: 행사대상종목의 행사가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9110'
+        - '696'
+        - '500'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 0
+        p50: 2913
+        max: 2300000
+        unique: 325
+    - name: optnExertRto
+      title: 옵션 행사의 행사 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+        - '0'
+        - '124.8833'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 0
+        p50: 100
+        max: 124.8833
+        unique: 3
+    - name: rgscHndvBcd
+      title: 주식의 권리를 교부할때 기준이 되는 코드
+      type: number
+      null_rate: 0.01
+      sample_values:
+        - '2'
+        - '1'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 2
+    - name: rgscHndvBcdNm
+      title: 주식의 권리를 교부할때 기준이 되는 코드의 명칭
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 행사익월 20일
+        - 행사일
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 2
+    - name: pymtDcd
+      title: 현금납입, 대용증권납입등 납입 방식을 구분하는 코드
+      type: number
+      null_rate: 0.75
+      sample_values:
+        - '3'
+        - '2'
+        - '1'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 1
+        p50: 3
+        max: 3
+        unique: 3
+    - name: pymtDcdNm
+      title: 현금납입, 대용증권납입등 납입 방식을 구분하는 코드의 명칭
+      type: code
+      null_rate: 0.75
+      sample_values:
+        - 현금+대용증권
+        - 대용증권
+        - 현금
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 3
+    - name: shcpPymtPlcNm
+      title: 주식회사를 설립할 때나 신주를 발행할 때 주식을 받기 위해 출자하는 금액을 납입한 장소의 명칭
+      type: code
+      null_rate: 0.786
+      sample_values:
+        - '[81-1723]KEB하나/두산타워'
+        - '[3-1655]기업/성남하이테크'
+        - '[88-6729]신한/광주기업금융센터'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 42
+    - name: rltnBondIsinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: code
+      null_rate: 0.806
+      sample_values:
+        - KRA0340221B1
+        - KRA042672170
+        - KRA214332181
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 29
+    - name: rltnBondIsinCdNm
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: code
+      null_rate: 0.806
+      sample_values:
+        - 두산에너빌리티2WR
+        - 현대두산인프라코어1WR
+        - 금호에이치티1WR
+      op: /getOptiExerPricAdju_V2
+      stats:
+        unique: 29
+    - name: rgtExertPricAdjDt
+      title: 옵션 행사 가격을 조정한 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00010101'
+        - '20180430'
+        - '20181104'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 10101
+        p50: 20181017
+        max: 20220913
+        unique: 564
+    - name: rgtBchgExertPrc
+      title: 권리행사 가격을 변경하기 전의 행사 가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '6430'
+        - '5660'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 0
+        p50: 3260
+        max: 1350000
+        unique: 714
+    - name: rgtAchgExertPrc
+      title: 권리행사 가격을 변경한 후의 행사 가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5660'
+        - '9110'
+      op: /getOptiExerPricAdju_V2
+      stats:
+        min: 0
+        p50: 2850
+        max: 135000
+        unique: 732
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20160121'
+        - '20160412'
+        - '20151021'
+      op: /getOptiExer_V2
+      stats:
+        min: 20080624
+        p50: 20160412
+        max: 20170206
+        unique: 111
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.005
+      sample_values:
+        - '1101110002694'
+        - '1712110005114'
+        - '2013110006783'
+      op: /getOptiExer_V2
+      stats:
+        min: 1101110002694
+        p50: 1301110010031
+        max: 2801110076686
+        unique: 123
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR6123041610
+        - KR6006361648
+        - KR60432015A0
+      op: /getOptiExer_V2
+      stats:
+        unique: 145
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 엠에스오토텍 7(분리신/풋)
+        - GS건설 131 (사모/전/풋)
+        - 파루 6(분리신/풋)
+      op: /getOptiExer_V2
+      stats:
+        unique: 145
+    - name: scrsIsurNm
+      title: 유가증권 발행사의 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 지에스건설
+        - 엠에스오토텍
+        - 파루
+      op: /getOptiExer_V2
+      stats:
+        unique: 128
+    - name: trgtStckIsinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - KR7006360002
+        - KR7123040008
+        - KR7043200005
+      op: /getOptiExer_V2
+      stats:
+        unique: 126
+    - name: trgtStckIsinCdNm
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 지에스건설
+        - 엠에스오토텍
+        - 파루
+      op: /getOptiExer_V2
+      stats:
+        unique: 128
+    - name: optnExertPrc
+      title: 행사대상종목의 행사가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2915'
+        - '24658'
+        - '2733'
+      op: /getOptiExer_V2
+      stats:
+        min: 0
+        p50: 3942
+        max: 184000
+        unique: 104
+    - name: optnExertRto
+      title: 옵션 행사의 행사 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+        - '0'
+      op: /getOptiExer_V2
+      stats:
+        min: 0
+        p50: 100
+        max: 100
+        unique: 2
+    - name: rgscHndvBcd
+      title: 주식의 권리를 교부할때 기준이 되는 코드
+      type: number
+      null_rate: 0.024
+      sample_values:
+        - '2'
+        - '1'
+      op: /getOptiExer_V2
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 2
+    - name: rgscHndvBcdNm
+      title: 주식의 권리를 교부할때 기준이 되는 코드의 명칭
+      type: code
+      null_rate: 0.024
+      sample_values:
+        - 행사익월 20일
+        - 행사일
+      op: /getOptiExer_V2
+      stats:
+        unique: 2
+    - name: pymtDcd
+      title: 현금납입, 대용증권납입등 납입 방식을 구분하는 코드
+      type: number
+      null_rate: 0.621
+      sample_values:
+        - '3'
+        - '2'
+        - '1'
+      op: /getOptiExer_V2
+      stats:
+        min: 1
+        p50: 3
+        max: 3
+        unique: 3
+    - name: pymtDcdNm
+      title: 현금납입, 대용증권납입등 납입 방식을 구분하는 코드의 명칭
+      type: code
+      null_rate: 0.621
+      sample_values:
+        - 현금+대용증권
+        - 대용증권
+        - 현금
+      op: /getOptiExer_V2
+      stats:
+        unique: 3
+    - name: shcpPymtPlcNm
+      title: 주식회사를 설립할 때나 신주를 발행할 때 주식을 받기 위해 출자하는 금액을 납입한 장소의 명칭
+      type: code
+      null_rate: 0.664
+      sample_values:
+        - '[20-884]우리/경주'
+        - '[3-1927]기업/순천(지)'
+        - '[20-1977]우리/안산(지)'
+      op: /getOptiExer_V2
+      stats:
+        unique: 20
+    - name: rltnBondIsinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: code
+      null_rate: 0.678
+      sample_values:
+        - KRA123042160
+        - KRA043202159
+        - KRA106082167
+      op: /getOptiExer_V2
+      stats:
+        unique: 8
+    - name: rltnBondIsinCdNm
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: code
+      null_rate: 0.678
+      sample_values:
+        - 엠에스오토텍7WR
+        - 파루6WR
+        - 하이소닉7WR
+      op: /getOptiExer_V2
+      stats:
+        unique: 8
+    - name: rgtOccrBasDt
+      title: 권리가 발생되는 기준 일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00010101'
+        - '20180608'
+        - '20180515'
+      op: /getOptiExer_V2
+      stats:
+        min: 10101
+        p50: 20180319.5
+        max: 20220216
+        unique: 618
+    - name: exertPric
+      title: 옵션 행사시 행사 가격
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2915'
+        - '28829'
+        - '0'
+      op: /getOptiExer_V2
+      stats:
+        min: 0
+        p50: 4040
+        max: 135000
+        unique: 133
+    - name: exertAmt
+      title: 옵션 행사시 행사 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1999983046'
+        - '999991523'
+      op: /getOptiExer_V2
+      stats:
+        min: 0
+        p50: 299999976
+        max: 27499957790
+        unique: 815
+    - name: exertStckCnt
+      title: 옵션 행사시 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '69374'
+        - '10000'
+      op: /getOptiExer_V2
+      stats:
+        min: 0
+        p50: 63334.5
+        max: 13056832
+        unique: 804
+    - name: lstgDt
+      title: 종목상장 적용일자(상장일자)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00010101'
+        - '20180619'
+        - '20171215'
+      op: /getOptiExer_V2
+      stats:
+        min: 10101
+        p50: 20180221
+        max: 20220307
+        unique: 390
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.872
+  rank_in_sector: 18
+  brm: 재정금융 - 금융
+  why: 채권 권리행사 내역, 보조 자료
+claims:
+  - id: c-15059595-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 4/4
+    evidence:
+      - type: measured
+        source: probe/runs/15059595.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 4/4
+      - type: measured
+        source: probe/apply/15059595.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15059595-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059595-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15059595.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 69개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059595-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059595.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059595-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059595-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059595-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 4/4
+  run: probe/runs/15059595.json
+  stats: probe/stats/15059595.json
+  data: probe/data/15059595/
+status: active
+summary_user: 금융위원회가 연계받은 채권의 권리행사 내역을 조기행사옵션, 옵션부채권 조기상환, 옵션 행사가 조정, 옵션 행사 내역의 4개 오퍼레이션으로 담으며, 기준일자·종목(ISIN)별 건 단위로 옵션 유형(콜·풋), 행사 기간·비율·금액, 조기상환일자, 행사가격 등을 제공한다. 채권 투자자나 분석가가 특정 회사채에 콜옵션·풋옵션이 붙어 있는지, 언제 조기상환됐는지, 전환·교환 대상 주식의 행사가격이 어떻게 조정됐는지를 확인하는 데 쓴다. 법인등록번호(crno)와 국제증권식별번호(isinCd)를 키로 금융위원회 채권 발행·시세 정보나 기업 공시·재무 데이터와 이어 쓴다.
+limits: 실시간 데이터가 아니며 기준일자 기준으로 연계된 값을 제공한다. 조기행사옵션조회는 기준일자·ISIN·법인등록번호 중 최소 1개를 넣어야 하고, 넣지 않으면 기준일자가 가장 최신 날짜로 자동 설정되므로 과거 이력 조회 시 기준일자를 명시해야 한다. 개발계정은 일 10,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15059595-01
+    - c-15059595-03
+    - c-15059595-04
+    - c-15059595-06
+  dropped_citations: 0

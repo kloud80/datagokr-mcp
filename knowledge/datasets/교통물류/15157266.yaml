@@ -1,0 +1,182 @@
+# Dataset 15157266 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15157266'
+tier: verified
+title: 서울특별시_교통정보시스템 TOPIS  공지사항
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15157266/openapi.do
+synonyms:
+  - 교통정보시스템
+  - 공지사항
+  - 교통통제안내
+  - 버스우회안내
+  - 정책안내
+  - TOPIS 공지
+  - 서울 교통통제 안내
+  - 버스 우회 정보
+  - 집회 행사 교통통제
+  - 서울 교통 공지사항
+  - 기상 재난 교통 공지
+  - 서울 열린데이터광장 교통
+summary_user: 서울시 교통정보시스템(TOPIS) 홈페이지에 등록된 공지사항 목록을 건별로 담으며, 통제·버스·정책·기상·기타 안내로 구분된 교통통제, 버스 우회, 집회·행사, 기상재난, 서비스 장애 공지가 들어 있다. 시민이나 분석가가 "오늘 서울에서 집회·행사로 통제되는 도로나 우회하는 버스 노선이 있는가"를 확인할 때 쓴다. 실측 컬럼에서 다른 데이터와 묶을 공통 조인 키를 찾지 못해, 실시간 소통·돌발상황 데이터와는 공지 본문의 도로명·노선명 같은 이름을 맞춰서만 이어 쓴다.
+description_portal: '해당 데이터는 서울 교통정보시스템(TOPIS) 공지사항 API입니다. 데이터의 원본시스템은 서울시 교통정보시스템입니다.(https://topis.seoul.go.kr)TOPIS 홈페이지에 등록 된 공지사항에 대한 목록 제공 (정보 구분 항목 : 통제안내 / 버스안내 / 정책안내 / 기상안내 / 기타안내)주요 내용은 교통통제 정보, 버스 우회정보, 집회/행사 알림, 서울시 교통정책 홍보, 기상재난 관련 공지, 지하철 또타 앱정보 전달, 서비스 장애 안내 등입니다.※ 바로가기 클릭 시 서울 열린데이터광장으로 이동합니다.'
+team:
+  dept: 데이터전략과
+services:
+  - op: NoticeList
+    name: NoticeList
+    endpoint: http://openapi.seoul.go.kr:8088/json/NoticeList/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ERROR-301
+      stats:
+        unique: 1
+    - name: MESSAGE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 파일타입 값이 누락 혹은 유효하지 않습니다. 요청인자 중 TYPE을 확인하십시오.
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6232
+  rank_in_sector: 889
+  brm: 교통물류 - 도로
+  why: TOPIS 공지사항은 기관 운영 자료
+claims:
+  - id: c-15157266-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15157266.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15157266-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157266-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157266.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157266-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157266.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157266-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157266-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157266-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15157266.json
+  stats: probe/stats/15157266.json
+  data: probe/data/15157266/
+limits: 서울 열린데이터광장(data.seoul.go.kr)의 별도 인증키(주소 경로의 KEY 값)가 필요하며 공공데이터포털 활용신청과는 따로 받는다. 공통 조인 키가 없어 링크·노선 단위로 바로 결합되지 않고 이름 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15157266-01
+    - c-15157266-03
+  dropped_citations: 0
+status: active

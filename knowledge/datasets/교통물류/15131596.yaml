@@ -1,0 +1,289 @@
+# Dataset 15131596 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15131596'
+tier: verified
+title: 경상남도 진주시_IC 유출입량
+sector: 교통물류/도로/road-facilities
+agency:
+  id: '5310000'
+  name: 경상남도 진주시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15131596/openapi.do
+synonyms:
+  - 분기점
+  - 교통
+  - 도로
+  - 평균속도
+  - 통행량
+  - 위치
+  - 좌표
+  - 유출입
+  - 진주시 교통량
+  - IC 통행량
+  - 나들목 유입 유출
+  - 진주 ITS
+  - 지점별 평균속도
+  - 인터체인지 교통량
+  - 진주 교통흐름
+description_portal: 경상남도 진주시 지능형교통체계(ITS) 시스템을 통해 수집된 교통 정보를 기반으로 가공한 데이터입니다. 각 지점별 지점ID, 유출입 구분, 통행량 합계, 평균속도 등 핵심 교통 지표를 포함하고 있으며, 지점 이름과 위도·경도와 같은 위치 정보도 함께 제공합니다. 본 데이터는 도심 교통 흐름 분석, 교통 혼잡도 파악, 교차로 운영 효율화, 교통정책 수립 등 다양한 행정 및 연구 목적에 활용될 수 있도록 구성되었습니다. 또한 지점별 이용 패턴 분석, 교통 수요 예측 모델 구축, 스마트 교통 서비스 개발 등에도 유용하게 활용될 수 있는 고도화된 데이터입니다.
+team:
+  dept: 스마트도시과
+services:
+  - op: /ic
+    name: IC 유출입량정보 조회
+    endpoint: https://apis.data.go.kr/5310000/traffic_ic/ic
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: startDate
+        required: true
+        example: '20240801'
+        desc: 시작 날짜
+      - name: endDate
+        required: true
+        example: '20240802'
+        desc: 종료 날짜
+      - name: dataType
+        required: false
+        example: json
+        desc: 데이터 타입
+      - name: timePeriod
+        required: false
+        example: 1D
+        desc: 데이터 적재 시간 단위(1일 1D, 1시간 1H, 5분 5M)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pointId
+      title: 지점 ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '3'
+        - '4'
+      stats:
+        min: 2
+        p50: 3.5
+        max: 6
+        unique: 5
+    - name: ioFlwDiv
+      title: '유출입 구분(I : 유입, O : 유출)'
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - O
+        - I
+      stats:
+        unique: 2
+    - name: sumTrfvlm
+      title: 통행량 합계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14884'
+        - '13195'
+        - '27143'
+      stats:
+        min: 2459
+        p50: 13969
+        max: 27143
+        unique: 8
+    - name: avgSpd
+      title: 평균 속도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '49.8'
+        - '61.5'
+      stats:
+        min: 0
+        p50: 41.9
+        max: 61.5
+        unique: 8
+    - name: pointNm
+      title: 지점 이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서진주IC
+        - 진주IC
+        - 문산IC
+      stats:
+        unique: 5
+    - name: lon
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '128.04501305'
+        - '128.12250297'
+        - '128.16001852'
+      stats:
+        min: 128.04501305
+        p50: 128.141260745
+        max: 128.27209537
+        unique: 5
+    - name: lat
+      title: 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.18561866'
+        - '35.15847114'
+        - '35.17218256'
+      stats:
+        min: 35.15847114
+        p50: 35.17890061
+        max: 35.22625806
+        unique: 5
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.4888
+  rank_in_sector: 2502
+  brm: 교통물류 - 도로
+  why: 진주시 ITS IC 유출입량, 단일 시
+claims:
+  - id: c-15131596-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15131596.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15131596.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15131596-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15131596-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15131596.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15131596-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15131596.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15131596-06
+    kind: admin_note
+    value: "세부 부문 '도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)'의 가치: 터널·교량·지하차도는 제공표준 — 지자체 파일 수백 건이 표준 하나로 접힌다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15131596-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15131596-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15131596.json
+  stats: probe/stats/15131596.json
+  data: probe/data/15131596/
+status: active
+summary_user: 진주시 ITS로 수집한 교통정보를 가공해, IC 등 지점별로 유입·유출 구분(ioFlwDiv)에 따른 통행량 합계와 평균속도를 지점 이름·위경도와 함께 담는다. 진주시 교통 분석가나 담당 공무원이 "어느 IC에서 유입·유출 통행량이 많고 속도가 떨어지는가"처럼 지점별 혼잡과 이용 패턴을 확인하는 데 쓴다. 전역 조인 키는 없어, 지점 ID는 진주시 ITS 내부에서만 쓰이고 다른 데이터와는 지점 이름이나 위경도 좌표로 맞춰 연결한다.
+limits: 범위는 진주시 한 곳의 개별 지점(주소·좌표)뿐이라 다른 시군구와 바로 비교하기 어렵다. 전국 공통 코드가 없어 다른 교통·도로 데이터와 붙이려면 이름이나 좌표를 직접 매칭해야 한다. 개발계정은 하루 100회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15131596-01
+    - c-15131596-03
+    - c-15131596-04
+  dropped_citations: 0

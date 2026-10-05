@@ -1,0 +1,234 @@
+# Dataset 15117401 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15117401'
+tier: verified
+title: 식품의약품안전처_식중독 조기경보(SMS) 전파
+sector: 식품건강/식품의약안전/food-safety-alerts
+agency:
+  id: '1471000'
+  name: 식품의약품안전처
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15117401/openapi.do
+synonyms:
+  - 식중독
+  - 조기경보
+  - 전파
+  - 학교
+  - 유치원
+  - 식중독 경보
+  - 식중독 문자 알림
+  - 학교급식 식중독
+  - 집단급식소 식중독
+  - 식중독 SMS
+  - 급식 안전 경보
+description_portal: 학교는 집단 급식 형태로 제한된 공간과 정해진 시간에 식품을 제공(섭취)함에 따라 식중독 발생 시 다수의 인원이 동시에 발생되어 대형 식중독으로 확대될 우려가 높고 납품받은 식재료에서 문제가 될 경우 다른 학교 또는 전국적으로 확산되어 발생될 수 있으므로 식중독과 관련된 철저한 관리와 주의 필요. 이에 학교 집단급식소 식중독 발생 시 신속 대응을 통한 확산방지와 식중독 예방 관리 강화를 위해 식품의약품안전처에서 보유한 식중독 조기경보(SMS) 전파 정보(전파일자, 대상구분, 수신대상 수)를 제공합니다.
+team:
+  dept: 데이터혁신기획팀
+services:
+  - op: /getFsnErlyAlrtSmsSprdService
+    name: 식중독 조기경보(SMS) 전파 정보
+    endpoint: https://apis.data.go.kr/1471000/FsnErlyAlrtSmsSprdService/getFsnErlyAlrtSmsSprdService
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '3'
+        desc: 한 페이지 결과수
+      - name: type
+        required: false
+        example: xml
+        desc: '응답데이터 형식(xml/json) default : xml'
+      - name: MSG_DATE
+        required: false
+        example: '20180927'
+        desc: 전파일자
+      - name: TARGET_GBN
+        required: false
+        example: 나라장터(G2B)
+        desc: 대상구분
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MSG_DATE
+      title: 전파일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20180927'
+        - '20181203'
+        - '20181204'
+      stats:
+        min: 20180927
+        p50: 20191106
+        max: 20200928
+        unique: 476
+    - name: TARGET_GBN
+      title: 대상구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 학교급식전자조달시스템(EAT)
+        - 식중독조기경보시스템(EWS)
+        - 나라장터(G2B)
+      stats:
+        unique: 3
+    - name: TARGET_CNT
+      title: 수신대상수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 4
+        max: 16593
+        unique: 202
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.491
+  rank_in_sector: 1102
+  brm: 식품건강 - 식품의약안전
+  why: 식중독 SMS 전파 이력, 지역·업소 키 없음
+claims:
+  - id: c-15117401-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15117401.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15117401.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15117401-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15117401-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15117401.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15117401-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15117401.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15117401-06
+    kind: admin_note
+    value: "세부 부문 '회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독'의 가치: 회수·판매중지는 실시간 소비자 안전, 행정처분은 업소 건별 이력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#food-safety-alerts
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15117401-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15117401-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15117401.json
+  stats: probe/stats/15117401.json
+  data: probe/data/15117401/
+status: active
+summary_user: 학교 집단급식소 식중독 발생 시 식품의약품안전처가 보낸 식중독 조기경보(SMS) 전파 이력을 전파일자·대상구분·수신대상 수 단위로 담는 전국 범위 건별 기록이다. 급식 안전 분석가나 교육·보건 담당자가 언제 어떤 대상에게 몇 명 규모로 조기경보가 나갔는지, 경보 전파가 어느 시기에 몰렸는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없고 지역·업소 코드도 없어, 다른 식중독·행정처분 데이터와는 전파일자 같은 날짜나 대상구분 이름을 맞춰 느슨하게만 연결한다.
+limits: 지역 정보가 없는 전국·비공간 데이터라 지역별 경보 현황이나 발생 학교·원인 식품은 알 수 없다. 경보가 나갈 때마다 생성되고 이후 바뀌지 않는 이벤트성 기록이라 정기 갱신 주기를 기대하면 안 된다. 조인 키가 없어 다른 데이터와는 이름·날짜 매핑으로만 이어 쓸 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15117401-02
+    - c-15117401-03
+    - c-15117401-04
+  dropped_citations: 0

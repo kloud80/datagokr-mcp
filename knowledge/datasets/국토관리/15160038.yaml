@@ -1,0 +1,208 @@
+# Dataset 15160038 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15160038'
+tier: verified
+title: 서울특별시_사업장폐기물 배출 사업장 신고 현황
+sector: 국토관리/지역및도시/unclassified
+domain: 국토관리/미분류
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15160038/fileData.do
+synonyms:
+  - 사업장폐기물
+  - 사업장
+  - 폐기물
+  - 신고
+  - 사업장폐기물배
+  - 폐기물 배출자 신고
+  - 사업장폐기물 배출업소
+  - 서울 폐기물 배출 사업장
+  - 건설폐기물 배출자
+  - 폐기물 위탁처리 사업장
+  - 사업장 폐기물 신고 목록
+summary_user: 서울특별시에서 사업장폐기물 배출자 신고를 한 사업장의 현황을 사업장 단위로 담으며, 사업장명·업종·주소가 들어 있다. 사업자나 분석가가 "서울에서 어떤 업종의 사업장이 어디서 사업장폐기물 배출자로 신고돼 있는가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업장명이나 주소(ADDR)를 이름·주소 매칭하는 방식으로만 이을 수 있다.
+description_portal: 폐기물이 발생하면 일반 가정에서는 종량제봉투를 구매 사용하여 배출 시 관할 지자체에서 공공 수거해 가고 있습니다. 그러나, 일정 규모 사업장의 경우, 폐기물관리법 제17조, 동법 제18조, 동칙 제18조에 의거 폐기물 배출량이 일 평균 300킬로그램 이상 배출 또는 건설공사 및 일련의 공사 또는 작업 등으로 인하여 폐기물을 5톤 이상 배출하는 경우, 사업장폐기물 배출자 신고를 해당 지자체에 신고하고 사업장에서 발생하는 폐기물을 스스로 처리하거나 폐기물처리업의 허가를 받은 자, 폐기물처리 신고자, 폐기물처리시설을 설치ㆍ운영하는 자에게 위탁하여 처리하여야 합니다. 본 데이터는 사업장폐기물 배출자 신고를 한 사업장의 현황 자료입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: workPlaWaste
+    name: workPlaWaste
+    endpoint: http://openapi.seoul.go.kr:8088/json/workPlaWaste/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: BPLC_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 상명대학교
+        - 성균관대학교
+        - ㈜아워홈 GS건설종로점(그랑서울 구내식당)
+      stats:
+        unique: 100
+    - name: TPBIZ
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 업무시설
+        - 숙박시설
+        - 교육연구시설
+      stats:
+        unique: 8
+    - name: ADDR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 종로구 새문안로 97
+        - 서울특별시 종로구 대학로 101
+        - 서울특별시 종로구 세종대로 175
+      stats:
+        unique: 96
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 미분류 (재구성 후 잔여)
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.2914
+  rank_in_sector: 1231
+  brm: 국토관리 - 지역및도시
+  why: 사업장폐기물 신고는 환경 분야 자료
+claims:
+  - id: c-15160038-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15160038.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15160038-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15160038-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15160038.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15160038-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15160038.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15160038-20
+    kind: legal_basis
+    value: "법 체계 층 '미분류 (재구성 후 잔여)': "
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/미분류
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15160038-06
+    kind: admin_note
+    value: '[국토관리 재구성 — 국토기본법 계층 · 결정] BRM 지역및도시·주택을 법 체계에 따라 다시 나눔. 부문 위에 계층(domain)을 새로 둠 — `sector_tree.yaml`, KG `domain` 노드·`in_domain`/`domain_of`/`related_sector` 엣지 (스키마 변경 없음, ARCHITECTURE §2 표에 추가).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L527
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15160038-07
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave4 판정 move
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15160038.json
+  stats: probe/stats/15160038.json
+  data: probe/data/15160038/
+limits: 서울 열린데이터광장(data.seoul.go.kr) 외부 API라서 공공데이터포털 활용신청과 별개로 서울시 인증키가 필요하다. 사업장 코드 같은 공통 키가 없어 다른 데이터와 정확히 조인하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15160038-01
+    - c-15160038-03
+  dropped_citations: 0
+status: active

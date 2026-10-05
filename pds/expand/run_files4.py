@@ -19,10 +19,25 @@ for x in t:
     if p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "").startswith(today):
         continue
     todo.append((x["id"], x["url"]))
+shard = os.environ.get("PDS_SHARD")  # "i/k" — 여러 프로세스로 나눠 받기
+if shard:
+    i, k = map(int, shard.split("/"))
+    todo = todo[i::k]
+if os.environ.get("PDS_REVERSE"):  # 같은 묶음을 반대쪽 끝부터 — 두 프로세스가 가운데서 만난다
+    todo = todo[::-1]
 print(f"파일 {len(todo)}건", flush=True)
 B = 25
+def _done(dsid):
+    p = config.ROOT / "probe" / "runs" / f"{dsid}.json"
+    return p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "").startswith(today)
+
+
 for i in range(0, len(todo), B):
-    r = asyncio.run(run_files(todo[i:i + B]))
+    batch = [x for x in todo[i:i + B] if not _done(x[0])]  # 다른 프로세스가 이미 받은 것은 건너뛴다
+    if not batch:
+        print("  남은 것 없음 — 다른 프로세스가 받았다", flush=True)
+        break
+    r = asyncio.run(run_files(batch))
     ok = sum(1 for x in r if x.get("ok_ops"))
     print(f"  {i + len(r)}/{len(todo)} 성공 {ok}/{len(r)}", flush=True)
     if any(x.get("captcha") for x in r):

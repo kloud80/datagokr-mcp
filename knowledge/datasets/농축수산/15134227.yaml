@@ -1,0 +1,251 @@
+# Dataset 15134227 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15134227'
+tier: verified
+title: 산림청_국립자연휴양림 예약정보
+sector: 농축수산/임업·산촌/forest-recreation
+agency:
+  id: '1400000'
+  name: 산림청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15134227/openapi.do
+synonyms:
+  - 휴양림
+  - 예약
+  - 관리
+  - 국립자연휴양림
+  - 휴양림예약
+  - 국립자연
+  - 자연휴양
+  - 휴양림 예약
+  - 자연휴양림 숙박
+  - 숲속의집 예약현황
+  - 휴양림 객실 예약
+  - 숲나들e
+  - 휴양림 취소 대기
+description_portal: 국립자연휴양림 예약 현황 자료는 2023년 3월 15일부터 2024년 2월 28일까지의 기간을 대상으로 하며, 각 휴양림별 예약 정보를 종합적으로 제공합니다. 주요 항목에는 기관ID와 기관 이름이 포함되어 해당 시설의 식별과 관리가 가능하며, 예약된 상품명과 숙박일자가 기록되어 이용자의 선택 내역과 일정 파악을 용이하게 합니다. 또한 예약의 상태 값이 함께 제공되어 확정, 대기, 취소 등 현황을 명확히 알 수 있어 운영 측면의 투명성과 효율성을 높입니다. 이 자료는 휴양림의 객실 및 시설 운영 계획 수립, 이용객 수요 예측, 예약 시스템 개선 등 다양한 정책적·관리적 활용에 중요한 기초 데이터를 제공합니다.
+team:
+  dept: 산림빅데이터팀
+services:
+  - op: /nationalRecreationForestReservationList
+    name: 국립자연휴양림예약목록조회
+    endpoint: https://apis.data.go.kr/1400000/nationalRecreationForestReservationService/nationalRecreationForestReservationList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: goodsNm
+        required: false
+        example: 금낭화
+        desc: 상품명
+      - name: startStngDt
+        required: false
+        example: '20240228'
+        desc: 숙박일자 기간검색 시작 ('YYYYMMDD')
+      - name: endStngDt
+        required: false
+        example: '20240228'
+        desc: 숙박일자 기간검색 종료 ('YYYYMMDD')
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: goodsnm
+      title: 상품명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금낭화
+        - 금낭화(1휴)
+        - 601호 금낭화
+      stats:
+        unique: 3
+    - name: insttid
+      title: 기관아이디
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '113'
+        - '200'
+        - '141'
+      stats:
+        min: 110
+        p50: 164
+        max: 200
+        unique: 6
+    - name: insttnm
+      title: 기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가리왕산 자연휴양림
+        - 낙안민속 자연휴양림
+        - 덕유산 자연휴양림
+      stats:
+        unique: 6
+    - name: status
+      title: 상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 체크아웃
+      stats:
+        unique: 1
+    - name: stngdt
+      title: 숙박일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20240228'
+      stats:
+        min: 20240228
+        p50: 20240228
+        max: 20240228
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6313
+  rank_in_sector: 42
+  brm: 농축수산 - 임업·산촌
+  why: 예약 현황, 기간 한정 구버전
+claims:
+  - id: c-15134227-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15134227.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15134227.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15134227-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15134227-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15134227.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15134227-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15134227.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15134227-06
+    kind: admin_note
+    value: "세부 부문 '산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)'의 가치: 등산·휴양 인구 수요, 시설코드·등산로ID·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#forest-recreation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15134227-07
+    kind: admin_note
+    value: '[농축수산 - 임업·산촌 · 결정] 산지 구분·산림 자원·산림 복지/휴양·임산물 품목까지만. 산불·산사태·병해충·임도·국유림·산촌·직불·임업인·산림항공·기관 운영 배제 (`forestry-deferred`, `forestry-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L553
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15134227-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15134227.json
+  stats: probe/stats/15134227.json
+  data: probe/data/15134227/
+status: active
+summary_user: 국립자연휴양림별 예약 건을 기관(휴양림) 이름·아이디, 예약 상품명, 숙박일자, 예약 상태(확정·대기·취소 등) 단위로 담은 건별 예약 자료로, 포털 설명상 2023년 3월 15일부터 2024년 2월 28일까지의 전국 휴양림 예약을 대상으로 한다. 휴양림 운영자나 분석가가 "어느 휴양림의 어떤 객실이 어느 날짜에 예약이 몰리고 취소가 잦은가"처럼 숙박 수요와 성수기를 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 휴양림·시설 데이터와는 기관명(insttnm)이나 같은 기관의 기관아이디로 이름·코드를 맞춰 연결해야 한다.
+limits: 표준 조인 키나 좌표가 없어 주소·위치 기반 결합은 직접 이름 매칭이 필요하고, 행정구역 단위 공간 분석은 이 데이터만으로는 안 된다. 개발계정은 하루 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15134227-01
+    - c-15134227-03
+    - c-15134227-04
+  dropped_citations: 0

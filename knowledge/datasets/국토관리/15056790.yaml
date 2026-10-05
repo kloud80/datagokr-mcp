@@ -1,0 +1,253 @@
+# Dataset 15056790 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056790'
+tier: verified
+title: 국토교통부_표준권역
+sector: 국토관리/수자원/river-registry
+domain: 국토관리/기반시설
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056790/openapi.do
+synonyms:
+  - 공간정보
+  - 수자원
+  - 지도
+  - 표준권역
+  - 표준유역
+  - 대권역
+  - 중권역
+  - 유역도
+  - 수자원 권역
+  - 유역 경계
+  - WAMIS 유역
+summary_user: 국가 수자원 관리를 위해 지형공간 위에 설정한 대권역·중권역·표준유역의 가상 구역을 지도정보로 담으며, 범위는 전국입니다. 분석가나 사업자가 특정 지점이나 사업지가 어느 표준유역·권역에 속하는지 확인해 수자원 계획이나 하천 관련 검토의 공간 단위를 정할 때 쓴다. 표준유역 코드(sbsncd)와 이름(sbsnnm)이 있지만 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 하천·유역 자료와는 유역 이름·코드 매핑이나 같은 기관 코드로만 연결한다.
+description_portal: 국가 차원의 수자원개발, 계획 및 관리업무의 효율적 추진을 위하여 수자원 업무에 활용되는 자료의 수집, 분석과 물관련 기관 간 자료의 공동활용을 목적으로 지형공간 상에 대권역, 중권역 및 표준유역의 가상의 구역을 설정한 지도정보를 제공합니다.
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_C_WKMSBSN
+    name: LT_C_WKMSBSN
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_C_WKMSBSN
+      - name: geomFilter
+        required: true
+        example: BOX(126.95,37.52,127.10,37.60)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sbsncd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '101806'
+        - '101807'
+        - '101809'
+      stats:
+        min: 101806
+        p50: 101810
+        max: 101813
+        unique: 7
+    - name: sbsnnm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 탄천하류
+        - 중랑천합류전
+        - 청계천
+      stats:
+        unique: 7
+    - name: cat_nam
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 표준유역
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.7157
+  rank_in_sector: 26
+  brm: 국토관리 - 수자원
+  why: 수자원 표준유역 구역도, 부동산 연계 약함
+claims:
+  - id: c-15056790-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056790.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15056790-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056790-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056790.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056790-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056790.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056790-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15056790-06
+    kind: admin_note
+    value: "세부 부문 '하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)'의 가치: 하천코드(WAMIS)·유역 권역 = 공간 규제 원장(하천구역 안팎은 건축 규제), 국가공간정보포털과 중복"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#river-registry
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056790-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056790-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056790.json
+  stats: probe/stats/15056790.json
+  data: probe/data/15056790/
+limits: 외부 사이트(vworld.kr) 인증키가 따로 필요하며 포털 활용신청과는 별개입니다. 전역 조인 키가 없어 다른 데이터와 직접 결합하기 어렵고, 국가공간정보포털 자료와 내용이 중복됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15056790-01
+    - c-15056790-03
+    - c-15056790-04
+    - c-15056790-06
+  dropped_citations: 0
+status: active

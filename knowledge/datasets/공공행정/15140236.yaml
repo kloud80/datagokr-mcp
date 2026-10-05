@@ -1,0 +1,285 @@
+# Dataset 15140236 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15140236'
+tier: verified
+title: 법제처_고용노동부 법령해석 목록 조회
+sector: 공공행정/법제/case-law
+agency:
+  id: '1170000'
+  name: 법제처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15140236/openapi.do
+synonyms:
+  - 고용노동부
+  - 법령
+  - 근로기준
+  - 임금체계
+  - 산업안전
+  - 근로시간
+  - 직장내괴롭힘
+  - 노동쟁의
+  - 노동부 유권해석
+  - 근로기준법 해석례
+  - 노동법 질의회신
+  - 법령해석례
+  - 산업안전보건법 해석
+  - 국가법령정보센터 해석
+summary_user: 고용노동부 법령해석 사례를 건별 목록으로 담으며, 해석마다 안건명·안건번호·질의기관·해석기관·해석일자와 상세 회신 본문으로 가는 링크(법령해석상세링크)가 붙는다. 노무 담당자나 노동법 분석가가 근로기준법·산업안전보건법 같은 노동 법령의 특정 쟁점에 대해 정부가 어떻게 해석했는지 사례를 찾을 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 법령해석일련번호로 같은 서비스의 상세 본문 조회와 잇거나 질의기관코드·해석기관코드 같은 기관 코드, 안건명 매칭으로만 다른 데이터와 연결한다.
+description_portal: 법제처 국가법령정보센터에서 제공하는 고용노동부 법령해석 데이터로, 법령해석에 대한 목록 정보를 조회하는 서비스입니다. 본 서비스는 근로기준법, 산업안전보건법, 고용정책기본법 등 노동 관련 법령에 대해 고용노동부가 법제처에 질의한 사례들을 목록 형태로 제공합니다. 목록 항목에는 해석 일련번호, 안건명, 질의기관, 접수일자, 해석일자, 회신 여부 및 처리 상태 등이 포함되어 있어 해석 요청의 진행 현황을 한눈에 확인할 수 있습니다. 이용자는 해당 목록을 바탕으로 관심 있는 사례를 선택하여 개별 회신 본문으로 연계할 수 있으며, 각 사례는 노동 정책 및 현장 행정에서 실제 쟁점이 된 사안들에 대한 법리적 판단 근거를 제공합니다.
+team:
+  dept: 법제처
+services:
+  - op: lawSearch:moelCgmExpc
+    name: lawSearch:moelCgmExpc
+    endpoint: https://www.law.go.kr/DRF/lawSearch.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: OC
+      issuer: open.law.go.kr
+    params:
+      - name: target
+        required: true
+        example: moelCgmExpc
+      - name: type
+        required: true
+        example: JSON
+      - name: display
+        required: true
+        example: '100'
+      - name: page
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: 안건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 1년간 지급받은 상여금을 평균임금 대상금품에 산입하는 방법
+        - 1년 미만자의 연차휴가 사용촉진
+        - 20억원 미만 공사에서 관리책임자 및 무자격 안전관리자 업무수당 사용여부
+      stats:
+        unique: 92
+    - name: 해석기관코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1492000'
+      stats:
+        min: 1492000
+        p50: 1492000
+        max: 1492000
+        unique: 1
+    - name: 법령해석상세링크
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - /DRF/lawService.do?OC=***&target=moelCgmExpc&ID=28212&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=moelCgmExpc&ID=314616&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=moelCgmExpc&ID=279490&type=HTML&mobileYn=
+      stats:
+        unique: 100
+    - name: 안건번호
+      type: string
+      null_rate: 0.03
+      sample_values:
+        - 퇴직연금복지과-795
+        - 임금 68207-120
+        - 근기 68207-1542
+      stats:
+        unique: 85
+    - name: 법령해석일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '28212'
+        - '314616'
+        - '279490'
+      stats:
+        min: 1968
+        p50: 22186
+        max: 2287777
+        unique: 100
+    - name: 질의기관명
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: 해석기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고용노동부
+      stats:
+        unique: 1
+    - name: 해석일자
+      type: date
+      null_rate: 0.02
+      sample_values:
+        - 2005.12.28
+        - 2001.12.04
+        - 2008.12.29
+      stats:
+        min: '1992-06-11'
+        max: '2025-07-07'
+        unique: 80
+    - name: 질의기관코드
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: 데이터기준일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2024.12.16
+        - 2025.12.11
+      stats:
+        min: '2024-12-16'
+        max: '2025-12-11'
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8132
+  rank_in_sector: 10
+  brm: 공공행정 - 법제
+  sector_rule: moleg-to-law
+  why: 기관별 법령해석 목록, 중복
+claims:
+  - id: c-15140236-01
+    kind: access
+    value: 외부 사이트 open.law.go.kr 인증키 필요 (query 파라미터 OC) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15140236.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.law.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15140236-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140236-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140236.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140236-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15140236.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140236-06
+    kind: admin_note
+    value: "세부 부문 '사법 판단 (판례·헌재·법령해석·행정심판·결정문)'의 가치: 시의성 + 희소성 — 판례·결정례·해석례는 등록 시점 이후만 가치"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#case-law
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15140236-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140236-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15140236.json
+  stats: probe/stats/15140236.json
+  data: probe/data/15140236/
+limits: 포털 활용신청과 별개로 open.law.go.kr 인증키(OC 파라미터)를 따로 받아야 호출된다. 범위는 전국·비공간이라 지역별 분석에는 쓰지 못하고, 해석례 특성상 등록 시점 이후 사례만 가치가 있어 시의성을 따져 읽어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15140236-01
+    - c-15140236-03
+    - c-15140236-04
+    - c-15140236-06
+  dropped_citations: 0
+status: active

@@ -1,0 +1,368 @@
+# Dataset 15157427 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157427'
+tier: verified
+title: 한국예탁결제원_REPO정보서비스_GW
+sector: 재정금융/금융/securities-market
+agency:
+  id: B552481
+  name: 한국예탁결제원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157427/openapi.do
+synonyms:
+  - REPO
+  - 환매조건부
+  - 기관간REPO
+  - 대고객REPO
+  - 한국은행REPO
+  - 3자간 환매
+  - REPO결제
+  - 담보자산
+  - 레포
+  - 환매조건부채권
+  - RP 거래
+  - REPO 담보금액
+  - 레포 잔액
+  - 단기자금시장
+  - 담보증권
+description_portal: REPO정보서비스는 REPO 증권종류별 담보금액, REPO 거래금액 및 일평균잔액, REPO 통화별잔액 등의 정보를 제공하는 API 서비스입니다. REPO 서비스란 금융시장에서 단기 자금 조달 및 운용을 위한 한 유형의 거래로, 증권의 매도자와 매수자가 미리 약정된 조건에 따라 일정 기간 후 매수자에게 증권을 다시 매도하는 형태의 거래를 말합니다. 실질적으로 REPO 거래는 단기 자금 조달 수단으로 기능합니다. 한국예탁결제원에서 제공하는 REPO서비스는 제3자 입장에서 공정하고 효율적인 REPO플랫폼을 통해 REPO 거래에 수반되는 결제, 거래증권 평가, 권리관리, 일일정산 등 3자간 환매서비스를 제공합니다. 예탁결제원은 중앙청산소(CCP) 역할을 수행하며, 기관 간 레포 시장의 안정성 확보 및 인프라를 운영하고 있습니다. REPO 거래에서 발생할 수 있는 신용위험 및 시장위험을 효과적으로 관리하고 있으며, 자본시장의 활성화와 유동성 공급을 위해 REPO 거래 관련 정책 지원 등의 업무도 수행하고 있습니다. 한국예탁결제원의 대표 증권정보포털인 SEIBro를 통해 실시간 REPO금리 및 시장 현황을 제공하고 있으며, 2025년에는 종합정보플랫폼 'RP인사이드'를 개시하여 KOFR 및 레포 시장의 업권, 차주신용, 담보, 포지션별 거래 분석을 확인할 수 있고 차입금리 비교 서비스를 제공하고 있습니다. 예탁결제원의 서비스의 장점은 Repo거래당사자간 합의에 따라 거래 세부사항을 자유롭게 정할 수 있으며, 거래기간 중에도 거래조건 변경이 가능합니다. 그리고 담보증권의 평가 일일정산서비스를 통해 담보증권의 가치변동에 따른 증거금 이행 및 거래규모 조정이 가능합니다. 마지막으로 담보증권에서 이자 등 권리가 발생하는 경우 수익지급을 통해 매도자에게 권리관리서비스를 제공하며, 매수자가 담보증권을 처분한 경우에도 대체지급프로세스를 통해 권리관리서비스를 제공합니다.
+team:
+  dept: 증권데이터부
+services:
+  - op: /getColatRepoAmt
+    name: REPO 증권종류별 담보금액 현황 조회
+    endpoint: https://apis.data.go.kr/B552481/RepoSvc/getColatRepoAmt
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: std_dt
+        required: true
+        example: '20210930'
+        desc: 조회기준일자
+      - name: repo_sort_cd
+        required: true
+        example: '1'
+        desc: 'REPO유형(1: 기관REPO, 2: 고객REPO)'
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getTrAmtRepoRem
+    name: REPO 거래금액 및 일평균잔액 현황 조회
+    endpoint: https://apis.data.go.kr/B552481/RepoSvc/getTrAmtRepoRem
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: std_dt
+        required: true
+        desc: 조회기준일자
+      - name: repo_sort_cd
+        required: true
+        desc: REPO유형
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getCurRepoRem
+    name: REPO 통화별잔액 조회
+    endpoint: https://apis.data.go.kr/B552481/RepoSvc/getCurRepoRem
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: std_dt
+        required: true
+        desc: 기준일자
+      - name: cur_cd
+        required: true
+        desc: 통화코드(KRW, USD, JPY)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: nbondColatAmt
+      title: 국채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '87822663762501'
+      stats:
+        min: 87822663762501
+        p50: 87822663762501
+        max: 87822663762501
+        unique: 1
+    - name: msbColatAmt
+      title: 통안채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5071946588919'
+      stats:
+        min: 5071946588919
+        p50: 5071946588919
+        max: 5071946588919
+        unique: 1
+    - name: fbondColatAmt
+      title: 금융채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37566816035853'
+      stats:
+        min: 37566816035853
+        p50: 37566816035853
+        max: 37566816035853
+        unique: 1
+    - name: sbondColatAmt
+      title: 특수채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7981744165768'
+      stats:
+        min: 7981744165768
+        p50: 7981744165768
+        max: 7981744165768
+        unique: 1
+    - name: cpbondColatAmt
+      title: 회사채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4394168237412'
+      stats:
+        min: 4394168237412
+        p50: 4394168237412
+        max: 4394168237412
+        unique: 1
+    - name: lbondColatAmt
+      title: 지방채 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '482035865637'
+      stats:
+        min: 482035865637
+        p50: 482035865637
+        max: 482035865637
+        unique: 1
+    - name: etfColatAmt
+      title: ETF 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '418803110000'
+      stats:
+        min: 418803110000
+        p50: 418803110000
+        max: 418803110000
+        unique: 1
+    - name: etcBondColatAmt
+      title: 기타채권 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: stkColatAmt
+      title: 주식 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: cpColatAmt
+      title: CP 담보금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.5006
+  rank_in_sector: 244
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: REPO 시장 전체 잔액 집계
+claims:
+  - id: c-15157427-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-04 실호출 성공 오퍼레이션 1/3
+    evidence:
+      - type: measured
+        source: probe/runs/15157427.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/3
+      - type: measured
+        source: probe/apply/15157427.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15157427-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157427-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157427.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157427-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157427.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157427-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157427-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157427-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157427-10
+    kind: pitfall
+    value: 필수 파라미터 cur_cd, repo_sort_cd는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157427.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157427-11
+    kind: pitfall
+    value: '오퍼레이션 2개는 최소 파라미터로 응답이 없었다: /getTrAmtRepoRem, /getCurRepoRem'
+    evidence:
+      - type: measured
+        source: probe/runs/15157427.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/3
+  run: probe/runs/15157427.json
+  stats: probe/stats/15157427.json
+  data: probe/data/15157427/
+status: active
+summary_user: 한국예탁결제원이 3자간 환매(REPO) 플랫폼에서 집계한 REPO 증권종류별 담보금액(국채·통안채·금융채·특수채·회사채·지방채·ETF·주식·CP 등), 거래금액·일평균잔액, 통화별잔액을 전국 단위 집계로 담은 API입니다. 금융 분석가가 기관 간 레포 시장에서 어떤 증권이 담보로 얼마나 쓰이는지, 국채와 회사채 담보 비중이 어떻게 달라지는지를 확인하는 데 쓴다. 실측 컬럼에 종목코드 같은 전역 조인 키가 없어 다른 증권 데이터와는 증권종류 이름이나 같은 기관 코드로만 맞춰 이어 쓰고, 통화·REPO 구분 코드는 다른 데이터에서 먼저 받아 넘겨야 한다.
+limits: 세 오퍼레이션 중 실호출에 성공한 것은 1개이며, 거래금액·잔액(/getTrAmtRepoRem)과 통화별잔액(/getCurRepoRem)은 최소 파라미터로 응답이 없었다. 필수 파라미터인 통화코드(cur_cd)와 REPO 구분코드(repo_sort_cd)는 다른 데이터의 코드라 먼저 확보해야 하고, 개발계정은 하루 100회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15157427-01
+    - c-15157427-03
+    - c-15157427-04
+    - c-15157427-10
+    - c-15157427-11
+  dropped_citations: 0

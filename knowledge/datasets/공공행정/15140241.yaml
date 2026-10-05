@@ -1,0 +1,296 @@
+# Dataset 15140241 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15140241'
+tier: verified
+title: 법제처_환경부 법령해석 목록 조회
+sector: 공공행정/법제/case-law
+agency:
+  id: '1170000'
+  name: 법제처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15140241/openapi.do
+synonyms:
+  - 환경정책
+  - 법령
+  - 자원순환
+  - 행정기록
+  - 법률판단
+  - 해석
+  - 회신정보
+  - 질의현황
+  - 환경부 유권해석
+  - 환경법령 질의회신
+  - 법령해석례
+  - 환경 법령 해석 사례
+  - 폐기물 법령 해석
+  - 국가법령정보센터 해석례
+summary_user: 법제처 국가법령정보센터가 제공하는 환경부 법령해석 사례를 건별 목록으로 담으며, 안건명·안건번호·질의기관·해석기관·해석일자와 상세 본문 링크를 포함하고 범위는 전국·비공간입니다. 사업자나 지자체 담당자가 '폐기물·수질·대기 관련 규정을 환경부가 어떻게 해석해 왔는지'를 안건명으로 찾아볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 법령해석일련번호와 상세링크(법령해석상세링크)로 같은 서비스의 본문 조회와 잇고, 다른 데이터와는 질의기관코드·해석기관코드나 기관명 매핑으로만 연결한다.
+description_portal: 법제처 국가법령정보센터에서 제공하는 환경부 법령해석 데이터로, 법령해석에 대한 목록 정보를 조회하는 서비스입니다. 본 서비스는 환경 관련 법령에 대한 해석 요청 및 회신 정보를 목록 형태로 제공합니다. 목록에는 해석 일련번호, 안건명, 질의기관, 접수일자, 해석일자, 회신 여부 등의 정보가 포함되어 있으며, 이를 통해 다양한 환경 분야에서 제기된 법률적 질의와 그 처리 현황을 확인할 수 있습니다. 제공되는 데이터는 대기질, 수질, 폐기물, 화학물질 관리 등 주요 환경 정책과 관련된 행정 해석 사례를 포괄하고 있습니다. 각 항목은 본문 조회 서비스와 연계되어 있으며, 해석 요청에 대한 상세 회신 내용을 확인할 수 있는 구조로 설계되어 있습니다.
+team:
+  dept: 법제처
+services:
+  - op: lawSearch:meCgmExpc
+    name: lawSearch:meCgmExpc
+    endpoint: https://www.law.go.kr/DRF/lawSearch.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: OC
+      issuer: open.law.go.kr
+    params:
+      - name: target
+        required: true
+        example: meCgmExpc
+      - name: type
+        required: true
+        example: JSON
+      - name: display
+        required: true
+        example: '100'
+      - name: page
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: 안건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0.2톤처리 소각시설의 여과집진시설 설치여부
+        - 0.3%이하 저유황 B/C유 사용 시 방지시설 설치 면제 여부
+        - 10HP 콤프레셔에 4개 시설이 동시가동할 때 배출시설적용
+      stats:
+        unique: 100
+    - name: 해석기관코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1482000'
+      stats:
+        min: 1482000
+        p50: 1482000
+        max: 1482000
+        unique: 1
+    - name: 법령해석상세링크
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - /DRF/lawService.do?OC=***&target=meCgmExpc&ID=316128&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=meCgmExpc&ID=315980&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=meCgmExpc&ID=316606&type=HTML&mobileYn=
+      stats:
+        unique: 100
+    - name: 안건번호
+      type: number
+      null_rate: 0.09
+      sample_values:
+        - '53851'
+        - '122863'
+        - '113885'
+      stats:
+        min: 30316
+        p50: 59656.5
+        max: 128585
+        unique: 91
+    - name: 법령해석일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '316128'
+        - '315980'
+        - '316606'
+      stats:
+        min: 20474
+        p50: 317321
+        max: 2758459
+        unique: 100
+    - name: 질의기관명
+      type: code
+      null_rate: 0.99
+      sample_values:
+        - 행정안전부
+      stats:
+        unique: 1
+    - name: 해석기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기후에너지환경부
+      stats:
+        unique: 1
+    - name: 해석일자
+      type: date
+      null_rate: 0.97
+      sample_values:
+        - 2026.07.24
+        - 2026.07.13
+        - 2015.11.03
+      stats:
+        min: '2015-11-03'
+        max: '2026-07-24'
+        unique: 3
+    - name: 질의기관코드
+      type: number
+      null_rate: 0.99
+      sample_values:
+        - '1741000'
+      stats:
+        min: 1741000
+        p50: 1741000
+        max: 1741000
+        unique: 1
+    - name: 데이터기준일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2024.12.16
+        - 2026.07.25
+        - 2026.07.14
+      stats:
+        min: '2024-12-16'
+        max: '2026-07-25'
+        unique: 4
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6201
+  rank_in_sector: 170
+  brm: 공공행정 - 법제
+  sector_rule: moleg-to-law
+  why: 환경부 법령해석 목록, 법령해석례와 중복
+claims:
+  - id: c-15140241-01
+    kind: access
+    value: 외부 사이트 open.law.go.kr 인증키 필요 (query 파라미터 OC) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15140241.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.law.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15140241-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140241-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140241.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140241-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15140241.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15140241-06
+    kind: admin_note
+    value: "세부 부문 '사법 판단 (판례·헌재·법령해석·행정심판·결정문)'의 가치: 시의성 + 희소성 — 판례·결정례·해석례는 등록 시점 이후만 가치"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#case-law
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15140241-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140241-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15140241.json
+  stats: probe/stats/15140241.json
+  data: probe/data/15140241/
+limits: open.law.go.kr의 별도 인증키(OC 파라미터)가 필요하며 포털 활용신청과는 별개다. 해석례는 등록 시점 이후의 것만 가치가 있어 시의성이 중요하고, 목록에는 회신 본문이 없어 상세 내용은 본문 조회로 따로 받아야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15140241-01
+    - c-15140241-03
+    - c-15140241-04
+    - c-15140241-06
+  dropped_citations: 0
+status: active

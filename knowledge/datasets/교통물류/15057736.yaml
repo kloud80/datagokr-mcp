@@ -1,0 +1,209 @@
+# Dataset 15057736 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15057736'
+tier: verified
+title: 한국교통안전공단_자동차 종합정보 검사정보 서비스
+sector: 교통물류/도로/vehicles
+agency:
+  id: B553881
+  name: 한국교통안전공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15057736/openapi.do
+synonyms:
+  - 자동차
+  - 검사정보
+  - 검사현황
+  - 자동차종합정보
+  - 통계
+  - 자동차검사 현황
+  - 차량 검사 통계
+  - 정기검사 건수
+  - 읍면동별 자동차검사
+  - 교통안전공단 검사정보
+  - 차종별 검사 실적
+description_portal: 자동차정보API 서비스로 자동차 검사 기준날짜 시작일(입력날짜 한달전으로 검색), 검사 기준날짜 종료일(입력날짜 한달 후로 검색), 사용자본거지 법정동코드(행정표준코드관리시스템에서 조회  가능 / code.go.kr / 예:2629010900), 용도(자가용,영업용,관용), 차종(승용,승합,특수,화물), 자동차규모(세부차종:경형,대형,소형,중형)를 입력하여 기간별검사(현황) 등록 통계정보를  조회하는 서비스 입니다. *매월1일부터 말일까지의 데이터는 익월2일에 조회 및 활용 가능합니다. *인증키는 공공데이터포털에서 자동발급 됩니다.
+team:
+  dept: AI혁신처
+services:
+  - op: /getlnsptlnfo
+    name: 검사정보 통계 조회
+    endpoint: https://apis.data.go.kr/B553881/insptlnfoService_01/getlnsptlnfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: bgnde
+        required: true
+        example: '20170218'
+        desc: 입력날짜 한달전으로 검색
+      - name: endde
+        required: true
+        example: '20190218'
+        desc: 입력날짜 한달후로 검색
+      - name: useStrnghldLegaldongCode
+        required: false
+        example: '2629010900'
+        desc: 사용자본거지 법정동 코드
+      - name: prposSeNm
+        required: false
+        example: 자가용
+        desc: 관용, 영업용 자가용
+      - name: vhctyAsortNm
+        required: false
+        example: 승용
+        desc: 승용,승합,특수,화물
+      - name: vhctyClNm
+        required: false
+        example: 중형
+        desc: 경형,대형,소형,중형
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dtaCo
+      title: 통계 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7023
+  rank_in_sector: 404
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 검사 건수 통계 API, 개체 원장 아님
+claims:
+  - id: c-15057736-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15057736.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15057736.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15057736-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057736-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057736.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057736-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15057736.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057736-06
+    kind: admin_note
+    value: "세부 부문 '자동차 등록·검사·정비·렌터카·운전면허'의 가치: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vehicles
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057736-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057736-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15057736.json
+  stats: probe/stats/15057736.json
+  data: probe/data/15057736/
+status: active
+summary_user: 자동차 검사 기간(기준일 앞뒤 한 달)과 사용본거지 법정동코드, 용도(자가용·영업용·관용), 차종(승용·승합·특수·화물), 세부 규모(경형·소형·중형·대형)를 조건으로 넣어 해당하는 검사 건수(dtaCo)를 돌려주는 집계형 API로, 범위는 전국 읍면동 단위다. 지역 교통·안전 분석가가 특정 동네에서 특정 기간에 영업용 화물차가 몇 대나 검사를 받았는지 확인할 때 쓴다. 응답 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 조회 조건으로 쓴 법정동코드(행정표준코드관리시스템 code.go.kr)를 기준으로 지역별로 맞춰 붙인다.
+limits: 응답은 조건에 맞는 통계 건수 하나뿐이라 개별 차량, 검사 결과(합격·부적합), 차량등록번호는 얻을 수 없다. 한 달치 데이터는 다음 달 2일부터 조회되며, 개발계정 호출은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15057736-01
+    - c-15057736-03
+    - c-15057736-04
+  dropped_citations: 0

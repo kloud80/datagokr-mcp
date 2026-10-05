@@ -1,0 +1,264 @@
+# Dataset 15001021 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15001021'
+tier: verified
+title: 대전광역시 문화관광(숙박정보)
+sector: 문화관광/관광/lodging
+agency:
+  id: '6300000'
+  name: 대전광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15001021/openapi.do
+synonyms:
+  - 문화
+  - 관광
+  - 숙박
+  - 여행정보
+  - 지역인프라
+  - 대전 숙박업소
+  - 대전 호텔
+  - 대전 모텔
+  - 대전 게스트하우스
+  - 대전 펜션
+  - 숙소 정보
+  - 대전 관광 숙박
+description_portal: 대전광역시 문화관광(숙박정보) 데이터는 지역 내 주요 숙박 시설의 현황을 집중적으로 제공합니다. 호텔, 모텔, 게스트하우스, 펜션 등 다양한 유형의 숙박 시설이 행정 구역별로 분류되어 수록되어 있으며, 각 숙박 업소의 명칭, 위치, 연락처, 부대 시설 등 이용객에 필요한 실질적인 정보가 다각적으로 포함됩니다. 이 자료는 관광객은 물론 기업, 연구자, 행정기관 등 다양한 이용자에게 여행 경로 설계, 지역 산업 분석, 관광 자원 활용, 정책 기획 등 다방면에서 활용됩니다. 2022년 대전광역시 공공데이터 기업매칭 지원사업 개발 OpenAPI입니다.
+team:
+  dept: 법무통계담당관
+services:
+  - op: /gettourroms
+    name: 문화시설 여행숙소 상세 정보를 조회
+    endpoint: https://apis.data.go.kr/6300000/openapi2022/tourroms/gettourroms
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: romsNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 오백호모텔
+        - 잉카의태양
+        - 시네마모텔
+      stats:
+        unique: 156
+    - name: romsZip
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34186'
+        - '34187'
+        - '34168'
+      stats:
+        min: 0
+        p50: 34386
+        max: 35300
+        unique: 52
+    - name: romsAddr
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 주소 확인 요망
+        - 대전 중구 보문로230번길 40
+        - 대전 유성구 온천로 92
+      stats:
+        unique: 152
+    - name: romsDtlAddr
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 주소 확인 요망
+        - 대전 중구 대흥동 447-11
+        - 대전광역시 유성구 봉명동 545-5
+      stats:
+        unique: 152
+    - name: romsRefadNo
+      type: string
+      null_rate: 0.0123
+      sample_values:
+        - 042-600-6000
+        - 042-620-6500
+        - 042-822-5656
+      stats:
+        unique: 160
+    - name: romsScl
+      type: string
+      null_rate: 0.0062
+      sample_values:
+        - 33실[ 양실:33]
+        - 30실[ 양실:30]
+        - 32실[ 한실:2 , 양실:30]
+      stats:
+        unique: 100
+    - name: romsHmpgAddr
+      type: code
+      null_rate: 0.7346
+      sample_values:
+        - https://www.hotelinterciti.com/#1
+        - http://www.hotelsunshine.kr/
+        - http://www.khhotel.com/
+      stats:
+        unique: 43
+    - name: romsSumm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 오백호모텔
+        - 잉카의태양
+        - 시네마모텔
+      stats:
+        unique: 156
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7341
+  rank_in_sector: 54
+  brm: 공공행정 - 일반행정
+  sector_rule: general-admin-to-lodging
+  why: 대전 숙박 목록, 전국 숙박업 원장과 중복
+claims:
+  - id: c-15001021-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15001021.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15001021.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15001021-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15001021-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15001021.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15001021-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15001021.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15001021-06
+    kind: admin_note
+    value: "세부 부문 '숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)'의 가치: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lodging
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15001021-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15001021-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15001021.json
+  stats: probe/stats/15001021.json
+  data: probe/data/15001021/
+status: active
+summary_user: 대전광역시 내 호텔·모텔·게스트하우스·펜션 등 숙박시설을 업소 한 곳당 한 행으로 담은 API이며, 이름·우편번호·주소·연락처·분류·홈페이지·소개 문구를 제공한다. 대전 여행객이 특정 구나 동네 근처 숙소의 연락처와 홈페이지를 찾거나, 분석가가 대전 숙박시설의 유형별 분포를 볼 때 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키가 없어, 공중위생 숙박업 인허가(LOCALDATA) 등과는 업소명·주소를 맞춰 보는 방식으로만 이어 쓴다.
+limits: 전역 조인 키가 없어 다른 데이터와 붙일 때는 업소명·주소 매칭에 의존해야 한다. 범위는 대전광역시 한 곳뿐이며, 이 데이터셋은 문화관광 부문에서 보조 등급으로 분류되어 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15001021-01
+    - c-15001021-03
+    - c-15001021-04
+    - c-15001021-06
+    - c-15001021-08
+  dropped_citations: 0

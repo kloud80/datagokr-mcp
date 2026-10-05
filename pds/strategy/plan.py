@@ -113,13 +113,14 @@ REL_MIN = 0.42       # 1위 관련도 대비 이 비율 미만은 풀에서 뺀�
 REF_MIN = 0.5        # 조인 없이 '참고'로 넣으려면 1위 대비 이 비율 이상
 W_SEM = 0.6          # 관련도 = (1-W_SEM)·BM25 + W_SEM·의미 (의미 검색이 없으면 BM25만)
 MAX_LEADS = 10
+GRADE_WEIGHT = {"보조": 0.6, "3순위": 0.85, "가족판": 0.9}  # 6차 확대 등급 (facets.grade) — 보조 자료가 핵심 원장을 밀어내지 않게
 
 
 def _relevance(q: str, sem_q: str) -> list[tuple[dict, float]]:
     """BM25와 의미 검색을 0~1로 맞춰 합친 관련도 — 글자가 겹치거나 뜻이 가깝거나."""
     from pds.service import semantic
     ix = sindex.get()
-    bm = ix.search_datasets(q, POOL_K, tiers=("verified",))
+    bm = ix.search_datasets(q, POOL_K, tiers=("verified",), graded=False)
     sem, floor = semantic.search_floor(sem_q, POOL_K, tiers=("verified",))
     rel: dict[str, float] = {}
     by = {}
@@ -165,7 +166,8 @@ def select(goal: str, rerank: bool = False) -> dict:
         base = 0.5 * hits[0][1]
         hits = [(d, max(s, base) if d["id"] in pinned else s) for d, s in hits]
         hits += [(ix.datasets[i], base) for i in sorted(pinned - have) if i in ix.datasets and ix.datasets[i]["tier"] == "verified"]
-    hits = [(d, s * _region_weight(d, region)) for d, s in hits]
+    hits = [(d, s * _region_weight(d, region) * GRADE_WEIGHT.get(((d.get("facets") or {}).get("grade") or [""])[0], 1.0))
+            for d, s in hits]
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])
     excluded, kept = [], []
     for d, s in scored:  # 지역이 어긋나면 주제가 맞아도 쓰지 않는다 — 상위권이었던 것만 사유와 함께 남긴다

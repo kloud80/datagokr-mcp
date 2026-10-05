@@ -1,0 +1,249 @@
+# Dataset 15046428 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15046428'
+tier: verified
+title: 서울특별시_노동조합 현황
+sector: 산업고용/고용노동/labor-unions
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15046428/fileData.do
+synonyms:
+  - 취업
+  - 단체
+  - 노조
+  - 노동조합
+  - 사업장명
+  - 노조 현황
+  - 서울 노조 목록
+  - 노동조합 설립신고
+  - 자치구별 노동조합
+  - 상급단체 연맹
+  - 노동조합 주소
+  - 전국노동조합표준데이터
+summary_user: 서울시에 설립·신고된 노동조합과 관련 단체를 조합 단위로 한 건씩 담은 원장으로, 노조명·사업장명·상급 소속단체명·주소와 함께 인허가번호(ESBMNT_NO)와 민원구분이 들어 있다. 노동정책 담당자나 분석가가 '어느 자치구에 어떤 사업장 노조가 몰려 있고, 어느 상급단체에 속해 있는가'를 확인하거나 자치구별 노조 분포를 집계하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 자치단체코드·자치구명이나 사업장명·노조명 같은 이름 매핑으로만 이어 쓰고, 전국노동조합표준데이터와도 이 방식으로 맞춰 본다.
+description_portal: 서울시 노동조합 현황 데이터는 서울시에 설립·신고된 노동조합 및 관련 단체들의 기본 정보를 제공하는 자료입니다. 자치단체코드를 통해 행정구역별로 노동조합을 구분할 수 있으며, 인허가번호와 민원구분은 각 노동조합의 설립·인가 이력과 행정처리 유형을 파악하는 데 활용됩니다. 노동조합단체명과 사업장명, 소속단체명은 어느 사업장에 어떤 이름의 노동조합이 설치되어 있고, 상급단체나 연맹 등과 어떤 관계를 맺고 있는지를 보여줍니다. 노동조합주소와 자치구명 정보는 노조의 실제 위치와 관할 지역을 확인할 수 있어 자치구별 노동조합 분포 분석, 지역 노동정책 수립, 현장 상담 및 노사관계 지원 업무에 활용하기 좋습니다. 이 데이터는 지역별 노동조합 조직률 파악, 업종·사업장 유형별 노조 현황 분석, 노동권 보호 및 노사협력 정책의 기초 자료로 폭넓게 활용될 수 있는 정보입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: ListLaborUnion
+    name: ListLaborUnion
+    endpoint: http://openapi.seoul.go.kr:8088/json/ListLaborUnion/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SF_TEAM_CODE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3220000'
+        - '6110000'
+        - '3230000'
+      stats:
+        min: 3000000
+        p50: 3180000
+        max: 6110000
+        unique: 20
+    - name: ESBMNT_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20266110000101900004'
+        - '20266110000101900003'
+        - '20266110000101900002'
+      stats:
+        min: 2025307029826099968
+        p50: 2026312021926099968
+        max: 20266110000101900288
+        unique: 100
+    - name: MINWON_GBN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 노동조합설립신고
+        - 노동조합해산신고
+        - 노동조합변경신고
+      stats:
+        unique: 3
+    - name: TEAM_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (재)은행권청년창업재단 노동조합
+        - 서울환경미화원노동조합
+        - 윤이크 노동조합
+      stats:
+        unique: 100
+    - name: WRKP_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 삼경운수(주)
+        - 서울과학종합대학원
+        - 성북구청 청소행정과
+      stats:
+        unique: 97
+    - name: UNION_TEAM_NM
+      type: code
+      null_rate: 0.81
+      sample_values:
+        - 상급단체미가입
+        - 없음
+        - 전국택시노동조합연맹
+      stats:
+        unique: 9
+    - name: SITE_ADDR
+      type: string
+      null_rate: 0.06
+      sample_values:
+        - 서울특별시 강동구 성내동  556번지 2호  청일 베르네
+        - 서울특별시 강남구 역삼동  823번지  삼원타워
+        - 서울특별시 마포구 상암동  1622번지  중소기업 DMC 타워
+      stats:
+        unique: 89
+    - name: SF_TEAM_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+        - 서울특별시
+        - 송파구
+      stats:
+        unique: 20
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 노동조합 (전국노동조합표준데이터·지자체 노동조합)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5126
+  rank_in_sector: 236
+  brm: 산업고용 - 고용노동
+  why: 전국노동조합표준데이터의 구 단위판
+claims:
+  - id: c-15046428-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15046428.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15046428-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15046428-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15046428.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15046428-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15046428.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15046428-06
+    kind: admin_note
+    value: "세부 부문 '노동조합 (전국노동조합표준데이터·지자체 노동조합)'의 가치: 전국노동조합표준데이터(활용 25,609) — 조합 단위 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#labor-unions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15046428-07
+    kind: admin_note
+    value: '[산업고용 · 고용노동] 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(KECO·NCS 코드 마스터)·정부지원 일자리사업·산업재해(중대재해 일별·재해사례·산재 판례/판정)·노동조합(표준데이터 활용 25,609)·고용 서비스 기관/강소기업·지역 고용동향(시도×월) (`labor-deferred`, `labor-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L641
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15046428-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15046428.json
+  stats: probe/stats/15046428.json
+  data: probe/data/15046428/
+limits: data.seoul.go.kr 외부 사이트의 별도 인증키(경로 파라미터 KEY)가 있어야 호출되며, 공공데이터포털 활용신청과는 별개다. 공통 식별 키가 없어 사업장·업종 데이터와 정확히 결합하기 어렵고, 이름 매칭에 따른 오결합에 주의해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15046428-01
+    - c-15046428-03
+    - c-15046428-04
+    - c-15046428-06
+  dropped_citations: 0
+status: active

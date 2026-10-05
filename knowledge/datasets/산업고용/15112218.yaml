@@ -1,0 +1,249 @@
+# Dataset 15112218 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15112218'
+tier: verified
+title: 서울에너지공사_일별 시수 사용량
+sector: 산업고용/에너지및자원개발/energy-usage
+agency:
+  id: B553734
+  name: 서울에너지공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15112218/openapi.do
+synonyms:
+  - 일별
+  - 시수
+  - 사용량
+  - 시간대분석
+  - 지사별소비
+  - 에너지패턴
+  - 사용일자
+  - 수요관리
+  - 시수량
+  - 지역난방 용수 사용량
+  - 서울에너지공사 지사별 사용량
+  - 일별 물 사용량
+  - 열공급 보충수
+  - 에너지 사용 패턴
+description_portal: 서울에너지공사의 일별 시수 사용량 정보를 제공하는 공공데이터이다. 본 자료는 지사별로 측정된 하루 단위의 시간대별 에너지 사용량을 포함하고 있으며, 사용일자, 지사명, 시간대, 사용량 등의 항목으로 구성된다. 시수 사용량은 하루 24시간을 기준으로 각 시간대에 실제 소비된 에너지의 양을 의미하며, 세부적인 사용 패턴을 분석하는 데 유용하다. 본 데이터는 시간대별 소비 특성 분석, 피크 시간대 확인, 에너지 수요 관리 방안 마련 등에 활용될 수 있다. 이를 통해 에너지 공급의 안정성을 확보하고, 과도한 부하를 사전에 방지하는 데 기여할 수 있다. 또한 지사 운영의 효율성을 높이며, 도시 에너지 정책 수립 및 정밀한 에너지 진단과 개선 방안 수립을 위한 기초자료로 활용 가능하다.
+team:
+  dept: 디지털관리부
+services:
+  - op: /getRawWateruseAmt1
+    name: 일별 시수 사용량
+    endpoint: https://apis.data.go.kr/B553734/RawWateruseAmt1/getRawWateruseAmt1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: returnType
+        required: false
+        example: XML
+        desc: 리턴타입
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 표시건수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: startDate
+        required: false
+        example: 2019-12
+        desc: 검색시작일
+      - name: endDate
+        required: false
+        example: 2020-12
+        desc: 검색종료일
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dates
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2020-09-07'
+        - '2020-10-22'
+        - '2019-12-22'
+      stats:
+        min: '2019-12-01'
+        max: '2020-11-30'
+        unique: 366
+    - name: useAmt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '502.00'
+        - '485.00'
+        - '479.00'
+      stats:
+        min: 17
+        p50: 485
+        max: 1274
+        unique: 407
+    - name: branchNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서부지사
+        - 동부지사
+      stats:
+        unique: 2
+    - name: waterClsfcNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 시수
+      stats:
+        unique: 1
+    - name: branchCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5441
+  rank_in_sector: 723
+  brm: 산업고용 - 에너지및자원개발
+  why: 서울에너지공사 지사별 용수 사용량, 내부 운영
+claims:
+  - id: c-15112218-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15112218.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15112218.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15112218-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15112218-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15112218.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15112218-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15112218.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15112218-06
+    kind: admin_note
+    value: "세부 부문 '에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)'의 가치: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-usage
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15112218-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15112218-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15112218.json
+  stats: probe/stats/15112218.json
+  data: probe/data/15112218/
+status: active
+summary_user: 서울에너지공사 지사별로 측정한 시수 사용량을 날짜(dates)와 지사 단위로 담은 건별 API 데이터이며, 지사 코드·지사명, 구분명(waterClsfcNm), 사용량 항목으로 구성된다. 지역난방 운영을 분석하는 사람이 어느 지사에서 어느 날 시수 사용량이 크게 늘었는지 확인하고 사용 패턴을 비교하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없어 다른 데이터와는 지사 코드(branchCd)나 지사명을 기준으로 같은 기관 자료끼리만 이어 쓴다.
+limits: 전역 조인 키가 없어 행정구역 코드 기반의 다른 지역 통계와 바로 결합할 수 없고, 비공간 데이터라 위치 정보가 없다. 호출에는 serviceKey가 필요하며 개발계정은 하루 3,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15112218-01
+    - c-15112218-03
+    - c-15112218-04
+  dropped_citations: 0

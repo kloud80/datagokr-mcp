@@ -1,0 +1,227 @@
+# Dataset 15120442 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15120442'
+tier: verified
+title: 성평등가족부_e새일 교육일정 정보
+sector: 산업고용/고용노동/vocational-training
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15120442/openapi.do
+synonyms:
+  - 경단녀
+  - 경력단절여성
+  - e새일
+  - 교육일정
+  - 강사
+  - 강의명
+  - 경력단절여성 교육
+  - 새일센터 강의 일정
+  - 여성 재취업 교육
+  - 경단녀 직업교육
+  - e새일 강의 시간표
+  - 여성 취업 교육 일정
+description_portal: 경력단절여성등의 경제활동 촉진법 제13조 제1항과 관련하여 e새일 교육 일정 정보를 조회할 수 있도록 관련 서비스를 제공하는 오픈 API형 데이터입니다.  해당 개방데이터는 e새일 교육일자, 교육 시작시각, 교육 종료시각, 강사, 강의명 등을 조회할 수 있습니다.경력단절여성의 재취업 지원 및 고용 연계를 위한 정보로 활용 가능하며, 일자리 정책 수립 및 관련 서비스 개발 등에 기여할 수 있습니다. 나아가 지역 사회의 고용 활성화는 물론이고 맞춤형 취업 지원 정책 마련에도 활용될 수 있습니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getEducationScheduleList
+    name: e새일 교육일정 정보
+    endpoint: https://apis.data.go.kr/1383000/nwis/EducationScheduleService/getEducationScheduleList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: eduYmd
+        required: false
+        example: '20110215'
+        desc: 교육일
+      - name: bgngTm
+        required: false
+        example: 14:00
+        desc: 시작시간
+      - name: lectNm
+        required: false
+        example: 코칭의 정의, 철학, 대상, 역할, 코칭과 티칭
+        desc: 강의명
+      - name: type
+        required: true
+        example: xml
+        desc: 결과타입
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: eduYmd
+      title: 교육일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20110215'
+      stats:
+        min: 20110215
+        p50: 20110215
+        max: 20110215
+        unique: 1
+    - name: bgngTm
+      title: 시작시각
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '14:00 '
+      stats:
+        unique: 1
+    - name: endTm
+      title: 종료시각
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '18:00 '
+      stats:
+        unique: 1
+    - name: lectNm
+      title: 강의명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 코칭의 정의, 철학, 대상, 역할, 코칭과 티칭
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 직업훈련 과정 (국민내일배움카드·사업주·컨소시엄·일학습병행·NCS 훈련)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4873
+  rank_in_sector: 257
+  brm: 산업고용 - 고용노동
+  why: 강의 일정만 제공, 장소·기관 연계 약함
+claims:
+  - id: c-15120442-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15120442.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15120442.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15120442-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120442-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120442.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120442-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120442.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15120442-06
+    kind: admin_note
+    value: '[산업고용 · 고용노동] 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(KECO·NCS 코드 마스터)·정부지원 일자리사업·산업재해(중대재해 일별·재해사례·산재 판례/판정)·노동조합(표준데이터 활용 25,609)·고용 서비스 기관/강소기업·지역 고용동향(시도×월) (`labor-deferred`, `labor-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L641
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120442-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15120442.json
+  stats: probe/stats/15120442.json
+  data: probe/data/15120442/
+status: active
+summary_user: e새일 교육의 일정을 강의 한 건 단위로 담으며, 교육일·시작시각·종료시각·강의명을 전국 범위로 제공한다. 경력단절여성이나 재취업 상담 실무자가 "이번 달 언제 어떤 e새일 강의가 열리는가"를 확인하거나, 서비스 개발자가 교육 일정 안내 화면을 만드는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 직업훈련·일자리 데이터와는 강의명 같은 이름 매칭으로만 느슨하게 이어 쓴다.
+limits: 지역 정보가 없는 비공간 데이터라 지역별 교육 현황을 나눠 보는 데는 쓸 수 없다. 공통 코드나 키가 없어 훈련과정·수강 실적과 정확히 연결하기 어렵다. 개발계정은 하루 10,000회까지만 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15120442-01
+    - c-15120442-03
+    - c-15120442-04
+  dropped_citations: 0

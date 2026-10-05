@@ -1,0 +1,190 @@
+# Dataset 15107542 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107542'
+tier: verified
+title: 행정안전부_통계연보_지역별 마을기업 육성사업
+sector: 사회복지/사회복지일반/social-economy
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107542/openapi.do
+synonyms:
+  - 지역별
+  - 마을기업
+  - 육성사업
+  - 사업비
+  - 통계연보
+  - 마을기업 현황
+  - 마을기업 사업비
+  - 마을기업 지원 국비 지방비
+  - 시도별 마을기업 수
+  - 행정안전 통계연보
+  - 사회적경제 마을기업
+  - 지역공동체 기업
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방행정/지역발전' 중 '마을기업 육성사업', '지역별 마을기업 육성사업'에 관한 통계입니다. 지역, 마을기업, 사업비 계, 사업비 국비, 사업비 지방비 등을 기준으로 하는 지역별 마을기업 육성사업 정보를 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /RegionalPromotionProject/getRegionalPromotionProject
+    name: 지역별 마을기업 육성사업 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/RegionalPromotionProject/RegionalPromotionProject/getRegionalPromotionProject
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 269}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RES"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2011', 'seq': 1, 'regi': '계', 'village_siness': '550', 'employme"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5118
+  rank_in_sector: 99
+  brm: 재정금융 - 기획재정
+  sector_rule: social-economy-scattered
+  why: 시도×연도 마을기업 수·일자리 집계, 지역 조인 가능
+claims:
+  - id: c-15107542-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107542.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107542.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107542-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107542-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107542.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107542-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15107542.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107542-06
+    kind: admin_note
+    value: "세부 부문 '사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)'의 가치: 인증번호·사업자번호 — 기업 축과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#social-economy
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107542-07
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107542.json
+  stats: probe/stats/15107542.json
+  data: probe/data/15107542/
+status: active
+summary_user: 행정안전 통계연보의 '지방행정/지역발전' 편에 실린 지역별 마을기업 육성사업 통계로, 지역마다 마을기업 수와 사업비(합계·국비·지방비)를 집계해 담는다. 정책 분석가나 지자체 담당자가 시도별로 마을기업이 몇 곳이고 육성 사업비 가운데 국비와 지방비가 각각 얼마인지 비교할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로 다른 지역 통계와는 지역명 매핑으로만 이어 쓴다.
+limits: 지역 단위 집계 통계라서 개별 마을기업의 인증번호나 사업자번호로 기업 단위 데이터와 연결할 수 없다. 범위는 전국이지만 공간 좌표가 없는 비공간 자료이고, 필드 명세가 head·row 구조로만 제공되므로 응답의 실제 컬럼은 호출해서 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107542-03
+    - c-15107542-04
+    - c-15107542-06
+  dropped_citations: 0

@@ -1,0 +1,994 @@
+# Dataset 15059612 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059612'
+tier: verified
+title: 금융위원회_주식대차정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059612/openapi.do
+synonyms:
+  - 주식대차
+  - 거래량
+  - 대차잔고
+  - 대차종목순위
+  - 대차거래현황
+  - 내외국인잔고
+  - 업종별대차
+  - 주식대여
+  - 공매도 대기자금
+  - 대차거래 현황
+  - 외국인 대차
+  - 종목별 대차잔고
+  - 주식차입
+description_portal: '주식대차정보는 주식대차 거래 종목별 순위, 업종별·참여자별 현황, 거래 주체별 대차잔고 비교 등 다양한 통계 정보를 제공하는 데이터입니다.주요 항목으로는 종목별 대차 상위 순위, 종목별 및 업종별 거래현황, 월별 대차규모, 내외국인별 잔고 및 거래량 통계 등이 포함됩니다.<데이터 조회 시 유의사항>파라미터 없이 조회 시 데이터 조회 시간이 오래걸려 timeout이 발생하게 되어 필수 파라미터를 지정하였습니다.- 파라미터 조건 : 조회 시 아래의 필수 파라미터 중 최소 1개 이상을 반드시 입력해야 합니다.- 기본값 안내 : 필수 파라미터를 입력하지 않은 경우, 기준일자(basDt)는 자동으로 가장 최신 날짜로 설정되어 조회됩니다.[서비스별 필수 파라미터 목록]- 주식업종별참여현황조회 : basDt, isinCd- 주식대차종목순위조회, 주식종목별대차거래현황조회, 월별대차거래현황조회, 내외국인대차잔고비교조회, 내외국인대차거래량조회 : 없음이 데이터는 6개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 주식대차종목순위 조회 : 대차거래 기준 상위 종목 순위 정보를 제공합니다.② 주식종목별대차거래현황 조회 : 특정 종목에 대한 일별 대차거래 규모 및 변동 현황을 조회합니다.③ 월별대차거래현황 조회 : 전체 시장 기준 월별 대차거래 실적 통계를 조회합니다.④ 주식업종별참여현황 조회 : 업종 단위로 대차거래 참여 현황 및 집중도 정보를 제공합니다.⑤ 내외국인대차잔고비교 조회 : 내국인과 외국인의 대차잔고 규모를 비교할 수 있습니다.⑥ 내외국인대차거래량 조회 : 내국인과 외국인의 거래량 및 증감 추이를 제공합니다.※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getStLendAndBorrItemRank_V2
+    name: 주식대차종목순위조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getStLendAndBorrItemRank_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getStItemLendAndBorrStatu_V2
+    name: 주식종목별대차거래현황조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getStItemLendAndBorrStatu_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: isinCdNm
+        required: false
+        desc: 유가증권 국제인증 고유번호 코드 이름
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getMontLendAndBorrStatu_V2
+    name: 월별대차거래현황조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getMontLendAndBorrStatu_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getStBusiTypePartStatu_V2
+    name: 주식업종별참여현황조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getStBusiTypePartStatu_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: sicNm
+        required: false
+        desc: 산업 주체들이 모든 산업활동을 그 성질에 따라 유형화한 분류 이름
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getNatiAndForeLendAndBorrBalaCo_V2
+    name: 내외국인대차잔고비교조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getNatiAndForeLendAndBorrBalaCo_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getNatiAndForeLendAndBorrTrad_V2
+    name: 내외국인대차거래량조회
+    endpoint: https://apis.data.go.kr/1160100/GetStocLendBorrInfoService_V2/getNatiAndForeLendAndBorrTrad_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080102'
+        - '20080103'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 20080102
+        p50: 20080102
+        max: 20080103
+        unique: 2
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR7000020008
+        - KR7000040006
+        - KR7000050005
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        unique: 620
+    - name: lnbScrtDcd
+      title: 대차 증권이 주식인지, 채권인지등을 구분하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '21'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 21
+        p50: 21
+        max: 21
+        unique: 1
+    - name: lnbScrtDcdNm
+      title: 대차 증권이 주식인지, 채권인지등을 구분하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주식
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        unique: 1
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 동화약품
+        - 케이알모터스
+        - 경방
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        unique: 620
+    - name: lnbCclStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래)를 체결한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5000'
+        - '500'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 3890000
+        unique: 113
+    - name: rcalRdptStckCnt
+      title: 상환 요청한 상환주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4000'
+        - '100'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 65000
+        unique: 19
+    - name: rdptStckCnt
+      title: 상환한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000'
+        - '3000'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 3890000
+        unique: 83
+    - name: lnbRmanStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래후 남은 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '20'
+        - '10'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 0
+        p50: 68650
+        max: 31501549
+        unique: 614
+    - name: lnbBal
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래후 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getStLendAndBorrItemRank_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080102'
+        - '20080103'
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        min: 20080102
+        p50: 20080102
+        max: 20080103
+        unique: 2
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR7000020008
+        - KR7000040006
+        - KR7000050005
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        unique: 620
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 동화약품
+        - 케이알모터스
+        - 경방
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        unique: 620
+    - name: lnbCclStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래)를 체결한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5000'
+        - '500'
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 3890000
+        unique: 113
+    - name: lnbRmanStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래후 남은 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '20'
+        - '10'
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        min: 0
+        p50: 68650
+        max: 31501549
+        unique: 614
+    - name: lnbRdptStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래에서 상환한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '10000'
+        - '3000'
+      op: /getStItemLendAndBorrStatu_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 3890000
+        unique: 83
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080131'
+        - '20080229'
+        - '20080331'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 20080131
+        p50: 20170580.5
+        max: 20261001
+        unique: 226
+    - name: lnbCclStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래)를 체결한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '259852627'
+        - '157441929'
+        - '205701164'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 383531
+        p50: 174101124
+        max: 1136792707
+        unique: 226
+    - name: lnbRmanStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래후 남은 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '484002698'
+        - '501479440'
+        - '536557704'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 203859224
+        p50: 1349144693
+        max: 2998886370
+        unique: 226
+    - name: lnbBal
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래후 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '16812072'
+        - '16923734'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 0
+        p50: 45813425
+        max: 153373757
+        unique: 190
+    - name: lnbRdptStckCnt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래에서 상환한 주식의 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '136667117'
+        - '139965187'
+        - '170622900'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 235202
+        p50: 161860100
+        max: 1398151220
+        unique: 226
+    - name: lnbExprItmsCnt
+      title: 만기별 종목의 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: lnbCclAmt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 체결 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11556055'
+        - '7010386'
+        - '7958397'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 15172
+        p50: 9247259.5
+        max: 35470192
+        unique: 226
+    - name: lnbRdptAmt
+      title: 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래) 거래에서 상환한 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5579717'
+        - '6178640'
+        - '6993507'
+      op: /getMontLendAndBorrStatu_V2
+      stats:
+        min: 19312
+        p50: 8170636
+        max: 39795413
+        unique: 226
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261001'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 20261001
+        p50: 20261001
+        max: 20261001
+        unique: 1
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - KR7000070003
+        - KR7000080002
+        - KR7000100008
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        unique: 201
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 삼양홀딩스
+        - 하이트진로
+        - 유한양행
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        unique: 201
+    - name: sicCd
+      title: 산업 주체들이 모든 산업활동을 그 성질에 따라 유형화하고 이를 부호화한 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '4'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 1
+        p50: 4
+        max: 9
+        unique: 6
+    - name: sicNm
+      title: 산업 주체들이 모든 산업활동을 그 성질에 따라 유형화한 분류 이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 외국인
+        - 내국인
+        - 증권사
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        unique: 6
+    - name: stckLndnBal
+      title: 주식의 대여 후 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5'
+        - '3'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 0
+        p50: 1116
+        max: 16867489
+        unique: 716
+    - name: stckLndnRto
+      title: 주식의 대여 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+        - '0'
+        - '.37'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 0
+        p50: 79.24000000000001
+        max: 100
+        unique: 611
+    - name: stckBrwBal
+      title: 주식을 차입한 경우, 차입 후 잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '112'
+        - '101'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 0
+        p50: 800
+        max: 16867489
+        unique: 613
+    - name: stckBrwRto
+      title: 주식을 차입한 경우, 그 차입 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+        - '0'
+        - '1.63'
+      op: /getStBusiTypePartStatu_V2
+      stats:
+        min: 0
+        p50: 62.455
+        max: 100
+        unique: 455
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080101'
+        - '20080201'
+        - '20080301'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 20080101
+        p50: 20170551
+        max: 20261001
+        unique: 226
+    - name: ntivBrwBal
+      title: 내국인에게 차입한 잔고 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1418400'
+        - '1391721'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 0
+        p50: 11127341
+        max: 72722391
+        unique: 190
+    - name: forgBrwBal
+      title: 외국인이 차입한 찬고 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '15393671'
+        - '15532012'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 0
+        p50: 28047749
+        max: 82881775
+        unique: 190
+    - name: brwBalForgRto
+      title: 차입잔액 기준 외국인 차입의 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50'
+        - '89.18'
+        - '75.67'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 33.29
+        p50: 59.39
+        max: 91.78
+        unique: 183
+    - name: ntivLndnBal
+      title: 내국인에게 대여한 잔고 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1636513'
+        - '1756357'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 0
+        p50: 13825121
+        max: 83883694
+        unique: 190
+    - name: forgLndnBal
+      title: 외국인에게 증권등을 대여한 잔고 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '15152730'
+        - '15144820'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 0
+        p50: 25789941
+        max: 69490063
+        unique: 190
+    - name: lndnBalForgRto
+      title: 외국인의 대여잔고 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '50'
+        - '75.12'
+        - '82.04'
+      op: /getNatiAndForeLendAndBorrBalaCo_V2
+      stats:
+        min: 25.62
+        p50: 50
+        max: 90.25
+        unique: 181
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20080102'
+        - '20080103'
+        - '20080104'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 20080102
+        p50: 20091228.5
+        max: 20111226
+        unique: 1000
+    - name: forgLnbCclStckCnt
+      title: 외국인과 체결한 대차 계약의 주식 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9025'
+        - '11232'
+        - '6248'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 25
+        p50: 5832.5
+        max: 45888
+        unique: 963
+    - name: forgLnbCclAmt
+      title: 외국인과 체결한 대차 계약 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2888'
+        - '2869'
+        - '3157'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 3
+        p50: 2950.5
+        max: 19123
+        unique: 923
+    - name: ntivLnbCclStckCnt
+      title: 내국인의 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래 ) 체결 주식 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '951'
+        - '434'
+        - '952'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 0
+        p50: 573.5
+        max: 6271
+        unique: 727
+    - name: ntivLnbCclAmt
+      title: 내국인의 대차(증권회사가 고객과의 신용거래에 필요로 하는 돈이나 주식을 증권금융회사가 대출하는 거래 ) 체결 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '47'
+        - '260'
+        - '164'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 0
+        p50: 252
+        max: 2494
+        unique: 528
+    - name: sumLnbCclStckCnt
+      title: 대차 거래를 체결한 총 합계 주식 수량
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9795'
+        - '4800'
+        - '18717'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 25
+        p50: 6598
+        max: 46949
+        unique: 970
+    - name: sumLnbCclAmt
+      title: 대차 거래를 체결한 총 합계 금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3171'
+        - '3143'
+        - '2010'
+      op: /getNatiAndForeLendAndBorrTrad_V2
+      stats:
+        min: 3
+        p50: 3242
+        max: 19409
+        unique: 930
+  foreign_keys:
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.8301
+  rank_in_sector: 36
+  brm: 재정금융 - 금융
+  why: 주식대차 순위·현황 집계
+claims:
+  - id: c-15059612-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 6/6
+    evidence:
+      - type: measured
+        source: probe/runs/15059612.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 6/6
+      - type: measured
+        source: probe/apply/15059612.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15059612-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059612-03
+    kind: key
+    value: '실측 조인 키: stock_cd(isinCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15059612.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 47개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059612-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059612.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059612-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059612-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059612-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 6/6
+  run: probe/runs/15059612.json
+  stats: probe/stats/15059612.json
+  data: probe/data/15059612/
+status: active
+summary_user: 주식 대차거래를 일자(basDt) 기준으로 6개 오퍼레이션에 나눠 담는다. 상위 종목 순위, 종목별 일별 체결·상환·잔고 수량, 시장 전체 월별 실적, 업종별 대여·차입 잔고와 비율, 내외국인별 잔고·체결량이 여기에 들어가며, 범위는 전국 단위의 비공간 데이터다. 투자자·분석가는 '특정 종목의 대차잔고가 최근 늘었는지, 외국인 차입 비중이 얼마인지' 같은 공매도 대기 물량과 수급을 확인하는 데 쓴다. 종목 단위 오퍼레이션은 ISIN 종목코드(isinCd)를 키로 해 같은 금융위원회 증권 시세·상장종목 데이터나 기업 공시와 잇는다. 시장 전체·내외국인 집계 오퍼레이션은 종목 키가 없어 기준일자로만 맞춘다.
+limits: 내외국인·월별 오퍼레이션은 시장 전체 집계라 종목별로 나눠 볼 수 없다. 업종별 참여현황은 기준일자와 종목코드를 필수로 넣어야 하고, 다른 오퍼레이션도 파라미터를 비우면 가장 최신 기준일자 하나만 조회된다. 개발계정은 하루 10,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15059612-01
+    - c-15059612-03
+    - c-15059612-04
+    - c-15059612-06
+  dropped_citations: 0

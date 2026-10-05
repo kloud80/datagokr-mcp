@@ -1,0 +1,246 @@
+# Dataset 15157715 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157715'
+tier: verified
+title: 인천항만공사_인천항 연안여객터미널 여객정보 내역 조회 서비스
+sector: 교통물류/해운·항만/coastal-passenger
+agency:
+  id: B551504
+  name: 인천항만공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157715/openapi.do
+synonyms:
+  - 연안여객터미널
+  - 여객정보
+  - 인천항 여객터미널
+  - 승객 수
+  - 입항정보
+  - 항로코드
+  - 선석코드
+  - 국적
+  - 인천항 여객 수
+  - 연안여객 입항
+  - 여객터미널 이용객
+  - 연안여객선 승객 통계
+  - 인천 섬 여객선 이용자
+  - 해상 여객 수요
+description_portal: 해당 자료는 연안여객터미널의 입항 여객정보를 조회할 수 있는 공공 Open API 서비스에 대한 상세 설명입니다. 주요 요청 파라미터로는 조회 범위 설정용, endRow, skipRow, pageNo, 인증키 등이 있으며, 응답 결과에는 입항구분, 여객 수, 선박명, 업체명, 국가코드 및 이름, 선석코드, 부두명, 항구명 등 다양한 항만 정보가 포함됩니다. 특히 여객 수(psngrCnt)와 승객 구분(psngrTp)는 연안 여객 수요 분석, 터미널 운영 최적화, 정책 수립 기반 자료로 활용됩니다. 연도, 월, 주 단위 입항일자 항목도 제공되어, 시계열 기반 여객 흐름 분석 및 해양 교통 수요 예측 등 다양한 분석 업무에 적용 가능합니다.
+team:
+  dept: 항만정보화실
+services:
+  - op: /getIntrPsngrInfoNew
+    name: 인천항 연안여객터미널 여객정보
+    endpoint: https://apis.data.go.kr/B551504/ipaTrmnlPsngrInfoNew/getIntrPsngrInfoNew
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: endRow
+        required: false
+        desc: 마지막줄
+      - name: skipRow
+        required: false
+        desc: 시작줄
+      - name: numOfRows
+        required: true
+        desc: 줄수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호1
+      - name: yyyyWw
+        required: true
+        desc: 조회 년, 주차
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지당 표출 데이터 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 데이터 총 개수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5267
+  rank_in_sector: 102
+  brm: 교통물류 - 해운·항만
+  why: 인천 연안터미널 여객수 집계, 단일 터미널
+claims:
+  - id: c-15157715-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157715.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157715.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15157715-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157715-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157715.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157715-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157715.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15157715-06
+    kind: admin_note
+    value: "세부 부문 '해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)'의 가치: 도서 주민·여행객의 결항 여부가 최대 대중 수요. 해양교통안전공단(가보고싶은섬) 운항상태·운항예보가 대표, 지자체·항만공사 것은 instance"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#coastal-passenger
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15157715-07
+    kind: admin_note
+    value: '[교통물류 - 해운·항만 · 결정] 선박 등록 원장·항만 시설 원장·입출항·해상 여객·항만 물류까지만. 해양 안전·항행경보·PSC·항만 개발·선원·해양 환경·해도 등 배제 (`port-non-core`),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L498
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157715-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157715-10
+    kind: pitfall
+    value: 필수 파라미터 yyyyWw는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15157715.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157715.json
+  stats: probe/stats/15157715.json
+  data: probe/data/15157715/
+status: active
+summary_user: 인천항 연안여객터미널의 입항 여객정보를 입항 건별로 조회하는 API로, 포털 설명상 입항구분·여객 수·승객 구분·선박명·업체명·선석·부두명과 연·월·주 단위 입항일자를 담는다. 항만 운영자나 분석가가 "인천항 연안여객터미널로 들어오는 여객 수가 주·월별로 어떻게 변하는가" 같은 연안 여객 수요·터미널 운영 질문에 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아 다른 데이터와는 선박명·업체명 같은 이름 매핑이나 같은 기관 코드로만 이어 쓴다.
+limits: 필수 파라미터인 주 단위 코드(yyyyWw)는 다른 데이터에서 먼저 받아 넘겨야 호출된다. 결항·운항 여부 같은 실시간 운항상태는 이 데이터의 대상이 아니며, 그런 용도는 해양교통안전공단 운항상태 데이터가 대표다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15157715-03
+    - c-15157715-10
+    - c-15157715-06
+    - c-15157715-01
+  dropped_citations: 0

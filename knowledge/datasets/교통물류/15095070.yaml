@@ -1,0 +1,218 @@
+# Dataset 15095070 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15095070'
+tier: verified
+title: 인천국제공항공사_시간대별 항공 통계 서비스
+sector: 교통물류/항공·공항/aviation-statistics
+agency:
+  id: B551177
+  name: 인천국제공항공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095070/openapi.do
+synonyms:
+  - 항공
+  - 화물
+  - 통계
+  - 시간대
+  - 도착항공
+  - 인천공항 시간대별 통계
+  - 인천공항 화물 통계
+  - 인천공항 여객 통계
+  - 공항 운항 실적
+  - 시간대별 출발 도착
+  - 항공 화물 물동량
+  - 인천공항 혼잡 시간대
+description_portal: 인천국제공항공사에서 제공하는 시간대별 항공 데이터 통계 서비스입니다. 시간대별 항공/여객/화물 통계에 대한 데이터를 얻으실 수 있습니다. 정기/부정기,화물기/여객기,국제선/국내선 등의 조건으로 구분하여 시간대별 도착,출발한 항공/여객/화물 통계 정보를 제공합니다. 월별 데이터를 조회하실 수 있습니다. 개발 계정 일 1000트래픽, 운영 계정 신청 시 일 1000000 트래픽을 제공합니다.데이터 포맷은 JSON과 XML을 모두 제공합니다. 개발 계정과 운영 계정 모두 자동승인됩니다.
+team:
+  dept: 인프라DX팀
+services:
+  - op: /getTotalTonsOfCargo
+    endpoint: https://apis.data.go.kr/B551177/AviationStatsByTimeline/getTotalTonsOfCargo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: time
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 00:00 ~ 00:59
+        - 01:00 ~ 01:59
+        - 02:00 ~ 02:59
+      stats:
+        unique: 24
+    - name: arrBaggage
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 1,013
+        - '153'
+        - 1,028
+      stats:
+        min: 153
+        p50: 3967.5
+        max: 9911
+        unique: 24
+    - name: depBaggage
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 5,095
+        - 2,988
+        - 3,176
+      stats:
+        min: 548
+        p50: 3264.5
+        max: 17055
+        unique: 24
+    - name: baggage
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 6,108
+        - 3,141
+        - 4,205
+      stats:
+        min: 1820
+        p50: 8049.5
+        max: 18133
+        unique: 24
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 항공통계 (공항·노선·항공사별 여객·화물·운항 실적)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6396
+  rank_in_sector: 28
+  brm: 교통물류 - 항공·공항
+  why: 시간대별 집계, 지역 연결 약함
+claims:
+  - id: c-15095070-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095070.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15095070.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15095070-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095070-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095070.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095070-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095070.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095070-06
+    kind: admin_note
+    value: "세부 부문 '항공통계 (공항·노선·항공사별 여객·화물·운항 실적)'의 가치: 공항·노선별 여객 실적 = 지역 관광·출장 수요, 화물 실적 = 수출입 물류 신호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#aviation-statistics
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095070-07
+    kind: admin_note
+    value: '[2026-09-28 교통물류 - 항공·공항 · 결정] 운항정보·항공통계·항공운송사업·항공기 등록·드론 관련 정보·공항코드까지만. 나머지는 우선 배제'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L467
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095070-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15095070.json
+  stats: probe/stats/15095070.json
+  data: probe/data/15095070/
+status: active
+summary_user: 인천국제공항의 시간대별 도착·출발 항공편·여객·화물 통계를 월 단위로 조회하는 집계 API로, 정기/부정기·화물기/여객기·국제선/국내선 조건으로 나눠 시간대(time)별 도착·출발·합계 수치를 담는다. 공항 운영·물류 분석가가 '특정 월 인천공항의 화물 도착·출발이 어느 시간대에 몰리는가'처럼 시간대별 혼잡과 물동량 흐름을 볼 때 쓰며, 여객 실적은 관광·출장 수요, 화물 실적은 수출입 물류 신호로 읽는다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시간대·월 같은 값이나 같은 기관(인천국제공항공사)의 다른 통계와 이름·코드 매핑으로만 이어 쓴다.
+limits: 건별 운항 원천이 아니라 시간대별 집계이고 공간 단위가 없는 비공간 데이터라 지역·노선 단위 분석에는 바로 쓰지 못한다. 개발계정은 일 1,000회 호출 제한이 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15095070-01
+    - c-15095070-03
+    - c-15095070-04
+    - c-15095070-06
+  dropped_citations: 0

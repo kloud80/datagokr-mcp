@@ -1,0 +1,304 @@
+# Dataset 15155775 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15155775'
+tier: verified
+title: 부산광역시_자율주행버스 승객 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6260000'
+  name: 부산광역시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15155775/openapi.do
+synonyms:
+  - 자율주행
+  - 돌발
+  - 이벤트
+  - 부산 자율주행 셔틀
+  - 자율주행버스 승하차
+  - 자율주행 대중교통 탑승인원
+  - 버스 혼잡도
+  - 부산 자율차 승객수
+  - 재차인원
+description_portal: '이 데이터는 자율주행버스 운행 시 자율주행버스에 탑승한 승객 관련 정보를 기록한 데이터입니다. 승객 탑승/하차 인원, 현재 탑승 인원 정보를 포함합니다.승객 흐름 분석, 운행 최적화, 배차 계획 수립, 혼잡도 모니터링 등에 활용 가능합니다.  (참고) logDate형식: 2025091610'
+team:
+  dept: 빅데이터과
+services:
+  - op: /Passenger
+    name: 자율주행버스 승객정보 조회
+    endpoint: https://apis.data.go.kr/6260000/autonomous_Passenger/Passenger
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: logDate
+        required: true
+        example: '2025091610'
+        desc: 기록일시
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rnum
+      title: 행번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 13
+        max: 25
+        unique: 25
+    - name: vehicleNo
+      title: 차량번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A01
+        - A02
+        - A04
+      stats:
+        unique: 3
+    - name: numberOfGetCurrent
+      title: 현재탑승인원
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '6'
+        - '10'
+      stats:
+        min: 0
+        p50: 0
+        max: 10
+        unique: 4
+    - name: logDate
+      title: 기록일시
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20250916100142'
+        - '20250916100353'
+        - '20250916100425'
+      stats:
+        min: 20250916100142
+        p50: 20250916101516
+        max: 20250916105928
+        unique: 25
+    - name: latitude
+      title: 위도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.196161'
+        - '35.193719'
+        - '35.196286'
+      stats:
+        min: 35.19189
+        p50: 35.196237
+        max: 35.202838
+        unique: 24
+    - name: numberOfGetIn
+      title: 승차인원
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: terminalId
+      title: 단말기id
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - AVEH000001
+        - AVEH000002
+        - AVEH000004
+      stats:
+        unique: 3
+    - name: routeNo
+      title: 노선번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B
+        - A
+      stats:
+        unique: 2
+    - name: numberOfGetOff
+      title: 하차인원
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: longitude
+      title: 경도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '129.20862'
+        - '129.219751'
+        - '129.222164'
+      stats:
+        min: 129.20862
+        p50: 129.214919
+        max: 129.223206
+        unique: 24
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5712
+  rank_in_sector: 1403
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 자율주행버스 승하차 시계열 로그
+claims:
+  - id: c-15155775-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15155775.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15155775.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15155775-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155775-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15155775.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155775-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15155775.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15155775-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15155775-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15155775-08
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave5 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15155775.json
+  stats: probe/stats/15155775.json
+  data: probe/data/15155775/
+status: active
+summary_user: 부산광역시 자율주행버스 운행 중 기록된 승객 정보를 차량·기록일시(시간 단위) 건별로 담으며, 승차·하차 인원과 현재 탑승 인원, 차량 위치(위도·경도), 노선번호를 포함한다. 교통 분석가나 운영 담당자가 "자율주행버스 노선에서 어느 시간대·구간에 승객이 몰리는가"처럼 혼잡도와 배차 계획을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 노선번호(routeNo)나 차량번호 이름 매핑, 좌표 근접 비교로만 부산 버스 노선·정류장 자료와 이어 쓸 수 있다.
+limits: 표준 정류장 ID 같은 전역 조인 키가 없어 다른 대중교통 원장과 직접 결합되지 않는다. 개발계정은 하루 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15155775-01
+    - c-15155775-03
+    - c-15155775-04
+  dropped_citations: 0

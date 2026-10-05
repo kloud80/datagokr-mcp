@@ -1,0 +1,184 @@
+# Dataset 15095938 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15095938'
+tier: verified
+title: 대구광역시 북구_장애수당
+sector: 사회복지/취약계층지원/disability-registry
+agency:
+  id: '3450000'
+  name: 대구광역시 북구
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15095938/openapi.do
+synonyms:
+  - 장애수당
+  - 장애아동수당
+  - 기초생활보장 수급자
+  - 보장시설 수급자
+  - 차상위계층
+  - 장애인 수당 지급현황
+  - 대구 북구 장애인 복지
+  - 경증장애인 수당
+  - 차상위 장애수당
+  - 기초수급 장애인 급여
+description_portal: 장애수당 대상자 - 18세 이상의 *등록한 장애인 중 * 장애인연금법상 중증장애인에 해당하지 않는 자(종전 3~6급)로 국민기초생활보장 수급자 및 차상위계층 장애아동수당 대상자 - 18세 미만의 등록한 장애인으로 국민기초생활보장수급자 및 차상위계층대구광역시_북구청_장애수당, 장애아동수당 지급현황 장애수당(기초), 장애수당(차상위 등) , 장애아동수당(기초), 장애아동수당(차상위 등) 지급현황(장애인복지법 제32조에 따라 등록한 장애인)(장애인연금법 제2조 제1호, 같은 법 시행령 제2조, 장애정도판정기준 제5장 장애인연금 수급을 위한 중증장애인 판정 기준)
+team:
+  dept: 정책소통과
+services:
+  - op: /getDisabilityAllowance_v2
+    name: 대구광역시_북구청_장애수당 데이터 조회
+    endpoint: https://apis.data.go.kr/3450000/disabilityAllowanceService_new/getDisabilityAllowance_v2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: currentPage
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: perPage
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SE
+      title: 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - "국민기초생활보장 수급자(일반 재가) \n및 차상위 계층"
+        - '보장시설 수급자 '
+      stats:
+        unique: 2
+    - name: AMOUNT
+      title: 수당 금액
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 월 60,000원
+        - 월 30,000원
+      stats:
+        unique: 2
+    - name: RM
+      title: 비고
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - 보장시설 퇴소시 재가 장애수당 지급
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 장애인 등록·급여 통계 (유형·정도·시군구, 장애인연금·수당·활동지원)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6345
+  rank_in_sector: 51
+  brm: 사회복지 - 취약계층지원
+  why: 북구 수당 금액 안내, 개체·통계 아님
+claims:
+  - id: c-15095938-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15095938.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15095938.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15095938-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095938-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095938.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095938-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095938.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15095938-06
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15095938.json
+  stats: probe/stats/15095938.json
+  data: probe/data/15095938/
+status: active
+summary_user: 대구광역시 북구청이 지급하는 장애수당(기초·차상위 등)과 장애아동수당(기초·차상위 등)을 구분별로 묶어 수당 금액과 비고를 담은 집계형 지급현황 데이터입니다. 북구의 장애수당·장애아동수당이 수급 구분별로 얼마나 지급되는지 확인하려는 복지 분석가나 주민이 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 구분 명칭을 맞추거나 같은 기관 데이터끼리만 이어 쓴다.
+limits: 조인 키가 없어 다른 시군구나 장애인 등록 통계와 자동으로 연결되지 않고, 수급자 개인 단위 정보는 없다. 호출에는 포털 활용신청 후 발급받은 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15095938-01
+    - c-15095938-03
+    - c-15095938-04
+  dropped_citations: 0

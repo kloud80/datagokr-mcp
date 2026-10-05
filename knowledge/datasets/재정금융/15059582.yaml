@@ -1,0 +1,621 @@
+# Dataset 15059582 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15059582'
+tier: verified
+title: 금융위원회_국제거래종목정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15059582/openapi.do
+synonyms:
+  - DR
+  - 주식
+  - 국제거래종목정보
+  - 국제거래
+  - 종목정보
+  - DR종목
+  - 사유별일정종목
+  - 법인등록번호
+  - 주식예탁증서
+  - 해외DR
+  - GDR
+  - ADR
+  - 해외상장 주식
+  - 예탁증권 권리일정
+  - 원주 전환비율
+description_portal: '국제거래종목정보는 기준일자와 법인등록번호 등을 기반으로 해외 발행 DR(대체증권, Depositary Receipt) 관련 정보를 제공하는 데이터입니다.총 2가지 오퍼레이션으로 구성되어 있으며,① DR종목 조회를 통해 DR 발행회사명, 주식종류, 종목단축코드, ISIN코드, 거래소 정보, 예탁기관명, 전환비율, 전환가능주식 수 등의 정보를 제공하고,② 사유별 일정정보 조회에서는 권리행사사유(예: 배당, 분배 등), 신규상장구분, DR 종목 및 원주의 상세 정보를 확인할 수 있습니다.※ 데이터 갱신주기는 일 1회이며, 주말 및 공휴일은 다음 영업일에 데이터가 제공됩니다.** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getDepoReceItem_V2
+    name: DR종목조회
+    endpoint: https://apis.data.go.kr/1160100/GetDrTradItemInfoService_V2/getDepoReceItem_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getReasScheInfo_V2
+    name: 사유별일정정보조회
+    endpoint: https://apis.data.go.kr/1160100/GetDrTradItemInfoService_V2/getReasScheInfo_V2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        desc: 페이지 번호
+      - name: resultType
+        required: true
+        desc: 결과형식(xml/json)
+      - name: basDt
+        required: false
+        desc: 작업 또는 거래의 기준이 되는 일자(년월일)
+      - name: crno
+        required: false
+        desc: 법인등록번호
+      - name: innnTrIssuCmpyNm
+        required: false
+        desc: 국제 거래에서 발행한 회사 이름
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20120101'
+        - '20120102'
+        - '20120103'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 20120101
+        p50: 20120109
+        max: 20120118
+        unique: 18
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110085450'
+        - '1101110303539'
+        - '1344110001387'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 1101110000086
+        p50: 1101112095837
+        max: 1801110073922
+        unique: 40
+    - name: isinCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: string
+      semantic_type: stock_cd
+      null_rate: 0.0
+      sample_values:
+        - US54569T1060
+        - US89023M1071
+        - US8246301076
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 57
+    - name: isinCdNm
+      title: 유가증권 국제인증 고유번호 코드 이름
+      type: code
+      null_rate: 0.457
+      sample_values:
+        - TONG YANG MAJOR CORP.(TONG YANG CEMENT CO.)
+        - '[BHKI LN] BHK INC_REGS GDR'
+        - '***HYUNDAI MOTOR CO           SPONSORED GDS 144A'
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 31
+    - name: drIssuCmpyNm
+      title: 대체증권(DR)의 발행회사명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 현대자동차
+        - 한국씨티은행
+        - 에스케이하이닉스
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 40
+    - name: stckKcd
+      title: 주식의 종류를 관리하는 코드(우선주, 보통주, 후배주, 혼합주 등)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '101'
+        - '201'
+        - '202'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 101
+        p50: 101
+        max: 202
+        unique: 3
+    - name: stckKcdNm
+      title: 주식의 종류를 관리하는 코드의 명칭(우선주, 보통주, 후배주, 혼합주 등)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보통주
+        - 우선주
+        - 2우선주
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 3
+    - name: orshIsinCdNm
+      title: 원주의 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 한국씨티은행
+        - 에스케이하이닉스
+        - 기아자동차
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 45
+    - name: orshIsinCd
+      title: 원주의 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KR7016830002
+        - KR7000660001
+        - KR7000270009
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 45
+    - name: itmsShrtnCd
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '016830'
+        - '000660'
+        - '000270'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 270
+        p50: 16830
+        max: 128640
+        unique: 45
+    - name: itmsShrtnCdNm
+      title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호의 명칭
+      type: code
+      null_rate: 1.0
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 0
+    - name: orshDrRto
+      title: 원주와 DR(대체증권)의 비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '.5'
+        - '.2'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 0.05
+        p50: 0.5
+        max: 100
+        unique: 15
+    - name: drDcd
+      title: 대체증권(DR)의 구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 2
+    - name: drDcdNm
+      title: 대체증권(DR)의 구분코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GDR
+        - ADR
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 2
+    - name: drCnvrPsblLmtTsumCnt
+      title: 대체증권(DR)으로 전환 가능한 총 주식수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '185929862'
+        - '0'
+        - '143426705'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 0
+        p50: 11803702
+        max: 775504910
+        unique: 43
+    - name: drCnvrPsblStckCnt
+      title: 대체증권(DR)으로 전환 가능한 총 주식수 중 전환 가능한 주식 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11173143'
+        - '-2858'
+        - '360000'
+      op: /getDepoReceItem_V2
+      stats:
+        min: -2858
+        p50: 8678659
+        max: 767269475
+        unique: 118
+    - name: drCnvrOrshCnt
+      title: 대체증권(DR)으로 전환한 원 주식수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '174756719'
+        - '2858'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 0
+        p50: 559617
+        max: 174773821
+        unique: 109
+    - name: drXchgDcd
+      title: 대체증권(DR)이 거래되는 거래소의 구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '06'
+        - '04'
+        - '07'
+      op: /getDepoReceItem_V2
+      stats:
+        min: 1
+        p50: 6
+        max: 13
+        unique: 6
+    - name: drXchgDcdNm
+      title: 대체증권(DR)이 거래되는 거래소의 구분코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - LuxX(룩셈부르크증권거래소)
+        - OTC(장외)
+        - LSE(런던증권거래소)
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 6
+    - name: drDpsgInstNm
+      title: 대체증권(DR)의 예탁기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - CITIBANK.N.A[ADR DEPT]
+        - THE BANK OF NEW YORK MELLON AD
+        - JP MORGAN CHASE BANK NA FBO HOLDERS OF DR
+      op: /getDepoReceItem_V2
+      stats:
+        unique: 4
+    - name: basDt
+      title: 작업 또는 거래의 기준이 되는 일자(년월일)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '19010101'
+        - '19000101'
+      op: /getReasScheInfo_V2
+      stats:
+        min: 19000101
+        p50: 19010101
+        max: 19010101
+        unique: 2
+    - name: crno
+      title: 법인등록번호
+      type: number
+      semantic_type: corp_rgst_no
+      null_rate: 0.0
+      sample_values:
+        - '1101110022816'
+        - '1101110017867'
+        - '1101110002975'
+      op: /getReasScheInfo_V2
+      stats:
+        min: 1101110002975
+        p50: 1101110017867
+        max: 1101110022816
+        unique: 3
+    - name: innnTrIssuCmpyNm
+      title: 국제 거래에서 발행한 회사 이름
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SK(소멸)
+        - 한솔홀딩스
+        - 삼성물산
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 3
+    - name: rgtExertRcd
+      title: 옵션등의 권리행사시 그 사유를 관리하는 코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '203'
+        - '101'
+        - '204'
+      op: /getReasScheInfo_V2
+      stats:
+        min: 101
+        p50: 203
+        max: 204
+        unique: 3
+    - name: rgtExertRcdNm
+      title: 옵션등의 권리행사시 그 사유를 관리하는 코드의 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 사무인수
+        - 유상증자
+        - 상호변경
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 3
+    - name: orshIsinCdNm
+      title: 원주의 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 명칭
+      type: code
+      null_rate: 0.512
+      sample_values:
+        - SK CORP DR
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 1
+    - name: newLstgClsfNm
+      title: 신규로 상장되는 유가증권의 거래소 및 상태등을 구분하는 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 예탁지정
+        - 유가증권시장
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 2
+    - name: drItmsShrtnCd
+      title: 대체증권(DR) 국제인증 고유번호 코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SKKOP
+        - HSPCY
+        - SACPP
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 4
+    - name: drIsinCd
+      title: 대체증권(DR) 국제인증 고유번호 코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - US7843282051
+        - US4113341055
+        - US7960532056
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 4
+    - name: drIsinCdNm
+      title: 대체증권(DR) 국제인증 고유번호의 명칭 코드의 명칭
+      type: code
+      null_rate: 0.512
+      sample_values:
+        - SK CORP DR
+      op: /getReasScheInfo_V2
+      stats:
+        unique: 1
+    - name: issrNo
+      title: 발행사번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '360'
+        - '415'
+        - '83'
+      op: /getReasScheInfo_V2
+      stats:
+        min: 83
+        p50: 360
+        max: 415
+        unique: 3
+  foreign_keys:
+    - fields:
+        - crno
+      reference:
+        key: corp_rgst_no
+      evidence: measured
+    - fields:
+        - isinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.9019
+  rank_in_sector: 9
+  brm: 재정금융 - 금융
+  why: 해외 DR 종목 소규모 보조 자료
+claims:
+  - id: c-15059582-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15059582.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15059582.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15059582-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059582-03
+    kind: key
+    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd)'
+    evidence:
+      - type: measured
+        source: probe/stats/15059582.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 31개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059582-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059582.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059582-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059582-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059582-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15059582.json
+  stats: probe/stats/15059582.json
+  data: probe/data/15059582/
+status: active
+summary_user: 해외에서 발행된 DR(주식예탁증서) 종목을 기준일자·법인별로 담은 API로, DR 종목 조회(발행회사, 주식종류, 원주와 DR 비율, 전환가능·전환된 주식 수, 거래 거래소, 예탁기관)와 배당·분배 등 권리행사 사유별 일정 조회 2개 오퍼레이션으로 구성된다. 투자자나 분석가가 '특정 국내 기업이 해외 어느 거래소에 DR을 상장했고, 원주 몇 주가 DR 1단위에 해당하며 배당 등 권리일정은 언제인가'를 확인하는 데 쓴다. 법인등록번호(crno)와 ISIN 코드(isinCd)가 실측 조인 키여서 같은 키를 쓰는 금융위원회 주식시세·상장종목·배당 정보나 기업 공시·재무 데이터와 이어 쓴다.
+limits: 해외 DR 종목 정보와 권리일정만 담아 DR의 해외 시세나 거래량은 이 데이터로 알 수 없다. 개발계정은 일 10,000회 호출 제한이 있으며, 전국 단위 비공간 데이터라 지역별 분석에는 쓸 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15059582-01
+    - c-15059582-03
+    - c-15059582-04
+    - c-15059582-06
+  dropped_citations: 0

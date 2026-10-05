@@ -1,0 +1,252 @@
+# Dataset 15137985 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15137985'
+tier: verified
+title: 전남광주통합특별시 여수시_실시간 CCTV 영상주소 조회 서비스
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '5785000'
+  name: 전남광주통합특별시 여수시
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15137985/openapi.do
+synonyms:
+  - 여수시
+  - 실시간
+  - CCTV
+  - 여수 교통 CCTV
+  - 실시간 도로 영상
+  - CCTV 스트리밍 주소
+  - HLS 교통영상
+  - 도로 상황 모니터링
+  - 여수시 CCTV 위치
+description_portal: 전라남도 여수시의 주요 도로에 설치된 실시간 CCTV 영상주소를 조회하여 실시간 교통 상황 모니터링이 가능한  API입니다.영상은 HLS(HTTP Live Streaming) 방식으로 제공되며 재생을 위해서는 VLC 플레이어, 팟플레이어 등 별도의 영상 플레이어가 필요합니다.
+team:
+  dept: 교통과
+services:
+  - op: /CCTVInfo
+    name: 도로 CCTV 조회 서비스
+    endpoint: https://apis.data.go.kr/4810000/YsRoadCctv/CCTVInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: cctv_mngm_nmbr
+      title: CCTV  관리 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 102
+        unique: 100
+    - name: x_crdn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.662967'
+        - '127.5722901'
+        - '127.590234'
+      stats:
+        min: 127.5461395
+        p50: 127.69423015000001
+        max: 127.804345
+        unique: 99
+    - name: y_crdn
+      title: Y 좌표
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34.8790767'
+        - '34.8629565'
+        - '34.8412104'
+      stats:
+        min: 34.594463
+        p50: 34.7608735
+        max: 34.9336024
+        unique: 100
+    - name: istl_lctn_nm
+      title: 설치 위치 명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 율촌월산교차로
+        - 율촌 취적리
+        - 여수공항
+      stats:
+        unique: 100
+    - name: istl_lctn_addr
+      title: 설치 위치 주소
+      type: code
+      null_rate: 0.84
+      sample_values:
+        - 미평동 591-1
+        - 소라면 의곡길 443
+        - 교동사거리 주정차
+      stats:
+        unique: 16
+    - name: strm_http_addr
+      title: 스트리밍 HTTP 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://itsstream.yeosu.go.kr:443/live/camera01.stream/playlist.m3u8
+        - https://itsstream.yeosu.go.kr:443/live/camera02.stream/playlist.m3u8
+        - https://itsstream.yeosu.go.kr:443/live/camera03.stream/playlist.m3u8
+      stats:
+        unique: 100
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8118
+  rank_in_sector: 47
+  brm: 교통물류 - 도로
+  why: 여수시 한정 CCTV 영상주소, 소규모
+claims:
+  - id: c-15137985-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15137985.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15137985.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15137985-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15137985-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15137985.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15137985-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15137985.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15137985-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15137985-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15137985-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15137985.json
+  stats: probe/stats/15137985.json
+  data: probe/data/15137985/
+status: active
+summary_user: 여수시 주요 도로에 설치된 CCTV를 대당 한 건씩, 관리번호·설치 위치명·주소·좌표와 HLS 실시간 영상 스트리밍 주소로 담는 원천 목록이다. 운전자나 교통 분석가가 '지금 여수 특정 교차로 일대가 막히는지 영상으로 확인할 수 있나'를 묻거나, 지도 서비스 개발자가 위치별 CCTV 영상을 띄우는 데 쓴다. 전역 조인 키는 없어서 설치 주소·좌표(x_crdn, y_crdn)로 다른 도로·소통 데이터와 공간 매칭하거나 같은 기관 코드로만 연결한다.
+limits: 표준 코드 같은 공통 키가 없어 타 기관 교통 데이터와는 주소·좌표 기반 매칭에 의존해야 한다. 범위는 여수시 한 시군구에 그친다. 영상은 HLS 스트림이라 재생하려면 별도 플레이어가 필요하며, 속도·통행시간 같은 수치 소통정보는 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15137985-01
+    - c-15137985-03
+    - c-15137985-04
+    - c-15137985-06
+  dropped_citations: 0

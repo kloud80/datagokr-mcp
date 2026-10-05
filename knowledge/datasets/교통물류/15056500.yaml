@@ -1,0 +1,183 @@
+# Dataset 15056500 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056500'
+tier: verified
+title: 서울특별시_돌발 유형 코드 정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056500/openapi.do
+synonyms:
+  - 교통상황
+  - 교통량
+  - 통제
+  - 돌발
+  - 소통
+  - 돌발상황 코드
+  - 교통 돌발 유형
+  - TOPIS 돌발
+  - 서울 교통사고 유형 코드
+  - 소통 돌발 API
+  - 돌발 코드표
+  - 도로 돌발정보
+summary_user: 서울시 교통정보 시스템(TOPIS)의 소통 돌발 API에서 쓰는 돌발 유형 코드와 코드명을 담은 코드표이며, 건별 원천 기록이 아니라 참조용 목록이다. 서울시 실시간 돌발상황 데이터를 받아 쓰는 개발자·분석가가 '이 돌발 코드가 사고인지 공사인지 무엇을 뜻하나'를 풀어 읽는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 소통 돌발 API 응답에 있는 돌발 유형 코드와 코드값·이름을 맞춰 연결한다.
+description_portal: '해당 데이터는 서울시 돌발 유형 코드 정보 OpenAPI 데이터이며 소통 돌발 API를 사용하기 위한 돌발 유형 코드입니다. 데이터의 원본시스템은 서울시 교통정보 시스템(https://topis.seoul.go.kr)입니다.요청인자 : 인증키, 요청파일타입, 서비스명, 요청시작위치출력값 : 총 데이터 건수(정상조회 시 출력됨), 요청결과 코드, 요청결과 메시지, 돌발 유형 코드, 돌발 유형 코드명※ 바로가기 링크 클릭 시 서울 열린데이터광장 개방 데이터로 이동합니다. 열린데이터광장에서 제공하는 오픈API를 사용하기 위해서는 먼저 인증키를 발급받으셔야 합니다.'
+team:
+  dept: 교통정보과
+services:
+  - op: AccMainCode
+    name: AccMainCode
+    endpoint: http://openapi.seoul.go.kr:8088/json/AccMainCode/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ERROR-301
+      stats:
+        unique: 1
+    - name: MESSAGE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 파일타입 값이 누락 혹은 유효하지 않습니다. 요청인자 중 TYPE을 확인하십시오.
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7312
+  rank_in_sector: 265
+  brm: 교통물류 - 도로
+  why: 서울 돌발 API용 유형 코드표, 보조 자료
+claims:
+  - id: c-15056500-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056500.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15056500-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056500-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056500.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056500-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056500.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15056500-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056500-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056500-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056500.json
+  stats: probe/stats/15056500.json
+  data: probe/data/15056500/
+limits: 이 데이터는 코드표일 뿐이라 돌발 발생 위치·시각·건수는 담지 않으며, 다른 기관 데이터와 바로 붙일 공통 키가 없다. 호출에는 포털 활용신청과 별개로 서울 열린데이터광장(data.seoul.go.kr)에서 발급한 인증키가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15056500-01
+    - c-15056500-03
+    - c-15056500-06
+  dropped_citations: 0
+status: active

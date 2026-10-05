@@ -1,0 +1,244 @@
+# Dataset 15125277 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15125277'
+tier: verified
+title: 법제처_금융위원회 결정문 목록 조회
+sector: 공공행정/법제/case-law
+agency:
+  id: '1170000'
+  name: 법제처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15125277/openapi.do
+synonyms:
+  - 금융위원회
+  - 결정문
+  - 의결정보
+  - 사건번호
+  - 심의일자
+  - 조치유형
+  - 행정처분
+  - 금융기관
+  - 금융위 제재 결정
+  - 금융회사 제재 내역
+  - 금융위원회 의결서
+  - 행정처분 결정문
+  - 금융 제재 사례
+  - 국가법령정보센터 결정문
+summary_user: 금융위원회가 심의·의결한 제재 사건의 결정문을 건별 목록으로 담으며, 한 건마다 의결번호·안건명·기관명·결정문일련번호·상세 링크가 붙고 범위는 전국·비공간입니다. 금융회사 준법 담당자나 분석가가 "특정 금융회사가 어떤 안건으로 금융위원회 제재 의결을 받았는가"를 찾고 결정문 원문으로 넘어가는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 기관명(금융회사명) 이름 매칭으로만 다른 데이터와 잇고, 결정문 본문은 결정문일련번호나 상세 링크로 따라가 조회한다.
+description_portal: 법제처 국가법령정보센터에서 제공하는 금융위원회 결정문 데이터로, 위원회 결정문에 대한 목록 정보를 조회하는 서비스입니다. 본 데이터는 금융위원회가 심의·의결한 각종 제재 사건에 대한 결정문 목록 정보를 제공합니다. 데이터는 사건번호, 심의일자, 금융회사명, 조치유형, 위반 법령, 위반행위 개요, 제재 내용 등으로 구성되어 있으며, 각 사건에 대한 행정처분 현황을 일자별로 조회할 수 있습니다. 사용자는 기간, 기관, 조치 구분 등 다양한 조건을 통해 목록을 검색할 수 있으며, 사건별로 고유 식별번호가 부여되어 있습니다.
+team:
+  dept: 법제처
+services:
+  - op: lawSearch:fsc
+    name: lawSearch:fsc
+    endpoint: https://www.law.go.kr/DRF/lawSearch.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: OC
+      issuer: open.law.go.kr
+    params:
+      - name: target
+        required: true
+        example: fsc
+      - name: type
+        required: true
+        example: JSON
+      - name: display
+        required: true
+        example: '100'
+      - name: page
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: 의결번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 의결 제2025-445호
+        - 의결 제2025-5호
+        - 의결 제2024- 215호
+      stats:
+        unique: 99
+    - name: 안건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - KB증권㈜에 대한 수시검사 결과 조치안
+        - NH투자증권㈜에 대한 수시검사 결과 조치안
+        - ㈜OOO의 사업보고서 및 연결감사보고서 등에 대한 조사·감리결과 조치안
+      stats:
+        unique: 84
+    - name: 기관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금융위원회
+      stats:
+        unique: 1
+    - name: 결정문일련번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '14597'
+        - '13757'
+        - '14551'
+      stats:
+        min: 7563
+        p50: 13761
+        max: 15653
+        unique: 100
+    - name: 결정문상세링크
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - /DRF/lawService.do?OC=***&target=fsc&ID=14597&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=fsc&ID=13757&type=HTML&mobileYn=
+        - /DRF/lawService.do?OC=***&target=fsc&ID=14551&type=HTML&mobileYn=
+      stats:
+        unique: 100
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6606
+  rank_in_sector: 103
+  brm: 공공행정 - 법제
+  sector_rule: moleg-to-law
+  why: 금융위 결정문 목록, 활용도 낮음
+claims:
+  - id: c-15125277-01
+    kind: access
+    value: 외부 사이트 open.law.go.kr 인증키 필요 (query 파라미터 OC) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15125277.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.law.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15125277-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125277-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125277.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125277-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125277.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125277-06
+    kind: admin_note
+    value: "세부 부문 '사법 판단 (판례·헌재·법령해석·행정심판·결정문)'의 가치: 시의성 + 희소성 — 판례·결정례·해석례는 등록 시점 이후만 가치"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#case-law
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15125277-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125277-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15125277.json
+  stats: probe/stats/15125277.json
+  data: probe/data/15125277/
+limits: open.law.go.kr의 별도 인증키(OC 파라미터)가 필요하며 포털 활용신청과 별개입니다. 공통 식별 코드가 없어 기업 정보 등과 정확히 결합하기 어렵고 이름 매칭에 의존합니다. 결정문은 등록 시점 이후 자료만 의미가 있어 과거 사건 전체를 망라한다고 보기 어렵습니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15125277-01
+    - c-15125277-03
+    - c-15125277-04
+    - c-15125277-06
+  dropped_citations: 0
+status: active

@@ -1,0 +1,327 @@
+# Dataset 15102060 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15102060'
+tier: verified
+title: 농촌진흥청 국립원예특작과학원_원예특용작물가격동향 조회 서비스
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: '1390804'
+  name: 농촌진흥청 국립원예특작과학원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15102060/openapi.do
+synonyms:
+  - 원예작물
+  - 특용작물
+  - 주간가격동향
+  - 도매가격
+  - 가격동향
+  - 농산물 가격동향
+  - 채소 가격 증감률
+  - 과일 시세
+  - 화훼 도매가격
+  - 버섯 가격
+  - 인삼 산지가격
+  - 원예작물 시세 보고서
+  - KAMIS 가격
+description_portal: '농촌진흥청 국립원예특작과학원에서 서비스중인 원예특용작물의 전주, 전월, 전년 대비 증감률 가격동향 정보를 조회할 수 있는 서비스로 원예특용작물가격 동향 목록과 상세정보를 제공한다 .대상품목으로는 채소 : 배추, 무, 양파, 파, 시금치, 상추, 깻잎, 고추, 토마토, 메론, 수박과수 : 바나나, 사과, 배특작 : 버섯(느타리, 새송이, 팽이), 수삼화훼 : 장미, 백합, 호접란(*자료출처: aTKamis( 도매가격 ), 화훼(장미, 백합, 호접란)는 양재동 도매가격 인삼은 금산군청 산지시장가격 버섯(표고,양송이) 서울농수산식품공사 도매가격)'
+team:
+  dept: 기획조정과
+services:
+  - op: /selectHorticulPriceList
+    name: 원예특용작물 가격동향 목록
+    endpoint: https://apis.data.go.kr/1390804/NihhsRdaHorticulPriceInfo/selectHorticulPriceList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호(default 1)
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수 (default 10)
+      - name: searchType
+        required: false
+        desc: '검색분류 (1: 제목, 2: 내용)'
+      - name: searchWord
+        required: false
+        desc: '검색어 (예: 5월)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /selectHorticulPriceView
+    name: 원예특용작물 가격동향 상세정보
+    endpoint: https://apis.data.go.kr/1390804/NihhsRdaHorticulPriceInfo/selectHorticulPriceView
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: idx
+        required: true
+        example: '32158'
+        desc: 게시글 인덱스
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: idx
+      title: 게시글 INDEX
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '38503'
+        - '38482'
+        - '38478'
+      op: /selectHorticulPriceList
+      stats:
+        min: 27778
+        p50: 36619
+        max: 38503
+        unique: 311
+    - name: title
+      title: 제목
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 원예특용작물가격동향(2026. 9. 30. 기준)
+        - 원예특용작물가격동향(2026. 9. 23. 기준)
+        - 원예특용작물가격동향(2026. 9. 16. 기준)
+      op: /selectHorticulPriceList
+      stats:
+        min: '2020-07-22'
+        max: '2026-12-08'
+        unique: 311
+    - name: regDate
+      title: 등록일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2024-12-02'
+        - '2023-12-06'
+        - '2023-10-05'
+      op: /selectHorticulPriceList
+      stats:
+        min: '2020-07-31'
+        max: '2026-09-30'
+        unique: 304
+    - name: fileNm1
+      title: 첨부파일명 1
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 농산물가격동향.pdf
+        - 원예특용작물 가격동향카드정보.pdf
+        - 원예특용작물 가격동향카드정보(2월24일).pdf
+      op: /selectHorticulPriceList
+      stats:
+        unique: 306
+    - name: fileUrl1
+      title: 첨부파일 url1
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056313&file
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056273&file
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056261&file
+      op: /selectHorticulPriceList
+      stats:
+        unique: 311
+    - name: fileNm2
+      title: 첨부파일명 2
+      type: string
+      null_rate: 0.0064
+      sample_values:
+        - 농산물가격동향.pdf
+        - 원예특용작물 가격동향 카드정보(3월 2일).pdf
+        - 원예특용작물 가격동향 카드정보.pdf
+      op: /selectHorticulPriceList
+      stats:
+        unique: 305
+    - name: fileUrl2
+      title: 첨부파일 url2
+      type: string
+      null_rate: 0.0064
+      sample_values:
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056313&file
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056273&file
+        - https://www.nihhs.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000056261&file
+      op: /selectHorticulPriceList
+      stats:
+        unique: 309
+    - name: resultCode
+      title: 결과코드 (조회 성공 1, 실패 0)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /selectHorticulPriceView
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: resultMsg
+      title: 결과메세지 (접속실패, 접속성공, 인증실패)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 접속성공
+      op: /selectHorticulPriceView
+      stats:
+        unique: 1
+    - name: repcategory
+      title: API 명 (원예특용작물 가격동향 목록)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 원예특용작물 가격동향 상세정보
+      op: /selectHorticulPriceView
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6703
+  rank_in_sector: 32
+  brm: 농축수산 - 농업·농촌
+  why: 게시글형 가격동향 증감률, 일자별 가격과 중복
+claims:
+  - id: c-15102060-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15102060.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15102060.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15102060-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15102060-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15102060.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15102060-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15102060.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15102060-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15102060-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15102060-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15102060.json
+  stats: probe/stats/15102060.json
+  data: probe/data/15102060/
+status: active
+summary_user: 국립원예특작과학원이 올리는 원예특용작물 가격동향 자료를 게시글 단위(목록·상세)로 담으며, 각 글은 제목·등록일자와 첨부파일 이름·URL로 이루어진 전국 단위 비공간 자료입니다. 식자재 구매자나 유통업 분석가가 배추·양파·사과·느타리버섯·장미 같은 품목의 가격이 전주·전월·전년보다 얼마나 올랐는지 정리한 동향 보고서를 찾을 때 씁니다. 응답에 전역 조인 키가 없으므로 aT KAMIS 도매가격 등 다른 가격 데이터와는 품목 이름을 맞추는 방식으로 이어 쓰고, 기관마다 품목코드가 달라 코드 매핑이 필요합니다.
+limits: 응답 필드는 게시글 제목·등록일·첨부파일 정보뿐이어서 품목별 가격 수치는 첨부파일을 열어야 확인됩니다. 범위가 전국 단위라 지역별 가격 비교에는 쓰지 못하고, 다른 데이터와 붙일 공통 코드가 없습니다. 개발계정은 하루 1,000회로 호출이 제한됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15102060-01
+    - c-15102060-03
+    - c-15102060-04
+    - c-15102060-06
+  dropped_citations: 0

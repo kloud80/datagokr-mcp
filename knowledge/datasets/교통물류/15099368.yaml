@@ -1,0 +1,243 @@
+# Dataset 15099368 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15099368'
+tier: verified
+title: 서울특별시_정류장마스터 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099368/fileData.do
+synonyms:
+  - 대중교통
+  - 버스
+  - 정류장
+  - 교통
+  - 버스도착정보
+  - 서울 버스정류장 목록
+  - 버스정류소 위치
+  - 정류장 ARS 번호
+  - 버스정류장 좌표
+  - 버스도착정보안내기 설치
+  - BIT 설치 현황
+  - TOPIS 정류장
+summary_user: 서울시 TOPIS를 원천으로 한 서울 시내버스 정류장 원장으로, 정류장 하나마다 정류장 ID·명칭·유형·정류장 번호·위도·경도와 버스도착정보안내기 설치 여부(미설치·설치·확인불가)를 담는다. 시민이나 분석가가 '우리 동네 정류장 중 도착정보안내기가 없는 곳은 어디인가', '특정 정류장 번호의 위치는 어디인가'를 확인하는 데 쓴다. 실측 컬럼에서는 전역 조인 키가 확인되지 않았으므로, 서울시 노선·도착·승하차 데이터와는 같은 기관의 정류장 ID(CRTR_ID)나 정류장 번호로 이어 쓰고, 다른 기관 데이터와는 정류장 이름 매핑이나 좌표로 연결해야 한다.
+description_portal: '해당 데이터는 서울시 정류장 마스터 정보입니다. 서울시 정류장에 대한 정류장 ID, 정류장 명칭, 정류장 유형, 정류장 번호, 정류장 위도, 정류장 경, 버스도착정보안내기 설치 여부(미설치, 설치, 확인불가) 정보를 확인할 수 있습니다. 데이터의 원천 시스템은 서울시 교통정보 시스템(TOPIS)(https://topis.seoul.go.kr)입니다. 자치구정류장 코드분류는 자치구, 정류장ARS, 정류장ID 정보를 제공합니다.부서: 교통정보과(02-2133-4959)※ 바로가기 클릭 시 서울 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: tbisMasterStation
+    name: tbisMasterStation
+    endpoint: http://openapi.seoul.go.kr:8088/json/tbisMasterStation/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CRTR_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100000001'
+        - '100000002'
+        - '100000003'
+      stats:
+        min: 100000001
+        p50: 100000055.5
+        max: 100000139
+        unique: 100
+    - name: CRTR_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 창경궁.서울대학교병원
+        - 경기상고
+        - 경복고교
+      stats:
+        unique: 79
+    - name: CRTR_TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반차로
+        - 중앙차로
+        - 가로변시간
+      stats:
+        unique: 4
+    - name: CRTR_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '01001'
+        - '01002'
+        - '01003'
+      stats:
+        min: 1001
+        p50: 1150.5
+        max: 1235
+        unique: 100
+    - name: LAT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.5698055407'
+        - '37.579432932'
+        - '37.5825800121'
+      stats:
+        min: 37.568059
+        p50: 37.58041945755
+        max: 37.6115844138
+        unique: 100
+    - name: LOT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.9877522923'
+        - '126.9965206101'
+        - '126.9982508372'
+      stats:
+        min: 126.9562103294
+        p50: 126.97281782385
+        max: 127.0156014431
+        unique: 100
+    - name: BUS_ARVL_INFO_GUIDEM_INSTL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '설치   '
+        - '미설치  '
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5183
+  rank_in_sector: 2090
+  brm: 교통물류 - 도로
+  why: 서울 정류장 마스터, 정류소정보 API와 같은 원장
+claims:
+  - id: c-15099368-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099368.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15099368-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099368-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099368.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099368-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099368.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15099368-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099368-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099368-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099368.json
+  stats: probe/stats/15099368.json
+  data: probe/data/15099368/
+limits: 서울 열린데이터광장(data.seoul.go.kr)에서 별도 인증키를 받아 호출해야 하며, 공공데이터포털 활용신청과는 별개다. 전역 조인 키가 없어 국가 대중교통 정류장(TAGO) 등 다른 기관 정류장 체계와 바로 맞물리지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15099368-01
+    - c-15099368-03
+  dropped_citations: 0
+status: active

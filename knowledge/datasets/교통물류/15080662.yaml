@@ -1,0 +1,314 @@
+# Dataset 15080662 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15080662'
+tier: verified
+title: 경기도_버스노선 조회
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15080662/openapi.do
+synonyms:
+  - 버스노선
+  - 경기도버스
+  - 경기도버스노선
+  - 경기 버스 노선
+  - 버스 노선 경로
+  - 노선 형상 좌표
+  - 경기버스정보
+  - 버스 노선 검색
+  - 노선 경유 정류소
+  - BIS 노선정보
+description_portal: 경기도 버스의 실시간 운행정보를 수집하여 이용자에게 제공하는 시스템.
+team:
+  dept: 교통정보과
+services:
+  - op: /getBusRouteInfoItemv2
+    name: 노선정보항목조회
+    endpoint: https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteInfoItemv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: routeId
+        required: true
+        desc: 노선ID
+      - name: format
+        required: true
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getBusRouteStationListv2
+    name: 경유정류소목록조회
+    endpoint: https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteStationListv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: routeId
+        required: true
+        desc: 정류소아이디
+      - name: format
+        required: true
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getBusRouteListv2
+    name: 노선번호목록조회
+    endpoint: https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteListv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: keyword
+        required: true
+        desc: 검색할 노선번호
+      - name: format
+        required: true
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /getBusRouteLineListv2
+    name: 노선형상정보목록조회
+    endpoint: https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteLineListv2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: routeId
+        required: true
+        example: '214000018'
+        desc: 정류소아이디
+      - name: format
+        required: true
+        example: json
+        desc: 응답 포멧(json/xml)
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lineSeq
+      title: ' 형상 좌표 순서'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 361
+        max: 721
+        unique: 721
+    - name: x
+      title: ' 정류소 X좌표'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.12505'
+        - '127.08048'
+        - '127.08087'
+      stats:
+        min: 127.04112
+        p50: 127.08478
+        max: 127.1441
+        unique: 610
+    - name: y
+      title: ' 정류소 Y좌표'
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '36.96318'
+        - '36.99838'
+        - '36.9957'
+      stats:
+        min: 36.95773
+        p50: 36.99097
+        max: 37.00394
+        unique: 545
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.873
+  rank_in_sector: 6
+  brm: 교통물류 - 도로
+  why: 경기도 노선 조회 API, 국토부 TAGO·전국 정류장 데이터와 중복
+claims:
+  - id: c-15080662-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-04 실호출 성공 오퍼레이션 1/4
+    evidence:
+      - type: measured
+        source: probe/runs/15080662.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/4
+      - type: measured
+        source: probe/apply/15080662.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15080662-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080662-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15080662.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080662-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15080662.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080662-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15080662-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15080662-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15080662-10
+    kind: pitfall
+    value: 필수 파라미터 format, keyword, routeId는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15080662.json
+        observed_at: '2026-10-04'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15080662-11
+    kind: pitfall
+    value: '오퍼레이션 3개는 최소 파라미터로 응답이 없었다: /getBusRouteInfoItemv2, /getBusRouteStationListv2, /getBusRouteListv2'
+    evidence:
+      - type: measured
+        source: probe/runs/15080662.json
+        observed_at: '2026-10-04'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/4
+  run: probe/runs/15080662.json
+  stats: probe/stats/15080662.json
+  data: probe/data/15080662/
+status: active
+summary_user: 경기도 버스노선의 정보(노선 목록·노선 상세·노선 경유 정류소·노선 형상 좌표)를 개별 주소·좌표 단위로 담는 API이며, 실측된 필드는 노선 형상의 좌표 순서(lineSeq)와 X·Y 좌표뿐이다. 경기도 버스 이용자나 교통 분석가가 '특정 노선이 어떤 경로로 다니는가'를 확인하거나 노선을 지도에 그릴 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 노선명·코드 매핑이나 같은 기관(경기도) 버스 데이터의 노선 ID로만 연결하며, routeId·keyword 같은 필수 파라미터는 노선 검색 결과에서 먼저 받아 넘겨야 한다.
+limits: 2026-10-04 실호출에서 4개 오퍼레이션 중 1개만 성공했고, 노선 목록·노선 상세·노선 경유 정류소 조회(v2)는 최소 파라미터로 응답이 없었다. 필수 파라미터 format·keyword·routeId는 다른 데이터에서 얻은 값을 넘겨야 하며, 개발계정은 일 1,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15080662-01
+    - c-15080662-03
+    - c-15080662-04
+    - c-15080662-10
+    - c-15080662-11
+  dropped_citations: 0

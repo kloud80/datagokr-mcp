@@ -1,0 +1,181 @@
+# Dataset 15059480 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15059480'
+tier: verified
+title: 서울특별시_소통 돌발 도로 분류 정보
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15059480/openapi.do
+synonyms:
+  - 통계
+  - 도로교통
+  - 돌발사고
+  - 돌발상황 코드
+  - 교통 돌발 유형
+  - 도시고속도로 교통정보
+  - 서울 도로 분류 코드
+  - 교통사고·공사 분류
+  - 실시간 교통 돌발
+summary_user: 서울시 도시고속도로 교통정보시스템이 제공하는 소통·돌발상황의 도로 분류 정보를 담으며, 공간 정보가 없는 비공간 데이터입니다. 분석가가 돌발상황·소통 데이터에 나오는 도로 분류가 무엇을 뜻하는지 확인할 때 쓰고, 실시간 돌발 이력을 쌓아 상습 정체 구간을 분석할 때 분류 기준으로 붙입니다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 서울시 실시간 소통·돌발 데이터와는 이름이나 코드 값을 직접 맞추어 연결합니다.
+description_portal: 서울시 도시고속도로 교통정보시스템에서 제공하는 도시고속도로에 관한 통계데이터 정보입니다
+team:
+  dept: 교통정보과
+services:
+  - op: RoadDivInfo
+    name: RoadDivInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/RoadDivInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ERROR-301
+      stats:
+        unique: 1
+    - name: MESSAGE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 파일타입 값이 누락 혹은 유효하지 않습니다. 요청인자 중 TYPE을 확인하십시오.
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6928
+  rank_in_sector: 451
+  brm: 교통물류 - 도로
+  why: 돌발 분류 코드, 보조 자료
+claims:
+  - id: c-15059480-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15059480.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15059480-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059480-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059480.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059480-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059480.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15059480-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059480-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059480-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15059480.json
+  stats: probe/stats/15059480.json
+  data: probe/data/15059480/
+limits: 포털 활용신청과 별도로 서울 열린데이터광장(data.seoul.go.kr) 인증키가 있어야 하며, 이 키는 호출 경로에 넣습니다. 명세상 필드가 결과 코드와 메시지(CODE·MESSAGE)뿐이라 실제 분류 항목의 구성은 호출 응답을 직접 보고 확인해야 합니다. 위치 정보가 없어 지도 표출이나 지역 단위 집계에는 이 데이터만으로 쓸 수 없습니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15059480-01
+    - c-15059480-03
+    - c-15059480-04
+    - c-15059480-06
+  dropped_citations: 0
+status: active

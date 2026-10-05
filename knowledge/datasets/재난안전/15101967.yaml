@@ -1,0 +1,220 @@
+# Dataset 15101967 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15101967'
+tier: verified
+title: 국토안전관리원_교량시설물 현황
+sector: 재난안전/안전관리/facility-safety
+agency:
+  id: B554390
+  name: 국토안전관리원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15101967/openapi.do
+synonyms:
+  - 공공시설물
+  - 제1종시설물
+  - 2종시설물
+  - 교량 현황
+  - 다리 시설물 통계
+  - 1종 교량
+  - 2종 교량
+  - 시도별 교량 수
+  - 시설물통합정보관리시스템
+  - FMS 교량
+description_portal: 시설물의 안전 및 유지관리에 관한 특별법에 의거하여 국토안전관리원에서 운영중인 시설물통합정보관리시스템 내 등록된 제1,2종 교량시설물의 시도별 종별 등록현황
+team:
+  dept: AI전략실
+services:
+  - op: /stat_br
+    name: 교량시설물 종별,시도별 현황조회
+    endpoint: https://apis.data.go.kr/B554390/facil_br/stat_br
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: type
+        required: true
+        example: json
+        desc: json(json응답 기본값), xml(xml응답)
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sidoNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 합계
+        - 강원도
+        - 강원특별자치도
+      stats:
+        unique: 20
+    - name: tot
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12743'
+        - '1336'
+        - '27'
+      stats:
+        min: 24
+        p50: 384
+        max: 12743
+        unique: 20
+    - name: totC1
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5097'
+        - '492'
+        - '9'
+      stats:
+        min: 4
+        p50: 201.5
+        max: 5097
+        unique: 20
+    - name: totC2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '176'
+        - '7646'
+        - '844'
+      stats:
+        min: 18
+        p50: 182.5
+        max: 7646
+        unique: 19
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 시도
+cycle: default
+classification:
+  subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.515
+  rank_in_sector: 934
+  brm: 재난안전 - 안전관리
+  why: 교량 시설물 시도별 종별 개수 집계
+claims:
+  - id: c-15101967-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15101967.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15101967.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15101967-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15101967-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15101967.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15101967-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 시도
+    evidence:
+      - type: measured
+        source: probe/runs/15101967.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15101967-06
+    kind: admin_note
+    value: "세부 부문 '시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)'의 가치: 승강기 고유번호·시설물 번호 단위 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#facility-safety
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15101967-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15101967-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15101967.json
+  stats: probe/stats/15101967.json
+  data: probe/data/15101967/
+status: active
+summary_user: 시설물통합정보관리시스템에 등록된 제1·2종 교량시설물의 등록 현황을 전국 시도별로 집계한 데이터로, 시도명과 전체·1종·2종 교량 수를 담는다. 지역 안전정책 담당자나 분석가가 "우리 시도에 관리 대상 1종 교량이 몇 개인가"처럼 시도 간 교량 시설물 규모를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시도명(sidoNm) 같은 이름 매핑으로만 이어 쓴다.
+limits: 시도 단위 집계라 개별 교량의 위치·안전등급·점검 결과는 알 수 없다. 조인 키가 없어 시군구 이하나 시설물 번호 단위 원장과 직접 연결되지 않고 시도명 매칭이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15101967-03
+    - c-15101967-04
+  dropped_citations: 0

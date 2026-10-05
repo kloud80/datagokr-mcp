@@ -1,0 +1,218 @@
+# Dataset 15145643 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15145643'
+tier: verified
+title: 서울특별시_부동산 시가표준액표 정보
+sector: 국토관리/건축물/standard-price
+domain: 국토관리/국토정보
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15145643/fileData.do
+synonyms:
+  - 시가표준액
+  - 부동산
+  - 표준
+  - 선박
+  - 항공
+  - 지방세 과세표준
+  - 건물 시가표준액
+  - 과세 기준가격
+  - 회원권 시가표준액
+  - 선박 항공기 시가표준액
+  - 기준시가
+summary_user: 서울특별시가 2015~2017년에 고시한 부동산 시가표준액표를 게시물 단위(제목·등록일·첨부 링크·내용)로 담은 외부 파일 목록이며, 선박·항공기·회원권 시가표준액표도 포함한다. 납세자나 세무 담당자가 해당 연도의 지방세 과세 기준이 된 건물·기타 물건의 시가표준액표를 찾아볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 연도·물건 이름을 직접 맞춰 연결해야 한다.
+description_portal: '2015~2017년 부동산 시가표준액표 제공 (선박,항공기,회원권 포함)2018년 이후 데이터는 서울시청 홈페이지>행정>자료실>세금>시가표준액표(건물,기타)에서 제공(http://news.seoul.go.kr/gov/statutory_standard_price#list/1)용어설명 : 부동산 시가표준액은 국세·지방세 등을 부과할 때 기준이 되는 정부가 고시한 부동산의 가격을 말합니다. 실제 거래가(시가)가 아니라 세금 부과 목적으로 정한 ‘공적 가격’입니다제공부서는 서울특별시 재무국 세제과(02-2133-3377) 입니다.※ 바로가기 클릭 시 서울 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: statutoryInfo
+    name: statutoryInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/statutoryInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: TTL
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2020년도 제5차 지방세시가표준액 변경결정 고시
+        - 2026년 지방세 시가표준액 변경 내역
+        - 2026년 적용 부동산 시가표준액 책자(조사산정 요령), 기타물건 포함
+      stats:
+        unique: 51
+    - name: REG_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-01-07'
+        - '2025-07-28'
+        - '2020-12-31'
+      stats:
+        min: '2017-01-02'
+        max: '2026-06-09'
+        unique: 35
+    - name: LK
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://news.seoul.go.kr/gov/statutory_standard_price#view/329139
+        - https://news.seoul.go.kr/gov/statutory_standard_price#view/459392
+        - https://news.seoul.go.kr/gov/statutory_standard_price#view/450031
+      stats:
+        unique: 51
+    - name: CN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ※ 주택외건물(건축물,오피스텔)은 개별사안 변경(용도변경 등)에 따라 해당 가액은 변경될 수 있습니다.주택외건물(건축물, 오피스텔) 관련 문의는
+        - 2020년도 부동산 시가표준액표(회원권 등 포함)
+        - 2020년도 제5차 지방세 시가표준액 변경결정고시자료(제2020-3620호)
+      stats:
+        unique: 49
+facets:
+  grade:
+    - 3순위
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기준시가·시가표준액
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.2844
+  rank_in_sector: 444
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-건축물
+  why: 서울시 시가표준액표, 2015~17년 한정이나 부동산 가격
+claims:
+  - id: c-15145643-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15145643.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15145643-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15145643-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15145643.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15145643-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15145643.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15145643-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 정보 원장 (공간정보·지적·건축물)': 국가공간정보기본법·공간정보관리법(측량·지적)·부동산공시법(공시지가)·건축법(건축물대장·인허가)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/국토정보
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:011023#1
+        detail: 공간정보의 구축 및 관리 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001823#1
+        detail: 건축법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15145643-06
+    kind: admin_note
+    value: '[국토관리 재구성 — 국토기본법 계층 · 결정] BRM 지역및도시·주택을 법 체계에 따라 다시 나눔. 부문 위에 계층(domain)을 새로 둠 — `sector_tree.yaml`, KG `domain` 노드·`in_domain`/`domain_of`/`related_sector` 엣지 (스키마 변경 없음, ARCHITECTURE §2 표에 추가).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L527
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15145643-07
+    kind: admin_note
+    value: wave6 · 등급:3순위 · wave4 판정 keep
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15145643.json
+  stats: probe/stats/15145643.json
+  data: probe/data/15145643/
+limits: 2018년 이후 시가표준액표는 이 데이터에 없고 서울시청 홈페이지 자료실에서 따로 받아야 한다. 호출하려면 포털 활용신청과 별개로 서울 열린데이터광장(data.seoul.go.kr) 인증키가 필요하다. 시가표준액은 세금 부과용 공적 가격이므로 실거래가로 해석하면 안 된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15145643-01
+    - c-15145643-03
+  dropped_citations: 0
+status: active

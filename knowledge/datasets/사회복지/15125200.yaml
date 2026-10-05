@@ -1,0 +1,256 @@
+# Dataset 15125200 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15125200'
+tier: verified
+title: 성평등가족부_청소년 또래상담 정보서비스
+sector: 사회복지/노인·청소년/youth-facilities-programs
+agency:
+  id: '1384000'
+  name: 성평등가족부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15125200/openapi.do
+synonyms:
+  - 청소년
+  - 또래 상담
+  - 통계
+  - 청소년서비스
+  - 분류정보
+  - 또래상담 통계
+  - 청소년 상담 현황
+  - 학생 또래상담
+  - 청소년 정신건강 상담
+  - 또래상담자
+  - 학년별 상담 비율
+description_portal: 청소년 또래 상담의 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 통계연월, 통계내용, 학년명, 성별, 분류내용, 분류비율의 정보를 확인할 수 있습니다.청소년 또래 상담 통계 데이터는 연도·학년·성별 등 다양한 기준으로 상담 참여 현황을 분석할 수 있는 기초 정보를 제공하며, 상담 비율과 분류 내용을 통해 학교 내 정신건강 증진 정책이나 예방교육의 방향을 설정하는 데 활용할 수 있습니다. 지역별 또는 시기별 참여율 변화를 비교함으로써 정책 성과에 대한 정량적 평가도 가능합니다. 이처럼 청소년 정신건강 지원 체계 개선 및 예방 상담 정책 수립에 활용될 수 있습니다.
+team:
+  dept: 정보통계담당관실
+services:
+  - op: /getYouthMntrPeerList
+    name: 청소년 또래상담 정보 조회
+    endpoint: https://apis.data.go.kr/1383000/yhis/getYouthMntrPeerService/getYouthMntrPeerList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: true
+        example: xml
+        desc: 결과타입
+      - name: statsRgnNm
+        required: false
+        example: 강원특별자치도
+        desc: 통계지역
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: statsYr
+      title: 통계연월
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+        - '2018'
+        - '2021'
+      stats:
+        min: 2018
+        p50: 2019
+        max: 2022
+        unique: 5
+    - name: statsRgnNm
+      title: 통계내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강원특별자치도
+      stats:
+        unique: 1
+    - name: acdmcrNm
+      title: 교급명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고등학교
+        - 초등학교
+        - 중학교
+      stats:
+        unique: 4
+    - name: gradeNm
+      title: 학년명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1학년
+        - 2학년
+        - 3학년
+      stats:
+        unique: 6
+    - name: gender
+      title: 성별
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 여
+        - 남
+      stats:
+        unique: 2
+    - name: clsfCn
+      title: 분류내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대인관계-친구관계
+        - 진로-진로고민
+        - 가족-가족과의 관계
+      stats:
+        unique: 26
+    - name: clsfNocs
+      title: 분류비율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 1
+        max: 22
+        unique: 13
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5131
+  rank_in_sector: 465
+  brm: 사회복지 - 노인·청소년
+  why: 또래상담 학년·성별 통계, 지역 연계 불가
+claims:
+  - id: c-15125200-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15125200.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15125200.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15125200-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125200-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15125200.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125200-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15125200.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15125200-06
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15125200-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15125200.json
+  stats: probe/stats/15125200.json
+  data: probe/data/15125200/
+status: active
+summary_user: 청소년 또래상담 참여 현황을 통계연월·통계내용·교급·학년·성별별로 나눈 분류 내용과 비율로 담은 전국 단위 집계 통계다. 정책 담당자나 연구자가 "중학생과 고등학생, 남녀 사이에 또래상담 주제 비율이 어떻게 다른가" 같은 질문을 보고 예방교육 방향을 정하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 교급·학년·성별 이름을 맞추거나 같은 기관 자료와만 이어 쓴다.
+limits: 전국 단위 비공간 집계라 시군구·시도별 비교나 개별 상담 건 분석에는 쓰지 못한다. 이벤트 주기로 생성된 뒤 바뀌지 않는 자료로 분류되어 정기 갱신을 전제로 쓰면 안 된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15125200-02
+    - c-15125200-03
+    - c-15125200-04
+  dropped_citations: 0

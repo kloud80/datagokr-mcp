@@ -1,0 +1,178 @@
+# Dataset 15000241 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15000241'
+tier: verified
+title: 과학기술정보통신부 우정사업본부_EMS행방조회 서비스
+sector: 교통물류/물류등기타/parcel-delivery
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15000241/openapi.do
+synonyms:
+  - 경제/경영
+  - 마케팅
+  - 물류/유통관리
+  - EMS 배송조회
+  - 국제특급 추적
+  - 국제우편 행방
+  - 우체국 EMS 조회
+  - 해외배송 추적
+  - 등기번호 조회
+  - 송장 추적
+description_portal: '등기번호(13자리)에 해당하는  EMS행방(건별) 조회 기능을 제공하는  OPEN API 서비스 입니다.ㅇ  출력하는 항목(사용자가 응답 받게 되는 데이터) : 등기번호, 행방 목록(처리일시, 처리현황, 현재위치, 상세설명)'
+team:
+  dept: 우정사업정보센터 보험정보과 보험운영팀
+services:
+  - op: /getLongitudinalEMSList
+    endpoint: http://openapi.epost.go.kr/trace/retrieveLongitudinalEMSService/retrieveLongitudinalEMSService/getLongitudinalEMSList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: title
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Error
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 생활물류 (택배·EMS·우편물 종적·무인택배함)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6553
+  rank_in_sector: 72
+  brm: 교통물류 - 물류등기타
+  why: 등기번호 단건 조회라 분석 조인 가치 낮음
+claims:
+  - id: c-15000241-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15000241.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15000241.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15000241-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000241-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15000241.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000241-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15000241.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15000241-06
+    kind: admin_note
+    value: "세부 부문 '생활물류 (택배·EMS·우편물 종적·무인택배함)'의 가치: 우정사업본부 택배·EMS 신청/행방·국내우편물 종적 = 송장 단위 조회 도구, 무인택배함은 위치 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#parcel-delivery
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15000241-07
+    kind: admin_note
+    value: '[교통물류 - 물류등기타 · 결정] 물류시설·화물운송·생활물류·주차장만 남김. 통계는 우선 배제 (`logistics-stats`), 나머지 배제 (`logistics-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L478
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15000241-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15000241.json
+  stats: probe/stats/15000241.json
+  data: probe/data/15000241/
+status: active
+summary_user: 등기번호(13자리) 하나에 대해 EMS 국제우편물의 행방 목록(처리일시, 처리현황, 현재위치, 상세설명)을 건별로 돌려주는 조회 API이며, 범위는 전국·비공간입니다. 국제특급(EMS)을 보내거나 받는 국민·사업자가 '내 EMS가 지금 어디서 어떤 처리 단계에 있나'를 확인하거나, 쇼핑몰·물류 서비스가 송장 단위 배송 추적을 화면에 붙일 때 씁니다. 실측 컬럼에서 다른 데이터와 이을 전역 조인 키는 찾지 못했고, 같은 기관의 택배·국내우편물 종적 조회처럼 등기번호를 입력값으로 쓰는 송장 단위 조회 도구와 나란히 쓰는 정도로만 연결됩니다.
+limits: 등기번호를 알아야만 조회되는 건별 조회 도구이므로 EMS 물량 통계나 기간·지역별 집계를 뽑는 데는 쓸 수 없습니다. 포털 활용신청은 자동승인이고 serviceKey를 쿼리로 넘기며, 개발계정은 하루 10,000회로 호출이 제한됩니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15000241-01
+    - c-15000241-03
+    - c-15000241-04
+    - c-15000241-06
+  dropped_citations: 0

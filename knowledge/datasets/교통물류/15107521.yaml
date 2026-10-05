@@ -1,0 +1,200 @@
+# Dataset 15107521 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15107521'
+tier: verified
+title: 행정안전부_통계연보_지역별 도로명
+sector: 교통물류/도로/road-network
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15107521/openapi.do
+synonyms:
+  - 지역별
+  - 도로명
+  - 연도별
+  - 주소
+  - 통계연보
+  - 도로명주소 통계
+  - 시도별 도로명 수
+  - 행정안전 통계연보
+  - 도로명 현황
+  - 지방행정 통계
+  - 도로명 부여 현황
+description_portal: "- 행정안전부에서는, 「행정안전부 통계관리규정」에 따라, 행정안전부 본부와 소속기관의 통계자료를 취합하여 매년 '행정안전 통계연보'를 발간하고 있습니다.- '행정안전 통계연보'에 수록된 분야별 통계정보를 공공·민간의 다양한 분야에서 이용할 수 있도록 오픈API로 제공하고 있습니다.- 해당 오픈API는 '행정안전 통계연보'에 수록된 '지방행정/지역발전' 중 '도로명주소', '지역별 도로명'에 관한 통계입니다. 서울, 부산, 대구, 인천, 대전, 세종, 충북, 충남 등을 기준으로 지역별 도로명을 포함하는 통계 정보를 제공합니다.- 아울러, '행정안전 통계연보'는 행정안전부 누리집의 정책자료 > 통계 > 통계연보·주제별 통계에서 PDF 형태로 다운로드가 가능합니다."
+team:
+  dept: 데이터정보화담당관
+services:
+  - op: /getNameOfRoadByRegion
+    name: 지역별 도로명 통계 정보
+    endpoint: https://apis.data.go.kr/1741000/NameOfRoadByRegion/getNameOfRoadByRegion
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: '페이지번호(default: 1)'
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: '한 페이지 결과 수(default: 10)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: head
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'totalCount': 7}, {'numOfRows': '100', 'pageNo': '1', 'type': 'JSON'}, {'RESUL"
+      stats:
+        unique: 1
+    - name: row
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - "[{'wrttimeid': '2019', 'seq': 1, 'tot': '164801', 'mois': '375', 'seoul': '14205"
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.501
+  rank_in_sector: 2317
+  brm: 교통물류 - 도로
+  why: 통계연보 시도별 도로명 수 집계
+claims:
+  - id: c-15107521-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15107521.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15107521.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15107521-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107521-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15107521.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107521-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15107521.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15107521-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15107521-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15107521-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15107521.json
+  stats: probe/stats/15107521.json
+  data: probe/data/15107521/
+status: active
+summary_user: 행정안전 통계연보 '지방행정/지역발전' 중 지역별 도로명 통계를 서울·부산·대구 등 시도 단위로 담은 집계 데이터를 오픈API로 제공한다. 지방행정 분석가나 연구자가 "시도별로 부여된 도로명이 얼마나 되는가"처럼 지역 간 도로명주소 현황을 비교하는 데 쓴다. 실측 응답에서 전역 조인 키가 확인되지 않아, 다른 데이터와는 시도 이름 매핑으로만 연결하며 표준노드링크(link_id·node_id)와 직접 이어지지 않는다.
+limits: 실측 컬럼에 공통 조인 키가 없어 지역명 문자열 매칭으로만 다른 데이터와 붙일 수 있다. 연보 수록 통계라 개별 도로명·도로 구간 단위의 공간 정보는 담지 않으므로 노드·링크 기반 도로망 분석에는 쓰지 않는다. 개발계정 호출 한도는 일 10,000회다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15107521-01
+    - c-15107521-03
+    - c-15107521-04
+    - c-15107521-06
+  dropped_citations: 0

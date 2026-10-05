@@ -14,7 +14,7 @@ def test_clean_goal_strips_intent():
 
 def test_validate_rejects_undeclared_join():
     from pds.strategy.plan import ProtocolError, validate
-    bad = {"datasets": [], "joins": [{"edge": "e-9999", "left": "1", "right": "2"}], "unverified_leads": [], "candidates": []}
+    bad = {"datasets": [], "joins": [{"edge": "e-undeclared", "left": "1", "right": "2"}], "unverified_leads": [], "candidates": []}
     with pytest.raises(ProtocolError):
         validate(bad)
     with pytest.raises(ProtocolError):
@@ -42,7 +42,7 @@ def test_api_endpoints():
     s = c.get("/api/stats").json()
     assert s["datasets"]["verified"] > 200 and s["code_lists"] > 100
     assert c.get("/api/codes/land_category", params={"q": "대"}).json()["values"]
-    assert "15000563" in [x["id"] for x in c.get("/api/search", params={"q": "응급실"}).json()[:3]]  # 글자 검색 — 응급실 방문 통계 등도 상위에 온다
+    assert "15000563" in [x["id"] for x in c.get("/api/search", params={"q": "응급실"}).json()[:3]]  # 글자 검색 × 등급 — 시군구판·보조가 핵심을 밀어내지 않는다
     p = c.post("/api/plan", json={"goal": "지금 가까운 응급실 병상", "use_llm": False}).json()
     assert p["datasets"][0]["id"] == "15000563"
 

@@ -1,0 +1,247 @@
+# Dataset 15094783 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15094783'
+tier: verified
+title: 금융위원회_소매채권수익률정보
+sector: 재정금융/금융/securities-market
+agency:
+  id: '1160100'
+  name: 금융위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15094783/openapi.do
+synonyms:
+  - 신용
+  - 등급
+  - 채권
+  - 소매채권
+  - 수익률
+  - 신용등급
+  - 채권통계
+  - 금융통계
+  - 소매채권 금리
+  - 채권 수익률 등급별
+  - 신용등급별 채권금리
+  - 만기별 채권수익률
+  - 금융투자협회 채권 수익률
+  - 리테일 채권
+description_portal: '소매채권수익률정보는 금융투자협회에서 제공하는 신용등급 및 만기에 따른 소매채권 수익률 통계를 요약 제공하는 데이터입니다. 각 등급별·만기별 수익률 현황은 투자 판단 및 시장 분석 등에 활용되며, 정기적으로 갱신되는 수치 기반의 요약 정보를 제공합니다.이 데이터는 1개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 소매채권수익률요약 조회 : 신용등급과 잔존만기 구간별로 분류된 소매채권 수익률 요약 정보를 조회합니다.※ 소매채권이란? 증권사가 채권을 대량으로 사들인 후 소액으로 쪼개 판매하는 채권※ 소매채권수익률정보 API는 해당 정보 제공에 대한 서비스 이용률 저조로 인해 데이터 제공기관에서 서비스가 폐지되었습니다.이에 따라 신규 데이터는 생성되지 않으며, 과거 데이터만 제공됩니다. 데이터 제공 범위는 2022.03.25까지입니다.'
+team:
+  dept: 금융공공데이터팀
+services:
+  - op: /getBondSecurityBenefitRate
+    name: 소매채권수익률요약
+    endpoint: https://apis.data.go.kr/1160100/service/GetBondInfoService/getBondSecurityBenefitRate
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: false
+        desc: 페이지 번호
+      - name: resultType
+        required: false
+        desc: '구분(xml, json) Default: xml'
+      - name: basDt
+        required: false
+        desc: 검색값과 기준일자와 일치하는 데이터를 검색
+      - name: beginBasDt
+        required: false
+        desc: 기준일자가 검색값보다 크거나 같은 데이터를 검색
+      - name: endBasDt
+        required: false
+        desc: 기준일자가 검색값보다 작은 데이터를 검색
+      - name: likeBasDt
+        required: false
+        desc: 기준일자값이 검색값을 포함하는 데이터를 검색
+      - name: crdtSc
+        required: false
+        desc: 신용등급 값을 통해 검색
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: basDt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220325'
+        - '20220324'
+        - '20220323'
+      stats:
+        min: 20220303
+        p50: 20220316
+        max: 20220325
+        unique: 16
+    - name: crdtSc
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A+
+        - A
+        - AA+
+      stats:
+        unique: 8
+    - name: ctg
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3개월미만
+        - 3개월~6개월미만
+        - 5년이상
+      stats:
+        unique: 8
+    - name: bnfRt
+      type: number
+      null_rate: 0.591
+      sample_values:
+        - '2.1'
+        - '2.5'
+        - '2.3'
+      stats:
+        min: 1.16
+        p50: 2.4
+        max: 4.02
+        unique: 158
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.6522
+  rank_in_sector: 138
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 소매채권 수익률 요약 통계
+claims:
+  - id: c-15094783-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-04 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15094783.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15094783.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15094783-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15094783-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15094783.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15094783-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15094783.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15094783-06
+    kind: admin_note
+    value: "세부 부문 '증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)'의 가치: 종목코드(ISIN·단축코드) 원장, 일별 시세 — 연기금 보유·기업 공시와 조인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#securities-market
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15094783-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15094783-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15094783.json
+  stats: probe/stats/15094783.json
+  data: probe/data/15094783/
+status: active
+summary_user: 금융투자협회가 산출한 소매채권 수익률을 신용등급과 잔존만기 구간별로 요약한 집계 데이터로, 기준일자(basDt)별 등급·만기 구간의 수익률 값을 담으며 포털 설명상 서비스 폐지로 2022년 3월 25일까지의 과거 데이터만 제공된다. 개인 투자자나 분석가가 '과거 특정 시점에 AA등급 3년 만기 소매채권 수익률은 얼마였나'처럼 등급·만기별 수익률 수준과 추이를 되짚어 보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 채권 시세·발행 데이터와는 기준일자와 신용등급 이름을 맞춰 붙이는 방식으로만 연결한다.
+limits: 개별 종목 코드가 없는 등급·만기 구간 요약치라서 특정 채권 종목의 수익률은 확인하지 못하고, 다른 데이터와 키로 바로 조인되지 않는다. 신규 데이터가 생성되지 않으므로 2022년 3월 이후 시점 분석에는 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15094783-01
+    - c-15094783-03
+    - c-15094783-04
+  dropped_citations: 0

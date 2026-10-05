@@ -1,0 +1,217 @@
+# Dataset 15057751 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057751'
+tier: verified
+title: 국토교통부_공유수면매립기본계획
+sector: 농축수산/해양수산·어촌/marine-spatial
+agency:
+  id: '1613000'
+  name: 국토교통부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057751/openapi.do
+synonyms:
+  - 연안
+  - 지도
+  - 공간정보
+  - 공유수면 매립
+  - 매립기본계획
+  - 연안 매립
+  - 해안 매립지
+  - 매립 면허 계획
+  - 해양공간 이용계획
+  - vworld 매립
+summary_user: 국토교통부가 10년마다 수립하는 공유수면매립 기본계획을 담은 데이터로, vworld.kr API로 호출하면 json/xml로 계획 항목(일련번호·명칭)을 반환하며 범위는 전국이다. 연안 개발·해상 입지를 검토하는 사업자나 분석가가 특정 해역에 공유수면 매립 계획이 잡혀 있는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양공간 데이터(해양용도구역·보호구역 등)와는 명칭 매핑으로만 이어 쓴다.
+description_portal: 국토의 전체적인 기능 및 용도에 맞고 환경과 조화되도록 공유수면을 매립·관리하기 위하여 10년마다 「연안관리법」 제30조에 따른 중앙연안관리심의회의 심의를 거쳐 공유수면매립 기본계획을 수립 RestAPI로 호출하면 json/xml로 데이터를 반환합니다
+team:
+  dept: 국가공간정보센터
+services:
+  - op: LT_C_WGISREPLAN
+    name: LT_C_WGISREPLAN
+    endpoint: https://api.vworld.kr/req/data
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: key
+      issuer: vworld.kr
+    params:
+      - name: service
+        required: true
+        example: data
+      - name: request
+        required: true
+        example: GetFeature
+      - name: data
+        required: true
+        example: LT_C_WGISREPLAN
+      - name: geomFilter
+        required: true
+        example: BOX(124.5,33.0,131.0,38.7)
+      - name: format
+        required: true
+        example: json
+      - name: size
+        required: true
+        example: '100'
+      - name: geometry
+        required: true
+        example: 'false'
+      - name: attribute
+        required: true
+        example: 'true'
+      - name: crs
+        required: true
+        example: EPSG:4326
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rec_ba_seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20437'
+        - '10269'
+        - '30077'
+      stats:
+        min: 10001
+        p50: 10213.5
+        max: 30123
+        unique: 81
+    - name: name
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 광양항
+        - 함해
+        - 감만
+      stats:
+        unique: 80
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7228
+  rank_in_sector: 30
+  brm: 농축수산 - 해양수산·어촌
+  why: 10년 주기 계획 문서성 자료, 개체 원장 아님
+claims:
+  - id: c-15057751-01
+    kind: access
+    value: 외부 사이트 vworld.kr 인증키 필요 (query 파라미터 key) — 포털 활용신청과 별개. 2026-10-04 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057751.json
+        observed_at: '2026-10-04'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 vworld.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-05'
+  - id: c-15057751-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057751-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057751.json
+        observed_at: '2026-10-04'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057751-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057751.json
+        observed_at: '2026-10-04'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-05'
+  - id: c-15057751-06
+    kind: admin_note
+    value: "세부 부문 '해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)'의 가치: 해양공간계획 용도구역 = 해상풍력 등 입지 규제, 토지이용규제의 해양 대응물"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#marine-spatial
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057751-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057751-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-04'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-04'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057751.json
+  stats: probe/stats/15057751.json
+  data: probe/data/15057751/
+limits: vworld.kr 인증키(key 파라미터)가 따로 필요하며 포털 활용신청과는 별개다. 행정단위가 전국·비공간으로 분류되어 있고 공통 조인 키가 없어 지역·코드 기준의 자동 결합은 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-04'
+  batch: sync
+  cited_claims:
+    - c-15057751-01
+    - c-15057751-03
+    - c-15057751-04
+    - c-15057751-06
+  dropped_citations: 0
+status: active
