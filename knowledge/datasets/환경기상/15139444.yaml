@@ -1,0 +1,186 @@
+# Dataset 15139444 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139444'
+tier: verified
+title: 기상청_연직바람관측(윈드프로파일러) 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139444/openapi.do
+synonyms:
+  - 고층기상관측
+  - 윈드프로파일러
+  - 연직바람관측
+  - 연직측풍
+  - 고층관측
+  - 연직바람
+  - 고층 바람 관측
+  - Wind Profiler Radar
+  - 고도별 풍향 풍속
+  - 상층 바람
+  - 기상 레이더 바람
+description_portal: '연직바람관측장비(Wind Profiler Radar)는 초단파, 극초단파(UHF, 300~3000 ㎒) 전파빔을 상층대기로 송신하여 바람과 함께 이동하는 난류에서 산란되어 오는 전파신호를 수신해 바람을 관측합니다. 관측자료는 최대빔 송신거리값 차이에 따라 ULC와 UHC로 구분하고, 10분주기로 생성됩니다.※ ULC: lowmode(~약 5km), UHC: high mode(~약 12km)(참고) 연직바람관측은 극초단파(UHF)와 초단파(VHF)를 고층 대기로 발사하고 대기 난류에 의해 산란되어 되돌아오는 전파 신호를 분석하여 고도별 바람을 관측합니다. 연직방향과 15도만큼 기울어진 동서남북쪽 방향으로 발사된 빔은 각방향의 대기운동에 다라 도플러 편이가 된 전파신호로 수신됩니다.생산주기: 분(10분 주기)보유기간: 2004년 1월 ~ 현재(지점별 상이함)'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: kma_wpf.php
+    name: kma_wpf.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/kma_wpf.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '202211301200'
+      - name: stn
+        required: true
+        example: '0'
+      - name: mode
+        required: true
+        example: L
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '  #-----------------------------------------------------------------------------'
+        - '  #  [입력인수형태][예] ?tm=201001051200&stn=0&mode=L&help=1'
+        - '  #  1. TM  : 년월일시분 (UTC)'
+      stats:
+        unique: 99
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5756
+  rank_in_sector: 423
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139444-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139444.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139444-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139444-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139444.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139444-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139444.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139444-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139444-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139444-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139444.json
+  stats: probe/stats/15139444.json
+  data: probe/data/15139444/
+status: active
+summary_user: 윈드프로파일러(연직바람관측장비)가 10분 주기로 관측한 고도별 바람 자료를 담으며, 저고도 모드(약 5km까지)와 고고도 모드(약 12km까지)로 나뉘고 범위는 전국이다. 기상 분석가나 항공·대기 연구자가 특정 시각 특정 지점 상공의 고도별 풍향·풍속이 어떻게 변했는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 관측 자료(ASOS·고층 관측 등)와는 지점 이름이나 기상청 지점 코드를 맞춰 연결해야 한다.
+limits: 포털 활용신청과 별도로 기상청 API허브(apihub.kma.go.kr) 인증키를 받아 경로 파라미터로 넣어야 호출된다. 응답 필드 명세가 단일 텍스트 줄(line) 형태로만 확인돼 컬럼 구조를 직접 파싱해야 하며, 공통 조인 키가 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139444-01
+    - c-15139444-03
+    - c-15139444-04
+  dropped_citations: 0

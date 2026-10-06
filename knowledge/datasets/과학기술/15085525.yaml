@@ -1,4 +1,5 @@
-# Dataset 15085525 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085525 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085525'
 tier: verified
 title: 한국연구재단_KCI DOI 정보서비스
@@ -25,6 +26,7 @@ synonyms:
   - 학술지 DOI 조회
   - 참고문헌 인용 링크
   - 국내 학술지 서지정보
+summary_user: KCI(한국학술지인용색인) 시스템의 DOI 발급 관련 정보를 조회하는 API로, DOI 기탁에 참여한 학회·저널, 논문과 참고문헌, 기탁 내역과 결과, DOI 패턴, 인용 링크 정보를 담는다(실측 응답은 기관 식별자·국문명·영문명·기탁 구분·기탁일자·기탁 파일명 등의 기탁 내역 형태). 학술지 담당자나 서지 분석가가 '특정 학회·저널이 언제 어떤 파일로 DOI를 기탁했고 결과가 어떤가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 학술·R&D 데이터와는 학회·저널 이름 매핑이나 같은 기관 코드(INSIID)로만 연결한다.
 description_portal: KCI DOI 정보서비스는 국내 학술지 정보, 논문 정보 및 참고 문헌을 데이터베이스화하여 각 서지 정보, 인용 정보, 통계 자료, 논문 간 인용관계 분석 등을 제공하는 한국학술지인용색인 (KCI) 시스템의 디지털 객체 식별자 (DOI) 발급 관련 데이터에 대한 상세정보를 조회할 수 있는 서비스입니다. KCI DOI 정보서비스의 주요 기능으로 DOI 기탁에 참여한 학회 및 저널 정보 조회, 관련 논문 및 논문에 포함된 참고문헌 정보 조회, DOI 기탁 내역 및 기탁 결과 정보 조회, DOI 패턴 정보 조회, 인용 링크 정보 조회 등이 포함됩니다.* 디지털 객체 식별자(Digital Object Identifier)는 온라인 상에서 유통되는 디지털 콘텐츠의 지적 재산권 보호를 목적으로 각 콘텐츠에 부여되는 숫자+영문 결합 형태의 고유한 식별번호로 학술 자료의 정확한 식별과 관리를 통해 정보에 대한 접근성을 높이고 자료의 이용 및 인용을 용이하게 합니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: INSIID
       type: code
+      semantic_type: kci_insi_id
       null_rate: 0.0
       sample_values:
         - INS000000002
@@ -176,12 +179,24 @@ schema:
         min: '2014-05-26'
         max: '2023-12-28'
         unique: 7
+  foreign_keys:
+    - fields:
+        - INSIID
+      reference:
+        key: kci_insi_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - ADDSDATE
+    - REFADDSFILEDOWNDT
+    - RESIDT
 cycle: default
 classification:
   subsector_name: 학술문헌 (KCI·ScienceON)
@@ -225,7 +240,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085525-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_insi_id(INSIID)'
     evidence:
       - type: measured
         source: probe/stats/15085525.json
@@ -290,8 +305,6 @@ verification:
   run: probe/runs/15085525.json
   stats: probe/stats/15085525.json
   data: probe/data/15085525/
-status: active
-summary_user: KCI(한국학술지인용색인) 시스템의 DOI 발급 관련 정보를 조회하는 API로, DOI 기탁에 참여한 학회·저널, 논문과 참고문헌, 기탁 내역과 결과, DOI 패턴, 인용 링크 정보를 담는다(실측 응답은 기관 식별자·국문명·영문명·기탁 구분·기탁일자·기탁 파일명 등의 기탁 내역 형태). 학술지 담당자나 서지 분석가가 '특정 학회·저널이 언제 어떤 파일로 DOI를 기탁했고 결과가 어떤가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 학술·R&D 데이터와는 학회·저널 이름 매핑이나 같은 기관 코드(INSIID)로만 연결한다.
 limits: 전역 조인 키가 없어 다른 데이터와 자동으로 붙지 않고 이름 매칭에 의존한다. 개발계정은 하루 5,000회 호출로 제한되며, 실호출 검증은 오퍼레이션 1개에 대해서만 이뤄졌다. 일반 학술 지식은 모델이 대부분 알고 있으므로, 이 데이터의 가치는 최신 국내 논문·인용 정보 확인에 한정된다.
 review:
   summary: draft
@@ -304,3 +317,4 @@ review:
     - c-15085525-04
     - c-15085525-06
   dropped_citations: 0
+status: active

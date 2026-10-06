@@ -1,0 +1,230 @@
+# Dataset 15126157 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126157'
+tier: verified
+title: 국회 국회사무처_시청각자료 목록
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126157/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 국회 영상자료
+  - 국회 회의 동영상
+  - 국회 시청각 자료실
+  - 회의 녹화 영상
+  - 국회 음성자료
+  - 열린국회정보 시청각
+summary_user: 국회사무처가 공개하는 국회 시청각자료 목록으로, 회의 단위로 회의 식별값(CONF_ID)·대수·회기·차수와 파일 내용, 내려받기 주소를 건별로 담는다. 의정활동을 살피는 국민이나 분석가가 특정 대수·회기의 회의 영상·음성 자료가 있는지 찾고 내려받을 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 의정활동 데이터(회의록·의안 등)와는 대수·회기·차수나 회의 식별값을 이름·코드 매핑으로 맞춰 이어 쓴다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: VCONFATTACRCLIST
+    name: VCONFATTACRCLIST
+    endpoint: https://open.assembly.go.kr/portal/openapi/VCONFATTACRCLIST
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CONF_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '052671'
+        - '052669'
+        - '051986'
+      stats:
+        min: 50660
+        p50: 52067
+        max: 53808
+        unique: 35
+    - name: ERACO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제21대
+      stats:
+        unique: 1
+    - name: SESS
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제403회
+        - 제384회
+        - 제398회
+      stats:
+        unique: 13
+    - name: DGR
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제2차
+        - 제5차
+        - 제4차
+      stats:
+        unique: 8
+    - name: FILE_CN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '[신현영 위원 시청각자료]'
+        - '[고민정 의원 시각자료]'
+        - '[김영식 의원 시각자료]'
+      stats:
+        unique: 87
+    - name: DOWN_URL
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://record.assembly.go.kr/assembly/mnts/apdix/apdixDownload.do?fileId=124973
+        - https://record.assembly.go.kr/assembly/mnts/apdix/apdixDownload.do?fileId=124973
+        - https://record.assembly.go.kr/assembly/mnts/apdix/apdixDownload.do?fileId=124973
+      stats:
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5927
+  rank_in_sector: 245
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 열린국회정보 (인증키)
+claims:
+  - id: c-15126157-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126157.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126157-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126157-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126157.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126157-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126157.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126157-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126157-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126157-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126157.json
+  stats: probe/stats/15126157.json
+  data: probe/data/15126157/
+limits: 포털 활용신청과 별개로 열린국회정보(open.assembly.go.kr) 인증키를 받아 호출 주소의 KEY 파라미터에 넣어야 한다. 전역 조인 키가 없어 다른 데이터와는 같은 기관 코드나 값 매핑으로만 연결되고, 지역 단위 분석에는 쓸 수 없다(전국·비공간).
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126157-01
+    - c-15126157-03
+    - c-15126157-04
+    - c-15126157-06
+  dropped_citations: 0
+status: active

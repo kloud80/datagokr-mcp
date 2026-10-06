@@ -1,4 +1,5 @@
-# Dataset 15072907 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072907 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072907'
 tier: verified
 title: 건강보험심사평가원_3단상병별 성별 연령군별 통계
@@ -22,6 +23,7 @@ synonyms:
   - 주상병 진료실적
   - 심평원 질병통계
   - 건강보험 진료비 통계
+summary_user: "건강보험 진료분을 진료년도·3단 주상병코드·성별·연령군 단위로 묶어 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 집계 파일이다(약국 제외, 양방만, 심사결정 기준). 분석가나 연구자가 '특정 질병(예: 당뇨병)으로 진료받은 환자가 성별·연령대별로 몇 명이고 진료비는 얼마인가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 주상병코드를 KCD(한국표준질병사인분류) 3단 코드표와 맞춰 질병명을 붙이거나 같은 기관의 다른 진료 통계와 코드 매핑으로 이어 쓴다."
 description_portal: '3단상병별 성별 연령군별 건강보험 진료비 통계  / 진료년도 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2025년 1월~12월, 심사년월: 2025년 1월~2026년 4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 양방만 포함※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 질병은 주상병 기준이며 의료기관에서 의사가 진료 시 환자의 호소, 증세에 따라 일차적으로 진단명을 부여하여 진료비 청구가 이루어짐에 따라 실제 최종 확정된 질병과는 차이가 발생할 수 있음※ 요양급여비용총액은 요양기관에서 건강보험 환자의 진료에 소요된 비용(비급여 제외)으로 보험자부담금과 본인부담금을 합한 금액임※ 연령별 환자는 명세서에 기재된 수진자의 만(滿)나이 기준으로 범주 내 동일인의 중복을 제거한 값이지만, 진료시점에 따라 중복집계될 수 있으며 다른 범주와 단순합산할 경우 중복이 발생할 수 있음'
 applicable_legislation:
   - law: 국민건강보험법
@@ -50,6 +52,7 @@ schema:
         unique: 1
     - name: 주상병코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - A02
@@ -134,12 +137,22 @@ schema:
         p50: 88038515
         max: 1004252818290
         unique: 49732
+  foreign_keys:
+    - fields:
+        - 주상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
@@ -176,7 +189,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072907-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(주상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15072907.json
@@ -254,8 +267,6 @@ verification:
   run: probe/runs/15072907.json
   stats: probe/stats/15072907.json
   data: probe/data/15072907/
-status: active
-summary_user: "건강보험 진료분을 진료년도·3단 주상병코드·성별·연령군 단위로 묶어 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 집계 파일이다(약국 제외, 양방만, 심사결정 기준). 분석가나 연구자가 '특정 질병(예: 당뇨병)으로 진료받은 환자가 성별·연령대별로 몇 명이고 진료비는 얼마인가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 주상병코드를 KCD(한국표준질병사인분류) 3단 코드표와 맞춰 질병명을 붙이거나 같은 기관의 다른 진료 통계와 코드 매핑으로 이어 쓴다."
 limits: 주상병 기준 청구 통계라 실제 확정 질병과 다를 수 있고, 연령별 환자수는 범주 내 중복만 제거한 값이라 다른 범주와 단순 합산하면 중복이 생긴다. 심평원 청구 기준 값이라 공단 자격 기준 통계와 수치가 다르며, 비급여와 약국 진료분은 빠져 있다. 지역 구분 없는 전국 단위라 시군구별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -268,3 +279,4 @@ review:
     - c-15072907-04
     - c-15072907-06
   dropped_citations: 0
+status: active

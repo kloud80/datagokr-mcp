@@ -1,4 +1,5 @@
-# Dataset 15125173 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125173 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125173'
 tier: verified
 title: 성평등가족부_청소년 종합 실태조사 통계데이터 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 의식조사
   - 청소년 복지 실태
   - 여성가족부 청소년 조사
+summary_user: 청소년 종합 실태조사 결과를 조사년도·통계항목·대중소 분류·문항별 데이터값으로 담은 전국 단위 집계 통계로, 건별 응답 원자료가 아니다. 연구자나 청소년 기관 기획자가 '특정 조사년도에 청소년의 생활환경·인식 관련 문항 응답 비율이 어떻게 나왔나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 조사명·통계항목명(statsNm) 같은 이름 매핑으로만 잇는다.
 description_portal: 청소년 종합 실태조사 통계 데이터 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 실태조사분류명, 실태조사명, 실태조사년도, 통계항목명, 대·중·소 분류명, 문항내용 등의 내용을 확인할 수 있습니다.청소년들의 생활환경, 사회적 인식, 복지 수준 등을 다각적으로 파악할 수 있는 실태 기반 통계로서 다양한 분야에 활용될 수 있습니다. 지역사회 정책 수립, 학술 연구, 언론 보도 및 청소년 관련 기관의 내부 기획 자료로 유용하게 쓰일 수 있으며, 문항별 분석을 통해 세부 영역별 문제 진단 및 해결 방안을 모색하는 데 효과적입니다. 정책 수립의 정량적 근거자료로 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -94,6 +96,7 @@ schema:
     - name: statsId
       title: 통계항목ID
       type: code
+      semantic_type: youth_survey_stats_id
       null_rate: 0.0
       sample_values:
         - DT_154013_A068
@@ -173,12 +176,22 @@ schema:
         p50: 26.8
         max: 100
         unique: 427
+  foreign_keys:
+    - fields:
+        - statsId
+      reference:
+        key: youth_survey_stats_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - exmnYr
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -223,7 +236,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125173-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_survey_stats_id(statsId)'
     evidence:
       - type: measured
         source: probe/stats/15125173.json
@@ -277,8 +290,6 @@ verification:
   run: probe/runs/15125173.json
   stats: probe/stats/15125173.json
   data: probe/data/15125173/
-status: active
-summary_user: 청소년 종합 실태조사 결과를 조사년도·통계항목·대중소 분류·문항별 데이터값으로 담은 전국 단위 집계 통계로, 건별 응답 원자료가 아니다. 연구자나 청소년 기관 기획자가 '특정 조사년도에 청소년의 생활환경·인식 관련 문항 응답 비율이 어떻게 나왔나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 조사명·통계항목명(statsNm) 같은 이름 매핑으로만 잇는다.
 limits: 전국 단위 비공간 통계라 시도·시군구별 지역 분석에는 쓰지 못한다. 조사 시점에 생성된 뒤 바뀌지 않는 이벤트성 데이터이므로 조사년도(exmnYr)를 확인해 해석한다.
 review:
   summary: draft
@@ -291,3 +302,4 @@ review:
     - c-15125173-04
     - c-15125173-06
   dropped_citations: 0
+status: active

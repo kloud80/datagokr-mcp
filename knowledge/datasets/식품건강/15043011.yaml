@@ -1,4 +1,5 @@
-# Dataset 15043011 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15043011 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043011'
 tier: verified
 title: 식품의약품안전처_건강기능식품
@@ -21,6 +22,7 @@ synonyms:
   - 건강기능식품 허가 업체
   - 품목보고번호 조회
   - 콜라겐 건강기능식품
+summary_user: 국내에서 보고·허가된 건강기능식품의 품목별 기본 현황을 담은 전국 단위 API로, 한 건마다 인허가 관할기관·인허가번호·업소명·업종, 품목보고번호·품목명·품목 대분류와 유형·보고일자가 들어 있다. 소비자나 업계 분석가가 특정 건강기능식품이 언제 어느 업체에서 보고되었고 어떤 유형으로 분류되는지 확인하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으므로, 같은 기관의 식품 인허가 업소·회수/행정처분 데이터와는 인허가번호(LCNS_NO)나 업소명으로, 다른 식품 품목 DB와는 품목보고번호로 맞춰 이어 쓴다.
 description_portal: 식품의약품안전처 「건강기능식품 정보」 OpenAPI는 국내에서 보고·허가된 건강기능식품(먹는 콜라겐)의 기본 현황을 조회할 수 있는 공공데이터입니다. 제공 항목에는 인허가 관할기관, 인허가번호, 업소명, 업종명, 인허가일자, 품목보고번호, 품목명, 품목대분류, 품목유형명, 보고일자 등이 포함되어 있습니다. 이를 통해 사용자는 특정 건강기능식품이 언제 어떤 업체에서 허가 또는 보고되었는지, 제품의 분류와 유형은 무엇인지 객관적으로 확인할 수 있습니다. 또한 제약사와 식품업체는 업계 현황을 파악하고 제품 관리에 참고할 수 있으며, 연구기관과 소비자는 건강기능식품의 허가·보고 이력을 확인해 신뢰성 있는 정보를 얻는 데 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -53,6 +55,7 @@ schema:
         unique: 5
     - name: LCNS_NO
       type: number
+      semantic_type: food_lcns_no
       null_rate: 0.0
       sample_values:
         - '20040020008'
@@ -93,6 +96,7 @@ schema:
         unique: 61
     - name: PRDLST_REPORT_NO
       type: number
+      semantic_type: food_product_cd
       null_rate: 0.0
       sample_values:
         - '20040020004203'
@@ -140,12 +144,28 @@ schema:
         p50: 20240710
         max: 20261002
         unique: 272
+  foreign_keys:
+    - fields:
+        - LCNS_NO
+      reference:
+        key: food_lcns_no
+      evidence: measured
+    - fields:
+        - PRDLST_REPORT_NO
+      reference:
+        key: food_product_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  category:
+    - ksic
+  category_fields:
+    - INDUTY_CD_NM
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -189,7 +209,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043011-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: food_lcns_no(LCNS_NO), food_product_cd(PRDLST_REPORT_NO)'
     evidence:
       - type: measured
         source: probe/stats/15043011.json
@@ -254,8 +274,6 @@ verification:
   run: probe/runs/15043011.json
   stats: probe/stats/15043011.json
   data: probe/data/15043011/
-status: active
-summary_user: 국내에서 보고·허가된 건강기능식품의 품목별 기본 현황을 담은 전국 단위 API로, 한 건마다 인허가 관할기관·인허가번호·업소명·업종, 품목보고번호·품목명·품목 대분류와 유형·보고일자가 들어 있다. 소비자나 업계 분석가가 특정 건강기능식품이 언제 어느 업체에서 보고되었고 어떤 유형으로 분류되는지 확인하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으므로, 같은 기관의 식품 인허가 업소·회수/행정처분 데이터와는 인허가번호(LCNS_NO)나 업소명으로, 다른 식품 품목 DB와는 품목보고번호로 맞춰 이어 쓴다.
 limits: 표준화된 전역 조인 키가 없어 다른 데이터와의 연결은 이름·번호 매핑이나 같은 기관 코드에 의존한다. 위치 정보가 없는 비공간 데이터라 지역별 분포 분석에는 바로 쓰기 어렵다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -269,3 +287,4 @@ review:
     - c-15043011-06
     - c-15043011-07
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15128145 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15128145 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15128145'
 tier: verified
 title: 해양수산부_해운항만물류정보시스템_월정료선박
@@ -21,6 +22,7 @@ synonyms:
   - 항만 이용료
   - 월정액 선박
   - 입항료 면제
+summary_user: PORT-MIS에 항만공사·지방청 담당자가 등록한 월정료 선박 정보를 선박·신청 건별로 담은 전국 단위 파일(CSV 약 117KB)로, 항구청·신청자·선박명·처리 유형·유효기간·납기일자·면제사유 등을 포함한다. 항만 운영 담당자나 분석가가 '어느 항구청에 어떤 선박이 어느 기간 월정료 대상으로 등록돼 있고 면제 사유는 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 선박번호·호출부호·선박명이나 항구청 이름 매핑으로 선박 등록 원장·입출항 데이터 등과 맞춰 이어 써야 한다.
 description_portal: 이 데이터는 해양수산부 해운항만물류정보시스템(PORT-MIS)에서 월정료 선박에 대한 정보를 관리 및 파악하기 위해 수집된 데이터입니다.  본 데이터의 주요 내용은 항만공사와 지방청의 업무담당자가 시스템을 통해 등록한 월정료 선박에 대한 정보로 구성되어 있습니다. 항구청코드, 신청자명, 선박명, 처리결과, 유효일자 등을 포함하고 있습니다.  본 데이터는 항만 및 선박 운영 실태에 대한 연구 자료로 활용될 수 있으며, 행정기관이 항만 운영 정책을 수립하거나 월정료 징수 및 선박 등록 현황을 분석할 때 참고자료로 사용할 수 있습니다. 또한, 항만별 월정료 부과 현황에 관심이 있는 산업계와 관련 기업이 경영 분석 및 내부 관리 목적으로 활용하는 데에도 이용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -61,6 +63,7 @@ schema:
         unique: 27
     - name: 선박번호
       type: number
+      semantic_type: vessel_id
       null_rate: 0.0161
       sample_values:
         - '60549'
@@ -140,6 +143,7 @@ schema:
         unique: 515
     - name: 호출부호
       type: string
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - '60549'
@@ -188,12 +192,29 @@ schema:
         min: '2025-07-03'
         max: '2026-07-31'
         unique: 200
+  foreign_keys:
+    - fields:
+        - 선박번호
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최초등록일자
+    - 시작유효일자
+    - 종료유효일자
 cycle: default
 classification:
   subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
@@ -230,7 +251,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15128145-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(선박번호), vessel_id(호출부호)'
     evidence:
       - type: measured
         source: probe/stats/15128145.json
@@ -295,8 +316,6 @@ verification:
   run: probe/runs/15128145.json
   stats: probe/stats/15128145.json
   data: probe/data/15128145/
-status: active
-summary_user: PORT-MIS에 항만공사·지방청 담당자가 등록한 월정료 선박 정보를 선박·신청 건별로 담은 전국 단위 파일(CSV 약 117KB)로, 항구청·신청자·선박명·처리 유형·유효기간·납기일자·면제사유 등을 포함한다. 항만 운영 담당자나 분석가가 '어느 항구청에 어떤 선박이 어느 기간 월정료 대상으로 등록돼 있고 면제 사유는 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 선박번호·호출부호·선박명이나 항구청 이름 매핑으로 선박 등록 원장·입출항 데이터 등과 맞춰 이어 써야 한다.
 limits: 표준 조인 키가 없어 다른 데이터와 연결할 때 이름·코드 매핑이 필요하고 일치율을 따로 확인해야 한다. 공간 정보가 없는 전국 단위 비공간 데이터이며, 해양 안전·선원·항만 개발 등 영역은 다루지 않는다.
 review:
   summary: draft
@@ -309,3 +328,4 @@ review:
     - c-15128145-04
     - c-15128145-07
   dropped_citations: 0
+status: active

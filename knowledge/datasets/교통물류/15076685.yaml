@@ -1,0 +1,315 @@
+# Dataset 15076685 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076685'
+tier: verified
+title: 한국도로공사_실시간 고속도로 정체상황
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076685/openapi.do
+synonyms:
+  - 고속도로
+  - 실시간
+  - 정체
+  - 교통흐름
+  - 통행속도
+  - 정체구간
+  - 도로이용
+  - 교통예보
+  - 고속도로 교통정보
+  - 고속도로 소통정보
+  - 실시간 교통상황
+  - 고속도로 통행속도
+  - 콘존 정체
+  - 도로공사 교통 API
+  - 고속도로 막힘
+summary_user: 전국 고속도로의 콘존(영업소·나들목 사이 구간) 단위로 노선, 기준 일시, 교통량, 통행 속도, 점유율, 평균 통행시간, 소통 등급, 상·하행 구분을 담은 실시간 정체 현황 데이터다. 운전자나 내비게이션·물류 사업자가 '지금 경부선 어느 구간이 막히고 평균 속도는 얼마인가'를 확인하는 데 쓰고, 분석가는 호출 결과를 쌓아 상습 정체 구간을 찾는 데 쓴다. 전역 조인 키는 없어서 노선번호(routeNo)·노선명, 콘존 ID, 검지기(VDS) ID처럼 한국도로공사 내부 코드나 이름을 맞춰 같은 기관의 다른 고속도로 데이터와 잇는다.
+description_portal: 본 데이터는 한국도로공사에서 운영하는 실시간 고속도로 정체 상황을 제공하는 OpenAPI 서비스이다.전국 고속도로 주요 노선의 정체 구간, 교통 흐름, 통행 속도 등을 실시간으로 수집하여 XML 및 JSON 형식으로 제공한다.이 데이터는 정체 발생 위치, 구간 거리, 통행 불편 지수 등을 포함하고 있으며, 수 분 단위로 자동 갱신된다.도로 이용자의 실시간 교통 정보 확인, 경로 탐색, 교통 예측, 민간 내비게이션 서비스와의 연계 등에 활용 가능하다.정확하고 신속한 정보 제공을 통해 고속도로 교통 흐름의 효율성 향상과 사용자 이동 편의 제고에 기여한다.또한 교통 관제, 정책 수립 등 공공 및 민간 부문에서 다양한 목적의 교통 정보 서비스 구축에 유용하게 활용될 수 있다.
+team:
+  dept: AI데이터처
+services:
+  - op: trafficAmountByCongest
+    name: trafficAmountByCongest
+    endpoint: https://data.ex.co.kr/openapi/odtraffic/trafficAmountByCongest
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 논산천안선
+        - 제2경인선
+        - 평택화성선
+      stats:
+        unique: 9
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0252'
+        - '1100'
+        - '0170'
+      stats:
+        min: 100
+        p50: 351
+        max: 1100
+        unique: 9
+    - name: trafficAmout
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '4'
+        - '69'
+      stats:
+        min: 4
+        p50: 30
+        max: 69
+        unique: 17
+    - name: conzoneId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0252CZS040
+        - 0351CZE130
+        - 0170CZS130
+      stats:
+        unique: 12
+    - name: conzoneName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남공주IC-탄천IC
+        - 서상IC-장수JC
+        - 남군포IC-동안산IC
+      stats:
+        unique: 12
+    - name: stdDate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261006'
+      stats:
+        min: 20261006
+        p50: 20261006
+        max: 20261006
+        unique: 1
+    - name: stdHour
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1251'
+      stats:
+        min: 1251
+        p50: 1251
+        max: 1251
+        unique: 1
+    - name: vdsId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0100VDE10400
+        - 0153VDS00180
+        - 0153VDS00260
+      stats:
+        unique: 21
+    - name: speed
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37'
+        - '32'
+        - '40'
+      stats:
+        min: 1
+        p50: 30
+        max: 40
+        unique: 13
+    - name: shareRatio
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '9'
+        - '3'
+        - '26'
+      stats:
+        min: 0
+        p50: 22
+        max: 99
+        unique: 16
+    - name: timeAvg
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '121'
+        - '407'
+        - '119'
+      stats:
+        min: 54
+        p50: 153
+        max: 1062
+        unique: 20
+    - name: grade
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '2'
+      stats:
+        min: 2
+        p50: 3
+        max: 3
+        unique: 2
+    - name: updownTypeCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - S
+        - E
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.7133
+  rank_in_sector: 344
+  brm: 교통물류 - 도로
+  why: 전국 고속도로 실시간 정체 상황
+claims:
+  - id: c-15076685-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076685.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076685-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076685-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076685.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 13개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076685-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076685.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076685-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076685-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076685-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076685.json
+  stats: probe/stats/15076685.json
+  data: probe/data/15076685/
+limits: 포털 활용신청과 별개로 data.ex.co.kr 인증키가 따로 필요하다. 응답은 현재 시점의 상태만 주므로, 과거 정체 추세를 분석하려면 직접 주기적으로 호출해 이력을 쌓아야 한다. 행정구역 코드나 좌표가 없어 지역 단위 통계나 다른 기관 데이터와 바로 결합할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076685-01
+    - c-15076685-03
+    - c-15076685-04
+    - c-15076685-06
+  dropped_citations: 0
+status: active

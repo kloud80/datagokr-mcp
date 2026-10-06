@@ -1,4 +1,5 @@
-# Dataset 15159554 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15159554 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15159554'
 tier: verified
 title: 전남광주통합특별시_일자리 정보망 일자리사업 접수관
@@ -23,6 +24,7 @@ synonyms:
   - 전라남도 일자리 정보망
   - 지자체 일자리 모집
   - 청년 일자리 지원사업
+summary_user: 전라남도 일자리 정보망에 등록된 지역산업맞춤형 일자리사업 접수관의 사업별 목록(제목·접수 기간·분야·지역·썸네일)을 사업 단위로 담는 API이며, 범위는 시도 단위·비공간이다. 전남 거주 구직자나 청년이 지금 접수 중인 전남형 일자리사업이 무엇이고 언제까지 신청하는지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했다. 그래서 다른 데이터와는 지역명·분야명 같은 이름으로 매핑하거나 같은 기관 코드로만 연결하며, 사업 고유번호(jobDeskId)는 목록과 상세·첨부파일 조회를 잇는 내부 키로 쓴다.
 description_portal: '- 입력 파라미터를 이용하여 전라남도 일자리 정보망에 등록되어있는 지역산업맞춤형 일자리사업 접수관의 목록 및 상세정보를 조회 할 수 있는 서비스 - 전남형 청년 희망일자리 사업: 18~45세 전남 거주 청년 대상 중소·사회적기업 취업 지원 모집 중 - 광양시 일자리창출 우수 시군 평가: 도내 22개 시군 중 ‘대상’ 수상 - 전남 중소기업일자리경제진흥원: 2025년 정책자금 4,400억 원 운영, 전년 대비 500억 원 증액 - 2022 지자체 일자리대상(대통령상): 전남도, ‘전국 종합대상’ 수상: 4,248명 고용창출과 예산 33.7% 확대, 해상풍력단지·디지털 전환 기반 마련 - 청년 유입 전략 및 지역 맞춤형 채용 정책이 핵심. 특히 전남형 청년 프로젝트, 디지털 전환 등 기반 마련이 돋보입니다. - 지역 기업 지원 확대: 플랫폼 통한 상담·역량교육, 지역 혁신기업 중심 정책자금 지원'
 team:
   dept: 정책기획관실
@@ -190,6 +192,10 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - jobDeskPeriod
 cycle: default
 classification:
   subsector_name: 채용 공고 (워크넷 채용·공채속보·공공기관 채용·장애인 구인 실시간·해외취업 모집·지자체 일자리)
@@ -322,8 +328,6 @@ verification:
   run: probe/runs/15159554.json
   stats: probe/stats/15159554.json
   data: probe/data/15159554/
-status: active
-summary_user: 전라남도 일자리 정보망에 등록된 지역산업맞춤형 일자리사업 접수관의 사업별 목록(제목·접수 기간·분야·지역·썸네일)을 사업 단위로 담는 API이며, 범위는 시도 단위·비공간이다. 전남 거주 구직자나 청년이 지금 접수 중인 전남형 일자리사업이 무엇이고 언제까지 신청하는지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했다. 그래서 다른 데이터와는 지역명·분야명 같은 이름으로 매핑하거나 같은 기관 코드로만 연결하며, 사업 고유번호(jobDeskId)는 목록과 상세·첨부파일 조회를 잇는 내부 키로 쓴다.
 limits: 상세·첨부파일 오퍼레이션(/getJobDeskInfoDetail, /getJobDeskInfoFile)은 사업 고유번호(jobDeskId)를 필수로 받으므로, 목록에서 이 값을 먼저 받아 넘겨야 한다. 최소 파라미터로 호출했을 때 이 두 오퍼레이션은 응답이 없었고, 실호출에 성공한 것은 3개 중 1개다. 개발계정은 하루 1,000회로 제한된다.
 review:
   summary: draft
@@ -337,3 +341,4 @@ review:
     - c-15159554-10
     - c-15159554-11
   dropped_citations: 0
+status: active

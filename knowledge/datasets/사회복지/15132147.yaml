@@ -1,4 +1,5 @@
-# Dataset 15132147 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132147 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132147'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄통합지원 설문대상 정보
@@ -21,6 +22,7 @@ synonyms:
   - 아이돌보미 설문
   - 육아 돌봄 실태
   - 한국건강가정진흥원 아이돌봄
+summary_user: 아이돌봄통합지원 설문에 응답한 대상자를 답변자 단위로 담은 건별 데이터로, 조사연도·소속센터·성별·연령·돌봄구분·소득유형·자녀수·취학자녀수·최소자녀연령·평생돌봄시간 등을 전국 범위로 담는다. 정책 분석가가 "소득유형이나 자녀 연령에 따라 아이돌봄 서비스 이용자의 돌봄 시간과 특성이 어떻게 다른가"처럼 대상 집단별 수요 특성을 살피는 데 쓴다. 전역 조인 키는 없고, 소속센터코드(ogdpCntrCd)나 답변자관리번호로 같은 기관의 다른 아이돌봄 데이터와만 이어 쓸 수 있다.
 description_portal: 아이돌봄통합지원 설문대상의 정보를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 최소자년연령, 조사연도, 소속센터코드, 답변자관리번호, 설문완료일자, 성별명, 연령, 돌봄구분코드, 소득유형코드, 평생돌봄시간, 등록일자, 자녀수, 취학자녀수 등의 내용을 확인할 수 있습니다.다양한 계층의 서비스 수요 특성을 파악할 수 있습니다. 이러한 정보는 아이돌봄 정책 수립 시 타깃 집단별 맞춤형 서비스를 기획하는 데 기여할 수 있습니다. 또한 취약 계층 선별에 효과적으로 활용될 수 있으며, 수요자 맞춤형 서비스 기획과 정책 타당성 분석에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -78,6 +80,7 @@ schema:
     - name: ogdpCntrCd
       title: 소속센터코드
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0266
@@ -88,6 +91,7 @@ schema:
     - name: answrMngNo
       title: 답변자관리번호
       type: number
+      semantic_type: idolbom_answr_mng_no
       null_rate: 0.0
       sample_values:
         - '490115200365216'
@@ -224,12 +228,27 @@ schema:
         - 10대 미만
       stats:
         unique: 7
+  foreign_keys:
+    - fields:
+        - ogdpCntrCd
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - answrMngNo
+      reference:
+        key: idolbom_answr_mng_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - exmnYr
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -273,7 +292,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132147-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(ogdpCntrCd), idolbom_answr_mng_no(answrMngNo)'
     evidence:
       - type: measured
         source: probe/stats/15132147.json
@@ -327,8 +346,6 @@ verification:
   run: probe/runs/15132147.json
   stats: probe/stats/15132147.json
   data: probe/data/15132147/
-status: active
-summary_user: 아이돌봄통합지원 설문에 응답한 대상자를 답변자 단위로 담은 건별 데이터로, 조사연도·소속센터·성별·연령·돌봄구분·소득유형·자녀수·취학자녀수·최소자녀연령·평생돌봄시간 등을 전국 범위로 담는다. 정책 분석가가 "소득유형이나 자녀 연령에 따라 아이돌봄 서비스 이용자의 돌봄 시간과 특성이 어떻게 다른가"처럼 대상 집단별 수요 특성을 살피는 데 쓴다. 전역 조인 키는 없고, 소속센터코드(ogdpCntrCd)나 답변자관리번호로 같은 기관의 다른 아이돌봄 데이터와만 이어 쓸 수 있다.
 limits: 다른 기관 데이터와 바로 연결할 공통 키가 없어 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 전국 단위 비공간 데이터라 지역별 분석에는 소속센터코드를 별도로 해석해야 한다. 개발계정 호출은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -340,3 +357,4 @@ review:
     - c-15132147-03
     - c-15132147-04
   dropped_citations: 0
+status: active

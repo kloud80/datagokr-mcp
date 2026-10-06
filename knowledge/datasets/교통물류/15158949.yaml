@@ -239,6 +239,7 @@ schema:
     - name: fid
       title: 편명UNIQ코드값
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '20241027646728'
@@ -278,6 +279,7 @@ schema:
     - name: flightid
       title: 항공편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - QV981
@@ -412,6 +414,7 @@ schema:
     - name: airlinecode
       title: 항공사코드(IATA)
       type: code
+      semantic_type: airline_cd
       null_rate: 0.0
       sample_values:
         - QH
@@ -423,6 +426,7 @@ schema:
     - name: depcitycode
       title: 출발공항 코드값
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - PUS
@@ -467,6 +471,7 @@ schema:
     - name: fid
       title: 편명UNIQ코드값
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '2026032951566888'
@@ -506,6 +511,7 @@ schema:
     - name: flightid
       title: 항공편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - LJ502
@@ -651,6 +657,7 @@ schema:
     - name: depcitycode
       title: 출발공항 코드값
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - GMP
@@ -1122,10 +1129,37 @@ schema:
       op: /int
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - fid
+      reference:
+        key: kac_fid
+      evidence: measured
+    - fields:
+        - flightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airlinecode
+      reference:
+        key: airline_cd
+      evidence: measured
+    - fields:
+        - depcitycode
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2024-10-15 ~ 2026-10-26
+grain:
+  time: day
+  time_fields:
+    - domesticEddate
+    - domesticStdate
+    - internationalEddate
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -1170,7 +1204,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15158949-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kac_fid(fid), flight_no(flightid), airline_cd(airlinecode), airport_cd(depcitycode)'
     evidence:
       - type: measured
         source: probe/stats/15158949.json

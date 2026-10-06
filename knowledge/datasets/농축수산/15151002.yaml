@@ -1,0 +1,191 @@
+id: '15151002'
+tier: verified
+title: 경기도_사이버식물명원 시군구_주소
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151002/fileData.do
+synonyms:
+  - 사이버식물병원
+  - 시군구정보
+  - 행정구역
+  - 주소코드
+  - 지역명
+  - 주소관리
+  - 사이버식물병원 주소
+  - 시군구 코드표
+  - 행정구역 코드
+  - 병해 진단 지역
+  - 경기데이터드림 시군구
+  - 식물병원 행정단위
+summary_user: 경기도 사이버식물병원(사이버식물명원) 시스템에서 쓰는 시군구 행정단위 코드표로, 시군구 코드(signgu_cd)와 시군구 명칭 두 항목을 행정단위별 한 행씩 담는다. 병해 진단 의뢰 주소를 시군구 단위로 해석하거나 '어느 시군구에서 병해 진단 의뢰가 많은가'를 집계하려는 분석가가 지역 기준표로 쓴다. 같은 시스템의 시도 주소 테이블, 진단 의뢰 주소 테이블과 시군구 코드로 이어 쓰며, 실측상 전역 조인 키는 없어 다른 기관 데이터와는 시군구 이름이나 코드 매핑으로만 연결한다.
+description_portal: 주소_시군구 테이블은 시도 하위의 시군구 행정단위 정보를 담고 있으며, 각 지역은 고유의 시군구 코드와 시군구 명칭으로 구성되어 있습니다. 이 데이터는 병해 진단 요청 시 입력된 주소를 시군구 단위로 분석하거나 행정단위별 병해 발생 현황을 파악하는 데 활용됩니다.이 테이블은 주소_시도와의 연계로 행정구역의 계층 구조를 구성하며, 진단_의뢰_주소 테이블에서 병해 발생 위치의 시군구 정보를 해석할 때 사용됩니다. 공간적 범주에 따른 병해 유형 분포 비교, 정책 수립을 위한 지역 기반 통계 분석 등에 활용 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: signgu_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11110'
+        - '11140'
+        - '11170'
+      stats:
+        min: 11110
+        p50: 28125
+        max: 41410
+        unique: 100
+    - name: signgu_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 중구
+        - 동구
+        - 서구
+      stats:
+        unique: 79
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - signgu_cd
+    - signgu_nm
+  space_via: code
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3077
+  brm: 농축수산 - 농업·농촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151002-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151002.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151002-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151002-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151002.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151002-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15151002.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151002-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151002-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151002-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151002.json
+  stats: probe/stats/15151002.json
+  data: probe/data/15151002/
+limits: 이 표는 코드와 명칭만 담고 병해 발생 건수나 가격 정보는 없어, 이것만으로는 통계를 낼 수 없다. 시군구 코드는 법정동·행정표준코드와 같다고 확인되지 않아 외부 데이터와 붙일 때 이름 매핑이 필요하다. 호출에는 포털 활용신청과 별도로 data.gg.go.kr 인증키(KEY)가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151002-01
+    - c-15151002-03
+    - c-15151002-04
+  dropped_citations: 0
+status: active

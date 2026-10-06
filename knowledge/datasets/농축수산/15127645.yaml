@@ -114,6 +114,7 @@ schema:
     - name: pwrLcnsSno
       title: 공유수면매립면허일련번호
       type: number
+      semantic_type: reclamation_license_no
       null_rate: 0.0
       sample_values:
         - '91056'
@@ -128,6 +129,7 @@ schema:
     - name: pwrMplSno
       title: 공유수면매립기본계획일련번호
       type: number
+      semantic_type: reclamation_plan_no
       null_rate: 0.0
       sample_values:
         - '10121'
@@ -142,6 +144,7 @@ schema:
     - name: pwrLcnsNo
       title: 공유수면매립면허번호
       type: string
+      semantic_type: reclamation_license_no
       null_rate: 0.9315
       sample_values:
         - 국토해양부 고시 제2009-241호
@@ -433,6 +436,21 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - pwrLcnsSno
+      reference:
+        key: reclamation_license_no
+      evidence: measured
+    - fields:
+        - pwrMplSno
+      reference:
+        key: reclamation_plan_no
+      evidence: measured
+    - fields:
+        - pwrLcnsNo
+      reference:
+        key: reclamation_license_no
+      evidence: measured
+    - fields:
         - rpsvcChrgrAddr
       reference:
         key: address
@@ -440,6 +458,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - rpsvcChrgrAddr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
@@ -483,7 +506,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15127645-03
     kind: key
-    value: '실측 조인 키: address(rpsvcChrgrAddr)'
+    value: '실측 조인 키: reclamation_license_no(pwrLcnsSno), reclamation_plan_no(pwrMplSno), reclamation_license_no(pwrLcnsNo), address(rpsvcChrgrAddr)'
     evidence:
       - type: measured
         source: probe/stats/15127645.json

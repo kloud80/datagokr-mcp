@@ -39,6 +39,7 @@ schema:
   fields:
     - name: 충전소 아이디
       type: number
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - '5014'
@@ -51,6 +52,7 @@ schema:
         unique: 1789
     - name: 충전기 아이디
       type: number
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - '3669'
@@ -91,10 +93,26 @@ schema:
         min: '2025-01-10'
         max: '2025-12-31'
         unique: 1328
+  foreign_keys:
+    - fields:
+        - 충전소 아이디
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
+        - 충전기 아이디
+      reference:
+        key: ev_charger_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2016-12-23 ~ 2025-12-31
+grain:
+  time: day
+  time_fields:
+    - 등록일시
+    - 변경일시
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -135,7 +153,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15117027-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fuel_station_id(충전소 아이디), ev_charger_id(충전기 아이디)'
     evidence:
       - type: measured
         source: probe/stats/15117027.json

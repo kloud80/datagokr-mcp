@@ -1,4 +1,3 @@
-# Dataset 15147925 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15147925'
 tier: verified
 title: 한국전기안전공사_사업소소개
@@ -24,6 +23,7 @@ synonyms:
   - 사업소 주소
   - 전기안전 관할구역
   - 전기안전공사 조직 목록
+summary_user: 한국전기안전공사의 13개 지역본부, 47개 지사, 연구원·센터·인재개발원 등 사업소별로 사업소코드, 대표번호, FAX, 우편번호, 주소, 관할구역을 한 행씩 담은 전국 단위 소개 목록이다. 전기안전 점검이나 상담이 필요한 국민·사업자가 '우리 지역을 관할하는 전기안전공사 지사는 어디이고 연락처는 무엇인가'를 확인하는 데 쓴다. 전역 조인 키는 없으므로 관할구역의 지역명이나 사업소 이름·사업소코드를 같은 기관의 다른 전기안전 데이터와 맞춰 이어 쓴다.
 description_portal: 한국전기안전공사의 사업소를 소개하는 데이터 입니다.13개 지역본부(서울본부, 부산울산본부, 대구경북본부, 인천본부, 광주전남본부, 대전세종충남본부, 경기본부, 경기북부본부, 강원본부, 충북본부, 전북본부, 경남본부, 제주본부)와 47개 지사(서울동부,서울서부,서울남부,서울북부,울산,부산동부,대구서부,구미칠곡,경북동부,경북서부,경북북부,경주,인천서부,부천김포,전남동부,전남서부,전남남부,여수,천안아산,충남중부,충남남부,서산태안,충남서부,경기중부,안산시흥,경기서부,평택안성,이천여주,용인,파주고양,경기북동부,강원동부,원주횡성,강원북부,강원남부,충주음성,제천단양,영동옥천,전북서부,익산,군산,남원순창,김해양산,경남서부,경남남부,경남북부,밀양창녕) 및 전기안전연구원, 에너지저장연구센터, 전기재해연구센터, 전기안전인재개발원의 사업소코드, 대표번호, FAX, 우편번호, 주소, 관할구역을 제공합니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 사업소
       type: string
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - 본사
@@ -46,6 +47,7 @@ schema:
         unique: 65
     - name: 사업소코드
       type: number
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - '1151'
@@ -104,6 +106,17 @@ schema:
         - 동대문구,성동구,광진구,강동구,송파구
       stats:
         unique: 65
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: kesco_office_cd
+      evidence: measured
+    - fields:
+        - 사업소코드
+      reference:
+        key: kesco_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -146,7 +159,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15147925-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kesco_office_cd(사업소), kesco_office_cd(사업소코드)'
     evidence:
       - type: measured
         source: probe/stats/15147925.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15147925.json
   stats: probe/stats/15147925.json
   data: probe/data/15147925/
-status: active
-summary_user: 한국전기안전공사의 13개 지역본부, 47개 지사, 연구원·센터·인재개발원 등 사업소별로 사업소코드, 대표번호, FAX, 우편번호, 주소, 관할구역을 한 행씩 담은 전국 단위 소개 목록이다. 전기안전 점검이나 상담이 필요한 국민·사업자가 '우리 지역을 관할하는 전기안전공사 지사는 어디이고 연락처는 무엇인가'를 확인하는 데 쓴다. 전역 조인 키는 없으므로 관할구역의 지역명이나 사업소 이름·사업소코드를 같은 기관의 다른 전기안전 데이터와 맞춰 이어 쓴다.
 limits: 표준 행정구역코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 관할구역 문자열을 직접 매핑해야 한다. 사업소 소개 목록일 뿐 점검 결과나 시설 안전 원장 같은 건별 안전 정보는 담지 않는다.
 review:
   summary: draft
@@ -224,3 +235,9 @@ review:
     - c-15147925-03
     - c-15147925-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address

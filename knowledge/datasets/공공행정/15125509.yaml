@@ -1,4 +1,5 @@
-# Dataset 15125509 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125509 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125509'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 독점배타영업지역 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹본부 계열회사 브랜드
   - 프랜차이즈 정보공개서
   - 영업지역 침해
+summary_user: 공정거래위원회 가맹사업 정보공개 중 브랜드별 독점·배타 영업지역과 관련해, 기준년도와 브랜드관리번호 단위로 동일업종 범위명, 같은 업종에서 가맹본부와 계열회사가 쓰는 영업표지명, 업종 대·중분류를 담은 전국 단위 비공간 API입니다. 창업 예정자나 가맹점주가 "이 브랜드 본부가 같은 업종에서 다른 영업표지나 계열회사 브랜드를 운영해 내 영업지역과 겹칠 수 있나"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 가맹정보 API들과는 브랜드관리번호(brandMnno)·가맹본부관리번호·기준년도를 같은 기관 코드로 맞춰 잇고, 그 밖의 데이터와는 영업표지명 같은 이름 매핑으로만 연결한다.
 description_portal: 브랜드 독점배타영업지역에 대한 기준년도, 브랜드관리번호를 이용하여 동일업종범위명, 영업표지명 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -144,12 +148,27 @@ schema:
         - “해당없음”
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -194,7 +213,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125509-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125509.json
@@ -259,8 +278,6 @@ verification:
   run: probe/runs/15125509.json
   stats: probe/stats/15125509.json
   data: probe/data/15125509/
-status: active
-summary_user: 공정거래위원회 가맹사업 정보공개 중 브랜드별 독점·배타 영업지역과 관련해, 기준년도와 브랜드관리번호 단위로 동일업종 범위명, 같은 업종에서 가맹본부와 계열회사가 쓰는 영업표지명, 업종 대·중분류를 담은 전국 단위 비공간 API입니다. 창업 예정자나 가맹점주가 "이 브랜드 본부가 같은 업종에서 다른 영업표지나 계열회사 브랜드를 운영해 내 영업지역과 겹칠 수 있나"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 가맹정보 API들과는 브랜드관리번호(brandMnno)·가맹본부관리번호·기준년도를 같은 기관 코드로 맞춰 잇고, 그 밖의 데이터와는 영업표지명 같은 이름 매핑으로만 연결한다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 응답에 없어 공정위 밖의 데이터와 바로 조인하기 어렵고, 이름 매핑에 기댈 수밖에 없다. 위치 정보가 없는 비공간 데이터라서 실제 영업지역의 경계나 범위는 이 데이터로 알 수 없다. 기준년도와 브랜드관리번호를 알아야 조회되며, 개발계정 호출 한도는 하루 10,000회다.
 review:
   summary: draft
@@ -273,3 +290,4 @@ review:
     - c-15125509-04
     - c-15125509-07
   dropped_citations: 0
+status: active

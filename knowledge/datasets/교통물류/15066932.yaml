@@ -1,5 +1,3 @@
-# Dataset 15066932 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15066932'
 tier: verified
 title: 한국교통안전공단_링크사고분석정보
@@ -37,6 +35,7 @@ schema:
   fields:
     - name: 링크id
       type: number
+      semantic_type: road_link_id
       null_rate: 0.0
       sample_values:
         - '1500008800'
@@ -65,6 +64,7 @@ schema:
         unique: 1
     - name: 경찰청사고번호
       type: number
+      semantic_type: police_accident_no
       null_rate: 0.0
       sample_values:
         - '2015110000000000 '
@@ -160,9 +160,30 @@ schema:
         - 동번호
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 링크id
+      reference:
+        key: road_link_id
+      evidence: measured
+    - fields:
+        - 경찰청사고번호
+      reference:
+        key: police_accident_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 사고x좌표
+    - 사고y좌표
+    - poix좌표
+  space_via: coord
+  time: month
+  time_fields:
+    - 사고년월
 cycle: default
 classification:
   subsector_name: traffic-accidents
@@ -199,7 +220,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15066932-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: road_link_id(링크id), police_accident_no(경찰청사고번호)'
     evidence:
       - type: measured
         source: probe/stats/15066932.json

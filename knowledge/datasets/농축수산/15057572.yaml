@@ -1,4 +1,5 @@
-# Dataset 15057572 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057572 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057572'
 tier: verified
 title: 해양수산부_수협 산지조합 창고 정보
@@ -22,6 +23,7 @@ synonyms:
   - 수협 조합 창고 목록
   - 수산물 물류 창고
   - 수산물 보관창고
+summary_user: 수협 산지조합이 보유한 창고를 창고 한 곳당 한 건으로 담으며, 조합명·창고명과 연락처, 주소, 면적(bldar)을 전국 범위로 제공한다. 수산물 물류·유통 사업자가 특정 지역에 어느 조합의 창고가 있고 규모가 어떤지 확인해 운송경로나 보관지를 정하는 데 쓴다. 전역 조인 키는 없으므로 조합코드·조합명으로 같은 수협 계열 데이터(위판장 경락 등)와 이어 쓰고, 다른 데이터와는 주소를 기준으로 맞춰 쓴다.
 description_portal: 이 데이터는 해양수산부에서 수협 산지조합이 보유한 창고의 상세 정보를 제공하기 위해 수집한 데이터입니다.  전체 데이터 조회 또는 특정 조합명, 창고명 값을 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 조합코드, 조합명, 창고코드, 창고명, 창고의 연락처, 주소, 면적 등 정보로 구성되어 있습니다.  본 데이터는 수산물 물류/유통 관련 기업에서 최적 운송경로 분석 등 업무를 위해 활용할 수 있습니다. 또한, 산지 창고별 수산물 재고 관리 현황 파악, 수협의 물류 관리업무 지원, 수산물 저장 및 보관 정책 수립 등에 활용될 수 있습니다.
 team:
   dept: 수산직불제팀
@@ -45,6 +47,7 @@ schema:
   fields:
     - name: mxtrCode
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '368'
@@ -66,6 +69,7 @@ schema:
         unique: 63
     - name: wrhousCode
       type: number
+      semantic_type: suhyup_warehouse_cd
       null_rate: 0.0
       sample_values:
         - '1000048'
@@ -144,6 +148,17 @@ schema:
         p50: 1005.5
         max: 1731
         unique: 2
+  foreign_keys:
+    - fields:
+        - mxtrCode
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
+    - fields:
+        - wrhousCode
+      reference:
+        key: suhyup_warehouse_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -193,7 +208,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057572-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(mxtrCode), suhyup_warehouse_cd(wrhousCode)'
     evidence:
       - type: measured
         source: probe/stats/15057572.json
@@ -258,8 +273,6 @@ verification:
   run: probe/runs/15057572.json
   stats: probe/stats/15057572.json
   data: probe/data/15057572/
-status: active
-summary_user: 수협 산지조합이 보유한 창고를 창고 한 곳당 한 건으로 담으며, 조합명·창고명과 연락처, 주소, 면적(bldar)을 전국 범위로 제공한다. 수산물 물류·유통 사업자가 특정 지역에 어느 조합의 창고가 있고 규모가 어떤지 확인해 운송경로나 보관지를 정하는 데 쓴다. 전역 조인 키는 없으므로 조합코드·조합명으로 같은 수협 계열 데이터(위판장 경락 등)와 이어 쓰고, 다른 데이터와는 주소를 기준으로 맞춰 쓴다.
 limits: 창고 시설 정보만 담으며 수산물 가격이나 재고량은 들어 있지 않다. 공통 조인 키가 없어 다른 데이터와는 이름·코드 매핑이나 주소로만 연결된다. 개발계정 호출은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -271,3 +284,4 @@ review:
     - c-15057572-03
     - c-15057572-04
   dropped_citations: 0
+status: active

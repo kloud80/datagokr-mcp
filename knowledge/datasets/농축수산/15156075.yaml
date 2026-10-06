@@ -1,4 +1,5 @@
-# Dataset 15156075 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156075 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156075'
 tier: verified
 title: 한국농수산식품유통공사_출하량 추이 정보 조회
@@ -25,6 +26,7 @@ synonyms:
   - 경매 물량
   - 농산물 수급
   - aT 유통정보
+summary_user: 한국농수산식품유통공사가 도매시장·법인·상품 분류·단위별로 조회일 기준 평균출하수량과 평균출하량, 그리고 1~4주 전 같은 값을 함께 담은 전국 범위의 주간 추이 집계 데이터다. 농업인이나 유통업자가 "이번 주 특정 도매시장에 들어오는 품목 물량이 한 달 전보다 늘었나"를 보고 출하 시기와 출하처를 고를 때 쓴다. 상품대분류·중분류 코드(gds_lclsf_cd, gds_mclsf_cd)가 있지만 전역 조인 키는 없어, 같은 기관의 도매 경락가격·반입물량 데이터와는 코드나 이름을 맞춰 잇고 KAMIS·HS·KOSIS 품목코드와는 별도 매핑이 필요하다.
 description_portal: 한국농수산식품유통공사의 조회일 기준 1~4주전 농산물 평균출하수량 및 평균출하량 추이 제공 데이터로,출하일자, 도매시장코드, 도매시장명, 법인코드, 법인명, 상품대분류코드, 상품대분류명, 상품중분류코드, 상품중분류명, 상품소분류코드, 상품소분류명, 단위코드, 단위명, 단위물량, 평균출하수량, 평균출하량, 1주일전평균출하수량, 1주일전평균출하량, 2주일전평균출하수량, 2주일전평균출하량, 3주일전평균출하수량, 3주일전평균출하량, 4주일전평균출하수량, 4주일전평균출하량을 제공합니다.★ API명세서 및 관련 코드정보가 첨부되어 있습니다.기대활용분야 - (국민) 농산물유통정보를 활용하여 농산물 판매·구매 계획 수립, 농산물 유통 분야 사업모델 발굴, 유통 과정 부가가치 창출, 개인 및 기관의 연구 목적으로 활용 등 다양한 빅데이터를 활용하여 융복합 기대 - (유통) 농산물유통정보 분석으로 생산성 관리, 재고관리 등 유통 분야 활용 - (농업종사자) 농산물유통정보 가격등락, 추이 정보 등을 활용, 농산물유통정보 데이터 확보를 통한 출하선택·결정권 강화 - (정책담당자) 농산물유통정보 분석을 통해 주요품목 수급안정 및 농산물 가격변동 완화 - (지자체:도매시장 개설자)농산물유통정보를 활용한 재고 및 물류 최적화
 team:
   dept: 도매시장부
@@ -95,6 +97,7 @@ schema:
     - name: gds_lclsf_cd
       title: 상품대분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '10'
@@ -108,6 +111,7 @@ schema:
     - name: gds_mclsf_cd
       title: 상품중분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '04'
@@ -118,6 +122,17 @@ schema:
         p50: 6
         max: 99
         unique: 43
+  foreign_keys:
+    - fields:
+        - gds_lclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - gds_mclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -167,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156075-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(gds_lclsf_cd), agri_item_cd(gds_mclsf_cd)'
     evidence:
       - type: measured
         source: probe/stats/15156075.json
@@ -232,8 +247,6 @@ verification:
   run: probe/runs/15156075.json
   stats: probe/stats/15156075.json
   data: probe/data/15156075/
-status: active
-summary_user: 한국농수산식품유통공사가 도매시장·법인·상품 분류·단위별로 조회일 기준 평균출하수량과 평균출하량, 그리고 1~4주 전 같은 값을 함께 담은 전국 범위의 주간 추이 집계 데이터다. 농업인이나 유통업자가 "이번 주 특정 도매시장에 들어오는 품목 물량이 한 달 전보다 늘었나"를 보고 출하 시기와 출하처를 고를 때 쓴다. 상품대분류·중분류 코드(gds_lclsf_cd, gds_mclsf_cd)가 있지만 전역 조인 키는 없어, 같은 기관의 도매 경락가격·반입물량 데이터와는 코드나 이름을 맞춰 잇고 KAMIS·HS·KOSIS 품목코드와는 별도 매핑이 필요하다.
 limits: 공유되는 전역 조인 키가 없어 다른 기관 데이터와는 품목·시장 이름이나 코드 매핑으로만 연결된다. 품목코드 체계가 KAMIS·도매시장·HS·KOSIS마다 달라 그대로 합치면 품목이 어긋날 수 있다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -246,3 +259,4 @@ review:
     - c-15156075-04
     - c-15156075-06
   dropped_citations: 0
+status: active

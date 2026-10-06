@@ -1,4 +1,5 @@
-# Dataset 15067663 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067663 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067663'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_정사영상원시영상
@@ -21,6 +22,7 @@ synonyms:
   - 항공촬영 코스번호 사진번호
   - 1:5000 도엽번호
   - 국토지리정보원 항공사진 메타데이터
+summary_user: 정사영상 제작 때 1:5,000 도엽마다 쓰인 항공사진 낱장(사업지구코드·코스번호·사진번호)을 도엽번호와 짝지은 건별 매핑 파일로, 전국 범위이며 CSV 한 건(약 152MB)으로 받는다. 공간정보 분석가나 지도 제작자가 '이 도엽의 정사영상은 어느 항공촬영 사진으로 만들었나'를 거슬러 확인하거나, 반대로 특정 항공사진이 어느 도엽 정사영상에 쓰였는지 찾을 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 도엽번호(도엽번호5000)나 항공사진 사업지구코드·코스번호·사진번호를 같은 기관의 정사영상·항공사진 목록과 코드로 맞춰 잇는다.
 description_portal: '정사영상 제작시 개별 도엽에 사용된 항공사진의 낱장 성과 관리번호(사업지구코드, 코스번호, 사진번호)와 도엽번호를 매핑한 정보해당 정사영상이 어떤 항공촬영사진을 기초로 제작되었는지를 파악 할수 있는 연계 정보▷ 속성정보- 식별정보 : 정사영상 사업지구코드,  도엽번호5,000- 속성정보 : 원시영상일련번호, 항공사진 사업지구코드, 코스번호, 사진번호* 정사영상 : 항공사진이나 위성영상을 지형의 고도 차이, 기울어짐, 렌즈 왜곡 등으로부터 생기는 기하학적 왜곡을 제거, 마치 수직으로 내려다본 것처럼 보이도록 만든 영상'
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 정사영상사업지구코드
       type: code
+      semantic_type: aerial_project_district_cd
       null_rate: 0.0
       sample_values:
         - 201511A0003
@@ -43,6 +46,7 @@ schema:
         unique: 12
     - name: 도엽번호5000
       type: number
+      semantic_type: map_sheet_no
       null_rate: 0.0
       sample_values:
         - '36803001'
@@ -67,6 +71,7 @@ schema:
         unique: 79
     - name: 항공사진사업지구코드
       type: code
+      semantic_type: aerial_project_district_cd
       null_rate: 0.0
       sample_values:
         - 201405A102C
@@ -76,6 +81,7 @@ schema:
         unique: 55
     - name: 코스번호
       type: code
+      semantic_type: aerial_photo_no
       null_rate: 0.0
       sample_values:
         - '13'
@@ -85,6 +91,7 @@ schema:
         unique: 445
     - name: 사진번호
       type: number
+      semantic_type: aerial_photo_no
       null_rate: 0.0
       sample_values:
         - '7'
@@ -95,6 +102,32 @@ schema:
         p50: 33
         max: 165
         unique: 355
+  foreign_keys:
+    - fields:
+        - 정사영상사업지구코드
+      reference:
+        key: aerial_project_district_cd
+      evidence: measured
+    - fields:
+        - 도엽번호5000
+      reference:
+        key: map_sheet_no
+      evidence: measured
+    - fields:
+        - 항공사진사업지구코드
+      reference:
+        key: aerial_project_district_cd
+      evidence: measured
+    - fields:
+        - 코스번호
+      reference:
+        key: aerial_photo_no
+      evidence: measured
+    - fields:
+        - 사진번호
+      reference:
+        key: aerial_photo_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -138,7 +171,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067663-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: aerial_project_district_cd(정사영상사업지구코드), map_sheet_no(도엽번호5000), aerial_project_district_cd(항공사진사업지구코드), aerial_photo_no(코스번호), aerial_photo_no(사진번호)'
     evidence:
       - type: measured
         source: probe/stats/15067663.json
@@ -213,8 +246,6 @@ verification:
   run: probe/runs/15067663.json
   stats: probe/stats/15067663.json
   data: probe/data/15067663/
-status: active
-summary_user: 정사영상 제작 때 1:5,000 도엽마다 쓰인 항공사진 낱장(사업지구코드·코스번호·사진번호)을 도엽번호와 짝지은 건별 매핑 파일로, 전국 범위이며 CSV 한 건(약 152MB)으로 받는다. 공간정보 분석가나 지도 제작자가 '이 도엽의 정사영상은 어느 항공촬영 사진으로 만들었나'를 거슬러 확인하거나, 반대로 특정 항공사진이 어느 도엽 정사영상에 쓰였는지 찾을 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 도엽번호(도엽번호5000)나 항공사진 사업지구코드·코스번호·사진번호를 같은 기관의 정사영상·항공사진 목록과 코드로 맞춰 잇는다.
 limits: 영상 자체나 촬영 일자·좌표 같은 속성은 없고 식별 번호 간 매핑만 담는다. 행정구역 코드가 없는 비공간 자료라서 지역별로 보려면 도엽번호를 별도 도엽 체계와 맞춰야 한다.
 review:
   summary: draft
@@ -226,3 +257,4 @@ review:
     - c-15067663-03
     - c-15067663-04
   dropped_citations: 0
+status: active

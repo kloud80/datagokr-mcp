@@ -1,4 +1,5 @@
-# Dataset 15130613 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15130613 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15130613'
 tier: verified
 title: 한국남동발전㈜_시간대별 연료전지 발전실적 현황
@@ -21,6 +22,7 @@ synonyms:
   - 호기별 발전량
   - 분산전원 발전실적
   - 신재생 발전 시간대별
+summary_user: 한국남동발전의 연료전지 발전소·호기별 하루 발전실적을 일자 단위로 담고, 1시부터 24시까지 시간대별 발전량과 총량·평균·최대·최소를 한 행에 제공하는 건별 원천 데이터입니다. 분석가나 에너지 사업자가 '남동발전 연료전지 발전기가 하루 중 어느 시간대에 얼마나 고르게 발전하는가'처럼 연료전지의 기저부하 운전 패턴과 호기별 가동 실적을 확인하는 데 쓴다. 전역 조인 키는 없어 발전소코드·호기코드·발전소명과 일자(dgenYmd)를 기준으로 같은 기관의 다른 발전실적 데이터나 발전소 이름 매칭으로만 이어 쓴다.
 description_portal: 해당 데이터는 한국남동발전에서 제공하는 시간대별 연료전지 발전실적 현황입니다. 한국남동발전의 발전소별 시간대별로 연료전지 발전 실적에 관한 데이터를 제공하고 있습니다. 발전소의 각 발전기(호기)별로 총량(KW), 평균(KWh), 최대(KWh), 최소(KWh) 등의 핵심 데이터를 포함하고 있습니다. 시간대별 연료전지 발전실적 현황 데이터는 안정적인 기저부하 전력을 공급하는 도심형 분산자원으로써 전력망 효율을 높이고, 미래 수소경제를 뒷받침하는 데 매우 중요한 기초자료로 활용될 수 있습니다.
 team:
   dept: AX전략부
@@ -75,6 +77,7 @@ schema:
     - name: ippt
       title: 발전소코드
       type: number
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - '9967'
@@ -88,6 +91,7 @@ schema:
     - name: hogi
       title: 호기코드
       type: code
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -513,12 +517,27 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - ippt
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
+    - fields:
+        - hogi
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - dgenYmd
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -562,7 +581,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15130613-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koen_ippt_unit(ippt), koen_ippt_unit(hogi)'
     evidence:
       - type: measured
         source: probe/stats/15130613.json
@@ -627,8 +646,6 @@ verification:
   run: probe/runs/15130613.json
   stats: probe/stats/15130613.json
   data: probe/data/15130613/
-status: active
-summary_user: 한국남동발전의 연료전지 발전소·호기별 하루 발전실적을 일자 단위로 담고, 1시부터 24시까지 시간대별 발전량과 총량·평균·최대·최소를 한 행에 제공하는 건별 원천 데이터입니다. 분석가나 에너지 사업자가 '남동발전 연료전지 발전기가 하루 중 어느 시간대에 얼마나 고르게 발전하는가'처럼 연료전지의 기저부하 운전 패턴과 호기별 가동 실적을 확인하는 데 쓴다. 전역 조인 키는 없어 발전소코드·호기코드·발전소명과 일자(dgenYmd)를 기준으로 같은 기관의 다른 발전실적 데이터나 발전소 이름 매칭으로만 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 전력거래소 등 다른 기관 데이터와는 발전소명·코드 매핑을 직접 만들어야 연결된다. 한국남동발전 소속 연료전지 설비만 담으므로 전국 연료전지 발전량 전체로 해석하지 않는다. 개발계정은 일 10,000회 호출 한도가 있다.
 review:
   summary: draft
@@ -640,3 +657,4 @@ review:
     - c-15130613-03
     - c-15130613-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15090422 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15090422'
 tier: verified
 title: 식품의약품안전처_의약품 해외제조소 정보
@@ -21,6 +20,7 @@ synonyms:
   - 해외제조소 등록
   - 수입 의약품 원산지
   - 의약품 제조국가
+summary_user: 국내로 수입되는 의약품의 해외 제조소(공장)를 수입업체별로 한 건씩 담은 원천 목록으로, 수입업체명·제조소명·소재지·등록번호·국가와 위도·경도 좌표를 제공한다. 제약사·수입업체나 분석가가 '이 수입업체는 어느 나라의 어떤 공장에서 만든 의약품을 들여오는가'를 확인하거나 수입 경로를 점검하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 식약처 의약품 허가정보와는 수입업체명·제조소명 같은 이름 매칭이나 사업자등록번호(BIZRNO)로 맞춰 이어 써야 한다.
 description_portal: 식품의약품안전처 「의약품 해외제조소 정보」 OpenAPI는 국내로 수입되는 의약품의 해외 제조소(공장) 정보를 제공하는 공공데이터입니다. 제공 항목으로는 수입업체명, 제조소명, 소재지, 등록번호, 국가, GPS 좌표(위도·경도) 등이 포함되어 있습니다. 이 데이터를 통해 특정 수입업체가 어떤 해외 제조소에서 제품을 생산하는지를 알 수 있어 제품의 수입 경로를 보다 명확히 파악할 수 있습니다. 또한, 의료기관과 환자는 수입 의약품의 안전성과 신뢰성을 확보할 수 있고, 제약사와 수입업체는 해외 제조소의 허가 및 관리 현황을 점검하는데 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -113,6 +113,7 @@ schema:
         unique: 647
     - name: BIZRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '2148762038'
@@ -123,6 +124,12 @@ schema:
         p50: 1388191523
         max: 8868100081
         unique: 322
+  foreign_keys:
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -173,7 +180,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15090422-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15090422.json
@@ -238,8 +245,6 @@ verification:
   run: probe/runs/15090422.json
   stats: probe/stats/15090422.json
   data: probe/data/15090422/
-status: active
-summary_user: 국내로 수입되는 의약품의 해외 제조소(공장)를 수입업체별로 한 건씩 담은 원천 목록으로, 수입업체명·제조소명·소재지·등록번호·국가와 위도·경도 좌표를 제공한다. 제약사·수입업체나 분석가가 '이 수입업체는 어느 나라의 어떤 공장에서 만든 의약품을 들여오는가'를 확인하거나 수입 경로를 점검하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 식약처 의약품 허가정보와는 수입업체명·제조소명 같은 이름 매칭이나 사업자등록번호(BIZRNO)로 맞춰 이어 써야 한다.
 limits: 품목기준코드 같은 전역 조인 키가 없어 어떤 의약품 품목이 해당 제조소에서 생산되는지 직접 연결하지 못하고, 이름·코드 매핑에 의존해야 한다. 활용신청은 자동승인이며 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -251,3 +256,9 @@ review:
     - c-15090422-03
     - c-15090422-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - MFTR_ADDR
+  space_via: address

@@ -1,4 +1,5 @@
-# Dataset 15057277 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057277 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057277'
 tier: verified
 title: 한국지역정보개발원_임원연봉 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 클린아이 경영공시
   - 지방공기업 통합경영공시
   - 임원 평균임금
+summary_user: 지방공기업별·연도별로 사장/이사장·이사·감사의 인원수와 기본급, 급여성복리후생비, 수당, 시간외수당, 인센티브, 예산성과급, 합계, 임원 1인당 평균임금을 담은 경영공시 집계 자료이며, 범위는 전국이다. 분석가나 국민이 '특정 지방공기업 사장의 연봉은 얼마이고 다른 지방공기업과 비교하면 어떤가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 지방공기업 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 이름으로 맞춰 이어 쓴다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 임원 연봉 자료에는 연도, 기관명, 사장/이사장/이사/감사 인원수, 기본급, 급여성복리후생비, 수당, 시간외수당, 인센티브, 예산성과급, 합계, 임원1인당 평균임금 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -91,6 +93,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -430,12 +433,22 @@ schema:
         p50: 102393.25
         max: 174502
         unique: 167
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -479,7 +492,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057277-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15057277.json
@@ -533,8 +546,6 @@ verification:
   run: probe/runs/15057277.json
   stats: probe/stats/15057277.json
   data: probe/data/15057277/
-status: active
-summary_user: 지방공기업별·연도별로 사장/이사장·이사·감사의 인원수와 기본급, 급여성복리후생비, 수당, 시간외수당, 인센티브, 예산성과급, 합계, 임원 1인당 평균임금을 담은 경영공시 집계 자료이며, 범위는 전국이다. 분석가나 국민이 '특정 지방공기업 사장의 연봉은 얼마이고 다른 지방공기업과 비교하면 어떤가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 지방공기업 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 이름으로 맞춰 이어 쓴다.
 limits: 기관 코드 같은 공통 조인 키가 없어 다른 데이터와 연결하려면 기관명 매핑에 의존해야 한다. 지역 좌표가 없는 비공간 자료라 지도 분석에는 바로 쓸 수 없고, 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -546,3 +557,4 @@ review:
     - c-15057277-03
     - c-15057277-04
   dropped_citations: 0
+status: active

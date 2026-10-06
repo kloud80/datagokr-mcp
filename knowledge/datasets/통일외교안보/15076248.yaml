@@ -48,6 +48,7 @@ schema:
   fields:
     - name: country_iso_alp2
       type: code
+      semantic_type: country_cd
       null_rate: 0.002
       sample_values:
         - MN
@@ -66,6 +67,7 @@ schema:
         unique: 39
     - name: dispatch_org_cd
       type: number
+      semantic_type: koica_dispatch_org_cd
       null_rate: 0.002
       sample_values:
         - '15426'
@@ -85,6 +87,17 @@ schema:
         - 이민국
       stats:
         unique: 981
+  foreign_keys:
+    - fields:
+        - country_iso_alp2
+      reference:
+        key: country_cd
+      evidence: measured
+    - fields:
+        - dispatch_org_cd
+      reference:
+        key: koica_dispatch_org_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -131,7 +144,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15076248-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(country_iso_alp2), koica_dispatch_org_cd(dispatch_org_cd)'
     evidence:
       - type: measured
         source: probe/stats/15076248.json

@@ -1,4 +1,5 @@
-# Dataset 15141815 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15141815 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15141815'
 tier: verified
 title: 한국농수산식품유통공사_도매시장 전자송품장 출하구매물량 예측정보
@@ -23,6 +24,7 @@ synonyms:
   - 도매시장 수급 예측
   - aT 물량 예측
   - 경락 물량
+summary_user: 도매시장 전자송품장을 바탕으로 도매시장·품목 대분류·중분류별로 출하 예측일자 기준 30일 이후까지의 예측 물량과 상한·하한 예측 물량, 전월 물량을 담은 전국 단위 예측 정보다. 산지 출하자나 도매 구매자가 '다음 달 특정 도매시장에 이 품목이 얼마나 들어올지'를 가늠해 출하·구매 시점을 정하는 데 쓴다. 도매시장 코드(whsl_mrkt_cd)와 품목 대·중분류 코드는 aT 농축수산물 표준코드 API에서 뜻을 확인해 같은 기관 데이터와 이어 쓰며, 실측상 기관 밖 데이터와 바로 맞물리는 전역 조인 키는 없다.
 description_portal: '도매시장 전자송품장 출하구매물량 예측정보로 대분류, 중분류, 도매시장, 출하 예측일자에 따라 30일 이후까지의 정산 예측 값을 제공합니다.★ API 명세서가 첨부되어있습니다. API 활용에 참고하실 수 있습니다.코드 정보는 한국농수산식품유통공사_농축수산물 표준코드 API를 조회 후 확인바랍니다. (https://www.data.go.kr/data/15141818/openapi.do)코드 종류 :whsl_mrkt_cd : 도매시장 코드corp_cd : 법인 코드unit_cd : 단위 코드sz_cd : 크기 코드plor_cd : 산지 코드pkg_cd : 포장 코드grd_cd : 등급 코드gds_lclsf_cd : 품목 코드 (대분류)gds_mclsf_cd : 품목 코드 (중분류)gds_sclsf_cd : 품목 코드 (소분류)'
 team:
   dept: 도매시장부
@@ -81,6 +83,7 @@ schema:
     - name: gds_lclsf_cd
       title: 상품대분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '06'
@@ -104,6 +107,7 @@ schema:
     - name: gds_mclsf_cd
       title: 상품중분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -228,6 +232,7 @@ schema:
     - name: whsl_mrkt_cd
       title: 도매시장코드
       type: number
+      semantic_type: whsl_mrkt_cd
       null_rate: 0.0
       sample_values:
         - '110001'
@@ -248,12 +253,34 @@ schema:
         - 부산엄궁
       stats:
         unique: 32
+  foreign_keys:
+    - fields:
+        - gds_lclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - gds_mclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - whsl_mrkt_cd
+      reference:
+        key: whsl_mrkt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - predc_prd
+    - predc_ymd
+    - prvmm_prd
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -297,7 +324,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15141815-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(gds_lclsf_cd), agri_item_cd(gds_mclsf_cd), whsl_mrkt_cd(whsl_mrkt_cd)'
     evidence:
       - type: measured
         source: probe/stats/15141815.json
@@ -362,8 +389,6 @@ verification:
   run: probe/runs/15141815.json
   stats: probe/stats/15141815.json
   data: probe/data/15141815/
-status: active
-summary_user: 도매시장 전자송품장을 바탕으로 도매시장·품목 대분류·중분류별로 출하 예측일자 기준 30일 이후까지의 예측 물량과 상한·하한 예측 물량, 전월 물량을 담은 전국 단위 예측 정보다. 산지 출하자나 도매 구매자가 '다음 달 특정 도매시장에 이 품목이 얼마나 들어올지'를 가늠해 출하·구매 시점을 정하는 데 쓴다. 도매시장 코드(whsl_mrkt_cd)와 품목 대·중분류 코드는 aT 농축수산물 표준코드 API에서 뜻을 확인해 같은 기관 데이터와 이어 쓰며, 실측상 기관 밖 데이터와 바로 맞물리는 전역 조인 키는 없다.
 limits: 전역 조인 키가 없어 KAMIS·HS·KOSIS 등 다른 체계의 품목코드와 붙이려면 이름이나 코드 매핑을 따로 해야 한다. 공간 정보가 없는 전국 단위 데이터라 지역별 지도 분석에는 맞지 않는다. 담긴 값은 실제 거래량이 아니라 예측값이다.
 review:
   summary: draft
@@ -376,3 +401,4 @@ review:
     - c-15141815-04
     - c-15141815-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15134532 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15134532 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15134532'
 tier: verified
 title: 서울특별시_버스운행순서
@@ -22,6 +23,7 @@ synonyms:
   - 버스 기사 운행 기록
   - 서울 버스 운행 데이터
   - 교통정책지원시스템 버스
+summary_user: 서울 시내버스의 실제 운행 이력을 바탕으로 운행 출발 일시, 노선, 차량, 기사별로 그 노선에서 몇 번째로 운행했는지(운행_순서)를 건별로 담은 파일이며, 실측 파일 크기는 약 5KB(csv)입니다. 교통 분석가나 연구자가 특정 노선에서 차량들이 어떤 순서와 간격으로 배차되어 운행됐는지, 시간대별 운행 패턴이 어떤지를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 노선 ID를 서울시 버스 노선·정류장 원장이나 BIS 도착정보와 같은 기관 코드 기준으로 맞춰 이어 쓴다.
 description_portal: 서울특별시의 교통정책지원시스템에서 제공하는 ‘서울특별시 버스운행순서’ 데이터는 서울 시내버스의 실제 운행 이력을 기반으로 구축된 운영 분석용 데이터입니다. 주요 항목으로는 운행 출발 일시, 노선 ID, 차량 ID, 기사 ID, 운행순서 정보가 포함되어 있으며, 특정 노선에서 차량이 어떤 순서로 운행되었는지 확인할 수 있습니다. 이를 통해 버스 배차 운영 현황 분석, 노선별 운행 효율성 검토, 기사별 운행 이력 관리, 대중교통 서비스 품질 개선 및 교통 정책 수립을 위한 기초 자료로 활용 가능합니다. 또한 시간대별 운행 패턴 분석, 혼잡도 예측, 이상 운행 탐지 등 다양한 교통 빅데이터 분석 및 스마트 교통 연구에도 활용 가치가 높은 데이터입니다.
 accrual_periodicity: 수시
 team:
@@ -97,6 +99,10 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 운행_출발_일시
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -198,8 +204,6 @@ verification:
   run: probe/runs/15134532.json
   stats: probe/stats/15134532.json
   data: probe/data/15134532/
-status: active
-summary_user: 서울 시내버스의 실제 운행 이력을 바탕으로 운행 출발 일시, 노선, 차량, 기사별로 그 노선에서 몇 번째로 운행했는지(운행_순서)를 건별로 담은 파일이며, 실측 파일 크기는 약 5KB(csv)입니다. 교통 분석가나 연구자가 특정 노선에서 차량들이 어떤 순서와 간격으로 배차되어 운행됐는지, 시간대별 운행 패턴이 어떤지를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 노선 ID를 서울시 버스 노선·정류장 원장이나 BIS 도착정보와 같은 기관 코드 기준으로 맞춰 이어 쓴다.
 limits: 내려받은 파일이 약 5KB로 작아 전체 운행 이력이 아니라 표본일 수 있으므로, 이 파일만으로 노선 전체의 운행 현황을 일반화하지 않는다. 노선·차량·기사 ID는 서울시 내부 코드라 다른 기관 데이터와는 이름·코드 매핑 없이 바로 연결되지 않는다.
 review:
   summary: draft
@@ -211,3 +215,4 @@ review:
     - c-15134532-03
     - c-15134532-06
   dropped_citations: 0
+status: active

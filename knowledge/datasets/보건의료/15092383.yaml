@@ -1,4 +1,5 @@
-# Dataset 15092383 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092383 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092383'
 tier: verified
 title: 한국건강증진개발원_국가금연지원서비스 등록정보(니코틴의존도)
@@ -22,6 +23,7 @@ synonyms:
   - 흡연자 등록
   - 금연상담
   - 니코틴 보조제
+summary_user: 국가금연지원서비스(전국 보건소·지역금연지원센터)에 등록한 대상자별 니코틴의존도 평가 응답을 담은 전국 범위 파일 데이터로, 기관유형·지역·제공기관·출생년도·성별·등록유형과 함께 6개 표준 문항(첫 담배까지 시간, 금연구역 흡연 참기, 하루 흡연 개비 수 등) 결과가 들어 있다. 금연 정책 분석가나 보건소 담당자가 지역·성별·연령대별로 금연 서비스 등록자의 니코틴 의존 수준이 어떻게 다른지, 니코틴 보조제가 필요한 고의존 흡연자가 어느 정도인지 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 지역명·제공기관명 같은 이름 매핑이나 같은 기관(한국건강증진개발원)의 다른 국가금연지원서비스 등록정보와 맞춰 이어 쓴다.
 description_portal: 국가금연지원서비스 대상자의 니코틴의존도 평가 데이터로 6개의 표준 조사항목에 대한 결과를 제공합니다.조사항목은 아침에 일어나서 얼마만에 첫 담배를 피우는지, 금연구역(도서관, 병원, 영화과 등)에서 흡연을 참기가 어려운지, 하루 중 가장 담배 맛이 좋은 때는 언제인지, 하루에 보통 몇 개비를 피우는지, 아침에 일어나서 첫 몇시간동안 하루 중 다른 시간보다 더 자주 담배를 피우는지, 몸이 아파 하루종일 누워있을 때도 담배를 피우는지 등을 파악하여 상담 시 보조 수단으로 니코틴 보조제 지급여부를 판단합니다.- 전국 보건소, 지역금연지원센터
 accrual_periodicity: 연간
 team:
@@ -61,6 +63,7 @@ schema:
         unique: 3
     - name: 제공기관
       type: code
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 경기 시흥시보건소
@@ -162,12 +165,22 @@ schema:
         p50: 0
         max: 1
         unique: 2
+  foreign_keys:
+    - fields:
+        - 제공기관
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 출생년도
 cycle: default
 classification:
   subsector_name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
@@ -204,7 +217,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092383-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(제공기관)'
     evidence:
       - type: measured
         source: probe/stats/15092383.json
@@ -269,8 +282,6 @@ verification:
   run: probe/runs/15092383.json
   stats: probe/stats/15092383.json
   data: probe/data/15092383/
-status: active
-summary_user: 국가금연지원서비스(전국 보건소·지역금연지원센터)에 등록한 대상자별 니코틴의존도 평가 응답을 담은 전국 범위 파일 데이터로, 기관유형·지역·제공기관·출생년도·성별·등록유형과 함께 6개 표준 문항(첫 담배까지 시간, 금연구역 흡연 참기, 하루 흡연 개비 수 등) 결과가 들어 있다. 금연 정책 분석가나 보건소 담당자가 지역·성별·연령대별로 금연 서비스 등록자의 니코틴 의존 수준이 어떻게 다른지, 니코틴 보조제가 필요한 고의존 흡연자가 어느 정도인지 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 지역명·제공기관명 같은 이름 매핑이나 같은 기관(한국건강증진개발원)의 다른 국가금연지원서비스 등록정보와 맞춰 이어 쓴다.
 limits: 보건소코드·시군구코드 같은 표준 코드가 없어 지역사회 건강조사 등 시군구 지표와 바로 결합되지 않고 이름 매핑이 필요하다. 개인 식별자가 없어 같은 사람의 금연 성공 여부나 추적 결과는 이 파일만으로 알 수 없다.
 review:
   summary: draft
@@ -283,3 +294,4 @@ review:
     - c-15092383-04
     - c-15092383-06
   dropped_citations: 0
+status: active

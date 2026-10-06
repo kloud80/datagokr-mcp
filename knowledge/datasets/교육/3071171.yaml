@@ -1,4 +1,5 @@
-# Dataset 3071171 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3071171 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3071171'
 tier: verified
 title: 한국장학재단_대학별 평균등록금
@@ -22,6 +23,7 @@ synonyms:
   - 대학정보공시 등록금
   - 등록금 공시
   - 입학정원
+summary_user: 대학별 입학정원, 평균입학금, 연간 기준 평균등록금(원)을 학제·설립·지역 구분과 함께 담은 대학정보공시 기반 집계 파일로, 범위는 전국이며 분교·캠퍼스는 본교에 통합해 산출한다. 학부모·수험생이 지원할 대학의 1년 등록금이 얼마인지 비교하거나, 분석가가 설립 유형·지역별 등록금 수준 차이를 살펴보는 데 쓴다. 전역 조인 키가 없어 다른 대학 공시·장학 데이터와는 대학명을 이름 매핑해 연결해야 한다.
 description_portal: '- 매년 4월 대학정보공시 기준의 대학별 입학정원, 평균입학금, 평균등록금을 확인할 수 있음(분교, 캠퍼스는 본교에 통합 산출) * 「고등교육법」제11조 제2항(2019.2.13. 신설)에 근거하여 학부는 2023년부터 입학금 전면 폐지  ※ 2023년 이전 입학금 폐지 완료한 대학 존재- 등록금 공시조사를 안정적으로 수행하여 국민들이 원하는 대학의 등록금을 적시에 확인할 수 있도록 체계화된 자료 제공 가능- 통계자료 분석 기반 조성으로 등록금 부담 완화 정책, 학자금 지원 사업 등 교육정책 수립 지원 및 교육 연구 기초자료 발굴- 평균등록금은 학기 기준이 아닌 연간 기준으로 작성되었음'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -57,6 +59,7 @@ schema:
         unique: 2
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 강원대학교
@@ -107,6 +110,12 @@ schema:
         p50: 6711017.449999999
         max: 9898886
         unique: 358
+  foreign_keys:
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -149,7 +158,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3071171-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: univ_school_cd(대학명)'
     evidence:
       - type: measured
         source: probe/stats/3071171.json
@@ -213,8 +222,6 @@ verification:
   run: probe/runs/3071171.json
   stats: probe/stats/3071171.json
   data: probe/data/3071171/
-status: active
-summary_user: 대학별 입학정원, 평균입학금, 연간 기준 평균등록금(원)을 학제·설립·지역 구분과 함께 담은 대학정보공시 기반 집계 파일로, 범위는 전국이며 분교·캠퍼스는 본교에 통합해 산출한다. 학부모·수험생이 지원할 대학의 1년 등록금이 얼마인지 비교하거나, 분석가가 설립 유형·지역별 등록금 수준 차이를 살펴보는 데 쓴다. 전역 조인 키가 없어 다른 대학 공시·장학 데이터와는 대학명을 이름 매핑해 연결해야 한다.
 limits: 대학코드 같은 공통 키가 없어 대학명 표기 차이에 따른 매칭 오류에 주의해야 한다. 분교·캠퍼스별 등록금은 따로 볼 수 없고, 평균등록금은 학기가 아닌 연간 기준이다. 학부 입학금은 2023년부터 전면 폐지되어 이후 평균입학금 값은 해석에 주의한다.
 review:
   summary: draft
@@ -226,3 +233,4 @@ review:
     - c-3071171-03
     - c-3071171-04
   dropped_citations: 0
+status: active

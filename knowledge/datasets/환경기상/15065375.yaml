@@ -1,4 +1,5 @@
-# Dataset 15065375 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15065375 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15065375'
 tier: verified
 title: 한국환경공단_영농폐기물관리시스템_품목코드정보
@@ -22,6 +23,7 @@ synonyms:
   - 영농폐기물 품목체계
   - 폐농약병
   - 하우스비닐
+summary_user: 한국환경공단 영농폐기물관리시스템에서 쓰는 품목코드 체계를 담은 코드표 파일로, 영농폐기물을 비닐류·농약용기류·종말품으로 나누고 세부 품목마다 코드·이름·상위품목·품목레벨을 부여한 계층 구조를 행 단위로 담는다(파일 크기 625바이트의 소규모 CSV). 지자체·농협·민간 수거업체 담당자나 분석가가 '하우스비닐이나 폐농약유리병이 어느 분류에 속하고 코드가 무엇인가'를 확인하거나 수거·재활용 기록의 품목명을 표준화할 때 쓴다. 전역 조인 키는 없어서, 같은 기관의 영농폐기물 관련 데이터에 품목코드나 품목명을 매핑해 붙여 쓰고, 상위품목코드로 자기 자신과 이어 계층을 펼친다.
 description_portal: '이 데이터는 한국환경공단의 영농폐기물관리시스템에서 사용하는 품목코드 체계를 나타냅니다. 농업 현장에서 발생하는 폐기물을 비닐류, 농약용기류, 종말품(목재·플라스틱·고철 등)으로 구분하고, 각 세부 품목(예: 하우스비닐, 폐농약유리병, 폐플라스틱 등)에 고유한 코드와 계층 구조(상위·하위 품목코드)를 부여하여 관리합니다.이를 통해 영농폐기물의 수거·재활용·폐기 과정을 체계적으로 관리할 수 있습니다.또한, 해당 코드 체계를 활용하면 지자체, 농협, 민간 수거업체 등 다양한 이해관계자 간의 데이터 표준화를 이끌어냄으로써 농민들이 이해하기 쉽게 정보를 전달할 수 있습니다.'
 accrual_periodicity: 연간
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 품목코드
       type: code
+      semantic_type: agri_waste_item_cd
       null_rate: 0.0
       sample_values:
         - P001
@@ -91,12 +94,23 @@ schema:
         p50: 8
         max: 14
         unique: 11
+  foreign_keys:
+    - fields:
+        - 품목코드
+      reference:
+        key: agri_waste_item_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  category:
+    - hs_cd
+  category_fields:
+    - 품목코드
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -133,7 +147,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15065375-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_waste_item_cd(품목코드)'
     evidence:
       - type: measured
         source: probe/stats/15065375.json
@@ -198,8 +212,6 @@ verification:
   run: probe/runs/15065375.json
   stats: probe/stats/15065375.json
   data: probe/data/15065375/
-status: active
-summary_user: 한국환경공단 영농폐기물관리시스템에서 쓰는 품목코드 체계를 담은 코드표 파일로, 영농폐기물을 비닐류·농약용기류·종말품으로 나누고 세부 품목마다 코드·이름·상위품목·품목레벨을 부여한 계층 구조를 행 단위로 담는다(파일 크기 625바이트의 소규모 CSV). 지자체·농협·민간 수거업체 담당자나 분석가가 '하우스비닐이나 폐농약유리병이 어느 분류에 속하고 코드가 무엇인가'를 확인하거나 수거·재활용 기록의 품목명을 표준화할 때 쓴다. 전역 조인 키는 없어서, 같은 기관의 영농폐기물 관련 데이터에 품목코드나 품목명을 매핑해 붙여 쓰고, 상위품목코드로 자기 자신과 이어 계층을 펼친다.
 limits: 품목 분류 코드표일 뿐이라 영농폐기물 발생량·수거량·처리현황이나 지역별 정보는 담지 않는다(범위 전국·비공간). 다른 데이터와 공통 키가 없어 이름·코드 매핑으로만 연결해야 한다.
 review:
   summary: draft
@@ -211,3 +223,4 @@ review:
     - c-15065375-03
     - c-15065375-04
   dropped_citations: 0
+status: active

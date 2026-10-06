@@ -79,6 +79,7 @@ schema:
     - name: PRGRM_SN
       title: 프로그램일련번호
       type: number
+      semantic_type: inmun_prgrm_sn
       null_rate: 0.0
       sample_values:
         - '3138'
@@ -92,6 +93,7 @@ schema:
     - name: SPRT_BIZ_SN
       title: 지원사업일련번호
       type: number
+      semantic_type: inmun_sprt_biz_sn
       null_rate: 0.0
       sample_values:
         - '674'
@@ -348,9 +350,29 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - PRGRM_SN
+      reference:
+        key: inmun_prgrm_sn
+      evidence: measured
+    - fields:
+        - SPRT_BIZ_SN
+      reference:
+        key: inmun_sprt_biz_sn
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - PRGRM_ACTV_RGN_SGG_NM
+  space_via: name
+  time: day
+  time_fields:
+    - REG_DT
+    - UPDT_DT
 cycle: event
 classification:
   subsector_name: 전시·행사 (문화포털 전국 행사·국립박물관 전시·소장품·강좌)
@@ -395,7 +417,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15156652-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: inmun_prgrm_sn(PRGRM_SN), inmun_sprt_biz_sn(SPRT_BIZ_SN)'
     evidence:
       - type: measured
         source: probe/stats/15156652.json

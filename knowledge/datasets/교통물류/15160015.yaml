@@ -134,6 +134,7 @@ schema:
     - name: etryptCo
       title: 입항횟수
       type: number
+      semantic_type: port_call_no
       null_rate: 0.0
       sample_values:
         - '088'
@@ -217,6 +218,7 @@ schema:
     - name: reqstFcltyCd
       title: 요청시설코드
       type: code
+      semantic_type: port_facility_cd
       null_rate: 0.0
       sample_values:
         - WAN
@@ -365,9 +367,25 @@ schema:
       reference:
         key: vessel_id
       evidence: measured
+    - fields:
+        - etryptCo
+      reference:
+        key: port_call_no
+      evidence: measured
+    - fields:
+        - reqstFcltyCd
+      reference:
+        key: port_facility_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - beginPrrrnDt
+    - endPrrrnDt
+    - beginAppnDt
 cycle: default
 classification:
   subsector_name: vessel-movements
@@ -412,7 +430,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15160015-03
     kind: key
-    value: '실측 조인 키: vessel_id(clsgn)'
+    value: '실측 조인 키: vessel_id(clsgn), port_call_no(etryptCo), port_facility_cd(reqstFcltyCd)'
     evidence:
       - type: measured
         source: probe/stats/15160015.json

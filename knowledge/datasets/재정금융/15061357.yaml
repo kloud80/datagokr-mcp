@@ -1,4 +1,5 @@
-# Dataset 15061357 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061357 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061357'
 tier: verified
 title: 금융위원회_금융통계선물사정보
@@ -25,6 +26,7 @@ synonyms:
   - 파생상품 거래실적
   - 선물회사 ROE
   - 금융회사 업권별 통계
+summary_user: 선물회사별·기준년월별로 일반현황(설립일·본점소재지·영업망), 재무현황(자산·부채·자기자본), 주요경영지표(ROA·ROE), 주요영업활동(고객예탁금·파생상품 거래실적·수탁고), 보도자료 기준 통계를 5개 오퍼레이션으로 담은 전국 단위 금융회사 원장형 통계다. 분석가나 투자자가 '특정 선물회사의 자기자본과 ROE가 최근 몇 년 사이 어떻게 변했고, 영업망은 얼마나 되는가'처럼 선물업권 회사 간 구조와 성과를 비교하는 데 쓴다. 법인등록번호(crno)를 조인 키로 써서 금융위원회 기업정보·공시 재무 데이터나 다른 업권 금융통계와 회사 단위로 잇는다.
 description_portal: '금융통계선물사정보는 기준년월 및 회사명을 기준으로 선물회사의 일반현황, 재무상태, 경영성과 및 주요 영업활동 정보를 제공하는 데이터입니다. 선물업권 내 기업의 구조와 성과를 시계열로 데이터로 제공합니다.이 데이터는 5개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 선물사 일반현황 조회 : 설립일, 본점소재지, 영업망 등 선물사의 일반 정보를 제공합니다.② 선물사 재무현황 조회 : 자산, 부채, 자기자본 등 재무구조 정보를 제공합니다.③ 선물사 주요경영지표 조회 : ROA, ROE 등 수익성과 관련된 경영지표를 조회할 수 있습니다.④ 선물사 주요영업활동 조회 : 고객예탁금, 파생상품 거래실적, 수탁고 등 영업성과 항목을 제공합니다.⑤ 선물사 보도자료 통계 조회 : 보도자료에 기재된 통계를 기준으로 선물사의 주요 수치를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -73,6 +75,7 @@ schema:
         unique: 11
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010891'
@@ -188,6 +191,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -237,7 +245,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061357-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061357.json
@@ -302,8 +310,6 @@ verification:
   run: probe/runs/15061357.json
   stats: probe/stats/15061357.json
   data: probe/data/15061357/
-status: active
-summary_user: 선물회사별·기준년월별로 일반현황(설립일·본점소재지·영업망), 재무현황(자산·부채·자기자본), 주요경영지표(ROA·ROE), 주요영업활동(고객예탁금·파생상품 거래실적·수탁고), 보도자료 기준 통계를 5개 오퍼레이션으로 담은 전국 단위 금융회사 원장형 통계다. 분석가나 투자자가 '특정 선물회사의 자기자본과 ROE가 최근 몇 년 사이 어떻게 변했고, 영업망은 얼마나 되는가'처럼 선물업권 회사 간 구조와 성과를 비교하는 데 쓴다. 법인등록번호(crno)를 조인 키로 써서 금융위원회 기업정보·공시 재무 데이터나 다른 업권 금융통계와 회사 단위로 잇는다.
 limits: 전국 단위의 비공간 데이터라 지역별 분석에는 쓰지 못한다. 포털 활용신청은 자동승인되며, 개발계정은 하루 10,000회로 호출이 제한된다. 실호출 검증은 5개 오퍼레이션 중 1개만 이뤄졌으므로 나머지 오퍼레이션은 응답을 직접 확인한 뒤 써야 한다.
 review:
   summary: draft
@@ -316,3 +322,4 @@ review:
     - c-15061357-04
     - c-15061357-06
   dropped_citations: 0
+status: active

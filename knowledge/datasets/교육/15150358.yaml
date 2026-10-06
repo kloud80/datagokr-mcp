@@ -1,4 +1,5 @@
-# Dataset 15150358 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15150358 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150358'
 tier: verified
 title: 한국산업인력공단_국가기술자격시험_공통 시험기준
@@ -20,6 +21,7 @@ synonyms:
   - 자격증 응시료
   - 종목코드
   - Q-Net 시험기준
+summary_user: 과정평가형 국가기술자격의 종목별 시험기준을 종목(종목코드·종목명) 단위로 담는다. 평가비율, 합격기준점, 응시료 적용비율, 계좌이체·카드결제·가상계좌 사용 여부를 포함한다. 과정평가형으로 자격을 따려는 수험생이나 훈련기관이 '이 종목은 내부·외부평가를 어떤 비율로 반영하고 몇 점 이상이면 합격인가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했다. 종목코드(jmCd)나 종목명으로 같은 기관의 능력단위별 내부평가방법·직업기초능력, 시험 일정, 합격률 데이터와 맞춰 쓴다.
 description_portal: 과정평가형 종목별 시험기준 조회 API 서비스는 종목명, 종목코드, 평가비율, 합격기준점, 계좌이체 여부 등을 제공하며, 조회된 종목코드를 기반으로 능력단위별 내부평가방법과 직업기초능력 정보를 제공하는 API입니다
 team:
   dept: 자격정보화부
@@ -97,6 +99,7 @@ schema:
         unique: 1
     - name: jmCd
       type: string
+      semantic_type: qnet_jm_cd
       null_rate: 0.0
       sample_values:
         - B021
@@ -115,6 +118,7 @@ schema:
         unique: 228
     - name: organStdVerCd
       type: code
+      semantic_type: organ_std_ver_cd
       null_rate: 0.0
       sample_values:
         - v3.0
@@ -163,6 +167,17 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - jmCd
+      reference:
+        key: qnet_jm_cd
+      evidence: measured
+    - fields:
+        - organStdVerCd
+      reference:
+        key: organ_std_ver_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -212,7 +227,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15150358-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: qnet_jm_cd(jmCd), organ_std_ver_cd(organStdVerCd)'
     evidence:
       - type: measured
         source: probe/stats/15150358.json
@@ -277,8 +292,6 @@ verification:
   run: probe/runs/15150358.json
   stats: probe/stats/15150358.json
   data: probe/data/15150358/
-status: active
-summary_user: 과정평가형 국가기술자격의 종목별 시험기준을 종목(종목코드·종목명) 단위로 담는다. 평가비율, 합격기준점, 응시료 적용비율, 계좌이체·카드결제·가상계좌 사용 여부를 포함한다. 과정평가형으로 자격을 따려는 수험생이나 훈련기관이 '이 종목은 내부·외부평가를 어떤 비율로 반영하고 몇 점 이상이면 합격인가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했다. 종목코드(jmCd)나 종목명으로 같은 기관의 능력단위별 내부평가방법·직업기초능력, 시험 일정, 합격률 데이터와 맞춰 쓴다.
 limits: 전국 범위의 비공간 데이터라 지역별 비교에는 쓰지 못한다. 다른 기관 데이터와 직접 이을 공통 키가 없어 종목명·코드 매핑이 필요하다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -291,3 +304,4 @@ review:
     - c-15150358-04
     - c-15150358-06
   dropped_citations: 0
+status: active

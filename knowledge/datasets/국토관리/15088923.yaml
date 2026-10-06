@@ -1,4 +1,5 @@
-# Dataset 15088923 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15088923 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088923'
 tier: verified
 title: 한국산업단지공단_팩토리온_업종관리
@@ -22,6 +23,7 @@ synonyms:
   - 입주기업 업종
   - 산업단지 입주업체
   - 제조업 공장 명부
+summary_user: 팩토리온(공장설립온라인지원시스템)에 등록된 전국 공장을 공장 단위로 담은 파일로, 2021년 7월말 기준 회사명·시도·시군구·단지명과 공장구분·설립구분·입주형태·보유구분, 생산품·원자재, 대표업종과 업종코드를 담는다. 분석가나 지자체 담당자가 '어느 시군구·산업단지에 어떤 업종의 공장이 얼마나 모여 있고, 주로 무엇을 생산하는가'를 파악하는 데 쓴다. 실측 컬럼에 사업자번호·필지번호 같은 전역 조인 키가 없어, 다른 데이터와는 시도·시군구명, 단지명, 업종코드(업종 분류) 같은 이름·코드 매핑으로만 이어 쓴다.
 description_portal: 해당 공공데이터는 산업단지 내 입주기업의 현황을 체계적으로 관리하기 위한 행정 기반자료로,`21년 7월말 기준으로 집계된 공장설립온라인지원시스템(factoryon)에 등록된 공장들의 기본정보(회사명 등), 공장 규모, 공장 관리번호를 기반으로 업종정보(업종코드, 대표업종, 입주형태, 원자재 등)를 집계한 데이터입니다.데이터 건수가 많아 일반적인 엑셀, 메모장 등에서는 전체 내용이 표출되지 않을 수 있으므로,전용 데이터 분석 소프트웨어(R, Python, SPSS, Stata 등)를 활용하여 분석하시기 바랍니다.
 accrual_periodicity: 수시
 team:
@@ -162,6 +164,7 @@ schema:
         unique: 4041
     - name: 업종코드
       type: string
+      semantic_type: classification_code
       null_rate: 0.0008
       sample_values:
         - '25924'
@@ -181,12 +184,27 @@ schema:
         p50: 10
         max: 10
         unique: 5
+  foreign_keys:
+    - fields:
+        - 업종코드
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 시군구명
+  space_via: name
+  category:
+    - ksic
+  category_fields:
+    - 업종코드
 cycle: default
 classification:
   subsector_name: 공장 등록 (팩토리온 공장등록·필지·생산정보, 시군구 공장등록 현황)
@@ -224,7 +242,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088923-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: classification_code(업종코드)'
     evidence:
       - type: measured
         source: probe/stats/15088923.json
@@ -319,8 +337,6 @@ verification:
   run: probe/runs/15088923.json
   stats: probe/stats/15088923.json
   data: probe/data/15088923/
-status: active
-summary_user: 팩토리온(공장설립온라인지원시스템)에 등록된 전국 공장을 공장 단위로 담은 파일로, 2021년 7월말 기준 회사명·시도·시군구·단지명과 공장구분·설립구분·입주형태·보유구분, 생산품·원자재, 대표업종과 업종코드를 담는다. 분석가나 지자체 담당자가 '어느 시군구·산업단지에 어떤 업종의 공장이 얼마나 모여 있고, 주로 무엇을 생산하는가'를 파악하는 데 쓴다. 실측 컬럼에 사업자번호·필지번호 같은 전역 조인 키가 없어, 다른 데이터와는 시도·시군구명, 단지명, 업종코드(업종 분류) 같은 이름·코드 매핑으로만 이어 쓴다.
 limits: 사업자번호나 필지 식별자가 없어 기업 재무·토지 데이터와 건별로 정확히 붙이기 어렵고, 이름 매칭에 의존해야 한다. 파일이 약 22MB xlsx로 커서 엑셀에서 전체가 보이지 않을 수 있으니 R·Python 등으로 읽는 편이 낫다.
 review:
   summary: draft
@@ -333,3 +349,4 @@ review:
     - c-15088923-04
     - c-15088923-06
   dropped_citations: 0
+status: active

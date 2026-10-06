@@ -1,4 +1,5 @@
-# Dataset 15064522 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064522 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064522'
 tier: verified
 title: 한국교통안전공단_철도자격관리시스템_면허 정보
@@ -21,6 +22,7 @@ synonyms:
   - 면허종류코드표
   - 철도 자격 종류
   - 기관사 면허
+summary_user: 철도자격관리시스템에서 쓰는 철도 면허·자격의 종류를 코드표 형태로 담은 작은 파일(csv 781바이트)로, 면허종류코드별로 면허종류명·유효기간·면허증 인쇄 명칭·자격 구분·사용 여부를 한 행씩 담는다. 철도 자격 관련 데이터를 다루는 분석가나 개발자가 '이 면허종류코드는 어떤 면허이고 유효기간은 얼마인가'를 확인할 때 쓴다. 전역 조인 키는 없으며, 같은 기관의 철도 면허·자격 데이터에 나오는 면허종류코드나 면허종류명과 맞춰 코드 해석용 참조표로 이어 쓴다.
 description_portal: 한국교통안전공단 철도자격관리스스템에 대한 철도자격시험 면허의 종류데이터 및 자격증에 대한 종류에 대한 데이터 입니다.
 applicable_legislation:
   - law: 철도안전법
@@ -73,6 +75,7 @@ schema:
         unique: 1
     - name: 면허종류코드
       type: number
+      semantic_type: rail_license_kind_cd
       null_rate: 0.0
       sample_values:
         - '00000001'
@@ -123,6 +126,12 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 면허종류코드
+      reference:
+        key: rail_license_kind_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -165,7 +174,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064522-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_license_kind_cd(면허종류코드)'
     evidence:
       - type: measured
         source: probe/stats/15064522.json
@@ -229,8 +238,6 @@ verification:
   run: probe/runs/15064522.json
   stats: probe/stats/15064522.json
   data: probe/data/15064522/
-status: active
-summary_user: 철도자격관리시스템에서 쓰는 철도 면허·자격의 종류를 코드표 형태로 담은 작은 파일(csv 781바이트)로, 면허종류코드별로 면허종류명·유효기간·면허증 인쇄 명칭·자격 구분·사용 여부를 한 행씩 담는다. 철도 자격 관련 데이터를 다루는 분석가나 개발자가 '이 면허종류코드는 어떤 면허이고 유효기간은 얼마인가'를 확인할 때 쓴다. 전역 조인 키는 없으며, 같은 기관의 철도 면허·자격 데이터에 나오는 면허종류코드나 면허종류명과 맞춰 코드 해석용 참조표로 이어 쓴다.
 limits: 면허 종류를 정의한 코드표일 뿐 개인별 면허 취득·보유 현황이나 시험 결과는 담지 않는다. 다른 데이터와 공통 키가 없어 면허종류코드·이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -242,3 +249,4 @@ review:
     - c-15064522-03
     - c-15064522-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 3074940 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3074940 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3074940'
 tier: verified
 title: 법무부_외국인 국적 및 체류기간별 출국자 현황
@@ -22,6 +23,7 @@ synonyms:
   - 출입국 통계
   - 외국인 연령별 출국
   - 외국인 체류기간
+summary_user: 외국인 출국자 수를 대륙·국적·성별로 나눈 전국 단위 집계 통계로, 포털 설명은 체류기간별(1일~10년 초과) 구분이라고 하나 실제 받은 CSV(약 33KB) 컬럼은 총합계와 5세 단위 연령대(0~4세~80세 이상)로 되어 있습니다. 외국인 정책 담당자나 분석가가 '어느 국적의 어떤 성별·연령대 외국인이 많이 출국하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 국가명·대륙명을 이름으로 맞춰 같은 법무부의 체류 외국인·출입국자 통계와 이어 쓴다.
 description_portal: 국내 체류중인 외국인에 대한 외국인 정책 수립의 기초자료로 활용되는 자료로  제공되는 항목은 대륙별, 국적별, 성별, 체류기간별 출국자수 입니다국적(지역)별 , 성별에 따른  출국자의 통계이며 국내 체류기간 (1일//2일/3일/4일/5일,6~10일,11~20일,1개월 이하,2개월 이하,3개월 이하,6개월 이하,1년 이하,2년 이하,3년 이하,5년 이하,10년 이하,10년 초과)로 구분하여 제공해당 통계를 활용하여 국내에 체류한 기간별 국적 현황/ 성별 현황을 확인하실 수 있습니다.해당 통계는 "출국자"에 관한 통계이며 입국자의 체류기간별 통계는 부존재합니다.
 legal_basis_portal: 출입국관리
 accrual_periodicity: 연간
@@ -45,6 +47,7 @@ schema:
         unique: 7
     - name: 국가
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 미국
@@ -277,6 +280,12 @@ schema:
         p50: 0
         max: 12855
         unique: 84
+  foreign_keys:
+    - fields:
+        - 국가
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -319,7 +328,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3074940-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국가)'
     evidence:
       - type: measured
         source: probe/stats/3074940.json
@@ -394,8 +403,6 @@ verification:
   run: probe/runs/3074940.json
   stats: probe/stats/3074940.json
   data: probe/data/3074940/
-status: active
-summary_user: 외국인 출국자 수를 대륙·국적·성별로 나눈 전국 단위 집계 통계로, 포털 설명은 체류기간별(1일~10년 초과) 구분이라고 하나 실제 받은 CSV(약 33KB) 컬럼은 총합계와 5세 단위 연령대(0~4세~80세 이상)로 되어 있습니다. 외국인 정책 담당자나 분석가가 '어느 국적의 어떤 성별·연령대 외국인이 많이 출국하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 국가명·대륙명을 이름으로 맞춰 같은 법무부의 체류 외국인·출입국자 통계와 이어 쓴다.
 limits: 전국 단위 비공간 집계라 시군구 등 지역별 분석에는 쓰지 못하며, 출국자만 다루고 입국자의 체류기간별 통계는 없습니다. 포털 설명의 체류기간 구분과 실제 파일의 연령대 컬럼이 달라 받은 파일의 컬럼을 먼저 확인해야 하고, 다른 데이터와는 국가명 매핑으로만 연결됩니다.
 review:
   summary: draft
@@ -408,3 +415,4 @@ review:
     - c-3074940-04
     - c-3074940-06
   dropped_citations: 0
+status: active

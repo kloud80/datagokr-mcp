@@ -1,4 +1,5 @@
-# Dataset 15129655 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15129655 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15129655'
 tier: verified
 title: 한국수력원자력(주)_가동원전 통합예측진단(AIMD) 현황
@@ -22,6 +23,7 @@ synonyms:
   - 원전 AI 모니터링
   - 한수원 예지정비
   - 가동원전 호기별 설비
+summary_user: 한국수력원자력 AIMD(인공지능 통합예측진단) 센터가 감시하는 가동원전 설비 현황을 노형·호기별로 감시대상 설비, 진동감시, 열화상감시 항목으로 담은 소규모 집계 파일(CSV 773바이트)이다. 원전 설비 예지정비나 AI 기반 설비감시 도입 수준을 살피는 분석가·연구자가 '어느 호기에서 어떤 설비를 진동·열화상으로 감시하고 있는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 원전 운영·고장 데이터와는 호기 이름을 맞춰 연결해야 한다.
 description_portal: 한국수력원자력㈜이 제공하는 가동원전 통합예측진단(AIMD) 현황에 관한 공개데이터입니다. 한국수력원자력㈜은 빅데이터와 인공지능(AI) 기술을 적용한 원전 설비 자동예측진단 시스템을 운영하고 있습니다. 해당데이터는 한국수력원자력㈜의 AIMD(AI Monitoring & Diagnosis) 센터에서 운영 중인 감시 대상 설비 운영 현황에 관한 데이터로 노형, 호기, 감시대상 설비, 진동감시, 열화상감시 항목으로 구성되어 있습니다. AIMD는 Artificial Intelligence Monitoring Diagnosis의 약자로 통합예측진단 시스템이라는 의미입니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 6
     - name: 호기
       type: code
+      semantic_type: kps_unit_nm
       null_rate: 0.0
       sample_values:
         - 고리2
@@ -87,6 +90,12 @@ schema:
         p50: 148.5
         max: 243
         unique: 24
+  foreign_keys:
+    - fields:
+        - 호기
+      reference:
+        key: kps_unit_nm
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -129,7 +138,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15129655-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kps_unit_nm(호기)'
     evidence:
       - type: measured
         source: probe/stats/15129655.json
@@ -183,8 +192,6 @@ verification:
   run: probe/runs/15129655.json
   stats: probe/stats/15129655.json
   data: probe/data/15129655/
-status: active
-summary_user: 한국수력원자력 AIMD(인공지능 통합예측진단) 센터가 감시하는 가동원전 설비 현황을 노형·호기별로 감시대상 설비, 진동감시, 열화상감시 항목으로 담은 소규모 집계 파일(CSV 773바이트)이다. 원전 설비 예지정비나 AI 기반 설비감시 도입 수준을 살피는 분석가·연구자가 '어느 호기에서 어떤 설비를 진동·열화상으로 감시하고 있는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 원전 운영·고장 데이터와는 호기 이름을 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 다른 데이터와는 호기·노형 이름 매핑으로만 이어 붙일 수 있다. 전국 범위의 비공간 데이터라 지역·좌표 단위 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -196,3 +203,4 @@ review:
     - c-15129655-03
     - c-15129655-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,235 @@
+# Dataset 15056866 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056866'
+tier: verified
+title: 경기도_대기오염 전광판 집계 현황
+sector: 환경기상/대기/air-quality
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056866/openapi.do
+synonyms:
+  - 대기오염전광판
+  - 대기측정
+  - 대기측정소
+  - 도시대기
+  - 도로변대기
+  - 환경
+  - 대기측정소 수
+  - 도시대기측정망
+  - 도로변대기측정소
+  - 경기도 측정소 현황
+  - 시군별 대기측정망
+  - 미세먼지 측정소 개수
+  - 대기오염 측정망
+summary_user: 경기도 시군별·집계년월별로 설치된 도시대기측정소 수와 도로변대기측정소 수를 담은 집계 현황이며, 대기오염 측정값 자체가 아니라 측정소 개수를 담는다. 분석가나 지자체 담당자가 '우리 시군에는 도로변 측정소가 몇 곳이고 다른 시군과 비교해 측정망이 충분한가'를 따질 때 쓴다. 측정소 코드 같은 전역 조인 키는 없으므로, 시군명(SIGUN_NM)이나 시군코드를 이름·코드 매핑해 경기도 시군 단위 인구·면적·대기질 통계와 이어 쓴다.
+description_portal: 이 데이터는 경기도 내 시군별 대기환경 측정을 위한 측정소 수를 도시대기측정소와 도로변대기측정소로 구분하여 집계한 현황입니다. 각 행은 특정 시군과 특정 집계년월 기준으로 설치된 대기측정소 수를 나타내며, 도시대기측정소는 일반 주거지역 및 상업지역 등에서의 대기질 측정을 목적으로 하고, 도로변대기측정소는 주요 도로변에서 차량 배출가스에 의한 대기 오염도를 측정하기 위해 설치된 설비입니다. 데이터 항목은 집계년월, 시군명, 도시대기측정소수, 도로변대기측정소수로 구성되어 있으며, 지역별 대기질 관리 수준을 평가하거나 환경 정책 수립, 대기환경 모니터링 기반 마련 등의 활용이 가능합니다.
+team:
+  dept: AI미래행정과
+services:
+  - op: AtmospherePollutionElectronic
+    name: AtmospherePollutionElectronic
+    endpoint: https://openapi.gg.go.kr/AtmospherePollutionElectronic
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202106'
+      stats:
+        min: 202106
+        p50: 202106
+        max: 202106
+        unique: 1
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원시
+        - 고양시
+        - 용인시
+      stats:
+        unique: 5
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41110'
+        - '41280'
+        - '41460'
+      stats:
+        min: 41110
+        p50: 41190
+        max: 41460
+        unique: 5
+    - name: CITY_ATMOS_MESURSTN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '6'
+        - '7'
+      stats:
+        min: 4
+        p50: 6
+        max: 7
+        unique: 3
+    - name: ROADSD_ATMOS_MESURSTN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 1
+        max: 2
+        unique: 2
+    - name: RM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6029
+  brm: 환경기상 - 대기
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15056866-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056866.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15056866-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056866-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056866.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056866-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056866.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056866-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056866-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056866-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056866.json
+  stats: probe/stats/15056866.json
+  data: probe/data/15056866/
+limits: 시간별 미세먼지·오존 농도나 경보·주의보 같은 실시간 대기질 값은 담지 않으며, 측정소 단위로 다른 측정 데이터와 바로 연결할 키도 없다. 호출에는 포털 활용신청과 별도로 외부 사이트(data.gg.go.kr) 인증키가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15056866-01
+    - c-15056866-03
+    - c-15056866-06
+  dropped_citations: 0
+status: active

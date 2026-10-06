@@ -1,4 +1,5 @@
-# Dataset 15025430 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15025430 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15025430'
 tier: verified
 title: 외교부_특별여행 경보제도
@@ -23,6 +24,7 @@ synonyms:
   - 해외안전여행
   - 여행금지 국가
   - '0404'
+summary_user: 외교부가 단기적 위험 상황에 발령하는 특별여행주의보·특별여행경보 대상국가 목록을 국가 단위로 담은 API로, 국가별 발령 여부(전체·일부 지역)와 내용, 여행위험지도 경로, 등록일을 제공한다. 해외여행 예정자나 여행사가 '지금 가려는 나라에 특별여행주의보가 발령돼 있어 여행을 취소·연기해야 하는지'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으나 ISO코드(iso_code)와 국가명이 있어, 같은 외교부의 일반 여행경보·안전공지·입국허가요건 데이터와 국가 표준코드나 국가명으로 맞춰 이어 쓴다.
 description_portal: 외교부 해외안전여행(https://www.0404.go.kr/)의 여행경보제도를 API로 서비스합니다.외교부에서 지정하는 여행 유의, 자제, 제한 등 해외 여행경보 대상국가 목록 및 상세정보를 조회할 수 있다. 특별여행경보 제도는 단기적인 위험 상황이 발생하는 경우에 발령하고 있습니다.ㅁ 특별여행주의보 발령에 따른 행동요령은 여행경보 2단계 이상 3단계 이하에 준합니다.  예) (여행예정자) 여행 취소·연기, (체류자) 신변안전 특별유의ㅁ 특별여행주의보 발령 기간은 90일을 넘지 않습니다.(통상 1개월 단위로 발령)ㅁ (발령기준) 단기적인 위험 상황이 발생하는 경우
 team:
   dept: 정보화담당관실
@@ -137,6 +139,7 @@ schema:
     - name: iso_code
       title: ISO코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - BO
@@ -194,6 +197,12 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - iso_code
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -244,7 +253,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15025430-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(iso_code)'
     evidence:
       - type: measured
         source: probe/stats/15025430.json
@@ -309,8 +318,6 @@ verification:
   run: probe/runs/15025430.json
   stats: probe/stats/15025430.json
   data: probe/data/15025430/
-status: active
-summary_user: 외교부가 단기적 위험 상황에 발령하는 특별여행주의보·특별여행경보 대상국가 목록을 국가 단위로 담은 API로, 국가별 발령 여부(전체·일부 지역)와 내용, 여행위험지도 경로, 등록일을 제공한다. 해외여행 예정자나 여행사가 '지금 가려는 나라에 특별여행주의보가 발령돼 있어 여행을 취소·연기해야 하는지'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으나 ISO코드(iso_code)와 국가명이 있어, 같은 외교부의 일반 여행경보·안전공지·입국허가요건 데이터와 국가 표준코드나 국가명으로 맞춰 이어 쓴다.
 limits: 전역 조인 키가 실측되지 않아 다른 데이터와는 국가명·ISO코드 매핑으로만 연결해야 한다. 갱신은 발령 같은 사건이 있을 때 생성되는 이벤트 주기라 정기 시계열로 보기 어렵고, 경보 조정의 시의성이 중요하므로 조회 시점의 등록일(wrt_dt)을 함께 확인해야 한다. 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -323,3 +330,4 @@ review:
     - c-15025430-03
     - c-15025430-06
   dropped_citations: 0
+status: active

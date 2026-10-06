@@ -1,4 +1,5 @@
-# Dataset 15063803 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15063803 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15063803'
 tier: verified
 title: 국토교통부_국토관리사무소별_보유장비정보
@@ -24,6 +25,7 @@ synonyms:
   - 장비 보험 가입 현황
   - 장비 취득 처분 이력
   - 국토관리청 차량
+summary_user: 전국 18개 국토관리사무소가 보유한 장비를 장비 한 대당 한 행으로 담은 CSV 파일(약 1.6MB)로, 등록·취득·처분 이력, 주기계·보조기계 제원, 보험 가입 현황을 함께 싣는다. 분석가가 "어느 국토관리사무소에 어떤 차종의 장비가 몇 대 있고, 내용연수를 넘긴 노후 장비는 얼마나 되나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사무소명(사무소명_약자1)이나 제작회사·차종 같은 이름 매핑으로만 이을 수 있다.
 description_portal: 전국 18개 국토 관리 사무소 별로 보유중인 장비의 현황 정보 데이터로 등록정보, 제원정보, 보험정보 등을 제공합니다.등록정보는 장비번호, 등록번호, 등록일자, 형식, 차종구분, 차형구분, 제작회사, 차대일련번호, 연식, 등록관서, 거리시간구분, 취득일자, 취득구분, 취득관련문서, 불용결정일, 처분일자, 처분사유구분, 처분금액, 처분관련부서, 처분처비고, 내용연수, 기준일수, 관리번호구분, 사용부서구분, 사용플래그 등의 데이터 정보를 제공합니다.제원정보는 주기계제작회사, 보조기계제작회사, 주기계형식, 보조기계형식, 주기계일련번호, 보조기계일련번호, 주기계실린더수, 보조기계실린더수, 주기계정격출력, 보조기계정격출력, 주기계분당회전수_RPM, 보조기계분당회전수_RPM, 주기계배기량_CC, 보조기계배기량_CC, 주기계비고, 보조기계비고 등의 데이터 정보를 제공합니다.보험정보는 책임대인가입여부, 대인가입여부, 대물가입여부, 자기신체가입여부, 자기차량가입여부, 무보험가입여부, 보험료, 보험가입시작일, 보험가입종료일, 회사명 등의 데이터 정보를 제공합니다.
 applicable_legislation:
   - law: 도로법
@@ -54,6 +56,7 @@ schema:
         unique: 18
     - name: 장비번호
       type: string
+      semantic_type: moct_equip_no
       null_rate: 0.0
       sample_values:
         - 999-999
@@ -556,12 +559,24 @@ schema:
         - 삼성화재
       stats:
         unique: 57
+  foreign_keys:
+    - fields:
+        - 장비번호
+      reference:
+        key: moct_equip_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일자
+    - 취득일자
+    - 불용결정일
 cycle: default
 classification:
   subsector_name: 도로 기타
@@ -597,7 +612,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15063803-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: moct_equip_no(장비번호)'
     evidence:
       - type: measured
         source: probe/stats/15063803.json
@@ -661,8 +676,6 @@ verification:
   run: probe/runs/15063803.json
   stats: probe/stats/15063803.json
   data: probe/data/15063803/
-status: active
-summary_user: 전국 18개 국토관리사무소가 보유한 장비를 장비 한 대당 한 행으로 담은 CSV 파일(약 1.6MB)로, 등록·취득·처분 이력, 주기계·보조기계 제원, 보험 가입 현황을 함께 싣는다. 분석가가 "어느 국토관리사무소에 어떤 차종의 장비가 몇 대 있고, 내용연수를 넘긴 노후 장비는 얼마나 되나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사무소명(사무소명_약자1)이나 제작회사·차종 같은 이름 매핑으로만 이을 수 있다.
 limits: 표준 조인 키가 없어 다른 데이터셋과 정확히 연결하려면 사무소명 등 이름 매칭이 필요하다. 범위는 전국이지만 좌표나 행정구역 코드가 없는 비공간 데이터라 지도 위치 분석에는 쓰기 어렵다.
 review:
   summary: draft
@@ -674,3 +687,4 @@ review:
     - c-15063803-03
     - c-15063803-04
   dropped_citations: 0
+status: active

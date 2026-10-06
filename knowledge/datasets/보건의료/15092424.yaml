@@ -1,4 +1,5 @@
-# Dataset 15092424 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092424 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092424'
 tier: verified
 title: 한국건강증진개발원_단기금연캠프 등록자 심리평가 정보
@@ -21,6 +22,7 @@ synonyms:
   - 금연동기
   - 금연효능감
   - 흡연유형
+summary_user: 지역금연지원센터 단기금연캠프 참여자의 흡연자 심리평가(니코틴의존도, 흡연유형, 흡연갈망, 금연동기, 금연효과지각 등) 결과를 기관별·성별·사전사후 구분(구분)별로 집계해 담은 전국 단위 CSV 파일(약 730KB)이다. 금연사업 담당자나 연구자가 '캠프 참여 전후로 니코틴의존도와 금연동기 점수 분포가 어떻게 달라졌는가'를 기관·성별로 비교하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관명(지역금연지원센터 이름)을 이름 매핑해서만 이어 쓸 수 있다.
 description_portal: 국가금연지원서비스 중 지역금연지원센터의 단기금연캠프 대상자의 흡연자 심리평가 결과 현황을 제공합니다. - 니코틴의존도, 흡연유형, 흡연갈망, 금연동기, 금연효과지각, 금연효능감, 우울감, 스트레스, 정서조절방략 - 본 데이터는 기관별, 성별, 심리평가 결과별로 구분하여 대상자의 사전사후 평가결과데이터를 제공하고 있습니다.  - 본 데이터는 금연관련 정책 또는 사업 활성화 및 단기금연캠프 참여자의 심리분석 등과 같은 연구 수행 시 기초자료 및 근거자료로 활용될 것으로 기대하고 있습니다.
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 기관명
       type: code
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 서울금연지원센터
@@ -996,6 +999,12 @@ schema:
         p50: 38
         max: 100
         unique: 25
+  foreign_keys:
+    - fields:
+        - 기관명
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -1038,7 +1047,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092424-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(기관명)'
     evidence:
       - type: measured
         source: probe/stats/15092424.json
@@ -1103,8 +1112,6 @@ verification:
   run: probe/runs/15092424.json
   stats: probe/stats/15092424.json
   data: probe/data/15092424/
-status: active
-summary_user: 지역금연지원센터 단기금연캠프 참여자의 흡연자 심리평가(니코틴의존도, 흡연유형, 흡연갈망, 금연동기, 금연효과지각 등) 결과를 기관별·성별·사전사후 구분(구분)별로 집계해 담은 전국 단위 CSV 파일(약 730KB)이다. 금연사업 담당자나 연구자가 '캠프 참여 전후로 니코틴의존도와 금연동기 점수 분포가 어떻게 달라졌는가'를 기관·성별로 비교하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관명(지역금연지원센터 이름)을 이름 매핑해서만 이어 쓸 수 있다.
 limits: 개인별 건 단위가 아닌 기관·성별·평가결과별 집계이고, 보건소코드·시군구코드 같은 표준 키가 없어 지역사회 건강조사 등과 직접 결합할 수 없다. 기관명 기준 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -1116,3 +1123,4 @@ review:
     - c-15092424-03
     - c-15092424-04
   dropped_citations: 0
+status: active

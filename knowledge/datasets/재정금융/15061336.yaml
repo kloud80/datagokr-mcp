@@ -1,4 +1,5 @@
-# Dataset 15061336 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061336 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061336'
 tier: verified
 title: 금융위원회_금융통계신기술금융사정보
@@ -25,6 +26,7 @@ synonyms:
   - 벤처캐피탈 금융사
   - 신기술금융사 임직원 현황
   - 금융통계정보
+summary_user: 신기술금융사의 일반현황(임직원 수 등), 재무현황(요약재무상태표 계정과목별 금액·구성비율), 주요경영지표(이사·감사 보수 등), 주요영업활동(부문별 금액)을 기준년월별 금융회사 단위 시계열로 담는 전국 범위 업권별 금융통계입니다. 분석가가 "특정 신기술금융사의 임직원 수와 자산 구성은 기준년월마다 어떻게 바뀌었나" 같은 질문에 답하거나 업권 내 회사를 비교할 때 쓴다. 법인등록번호(crno)를 조인 키로 삼아 금융위원회 기업정보·공시/재무 데이터와 다른 업권 금융통계의 같은 법인을 이어 쓰고, 금융회사코드(fncoCd)도 함께 담는다.
 description_portal: '금융통계신기술금융사정보는 기준년월을 기준으로 신기술금융사일반현황, 신기술금융사재무현황, 신기술금융사주요경영지표, 신기술금융사주요영업활동 등의 정보를 시계열 형식으로 제공하는 데이터입니다. 이 데이터는 4개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 신기술 금융사 일반현황 조회 : 기준년월등을 통하여 금융회사명, 인원수, 임직원수, 임직원 구분코드명등을 조회하는 신기술금융사일반현황조회 기능② 신기술 금융사 재무현황 조회 : 기준년월 등을 통하여 금융회사명, 자산요약재무상태표계정과목금액, 자산요약재무상태표계정과목코드, 자산요약재무상태표계정과목코드명, 자산요약재무상태표계정과목구성비율, 법인등록번호등을 조회하는 신기술금융사재무현황조회 기능③ 신기술 금융사 주요경영지표 조회 : 기준일자, 법인등록번호를 통하여 등기이사비고내용, 사외이사총보수금액, 감사인수, 감사인총보수금액등을 조회하는 신기술금융사주요경영지표조회 기능④ 신기술 금융사 주요영업활동 조회 : 기준년월 등을 통하여, 금융회사명, 부문구분금액, 부문구분코드, 부문구분코드명 등을 조회하는 신기술금융사주요영업활동조회 기능'
 team:
   dept: 금융공공데이터팀
@@ -73,6 +75,7 @@ schema:
         unique: 14
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010275'
@@ -158,6 +161,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -207,7 +215,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061336-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061336.json
@@ -272,8 +280,6 @@ verification:
   run: probe/runs/15061336.json
   stats: probe/stats/15061336.json
   data: probe/data/15061336/
-status: active
-summary_user: 신기술금융사의 일반현황(임직원 수 등), 재무현황(요약재무상태표 계정과목별 금액·구성비율), 주요경영지표(이사·감사 보수 등), 주요영업활동(부문별 금액)을 기준년월별 금융회사 단위 시계열로 담는 전국 범위 업권별 금융통계입니다. 분석가가 "특정 신기술금융사의 임직원 수와 자산 구성은 기준년월마다 어떻게 바뀌었나" 같은 질문에 답하거나 업권 내 회사를 비교할 때 쓴다. 법인등록번호(crno)를 조인 키로 삼아 금융위원회 기업정보·공시/재무 데이터와 다른 업권 금융통계의 같은 법인을 이어 쓰고, 금융회사코드(fncoCd)도 함께 담는다.
 limits: 금융회사 단위 집계라 개별 투자·거래 건이나 지역별 분포는 담지 않는다(전국·비공간). 실호출은 1개 오퍼레이션만 확인했으므로 나머지 오퍼레이션의 응답 형식은 호출해 보고 확인해야 하며, 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -286,3 +292,4 @@ review:
     - c-15061336-04
     - c-15061336-06
   dropped_citations: 0
+status: active

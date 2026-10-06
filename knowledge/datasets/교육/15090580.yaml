@@ -1,4 +1,5 @@
-# Dataset 15090580 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15090580 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15090580'
 tier: verified
 title: 한국교육학술정보원_학교세입세출결산
@@ -22,6 +23,7 @@ synonyms:
   - 초중고 세입세출
   - 학교 불용액 이월액
   - 교육재정 원가통계
+summary_user: 전국 초·중·고등학교의 회계연도별 세입·세출 결산을 학교(층화추출학교ID)·학교급·시도·시군구 단위로, 세입 장·관·항·목과 세출 목·세목, 정책·단위·세부사업, 원가통계비목별로 나눠 결산액·예산현액·불용액·이월액을 담은 건별 원장 파일(CSV 약 26MB)이다. 교육재정 분석가나 연구자가 '시군구·학교급별로 학교가 어떤 사업에 얼마를 쓰고 얼마를 불용·이월했는가'를 비교하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도명·시군구명 같은 이름 매핑이나 같은 기관(학교알리미) 자료의 코드로만 연결한다.
 description_portal: 제공하는 데이터는 전국 초·중·고등학교의 회계연도별 세입과 세출 결산 현황을 체계적으로 제공하는 공공데이터입니다. 주요 제공 항목에는 회계연도, 학교별 고유 식별자, 시도 및 시군구 명칭, 각 학교의 세입 및 세출 결산액 등 학교 단위의 재정 운영 실적이 포함되어 있습니다. 데이터는 「교육관련기관의 정보공개에 관한 특례법」 및 지방교육재정 관련 법령에 따라 수집·관리되며, 업데이트 주기는 수시(1회성 데이터)로 이루어집니다. 이 데이터는 학교별 재정 건전성 평가, 교육재정의 투명성 제고, 예산 편성 및 집행의 효율성 분석, 정책 수립, 연구 및 통계 등 다양한 분야에서 활용됩니다.
 accrual_periodicity: 월간
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 10
     - name: 층화추출학교ID
       type: number
+      semantic_type: edufin_sample_school_id
       null_rate: 0.0
       sample_values:
         - '3125331174'
@@ -349,12 +352,28 @@ schema:
         p50: 0
         max: 10269756152
         unique: 236
+  foreign_keys:
+    - fields:
+        - 층화추출학교ID
+      reference:
+        key: edufin_sample_school_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구명
+  space_via: name
+  time: year
+  time_fields:
+    - 회계년도
+    - 세입세출결산 다음년도사고이월금액
+    - 세입세출결산 다음년도계속비이월금액
 cycle: default
 classification:
   subsector_name: 학교알리미 공시·학교 단위 원장
@@ -391,7 +410,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15090580-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: edufin_sample_school_id(층화추출학교ID)'
     evidence:
       - type: measured
         source: probe/stats/15090580.json
@@ -456,8 +475,6 @@ verification:
   run: probe/runs/15090580.json
   stats: probe/stats/15090580.json
   data: probe/data/15090580/
-status: active
-summary_user: 전국 초·중·고등학교의 회계연도별 세입·세출 결산을 학교(층화추출학교ID)·학교급·시도·시군구 단위로, 세입 장·관·항·목과 세출 목·세목, 정책·단위·세부사업, 원가통계비목별로 나눠 결산액·예산현액·불용액·이월액을 담은 건별 원장 파일(CSV 약 26MB)이다. 교육재정 분석가나 연구자가 '시군구·학교급별로 학교가 어떤 사업에 얼마를 쓰고 얼마를 불용·이월했는가'를 비교하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도명·시군구명 같은 이름 매핑이나 같은 기관(학교알리미) 자료의 코드로만 연결한다.
 limits: 학교 식별자가 층화추출학교ID라서 실제 학교명이나 학교 코드로 바로 이어지지 않고, 이름·코드 매핑 없이는 다른 데이터셋과 결합하기 어렵다. 공간 범위는 전국이며 행정단위는 시군구까지다.
 review:
   summary: draft
@@ -470,3 +487,4 @@ review:
     - c-15090580-04
     - c-15090580-06
   dropped_citations: 0
+status: active

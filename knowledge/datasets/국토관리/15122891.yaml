@@ -1,4 +1,5 @@
-# Dataset 15122891 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15122891 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15122891'
 tier: verified
 title: 국토교통부_지적재조사 토지현황조사 연계정보
@@ -23,6 +24,7 @@ synonyms:
   - 지적재조사 사업지구
   - 용도지역지구
   - 필지 현황
+summary_user: 지적재조사 사업지구 안 토지를 대상으로 한 토지현황조사 자료를 필지·건물 단위로 담은 파일로, 사업지구명·기준년도와 함께 필지별 공시지가와 전년 대비 변동률, 용도지역지구, 대지·건물면적, 기준점 정보가 들어 있으며 범위는 전국이다. 지적재조사 사업지구 안 필지의 공시지가와 용도지역, 건축물 현황이 어떠한지 확인하려는 지자체 담당자나 토지 분석가가 쓴다. 필지고유번호(pnu)를 키로 토지대장·연속지적도·개별공시지가·토지이용계획 등 다른 필지 단위 데이터와 이어 쓴다.
 description_portal: '지적재조사 사업지구 실시계획을 수립한 때에는 예정지구임이 지적공부에 등록된 토지를 대상으로 토지현황조사를 합니다.(토지현황 사전조사 항목)토지현황조사에 관한 사항 : 지적공부 및 토지등기부건축물에관한사항 : 건축물대장 및 건물등기부토지이용계관한사항 : 토지이용계획확인서토지이용현황 및 건축물 현황 : 개별공시지가 토지특성조사표, 국공유지 실태조사표, 건축물대장 현황 및 배치도지하시설(구조)물 등 현황 : 도시철도 및 지하상가 등 지하시설물을 관리하는 관리기관, 관리부서의 자료와 구분지상권 등기사항해당 정보는 유관기관과의 연계기능을 통해 구축됩니다.'
 accrual_periodicity: 연간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 사업지구일련번호
       type: number
+      semantic_type: cadastral_resurvey_zone_sn
       null_rate: 0.0
       sample_values:
         - '11025'
@@ -252,6 +255,11 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - 사업지구일련번호
+      reference:
+        key: cadastral_resurvey_zone_sn
+      evidence: measured
+    - fields:
         - 필지고유번호
       reference:
         key: pnu
@@ -262,6 +270,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: parcel
+  space_fields:
+    - 필지고유번호
+  space_via: code
+  time: day
+  time_fields:
+    - 연계기준일시
 cycle: default
 classification:
   subsector_name: 지적 (토지·임야대장·연속지적도·지적도근점·지번)
@@ -299,7 +315,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15122891-03
     kind: key
-    value: '실측 조인 키: pnu(필지고유번호)'
+    value: '실측 조인 키: cadastral_resurvey_zone_sn(사업지구일련번호), pnu(필지고유번호)'
     evidence:
       - type: measured
         source: probe/stats/15122891.json
@@ -385,8 +401,6 @@ verification:
   run: probe/runs/15122891.json
   stats: probe/stats/15122891.json
   data: probe/data/15122891/
-status: active
-summary_user: 지적재조사 사업지구 안 토지를 대상으로 한 토지현황조사 자료를 필지·건물 단위로 담은 파일로, 사업지구명·기준년도와 함께 필지별 공시지가와 전년 대비 변동률, 용도지역지구, 대지·건물면적, 기준점 정보가 들어 있으며 범위는 전국이다. 지적재조사 사업지구 안 필지의 공시지가와 용도지역, 건축물 현황이 어떠한지 확인하려는 지자체 담당자나 토지 분석가가 쓴다. 필지고유번호(pnu)를 키로 토지대장·연속지적도·개별공시지가·토지이용계획 등 다른 필지 단위 데이터와 이어 쓴다.
 limits: 지적재조사 사업지구로 지정된 토지만 담으므로 전국 모든 필지의 현황을 대신하지 못한다. 파일 크기가 약 51KB로 작은 단일 CSV 파일이며, 필드별 명세상 의미와 코드표가 제공되지 않아 기준점구분코드·용도지역지구코드는 별도 확인이 필요하다.
 review:
   summary: draft
@@ -399,3 +413,4 @@ review:
     - c-15122891-04
     - c-15122891-06
   dropped_citations: 0
+status: active

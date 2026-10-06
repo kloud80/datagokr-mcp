@@ -1,4 +1,5 @@
-# Dataset 15044436 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044436 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044436'
 tier: verified
 title: 서울교통공사_수평보행기 설치현황
@@ -20,6 +21,7 @@ synonyms:
   - 역사 승강설비
   - 교통약자 이동시설
   - 서울지하철 수평에스컬레이터
+summary_user: 서울교통공사가 운영하는 지하철 역사의 수평보행기(무빙워크)를 1대씩 한 행으로 담은 설치현황 파일로, 호선·역명·호기 번호, 가까운 출입구, 시작층·종료층의 지상/지하 구분과 상세위치, 승강기 일련번호를 포함한다(CSV 약 2KB 규모의 소량 파일). 교통약자나 이동 동선을 안내하려는 사람이 어느 역 어느 구간에 수평보행기가 있는지 확인하거나, 분석가가 역별 편의시설 분포를 볼 때 쓴다. 전역 조인 키는 없어서 다른 역사 편의시설·승강기 데이터와는 호선·역명을 맞추거나 승강기 일련번호로 이어 써야 한다.
 description_portal: 서울교통공사의 역사 수평보행기 설치 현황 데이터 입니다.해당 데이터는 연번,호선,역  명,관리번호(호기),(근접) 출입구번호,시작층(지상_지하),시작층(운행역층),시작층(상세위치),종료층(지상_지하),종료층(운행역층),종료층(상세위치),승강기 일련번호를 포함하고 있습니다.해당 데이터는 서울교통공사의 2026년 02월 11일 기준 수평보행기 설치 현황입니다.2026년 02월 11일 기준으로 변동사항은 없습니다.데이터기준날짜를 기준으로 변동이 있을 시 상이한 부분이 있을 수 있습니다. 참고하시기 바랍니다.
 accrual_periodicity: 반기
 team:
@@ -137,6 +139,7 @@ schema:
         unique: 6
     - name: 승강기 일련번호
       type: code
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - 1800-199
@@ -153,12 +156,22 @@ schema:
         min: '2026-09-01'
         max: '2026-09-01'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 승강기 일련번호
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 데이터 기준일자
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -194,7 +207,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15044436-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(승강기 일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15044436.json
@@ -248,8 +261,6 @@ verification:
   run: probe/runs/15044436.json
   stats: probe/stats/15044436.json
   data: probe/data/15044436/
-status: active
-summary_user: 서울교통공사가 운영하는 지하철 역사의 수평보행기(무빙워크)를 1대씩 한 행으로 담은 설치현황 파일로, 호선·역명·호기 번호, 가까운 출입구, 시작층·종료층의 지상/지하 구분과 상세위치, 승강기 일련번호를 포함한다(CSV 약 2KB 규모의 소량 파일). 교통약자나 이동 동선을 안내하려는 사람이 어느 역 어느 구간에 수평보행기가 있는지 확인하거나, 분석가가 역별 편의시설 분포를 볼 때 쓴다. 전역 조인 키는 없어서 다른 역사 편의시설·승강기 데이터와는 호선·역명을 맞추거나 승강기 일련번호로 이어 써야 한다.
 limits: 표준 역 코드 같은 공통 조인 키가 없어 다른 데이터와 연결하려면 역명·호선 문자열 매핑이 필요하다. 행정구역 단위의 공간 정보가 없는 비공간 데이터이며, 기준일자 이후 설치·철거 변동은 반영되지 않았을 수 있다.
 review:
   summary: draft
@@ -261,3 +272,4 @@ review:
     - c-15044436-03
     - c-15044436-04
   dropped_citations: 0
+status: active

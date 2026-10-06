@@ -1,4 +1,5 @@
-# Dataset 15087352 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15087352 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087352'
 tier: verified
 title: 한국농수산식품유통공사_주요 채소류 일일가격 현황
@@ -23,6 +24,7 @@ synonyms:
   - 농산물 가격 위기단계
   - 평년 대비 가격
   - KAMIS 채소 가격
+summary_user: 농넷 수급관리 품목인 배추·무·건고추·양파·마늘의 도매·소매 가격을 조회일자·품목별로 담은 전국 단위 파일(CSV 약 398KB)로, 일일가격과 함께 전일·전순·전년·평년 가격과 비율, 7단계 가격 위기단계(상승심각~하락심각)를 담는다. 물가를 살피는 분석가나 식자재를 사는 사업자가 '지금 배추 도매가격이 평년보다 얼마나 높고 위기단계는 어디인가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 품목코드·품목명으로 KAMIS 일일도매가격 등과 맞춰 쓰되 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑이 필요하다.
 description_portal: 농넷(www.nongnet.or.kr)에서 제공하고 있는 수급관리 품목(배추,무,건고추,양파,마늘)의 연간 수급상황 정보 - 매월 일단위의 도소매 일일, 전일, 전순, 전년, 평년가격 등을 제공주요 농산물 도매가격을 7단계(상승심각, 상승경계, 상승주의, 안정, 하락주의, 하락경계, 하락심각)로 나누어 현시점의 가격이 어느 정도 수준인지 파악 시에 활용각 품목별 상품 기준 및 무게 기준은 KAMIS  주요 농산물 일일도매가격(https://www.kamis.or.kr/customer/price/wholesale/garak.do)과 동일
 accrual_periodicity: 연간
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 366
     - name: 품목코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '1001'
@@ -445,12 +448,28 @@ schema:
         min: '2023-12-29'
         max: '2024-01-31'
         unique: 19
+  foreign_keys:
+    - fields:
+        - 품목코드
+      reference:
+        key: agri_item_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 조회일자
+    - 도매전일자
+    - 도매일자
+  category:
+    - hs_cd
+  category_fields:
+    - 품목코드
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -487,7 +506,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15087352-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(품목코드)'
     evidence:
       - type: measured
         source: probe/stats/15087352.json
@@ -552,8 +571,6 @@ verification:
   run: probe/runs/15087352.json
   stats: probe/stats/15087352.json
   data: probe/data/15087352/
-status: active
-summary_user: 농넷 수급관리 품목인 배추·무·건고추·양파·마늘의 도매·소매 가격을 조회일자·품목별로 담은 전국 단위 파일(CSV 약 398KB)로, 일일가격과 함께 전일·전순·전년·평년 가격과 비율, 7단계 가격 위기단계(상승심각~하락심각)를 담는다. 물가를 살피는 분석가나 식자재를 사는 사업자가 '지금 배추 도매가격이 평년보다 얼마나 높고 위기단계는 어디인가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 품목코드·품목명으로 KAMIS 일일도매가격 등과 맞춰 쓰되 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑이 필요하다.
 limits: 지역별 가격이 아닌 전국 단위 수치라 시도·시장별 비교에는 쓰지 못한다. 다른 데이터와 바로 붙는 공통 키가 없어 품목코드·품목명 매핑을 따로 해야 한다.
 review:
   summary: draft
@@ -566,3 +583,4 @@ review:
     - c-15087352-04
     - c-15087352-06
   dropped_citations: 0
+status: active

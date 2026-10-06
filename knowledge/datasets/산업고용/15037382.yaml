@@ -1,0 +1,198 @@
+# Dataset 15037382 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15037382'
+tier: verified
+title: 한국고용정보원_공통코드-훈련(KECO,NCS,훈련종류 등)
+sector: 산업고용/고용노동/vocational-training
+agency:
+  id: B551904
+  name: 한국고용정보원
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15037382/openapi.do
+synonyms:
+  - NCS코드
+  - 훈련코드
+  - 직업코드
+  - 직업훈련
+  - 훈련종류
+  - 훈련지역
+  - 훈련분야
+  - 직업훈련 코드표
+  - NCS 코드
+  - KECO 직업분류
+  - 훈련분야 코드
+  - 훈련지역 코드
+  - 고용24 공통코드
+  - HRD-Net 코드
+summary_user: 직업훈련 과정 검색에 쓰는 훈련지역·훈련분야·KECO·NCS·훈련종류 같은 공통코드를 코드값·코드명·사용여부 단위로 돌려주는 전국 범위의 코드 마스터 API다. 훈련과정 조회 API를 붙이는 개발자나 분석가가 '이 훈련분야 코드는 어떤 이름이며 지금도 쓰이는가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 훈련과정 데이터에 나오는 코드값과 코드값(rsltCode)·코드명을 직접 맞춰 이어 쓴다.
+description_portal: '검색조건이나 검색 결과에 필요한 각종 코드에 대한 정보를 제공합니다. *훈련지역이나 훈련 분야와 같은 코드성 정보 제공훈련지역이나 훈련 분야와 같은 코드성 정보에 대한 정보를 제공하며, 각 화면단에서 코드값을 제공한 경우에는 이 API에서는 제외됩니다.검색조건 및 검색 결과에 필요한 각종 코드에 대한 정보를 제공합니다. 공통코드 구분, 공통코드 구분에 따른 검색값1, 공통코드 구분에 따른 검색값2 등을 파라미터로 받아 검색된 총 건수, 공통코드명칭, 코드값, 코드명, 사용여부 등의 결과를 제공합니다. * 유의사항:  문자열로 입력되는 항목의 경우 공백이나 오탈자가 포함되면 검색 결과가 제대로 나오지 않을 수 있으므로 주의해야 합니다. 대부분의 파라미터는 선택적으로 입력할 수 있으며, 필요한 조건만 입력해도 조회는 가능합니다.'
+team:
+  dept: 데이터기획운영팀
+services:
+  - op: callOpenApiSvcInfo319L01
+    name: callOpenApiSvcInfo319L01
+    endpoint: http://www.work24.go.kr/cm/openApi/call/hr/callOpenApiSvcInfo319L01.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: www.work24.go.kr
+    params:
+      - name: returnType
+        required: true
+        example: XML
+      - name: outType
+        required: true
+        example: '1'
+      - name: srchType
+        required: true
+        example: '00'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rsltCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '12'
+        - '26'
+      stats:
+        min: 11
+        p50: 42
+        max: 52
+        unique: 21
+    - name: rsltName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강원
+        - 전북
+        - 제주
+      stats:
+        unique: 18
+    - name: useYn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: event
+classification:
+  subsector_name: 직업훈련 과정 (국민내일배움카드·사업주·컨소시엄·일학습병행·NCS 훈련)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7698
+  rank_in_sector: 22
+  brm: 산업고용 - 고용노동
+  why: 고용24 (서비스별 인증키)
+claims:
+  - id: c-15037382-01
+    kind: access
+    value: 외부 사이트 www.work24.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15037382.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.work24.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15037382-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15037382-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15037382.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15037382-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15037382.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15037382-06
+    kind: admin_note
+    value: '[산업고용 · 고용노동] 채용 공고(워크넷·공공기관·장애인 구인 실시간)·직업훈련 과정·직업/직무 사전(KECO·NCS 코드 마스터)·정부지원 일자리사업·산업재해(중대재해 일별·재해사례·산재 판례/판정)·노동조합(표준데이터 활용 25,609)·고용 서비스 기관/강소기업·지역 고용동향(시도×월) (`labor-deferred`, `labor-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L641
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15037382-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15037382.json
+  stats: probe/stats/15037382.json
+  data: probe/data/15037382/
+limits: 호출에는 포털 활용신청과 별개로 고용24(work24.go.kr) 인증키가 필요하다. 각 화면에서 이미 코드값을 제공하는 항목은 이 API에서 빠지고, 문자열 파라미터에 공백이나 오탈자가 있으면 결과가 제대로 나오지 않는다. 갱신은 정기 주기가 아닌 이벤트 때 생성되는 것으로 분류되어 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15037382-01
+    - c-15037382-02
+    - c-15037382-03
+    - c-15037382-04
+  dropped_citations: 0
+status: active

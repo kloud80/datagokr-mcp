@@ -47,6 +47,7 @@ schema:
   fields:
     - name: regId
       type: string
+      semantic_type: kma_station_cd
       null_rate: 0.0
       sample_values:
         - '10000000'
@@ -162,6 +163,11 @@ schema:
         unique: 9
   foreign_keys:
     - fields:
+        - regId
+      reference:
+        key: kma_station_cd
+      evidence: measured
+    - fields:
         - lat
       reference:
         key: coord
@@ -175,6 +181,12 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1990-01-01 ~ 2025-03-05
+grain:
+  space: point
+  space_fields:
+    - lat
+    - lon
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
@@ -220,7 +232,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15057111-03
     kind: key
-    value: '실측 조인 키: coord(lat), coord(lon)'
+    value: '실측 조인 키: kma_station_cd(regId), coord(lat), coord(lon)'
     evidence:
       - type: measured
         source: probe/stats/15057111.json

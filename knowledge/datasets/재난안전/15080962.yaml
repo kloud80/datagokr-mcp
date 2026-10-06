@@ -1,4 +1,5 @@
-# Dataset 15080962 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15080962 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080962'
 tier: verified
 title: 소방청_세종시 119신고 정보 데이터
@@ -24,6 +25,7 @@ synonyms:
   - 시간대별 신고건수
   - 타시도 이관 신고
   - 소방 신고 통계
+summary_user: 세종특별자치시에서 접수된 119 신고를 일련번호·접수일시·접수경로(일반전화·이동전화·온라인 등)·타시도 신고 여부로 담은 CSV 파일(약 32MB)이며, 포털 설명상 기간은 2012~2020년입니다. 분석가가 '세종시 인구 유입기에 119 신고가 연도·시간대별로 얼마나 늘었고, 이동전화나 온라인 접수 비중은 어떻게 바뀌었나'를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 소방·인구 데이터와는 접수일시에서 뽑은 연·월·시간대나 지역명을 기준으로 맞춰 이어 쓴다.
 description_portal: 해당 데이터는 2012년부터 2020년까지의 세종특별자치시에서 접수된 119 신고 내역을 유형별로 집계한 자료로, 지역 내 긴급 상황 발생 현황을 객관적으로 파악할 수 있는 데이터입니다. 세종시는 행정중심복합도시로 인구 유입과 도시 확장이 빠르게 진행되고 있어, 이 데이터는 지역 내에서 신고건수 증감율, 시간대별 접수건 수, 접수방법(일반전화, 이동전화, 온라인신고, 기타 등) 등 세종시에서 접수된 119신고건에 대해 알 수 있습니다. 또한 타시도에서 접수된 건인지도 구분할 수 있는 자료 입니다.
 accrual_periodicity: 수시
 team:
@@ -90,6 +92,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - 타시도신고여부
+  space_via: name
+  time: day
+  time_fields:
+    - 접수일시
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -191,8 +201,6 @@ verification:
   run: probe/runs/15080962.json
   stats: probe/stats/15080962.json
   data: probe/data/15080962/
-status: active
-summary_user: 세종특별자치시에서 접수된 119 신고를 일련번호·접수일시·접수경로(일반전화·이동전화·온라인 등)·타시도 신고 여부로 담은 CSV 파일(약 32MB)이며, 포털 설명상 기간은 2012~2020년입니다. 분석가가 '세종시 인구 유입기에 119 신고가 연도·시간대별로 얼마나 늘었고, 이동전화나 온라인 접수 비중은 어떻게 바뀌었나'를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 소방·인구 데이터와는 접수일시에서 뽑은 연·월·시간대나 지역명을 기준으로 맞춰 이어 쓴다.
 limits: 표준 행정코드나 기관 코드 같은 조인 키가 없어 다른 데이터와 자동으로 연결되지 않는다. 신고 위치나 사고 유형을 나타내는 컬럼이 없어, 지역 세부 분포나 화재·구급 같은 신고 내용별 분석에는 쓰지 못한다. 메타데이터의 범위는 '전국'으로 잡혀 있으나 제목과 설명은 세종시 접수분이므로, 실제 범위는 파일을 직접 확인해야 한다.
 review:
   summary: draft
@@ -204,3 +212,4 @@ review:
     - c-15080962-03
     - c-15080962-04
   dropped_citations: 0
+status: active

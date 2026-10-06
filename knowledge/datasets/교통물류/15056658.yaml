@@ -108,6 +108,7 @@ schema:
     - name: etryptCo
       title: 입항횟수
       type: number
+      semantic_type: port_call_no
       null_rate: 0.0
       sample_values:
         - '001'
@@ -181,6 +182,7 @@ schema:
     - name: laidupPlaceCd
       title: 계선장소코드
       type: code
+      semantic_type: port_facility_cd
       null_rate: 0.0
       sample_values:
         - MB6
@@ -538,9 +540,19 @@ schema:
         unique: 7
   foreign_keys:
     - fields:
+        - etryptCo
+      reference:
+        key: port_call_no
+      evidence: measured
+    - fields:
         - clsgn
       reference:
         key: vessel_id
+      evidence: measured
+    - fields:
+        - laidupPlaceCd
+      reference:
+        key: port_facility_cd
       evidence: measured
     - fields:
         - frghtPrdlstCd
@@ -566,6 +578,16 @@ coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2017-01-18 ~ 2017-01-24
+grain:
+  time: day
+  time_fields:
+    - etryndDt
+    - satmntDt
+    - aprtfEtryptDt
+  category:
+    - hs_cd
+  category_fields:
+    - frghtPrdlstCd
 cycle: default
 classification:
   subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
@@ -610,7 +632,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15056658-03
     kind: key
-    value: '실측 조인 키: vessel_id(clsgn), hs_cd(frghtPrdlstCd), port_cd(ldPrtCd), port_cd(landngPrtCd), port_cd(lastPurpsPrtCd)'
+    value: '실측 조인 키: port_call_no(etryptCo), vessel_id(clsgn), port_facility_cd(laidupPlaceCd), hs_cd(frghtPrdlstCd), port_cd(ldPrtCd), port_cd(landngPrtCd), port_cd(lastPurpsPrtCd)'
     evidence:
       - type: measured
         source: probe/stats/15056658.json

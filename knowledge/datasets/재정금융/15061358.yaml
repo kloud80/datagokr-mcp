@@ -1,4 +1,5 @@
-# Dataset 15061358 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061358 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061358'
 tier: verified
 title: 금융위원회_금융통계투자자문사정보
@@ -23,6 +24,7 @@ synonyms:
   - 자문사 임직원 수
   - 투자자문사 영업수익
   - 금융회사 통계
+summary_user: 투자자문사별로 기준년월(basYm) 단위의 조직 일반현황(인가일자, 임직원 수, 본점·지점 수)과 재무현황(자본금, 총자산, 영업수익, 당기순이익 등)을 담은 전국 범위의 업권별 금융통계입니다. 특정 투자자문사의 규모나 수익성이 시기별로 어떻게 변했는지, 업계에서 어느 정도 위치인지 확인하려는 투자자·분석가가 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위원회 기업정보 등 법인등록번호를 가진 금융회사·기업 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 회사명으로 같은 업권의 다른 금융통계와 맞춰 본다.
 description_portal: '금융통계투자자문사정보는 기준년월을 중심으로 투자자문사의 조직 현황 및 재무 현황에 대한 통계자료를 제공하는 데이터입니다. 투자자문사별 인가일자, 임직원 수, 본점·지점 수와 같은 조직 일반 정보뿐 아니라 자본금, 총자산, 영업수익, 당기순이익 등 주요 재무 항목을 시계열로 확인할 수 있도록 구성되어 있습니다.이 데이터는 2개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 투자자문사 일반현황 조회 : 투자자문사의 설립일, 조직 규모, 영업점 수 등의 일반 현황 정보를 제공합니다.② 투자자문사 재무현황 조회 : 자본금, 자산총계, 영업수익, 영업이익, 순이익 등 주요 재무 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -71,6 +73,7 @@ schema:
         unique: 80
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0011391'
@@ -126,6 +129,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -175,7 +183,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061358-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061358.json
@@ -240,8 +248,6 @@ verification:
   run: probe/runs/15061358.json
   stats: probe/stats/15061358.json
   data: probe/data/15061358/
-status: active
-summary_user: 투자자문사별로 기준년월(basYm) 단위의 조직 일반현황(인가일자, 임직원 수, 본점·지점 수)과 재무현황(자본금, 총자산, 영업수익, 당기순이익 등)을 담은 전국 범위의 업권별 금융통계입니다. 특정 투자자문사의 규모나 수익성이 시기별로 어떻게 변했는지, 업계에서 어느 정도 위치인지 확인하려는 투자자·분석가가 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위원회 기업정보 등 법인등록번호를 가진 금융회사·기업 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 회사명으로 같은 업권의 다른 금융통계와 맞춰 본다.
 limits: 비공간 데이터라 지역별 분석에는 쓰지 못한다. 실측 호출에서 확인된 오퍼레이션은 1개뿐이어서, 일반현황·재무현황 두 오퍼레이션이 모두 응답하는지는 따로 확인해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -254,3 +260,4 @@ review:
     - c-15061358-04
     - c-15061358-06
   dropped_citations: 0
+status: active

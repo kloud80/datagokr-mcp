@@ -1,4 +1,5 @@
-# Dataset 15063822 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15063822 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15063822'
 tier: verified
 title: 국토교통부_국토관리사무소별_기술검사 및 축중계관리정보
@@ -22,6 +23,7 @@ synonyms:
   - 도로 장비 입출고 검사
   - 축중기 수리 이력
   - 국토사무소 장비관리
+summary_user: 전국 18개 국토관리사무소가 수행한 장비 기술검사(입고·출고) 내역과 축중계 고장수리 내역을 건별로 담은 파일 데이터로, 사무소 약칭·검사일자·장비번호·품목명·거리누계·검사구분 등을 담는다. 도로 관리 분석가나 행정 담당자가 사무소별로 어떤 장비가 언제 입고·출고 검사를 받았는지, 축중계 고장이 얼마나 자주 수리되는지 살펴볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 사무소 이름이나 장비번호·품목명을 직접 맞춰서 연결해야 한다.
 description_portal: 전국 18개의 국토 관리 사무소 별로 수행한 장비 기술검사(입고, 출고) 및 축중계 고장수리 내역 정보(품목명, 고장 내역 등)를 제공합니다.기술검사 자료에서는 각 국토 사무소명을 약자로 표출하고, 검사일자 순으로 데이터를 볼 수 있습니다.장비번호를 A와 B로 나누어서 구분하였는데, 예를 들어서 장비번호가 "151-259"이면 장비번호 A는 "151"이고, 장비번호 B는 "259"로 표시됩니다.품목IDX는 장비의 인덱스 값이고, 검사구분에 입고, 출고로 구분하여 표시되며, 각 장비의 거리누계와 품목명의 데이터를 제공합니다.축중계관리정보 자료에서는 축중계 고장수리 내역 정보로 사무소명_약자, 장비번호 A, 장비번호B, 품목명, 문서번호, 각개번호 등의 정보를 제공하고,수리업체와 검문소를 구분한 데이터를 볼수 있으며, 접수일자, 착수일자, 완료일자, 등록일의 정보를 제공합니다.
 applicable_legislation:
   - law: 도로법
@@ -63,6 +65,7 @@ schema:
         unique: 1739
     - name: 장비번호A
       type: number
+      semantic_type: moct_equip_no
       null_rate: 0.0
       sample_values:
         - '211'
@@ -127,12 +130,22 @@ schema:
         - 노면청소차
       stats:
         unique: 184
+  foreign_keys:
+    - fields:
+        - 장비번호A
+      reference:
+        key: moct_equip_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 검사일자
 cycle: default
 classification:
   subsector_name: 도로 기타
@@ -168,7 +181,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15063822-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: moct_equip_no(장비번호A)'
     evidence:
       - type: measured
         source: probe/stats/15063822.json
@@ -232,8 +245,6 @@ verification:
   run: probe/runs/15063822.json
   stats: probe/stats/15063822.json
   data: probe/data/15063822/
-status: active
-summary_user: 전국 18개 국토관리사무소가 수행한 장비 기술검사(입고·출고) 내역과 축중계 고장수리 내역을 건별로 담은 파일 데이터로, 사무소 약칭·검사일자·장비번호·품목명·거리누계·검사구분 등을 담는다. 도로 관리 분석가나 행정 담당자가 사무소별로 어떤 장비가 언제 입고·출고 검사를 받았는지, 축중계 고장이 얼마나 자주 수리되는지 살펴볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 사무소 이름이나 장비번호·품목명을 직접 맞춰서 연결해야 한다.
 limits: 표준 행정코드 같은 공통 키가 없어 다른 데이터와 자동으로 결합하기 어렵다. 범위는 전국이며 좌표 같은 공간 정보는 없다.
 review:
   summary: draft
@@ -245,3 +256,4 @@ review:
     - c-15063822-03
     - c-15063822-04
   dropped_citations: 0
+status: active

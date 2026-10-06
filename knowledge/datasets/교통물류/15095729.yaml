@@ -1,0 +1,225 @@
+# Dataset 15095729 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15095729'
+tier: verified
+title: 제주특별자치도_제주 기상 상태별 교통사고 통계
+sector: 교통물류/도로/traffic-accidents
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15095729/openapi.do
+synonyms:
+  - 자동차
+  - 날씨
+  - 사고
+  - 제주 날씨별 교통사고
+  - 기상조건 교통사고 통계
+  - 우천 시 교통사고
+  - 제주 교통사고 사망자
+  - TAAS 제주
+  - 악천후 사고 통계
+summary_user: 제주도 내 교통사고를 기준 연도와 기상 상태(맑음·비 등)별로 묶어 사고 건수·사망자 수·부상자 수를 담은 집계 통계이며, 출처는 TAAS 교통사고분석시스템입니다. 비 오는 날이나 안개 낀 날 제주에서 사고와 사상자가 얼마나 생기는지, 연도별로 어떻게 달라지는지를 보려는 교통안전 담당자나 분석가가 쓴다. 전역 조인 키가 없어 기준 연도와 기상 상태 이름을 맞춰 다른 제주 교통사고 통계나 도로교통공단(TAAS) 사고다발지역 자료와 나란히 비교하는 방식으로 이어 쓴다.
+description_portal: '기상 상태별 제주도 내 교통사고 통계 (부상자 / 사망자 등)를 제공합니다.- 데이터 제공처: TAAS 교통사고분석시스템'
+team:
+  dept: 디지털혁신과
+services:
+  - op: preview
+    name: preview
+    endpoint: https://jejudatahub.net/api/data/view?id=892
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: jejudatahub.net
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: "\uFEFF기준 연도"
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2005'
+        - '2006'
+        - '2007'
+      stats:
+        min: 2005
+        p50: 2006
+        max: 2008
+        unique: 4
+    - name: 기상 상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타/불명
+        - 눈
+        - 맑음
+      stats:
+        unique: 6
+    - name: 부상자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2161'
+        - '5940'
+        - '282473'
+      stats:
+        min: 736
+        p50: 4695.5
+        max: 282473
+        unique: 20
+    - name: 사고 건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1459'
+        - '3057'
+        - '179009'
+      stats:
+        min: 404
+        p50: 2415
+        max: 179009
+        unique: 20
+    - name: 사망자 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35'
+        - '77'
+        - '5019'
+      stats:
+        min: 13
+        p50: 76
+        max: 5019
+        unique: 20
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - "\uFEFF기준 연도"
+cycle: default
+classification:
+  subsector_name: 교통사고 (사고 다발지역·지역별 사고)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.571
+  rank_in_sector: 1406
+  brm: 교통물류 - 도로
+  why: 제주데이터허브 (상세 페이지 미리보기 — 원본·API는 projectKey)
+claims:
+  - id: c-15095729-01
+    kind: access
+    value: 외부 사이트 jejudatahub.net 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15095729.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 jejudatahub.net
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15095729-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095729-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095729.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095729-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095729.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095729-06
+    kind: admin_note
+    value: "세부 부문 '교통사고 (사고 다발지역·지역별 사고)'의 가치: 도로교통공단(TAAS) 다발지역 공간 원장이 대표, 재난안전의 지자체 사고 통계와 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-accidents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095729-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095729-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15095729.json
+  stats: probe/stats/15095729.json
+  data: probe/data/15095729/
+limits: 건별 사고 원천이나 위치 정보가 없는 집계 자료라 지점·도로 단위 분석은 할 수 없고, 다른 데이터와 직접 결합할 공통 코드도 없다. 호출에는 포털 활용신청과 별도로 외부 사이트 jejudatahub.net에서 받은 인증키(KEY)가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15095729-01
+    - c-15095729-03
+    - c-15095729-04
+    - c-15095729-06
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15078110 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078110 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078110'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 누적아동실적현황-연령소득기준별 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 아이돌봄 누적 이용
   - 돌봄 수요 소득계층
   - 아이돌보미 이용 현황
+summary_user: 아이돌봄기관별·기준연월별로 누적 이용 아동 수를 0~12세 연령과 소득기준 유형(가형~라형)으로 나눠 담은 전국 단위 집계 데이터이며, 전염성 질병 아동 여부와 상위 기관 정보도 함께 들어 있다. 정책 분석가나 지자체 담당자가 "어느 소득구간에서 몇 살 아동의 돌봄 이용이 많은가"처럼 소득 계층별 연령 분포를 비교하는 데 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 다른 데이터와는 아이돌봄기관명이나 같은 기관의 기관번호(childCareInstNo)로만 맞춰 이어 쓴다.
 description_portal: 아이돌봄 연령과 소득기준별로 누적아동 실적 조회 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 기준연월, 아이돌봄기관명, 전염성 질병 아동여부,  0세부터 12세까지 각 연령별로 가형부터 라형까지의 아동 수 등의 정보를 확인할 수 있습니다.가형부터 라형까지 유형별로 아동 연령 분포를 분석함으로써, 경제적 여건에 따른 돌봄 수요의 차이를 구체적으로 파악할 수 있습니다. 특정 소득구간의 아동 연령대별 수요 집중도는 계층 맞춤형 복지 설계의 기초 자료가 될 수 있으며,  정책 수립 시 정밀 타겟팅 전략 수립에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -56,6 +58,7 @@ schema:
         unique: 2
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0396
@@ -98,6 +101,7 @@ schema:
         unique: 2
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -746,6 +750,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -795,7 +810,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078110-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078110.json
@@ -849,8 +864,6 @@ verification:
   run: probe/runs/15078110.json
   stats: probe/stats/15078110.json
   data: probe/data/15078110/
-status: active
-summary_user: 아이돌봄기관별·기준연월별로 누적 이용 아동 수를 0~12세 연령과 소득기준 유형(가형~라형)으로 나눠 담은 전국 단위 집계 데이터이며, 전염성 질병 아동 여부와 상위 기관 정보도 함께 들어 있다. 정책 분석가나 지자체 담당자가 "어느 소득구간에서 몇 살 아동의 돌봄 이용이 많은가"처럼 소득 계층별 연령 분포를 비교하는 데 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 다른 데이터와는 아이돌봄기관명이나 같은 기관의 기관번호(childCareInstNo)로만 맞춰 이어 쓴다.
 limits: 전역 조인 키가 없어 행정구역 코드나 시설 마스터와 바로 결합하지 못하며, 기관명·기관 코드 매핑을 직접 해야 한다. 지역 범위는 전국이지만 공간 좌표가 없는 비공간 데이터다. 호출에는 serviceKey가 필요하고 개발계정은 하루 3,000회로 제한된다.
 review:
   summary: draft
@@ -862,3 +875,4 @@ review:
     - c-15078110-03
     - c-15078110-04
   dropped_citations: 0
+status: active

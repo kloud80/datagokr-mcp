@@ -1,4 +1,5 @@
-# Dataset 15100045 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100045 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100045'
 tier: verified
 title: 법무부_53(외국국적동포) 월별 영주(F_5) 자격 소지자 국적(지역)별 현황
@@ -20,6 +21,7 @@ synonyms:
   - 동포 영주권 국적별
   - 체류외국인 통계월보
   - 출입국 영주 현황
+summary_user: 국내에 체류 중인 외국국적동포 가운데 영주(F-5) 자격 소지자 수를 년·월과 국적(지역)별로 집계한 전국 단위 파일(csv)입니다. 법무·이민 분석가나 연구자가 "중국·미국 등 어느 국적의 동포 영주권자가 매월 얼마나 늘고 있나"를 확인하는 데 쓴다. 전역 조인 키는 없으며, 년·월과 국적(지역) 이름을 맞춰 같은 기관의 다른 체류자격별 동포 통계(F-4 등)나 출입국 통계월보와 나란히 놓고 쓴다.
 description_portal: '국내 체류중인 영주(F-5) 자격 소지자의 국적(지역)별 현황을 월별로 제공하고 있습니다.*외국국적동포 : 재외동포의 출입국과 법적지위에 관한 법률 제2조에 따라 대한민국의 국적을 보유하였던 자(대한민국정부 수립 전에 국외로 이주한 동포 포함) 또는 그 직계비속으로서 외국국적을 취득한 자 중 대통령령으로 정하는 자(F4를 비롯한 기타체류자격 보유자의 합이며, 그 중 이 데이터는 F5체류자격을 보유한 사람들의 국적별 통계이며 동일 한 통계를 통계월보에서도 확인하실 수 있습니다)출입국외국인정책본부 통계월보의 경로는 아래와 같습니다. https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY1OTU0MjYlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2'
 applicable_legislation:
   - law: 재외동포의 출입국과 법
@@ -65,6 +67,7 @@ schema:
         unique: 12
     - name: 국적지역
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 중국
@@ -84,6 +87,12 @@ schema:
         p50: 243
         max: 163268
         unique: 544
+  foreign_keys:
+    - fields:
+        - 국적지역
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -126,7 +135,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100045-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적지역)'
     evidence:
       - type: measured
         source: probe/stats/15100045.json
@@ -201,8 +210,6 @@ verification:
   run: probe/runs/15100045.json
   stats: probe/stats/15100045.json
   data: probe/data/15100045/
-status: active
-summary_user: 국내에 체류 중인 외국국적동포 가운데 영주(F-5) 자격 소지자 수를 년·월과 국적(지역)별로 집계한 전국 단위 파일(csv)입니다. 법무·이민 분석가나 연구자가 "중국·미국 등 어느 국적의 동포 영주권자가 매월 얼마나 늘고 있나"를 확인하는 데 쓴다. 전역 조인 키는 없으며, 년·월과 국적(지역) 이름을 맞춰 같은 기관의 다른 체류자격별 동포 통계(F-4 등)나 출입국 통계월보와 나란히 놓고 쓴다.
 limits: 전국 단위 비공간 집계라 시군구 등 지역별 분포는 알 수 없습니다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국적 이름 매핑이나 같은 기관 코드로만 연결됩니다.
 review:
   summary: draft
@@ -214,3 +221,4 @@ review:
     - c-15100045-03
     - c-15100045-04
   dropped_citations: 0
+status: active

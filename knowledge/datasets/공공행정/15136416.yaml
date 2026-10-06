@@ -1,0 +1,221 @@
+# Dataset 15136416 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15136416'
+tier: verified
+title: 경기도_경기공유서비스 시설대관 운영시간
+sector: 공공행정/정부자원관리/open-facilities
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15136416/fileData.do
+synonyms:
+  - 공유서비스
+  - 시설대관
+  - 운영시간
+  - 시설관리
+  - 요일구분
+  - 대관시간
+  - 공유누리 운영시간
+  - 공공시설 대관 가능시간
+  - 시설 예약 시간
+  - 경기도 공공시설 개방
+  - 회의실 대관 요일
+  - 경기데이터드림 시설대관
+summary_user: 경기공유서비스(공유누리)에서 대관하는 공공시설별로 요일 구분(평일·토요일·일요일·공휴일 등)마다 운영 시작·종료 시간을 한 행씩 담은 설정 자료이며, 범위는 시도 단위이고 공간 좌표는 없다. 주민이나 단체가 "이 회의실을 토요일 몇 시부터 몇 시까지 빌릴 수 있나"를 확인할 때, 분석가가 요일·시간대별 대관 가능 시간과 가동률을 따질 때 쓴다. 기관코드(inst_cd)와 시설코드(faclt_cd)로 같은 경기공유서비스의 시설 목록·예약 데이터와 이어 쓰지만, 다른 기관 데이터와 붙일 전역 조인 키는 실측에서 찾지 못했다.
+description_portal: 이 데이터는 공공시설의 대관 운영시간을 관리하기 위한 자료로, 각 시설별 운영 가능 요일과 시작/종료 시간을 포함하고 있습니다. 주요 항목은 ‘기관코드’, ‘시설코드’를 통해 각 시설을 식별하고, ‘요일구분’은 평일, 주말, 공휴일 등 운영 요일을 코드(SA, SU, WE, HO 등)로 구분합니다. ‘시작시간’과 ‘종료시간’은 해당 요일의 운영 시작과 종료 시점을 시간 형식으로 표시합니다. 이 데이터는 시설예약 시스템 내 운영시간 설정, 요일별 예약 가능시간 안내, 공공자원 가동률 분석 및 시간대별 수요 대응 등에 활용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: opr_hr_sn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '13'
+        - '14'
+        - '15'
+      stats:
+        min: 13
+        p50: 3968.5
+        max: 4906
+        unique: 100
+    - name: inst_cd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '1010002'
+        - '1010000'
+        - B551328
+      stats:
+        unique: 11
+    - name: faclt_cd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - F0001
+        - F0002
+        - F0004
+      stats:
+        unique: 14
+    - name: wday_div
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - WE
+        - SA
+        - SU
+      stats:
+        unique: 4
+    - name: inpt_type
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - TI
+        - CE
+      stats:
+        unique: 2
+    - name: bgng_hr
+      type: code
+      null_rate: 0.31
+      sample_values:
+        - 09:00
+        - 06:00
+        - '8'
+      stats:
+        unique: 5
+    - name: end_hr
+      type: code
+      null_rate: 0.31
+      sample_values:
+        - 18:00
+        - 20:00
+        - 22:00
+      stats:
+        unique: 13
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공공자원 개방·대관 (공유누리)
+  depth: hold
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.2948
+  rank_in_sector: 405
+  brm: 공공행정 - 정부자원관리
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15136416-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15136416.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15136416-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15136416-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15136416.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15136416-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15136416.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15136416-06
+    kind: admin_note
+    value: '[정부자원관리 · 결정] 목록 전체를 보관하고 세부 부문 8개로 나눔 — 다른 목적의 수요에서 연계 가능성이 높음(행정표준코드 = 조인 키 원장, 국유재산 = PNU 체인).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L398
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15136416-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15136416.json
+  stats: probe/stats/15136416.json
+  data: probe/data/15136416/
+limits: 경기데이터드림(data.gg.go.kr)에서 별도 인증키(KEY)를 받아야 호출되며, 이 키는 공공데이터포털 활용신청과 별개다. 전역 조인 키가 없어 외부 데이터와는 시설명·코드 매핑이나 같은 기관 코드로만 연결된다. 운영시간 설정만 담고 실제 예약 현황이나 이용 실적은 들어 있지 않다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15136416-01
+    - c-15136416-03
+    - c-15136416-04
+  dropped_citations: 0
+status: active

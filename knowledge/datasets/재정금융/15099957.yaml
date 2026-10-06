@@ -1,0 +1,239 @@
+# Dataset 15099957 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15099957'
+tier: verified
+title: 경기도_지방세납세자현황
+sector: 재정금융/세제/regional-tax
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099957/fileData.do
+synonyms:
+  - 지방세
+  - 납세자수
+  - 세목
+  - 과세통계
+  - 납세자정보
+  - 세금
+  - 지방세 납세자 수
+  - 세목별 납세자
+  - 관내 관외 납세자
+  - 시군별 지방세 통계
+  - 경기도 세정 통계
+  - 납세자유형별 현황
+summary_user: 경기도 내 자치단체별로 과세연도·세목·납세자유형·관내외 여부에 따른 지방세 납세자 수를 집계한 통계로, 범위는 시도 단위이며 공간정보는 없다. 지방세 정책 담당자나 분석가가 '우리 시군의 재산세 납세자 중 관외 거주자가 연도별로 얼마나 늘었나' 같은 질문에 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아 시도·시군구 이름이나 자치단체코드(sfrnd_cd)를 행정구역 코드에 매핑해 다른 시도·시군구 지역 지표와 잇는다.
+description_portal: 이 데이터는 경기도 내 지방세 납세자 현황을 정리한 통계자료로, 자치단체별 납세자 수의 변화 추이를 파악할 수 있는 정보를 제공합니다. 주요 항목은 시도명, 시군구명, 자치단체코드, 과세년도, 세목명, 납세자유형, 관내·관외 여부, 그리고 납세자 수로 구성되어 있습니다. 이 데이터를 활용하면 특정 세목에 대한 납세 규모나 지역별 납세자 분포, 연도별 납세 변화 경향 등을 분석할 수 있으며, 자치단체 세수 기반 강화, 조세정책 설계, 세정 운영 전략 수립 등에 참고 자료로 활용됩니다. 특히 납세자유형과 세목별 세수 구성의 관계를 분석하면, 경제활동 유형별 조세기여도를 평가하는 데 유용합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI데이터행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sido_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+      stats:
+        unique: 1
+    - name: signgu_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+      stats:
+        unique: 1
+    - name: sfrnd_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41000'
+      stats:
+        min: 41000
+        p50: 41000
+        max: 41000
+        unique: 1
+    - name: taxt_yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2017'
+        - '2018'
+        - '2019'
+      stats:
+        min: 2017
+        p50: 2020.5
+        max: 2024
+        unique: 8
+    - name: taxitm_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지방소비세
+      stats:
+        unique: 1
+    - name: txpr_type
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 법인
+      stats:
+        unique: 1
+    - name: inzn_otzn_yn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: txpr_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - signgu_nm
+  space_via: name
+cycle: default
+classification:
+  subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3463
+  brm: 재정금융 - 세제
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15099957-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099957.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15099957-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15099957-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099957.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15099957-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099957.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15099957-06
+    kind: admin_note
+    value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-tax
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15099957-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099957-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099957.json
+  stats: probe/stats/15099957.json
+  data: probe/data/15099957/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 포털 활용신청과는 따로 받아야 한다. 납세자 수만 담고 있어 세액·세수 규모는 이 데이터로 알 수 없고, 다른 데이터와 붙일 공통 키가 없어 이름·코드 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15099957-01
+    - c-15099957-03
+    - c-15099957-04
+    - c-15099957-06
+  dropped_citations: 0
+status: active

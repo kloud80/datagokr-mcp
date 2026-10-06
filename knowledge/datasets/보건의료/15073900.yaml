@@ -1,4 +1,5 @@
-# Dataset 15073900 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073900 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073900'
 tier: verified
 title: 식품의약품안전처_의료기기 임상시험계획승인신청 상세
@@ -21,6 +22,7 @@ synonyms:
   - 임상시험 승인번호
   - 의료기기 임상 신청 내역
   - 식약처 임상시험
+summary_user: 의료기기 임상시험계획 승인 건별로 승인번호·승인일자, 제조·수입업체와 신청업체, 제품명, 임상시험 제목, 임상시험 구분과 세부 구분, 의료기기 분류번호를 담는 전국 단위 API입니다. 의료기기 업체나 연구자가 특정 제품이나 업체의 임상시험계획이 언제 승인됐는지, 어떤 종류의 임상시험인지 확인하는 데 씁니다. 실측 컬럼에는 전역 조인 키가 없어서, 사업자등록번호(BRNO)나 의료기기 분류번호·품목 일련번호처럼 식약처 안에서 쓰는 코드, 또는 업체명·제품명 매칭으로 의료기기 품목허가 등 같은 기관 데이터와 잇습니다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 임상시험계획승인신청 상세 관한 공공데이터입니다.「의료기기법 시행규칙」 제21조(임상시험기관 지정기준 및 절차 등) 제8항에 따라 식약의약품안전처장이 지정한 의료기기 임상시험기관의 명칭, 소재지, 대표자 등을 공개하고 있습니다. 의료기기 제조·수입업체 및 연구자들의 임상시험기관 접근 편의성 제고를 위하여 식품의약품안전처에서 공개 중인 의료기기 임상시험기관 지정 정보를 목록으로 제공하고 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -127,6 +129,7 @@ schema:
         unique: 990
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.833
       sample_values:
         - '0'
@@ -165,6 +168,7 @@ schema:
         unique: 2
     - name: MDEQ_CLSF_NO
       type: string
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - B04230.01
@@ -189,6 +193,7 @@ schema:
         unique: 1
     - name: BRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.116
       sample_values:
         - '2138205096'
@@ -199,12 +204,32 @@ schema:
         p50: 2068117637
         max: 9000002310
         unique: 402
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - APRV_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -249,7 +274,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073900-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN), meddev_clsf_no(MDEQ_CLSF_NO), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15073900.json
@@ -314,8 +339,6 @@ verification:
   run: probe/runs/15073900.json
   stats: probe/stats/15073900.json
   data: probe/data/15073900/
-status: active
-summary_user: 의료기기 임상시험계획 승인 건별로 승인번호·승인일자, 제조·수입업체와 신청업체, 제품명, 임상시험 제목, 임상시험 구분과 세부 구분, 의료기기 분류번호를 담는 전국 단위 API입니다. 의료기기 업체나 연구자가 특정 제품이나 업체의 임상시험계획이 언제 승인됐는지, 어떤 종류의 임상시험인지 확인하는 데 씁니다. 실측 컬럼에는 전역 조인 키가 없어서, 사업자등록번호(BRNO)나 의료기기 분류번호·품목 일련번호처럼 식약처 안에서 쓰는 코드, 또는 업체명·제품명 매칭으로 의료기기 품목허가 등 같은 기관 데이터와 잇습니다.
 limits: 다른 기관 데이터와 바로 붙일 공통 키가 없어 이름이나 식약처 자체 코드로 매핑해야 합니다. 포털 설명에는 임상시험기관 지정 목록이라고 적혀 있지만, 실제 필드는 임상시험계획 승인 건 정보입니다. 개발계정은 하루 10,000회까지 호출할 수 있습니다.
 review:
   summary: draft
@@ -327,3 +350,4 @@ review:
     - c-15073900-03
     - c-15073900-04
   dropped_citations: 0
+status: active

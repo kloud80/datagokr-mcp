@@ -1,0 +1,233 @@
+# Dataset 15151444 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151444'
+tier: verified
+title: 경기도_가맹사업 행정동영역정보
+sector: 산업고용/산업·중소기업일반/business-licenses
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151444/fileData.do
+synonyms:
+  - 가맹정보제공시스템
+  - 가맹정보
+  - 가맹점
+  - 지역구분
+  - 행정동
+  - 시군구
+  - 행정동코드
+  - 행정구역코드
+  - 시군구코드
+  - 읍면동 코드표
+  - 가맹정보 지역코드
+  - 행정동 경계 코드
+  - 지역 식별 기준표
+summary_user: 가맹정보제공 시스템에서 쓰는 시도·시군구·행정동 3단계 행정구역 코드와 명칭을 한 행정동당 한 행으로 담은 기준표로, 범위는 전국 시도부터 읍면동 단위까지다. 가맹사업 분석가가 '지역별 가맹점 분포나 상권 데이터를 행정동 단위로 묶으려면 어떤 코드를 써야 하나'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 행정동코드(admdong_cd)나 시군구·행정동 명칭을 매핑해 같은 체계의 가맹·상권·유동인구 데이터와 이어 쓴다.
+description_portal: 이 데이터는 가맹정보제공 시스템에서 사용되는 전국 시도, 시군구, 행정동 단위의 행정구역 코드와 명칭을 포함한 정보로 구성되어 있으며, 가맹사업 관련 데이터와의 연계를 위한 지역 식별 기준으로 사용됩니다. 각 행정동은 고유한 행정동코드를 가지고 있으며, 시도코드 및 시군구코드와 함께 지역을 계층적으로 구분할 수 있습니다. 본 자료는 상권 분석, 유동인구 데이터와의 매칭, 지역별 가맹점 분포 분석 등 다양한 데이터 간 결합을 위한 기초 지리정보로 활용됩니다. 데이터는 전체 시도와 시군구, 행정동까지 포함되어 있어 전국 단위의 지역 분석에도 활용이 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sido_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '0'
+      stats:
+        min: 0
+        p50: 11
+        max: 11
+        unique: 2
+    - name: sido_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+        - 전체
+      stats:
+        unique: 2
+    - name: signgu_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11110'
+        - '11200'
+        - '11170'
+      stats:
+        min: 0
+        p50: 11200
+        max: 11260
+        unique: 8
+    - name: signgu_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+        - 성동구
+        - 용산구
+      stats:
+        unique: 8
+    - name: admdong_cd
+      type: number
+      null_rate: 0.01
+      sample_values:
+        - '11110515'
+        - '11110530'
+        - '11110540'
+      stats:
+        min: 11110515
+        p50: 11200535
+        max: 11260570
+        unique: 99
+    - name: admdong_nm
+      type: string
+      null_rate: 0.01
+      sample_values:
+        - 청운효자동
+        - 사직동
+        - 삼청동
+      stats:
+        unique: 99
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - admdong_nm
+  space_via: name
+cycle: default
+classification:
+  subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.2939
+  brm: 산업고용 - 산업·중소기업일반
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151444-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151444.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151444-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151444-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151444.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151444-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15151444.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151444-06
+    kind: admin_note
+    value: "세부 부문 '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'의 가치: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151444-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151444-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151444.json
+  stats: probe/stats/15151444.json
+  data: probe/data/15151444/
+limits: 외부 사이트 data.gg.go.kr의 별도 인증키(KEY)가 필요하며 포털 활용신청과는 별개다. 행정구역 코드만 담은 기준표라 가맹점 수나 업종 정보는 없고, 다른 데이터와는 코드 체계를 직접 대조하거나 명칭으로 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151444-01
+    - c-15151444-03
+    - c-15151444-04
+  dropped_citations: 0
+status: active

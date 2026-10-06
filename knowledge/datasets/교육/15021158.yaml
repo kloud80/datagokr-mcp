@@ -33,6 +33,7 @@ schema:
   fields:
     - name: 학구ID
       type: string
+      semantic_type: school_district_id
       null_rate: 0.0
       sample_values:
         - Z000300023
@@ -121,6 +122,7 @@ schema:
         unique: 1
     - name: 제공기관코드
       type: date
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - B554398
@@ -137,14 +139,34 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - 학구ID
+      reference:
+        key: school_district_id
+      evidence: measured
+    - fields:
         - 학교ID
       reference:
         key: school_cd
+      evidence: measured
+    - fields:
+        - 제공기관코드
+      reference:
+        key: instt_cd
       evidence: measured
 coverage:
   spatial: 미상
   admin_unit: 시도
   temporal: 2026-03-20 ~ 2026-03-20
+grain:
+  space: sido
+  space_fields:
+    - 시도교육청코드
+    - 시도교육청명
+  space_via: name
+  time: day
+  time_fields:
+    - 데이터기준일자
+    - 제공기관코드
 cycle: default
 classification:
   subsector_name: 학구도·통학구역·학군
@@ -183,7 +205,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15021158-03
     kind: key
-    value: '실측 조인 키: school_cd(학교ID)'
+    value: '실측 조인 키: school_district_id(학구ID), school_cd(학교ID), instt_cd(제공기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15021158.json

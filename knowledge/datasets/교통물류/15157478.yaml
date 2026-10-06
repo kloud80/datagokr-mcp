@@ -1,4 +1,5 @@
-# Dataset 15157478 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157478 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157478'
 tier: verified
 title: 울산광역시_버스정보시스템 실시간 버스위치 GPS데이터
@@ -25,6 +26,7 @@ synonyms:
   - 버스 궤적 데이터
   - 울산 시내버스 속도
   - 정류장 통과 정보
+summary_user: 울산 시내버스 단말기가 보낸 GPS 위치를 송신 시점별 한 건씩 담은 원천 데이터로, 2025년 12월 31일 오전 출근시간대만 잘라 CSV 한 파일(약 14.7MB)로 제공한다. 분석가나 연구자가 '출근시간대 특정 노선 버스가 어느 구간에서 느려지고 정류장을 몇 분 간격으로 통과하는가' 같은 운행 실태를 살피는 데 쓴다. 전역 조인 키는 없어서, 노선 아이디와 통과 지점(정류장) 아이디를 울산 BIS 노선·정류장 원장과 같은 기관 코드로 맞춰야 이어 쓸 수 있고, 좌표(X·Y)는 지도 위 위치로 겹쳐 본다.
 description_portal: 본 데이터는 지능형 교통체계 기반으로 수집되는 시내버스의 실시간 위치 정보를 특정 시점 기준으로 제공하는 자료이다. 본 개방 데이터는 2025년 12월 31일 오전 출근시간대의 버스 위치 정보를 대상으로 하며, 대용량 원자료 중 정책적 활용도가 높은 시간대를 선별하여 구성하였다. 버스 단말기에서 송신된 GPS 좌표를 활용하여 차량의 위치, 이동 방향, 순간 속도, 운행 상태 등을 시점별로 확인할 수 있다. 또한 정류장 통과 정보와 도착 예정 지점 정보가 포함되어 노선 운영 현황 분석에 활용 가능하다. 본 자료는 대중교통 정책 검토, 교통 서비스 개선, 연구 및 통계 분석 등 공공 목적 활용을 고려한 기초 데이터로 제공되며, 학술용 자료로 활용할 수 있다.
 accrual_periodicity: 연간
 team:
@@ -182,6 +184,11 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - 발생 일시
+    - 송신 일시
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -283,8 +290,6 @@ verification:
   run: probe/runs/15157478.json
   stats: probe/stats/15157478.json
   data: probe/data/15157478/
-status: active
-summary_user: 울산 시내버스 단말기가 보낸 GPS 위치를 송신 시점별 한 건씩 담은 원천 데이터로, 2025년 12월 31일 오전 출근시간대만 잘라 CSV 한 파일(약 14.7MB)로 제공한다. 분석가나 연구자가 '출근시간대 특정 노선 버스가 어느 구간에서 느려지고 정류장을 몇 분 간격으로 통과하는가' 같은 운행 실태를 살피는 데 쓴다. 전역 조인 키는 없어서, 노선 아이디와 통과 지점(정류장) 아이디를 울산 BIS 노선·정류장 원장과 같은 기관 코드로 맞춰야 이어 쓸 수 있고, 좌표(X·Y)는 지도 위 위치로 겹쳐 본다.
 limits: 하루 오전 출근시간대 한 시점 묶음만 담겨 있어 다른 날짜·시간대나 실시간 조회에는 쓰지 못한다. 노선·정류장 이름이 없고 전국 공통 키도 없어, 같은 기관의 노선·정류장 코드표가 있어야 해석된다.
 review:
   summary: draft
@@ -296,3 +301,4 @@ review:
     - c-15157478-03
     - c-15157478-04
   dropped_citations: 0
+status: active

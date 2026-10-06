@@ -1,4 +1,5 @@
-# Dataset 15097922 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15097922 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15097922'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_ESG
@@ -21,6 +22,7 @@ synonyms:
   - 뉴스 키워드 분석
   - 지속가능경영 기사
   - 환경 사회 지배구조 보도
+summary_user: 빅카인즈 뉴스데이터베이스에서 ESG 관련 보도를 골라 기사 한 건마다 일자·언론사·제목·통합 분류·키워드·특성추출 정보를 담은 메타데이터로, 약 61MB 크기의 CSV 파일 하나로 제공된다. 연구자나 기업 분석가가 시기별·언론사별로 환경·사회·지배구조 의제가 어떻게 다뤄졌는지, 어떤 키워드가 자주 나왔는지를 살필 때 쓴다. 전역 조인 키는 없어 다른 데이터와는 일자나 언론사명, 키워드 같은 이름 매칭으로만 이어 쓴다.
 description_portal: 이 데이터는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 ESG(Environment·Social·Governance) 관련 보도를 분석한 메타정보 자료입니다. ESG는 기업의 지속가능성과 사회적 책임을 평가하는 핵심 기준으로, 최근 언론 보도에서 큰 비중을 차지하고 있습니다. 본 자료는 주요 신문 및 방송사의 뉴스 기사에서 ESG 관련 키워드와 등장 빈도를 추출하고, 시기별·주제별 변화를 살펴볼 수 있도록 구성되어 있습니다. 이를 통해 환경 문제, 사회적 가치, 기업 지배구조와 같은 의제가 어떻게 언론 담론 속에서 다루어지는지 파악할 수 있으며, 기업 연구, 정책 분석, 학술 연구, 교육 현장에서 활용할 수 있는 기초 데이터를 제공합니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 365
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 아시아경제
@@ -94,12 +97,22 @@ schema:
         - 이재명,선제타격,더불어민주당,국민의힘,윤석열,타투,한동안,나연수,만큼,수출액
       stats:
         unique: 42350
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15097922-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15097922.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15097922.json
   stats: probe/stats/15097922.json
   data: probe/data/15097922/
-status: active
-summary_user: 빅카인즈 뉴스데이터베이스에서 ESG 관련 보도를 골라 기사 한 건마다 일자·언론사·제목·통합 분류·키워드·특성추출 정보를 담은 메타데이터로, 약 61MB 크기의 CSV 파일 하나로 제공된다. 연구자나 기업 분석가가 시기별·언론사별로 환경·사회·지배구조 의제가 어떻게 다뤄졌는지, 어떤 키워드가 자주 나왔는지를 살필 때 쓴다. 전역 조인 키는 없어 다른 데이터와는 일자나 언론사명, 키워드 같은 이름 매칭으로만 이어 쓴다.
 limits: 기사 본문은 빠져 있고 메타정보와 추출 키워드만 담고 있다. 공통 식별 코드가 없어 기업 공시나 ESG 평가 데이터와 연결하려면 이름을 직접 맞춰야 하며, 지역 단위 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15097922-03
     - c-15097922-04
   dropped_citations: 0
+status: active

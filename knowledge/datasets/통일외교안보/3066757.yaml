@@ -1,5 +1,3 @@
-# Dataset 3066757 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3066757'
 tier: verified
 title: 병무청_사회복무요원 복무기관
@@ -89,6 +87,7 @@ schema:
     - name: bmgigwanCd
       title: 복무기관코드
       type: number
+      semantic_type: sw_agency_cd
       null_rate: 0.0
       sample_values:
         - '20002927'
@@ -132,6 +131,7 @@ schema:
     - name: ghjbcCd
       title: 관할지방청코드
       type: number
+      semantic_type: mma_office_cd
       null_rate: 0.0
       sample_values:
         - '06'
@@ -227,9 +227,26 @@ schema:
       reference:
         key: sgg_cd
       evidence: measured
+    - fields:
+        - bmgigwanCd
+      reference:
+        key: sw_agency_cd
+      evidence: measured
+    - fields:
+        - ghjbcCd
+      reference:
+        key: mma_office_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - bjdsgg
+    - bjdsggjusoCd
+    - drmJuso
+  space_via: name
 cycle: default
 classification:
   subsector_name: 사회복무요원·병역지정업체 (복무기관·본인선택 공석·전문연구/산업기능요원 지정업체·인원배정·병역일터 채용)
@@ -273,7 +290,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-3066757-03
     kind: key
-    value: '실측 조인 키: sgg_cd(bjdsggjusoCd)'
+    value: '실측 조인 키: sgg_cd(bjdsggjusoCd), sw_agency_cd(bmgigwanCd), mma_office_cd(ghjbcCd)'
     evidence:
       - type: measured
         source: probe/stats/3066757.json

@@ -1,4 +1,5 @@
-# Dataset 15156218 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156218 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156218'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_프로야구
@@ -22,6 +23,7 @@ synonyms:
   - 야구 언론 보도 키워드
   - 프로야구 뉴스 빅데이터
   - 구단 선수 보도량
+summary_user: 빅카인즈(BIGKinds)에서 모은 국내 언론사의 프로야구(KBO 리그) 관련 뉴스를 기사 한 건당 한 행으로 담은 메타데이터 파일로, 보도 일자·언론사·제목·통합분류(1~3단계)·인물·지역·기업기관 개체명·키워드·특성추출 값을 담으며 CSV 약 62MB 규모다. 스포츠·언론 연구자나 구단·마케팅 담당자가 '특정 팀이나 선수, FA·트레이드 같은 이슈가 언제 어느 언론사에서 집중 보도됐고 어떤 키워드로 다뤄졌나'를 따져 보는 데 쓴다. 전역 조인 키는 없어서 다른 데이터와는 일자, 언론사명, 개체명(인물·기업기관)에 든 선수·구단 이름을 문자열로 맞춰 잇는다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 프로야구 관련 뉴스 메타정보 자료입니다. 포함 항목으로는 기사 주소, 보도 일자, 언론사, 제목, 통합분류(1~3단계), 개체명(인물·지역·기업·팀명), 키워드, 특성추출 값, 본문 내용 등이 있으며, 이를 통해 개별 기사에 대한 구조적·정량적 분석이 가능합니다.본 자료는 국내 주요 언론사의 프로야구(KBO 리그) 관련 보도를 대상으로, 어떤 팀·선수·경기 이슈가 어느 시기에 집중 보도되었는지, 주요 키워드와 보도 프레임이 어떻게 형성되었는지 등을 파악하는 데 중점을 두고 있습니다. 이러한 분석을 통해 언론이 정규시즌·포스트시즌 흐름, 선수 성적 및 부상, 트레이드·FA·신인 드래프트, 감독 교체 및 팀 전략 변화, 경기력 논쟁, 스타 선수 중심의 스토리텔링 등 다양한 이슈를 어떤 관점에서 재현하는지 확인할 수 있으며, 이러한 보도 경향이 팬 여론, 팀 마케팅 전략, 리그 운영 방향 등에 어떤 영향을 미쳤는지를 추적하는 데도 유용합니다.또한 이 자료는 스포츠 분야 연구자, 구단 전략 담당자, 스포츠 마케팅 관계자, 언론·커뮤니케이션 연구자 등에게 프로야구 보도의 흐름, 이슈별 프레임 변화, 언론의 스포츠 재현 방식을 이해하는 데 기초 자료로 활용될 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -52,6 +54,7 @@ schema:
         unique: 366
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 스포츠서울
@@ -140,12 +143,22 @@ schema:
         - 유주,고척스카이돔,키움히어로즈,걸그룹,한화이글스,고척,시구,출신,최선,마음,응원,야구,가수,선수,여자,솔로,친구,경기,프로,감사,순간,이날
       stats:
         unique: 32730
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -182,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156218-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15156218.json
@@ -257,8 +270,6 @@ verification:
   run: probe/runs/15156218.json
   stats: probe/stats/15156218.json
   data: probe/data/15156218/
-status: active
-summary_user: 빅카인즈(BIGKinds)에서 모은 국내 언론사의 프로야구(KBO 리그) 관련 뉴스를 기사 한 건당 한 행으로 담은 메타데이터 파일로, 보도 일자·언론사·제목·통합분류(1~3단계)·인물·지역·기업기관 개체명·키워드·특성추출 값을 담으며 CSV 약 62MB 규모다. 스포츠·언론 연구자나 구단·마케팅 담당자가 '특정 팀이나 선수, FA·트레이드 같은 이슈가 언제 어느 언론사에서 집중 보도됐고 어떤 키워드로 다뤄졌나'를 따져 보는 데 쓴다. 전역 조인 키는 없어서 다른 데이터와는 일자, 언론사명, 개체명(인물·기업기관)에 든 선수·구단 이름을 문자열로 맞춰 잇는다.
 limits: 표준 코드나 식별자가 없어 경기 기록·구단 통계 등과 붙이려면 이름 매칭에 기대야 하고 표기 차이에 주의한다. 범위는 전국·비공간 데이터라 지역별 행정구역 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -270,3 +281,4 @@ review:
     - c-15156218-03
     - c-15156218-04
   dropped_citations: 0
+status: active

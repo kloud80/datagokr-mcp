@@ -1,4 +1,5 @@
-# Dataset 15075347 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15075347 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15075347'
 tier: verified
 title: 외교부_재외공관 홈페이지
@@ -23,6 +24,7 @@ synonyms:
   - 공관 홈페이지 URL
   - 재외공관코드
   - 해외 공관 사이트
+summary_user: 재외공관별 홈페이지 정보를 공관 단위로 담은 API로, 재외공관코드·한글명·현지명, 언어 구분, 사이트 유형, 홈페이지 주소를 건별로 제공한다. 해외 체류 국민이나 여행자가 '이 나라에 있는 우리 대사관·총영사관 홈페이지 주소는 어디인가, 한국어·현지어 사이트가 따로 있는가'를 확인하거나, 서비스 개발자가 공관 안내 링크를 붙이는 데 쓴다. 전역 조인 키는 실측되지 않았으므로 같은 외교부의 재외공관 정보 데이터와는 재외공관코드(embassy_cd)나 공관명으로 맞춰 이어 쓴다.
 description_portal: '[요약정보]재외공관코드로 재외공관정보 목록 조회[상세 정보]재외공관 홈페이지 목록 조회: 재외공관코드로 재외공관정보 목록 조회 - 재외공관 홈페이지 관련 공관명, 타임존, 홈페이지 주소정보 제공하는 공공데이터 API 서비스[응답정보(출력결과)] 결과코드, 결과메시지, 한 페이지 결과수, 페이지 번호, 전체 결과수, 재외공관 홈페이지ID ,재외공관코드, 재외공관 한글명, 사이트아이디값, 재외공관명, 언어구분코드, 언어구분명, 사이트 유형코드,사이트 유형명, 홈페이지 URL, 현재 결과수 등을 포함하여 서비스 합니다.'
 team:
   dept: 정보화담당관실
@@ -46,6 +48,7 @@ schema:
   fields:
     - name: embassy_cd
       type: string
+      semantic_type: embassy_cd
       null_rate: 0.0
       sample_values:
         - ae
@@ -131,6 +134,12 @@ schema:
         - 레거시
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - embassy_cd
+      reference:
+        key: embassy_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -180,7 +189,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15075347-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: embassy_cd(embassy_cd)'
     evidence:
       - type: measured
         source: probe/stats/15075347.json
@@ -245,8 +254,6 @@ verification:
   run: probe/runs/15075347.json
   stats: probe/stats/15075347.json
   data: probe/data/15075347/
-status: active
-summary_user: 재외공관별 홈페이지 정보를 공관 단위로 담은 API로, 재외공관코드·한글명·현지명, 언어 구분, 사이트 유형, 홈페이지 주소를 건별로 제공한다. 해외 체류 국민이나 여행자가 '이 나라에 있는 우리 대사관·총영사관 홈페이지 주소는 어디인가, 한국어·현지어 사이트가 따로 있는가'를 확인하거나, 서비스 개발자가 공관 안내 링크를 붙이는 데 쓴다. 전역 조인 키는 실측되지 않았으므로 같은 외교부의 재외공관 정보 데이터와는 재외공관코드(embassy_cd)나 공관명으로 맞춰 이어 쓴다.
 limits: 실측 컬럼에 다른 기관 데이터와 바로 붙는 공통 키가 없어 공관명·코드 매핑을 직접 해야 한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -258,3 +265,4 @@ review:
     - c-15075347-03
     - c-15075347-06
   dropped_citations: 0
+status: active

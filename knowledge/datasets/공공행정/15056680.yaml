@@ -1,4 +1,5 @@
-# Dataset 15056680 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056680 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056680'
 tier: verified
 title: 한국지역정보개발원_신입사원 평균임금 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 클린아이
   - 신입사원 급여
   - 공기업 임금 비교
+summary_user: 전국 지방공기업의 신입사원 임금을 연도·기관별로 집계해 기본급, 급여성복리후생비, 수당, 시간외근무수당, 합계와 신입사원 수로 담는다. 취업준비생이 특정 지방공기업의 신입 초봉 수준을 비교하거나, 분석가가 기관 간 신입 처우 격차를 살펴볼 때 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 기관명(ENT_NAME)과 연도로 이름 매칭해 이어 붙여야 한다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 신입사원 평균임금 자료에는 연도, 기관명, 신입사원 기본급, 신입사원 급여성복리후생비, 신입사원 수당, 신입사원 시간외근무수당, 합계, 신입사원 직원수 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 매년 정기적으로 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -90,6 +92,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -175,12 +178,22 @@ schema:
         p50: 9
         max: 690
         unique: 54
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -224,7 +237,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056680-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15056680.json
@@ -278,8 +291,6 @@ verification:
   run: probe/runs/15056680.json
   stats: probe/stats/15056680.json
   data: probe/data/15056680/
-status: active
-summary_user: 전국 지방공기업의 신입사원 임금을 연도·기관별로 집계해 기본급, 급여성복리후생비, 수당, 시간외근무수당, 합계와 신입사원 수로 담는다. 취업준비생이 특정 지방공기업의 신입 초봉 수준을 비교하거나, 분석가가 기관 간 신입 처우 격차를 살펴볼 때 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 기관명(ENT_NAME)과 연도로 이름 매칭해 이어 붙여야 한다.
 limits: 기관 코드 같은 공통 키가 없어 다른 데이터와 연결할 때 기관명 표기 차이로 매칭이 어긋날 수 있다. 지방행정 부문 정리 방침상 보조 등급의 경영공시 항목으로 분류돼 있다.
 review:
   summary: draft
@@ -293,3 +304,4 @@ review:
     - c-15056680-06
     - c-15056680-07
   dropped_citations: 0
+status: active

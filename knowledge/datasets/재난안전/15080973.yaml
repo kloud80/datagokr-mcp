@@ -1,4 +1,5 @@
-# Dataset 15080973 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15080973 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080973'
 tier: verified
 title: 소방청_세종시 재난별 출동보고현황
@@ -24,6 +25,7 @@ synonyms:
   - 재난 유형별 출동 건수
   - 구조구급 출동기록
   - 소방서 관할 출동
+summary_user: 세종시에서 접수된 119 긴급구조 신고를 출동 건별로 담은 원천 파일(csv, 약 83MB)로, 행마다 접수 경로·접수일시, 사고 장소(우편번호·동·리), 긴급구조 종별·분류·규모, 관할 소방서·센터, 상황종료 시각, 고속도로사고 여부가 들어 있다. 분석가나 소방 행정 담당자가 세종시에서 어떤 유형의 재난 출동이 어느 동네·어느 시기에 많은지, 접수부터 상황종료까지 시간이 얼마나 걸리는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 우편번호·동명 같은 이름 매칭이나 관할서·센터명으로만 이어 쓰며, 119안전센터 위치나 화재 발생 건별 데이터와 연결할 때도 이름 매핑이 필요하다.
 description_portal: 공공데이터 포털에서 제공하는 “세종시 재난별 출동보고현황” 데이터는 세종특별자치시 내에서 발생하는 각종 재난 상황에 대해 소방관서가 실제로 출동한 내역을 유형별로 구분하여 기록한 상세 통계자료입니다. 이 데이터에는 화재, 구조, 구급뿐만 아니라 풍수해, 낙뢰, 붕괴, 교통사고, 가스·전기 사고, 생활안전 관련 사고 등 다양한 재난 유형이 포함되어 있으며, 연도별·월별·분기별로 세분화된 출동 건수가 집계됩니다. 특히 단순 건수 집계에 그치지 않고, 재난별 출동 비율, 특정 시기에 급증하는 유형, 계절·기상 상황과의 연관성 등을 확인할 수 있어 재난 발생 패턴을 분석하는 데 유용합니다.이 자료를 활용하면 세종시에서 상대적으로 빈번히 발생하는 재난이 무엇인지 파악할 수 있고, 특정 지역에서 반복적으로 출동이 많은 유형을 추적하여 위험 요인을 사전에 줄일 수 있습니다. 예를 들어 여름철에는 폭우·태풍과 같은 풍수해 출동이, 겨울철에는 화재와 난방기구 관련 사고 출동이 증가하는 등 시기적 특징을 반영할 수 있습니다. 또한 장기적으로는 재난별 출동 건수의 증감 추이를 기반으로 소방력 배치 계획, 장비 보강, 시민 대상 안전캠페인 및 교육 프로그램 수립에 활용되어 지역 맞춤형 재난 대응 체계를 강화할 수 있는 중요한 기초자료 역할을 합니다
 accrual_periodicity: 연간
 team:
@@ -149,6 +151,7 @@ schema:
         unique: 6350
     - name: 관할서명
       type: code
+      semantic_type: fire_center
       null_rate: 0.005
       sample_values:
         - (구)세종남부소방서
@@ -158,6 +161,7 @@ schema:
         unique: 4
     - name: 서센터명
       type: code
+      semantic_type: fire_center
       null_rate: 0.005
       sample_values:
         - (구)조치원119안전센터
@@ -213,12 +217,33 @@ schema:
         - 18:00:29
       stats:
         unique: 51293
+  foreign_keys:
+    - fields:
+        - 관할서명
+      reference:
+        key: fire_center
+      evidence: measured
+    - fields:
+        - 서센터명
+      reference:
+        key: fire_center
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - 타시도신고여부
+  space_via: name
+  time: day
+  time_fields:
+    - 접수일시
+    - 상황종료일시
+    - 관제진행일시
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -255,7 +280,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080973-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fire_center(관할서명), fire_center(서센터명)'
     evidence:
       - type: measured
         source: probe/stats/15080973.json
@@ -320,8 +345,6 @@ verification:
   run: probe/runs/15080973.json
   stats: probe/stats/15080973.json
   data: probe/data/15080973/
-status: active
-summary_user: 세종시에서 접수된 119 긴급구조 신고를 출동 건별로 담은 원천 파일(csv, 약 83MB)로, 행마다 접수 경로·접수일시, 사고 장소(우편번호·동·리), 긴급구조 종별·분류·규모, 관할 소방서·센터, 상황종료 시각, 고속도로사고 여부가 들어 있다. 분석가나 소방 행정 담당자가 세종시에서 어떤 유형의 재난 출동이 어느 동네·어느 시기에 많은지, 접수부터 상황종료까지 시간이 얼마나 걸리는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 우편번호·동명 같은 이름 매칭이나 관할서·센터명으로만 이어 쓰며, 119안전센터 위치나 화재 발생 건별 데이터와 연결할 때도 이름 매핑이 필요하다.
 limits: 표준 코드형 조인 키가 없어 행정구역 코드나 시설 ID로 바로 결합할 수 없고, 이름·우편번호 매핑에 의존해야 한다. 메타데이터상 범위는 '전국·비공간'으로 표기돼 있으나 제목과 내용은 세종시 한정이므로 범위를 해석할 때 주의하고, 좌표가 없어 지도 분석에는 주소 변환이 따로 필요하다.
 review:
   summary: draft
@@ -334,3 +357,4 @@ review:
     - c-15080973-04
     - c-15080973-06
   dropped_citations: 0
+status: active

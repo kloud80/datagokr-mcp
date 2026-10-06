@@ -1,4 +1,5 @@
-# Dataset 15084727 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15084727 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15084727'
 tier: verified
 title: 한국연구재단_KCI 인용 정보 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 자기인용
   - 학술지 인용 통계
   - 국내 학술지 평가
+summary_user: 국내 학술지별·기준연도(STAN_YR)별로 연도별 피인용 횟수, 자기인용 제외 피인용, 게재 논문 수와 영향력지수·KOR FACTOR·ZIF·즉시성지수 같은 인용 지표를 담은 학술지 단위 집계 데이터다. 연구자나 학술지 운영자가 "이 학술지의 최근 몇 년간 영향력지수와 자기인용 비중은 어떻게 변했나"를 확인하거나 투고·평가 대상 학술지를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 다른 학술문헌 데이터와는 학술지 ID(SERE_ID)·ISSN·학술지명 매핑으로만 연결한다.
 description_portal: KCI 인용 정보 서비스는 국내 학술지의 인용 현황, 자기 인용, 논문 수, 영향력 지수 등의 다양한 인용 관련 데이터를 제공합니다. 학술지별로 연도별 피인용 횟수, 논문 수, 자기 인용 횟수, 임팩트 팩터, KOR FACTOR, ZIF, 즉시성 지수 등 주요 지표를 포함하고 있으므로, 학술지의 영향력과 연구 성과를 다각도로 분석할 수 있습니다. 이 서비스는 연구자, 평가기관, 학술지 운영자 등이 학술지의 인용 동향을 파악하거나 연구 성과를 평가하고, 학술지 선정 등에 활용할 수 있는 중요한 정보를 제공합니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: SERE_ID
       type: number
+      semantic_type: kci_sere_id
       null_rate: 0.0
       sample_values:
         - '000001'
@@ -77,6 +80,7 @@ schema:
         unique: 1
     - name: ISSN
       type: number
+      semantic_type: issn
       null_rate: 0.0
       sample_values:
         - '12260533'
@@ -790,12 +794,27 @@ schema:
         p50: 9
         max: 9
         unique: 1
+  foreign_keys:
+    - fields:
+        - SERE_ID
+      reference:
+        key: kci_sere_id
+      evidence: measured
+    - fields:
+        - ISSN
+      reference:
+        key: issn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - CREATE_DATE
 cycle: default
 classification:
   subsector_name: 학술문헌 (KCI·ScienceON)
@@ -839,7 +858,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15084727-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_sere_id(SERE_ID), issn(ISSN)'
     evidence:
       - type: measured
         source: probe/stats/15084727.json
@@ -904,8 +923,6 @@ verification:
   run: probe/runs/15084727.json
   stats: probe/stats/15084727.json
   data: probe/data/15084727/
-status: active
-summary_user: 국내 학술지별·기준연도(STAN_YR)별로 연도별 피인용 횟수, 자기인용 제외 피인용, 게재 논문 수와 영향력지수·KOR FACTOR·ZIF·즉시성지수 같은 인용 지표를 담은 학술지 단위 집계 데이터다. 연구자나 학술지 운영자가 "이 학술지의 최근 몇 년간 영향력지수와 자기인용 비중은 어떻게 변했나"를 확인하거나 투고·평가 대상 학술지를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 다른 학술문헌 데이터와는 학술지 ID(SERE_ID)·ISSN·학술지명 매핑으로만 연결한다.
 limits: 논문 단위나 연구자 단위 인용 정보는 없고 학술지 단위 지표만 담는다. 공통 조인 키가 없어 다른 데이터와 붙일 때 이름·ISSN 매핑이 필요하다. 개발계정은 하루 5,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -917,3 +934,4 @@ review:
     - c-15084727-03
     - c-15084727-04
   dropped_citations: 0
+status: active

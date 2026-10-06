@@ -1,4 +1,5 @@
-# Dataset 15049023 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049023 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049023'
 tier: verified
 title: 도로교통공단_소장도서 및 자료 서지정보
@@ -25,6 +26,7 @@ synonyms:
   - 청구기호
   - 교통공학 보고서
   - 기관 도서관 서지
+summary_user: 한국도로교통공단 도서실이 소장한 도서·보고서·정기간행물을 등록번호 단위로 한 건씩 담은 서지 목록이며, 서명·저자·출판사·출판년도·청구기호·소장처·자료유형을 담는다(CSV 약 21.7MB). 교통안전·교통공학 연구자나 정책 담당자가 '이 주제의 문헌을 공단 도서실이 갖고 있는지, 어디에 어떤 청구기호로 있는지'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 도서관 목록이나 국가서지와는 서명·저자·출판사 같은 이름 매칭으로만 이어 쓴다.
 description_portal: '본 데이터는 한국도로교통공단 도서실이 보유한 도서·보고서·정기간행물의 서지 메타데이터를 정리한 자료이다. 서명, 저자, 발행사, 발행연도, 자료유형, 식별자(ISBN/ISSN), 소장처, 청구기호를 표준 필드로 제공한다. 항목 명칭을 통일해 목록 검색과 연계 활용이 쉽고, 서명·저자·주제어 기반 교차 탐색과 서지관리 도구 연동이 가능하다. 본 자료는 교통안전·교통공학 문헌 출처 파악, 기관 지식자원 현황 점검, 주제별 자료 묶음 구성에 쓰인다. 이용자는 연구·정책 수립에 필요한 기본 문헌을 파악하고, 타 기관 자료와 결합해 소장 범위를 시각화한다. 요약: 공단 소장 자료의 표준 서지정보를 제공해 서명·발행사항·소장 위치를 일관되게 확인하도록 구성한 데이터다.'
 accrual_periodicity: 수시
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 등록번호
       type: string
+      semantic_type: koroad_lib_reg_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -177,12 +180,22 @@ schema:
         - 공단연구보고서
       stats:
         unique: 7
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: koroad_lib_reg_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 출판년도
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -220,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15049023-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koroad_lib_reg_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15049023.json
@@ -285,8 +298,6 @@ verification:
   run: probe/runs/15049023.json
   stats: probe/stats/15049023.json
   data: probe/data/15049023/
-status: active
-summary_user: 한국도로교통공단 도서실이 소장한 도서·보고서·정기간행물을 등록번호 단위로 한 건씩 담은 서지 목록이며, 서명·저자·출판사·출판년도·청구기호·소장처·자료유형을 담는다(CSV 약 21.7MB). 교통안전·교통공학 연구자나 정책 담당자가 '이 주제의 문헌을 공단 도서실이 갖고 있는지, 어디에 어떤 청구기호로 있는지'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 도서관 목록이나 국가서지와는 서명·저자·출판사 같은 이름 매칭으로만 이어 쓴다.
 limits: 필드 목록에 ISBN·도서관코드 같은 공통 식별자가 없어 도서관정보나루 등 외부 데이터와 키로 바로 결합할 수 없고, 서명·저자 문자열 매칭에 의존해야 한다. 대출·이용 현황은 담지 않는 소장 목록이다.
 review:
   summary: draft
@@ -298,3 +309,4 @@ review:
     - c-15049023-03
     - c-15049023-06
   dropped_citations: 0
+status: active

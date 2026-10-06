@@ -1,4 +1,5 @@
-# Dataset 15124891 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15124891 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124891'
 tier: verified
 title: "금융위원회_\uFEFF자동차보험가입정보"
@@ -25,6 +26,7 @@ synonyms:
   - 부상급수 장애급수
   - 경과보험료
   - 차보험 계약 현황
+summary_user: 자동차보험의 계약 통계(보험종목·담보·성별·연령·차종별 가입대수·경과보험료), 손해상황(손해액·부상/사망 건수), 사고 피해자 통계를 오퍼레이션별 집계로 담으며, 실호출로 확인된 피해자 정보는 사고종결년월별 사망·부상 구분, 장애 여부, 부상·장애 급수별 인원수를 전국 단위로 제공한다. 보험 분석가나 연구자가 "월별 자동차사고 피해자 중 부상 급수·장애 급수별 인원이 어떻게 분포하는가" 같은 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 사고종결년월(atmbAcdnCnlsYm) 같은 기간 값이나 급수·구분 이름을 맞춰 연결해야 한다.
 description_portal: '자동차보험가입정보는 자동차보험과 관련된 주요 계약 통계정보, 손해 상황정보,자동차사고  피해자 현황 정보 등을 종합적으로 제공하는 데이터입니다.데이터는 다음 3가지 오퍼레이션으로 구성되어 있습니다.① 자동차보험 계약정보 조회 : 보험종목, 담보구분, 성별, 연령, 국외산, 차종, 가입대수, 경과보험료 등의 계약 통계정보를 조회하는 기능② 자동차보험 손해상황 정보 조회 : 보험종목, 담보구분, 차종, 손해액, 부상/분손 건수, 사망/전손 건수 등을 조회하는 기능③ 자동차보험 피해자 정보 조회 : 사망부상구분, 장애여부, 부상급수, 장애급수, 인원수 관련 통계 정보를 제공하는 기능'
 team:
   dept: 금융공공데이터팀
@@ -273,6 +275,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - atmbAcdnCnlsYm
 cycle: default
 classification:
   subsector_name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
@@ -393,8 +399,6 @@ verification:
   run: probe/runs/15124891.json
   stats: probe/stats/15124891.json
   data: probe/data/15124891/
-status: active
-summary_user: 자동차보험의 계약 통계(보험종목·담보·성별·연령·차종별 가입대수·경과보험료), 손해상황(손해액·부상/사망 건수), 사고 피해자 통계를 오퍼레이션별 집계로 담으며, 실호출로 확인된 피해자 정보는 사고종결년월별 사망·부상 구분, 장애 여부, 부상·장애 급수별 인원수를 전국 단위로 제공한다. 보험 분석가나 연구자가 "월별 자동차사고 피해자 중 부상 급수·장애 급수별 인원이 어떻게 분포하는가" 같은 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 사고종결년월(atmbAcdnCnlsYm) 같은 기간 값이나 급수·구분 이름을 맞춰 연결해야 한다.
 limits: 3개 오퍼레이션 중 계약정보 조회와 손해상황 조회는 최소 파라미터로 호출했을 때 응답이 없었고, 실호출 성공은 피해자 정보 1개뿐이다. 지역 구분이 없는 전국·비공간 통계라 시도·시군구별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -407,3 +411,4 @@ review:
     - c-15124891-04
     - c-15124891-10
   dropped_citations: 0
+status: active

@@ -110,6 +110,7 @@ schema:
     - name: corp_cd
       title: 법인코드
       type: number
+      semantic_type: whsl_corp_cd
       null_rate: 0.0
       sample_values:
         - '11000101'
@@ -129,6 +130,7 @@ schema:
     - name: gds_lclsf_cd
       title: 상품대분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '08'
@@ -152,6 +154,7 @@ schema:
     - name: gds_mclsf_cd
       title: 상품중분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '04'
@@ -175,6 +178,7 @@ schema:
     - name: gds_sclsf_cd
       title: 상품소분류코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -409,10 +413,35 @@ schema:
         - 서울가락
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - corp_cd
+      reference:
+        key: whsl_corp_cd
+      evidence: measured
+    - fields:
+        - gds_lclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - gds_mclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - gds_sclsf_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2025-02-10 ~ 2025-02-10
+grain:
+  time: day
+  time_fields:
+    - trd_clcln_ymd
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -457,7 +486,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15141809-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: whsl_corp_cd(corp_cd), agri_item_cd(gds_lclsf_cd), agri_item_cd(gds_mclsf_cd), agri_item_cd(gds_sclsf_cd)'
     evidence:
       - type: measured
         source: probe/stats/15141809.json

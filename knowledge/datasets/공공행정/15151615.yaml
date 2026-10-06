@@ -1,0 +1,199 @@
+# Dataset 15151615 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151615'
+tier: verified
+title: 경기도_데이터분석 분석센터 반출신청내역
+sector: 공공행정/일반행정/civic-facilities
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151615/fileData.do
+synonyms:
+  - 데이터분석포털
+  - 분석시스템
+  - 분석센터
+  - 데이터반출
+  - 분석데이터
+  - 반출데이터
+  - 경기도 데이터분석센터
+  - 데이터 반출 신청
+  - 분석센터 반출 내역
+  - 데이터 활용 현황
+  - 민간데이터 활용 동향
+  - 데이터 수요 분석
+summary_user: 경기도 데이터분석센터에서 이용자가 반출을 신청한 내역을 신청 건별로 담으며, 분석신청번호(anls_aply_no)·데이터셋ID·데이터셋명으로 구성된다. 연구·분석 목적으로 유동인구, 성연령별 카드 매출, 이동 목적 OD, 생활인구 같은 데이터 중 어떤 것이 많이 반출되는지 파악하려는 분석가가 데이터 활용 동향과 수요를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 데이터셋명 같은 이름 매핑으로만 이어 쓸 수 있다.
+description_portal: 이 데이터는 경기도 데이터분석센터에서 사용자들이 특정 데이터를 반출 요청한 내역을 정리한 자료로, 각 반출 신청 건에 대해 분석신청번호, 데이터셋ID, 데이터셋명으로 구성되어 있습니다. 데이터셋명에는 유동인구, 성연령별 카드 매출, 이동 목적 기반 OD(Origin-Destination) 데이터, 생활인구 등 다양한 주제의 데이터가 포함되어 있으며, 이를 통해 연구 및 분석 목적으로 어떤 데이터가 많이 활용되고 있는지를 파악할 수 있습니다. 본 데이터는 공공데이터 및 민간데이터 활용 동향 분석, 데이터 활용 수요 예측, 반출관리 시스템 개발 등 다양한 분야에서 활용 가능성이 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: anls_aply_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '12'
+        - '2'
+      stats:
+        min: 2
+        p50: 10.5
+        max: 12
+        unique: 6
+    - name: ds_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100013'
+        - '100025'
+        - '1745'
+      stats:
+        min: 1745
+        p50: 100020
+        max: 100042
+        unique: 6
+    - name: ds_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 유동인구_셀 단위 집계
+        - 행정동간 성연령별 이동목적 OD 데이터
+        - 성연령별 카드 매출 데이터 (BC카드)
+      stats:
+        unique: 6
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2673
+  brm: 공공행정 - 일반행정
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151615-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151615.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151615-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151615-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151615.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151615-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15151615.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151615-06
+    kind: admin_note
+    value: "세부 부문 '생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)'의 가치: 좌표 있는 생활 시설 원장 — 공공시설 개방·무인민원은 표준데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#civic-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151615-07
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 일반행정 (10,088건)] 대부분 기관 운영 자료라 먼저 배제(`general-admin-deferred`). 개체 단위 데이터는 원래 부문으로 옮김 — 의회·의안 → 국정운영, 도서관 → 문화예술, 승강기·시설물 안전·대피·방범·치안·소방 → 재난안전, AED → 응급의료, 도로굴착·따릉이·교통사고 → 도로, 공원 → 공원녹지, 도로명주소 → 우정, 지명 → 공간정보, 지적기준점 → 토지·지적, 토지수용 재결 → 도시개발·정비, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L717
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151615-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151615.json
+  stats: probe/stats/15151615.json
+  data: probe/data/15151615/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 공공데이터포털 활용신청과는 따로 발급받아야 한다. 범위는 시도 단위의 비공간 자료로 좌표·지역 정보가 없고, 전역 조인 키가 없어 다른 데이터와 직접 결합하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151615-01
+    - c-15151615-03
+    - c-15151615-04
+  dropped_citations: 0
+status: active

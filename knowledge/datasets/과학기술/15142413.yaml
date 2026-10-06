@@ -1,0 +1,294 @@
+id: '15142413'
+tier: verified
+title: 과학기술정보통신부 우정사업본부_우체국 정보
+sector: 과학기술/우정/excluded-rest
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15142413/openapi.do
+synonyms:
+  - 우체국
+  - 주소
+  - 우편번호
+  - 우체국 위치
+  - 우체국 주소
+  - 우체국 전화번호
+  - 우체국 목록
+  - 총괄우체국
+  - 지방우정청
+  - 우체국 찾기
+description_portal: 전국 우체국 현황에 대한 데이터를 제공하며 지방청을 기준으로 세부 총괄국명과 관내 우체국명,  우체국의 주소 정보, 전화번호 정보, 구분코드 정보를 제공
+team:
+  dept: 디지털혁신담당관
+services:
+  - op: /getEpsotData
+    name: 우체국 정보 조회
+    endpoint: https://apis.data.go.kr/1721301/TbPoInfoListApi/getEpsotData
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        example: json
+        desc: 리턴받을 타입 (json 고정이나 입력하지 않아도 무방. 다른값 입력시 에러)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lgvofcNm
+      title: 지방청명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충청청
+        - 서울청
+        - 강원청
+      stats:
+        unique: 3
+    - name: ovrpoNm
+      title: 총괄국명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울강남우체국
+        - 서울송파우체국
+        - 논산우체국
+      stats:
+        unique: 79
+    - name: pstofcAddr
+      title: 우체국주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울 영등포구 의사당대로 1  (여의도동)
+        - 강원특별자치도 원주시 이화1길 27
+        - 강원특별자치도 강릉시 하슬라로 114
+      stats:
+        unique: 996
+    - name: pstofcSeCd
+      title: 우체국구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10024'
+        - '10033'
+        - '10042'
+      stats:
+        min: 10024
+        p50: 21567.5
+        max: 35398
+        unique: 1000
+    - name: pstofcZip
+      title: 우체국우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '04386'
+        - '07233'
+        - '26485'
+      stats:
+        min: 1001
+        p50: 25808
+        max: 35426
+        unique: 993
+    - name: regDt
+      title: 등록일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-04-23T14:02:13.418+09:00'
+        - '2025-04-23T14:02:13.437+09:00'
+        - '2025-04-23T14:02:13.430+09:00'
+      stats:
+        min: '2025-04-23'
+        max: '2025-04-23'
+        unique: 4
+    - name: wtjrPstofcNm
+      title: 관내우체국코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 광화문우체국
+        - 서대문우체국
+        - 서울마포우체국
+      stats:
+        unique: 1000
+    - name: pstofcTelNo
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-3703-9011
+        - 02-390-9114
+        - 02-6901-7699
+      stats:
+        unique: 1000
+    - name: pstofcFaxNo
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 미운영
+        - 0505-005-1121
+        - 0505-005-1125
+      stats:
+        unique: 959
+    - name: postBizHr
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 09:00~18:00
+        - 09:00~12:00
+        - 14:00~18:00
+      stats:
+        unique: 7
+    - name: finBizHr
+      type: code
+      null_rate: 0.001
+      sample_values:
+        - 09:00~16:30
+        - 미운영
+        - 09:00~12:00
+      stats:
+        unique: 8
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - pstofcAddr
+  space_via: address
+  time: day
+  time_fields:
+    - regDt
+cycle: default
+classification:
+  subsector_name: 제외 대상
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.6537
+  brm: 과학기술 - 우정
+  why: 기관 분석 핵심 원장 — 과학기술정보통신부 우정사업본부
+claims:
+  - id: c-15142413-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15142413.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15142413.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15142413-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15142413-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15142413.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15142413-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15142413.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15142413-06
+    kind: admin_note
+    value: '[과학기술 - 우정 · 결정] 우편번호·배달·주소만 남기고 나머지 전부 제외 (`postal-non-address`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L435
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15142413-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15142413.json
+  stats: probe/stats/15142413.json
+  data: probe/data/15142413/
+status: active
+summary_user: 전국 우체국을 한 건씩 담은 원천 목록으로, 지방청·총괄국·관내 우체국명과 주소·우편번호·전화번호·구분코드를 우체국 단위로 제공한다. 국민이 가까운 우체국의 주소와 연락처를 찾거나, 분석가가 지방청·총괄국별로 우체국이 어떻게 분포하는지 볼 때 쓴다. 전역 조인 키는 없어 다른 데이터와는 우체국명·주소·우편번호(pstofcZip) 같은 이름·코드 매핑으로만 잇는다.
+limits: 표준 기관코드나 행정구역코드 같은 공통 키가 없어 다른 데이터와 붙이려면 이름이나 주소를 직접 맞춰야 한다. 우정 부문에서 우편번호·배달·주소 외 데이터를 제외하기로 한 검토 결정에 따라 이 데이터셋은 제외 대상으로 분류돼 있다. 개발계정 호출 한도는 하루 10,000회다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15142413-01
+    - c-15142413-03
+    - c-15142413-04
+    - c-15142413-06
+  dropped_citations: 0

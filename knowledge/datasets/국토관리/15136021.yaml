@@ -1,4 +1,5 @@
-# Dataset 15136021 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15136021 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15136021'
 tier: verified
 title: 중소벤처기업진흥공단_내일채움공제 청약기간 연장신청 현황
@@ -20,6 +21,7 @@ synonyms:
   - 만기 연장
   - 중진공 공제
   - 중소기업 핵심인력 성과보상
+summary_user: 중소벤처기업진흥공단 내일채움공제 가입 건의 계약기간 연장 신청 내역을 청약번호별 건 단위로 담으며, 연장 전후의 만기일자·계약개월수와 등록일시가 들어 있다(전국 범위, csv 약 7KB). 정책 분석가가 연장 신청 때 계약기간이 몇 개월 늘어나는지, 신청이 어느 시기에 몰리는지를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 같은 기관 데이터의 이름·코드 매핑으로만 이어 쓸 수 있다.
 description_portal: 중소벤처기업진흥공단이 운영하는 내일채움공제 가입자가 기존 청약에 따른 계약기간을 연장 신청한 내역에 대한 정보입니다.
 applicable_legislation:
   - law: 중소기업 인력지원 특별법
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 청약번호
       type: string
+      semantic_type: sbc_tomorrow_subscription_no
       null_rate: 0.0
       sample_values:
         - 2017-02-0087
@@ -101,12 +104,24 @@ schema:
         min: '2020-10-06'
         max: '2025-08-06'
         unique: 109
+  foreign_keys:
+    - fields:
+        - 청약번호
+      reference:
+        key: sbc_tomorrow_subscription_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 변경전만기일자
+    - 만기일자
+    - 등록일시
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -148,7 +163,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15136021-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sbc_tomorrow_subscription_no(청약번호)'
     evidence:
       - type: measured
         source: probe/stats/15136021.json
@@ -253,8 +268,6 @@ verification:
   run: probe/runs/15136021.json
   stats: probe/stats/15136021.json
   data: probe/data/15136021/
-status: active
-summary_user: 중소벤처기업진흥공단 내일채움공제 가입 건의 계약기간 연장 신청 내역을 청약번호별 건 단위로 담으며, 연장 전후의 만기일자·계약개월수와 등록일시가 들어 있다(전국 범위, csv 약 7KB). 정책 분석가가 연장 신청 때 계약기간이 몇 개월 늘어나는지, 신청이 어느 시기에 몰리는지를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 같은 기관 데이터의 이름·코드 매핑으로만 이어 쓸 수 있다.
 limits: 여기서 '청약'은 공제 가입을 뜻하며 주택 청약과는 무관하다. 그런데 포털 부문은 주택 청약·분양으로 분류돼 있고 이동 대상으로 판정됐다. 가입자 속성·기업 정보·지역 정보가 없어 지역별·업종별 분석은 하지 못한다. 갱신 주기는 명세상 연간으로만 확인된다.
 review:
   summary: draft
@@ -268,3 +281,4 @@ review:
     - c-15136021-04
     - c-15136021-08
   dropped_citations: 0
+status: active

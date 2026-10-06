@@ -1,4 +1,5 @@
-# Dataset 15125487 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125487 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125487'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 사업자 교육계약채용 기준 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 교육
   - 가맹본부 교육 요건
   - 프랜차이즈 창업 교육
+summary_user: 가맹 브랜드별로 가맹점사업자와 종업원 구분에 따른 교육 기준과 계약·채용 기준 내용을 기준년도 단위로 담은 전국 범위 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드는 가맹점주와 직원에게 어떤 교육을 요구하고, 채용 계약 조건은 어떤가"를 정보공개서 내용으로 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 같은 기관의 가맹정보 서비스와는 브랜드관리번호(brandMnno)·가맹본부관리번호와 기준년도로 맞춰 이어 쓴다.
 description_portal: 브랜드 가맹점 사업자 교육계약채용 기준에 대한 기준년도, 브랜드관리번호를 이용하여 가맹점사업자종업원구분명, 교육기준내용 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -132,12 +136,27 @@ schema:
         - 가맹점 운영능력 및 운용자금 소유자
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -182,7 +201,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125487-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125487.json
@@ -247,8 +266,6 @@ verification:
   run: probe/runs/15125487.json
   stats: probe/stats/15125487.json
   data: probe/data/15125487/
-status: active
-summary_user: 가맹 브랜드별로 가맹점사업자와 종업원 구분에 따른 교육 기준과 계약·채용 기준 내용을 기준년도 단위로 담은 전국 범위 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드는 가맹점주와 직원에게 어떤 교육을 요구하고, 채용 계약 조건은 어떤가"를 정보공개서 내용으로 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 같은 기관의 가맹정보 서비스와는 브랜드관리번호(brandMnno)·가맹본부관리번호와 기준년도로 맞춰 이어 쓴다.
 limits: 사업자등록번호·법인등록번호 같은 전역 조인 키가 실측 컬럼에 없어 다른 기관 데이터와는 이름 매핑이나 공정위 내부 관리번호로만 연결된다. 교육·채용 기준은 서술형 텍스트라 수치 비교·집계에는 별도 가공이 필요하고, 개발계정은 일 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -261,3 +278,4 @@ review:
     - c-15125487-04
     - c-15125487-07
   dropped_citations: 0
+status: active

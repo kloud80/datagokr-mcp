@@ -1,4 +1,5 @@
-# Dataset 15150124 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15150124 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150124'
 tier: verified
 title: 성평등가족부_청소년활동 봉사활동 정보
@@ -22,6 +23,7 @@ synonyms:
   - 1365 청소년 봉사
   - 청소년활동 프로그램
   - 봉사시간 인정 활동
+summary_user: 청소년 봉사활동 프로그램을 건별로 담은 원천 데이터로, 프로그램번호·차수, 활동 영역과 유형, 모집 인원, 신청·활동 기간, 참가비, 진행 상태, 활동 시도·시군구와 장소를 전국 범위로 제공한다. 청소년이나 학부모가 우리 지역에서 지금 신청할 수 있는 무료 봉사활동이 무엇인지 찾거나, 분석가가 지역·활동영역별 봉사 프로그램 분포를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 활동 시도·시군구명(actvSggNm) 같은 이름 매핑으로 지역 통계에 잇거나 같은 기관의 프로그램·단체번호로만 연결한다.
 description_portal: 성평등가족부 청소년활동 봉사활동 정보는 청소년이 참여한 봉사활동의 기본 정보를 체계적으로 기록하고 관리하기 위해 제공되는 자료입니다. 활동명, 운영 일자, 참여자 명단, 지도자 정보, 진행 상태, 장소 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 봉사활동 현황 관리, 참여자 안내, 프로그램 운영, 정책 분석, 기록 관리, 안전 점검, 프로그램 개선 등 다양한 목적으로 활용할 수 있습니다. 또한 청소년활동 봉사활동 정보는 청소년 참여 기록 관리와 프로그램 신뢰성 확보에도 중요한 기초 자료입니다.
 team:
   dept: 정보통계담당관실
@@ -64,6 +66,7 @@ schema:
     - name: prgrmNo
       title: 프로그램번호
       type: number
+      semantic_type: vltr_prgrm_no
       null_rate: 0.0
       sample_values:
         - '999999'
@@ -95,6 +98,7 @@ schema:
     - name: grpNo
       title: 단체번호
       type: number
+      semantic_type: vltr_grp_no
       null_rate: 0.069
       sample_values:
         - '33478'
@@ -108,6 +112,7 @@ schema:
     - name: grpClubNo
       title: 단체동호회번호
       type: number
+      semantic_type: vltr_club_no
       null_rate: 0.979
       sample_values:
         - '2273'
@@ -467,12 +472,37 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - prgrmNo
+      reference:
+        key: vltr_prgrm_no
+      evidence: measured
+    - fields:
+        - grpNo
+      reference:
+        key: vltr_grp_no
+      evidence: measured
+    - fields:
+        - grpClubNo
+      reference:
+        key: vltr_club_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sido
+  space_fields:
+    - regCtpvNm
+    - actvCtpvNm
+  space_via: name
+  time: day
+  time_fields:
+    - prgrmSn
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -517,7 +547,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15150124-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vltr_prgrm_no(prgrmNo), vltr_grp_no(grpNo), vltr_club_no(grpClubNo)'
     evidence:
       - type: measured
         source: probe/stats/15150124.json
@@ -571,8 +601,6 @@ verification:
   run: probe/runs/15150124.json
   stats: probe/stats/15150124.json
   data: probe/data/15150124/
-status: active
-summary_user: 청소년 봉사활동 프로그램을 건별로 담은 원천 데이터로, 프로그램번호·차수, 활동 영역과 유형, 모집 인원, 신청·활동 기간, 참가비, 진행 상태, 활동 시도·시군구와 장소를 전국 범위로 제공한다. 청소년이나 학부모가 우리 지역에서 지금 신청할 수 있는 무료 봉사활동이 무엇인지 찾거나, 분석가가 지역·활동영역별 봉사 프로그램 분포를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 활동 시도·시군구명(actvSggNm) 같은 이름 매핑으로 지역 통계에 잇거나 같은 기관의 프로그램·단체번호로만 연결한다.
 limits: 전역 조인 키가 없어 행정구역 코드로 바로 결합할 수 없고 시도·시군구 이름을 코드로 매핑해야 한다. 이벤트 주기 데이터로 분류되어 있어 정기 갱신을 전제로 해석하지 않는다. 포털 설명에 있는 참여자 명단·지도자 정보는 필드 목록에 없으므로 개인별 참여 기록 분석에는 쓰지 않는다.
 review:
   summary: draft
@@ -586,3 +614,4 @@ review:
     - c-15150124-04
     - c-15150124-06
   dropped_citations: 0
+status: active

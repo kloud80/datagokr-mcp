@@ -1,4 +1,5 @@
-# Dataset 15134960 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15134960 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15134960'
 tier: verified
 title: 국민건강보험공단_심전도감시 관련 특정 행위코드에 대한 진료정보
@@ -22,6 +23,7 @@ synonyms:
   - 부정맥 감시 진료 통계
   - 심전도 감시 수가
   - 주상병별 진료인원
+summary_user: 건강보험 행위코드 EX871(원격심박기술에 의한 심전도 감시, 1일당)에 대해 2024년 진료분을 주상병코드·진료과목별로 묶어 진료인원·진료건수·수가금액(천원)을 담은 전국 단위 집계 파일입니다. 의료 분석가나 의료기기 사업자가 원격 심전도 감시가 어떤 진단명 환자에게 얼마나 쓰이고 급여 규모가 얼마인지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 주상병코드를 KCD 질병분류 코드표와, 행위코드를 EDI 행위 코드 마스터와 코드 매핑으로 이어 쓴다.
 description_portal: '1. 행위코드(건강보험행위분류): EX871(심전도 감시 [원격심박기술에 의한 감시] [1일당])2. 진료년도: 2024년3. 주상병코드 및 주상병명: A~Z4. 진료인원 및 진료건수: 해당 구분별 진료인원(중복제외) 및 건수5. 수가금액: 해당 수가에 대한 종별가산 적용금액- 진료일 기준(한의분류 제외, 약국 제외)- 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외- 2025년 6월 심사분까지 반영- 요양기관에서 환자 진료 중 진단명이 확정되지 않은 상태에서의 호소, 증세 등에 따라 일차진단명을 부여하고 청구한 내역 중주진단명 기준으로 발췌한 것이므로 최종 확정된 질병과는 다를 수 있음※ 개인정보 보호를 위해 5인 미만 또는 5개 미만의 건수는 "*" 처리※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터이며 본 데이터와 무관한 건강보험제도, 개인의 자격,징수,급여, 장기요양 관련 문의는 공단 대표번호(1577-1000)로 하시기 바랍니다.'
 accrual_periodicity: 연간
 team:
@@ -45,6 +47,7 @@ schema:
         unique: 1
     - name: 행위코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - EX871
@@ -115,12 +118,22 @@ schema:
         p50: 354
         max: 516015
         unique: 691
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -157,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15134960-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(행위코드)'
     evidence:
       - type: measured
         source: probe/stats/15134960.json
@@ -222,8 +235,6 @@ verification:
   run: probe/runs/15134960.json
   stats: probe/stats/15134960.json
   data: probe/data/15134960/
-status: active
-summary_user: 건강보험 행위코드 EX871(원격심박기술에 의한 심전도 감시, 1일당)에 대해 2024년 진료분을 주상병코드·진료과목별로 묶어 진료인원·진료건수·수가금액(천원)을 담은 전국 단위 집계 파일입니다. 의료 분석가나 의료기기 사업자가 원격 심전도 감시가 어떤 진단명 환자에게 얼마나 쓰이고 급여 규모가 얼마인지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 주상병코드를 KCD 질병분류 코드표와, 행위코드를 EDI 행위 코드 마스터와 코드 매핑으로 이어 쓴다.
 limits: 진료일 기준 건강보험 급여실적만 담아 의료급여·비급여·한방·약국은 빠지고, 2025년 6월 심사분까지만 반영된다. 주상병은 청구 시 일차진단명이라 최종 확정 질병과 다를 수 있고, 5 미만 값은 '*'로 가려져 합계 계산에 주의해야 한다. 지역·요양기관 단위 구분은 없다.
 review:
   summary: draft
@@ -236,3 +247,4 @@ review:
     - c-15134960-04
     - c-15134960-06
   dropped_citations: 0
+status: active

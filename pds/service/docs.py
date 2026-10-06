@@ -135,7 +135,9 @@ def _build(stamp: float) -> dict:
         "edges": {"by_rel": dict(Counter(e["rel"] for e in edges)), "by_rule": dict(Counter((e.get("on") or {}).get("transform") or "같은 키" for e in edges if e["rel"] != "related_to")),
                   "rate": dict(rate_b), "hubs": [{"id": h, "name": HUBS[h], "edges": n} for h, n in hub_n.most_common()],
                   "via_mapping": sum(1 for e in edges if (e.get("on") or {}).get("via_mapping"))},
+        "grain": _grain_stats(ds, {r["id"] for r in ver if r["edges"]}),
         "rules": rules,
+        "agencies": _agencies(),
         "claims": {"by_kind": dict(claim_kind.most_common()), "by_evidence": dict(ev_type.most_common()), "grounded": dict(grounded)},
         "keys": keys,
         "contexts": [{"id": c["id"], "name": c["name"], "dimension": c.get("dimension"), "question": c.get("question"),
@@ -154,6 +156,39 @@ def _build(stamp: float) -> dict:
         "examples": {"dataset": _yaml_example("datasets/식품건강/15154916.yaml", 70), "edge": _edge_example(edges),
                      "rule": _yaml_example("rules.yaml", 24), "context": _yaml_example("contexts/commercial-district.yaml", 30)},
     }
+
+
+def _agencies() -> dict:
+    """기관 엔티티 (knowledge/agencies) — 등급별 집계와 A·B등급 상세 (시스템·고유 키·관계·빠진 핵심)."""
+    from pds.schema import store as _st
+    rows = [a for a, _ in _st.iter_raw("agency")]
+    tiers = Counter(a["tier"] for a in rows)
+    detail = []
+    for a in rows:
+        if a["tier"] not in ("A", "B"):
+            continue
+        c = a.get("counts") or {}
+        detail.append({"id": a["id"], "name": a["name"], "type": a["type"], "tier": a["tier"], **c,
+                       "portal": a.get("external_portal"), "note": a.get("note"),
+                       "systems": [{"name": x["name"], "n": len(x.get("datasets") or []), "core": len(x.get("core") or [])}
+                                   for x in a.get("systems") or []],
+                       "keys": a.get("native_keys") or [], "relations": len(a.get("relations") or []),
+                       "core_missing": len(a.get("core_missing") or []), "gaps": a.get("gaps") or []})
+    detail.sort(key=lambda r: -(r.get("catalog") or 0))
+    return {"total": len(rows), "tiers": dict(sorted(tiers.items())), "types": dict(Counter(a["type"] for a in rows)),
+            "analyzed": sum(1 for a in rows if a.get("analyzed_at")), "systems": sum(len(a.get("systems") or []) for a in rows),
+            "relations": sum(len(a.get("relations") or []) for a in rows),
+            "core_missing": sum(len(a.get("core_missing") or []) for a in rows), "detail": detail}
+
+
+def _grain_stats(ds: dict, with_edge: set) -> dict:
+    """느슨한 조인의 바탕 — 검증 데이터의 단위(grain) 분포와, Edge가 없지만 공간 단위가 있어 느슨하게 이을 수 있는 수."""
+    g = [(i, d.get("grain") or {}) for i, d in ds.items() if d["tier"] == "verified"]
+    return {"space": dict(Counter(x.get("space") or "없음" for _, x in g).most_common()),
+            "time": dict(Counter(x.get("time") or "없음" for _, x in g).most_common()),
+            "category": dict(Counter(c for _, x in g for c in x.get("category") or []).most_common()),
+            "with_space": sum(1 for _, x in g if x.get("space")),
+            "no_edge_with_space": sum(1 for i, x in g if x.get("space") and i not in with_edge)}
 
 
 def build() -> dict:

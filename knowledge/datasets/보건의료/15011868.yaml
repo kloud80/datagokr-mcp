@@ -1,4 +1,5 @@
-# Dataset 15011868 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15011868 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15011868'
 tier: verified
 title: 국민건강보험공단_65세이상 노인 질병소분류별 다빈도 상병 급여현황
@@ -23,6 +24,7 @@ synonyms:
   - 노인 의료비 통계
   - 건강보험통계연보
   - 질병소분류 급여
+summary_user: 건강보험 65세 이상 노인의 다빈도 상병을 질병소분류(상병기호) 단위로 순위를 매겨 진료실인원·내원일수·급여일수·진료비·급여비를 담은 전국 집계 파일로, 건강보험통계연보 수록자료이며 크기는 6,936바이트의 작은 CSV입니다. 노인 의료 정책 분석가가 '65세 이상에서 진료 인원과 진료비가 가장 많은 질병은 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 질병 통계와는 상병기호(KCD 소분류)나 상병명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 description_portal: 건강보험 65세이상 노인 질병소분류별 다빈도 상병 급여현황에 대한 데이터로 진료실인원, 내원일수, 급여일수, 진료비, 급여비 통계를 제공합니다국민건강보험공단의 국가승인통계인 건강보험통계연보의 수록자료입니다. 1. 건강보험 재정은 결산 기준이며, 진료현황 및 질병통계는 환자가 요양기관에서 진료 받은 진료일 기준임2. 건강보험 진료현황은 가입자 주민등록지 기준이고, 심사실적은 요양기관 소재지 기준임3. 질병통계는 가입자가 해당질병이 의심되어 진료 받은 1차 진단명을 요양기관이 청구한 내역으로 청구한 내역의 주상병 기준으로 최종 확정된 질병과는 차이가 있을 수 있음4. 청구건수는 요양기관에서 환자에게 진료(투약)한 후 건강보험 요양급여비용 청구방법에 의거 작성한 요양급여비용 명세서 건수임5. 보험급여비는 피보험대상자의 진료에 소요된 총 진료비 중 공단이 부담한 금액이며 결산 기준, 지급 기준, 심사 결정 기준으로 구분하여 수록함6. 통계표 중 전년도 연보와 일치하지 않는 것은 금년 호에서 정정된 것임7. 계수가 단위 미만수는 반올림을 하였으므로 내용과 총수가 일치되지 않는 경우가 있음
 applicable_legislation:
   - law: 국민건강보험법
@@ -53,6 +55,7 @@ schema:
         unique: 100
     - name: 상병기호
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - K05
@@ -129,6 +132,12 @@ schema:
         p50: 65619524
         max: 1801294357
         unique: 100
+  foreign_keys:
+    - fields:
+        - 상병기호
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -171,7 +180,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15011868-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(상병기호)'
     evidence:
       - type: measured
         source: probe/stats/15011868.json
@@ -249,8 +258,6 @@ verification:
   run: probe/runs/15011868.json
   stats: probe/stats/15011868.json
   data: probe/data/15011868/
-status: active
-summary_user: 건강보험 65세 이상 노인의 다빈도 상병을 질병소분류(상병기호) 단위로 순위를 매겨 진료실인원·내원일수·급여일수·진료비·급여비를 담은 전국 집계 파일로, 건강보험통계연보 수록자료이며 크기는 6,936바이트의 작은 CSV입니다. 노인 의료 정책 분석가가 '65세 이상에서 진료 인원과 진료비가 가장 많은 질병은 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 질병 통계와는 상병기호(KCD 소분류)나 상병명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 limits: 전국 단위 집계라 지역별·월별 분석은 할 수 없고, 공식 조인 키가 없어 연결은 상병기호 매핑에 의존한다. 질병통계는 청구된 주상병 기준이라 최종 확정 질병과 다를 수 있으며, 공단(자격 기준) 값은 심평원(청구 기준) 통계와 다를 수 있다.
 review:
   summary: draft
@@ -263,3 +270,4 @@ review:
     - c-15011868-04
     - c-15011868-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15070469 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070469 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070469'
 tier: verified
 title: 한국장학재단_대학생 청소년교육지원장학금_월별 국고이자내역
@@ -21,6 +22,7 @@ synonyms:
   - 국고보조금 이자
   - 대학별 이자수익
   - 장학금 집행내역
+summary_user: 대학생 청소년교육지원장학금(대학생이 초중고생을 멘토링하고 장학금을 받는 사업)의 참여대학별·월 마감일자별 국고 지급금액, 국고이자수익금액, 이자집행금액을 담은 집계 파일이다. 사업 담당자나 분석가가 대학별로 지급된 국고에서 이자가 얼마나 발생했고 그중 얼마를 집행했는지 월 단위로 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명을 이름 매칭해 이어 쓴다.
 description_portal: '대학생 청소년교육지원장학금 멘토링 월별 국고이자내역 관련 정보: 상품명, 대학명, 이자수익 등의 정보를 제공함데이터 제공항목은 사업 상품명, 사업 참여대학명, 월 마감일자, 국고 지급금액, 국고이자수익금액, 이자집행금액이 있습니다. 대학생 청소년교육지원장학금은 대학생이 초중고등학생 대상으로  멘토링을 지원하고, 대학생에게는 장학금을 지원하는 것을 목적으로 합니다. 대학생 청소년교육지원장학금 관련 정보는 "한국장학재단 누리집(https://www.kosaf.go.kr) > 인재육성 > 대학생지식멘토링 > 대학생 청소년교육지원장학금"에서 확인 가능'
 legal_basis_portal: 한국장학재단 설립 등에 관한 정보
 accrual_periodicity: 연간
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 대학생 청소년교육지원 장학금
@@ -42,6 +45,7 @@ schema:
         unique: 1
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 가톨릭대학교(성심교정) 학부
@@ -96,12 +100,27 @@ schema:
         p50: 0
         max: 42047
         unique: 8
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 마감일자
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -138,7 +157,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070469-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_scholarship_product(상품명), univ_school_cd(대학명)'
     evidence:
       - type: measured
         source: probe/stats/15070469.json
@@ -202,8 +221,6 @@ verification:
   run: probe/runs/15070469.json
   stats: probe/stats/15070469.json
   data: probe/data/15070469/
-status: active
-summary_user: 대학생 청소년교육지원장학금(대학생이 초중고생을 멘토링하고 장학금을 받는 사업)의 참여대학별·월 마감일자별 국고 지급금액, 국고이자수익금액, 이자집행금액을 담은 집계 파일이다. 사업 담당자나 분석가가 대학별로 지급된 국고에서 이자가 얼마나 발생했고 그중 얼마를 집행했는지 월 단위로 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명을 이름 매칭해 이어 쓴다.
 limits: 표준 대학 코드 같은 조인 키가 없어 다른 데이터와 연결하려면 대학명 문자열을 맞춰야 한다. 멘토링 참여 학생 수나 장학금 수혜 내역은 담지 않고 국고 지급·이자 흐름만 담는다.
 review:
   summary: draft
@@ -215,3 +232,4 @@ review:
     - c-15070469-03
     - c-15070469-04
   dropped_citations: 0
+status: active

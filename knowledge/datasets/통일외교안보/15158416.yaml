@@ -643,6 +643,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '39085'
@@ -691,6 +692,7 @@ schema:
     - name: g2bPblancNo
       title: G2B공고번호
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - 2026MDJ006739085
@@ -741,6 +743,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: string
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - LDH
@@ -885,6 +888,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '38541'
@@ -960,6 +964,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: string
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - HCL
@@ -1086,6 +1091,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: code
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - BADH6061
@@ -1097,6 +1103,7 @@ schema:
     - name: g2bPblancNo
       title: G2B공고번호
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - 2026ELA0026BBAL6013005
@@ -1239,10 +1246,32 @@ schema:
         p50: 202610021200
         max: 202610291400
         unique: 3
+  foreign_keys:
+    - fields:
+        - dcsNo
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
+    - fields:
+        - g2bPblancNo
+      reference:
+        key: bid_ntce_no
+      evidence: measured
+    - fields:
+        - orntCode
+      reference:
+        key: d2b_org_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-07-16 ~ 2026-11-10
+grain:
+  time: realtime
+  time_fields:
+    - bidPartcptRegistClosDt
+    - biddocPresentnClosDt
+    - opengDt
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -1287,7 +1316,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15158416-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(dcsNo), bid_ntce_no(g2bPblancNo), d2b_org_cd(orntCode)'
     evidence:
       - type: measured
         source: probe/stats/15158416.json

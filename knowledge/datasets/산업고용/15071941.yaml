@@ -1,4 +1,5 @@
-# Dataset 15071941 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15071941 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15071941'
 tier: verified
 title: 중소벤처기업진흥공단_융복합기술교류촉진사업 해외기술교류 상담회 개최 현황
@@ -22,6 +23,7 @@ synonyms:
   - 중진공 해외상담회
   - 융복합 기술교류
   - 1:1 해외 미팅
+summary_user: 중소벤처기업진흥공단 융복합기술교류촉진사업으로 열린 해외기술교류 상담회의 참가 업체별 기록을 담은 파일(CSV, 약 59KB)로, 국가·개최도시·회차·시작일과 종료일, 업종, 1:1 상담한 외국기업 수와 상담 후 현지 방문 횟수가 들어 있습니다. 분석가나 정책 담당자가 '어느 국가 상담회에서 중소기업 한 곳당 외국기업을 몇 곳 만나고 실제 현지 방문까지 몇 번 이어졌는가'를 보는 데 씁니다. 사업자번호 컬럼이 있지만 실측에서 전역 조인 키로 확인되지 않아, 다른 기업 데이터와는 업종·국가 같은 이름 매핑이나 같은 기관 자료 기준으로만 연결합니다.
 description_portal: '본 데이터는 중소벤처기업진흥공단이 추진하는 융복합기술교류촉진사업의 일환으로 개최된 해외기술교류 상담회의 개최 현황을 정리한 자료입니다. 본 데이터에는 상담회명, 개최국가 등의 정보가 포함되어 있습니다. * 상담 외국기업 수 : 해외기술교류상담회 1:1 미팅을 진행한 외국 기업 수* 현지 방문기업 수 : 상담회 이후, 미팅에서 만났거나 사전에 방문하기로 협의했었던 해당 외국기업에 방문한 횟수* 회차 : 국가별 상담회 차수다만, 중소벤처기업진흥공단의 해외 기술교류센터 운영 사업은 2023년을 마지막으로 종료되었으며, 본 데이터는 사업 종료 시점까지의 누적 정보를 제공하는 기록 자료로서 의미를 가집니다.'
 accrual_periodicity: 수시
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 656
     - name: 사업자번호
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '2308801312'
@@ -141,12 +144,23 @@ schema:
         - 베트남
       stats:
         unique: 16
+  foreign_keys:
+    - fields:
+        - 사업자번호
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 시작일
+    - 종료일
 cycle: default
 classification:
   subsector_name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
@@ -183,7 +197,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15071941-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(사업자번호)'
     evidence:
       - type: measured
         source: probe/stats/15071941.json
@@ -248,8 +262,6 @@ verification:
   run: probe/runs/15071941.json
   stats: probe/stats/15071941.json
   data: probe/data/15071941/
-status: active
-summary_user: 중소벤처기업진흥공단 융복합기술교류촉진사업으로 열린 해외기술교류 상담회의 참가 업체별 기록을 담은 파일(CSV, 약 59KB)로, 국가·개최도시·회차·시작일과 종료일, 업종, 1:1 상담한 외국기업 수와 상담 후 현지 방문 횟수가 들어 있습니다. 분석가나 정책 담당자가 '어느 국가 상담회에서 중소기업 한 곳당 외국기업을 몇 곳 만나고 실제 현지 방문까지 몇 번 이어졌는가'를 보는 데 씁니다. 사업자번호 컬럼이 있지만 실측에서 전역 조인 키로 확인되지 않아, 다른 기업 데이터와는 업종·국가 같은 이름 매핑이나 같은 기관 자료 기준으로만 연결합니다.
 limits: 해외 기술교류센터 운영 사업이 2023년에 끝나 사업 종료 시점까지의 누적 기록이며, 이후 상담회는 담지 않습니다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 사업자번호로 인증·지원사업 원장과 바로 결합된다고 가정하면 안 됩니다. 상담 성과는 만난 기업 수와 방문 횟수까지만 있고 계약·수출 같은 결과는 없습니다.
 review:
   summary: draft
@@ -261,3 +273,4 @@ review:
     - c-15071941-03
     - c-15071941-04
   dropped_citations: 0
+status: active

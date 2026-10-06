@@ -1,4 +1,5 @@
-# Dataset 15108177 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15108177 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15108177'
 tier: verified
 title: 금융위원회_개인사업자평가정보
@@ -20,6 +21,7 @@ synonyms:
   - 비금융 신용평가
   - 업종별 신용분포
   - 개인사업자 CB
+summary_user: 전국 개인사업자의 신용·매출 안정성·성장성 평가 결과를 우수·양호·보통이하 세 등급으로 담은 API입니다. 각 행에는 기준년월, 대표자 성별·연령대, 설립년도, 사업지역명, 업종 코드·명, 종업원수 구분이 함께 실립니다. 창업 준비자나 분석가가 '이 지역·업종의 개인사업자 중 평가 등급이 우수한 비율은 얼마인가'처럼 지역·업종·업력별 신용 분포를 비교할 때 씁니다. 전역 조인 키는 없으며, 업종코드(bizBzcCd)나 사업지역명을 이름·코드로 맞춰 업종·지역 통계와 붙여 씁니다.
 description_portal: '개인사업자평가정보는 개인사업자의 상거래 신용능력, 매출변동과 안정성, 성장성 등의 비금융적 요소까지 포함한 평가정보를 우수, 양호, 보통이하로 범주화하여 제공됩니다.이 데이터는 1개 오퍼레이션으로 구성되어 있습니다.① 개인사업자 평가정보 조회 : 개인사업자의 신용능력, 안정성, 성장성 등을 종합적으로 평가한 등급 정보를 조회할 수 있습니다. 요청 메시지로는 기준년월, 사업지역명, 사업업종명, 사업업종코드, 평가정보가 있으며, 응답 메시지로는 대표자 성별, 대표자 연령대, 설립년도, 사업지역명, 사업업종코드, 사업업종명, 종업원수구분명, 평가정보로 제공됩니다.※ 데이터는 매년 1회 갱신됩니다.'
 team:
   dept: 금융공공데이터팀
@@ -124,6 +126,7 @@ schema:
         unique: 5
     - name: bizBzcCd
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '56'
@@ -161,6 +164,12 @@ schema:
         - 우수
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - bizBzcCd
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -211,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15108177-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: classification_code(bizBzcCd)'
     evidence:
       - type: measured
         source: probe/stats/15108177.json
@@ -276,8 +285,6 @@ verification:
   run: probe/runs/15108177.json
   stats: probe/stats/15108177.json
   data: probe/data/15108177/
-status: active
-summary_user: 전국 개인사업자의 신용·매출 안정성·성장성 평가 결과를 우수·양호·보통이하 세 등급으로 담은 API입니다. 각 행에는 기준년월, 대표자 성별·연령대, 설립년도, 사업지역명, 업종 코드·명, 종업원수 구분이 함께 실립니다. 창업 준비자나 분석가가 '이 지역·업종의 개인사업자 중 평가 등급이 우수한 비율은 얼마인가'처럼 지역·업종·업력별 신용 분포를 비교할 때 씁니다. 전역 조인 키는 없으며, 업종코드(bizBzcCd)나 사업지역명을 이름·코드로 맞춰 업종·지역 통계와 붙여 씁니다.
 limits: 사업자번호나 법인등록번호가 없어 특정 사업자를 식별하거나 기업 공시·재무 데이터와 바로 연결할 수 없습니다. 지역은 이름으로만 제공되는 비공간 데이터입니다. 갱신은 포털 설명상 연 1회이지만 실측 판정은 이벤트형(생성 후 불변)으로 나와 엇갈리므로, 기준년월을 확인해 쓰는 것이 좋습니다.
 review:
   summary: draft
@@ -291,3 +298,4 @@ review:
     - c-15108177-04
     - c-15108177-06
   dropped_citations: 0
+status: active

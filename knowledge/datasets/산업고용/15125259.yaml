@@ -81,6 +81,7 @@ schema:
     - name: saupso
       title: 발전소명
       type: code
+      semantic_type: kospo_saupso_cd
       null_rate: 0.0
       sample_values:
         - 부산
@@ -89,6 +90,7 @@ schema:
     - name: snumpos
       title: 지역코드
       type: number
+      semantic_type: kospo_env_pos
       null_rate: 0.0
       sample_values:
         - '01'
@@ -100,6 +102,7 @@ schema:
     - name: pos
       title: 지역명
       type: code
+      semantic_type: kospo_env_pos
       null_rate: 0.0
       sample_values:
         - 발전소
@@ -163,9 +166,29 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - saupso
+      reference:
+        key: kospo_saupso_cd
+      evidence: measured
+    - fields:
+        - snumpos
+      reference:
+        key: kospo_env_pos
+      evidence: measured
+    - fields:
+        - pos
+      reference:
+        key: kospo_env_pos
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  time: day
+  time_fields:
+    - dddprc
 cycle: default
 classification:
   subsector_name: plant-emissions
@@ -209,7 +232,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15125259-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_saupso_cd(saupso), kospo_env_pos(snumpos), kospo_env_pos(pos)'
     evidence:
       - type: measured
         source: probe/stats/15125259.json

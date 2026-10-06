@@ -164,6 +164,7 @@ schema:
     - name: flightId
       title: 항공 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - KE314
@@ -232,6 +233,7 @@ schema:
     - name: masterflightid
       title: 마스터편명
       type: code
+      semantic_type: flight_no
       null_rate: 0.9959
       sample_values:
         - NH8475
@@ -250,6 +252,7 @@ schema:
     - name: airportCode
       title: 인천공항에서 출발하는 편명의 도착지공항코드
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - ORD
@@ -277,6 +280,7 @@ schema:
     - name: fid
       title: 각 스케줄에 따른 편명 별 유니크 코드 값(랜덤생성)
       type: number
+      semantic_type: iiac_flight_fid
       null_rate: 0.0
       sample_values:
         - '2026092400000007822607'
@@ -287,9 +291,35 @@ schema:
         p50: 2026092800000008126464
         max: 2026100300000008077312
         unique: 734
+  foreign_keys:
+    - fields:
+        - flightId
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - masterflightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airportCode
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - fid
+      reference:
+        key: iiac_flight_fid
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: realtime
+  time_fields:
+    - scheduleDateTime
+    - estimatedDateTime
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -333,7 +363,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15113461-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightId), flight_no(masterflightid), airport_cd(airportCode), iiac_flight_fid(fid)'
     evidence:
       - type: measured
         source: probe/stats/15113461.json

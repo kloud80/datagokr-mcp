@@ -74,6 +74,7 @@ schema:
     - name: EXPRT_NATN_CD
       title: 수출국가코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - AE
@@ -90,6 +91,7 @@ schema:
     - name: EXPRT_ENTP_CD
       title: 수출업소코드
       type: code
+      semantic_type: exprt_entp_cd
       null_rate: 0.0
       sample_values:
         - AE000000001
@@ -160,6 +162,16 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - EXPRT_NATN_CD
+      reference:
+        key: country_cd
+      evidence: measured
+    - fields:
+        - EXPRT_ENTP_CD
+      reference:
+        key: exprt_entp_cd
+      evidence: measured
+    - fields:
         - EXPRT_ENTP_ADDR
       reference:
         key: address
@@ -167,6 +179,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - EXPRT_ENTP_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 수입식품 (수입신고·해외제조업소·수입업체)
@@ -210,7 +227,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15073938-03
     kind: key
-    value: '실측 조인 키: address(EXPRT_ENTP_ADDR)'
+    value: '실측 조인 키: country_cd(EXPRT_NATN_CD), exprt_entp_cd(EXPRT_ENTP_CD), address(EXPRT_ENTP_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15073938.json

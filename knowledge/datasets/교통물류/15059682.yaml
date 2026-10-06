@@ -1,4 +1,5 @@
-# Dataset 15059682 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15059682 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059682'
 tier: verified
 title: 여수광양항만공사_광양항 서부컨테이너터미널 차량출입 데이터
@@ -24,6 +25,7 @@ synonyms:
   - 항만 차량 체류시간
   - 광양항 화물차 통행량
   - 컨테이너터미널 게이트 데이터
+summary_user: 광양항 서부컨테이너터미널에 드나든 컨테이너 차량을 한 건씩 기록한 원천 데이터로, 차량번호·진입/진출 게이트와 일시·작업시간을 담은 CSV 파일(약 5.4MB)이다. 터미널 운영자나 물류 분석가가 '어느 날짜·시간대에 게이트 차량이 몰리고, 차량 한 대가 터미널 안에 얼마나 머무는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 날짜·시간대로 맞추거나 같은 기관(여수광양항만공사)의 물동량 자료와 이름 기준으로만 이어 쓴다.
 description_portal: 광양항 내 서부컨테이너 터미널이 운영하는 게이트별 컨테이너 차량의 이동데이터 입니다. 차량번호, 진입게이트, 진입시간, 진출게이트, 진출시간, 작업시간으로 구성되어 있습니다. 데이터 갱신주기는 반기입니다.이 데이터는 특정 시점의 차량 집중 현상이나 일자별, 시간대별 통행량 추이를 확인하는 데 유용하며, 터미널 운영정책 수립이나 주차·대기 공간 관리에도 참고할 수 있습니다. 또한 차량별 통행 특성을 추적하면 주요 고객사 물동량 흐름이나 특정 노선의 이용 패턴까지 파악할 수 있습니다. 나아가 교통 빅데이터로서 항만 배후단지 접근로 개선, 친환경 교통수단 도입, 항만 스마트 모빌리티 구축 등의 근거자료로 활용될 수 있습니다. 결국 이 자료는 항만 운영의 효율화, 물류 경쟁력 강화, 그리고 교통 안전 및 환경정책 수립을 위한 중요한 기초 데이터라 할 수 있습니다.
 applicable_legislation:
   - law: 항만법
@@ -41,6 +43,7 @@ schema:
   fields:
     - name: 차량번호
       type: code
+      semantic_type: vhcl_no
       null_rate: 0.4183
       sample_values:
         - 전남98사****
@@ -97,12 +100,23 @@ schema:
         - 00:06
       stats:
         unique: 315
+  foreign_keys:
+    - fields:
+        - 차량번호
+      reference:
+        key: vhcl_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 진입일시
+    - 진출일시
 cycle: default
 classification:
   subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
@@ -139,7 +153,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15059682-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_no(차량번호)'
     evidence:
       - type: measured
         source: probe/stats/15059682.json
@@ -214,8 +228,6 @@ verification:
   run: probe/runs/15059682.json
   stats: probe/stats/15059682.json
   data: probe/data/15059682/
-status: active
-summary_user: 광양항 서부컨테이너터미널에 드나든 컨테이너 차량을 한 건씩 기록한 원천 데이터로, 차량번호·진입/진출 게이트와 일시·작업시간을 담은 CSV 파일(약 5.4MB)이다. 터미널 운영자나 물류 분석가가 '어느 날짜·시간대에 게이트 차량이 몰리고, 차량 한 대가 터미널 안에 얼마나 머무는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 날짜·시간대로 맞추거나 같은 기관(여수광양항만공사)의 물동량 자료와 이름 기준으로만 이어 쓴다.
 limits: 다른 데이터와 직접 결합할 공통 코드가 없어 차량 기록을 화물·선박·화주 정보와 바로 연결할 수 없다. 범위는 광양항 서부컨테이너터미널 한 곳의 게이트 기록이며, 행정구역 단위의 공간 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -228,3 +240,4 @@ review:
     - c-15059682-04
     - c-15059682-06
   dropped_citations: 0
+status: active

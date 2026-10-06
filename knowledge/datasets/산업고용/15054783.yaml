@@ -1,4 +1,5 @@
-# Dataset 15054783 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15054783 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15054783'
 tier: verified
 title: 한국서부발전(주)_발전연료소비실적
@@ -23,6 +24,7 @@ synonyms:
   - LNG 발전 연료량
   - 유연탄 소비실적
   - 화력발전 연료
+summary_user: 한국서부발전 발전기별로 전력 생산에 투입한 연료의 종류(주연료원)와 연도별 사용량을 단위와 함께 담은 집계 파일(csv, 약 9.9KB)이다. 에너지 분석가나 연구자가 서부발전의 어느 발전기가 유연탄·중유·LNG 등을 해마다 얼마나 썼는지, 같은 연료를 쓰는 발전기끼리 소비량이 어떻게 다른지 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전소·배출 데이터와는 발전기명 같은 이름 매핑이나 같은 기관 자료로만 연결한다.
 description_portal: 한국서부발전 발전소별 연료 소비실적 정보입니다. 발전기별 및 연료별 연료사용량 데이터는 각 발전기가 전력을 생산하기 위해 투입한 연료의 종류와 사용량을 구체적으로 기록한 자료입니다. 이 데이터에는 유연탄, 중유, LNG 등 다양한 연료 유형별 소모량이 발전기 단위로 구분되어 집계되며, 전력 생산 과정에서의 에너지 효율성과 연료 의존도를 분석하는데 활용됩니다. 또한 동일 연료를 사용하는 발전기간 비교를 통해 설비 효율성, 운전 특성, 정비 상태 등에 따른 연료 소비 차이를 파악할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -48,6 +50,7 @@ schema:
         unique: 12
     - name: 발전기명
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 태안#1
@@ -85,12 +88,22 @@ schema:
         - KL
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 년도
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -127,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15054783-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15054783.json
@@ -192,8 +205,6 @@ verification:
   run: probe/runs/15054783.json
   stats: probe/stats/15054783.json
   data: probe/data/15054783/
-status: active
-summary_user: 한국서부발전 발전기별로 전력 생산에 투입한 연료의 종류(주연료원)와 연도별 사용량을 단위와 함께 담은 집계 파일(csv, 약 9.9KB)이다. 에너지 분석가나 연구자가 서부발전의 어느 발전기가 유연탄·중유·LNG 등을 해마다 얼마나 썼는지, 같은 연료를 쓰는 발전기끼리 소비량이 어떻게 다른지 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전소·배출 데이터와는 발전기명 같은 이름 매핑이나 같은 기관 자료로만 연결한다.
 limits: 전역 조인 키가 없어 다른 기관·전력거래소 데이터와 자동으로 붙지 않고 발전기명 매칭이 필요하다. 연도 단위 실적이라 실시간·일별 수급이나 시간별 발전량 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -205,3 +216,4 @@ review:
     - c-15054783-03
     - c-15054783-04
   dropped_citations: 0
+status: active

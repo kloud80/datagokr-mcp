@@ -1,4 +1,5 @@
-# Dataset 15101148 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15101148 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15101148'
 tier: verified
 title: 한국수력원자력(주)_가동원전 격납건물 방호도장 시스템 현황
@@ -22,6 +23,7 @@ synonyms:
   - 설계기준사고 도료
   - 원전 도장 시스템
   - 격납건물 코팅재
+summary_user: 가동 중인 국내 원전 격납건물에 적용된 방호도장 시스템을 발전소·적용부위별로 정리하고, 각 시스템의 1차~6차 도장 층에 쓰인 도료를 담은 현황표 파일(CSV, 약 6KB)이다. 원전 정비·도장재 공급 사업자나 안전성 분석가가 '어느 발전소의 어느 부위에 어떤 설계기준사고(DBA) 시험 통과 도장 시스템과 도료가 쓰였는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 원전 데이터와는 발전소 이름을 맞춰 연결하거나 같은 한국수력원자력 자료끼리 이어 쓴다.
 description_portal: 한국수력원자력㈜이 공개하는 가동원전 격납건물 방호도장 시스템 현황 데이터는 국내에서 가동 중인 원자력발전소 격납건물에 적용된 방호도장 시스템과 그에 사용된 도료 정보를 담고 있습니다. 원전 격납건물의 방호도장은 원자로 및 관련 설비를 보호하고 사고 시 안전성을 확보하기 위해 필수적으로 적용되며, 각 노형별 시스템에 적합한 도장재는 DBA(Design Basis Accident, 설계기준사고) 시험을 통해 검증됩니다. 이 데이터는 DBA 시험을 통과해 원전에 적용이 승인된 시스템과 도장재의 현황을 설명하고 있으며, 원전 안전성 확보를 위한 재료 선택 기준과 적용 현황을 확인할 수 있는 자료로 활용됩니다.
 accrual_periodicity: 수시
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 발전소
       type: code
+      semantic_type: khnp_site
       null_rate: 0.0
       sample_values:
         - 고리2발
@@ -113,6 +116,12 @@ schema:
         - EH 2340
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: khnp_site
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -156,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15101148-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_site(발전소)'
     evidence:
       - type: measured
         source: probe/stats/15101148.json
@@ -210,8 +219,6 @@ verification:
   run: probe/runs/15101148.json
   stats: probe/stats/15101148.json
   data: probe/data/15101148/
-status: active
-summary_user: 가동 중인 국내 원전 격납건물에 적용된 방호도장 시스템을 발전소·적용부위별로 정리하고, 각 시스템의 1차~6차 도장 층에 쓰인 도료를 담은 현황표 파일(CSV, 약 6KB)이다. 원전 정비·도장재 공급 사업자나 안전성 분석가가 '어느 발전소의 어느 부위에 어떤 설계기준사고(DBA) 시험 통과 도장 시스템과 도료가 쓰였는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 원전 데이터와는 발전소 이름을 맞춰 연결하거나 같은 한국수력원자력 자료끼리 이어 쓴다.
 limits: 발전소 코드 같은 표준 조인 키가 없어 다른 데이터와 결합하려면 발전소명을 직접 매핑해야 한다. 범위는 전국이지만 위치 정보가 없는 비공간 자료라 지도 분석에는 바로 쓰지 못한다.
 review:
   summary: draft
@@ -223,3 +230,4 @@ review:
     - c-15101148-03
     - c-15101148-04
   dropped_citations: 0
+status: active

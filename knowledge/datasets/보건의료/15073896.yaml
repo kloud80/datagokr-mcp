@@ -1,4 +1,5 @@
-# Dataset 15073896 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073896 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073896'
 tier: verified
 title: 식품의약품안전처_의료기기 유해사례별 제품정보
@@ -20,6 +21,7 @@ synonyms:
   - 의료기기 안전성 정보
   - 부작용 인과관계
   - 식약처 의료기기 유해사례
+summary_user: 의료기기 유해사례 보고 건별로 대상업체, 유해사례 인지일·발생일·종료일, 의료기기와의 인과관계, 최초보고일자, 대상 제품의 수입·판매·보유 수량 등을 담는 전국 단위 API 데이터입니다. 분석가나 업체 담당자가 특정 제조·수입업체 제품에서 보고된 유해사례가 언제 발생해 얼마나 지속됐고 의료기기와 인과관계가 있다고 판단됐는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 업체명이나 사업자등록번호(BRNO) 같은 이름·번호 매칭, 또는 같은 식약처 데이터의 코드로만 이어 쓴다.
 description_portal: 이 공공데이터는 유해사례별 제품정보를 관리하는 사용자에게 알려줍니다.  이 공공데이터는 대상업체, 유해사례인지일, 유해사례발생일, 유해사례종료일, 의료기기인과관계, 최보고일자 등의 정보를 제공합니다. 이 데이터는 대상업체 정보를 통해 유해사례와 연관된 제조업체나 수입업체를 식별하며 유해사례인지일 발생일 종료일로 사건의 시간적 경과를 추적할 수 있습니다. 또한 의료기기와의 인과관계 분석 결과와 최초보고일자 정보를 제공하여 유해사례의 원인 규명과 신속한 초기 대응을 가능하게 합니다.
 team:
   dept: 데이터혁신기획팀
@@ -79,6 +81,7 @@ schema:
         unique: 53
     - name: RPT_SEQ
       type: number
+      semantic_type: meddev_hrmf_rpt_seq
       null_rate: 0.0
       sample_values:
         - '20180993'
@@ -163,6 +166,7 @@ schema:
         unique: 684
     - name: BRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.1174
       sample_values:
         - '1068136159'
@@ -173,12 +177,27 @@ schema:
         p50: 1208688018
         max: 9000000493
         unique: 96
+  foreign_keys:
+    - fields:
+        - RPT_SEQ
+      reference:
+        key: meddev_hrmf_rpt_seq
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - FRST_RPT_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -223,7 +242,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073896-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_hrmf_rpt_seq(RPT_SEQ), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15073896.json
@@ -288,8 +307,6 @@ verification:
   run: probe/runs/15073896.json
   stats: probe/stats/15073896.json
   data: probe/data/15073896/
-status: active
-summary_user: 의료기기 유해사례 보고 건별로 대상업체, 유해사례 인지일·발생일·종료일, 의료기기와의 인과관계, 최초보고일자, 대상 제품의 수입·판매·보유 수량 등을 담는 전국 단위 API 데이터입니다. 분석가나 업체 담당자가 특정 제조·수입업체 제품에서 보고된 유해사례가 언제 발생해 얼마나 지속됐고 의료기기와 인과관계가 있다고 판단됐는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 업체명이나 사업자등록번호(BRNO) 같은 이름·번호 매칭, 또는 같은 식약처 데이터의 코드로만 이어 쓴다.
 limits: 전역 조인 키가 없어 의료기기 품목허가 등 다른 데이터와 바로 연결되지 않고, 업체명·번호 매칭에 의존해야 한다. 지역 구분이 없는 전국·비공간 데이터라 지역별 분석에는 맞지 않는다. 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -301,3 +318,4 @@ review:
     - c-15073896-03
     - c-15073896-04
   dropped_citations: 0
+status: active

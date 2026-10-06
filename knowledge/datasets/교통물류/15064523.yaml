@@ -1,4 +1,5 @@
-# Dataset 15064523 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064523 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064523'
 tier: verified
 title: 한국교통안전공단_철도자격관리시스템 교육관련 정보
@@ -22,6 +23,7 @@ synonyms:
   - 운전면허 교육시간
   - 철도자격 교육과목
   - 기관사 면허 교육
+summary_user: 철도차량 운전면허와 철도교통 관제자격증명 교육에 관한 정보를 교육기관·교육기수·교육과정·교육과목 단위로 담은 전국 범위 파일 데이터이며, 교육시간, 교육 시작·종료일, 면허종류·자격구분 코드 등이 들어 있다. 철도 운전면허나 관제자격 취득을 준비하는 사람이나 분석가가 "어느 교육기관의 어떤 과정이 어떤 과목을 몇 시간 가르치는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 데이터와는 교육기관코드·면허종류코드 같은 같은 기관(한국교통안전공단) 내부 코드나 이름 매핑으로만 이어 쓴다.
 description_portal: 철도차량 운전면허 및 철도교통 관제자격증명 교육관련 데이터로 "철도차량 운전면허 및 철도교통 관제자격증 교육기관코드, 철도차량 운전면허 및 철도교통 관제자격증 교육기수일련번호, 교육과정코드, 교육과목 구분코드, 교육과목코드, 교육과정명, 설명, 과목코드, 교육시간 등"의 정보를 제공합니다.
 applicable_legislation:
   - law: 철도안전법
@@ -186,6 +188,7 @@ schema:
         unique: 17
     - name: 면허종류코드
       type: number
+      semantic_type: rail_license_kind_cd
       null_rate: 0.6071
       sample_values:
         - '3'
@@ -243,12 +246,23 @@ schema:
         - N
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 면허종류코드
+      reference:
+        key: rail_license_kind_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 교육시작일
+    - 교육종료일
 cycle: default
 classification:
   subsector_name: 철도 안전·사고
@@ -285,7 +299,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064523-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_license_kind_cd(면허종류코드)'
     evidence:
       - type: measured
         source: probe/stats/15064523.json
@@ -349,8 +363,6 @@ verification:
   run: probe/runs/15064523.json
   stats: probe/stats/15064523.json
   data: probe/data/15064523/
-status: active
-summary_user: 철도차량 운전면허와 철도교통 관제자격증명 교육에 관한 정보를 교육기관·교육기수·교육과정·교육과목 단위로 담은 전국 범위 파일 데이터이며, 교육시간, 교육 시작·종료일, 면허종류·자격구분 코드 등이 들어 있다. 철도 운전면허나 관제자격 취득을 준비하는 사람이나 분석가가 "어느 교육기관의 어떤 과정이 어떤 과목을 몇 시간 가르치는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 데이터와는 교육기관코드·면허종류코드 같은 같은 기관(한국교통안전공단) 내부 코드나 이름 매핑으로만 이어 쓴다.
 limits: 다른 기관 데이터와 바로 붙일 공통 키가 없어 연계하려면 코드·명칭 매핑을 따로 만들어야 한다. 행정구역 정보가 없는 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -362,3 +374,4 @@ review:
     - c-15064523-03
     - c-15064523-04
   dropped_citations: 0
+status: active

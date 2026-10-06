@@ -1,4 +1,5 @@
-# Dataset 15126488 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15126488 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126488'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_범죄보도
@@ -22,6 +23,7 @@ synonyms:
   - 사건사고 기사
   - 이상동기 범죄 보도
   - 성범죄 보도
+summary_user: BIGKinds 뉴스 데이터베이스에서 뽑은 범죄 관련 보도를 기사 한 건 단위로 담은 CSV 파일(약 240MB)로, 제목·본문·언론사·보도일자·사건사고 분류·분류 키워드와 폭력·강도·살인, 성범죄, 이상동기 범죄 건수 항목이 들어 있습니다. 언론 연구자나 범죄학자가 '어떤 유형의 범죄가 어느 시기에 어느 언론사에서 많이 보도됐는가', '보도 키워드와 표현이 어떻게 바뀌었는가'를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 보도일자나 언론사명 같은 이름·날짜를 맞춰 붙여야 합니다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 범죄보도 관련 뉴스 메타정보 자료입니다. 포함 항목으로는 기사 주소, 보도 일자, 언론사, 기고자, 제목, 통합분류(1~3단계), 사건/사고 여부, 개체명(인물·지역·기업), 키워드, 특성추출 값, 본문 내용, 원본 주소 등이 있으며, 이를 통해 개별 기사에 대한 구조적 분석이 가능합니다.본 자료는 국내 주요 언론사의 범죄 관련 보도를 대상으로, 어떤 유형의 범죄가 어느 시기에 빈번하게 보도되었는지, 보도 키워드와 표현 양상은 어떠했는지 등의 패턴을 밝히는 데 중점을 두고 있습니다. 이러한 분석은 언론이 범죄 담론을 어떻게 형성하는지, 사회적 반응과 정책 논의에 어떤 영향을 미쳤는지 추적하는 데 유용합니다. 또한 학계, 언론 연구자, 범죄학자, 정책 입안자들이 범죄 보도 경향 및 언론의 범죄 인식 변화를 이해하고, 보다 균형 있는 보도 기준이나 대응 전략을 모색하는 데 기초 자료로 활용될 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -59,6 +61,7 @@ schema:
         unique: 80837
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 세계일보
@@ -128,12 +131,22 @@ schema:
         p50: 0
         max: 1
         unique: 2
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -170,7 +183,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15126488-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15126488.json
@@ -245,8 +258,6 @@ verification:
   run: probe/runs/15126488.json
   stats: probe/stats/15126488.json
   data: probe/data/15126488/
-status: active
-summary_user: BIGKinds 뉴스 데이터베이스에서 뽑은 범죄 관련 보도를 기사 한 건 단위로 담은 CSV 파일(약 240MB)로, 제목·본문·언론사·보도일자·사건사고 분류·분류 키워드와 폭력·강도·살인, 성범죄, 이상동기 범죄 건수 항목이 들어 있습니다. 언론 연구자나 범죄학자가 '어떤 유형의 범죄가 어느 시기에 어느 언론사에서 많이 보도됐는가', '보도 키워드와 표현이 어떻게 바뀌었는가'를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 보도일자나 언론사명 같은 이름·날짜를 맞춰 붙여야 합니다.
 limits: 전국·비공간 자료라서 지역별 범죄 발생 분석에는 바로 쓰기 어렵고, 공식 범죄통계가 아니라 보도된 기사를 기준으로 한 자료입니다. 공통 코드나 키가 없어 다른 통계와 연결할 때는 언론사명·일자를 직접 맞춰야 합니다.
 review:
   summary: draft
@@ -258,3 +269,4 @@ review:
     - c-15126488-03
     - c-15126488-04
   dropped_citations: 0
+status: active

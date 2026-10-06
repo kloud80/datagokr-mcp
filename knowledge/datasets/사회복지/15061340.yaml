@@ -1,4 +1,5 @@
-# Dataset 15061340 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061340 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061340'
 tier: verified
 title: 금융위원회_금융통계수산업협동조합정보
@@ -23,6 +24,7 @@ synonyms:
   - 어업협동조합 재무
   - 수협 ROA ROE
   - 수산업협동조합 일반현황
+summary_user: 수산업협동조합(수협중앙회·단위 수협)의 일반현황·재무현황·주요경영지표를 기준년월과 조합 단위로 담은 전국 범위 API로, 설립일·소재지 같은 일반 정보와 자산·부채·자본, ROA·ROE 등 경영지표를 3개 오퍼레이션으로 나눠 제공한다. 분석가나 어민·사업자가 특정 지역 수협의 재무 건전성이나 수익성이 최근 몇 년간 어떻게 변했는지를 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 같은 번호를 가진 기업·법인 정보 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 기준년월(basYm)로 다른 금융통계 시계열과 맞춘다.
 description_portal: '금융통계수산업협동조합정보는 기준년월과 조합명을 기준으로 수산업협동조합의 일반현황, 재무구조, 경영성과 등을 제공하는 데이터입니다. 수협중앙회 및 단위 수협의 경영지표를 시계열로 분석할 수 있습니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 수산업협동조합 일반현황 조회 : 설립일, 본점소재지, 지역별 분포 등 조합의 일반 정보를 제공합니다.② 수산업협동조합 재무현황 조회 : 자산, 부채, 자본 등 재무구조 관련 정보를 제공합니다.③ 수산업협동조합 주요경영지표 조회 : ROA, ROE, 순이익률 등 수익성과 경영성과 관련 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -69,6 +71,7 @@ schema:
         unique: 1
     - name: fncoCd
       type: string
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - 030901S
@@ -151,6 +154,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -201,7 +209,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061340-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061340.json
@@ -255,8 +263,6 @@ verification:
   run: probe/runs/15061340.json
   stats: probe/stats/15061340.json
   data: probe/data/15061340/
-status: active
-summary_user: 수산업협동조합(수협중앙회·단위 수협)의 일반현황·재무현황·주요경영지표를 기준년월과 조합 단위로 담은 전국 범위 API로, 설립일·소재지 같은 일반 정보와 자산·부채·자본, ROA·ROE 등 경영지표를 3개 오퍼레이션으로 나눠 제공한다. 분석가나 어민·사업자가 특정 지역 수협의 재무 건전성이나 수익성이 최근 몇 년간 어떻게 변했는지를 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 같은 번호를 가진 기업·법인 정보 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 기준년월(basYm)로 다른 금융통계 시계열과 맞춘다.
 limits: 지역 구분은 전국 단위의 비공간 데이터라 좌표나 행정구역 코드로 지도에 바로 얹을 수 없다. 개발계정은 하루 10,000회로 호출이 제한되며 serviceKey를 쿼리로 넘겨야 한다.
 review:
   summary: draft
@@ -268,3 +274,4 @@ review:
     - c-15061340-03
     - c-15061340-04
   dropped_citations: 0
+status: active

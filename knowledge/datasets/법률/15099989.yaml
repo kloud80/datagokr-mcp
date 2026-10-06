@@ -1,4 +1,5 @@
-# Dataset 15099989 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15099989 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099989'
 tier: verified
 title: 법무부_4(출입국심사)월별 국적(지역)별 외국인 입국자 현황
@@ -21,6 +22,7 @@ synonyms:
   - 출입국 통계월보
   - 방한 외국인
   - 외래객 입국
+summary_user: 법무부 출입국심사 기준으로 월별·국적(지역)별 외국인 입국자 수를 담은 전국 단위 집계 파일로, 연도·월·국적지역·입국자수 네 항목으로 구성된다. 관광·항공·숙박 업계나 정책 분석가가 "특정 국가에서 온 입국자가 월별로 어떻게 늘고 줄었나"를 확인하는 데 쓴다. 전역 조인 키나 국가 코드가 없어 다른 데이터와는 국적 이름과 연·월을 맞춰 연결해야 하며, 지역(시군구) 정보가 없어 시군구 단위 체류 외국인·주민등록 인구와는 직접 이어지지 않는다.
 description_portal: 월별 외국인 입국자의 수 및 국적별 외국인 입국자의 수에 대한 데이터로 월별로 업데이트하여 제공 (항목은 연도, 월, 국적별, 입국자수)입국자 통계는 한명이 여러번 입국하는 경우 중복 집계됨, 가령 한명이 2번 입국한 경우 2명으로 집계됨  2022년부터 2026년 현재까지 원본 데이터는 출입국외국인정책본부 홈페이지의 통계월보에서 확인하실 수 있으며 경로는 아래와 같습니다.통계월보 게시물- 한글파일 참조 및 엑셀파일 원본표https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY1OTU0MjYlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2
 applicable_legislation:
   - law: 출입국관리법
@@ -62,6 +64,7 @@ schema:
         unique: 12
     - name: 국적지역
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 미국
@@ -81,6 +84,12 @@ schema:
         p50: 106
         max: 841685
         unique: 3229
+  foreign_keys:
+    - fields:
+        - 국적지역
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -123,7 +132,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15099989-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적지역)'
     evidence:
       - type: measured
         source: probe/stats/15099989.json
@@ -198,8 +207,6 @@ verification:
   run: probe/runs/15099989.json
   stats: probe/stats/15099989.json
   data: probe/data/15099989/
-status: active
-summary_user: 법무부 출입국심사 기준으로 월별·국적(지역)별 외국인 입국자 수를 담은 전국 단위 집계 파일로, 연도·월·국적지역·입국자수 네 항목으로 구성된다. 관광·항공·숙박 업계나 정책 분석가가 "특정 국가에서 온 입국자가 월별로 어떻게 늘고 줄었나"를 확인하는 데 쓴다. 전역 조인 키나 국가 코드가 없어 다른 데이터와는 국적 이름과 연·월을 맞춰 연결해야 하며, 지역(시군구) 정보가 없어 시군구 단위 체류 외국인·주민등록 인구와는 직접 이어지지 않는다.
 limits: 한 사람이 여러 번 입국하면 횟수만큼 중복 집계되므로 실제 입국한 사람 수로 해석하면 안 된다. 전국·비공간 집계라 지역별 분석에는 쓸 수 없고, 국적은 코드가 아닌 이름으로만 제공된다.
 review:
   summary: draft
@@ -212,3 +219,4 @@ review:
     - c-15099989-04
     - c-15099989-06
   dropped_citations: 0
+status: active

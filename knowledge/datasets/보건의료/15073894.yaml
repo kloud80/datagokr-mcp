@@ -1,4 +1,5 @@
-# Dataset 15073894 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073894 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073894'
 tier: verified
 title: 식품의약품안전처_의료기기 유해사례별 후속조치
@@ -22,6 +23,7 @@ synonyms:
   - 의료기기 안전성 정보
   - 유해사례 보고
   - 식약처 행정조치
+summary_user: 의료기기 유해사례 보고 건별로 대상업체명, 유해사례 인지일·발생일·종료일, 최초보고일자, 보고일련번호와 함께 품질관리 수거검사·사용중지·회수폐기·서한발송 등 후속조치 유형을 담은 전국 범위의 원천 데이터다. 특정 업체나 의료기기에서 유해사례가 보고된 뒤 회수·사용중지 같은 행정조치가 실제로 내려졌는지, 그 조치가 언제 이뤄졌는지를 확인하려는 의료기관·제조수입업체·안전성 분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 식약처 의료기기 데이터와는 업체명이나 사업자등록번호(BRNO) 같은 이름·코드 매핑으로만 연결한다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 제공하는 의료기기 유해사례별 후속조치 정보입니다.  이 공공데이터는 대상업체명과 유해사례인지일 발생일 종료일을 통해 사건의 기본 정보와 시간적 경과를 파악할 수 있습니다 보고일련번호로 각 사례를 고유하게 식별하며 조치대상을 명시하여 대응 범위를 명확히 합니다.  후속조치는 품질관리 수거검사, 사용중지, 회수폐기, 시험검토, 자문요청, 서한발송, 홍보요청, 홈페이지공개 기타내용 등 다양한 행정조치를 포함합니다.  그 외 최초보고일자도 확인할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -81,6 +83,7 @@ schema:
         unique: 53
     - name: RPT_SEQ
       type: number
+      semantic_type: meddev_hrmf_rpt_seq
       null_rate: 0.0
       sample_values:
         - '20180993'
@@ -218,12 +221,22 @@ schema:
         p50: 1208688018
         max: 9000000493
         unique: 96
+  foreign_keys:
+    - fields:
+        - RPT_SEQ
+      reference:
+        key: meddev_hrmf_rpt_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - FRST_RPT_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -268,7 +281,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073894-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_hrmf_rpt_seq(RPT_SEQ)'
     evidence:
       - type: measured
         source: probe/stats/15073894.json
@@ -333,8 +346,6 @@ verification:
   run: probe/runs/15073894.json
   stats: probe/stats/15073894.json
   data: probe/data/15073894/
-status: active
-summary_user: 의료기기 유해사례 보고 건별로 대상업체명, 유해사례 인지일·발생일·종료일, 최초보고일자, 보고일련번호와 함께 품질관리 수거검사·사용중지·회수폐기·서한발송 등 후속조치 유형을 담은 전국 범위의 원천 데이터다. 특정 업체나 의료기기에서 유해사례가 보고된 뒤 회수·사용중지 같은 행정조치가 실제로 내려졌는지, 그 조치가 언제 이뤄졌는지를 확인하려는 의료기관·제조수입업체·안전성 분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 식약처 의료기기 데이터와는 업체명이나 사업자등록번호(BRNO) 같은 이름·코드 매핑으로만 연결한다.
 limits: 다른 데이터와 바로 이어 붙일 공통 키가 없어 업체명·사업자번호 매핑에 의존해야 한다. 행정구역 단위 구분이 없는 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다. 호출은 포털 활용신청 후 serviceKey로 하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -346,3 +357,4 @@ review:
     - c-15073894-03
     - c-15073894-04
   dropped_citations: 0
+status: active

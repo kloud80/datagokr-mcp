@@ -1,4 +1,5 @@
-# Dataset 15155798 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15155798 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15155798'
 tier: verified
 title: 법무부_65_(출입국심사) 월별 공항만별 자동출입국심사 등록 및 이용 현황
@@ -21,6 +22,7 @@ synonyms:
   - 공항 출입국 통계
   - 공항만별 출국자
   - SES 등록
+summary_user: 전국 공항만별로 자동출입국심사 사전 등록자수와 이용자수를 2022년부터 월 단위로 집계한 통계 파일로, 원본은 출입국·외국인정책본부 통계월보다. 출입국 정책 분석가나 공항 운영 담당자가 '어느 공항만에서 자동심사 이용이 월별로 얼마나 늘었는가'를 살피는 데 쓴다. 전역 조인 키가 없어 다른 출입국자 통계와는 연·월과 공항만 이름을 맞춰 이어 써야 한다.
 description_portal: 국내 공항만별 자동 출입국심사 사전 등록 및 이용현황을 2022년부터 월별로 공개합니다.해당 데이터의 원본 통계는 출입국 외국인정책본부의 통계월보이며, 경로는 아래와 같습니다. https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY2MDA3NTQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2
 accrual_periodicity: 월간
 team:
@@ -58,6 +60,7 @@ schema:
         unique: 12
     - name: 공항만
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - 인천공항
@@ -89,6 +92,12 @@ schema:
         p50: 52608.5
         max: 30893543
         unique: 457
+  foreign_keys:
+    - fields:
+        - 공항만
+      reference:
+        key: airport_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -131,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15155798-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: airport_cd(공항만)'
     evidence:
       - type: measured
         source: probe/stats/15155798.json
@@ -196,8 +205,6 @@ verification:
   run: probe/runs/15155798.json
   stats: probe/stats/15155798.json
   data: probe/data/15155798/
-status: active
-summary_user: 전국 공항만별로 자동출입국심사 사전 등록자수와 이용자수를 2022년부터 월 단위로 집계한 통계 파일로, 원본은 출입국·외국인정책본부 통계월보다. 출입국 정책 분석가나 공항 운영 담당자가 '어느 공항만에서 자동심사 이용이 월별로 얼마나 늘었는가'를 살피는 데 쓴다. 전역 조인 키가 없어 다른 출입국자 통계와는 연·월과 공항만 이름을 맞춰 이어 써야 한다.
 limits: 공항만 이름 외에 표준 코드가 없어 다른 데이터와 연결하려면 이름 매핑이 필요하다. 전국 단위 비공간 집계라 시군구 등 지역별 분석에는 쓸 수 없고, 개인별·국적별 구분도 없다.
 review:
   summary: draft
@@ -209,3 +216,4 @@ review:
     - c-15155798-03
     - c-15155798-04
   dropped_citations: 0
+status: active

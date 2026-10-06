@@ -1,4 +1,5 @@
-# Dataset 15072348 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072348 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072348'
 tier: verified
 title: 문화체육관광부_국가도서관통계_전국대학도서관통계
@@ -25,6 +26,7 @@ synonyms:
   - 자료구입비
   - 국가도서관통계시스템
   - 도서관 운영현황
+summary_user: 전국 대학도서관별로 평가년도마다 장서수·사서수·대출자수·대출권수·자료구입비를 담은 도서관 단위 통계 파일이며, 소재지는 행정구역·시군구 수준으로 표시된다. 대학 관계자나 정책 분석가가 "우리 지역 대학도서관의 사서 1인당 장서·대출 실적과 자료구입비가 다른 시도와 비교해 어느 수준인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 도서관코드(같은 체계를 쓰는 데이터에 한함)나 도서관명·시군구 이름 매칭으로만 잇는다.
 description_portal: 전국 대학도서관의 운영 현황과 자원 분포를 종합적으로 파악할 수 있도록 평가년도, 도서관구분, 도서관코드, 도서관명, 행정구역, 시군구, 장서수, 사서수, 대출자수, 대출권수, 도서예산 등 다양한 항목에 대한 통계 정보를 제공합니다. 대학도서관의 규모, 인력, 자료 보유 현황, 이용 실적 및 예산 현황을 한눈에 확인할 수 있어 도서관 정책 수립, 연구, 교육, 지역별 도서관 비교 분석 등 다양한 목적으로 활용할 수 있습니다. 도서관 관련 연구자, 정책 담당자, 대학 관계자 등에게 유용한 자료로서, 대학도서관의 발전 방향을 모색하는 데에도 도움이 됩니다.
 legal_basis_portal: 국가승인통계(국가통계 승인번호  제113016호)
 accrual_periodicity: 연간
@@ -56,6 +58,7 @@ schema:
         unique: 1
     - name: 도서관코드
       type: string
+      semantic_type: library_cd
       null_rate: 0.0
       sample_values:
         - L0044
@@ -150,12 +153,26 @@ schema:
         p50: 111952258
         max: 13556707791
         unique: 426
+  foreign_keys:
+    - fields:
+        - 도서관코드
+      reference:
+        key: library_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+  space_via: name
+  time: year
+  time_fields:
+    - 평가년도
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -193,7 +210,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072348-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: library_cd(도서관코드)'
     evidence:
       - type: measured
         source: probe/stats/15072348.json
@@ -268,8 +285,6 @@ verification:
   run: probe/runs/15072348.json
   stats: probe/stats/15072348.json
   data: probe/data/15072348/
-status: active
-summary_user: 전국 대학도서관별로 평가년도마다 장서수·사서수·대출자수·대출권수·자료구입비를 담은 도서관 단위 통계 파일이며, 소재지는 행정구역·시군구 수준으로 표시된다. 대학 관계자나 정책 분석가가 "우리 지역 대학도서관의 사서 1인당 장서·대출 실적과 자료구입비가 다른 시도와 비교해 어느 수준인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 도서관코드(같은 체계를 쓰는 데이터에 한함)나 도서관명·시군구 이름 매칭으로만 잇는다.
 limits: 전역 조인 키가 없어 학교 정보나 다른 도서관 데이터와 붙이려면 이름·코드 매핑을 따로 해야 한다. 위치는 시군구 단위까지만 있어 그보다 세밀한 지역 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -282,3 +297,4 @@ review:
     - c-15072348-04
     - c-15072348-06
   dropped_citations: 0
+status: active

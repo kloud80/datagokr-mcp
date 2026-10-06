@@ -114,6 +114,7 @@ schema:
     - name: trainno
       title: 서울지하철 열차번호
       type: string
+      semantic_type: seoul_metro_train_no
       null_rate: 0.0
       sample_values:
         - K1906
@@ -163,6 +164,7 @@ schema:
     - name: stnCd
       title: 해당 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '0150'
@@ -174,6 +176,7 @@ schema:
     - name: stnNo
       title: 해당 지하철 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '133'
@@ -201,6 +204,7 @@ schema:
     - name: dptreStnCd
       title: 출발 해당 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '1812'
@@ -242,6 +246,7 @@ schema:
     - name: arvlStnCd
       title: 도착 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '1019'
@@ -356,10 +361,41 @@ schema:
         p50: 20251031
         max: 20260903
         unique: 7
+  foreign_keys:
+    - fields:
+        - trainno
+      reference:
+        key: seoul_metro_train_no
+      evidence: measured
+    - fields:
+        - stnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - stnNo
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
+    - fields:
+        - dptreStnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - arvlStnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2025-05-01 ~ 2026-09-03
+grain:
+  time: day
+  time_fields:
+    - vldBgngDt
+    - vldEndDt
 cycle: default
 classification:
   subsector_name: 실시간 도착·시간표·운임 (조회 도구)
@@ -404,7 +440,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15143847-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_train_no(trainno), seoul_metro_station_cd(stnCd), seoul_metro_station_fr_cd(stnNo), seoul_metro_station_cd(dptreStnCd), seoul_metro_station_cd(arvlStnCd)'
     evidence:
       - type: measured
         source: probe/stats/15143847.json

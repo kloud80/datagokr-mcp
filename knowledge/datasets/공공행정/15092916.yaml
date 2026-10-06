@@ -1,4 +1,5 @@
-# Dataset 15092916 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092916 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092916'
 tier: verified
 title: 법제처_세계법제정보센터_국가정보관련
@@ -24,6 +25,7 @@ synonyms:
   - 세계 국가 현황
   - 외국법령 부가정보
   - 국가코드 ISO
+summary_user: 세계법제정보센터 법령정보의 부가자료로, 국가별 인구·민족·종교·도시·면적·통화·언어 같은 기본 정보와 항목별 추가 설명, 관련 사이트 링크를 국가 단위로 담은 파일(CSV 약 90KB)이다. 해외 법령을 조사하는 법제 연구자나 입법·정책 담당자가 '이 나라의 언어·종교·통화 등 기본 여건은 어떤가'를 확인해 외국 법령을 읽는 배경 자료로 쓴다. 국가코드(ISO 2·3자리 등) 필드가 있지만 실측에서 전역 조인 키로 확인되지는 않았으므로, 세계법제정보센터의 외국 법령 데이터와는 국가명이나 국가코드를 직접 맞춰 이어 쓴다.
 description_portal: 세계법제정보센터에서 제공하는 법령정보의 부가정보로 국가의 상세정보 제공함으로서, 해당 국가의 특성을 반영한 법령정보를 이해하기 위한 부가 정보로 국가별 법제 구조, 법률 체계, 행정 입법 방식, 법률 개정 절차와 시기 등의 비교 분석 내용을 포함합니다. 또한 국제 규범과 주요 국가 사례를 중심으로 법제 동향을 제시하고, 제도적 특징 및 발전 방향에 대한 심층적 이해를 돕습니다. 이를 통해 국내 법제 운영의 상대적 위치를 확인하고, 해외 우수 법제 사례를 참고하여 국내 입법 및 정책 개발에 대한 시사점을 제공할 수 있도록 구성되어 있습니다. 본 자료는 법제 연구자, 정책 기획자 및 입법 담당자가 국제 법제 환경을 이해하고, 전략적 법제 발전 방안을 모색하는 데 유용합니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 국가코드1(ISO1)
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - AE
@@ -221,6 +224,12 @@ schema:
         - '아르헨티나 경제금융부 , 아르헨티나 중앙 은행 , 아르헨티나 상원 '
       stats:
         unique: 56
+  foreign_keys:
+    - fields:
+        - 국가코드1(ISO1)
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -264,7 +273,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092916-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국가코드1(ISO1))'
     evidence:
       - type: measured
         source: probe/stats/15092916.json
@@ -318,8 +327,6 @@ verification:
   run: probe/runs/15092916.json
   stats: probe/stats/15092916.json
   data: probe/data/15092916/
-status: active
-summary_user: 세계법제정보센터 법령정보의 부가자료로, 국가별 인구·민족·종교·도시·면적·통화·언어 같은 기본 정보와 항목별 추가 설명, 관련 사이트 링크를 국가 단위로 담은 파일(CSV 약 90KB)이다. 해외 법령을 조사하는 법제 연구자나 입법·정책 담당자가 '이 나라의 언어·종교·통화 등 기본 여건은 어떤가'를 확인해 외국 법령을 읽는 배경 자료로 쓴다. 국가코드(ISO 2·3자리 등) 필드가 있지만 실측에서 전역 조인 키로 확인되지는 않았으므로, 세계법제정보센터의 외국 법령 데이터와는 국가명이나 국가코드를 직접 맞춰 이어 쓴다.
 limits: 법령 본문이나 국가 간 법제 비교 결과 자체를 담은 데이터가 아니라 국가 기본정보 중심의 부가자료다. 실측에서 전역 조인 키를 찾지 못해, 다른 데이터와는 국가명·코드를 직접 매핑해야 연결된다.
 review:
   summary: draft
@@ -330,3 +337,4 @@ review:
     - c-15092916-01
     - c-15092916-03
   dropped_citations: 0
+status: active

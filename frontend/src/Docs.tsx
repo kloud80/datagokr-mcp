@@ -16,6 +16,7 @@ import { DatasetDrawer } from './DatasetDrawer'
 import { Diagram, type DLink, type DNode } from './docs/Diagram'
 import { DataTable, level } from './docs/DataTable'
 import { SiteTable } from './docs/SiteTable'
+import { AgencyTable } from './docs/AgencyTable'
 import { fmtCount } from './JoinMap'
 import { TrustLegend } from './Trust'
 import { Credit } from './Credit'
@@ -32,6 +33,7 @@ const TOC = [
   { id: 'progress', n: 7, t: '지금까지 진행된 사항' },
   { id: 'verified', n: 8, t: '확인된 관계와 데이터' },
   { id: 'coverage', n: 9, t: '데이터별 범위와 커버리지 수준' },
+  { id: 'agencies', n: 10, t: '기관별 핵심 데이터와 관계' },
 ]
 
 const n = (v?: number | null) => (v ?? 0).toLocaleString()
@@ -104,8 +106,13 @@ const TIMELINE: { d: string; t: string; s: string }[] = [
   { d: '2026-10-03', t: '4차 확대 — 도시·부동산 우선, 3,000건', s: '키를 새로 받지 않고 도시·부동산 6,777건(5,407단위)과 나머지 부문 점수 상위 5,000단위를 부문 검토 → 1,864건 검증. 도시·부동산 989 · 나머지 450 · 실패 API 파라미터 자동 수리 59 → 검증 1,583 → 3,080. 브이월드 공간정보 일괄 다운로드(개별공시지가·토지특성 등) 118건 포함. 조인 2,089 → 3,378.' },
   { d: '2026-10-03', t: '5차 확대 — 나머지 부문 전부', s: '남은 나머지 부문 20,096단위를 Opus로 부문 검토(유지 2,466 · 이동 373) → 1,716건 검증 대상. 포털 파일 920 · 링크형 152 · 택지정보시스템 15(새 검증기) · 포털 API 271(활용신청 311, 파라미터 수리 24 포함) → 검증 3,081 → 4,444. 조인 4,874 (실측 1,634).' },
   { d: '2026-10-05', t: '6차 확대 — 검증 2만', s: '새 검토 없이 기존 판정을 넓혀 18,792건 검증: 가족판(같은 형식 시군구판) · 3순위 · 보조(미룸 판정 점수 상위). 포털 파일 13,647 · API 1,573(활용신청 2,098) · 링크 1,257 → 검증 4,444 → 20,921. 등급(facets.grade)으로 보조 자료는 전략 점수를 낮춰 핵심을 밀어내지 않게. 조인 24,800.' },
+  { d: '2026-10-06', t: '기관 분석 · 사이트 가입 — 검증 2만 5천', s: '공공기관 1,115곳을 엔티티로 등록하고 상위 150곳은 Opus로 분석(시스템 1,596 · 고유 키 824 · 빠진 핵심 원장 1,410). 사용자가 가입한 사이트(경기데이터드림 · 열린국회정보 · 문화공공데이터광장 · OpenDART · 기상청 API허브 · 제주데이터허브 · 고용24 등)별 검증기를 만들어 링크형을 확인. 검증 20,921 → 25,155.' },
+  { d: '2026-10-07', t: '포털 핵심 원장 · 느슨한 조인', s: '기관 분석이 찾은 포털 핵심 원장 API 219건 활용신청(저장 세션은 SSO 교환을 한 번 거쳐야 신청 폼이 열린다) → 158건 검증(파라미터 수리 11 포함) → 25,305. 키가 정확히 같지 않아도 공통 단위(필지·법정동·시군구 × 일·월·분기·연 × 업종)로 집계해 잇는 느슨한 조인(R-20~R-23)을 정의 — 데이터마다 실측 필드로 단위(grain)를 기록(공간 단위 13,281건)하고 전략·코드에서 정확한 조인과 따로 보인다.' },
   { d: '2026-10-03', t: '원격 MCP · 사용 통계', s: '이 서버의 /mcp로 원격 MCP를 열고(읽기 전용·인증 없음) 연결 가이드를 만들었다. Google Analytics 4로 방문·질문 수를 수집한다.' },
 ]
+
+const SPACE_KO: Record<string, string> = { point: '좌표', parcel: '필지', bjd: '법정동', emd: '읍면동', sgg: '시군구', sido: '시도', national: '전국' }
+const TIME_KO: Record<string, string> = { realtime: '실시간', day: '일', month: '월', quarter: '분기', year: '연' }
 
 export function Docs() {
   const [d, setD] = useState<DocsData | null>(null)
@@ -287,6 +294,21 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
                 <div className="doc-card"><AgentChip variant="secondary">lookup</AgentChip><b>{n(d.edges.by_rel.lookup)}</b><p>한쪽을 부르려면 다른 쪽의 값(코드)이 먼저 필요하다 — 호출 체인.</p></div>
                 <div className="doc-card"><AgentChip variant="neutral">related_to</AgentChip><b>{n(d.edges.by_rel.related_to)}</b><p>같은 맥락의 참고 관계. 행을 잇지는 않는다(측정하지 않음).</p></div>
               </div>
+              <h3 className="doc-h3">느슨한 조인 (정렬 조인) — 공통 단위로 집계한 뒤 결합</h3>
+              <p className="doc-p">키가 정확히 같지 않아도 <b>공통 단위</b>로 맞추면 이을 수 있다. 데이터마다 실측 필드로 <b>단위(grain)</b>를 기록하고(공간·시간·분류),
+                전략을 짤 때 선언된 조인이 없는 데이터 쌍에 대해 두 단위 중 <b>거친 쪽</b>으로 맞춘다. 결과는 행 단위 결합이 아니라 "시군구 × 월" 같은 집계끼리의 비교·상관이며,
+                화면과 생성 코드에서 <b>느슨한 조인</b>으로 구분해 보인다(정확한 키 조인보다 신뢰도 낮음).</p>
+              <AgentTable caption="느슨한 조인 규칙" columns={[{ key: 'ax', label: '축' }, { key: 'lv', label: '단위 (세밀 → 거침)' }, { key: 'r', label: '규칙' }]}
+                rows={[
+                  { key: 's', ax: '공간', lv: '좌표 → 필지(PNU 19) → 법정동(10) → 읍면동(8) → 시군구(5) → 시도(2)', r: 'R-20 PNU 앞 10자리 = 법정동 · R-21 앞자리로 상위 행정구역 · R-12/13 좌표·주소 → 필지 · R-14 이름 → 코드' },
+                  { key: 't', ax: '시간', lv: '실시간 → 일 → 월 → 분기 → 연', r: 'R-22 날짜를 공통 시점으로 내림 (기간이 겹치는지는 셀 통계로)' },
+                  { key: 'c', ax: '분류', lv: '업종(KSIC)·품목(HS) 세분류 → 대분류', r: 'R-23 코드 앞자리로 상위 분류 — 같은 체계일 때만' },
+                ]} />
+              {d.grain ? (
+                <p className="doc-p">검증 데이터 중 공간 단위가 있는 것 <b>{n(d.grain.with_space)}</b>개 — 그 가운데 선언된 조인(Edge)이 없어 느슨한 조인으로만 이어지는 것 <b>{n(d.grain.no_edge_with_space)}</b>개.
+                  공간: {Object.entries(d.grain.space).map(([k, v]) => `${SPACE_KO[k] ?? k} ${n(v)}`).join(' · ')} / 시간: {Object.entries(d.grain.time).map(([k, v]) => `${TIME_KO[k] ?? k} ${n(v)}`).join(' · ')}</p>
+              ) : null}
+              <p className="doc-small">공간 축 없이 시간만 맞는 쌍은 너무 느슨해 쓰지 않는다(시간+분류가 함께 맞을 때만). 구현: <code className="pds-code">pds/rules</code>(R-20~23) · <code className="pds-code">Dataset.grain</code> · <code className="pds-code">pds/strategy/plan.py align_pair</code>.</p>
               <h3 className="doc-h3">허브 — 많은 데이터가 모이는 키</h3>
               <p className="doc-p">모든 데이터를 서로 잇면 n² 조합이 된다. 그래서 필지(PNU)·법정동 같은 공통 키를 <b>허브</b>로 두고 데이터마다 허브로의 길 하나만 선언한다(별 모양). 두 데이터는 허브를 거쳐 이어진다.</p>
               <div className="doc-hubs">
@@ -353,15 +375,19 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
                   { label: '외부 사이트 파일', value: d.sites.sites.reduce((a, r) => a + r.file, 0) },
                 ]} />
                 <div className="doc-cards4">
-                  {(['보유·검증', '보유', '미보유', '키 불필요'] as const).map((k) => (
-                    <div key={k} className={`doc-card doc-card--${k === '보유·검증' ? 'ok' : k === '미보유' ? 'need' : 'plain'}`}>
-                      <AgentChip variant={k === '보유·검증' ? 'live' : k === '보유' ? 'primary' : k === '미보유' ? 'hot' : 'neutral'}>{k}</AgentChip>
-                      <b>{n(d.sites?.summary.by_key[k]?.sites)}곳</b>
-                      <p>{n(d.sites?.summary.by_key[k]?.datasets)}건 · {({ '보유·검증': '키를 받아 실제로 불러 확인한 사이트', '보유': '키는 있으나 아직 이 시스템 대상 데이터가 없는 사이트', '미보유': 'API 키가 필요하지만 아직 받지 않은 사이트 (추가외부키.md)', '키 불필요': '파일 내려받기만 하는 사이트(대부분 기관 홈페이지) — 가입 없이 또는 계정만' } as Record<string, string>)[k]}</p>
+                  {(['보유·검증', '가입 불필요(견본)', '승인·신청 대기', '미보유', '키 불필요'] as const).map((k) => (
+                    <div key={k} className={`doc-card doc-card--${k === '보유·검증' || k === '가입 불필요(견본)' ? 'ok' : k === '미보유' || k === '승인·신청 대기' ? 'need' : 'plain'}`}>
+                      <AgentChip variant={k === '보유·검증' || k === '가입 불필요(견본)' ? 'live' : k === '미보유' || k === '승인·신청 대기' ? 'hot' : 'neutral'}>{k}</AgentChip>
+                      <b>{n(d.sites?.summary.by_key[k]?.sites ?? 0)}곳</b>
+                      <p>{n(d.sites?.summary.by_key[k]?.datasets ?? 0)}건 · {({ '보유·검증': '가입·키·로그인 세션으로 실제로 불러 확인한 사이트', '가입 불필요(견본)': '가입 없이 견본 키(sample·test)로 확인한 사이트', '승인·신청 대기': '가입·신청은 했고 승인이나 API별 활용신청을 기다리는 사이트', '미보유': 'API 키가 필요하지만 아직 받지 않은 사이트 (추가외부키.md)', '키 불필요': '파일 내려받기만 하는 사이트(대부분 기관 홈페이지) — 가입 없이 또는 계정만' } as Record<string, string>)[k]}</p>
                     </div>
                   ))}
                 </div>
-                <p className="doc-p">이 시스템이 키를 받아 확인한 곳은 <b>data.go.kr</b>(포털)과 <b>브이월드 · 서울 열린데이터광장 · 법제처 · 나이스</b>다. 나머지 API 사이트는 가입·신청 부담 때문에 아직 받지 않았고, 대상 데이터와 사이트별 발급 절차는 저장소의 <code className="pds-code">추가외부키.md</code>에 정리돼 있다.</p>
+                <p className="doc-p">처음에는 포털과 <b>브이월드 · 서울 열린데이터광장 · 법제처 · 나이스</b>만 키가 있었다. 2026-10-06 사이트를 차례로 가입·확인했다 —
+                  <b>경기데이터드림</b>(로그인 세션 · 시트) · <b>제주데이터허브</b>(미리보기 표) · <b>재난안전데이터공유플랫폼</b>(샘플 다운로드) · <b>농식품 공공데이터 포털</b> ·
+                  <b>열린국회정보</b> · <b>지방재정365</b>(포털 링크가 공시 화면이라 제목 유사도로 짝지음) · <b>문화공공데이터광장</b>(API마다 신청, API별 서비스키가 메일로 — 115건) ·
+                  <b>OpenDART</b> · <b>고용24</b>(서비스별 키 11개). <b>식품안전나라 · 한국도로공사 · 택지정보</b>는 가입 없이 견본 키로 확인됐다.
+                  생활안전지도·농사로는 승인 대기, 기상청 API허브는 API마다 활용신청이 남았다. 사이트마다 검증기가 따로 있다(<code className="pds-code">pds/probe/*_sites.py · *_files.py</code>).</p>
                 <SiteTable sites={d.sites.sites} />
               </>) : <p className="doc-p">사이트별 집계를 아직 만들지 않았습니다 (python -m pds.expand.site_coverage).</p>}
             </Section>
@@ -423,6 +449,22 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
               <DataTable rows={d.datasets} keyFilter={keyFilter} onKeyFilter={setKeyFilter} open={setDsId} />
               <p className="doc-small">건수 표기 예: {fmtCount(2300238)} = 2,300,238건.</p>
             </Section>
+
+            {d.agencies ? <Section id="agencies" n={10} title="기관별 핵심 데이터와 관계"
+              lead="데이터를 개방한 기관마다 어떤 원천 시스템에서 무엇이 나오고, 무엇이 핵심 원장이며, 어떤 고유 키로 서로 이어지는지 정리했다.">
+              <div className="doc-kpis">
+                {([['개방 기관', d.agencies.total], ['정밀 분석 (A)', d.agencies.analyzed], ['운영 시스템', d.agencies.systems],
+                  ['관계', d.agencies.relations], ['빠진 핵심 원장', d.agencies.core_missing]] as [string, number][]).map(([k, v]) => (
+                  <div key={k} className="doc-kpi"><b>{n(v)}</b><span>{k}</span></div>
+                ))}
+              </div>
+              <ul className="doc-facts">
+                <li>등급: A 중앙부처·공공기관 정밀 분석 {n(d.agencies.tiers.A ?? 0)} · B 광역 {n(d.agencies.tiers.B ?? 0)} · C 기초 {n(d.agencies.tiers.C ?? 0)}(가족판·표준데이터로 일괄) · D 소규모 {n(d.agencies.tiers.D ?? 0)}(자동 집계).</li>
+                <li>A등급은 기관 목록 전체를 Opus가 읽고 시스템·핵심 원장·고유 키를 제안한다. 키의 열 이름은 실측·명세 컬럼에 있어야만 남긴다.</li>
+                <li>고유 키는 Key로 등록되어 필드에 붙고, 조인은 규칙(edges.auto)이 만들고 실측(probe.join — 거래 번호는 그 값으로 직접 조회해 값 포함 확인)이 판정한다. LLM은 조인을 만들지 않는다.</li>
+              </ul>
+              <AgencyTable rows={d.agencies.detail} />
+            </Section> : null}
             <div className="doc-end"><AgentButton variant="secondary" onClick={() => go('philosophy')}>맨 위로</AgentButton></div>
             <Credit />
           </>)}

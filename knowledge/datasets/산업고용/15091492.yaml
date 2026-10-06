@@ -1,4 +1,5 @@
-# Dataset 15091492 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15091492 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15091492'
 tier: verified
 title: 한국가스안전공사_ KGS Code(상세기준) 현황_도시가스법
@@ -23,6 +24,7 @@ synonyms:
   - 가스기술기준
   - KGS Code 목록
   - 가스 검사기준
+summary_user: 도시가스법에 관련된 KGS Code(가스안전 분야 시설·검사·기술 상세기준)의 목록을 코드 한 건당 한 행으로 담은 현황 파일로, 분류·코드번호·코드명·최신버전·내용쪽수로 구성되며 전국 단위의 비공간 데이터이고 파일 크기는 약 2KB(1,979바이트)로 작다. 도시가스 사업자나 설비 설계·시공 담당자가 '도시가스 시설에 적용되는 상세기준 코드는 무엇이고 현재 최신 버전은 몇 판인가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 코드번호·코드명 같은 이름·코드 매핑으로만 연결하며, 고압가스·LPG 등 같은 기관의 다른 KGS Code 현황 파일과는 코드번호 체계로 나란히 대조한다.
 description_portal: 'KGS Code는 정부에서 승인한 가스안전분야 시설,검사,기술 상세기준으로 한국가스안공사에서 보유하고 있는 도시가스 코드 현황 데이터입니다.해당 데이터는 분류, 코드번호, 코드명, 최신버전, 내용쪽수로 구성되어 있습니다.도시가스법 관련 KGS코드 최신정보를 쉽게 확인 할 수 있습니다.※ KGS Code : 가스 관계 법령에서 정한 시설·기술·검사 등의 기술적인 사항을 상세기준으로 정하여 코드화한 것으로, 가스기술 기준위원회에서 심의·의결하고 산업통상자원부에서 승인한 가스안전 분야의 기술기준입니다.※ 해당 데이터는 연간 주기로 업데이트 됩니다.※ 2025년 데이터기준일 기준 현황입니다.- 데이터기준일 : 2025년 9월 15일'
 accrual_periodicity: 연간
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 1
     - name: 코드번호
       type: code
+      semantic_type: kgs_code_no
       null_rate: 0.0
       sample_values:
         - KGS FP451
@@ -81,12 +84,22 @@ schema:
         p50: 76
         max: 169
         unique: 18
+  foreign_keys:
+    - fields:
+        - 코드번호
+      reference:
+        key: kgs_code_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최신버전
 cycle: default
 classification:
   subsector_name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
@@ -123,7 +136,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15091492-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kgs_code_no(코드번호)'
     evidence:
       - type: measured
         source: probe/stats/15091492.json
@@ -188,8 +201,6 @@ verification:
   run: probe/runs/15091492.json
   stats: probe/stats/15091492.json
   data: probe/data/15091492/
-status: active
-summary_user: 도시가스법에 관련된 KGS Code(가스안전 분야 시설·검사·기술 상세기준)의 목록을 코드 한 건당 한 행으로 담은 현황 파일로, 분류·코드번호·코드명·최신버전·내용쪽수로 구성되며 전국 단위의 비공간 데이터이고 파일 크기는 약 2KB(1,979바이트)로 작다. 도시가스 사업자나 설비 설계·시공 담당자가 '도시가스 시설에 적용되는 상세기준 코드는 무엇이고 현재 최신 버전은 몇 판인가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 코드번호·코드명 같은 이름·코드 매핑으로만 연결하며, 고압가스·LPG 등 같은 기관의 다른 KGS Code 현황 파일과는 코드번호 체계로 나란히 대조한다.
 limits: 코드 목록과 버전·쪽수만 담고 기준 본문 내용은 없으며, 사업장·시설 단위 정보나 지역 구분이 없어 인허가 원장과 직접 결합하지 못한다. 활용신청 없이 포털에서 CSV 파일로 받는 방식이다.
 review:
   summary: draft
@@ -201,3 +212,4 @@ review:
     - c-15091492-03
     - c-15091492-04
   dropped_citations: 0
+status: active

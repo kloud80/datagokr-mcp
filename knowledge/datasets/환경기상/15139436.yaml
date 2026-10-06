@@ -1,0 +1,186 @@
+# Dataset 15139436 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139436'
+tier: verified
+title: 기상청_적설관측 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139436/openapi.do
+synonyms:
+  - 적설
+  - 강설
+  - 눈
+  - 진눈깨비
+  - 대설
+  - 적설량
+  - 눈 쌓인 깊이
+  - 신적설
+  - 폭설 관측
+  - 적설 깊이 API
+  - 기상청 API허브 적설
+description_portal: '적설이란 고체상의 강수(눈, 싸락눈 등)가 지면에 내려 쌓여 있는 수직 깊이를 말합니다. 눈이 관측장소 또는 관측장소 주위의 지면에 반 이상을 덮었을 때를 적설이 있는 것으로 판단합니다. 목측관측을 비롯하여 레이저식, 초음파식, 영상식 등 적설계로 적설을 측정합니다.생산주기: 시간, 일(관측방법에 따라 상이함)보유기간: 1904년 4월(지점별 상이함) ~(참고) 적설관측은 지표면 위에 쌓인 눈의 깊이·면적·양 등을 측정하는 것으로, 기상·수문·재난 대응 및 농업·교통 분야에서 매우 중요합니다. 관측 방법적설계(눈자): 일정한 눈판 위에 자를 세워 눈의 깊이를 측정적설중량계: 눈의 무게를 측정하여 수분량(적설수량)으로 환산자동기상관측장비(AWS): 일부 관측소에 설치되어 자동 기록'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: stn_snow.php
+    name: stn_snow.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/stn_snow.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: stn
+        required: true
+      - name: tm
+        required: true
+        example: '201601051200'
+      - name: mode
+        required: true
+        example: '0'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '   90  128.56472000   38.25085000 000          18.06  90 속초                 11D2'
+        - '   95  127.30420000   38.14788000 000         153.70  95 철원                 11D1'
+        - '   98  127.06069000   37.90186000 004         109.06  98 동두천               11B20'
+      stats:
+        unique: 78
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7646
+  rank_in_sector: 49
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139436-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139436.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139436-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139436-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139436.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139436-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139436.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139436-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139436-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139436-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139436.json
+  stats: probe/stats/15139436.json
+  data: probe/data/15139436/
+status: active
+summary_user: 기상청 관측지점의 적설(땅에 쌓인 눈의 깊이) 관측값을 시간 또는 일 단위로 담은 관측 원천 자료이며, 범위는 전국입니다. 기후·농업·보험 분석가가 특정 지점에 눈이 언제 얼마나 쌓였는지 확인하거나 폭설 피해·교통 대응을 분석할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 관측지점 이름·번호 매핑이나 같은 기상청 관측자료(ASOS·AWS 등)의 지점 코드로만 다른 데이터와 잇는다.
+limits: 포털 활용신청과 별도로 기상청 API허브(apihub.kma.go.kr) 인증키가 있어야 호출된다. 행정구역 단위 공간 정보가 없어 시군구별 집계에 바로 쓰기 어렵고, 다른 데이터와 붙일 공통 키가 없어 지점 매핑을 따로 해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139436-01
+    - c-15139436-03
+    - c-15139436-04
+    - c-15139436-06
+  dropped_citations: 0

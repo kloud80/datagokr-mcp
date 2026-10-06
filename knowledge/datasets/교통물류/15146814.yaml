@@ -39,6 +39,7 @@ schema:
   fields:
     - name: 지사코드
       type: code
+      semantic_type: komsa_branch_cd
       null_rate: 0.0
       sample_values:
         - E
@@ -77,6 +78,7 @@ schema:
         unique: 361
     - name: 여객선코드
       type: code
+      semantic_type: komsa_psnshp_cd
       null_rate: 0.0
       sample_values:
         - E62
@@ -111,9 +113,24 @@ schema:
         - 통제
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - 지사코드
+      reference:
+        key: komsa_branch_cd
+      evidence: measured
+    - fields:
+        - 여객선코드
+      reference:
+        key: komsa_psnshp_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
@@ -150,7 +167,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15146814-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komsa_branch_cd(지사코드), komsa_psnshp_cd(여객선코드)'
     evidence:
       - type: measured
         source: probe/stats/15146814.json

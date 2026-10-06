@@ -1,4 +1,3 @@
-# Dataset 15156708 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15156708'
 tier: verified
 title: 한국환경공단_에어코리아_측정소 영문 정보 조회 서비스
@@ -22,6 +21,7 @@ synonyms:
   - 미세먼지 측정소 목록
   - TM 좌표 측정소
   - 외국인 대기질 정보
+summary_user: 에어코리아 대기질 측정소의 영문 정보를 측정소 한 곳당 한 건으로 담으며, 측정소명·도로명주소·설치연도·시설구분·측정항목·좌표를 전국 범위로 제공한다. 외국인 대상 대기질 앱이나 해외 서비스 개발자가 '이 위치에서 가장 가까운 측정소는 어디이고 영문으로 어떻게 표기하나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 에어코리아 실시간 대기질 등 같은 기관 데이터와는 측정소명 매핑이나 좌표(xcrd·ycrd)로 맞춰 이어 쓴다.
 description_portal: '측정소 영문 정보 조회 서비스 OPEN API기능은 대기질 측정소 정보를 조회하기 위한 서비스로 TM 좌표기반의 가까운 측정소 및 측정소 목록과 측정소의 정보를 조회할 수 있습니다. 측정소정보 조회 OpenAPI 내 상세 기능은 측정소 목록 조회, 근접측정소 목록 조회, TM 기준좌표 조회로 이루어져 있습니다. 해당 서비스는 아래에 유용하게 사용하실 수 있습니다.-외국인 대상 서비스 개발: 국내 거주 외국인이나 한국을 방문하는 관광객을 위한 날씨 또는 대기질 정보 앱/웹사이트를 만들 때 사용됩니다.-글로벌 서비스 연동: 국내 대기질 정보를 해외 서비스에 연동하여 보여주고자 할 때, 측정소의 위치를 영문으로 정확하게 표기하기 위해 필요합니다.각 기능별 정보와 요청변수, 응답메세지에 대한 설명은 OpenAPI 기술문서를 참고하셔서 이용하시길 바랍니다.※ 운영계정으로 사용하고자 할 경우 "한국환경공단 에어코리아 OpenAPI 기술문서" 내 신청 가이드 참고'
 team:
   dept: 대기환경처 대기정책지원부
@@ -91,6 +91,7 @@ schema:
     - name: msrstnNm
       title: 측정소명
       type: code
+      semantic_type: air_station_cd
       null_rate: 0.0
       sample_values:
         - Sangdae-dong
@@ -147,12 +148,27 @@ schema:
         p50: 35.180609
         max: 35.180609
         unique: 1
+  foreign_keys:
+    - fields:
+        - msrstnNm
+      reference:
+        key: air_station_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - xcrd
+    - ycrd
+  space_via: coord
+  time: day
+  time_fields:
+    - msrmtArtclNm
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -196,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156708-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: air_station_cd(msrstnNm)'
     evidence:
       - type: measured
         source: probe/stats/15156708.json
@@ -261,8 +277,6 @@ verification:
   run: probe/runs/15156708.json
   stats: probe/stats/15156708.json
   data: probe/data/15156708/
-status: active
-summary_user: 에어코리아 대기질 측정소의 영문 정보를 측정소 한 곳당 한 건으로 담으며, 측정소명·도로명주소·설치연도·시설구분·측정항목·좌표를 전국 범위로 제공한다. 외국인 대상 대기질 앱이나 해외 서비스 개발자가 '이 위치에서 가장 가까운 측정소는 어디이고 영문으로 어떻게 표기하나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 에어코리아 실시간 대기질 등 같은 기관 데이터와는 측정소명 매핑이나 좌표(xcrd·ycrd)로 맞춰 이어 쓴다.
 limits: 이 서비스는 측정소 정보만 담고 미세먼지·오존 등 실제 측정값이나 경보는 담지 않으므로 별도 대기질 서비스와 함께 써야 한다. 공통 코드 키가 없어 다른 데이터와는 이름·좌표 매칭에 의존한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -275,3 +289,4 @@ review:
     - c-15156708-04
     - c-15156708-06
   dropped_citations: 0
+status: active

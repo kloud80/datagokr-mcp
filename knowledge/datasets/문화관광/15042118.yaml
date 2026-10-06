@@ -1,4 +1,5 @@
-# Dataset 15042118 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15042118 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15042118'
 tier: verified
 title: 경기도_안산시_행정자료도서관리_대여현황
@@ -22,6 +23,7 @@ synonyms:
   - 장서 회전율
   - 안산시 도서관
   - 행정자료실 대출
+summary_user: 안산시 행정자료 도서관에서 관리하는 도서의 대출·반납 이력을 대출 건별로 담은 원천 파일(CSV, 약 1MB)로, 도서 고유번호·바코드와 대여일·반납예정일·실제 반납일·연장횟수를 기록한다. 도서관 운영 담당자나 분석가가 "대출 도서 중 반납예정일을 넘겨 반납된 비율은 얼마이고, 연장은 몇 번까지 하는가"처럼 연체·연장 패턴과 장서 회전율을 따져볼 때 쓴다. 실측 컬럼에 ISBN·도서관코드 같은 전역 조인 키가 없어 도서관정보나루 등 다른 도서 데이터와는 바로 붙지 않고, 같은 기관 자료 안에서 바코드·고유번호로만 연결한다.
 description_portal: 이 데이터는 안산시 평생비전센터 또는 관련 행정 도서관에서 관리하는 도서 대출 및 반납 이력을 기록한 운영 데이터입니다. 각 도서의 '고유번호'와 '바코드'를 통해 개별 도서를 식별할 수 있으며, '도서대여일', '반납예정일', 그리고 실제 '반납일' 정보를 포함하고 있어 대출 기간 준수 여부와 연체 현황을 파악할 수 있습니다. 또한 '연장횟수' 항목을 통해 도서 이용자들의 대출 연장 패턴을 분석할 수 있습니다. 이 자료는 도서관 장서의 회전율 분석, 연체 관리 정책 수립, 그리고 이용자들의 도서 이용 행태를 연구하는 데 유용한 기초 데이터로 활용됩니다.
 accrual_periodicity: 수시
 team:
@@ -126,6 +128,12 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 도서대여일
+    - 등록일
+    - 반납예정일
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -228,8 +236,6 @@ verification:
   run: probe/runs/15042118.json
   stats: probe/stats/15042118.json
   data: probe/data/15042118/
-status: active
-summary_user: 안산시 행정자료 도서관에서 관리하는 도서의 대출·반납 이력을 대출 건별로 담은 원천 파일(CSV, 약 1MB)로, 도서 고유번호·바코드와 대여일·반납예정일·실제 반납일·연장횟수를 기록한다. 도서관 운영 담당자나 분석가가 "대출 도서 중 반납예정일을 넘겨 반납된 비율은 얼마이고, 연장은 몇 번까지 하는가"처럼 연체·연장 패턴과 장서 회전율을 따져볼 때 쓴다. 실측 컬럼에 ISBN·도서관코드 같은 전역 조인 키가 없어 도서관정보나루 등 다른 도서 데이터와는 바로 붙지 않고, 같은 기관 자료 안에서 바코드·고유번호로만 연결한다.
 limits: ISBN·서명 같은 서지 정보가 없어 어떤 책이 많이 빌려졌는지는 알 수 없고, 다른 도서관 데이터와 키로 결합할 수 없다. 안산시 한 기관 범위의 자료라 지역 간 비교에는 쓰지 못한다.
 review:
   summary: draft
@@ -242,3 +248,4 @@ review:
     - c-15042118-04
     - c-15042118-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15135630 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15135630'
 tier: verified
 title: 국토교통부_골재자원조사_물리탐사
@@ -20,6 +19,7 @@ synonyms:
   - 사력층 탐사
   - 골재 매장 조사
   - 지표레이다탐사 GPR
+summary_user: 국토교통부 골재자원조사에서 하천·육상 골재의 분포와 사력·자갈층 범위를 파악하려고 실시한 물리탐사(굴절법 탄성파·전기비저항 등) 측선을 건별로 담은 전국 파일로, 측선마다 주소·기점과 종점 좌표·탐사방법·탐사길이(미터)가 들어 있습니다. 골재 채취 사업자나 자원 분석가가 특정 지역에서 어떤 방법으로 얼마나 길게 탐사했는지 확인하고, 골재 부존 조사가 이뤄진 위치를 지도에 표시하는 데 씁니다. 전역 조인 키는 없으므로 좌표·주소로 공간 결합하거나, 조사지역일련번호를 매개로 같은 골재자원조사의 시추조사 등 다른 파일과 이름·코드를 맞춰 연결합니다.
 description_portal: 물리탐사는 시추조사와 더불어 하천, 육상 골재자원의 수직 및 수평 분포상태와 부존 특성을 파악하기 위함이며, 굴절법 탄성파탐사를 비롯하여 전기비저항탐사 등을 주로 이용함, 지층구분과 특히 사력 및 자갈층의 부존 범위 및 두께나 깊이를 파악하며, 이외에 현장 탐사 조건에 따라서 전자탐사나 지표 레이다탐사(GPR)를 이용함, 시추 조사에서 얻을 수 있는 정보 이외에 암상변화, 점토성분 추정, 지하수의 전기전도도측정, 지표탐사자료의 해석 등 보다 정확한 골재자원 평가 목적으로 물리검층을 실시하기도 함
 accrual_periodicity: 연간
 team:
@@ -45,6 +45,7 @@ schema:
         unique: 427
     - name: 조사지역일련번호
       type: number
+      semantic_type: aggregate_survey_area_sn
       null_rate: 0.0
       sample_values:
         - '122'
@@ -142,6 +143,12 @@ schema:
         p50: 230
         max: 1080
         unique: 46
+  foreign_keys:
+    - fields:
+        - 조사지역일련번호
+      reference:
+        key: aggregate_survey_area_sn
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -184,7 +191,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15135630-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: aggregate_survey_area_sn(조사지역일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15135630.json
@@ -249,8 +256,6 @@ verification:
   run: probe/runs/15135630.json
   stats: probe/stats/15135630.json
   data: probe/data/15135630/
-status: active
-summary_user: 국토교통부 골재자원조사에서 하천·육상 골재의 분포와 사력·자갈층 범위를 파악하려고 실시한 물리탐사(굴절법 탄성파·전기비저항 등) 측선을 건별로 담은 전국 파일로, 측선마다 주소·기점과 종점 좌표·탐사방법·탐사길이(미터)가 들어 있습니다. 골재 채취 사업자나 자원 분석가가 특정 지역에서 어떤 방법으로 얼마나 길게 탐사했는지 확인하고, 골재 부존 조사가 이뤄진 위치를 지도에 표시하는 데 씁니다. 전역 조인 키는 없으므로 좌표·주소로 공간 결합하거나, 조사지역일련번호를 매개로 같은 골재자원조사의 시추조사 등 다른 파일과 이름·코드를 맞춰 연결합니다.
 limits: 실측 컬럼에서 전역 조인 키가 확인되지 않아 다른 데이터와는 주소·좌표나 같은 기관 코드로만 이을 수 있습니다. 탐사 위치·방법·길이만 담고 있어 지층 해석 결과나 골재 매장량은 이 파일로 알 수 없습니다.
 review:
   summary: draft
@@ -262,3 +267,11 @@ review:
     - c-15135630-03
     - c-15135630-04
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - 기점위도
+    - 기점경도
+    - 종점위도
+  space_via: coord

@@ -80,9 +80,16 @@ def aggregate(d: pd.DataFrame | None = None) -> dict:
         api = int((g["api_kind_label"] == "API_LINK").sum())
         fil = int((g["api_kind_label"] == "FILE_LINK").sum())
         targ = [i for i in g["id"] if i in t]
-        ver = [i for i in g["id"] if i in known_ds and t.get(i, {}).get("status") == "verified"]
+        ver = [i for i in g["id"] if t.get(i, {}).get("status") == "verified"]  # 대상 상태 기준 (데이터셋 생성 전에도 센다)
         env = site.get("env", "")
-        if env.startswith("("):
+        mode = site.get("mode")
+        if mode == "pending":
+            key = "승인·신청 대기"
+        elif mode in ("session", "per_api") or (mode == "key" and _have(env)):
+            key = "보유·검증" if ver else "보유"
+        elif mode == "sample":
+            key = "가입 불필요(견본)" if ver else "키 불필요"
+        elif env.startswith("("):
             key = "키 불필요"
         elif _have(env):
             key = "보유·검증" if ver else "보유"

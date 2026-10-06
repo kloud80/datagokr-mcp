@@ -1,4 +1,5 @@
-# Dataset 15119290 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119290 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119290'
 tier: verified
 title: 한국도로공사_푸드트럭 현황
@@ -24,6 +25,7 @@ synonyms:
   - 푸드트럭 운영 현황
   - 휴게소 소상공인 매장
   - 도로공사 휴게소
+summary_user: 한국도로공사가 관할하는 고속도로 휴게소에 설치된 푸드트럭을 매장 한 곳당 한 행으로 담은 현황 파일로, 본부·지사·휴게소(시설명)·매장명·소유주·운영방식·주요품목·오픈일자를 기록하며 파일 크기는 792바이트로 작다. 고속도로 이용자가 어느 휴게소에 어떤 메뉴의 푸드트럭이 있는지 확인하거나, 분석가가 휴게소 푸드트럭의 운영방식·품목·개장 시기를 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 휴게소 데이터와는 휴게소 이름(시설명)이나 본부·지사 이름을 맞춰 붙여야 한다.
 description_portal: 본 데이터는 한국도로공사가 관할하는 고속도로 휴게소에 설치된 푸드트럭 운영 현황을 나타낸다. 주요 구성 항목으로는 본부, 지사, 시설명, 매장명, 소유주, 운영방식, 주요품목, 오픈일자가 포함되어 있으며, 이를 통해 각 휴게소에 설치된 푸드트럭의 위치와 운영 형태, 제공 품목 등을 파악할 수 있다. 해당 데이터는 고속도로 이용자에게 다양한 먹거리 선택 정보를 제공하며, 소상공인의 자립 기반 조성 및 휴게소의 편의성 강화를 목적으로 한다. 또한, 운영일자와 품목 정보는 푸드트럭 운영 실태 분석 및 정책 수립에 참고 자료로 활용할 수 있다. 전반적인 푸드트럭 인프라 현황을 데이터로 정리함으로써 공공의 정보 접근성과 행정의 투명성을 높인다.
 accrual_periodicity: 연간
 team:
@@ -55,6 +57,7 @@ schema:
         unique: 10
     - name: 시설명
       type: code
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 김포(내측)
@@ -103,12 +106,22 @@ schema:
         min: '2022-11-01'
         max: '2025-06-18'
         unique: 10
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 오픈일자
 cycle: default
 classification:
   subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
@@ -145,7 +158,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119290-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15119290.json
@@ -210,8 +223,6 @@ verification:
   run: probe/runs/15119290.json
   stats: probe/stats/15119290.json
   data: probe/data/15119290/
-status: active
-summary_user: 한국도로공사가 관할하는 고속도로 휴게소에 설치된 푸드트럭을 매장 한 곳당 한 행으로 담은 현황 파일로, 본부·지사·휴게소(시설명)·매장명·소유주·운영방식·주요품목·오픈일자를 기록하며 파일 크기는 792바이트로 작다. 고속도로 이용자가 어느 휴게소에 어떤 메뉴의 푸드트럭이 있는지 확인하거나, 분석가가 휴게소 푸드트럭의 운영방식·품목·개장 시기를 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 휴게소 데이터와는 휴게소 이름(시설명)이나 본부·지사 이름을 맞춰 붙여야 한다.
 limits: 좌표나 노선번호·노드링크 ID가 없는 비공간 데이터라 지도나 도로망에 바로 올릴 수 없고, 다른 데이터와는 이름을 맞춰서만 이을 수 있다. 활용신청 없이 받는 파일이고, 갱신 주기는 확인되지 않았다.
 review:
   summary: draft
@@ -223,3 +234,4 @@ review:
     - c-15119290-03
     - c-15119290-04
   dropped_citations: 0
+status: active

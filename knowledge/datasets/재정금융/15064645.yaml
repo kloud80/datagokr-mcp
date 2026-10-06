@@ -1,4 +1,5 @@
-# Dataset 15064645 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064645 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064645'
 tier: verified
 title: 신용보증기금_Trust on 보증 이용 기업명세
@@ -21,6 +22,7 @@ synonyms:
   - 보증부대출 이용기업
   - 신보 보증기업 목록
   - 업종별 보증잔액
+summary_user: 신용보증기금 Trust on 보증(보증부대출금을 투명하게 쓰도록 지원하는 보증)을 이용한 기업을 연도말 업체별 보증잔액 기준으로 한 건씩 담은 전국 범위의 명세 파일로, 순번·업종코드·업종명·보증잔액만 있다. 분석가가 'Trust on 보증 잔액이 어떤 업종에 몰려 있는가'처럼 업종별 보증 규모 분포를 볼 때 쓴다. 전역 조인 키가 없어 기업 단위로 다른 데이터와 붙일 수 없고, 업종코드(최종업종코드)가 통계청 한국표준산업분류(세세분류)를 따르므로 이 분류 기준의 다른 업종 통계와 업종 단위로 이어 쓴다.
 description_portal: 신용보증기금과 기업의 상호 신뢰하에 기업이 보증부대출금을 투명하게 사용할 수 있도록 지원하는 Trust on보증의 이용기업 명세 데이터로, 다양한 사용자층의 이해 수준을 고려하여 시각적 요소와 함께 정보 접근성을 강화하였으며, 교육용 및 정책 홍보 자료로서도 활용도가 높습니다- 각 연도말 업체별 보증잔액 기준- 업종코드(세세분류)는 별개의 코드북 없이 통계청의 한국표준산업분류코드를 따르고 있는 바, 아래의 링크를 참고하여 주시기 바랍니다.https://kssc.kostat.go.kr:8443/ksscNew_web/kssc/main/main.do?gubun=1
 applicable_legislation:
   - law: 신용보증기금법
@@ -51,6 +53,7 @@ schema:
         unique: 17811
     - name: 최종업종코드
       type: code
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - G47912
@@ -76,12 +79,23 @@ schema:
         - 1억미만
       stats:
         unique: 4
+  foreign_keys:
+    - fields:
+        - 최종업종코드
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  category:
+    - ksic
+  category_fields:
+    - 최종업종코드
 cycle: default
 classification:
   subsector_name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
@@ -118,7 +132,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064645-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: classification_code(최종업종코드)'
     evidence:
       - type: measured
         source: probe/stats/15064645.json
@@ -196,8 +210,6 @@ verification:
   run: probe/runs/15064645.json
   stats: probe/stats/15064645.json
   data: probe/data/15064645/
-status: active
-summary_user: 신용보증기금 Trust on 보증(보증부대출금을 투명하게 쓰도록 지원하는 보증)을 이용한 기업을 연도말 업체별 보증잔액 기준으로 한 건씩 담은 전국 범위의 명세 파일로, 순번·업종코드·업종명·보증잔액만 있다. 분석가가 'Trust on 보증 잔액이 어떤 업종에 몰려 있는가'처럼 업종별 보증 규모 분포를 볼 때 쓴다. 전역 조인 키가 없어 기업 단위로 다른 데이터와 붙일 수 없고, 업종코드(최종업종코드)가 통계청 한국표준산업분류(세세분류)를 따르므로 이 분류 기준의 다른 업종 통계와 업종 단위로 이어 쓴다.
 limits: 실측 컬럼에 사업자번호 같은 기업 식별 키가 없어 개별 기업을 특정하거나 다른 기업 데이터와 직접 조인할 수 없다. 지역 정보가 없는 전국·비공간 자료라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -210,3 +222,4 @@ review:
     - c-15064645-04
     - c-15064645-06
   dropped_citations: 0
+status: active

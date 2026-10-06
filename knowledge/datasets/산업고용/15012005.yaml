@@ -863,6 +863,7 @@ schema:
     - name: indsSclsCd
       title: 해당 상가업소의 상권업종소분류코드(6자리)
       type: code
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - I21201
@@ -881,6 +882,7 @@ schema:
     - name: ksicCd
       title: 해당 상가업소의 표준산업분류코드(6자리)
       type: code
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - I56221
@@ -1661,6 +1663,16 @@ schema:
         key: store_id
       evidence: measured
     - fields:
+        - indsSclsCd
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
+        - ksicCd
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
         - ctprvnCd
       reference:
         key: admin_area_code
@@ -1714,6 +1726,21 @@ coverage:
   spatial: 전국
   admin_unit: 필지·건물
   temporal: 2024-01-01 ~ 2024-01-01
+grain:
+  space: point
+  space_fields:
+    - lon
+    - lat
+  space_via: coord
+  time: day
+  time_fields:
+    - stdrDt
+    - stdrDt
+    - stdrDt
+  category:
+    - ksic
+  category_fields:
+    - ksicCd
 cycle: default
 classification:
   subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
@@ -1758,7 +1785,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15012005-03
     kind: key
-    value: '실측 조인 키: store_id(bizesId), admin_area_code(ctprvnCd), sgg_cd(signguCd), bjd_cd(ldongCd), pnu(lnoCd), address(lnoAdr), address(rdnmCd), address(rdnm), address(rdnmAdr), coord(lon), coord(lat)'
+    value: '실측 조인 키: store_id(bizesId), classification_code(indsSclsCd), classification_code(ksicCd), admin_area_code(ctprvnCd), sgg_cd(signguCd), bjd_cd(ldongCd), pnu(lnoCd), address(lnoAdr), address(rdnmCd), address(rdnm), address(rdnmAdr), coord(lon), coord(lat)'
     evidence:
       - type: measured
         source: probe/stats/15012005.json

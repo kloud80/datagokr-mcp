@@ -1,4 +1,5 @@
-# Dataset 15069279 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069279 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069279'
 tier: verified
 title: 한국장학재단_학자금대출 금리기준
@@ -23,6 +24,7 @@ synonyms:
   - 장학재단 대출금리
   - 대학생 대출 금리
   - 고정금리 변동금리 학자금
+summary_user: 한국장학재단 학자금대출 금리를 대출년도·학기(1·2학기), 상품(취업 후 상환·일반상환 등), 금리변동구분(고정·변동)별로 정리한 전국 단위 기준 금리표로, 약 9KB 분량의 CSV 파일이다. 학생·학부모나 분석가가 "올해 2학기 취업 후 상환 학자금대출 금리는 얼마이고 과거 학기와 비교해 어떻게 변했나"를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 학자금 데이터와는 상품명·대출년도·학기를 이름으로 맞추거나 같은 기관 자료끼리만 연결한다.
 description_portal: 한국장학재단은 경제적 여건에 관계없이 능력과 의지가 있는 학생이면 누구나 균등한 고등교육 기회를 가질 수 있도록 시중은행 보다 낮은 금리로 학자금대출을 지원하고 있습니다. 해당 자료는 학자금대출 금리에 대한 데이터로, 학기별(1학기, 2학기), 상품별(취업 후 상환 학자금대출, 일반상환 학자금대출 등), 금리변동구분별(고정금리, 변동금리) 학자금대출 금리를 제공합니다.(현재 학자금대출부에서 운영하지 않는 대출상품은 제외)학자금대출 상품에 관한 자세한 정보는 재단 홈페이지(https://www.kosaf.go.kr/ko/tuition.do?pg=tuition_main)를 참고바랍니다.
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -40,6 +42,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_loan_product
       null_rate: 0.0
       sample_values:
         - 일반상환학자금_등록금
@@ -91,12 +94,22 @@ schema:
         p50: 2.25
         max: 5.8
         unique: 13
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_loan_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 대출년도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -133,7 +146,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069279-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_loan_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15069279.json
@@ -197,8 +210,6 @@ verification:
   run: probe/runs/15069279.json
   stats: probe/stats/15069279.json
   data: probe/data/15069279/
-status: active
-summary_user: 한국장학재단 학자금대출 금리를 대출년도·학기(1·2학기), 상품(취업 후 상환·일반상환 등), 금리변동구분(고정·변동)별로 정리한 전국 단위 기준 금리표로, 약 9KB 분량의 CSV 파일이다. 학생·학부모나 분석가가 "올해 2학기 취업 후 상환 학자금대출 금리는 얼마이고 과거 학기와 비교해 어떻게 변했나"를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 학자금 데이터와는 상품명·대출년도·학기를 이름으로 맞추거나 같은 기관 자료끼리만 연결한다.
 limits: 상품·학기별 기준금리만 담아 개인별 대출 실적·잔액이나 지역별 차이는 알 수 없다. 현재 운영하지 않는 대출상품은 빠져 있어 폐지 상품의 과거 금리는 확인하지 못한다. 공통 코드가 없어 다른 데이터와 붙일 때 상품명 표기를 직접 맞춰야 한다.
 review:
   summary: draft
@@ -210,3 +221,4 @@ review:
     - c-15069279-03
     - c-15069279-04
   dropped_citations: 0
+status: active

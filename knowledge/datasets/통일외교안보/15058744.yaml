@@ -49,6 +49,7 @@ schema:
   fields:
     - name: branch1
       type: code
+      semantic_type: io_org_field_cd
       null_rate: 0.0
       sample_values:
         - 행정
@@ -150,6 +151,7 @@ schema:
         unique: 1
     - name: seq
       type: number
+      semantic_type: io_vacancy_seq
       null_rate: 0.0
       sample_values:
         - '27743'
@@ -168,10 +170,26 @@ schema:
         - 마감
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - branch1
+      reference:
+        key: io_org_field_cd
+      evidence: measured
+    - fields:
+        - seq
+      reference:
+        key: io_vacancy_seq
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-09-02 ~ 2026-11-08
+grain:
+  time: day
+  time_fields:
+    - endDate
+    - regDate
 cycle: event
 classification:
   subsector_name: 국제기구 공석 (분야·기구별·JPO·UNV·인턴십)
@@ -216,7 +234,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15058744-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: io_org_field_cd(branch1), io_vacancy_seq(seq)'
     evidence:
       - type: measured
         source: probe/stats/15058744.json

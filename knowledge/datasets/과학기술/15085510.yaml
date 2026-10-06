@@ -1,4 +1,5 @@
-# Dataset 15085510 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085510 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085510'
 tier: verified
 title: 한국연구재단_KCI연계정보 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 학술논문 DB 연계
   - NDSL 연계
   - 논문 영향력 분석
+summary_user: 국내 학술논문 한 편마다 KCI 논문 ID(ARTIID)를 기준으로 WOS·SCOPUS·NDSL(NOS) 등 외부 학술 데이터베이스의 식별자, 피인용 횟수, 원문·인용 URL, 연계 날짜를 담은 논문 단위 연계 정보입니다. 연구자나 평가기관이 특정 KCI 논문이 WOS·SCOPUS에도 등재돼 있는지, 각 데이터베이스에서 몇 번 인용됐는지 확인할 때 씁니다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 KCI·ScienceON 데이터와는 KCI 논문 ID 같은 식별자를 이름·코드 매핑으로 맞춰 이어 써야 합니다.
 description_portal: KCI연계정보 서비스는 국내 학술논문의 KCI, WOS, SCOPUS, NDSL 등 주요 학술 데이터베이스 간의 연계 정보를 제공합니다. 이를 통해 논문별 인용 현황, 관련 문헌, 연계 날짜 등 다양한 정보를 확인할 수 있습니다. 논문 간 인용관계, 데이터베이스별 피인용 횟수, 원문 URL 등의 상세 정보를 포함하고 있어 연구성과 분석, 인용 통계, 학술정보 연계, 연구동향 파악 등에 활용도가 높습니다. 또한 연구자, 기관, 평가기관 등에서 논문 영향력 분석과 연구성과 관리에 유용하게 사용할 수 있습니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: ARTIID
       type: code
+      semantic_type: kci_arti_id
       null_rate: 0.0
       sample_values:
         - ART000850832
@@ -161,6 +164,12 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - ARTIID
+      reference:
+        key: kci_arti_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -210,7 +219,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085510-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_arti_id(ARTIID)'
     evidence:
       - type: measured
         source: probe/stats/15085510.json
@@ -275,8 +284,6 @@ verification:
   run: probe/runs/15085510.json
   stats: probe/stats/15085510.json
   data: probe/data/15085510/
-status: active
-summary_user: 국내 학술논문 한 편마다 KCI 논문 ID(ARTIID)를 기준으로 WOS·SCOPUS·NDSL(NOS) 등 외부 학술 데이터베이스의 식별자, 피인용 횟수, 원문·인용 URL, 연계 날짜를 담은 논문 단위 연계 정보입니다. 연구자나 평가기관이 특정 KCI 논문이 WOS·SCOPUS에도 등재돼 있는지, 각 데이터베이스에서 몇 번 인용됐는지 확인할 때 씁니다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 KCI·ScienceON 데이터와는 KCI 논문 ID 같은 식별자를 이름·코드 매핑으로 맞춰 이어 써야 합니다.
 limits: 다른 데이터셋과 바로 붙는 공통 조인 키가 확인되지 않아 연결은 식별자 매핑에 의존합니다. 개발계정은 하루 5,000회로 호출이 제한됩니다. 지역 구분 없는 전국·비공간 데이터라 지역별 분석에는 쓰지 못합니다.
 review:
   summary: draft
@@ -288,3 +295,4 @@ review:
     - c-15085510-03
     - c-15085510-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15049997 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049997 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049997'
 tier: verified
 title: 제주관광공사_제주관광정보시스템(VISIT JEJU)_찜한여행일정
@@ -20,6 +21,7 @@ synonyms:
   - 관광 일정 즐겨찾기
   - 제주관광 이용자 선호
   - 여행코스 찜 기록
+summary_user: 제주관광공사 관광정보 플랫폼 비짓제주에서 이용자가 여행일정을 찜할 때마다 쌓인 기록을 건별로 담은 파일로, 찜한 여행일정과 등록일시 두 항목만 있다(포털 설명 기준 4,116건). 비짓제주 이용자가 어떤 여행일정을 많이 찜했는지, 찜이 언제 몰리는지 살펴 인기 일정이나 일정 콘텐츠 기획 방향을 보려는 관광 마케팅 담당자·분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 여행일정 이름을 맞추는 방식으로만 이어 쓸 수 있다.
 description_portal: '- 제주관광공사에서 운영하는 제주관광정보플랫폼 비짓제주의 찜한여행일정 내역입니다.- 해당 데이터는 사용자가 비짓제주에서 제공된 여행일정을 찜했을 때 데이터베이스에 저장하여 생성합니다.- 개방데이터 항목은 여행일정, 등록일시이며 전체 데이터 수는 4,116건(데이터 기준일 기준)입니다.- 해당 데이터를 통해 비짓제주 플랫폼 내 이용자 선호 여행일정 파악, 인기 일정 분석, 맞춤형 여행일정 추천 서비스 개발, 이용자 참여 증진 및 커뮤니티 활성화, 관광 콘텐츠 기획 및 마케팅 전략 수립 등 다양한 분야에 활용할 수 있을 것으로 기대됩니다.'
 accrual_periodicity: 연간
 team:
@@ -33,6 +35,7 @@ schema:
   fields:
     - name: 여행일정
       type: string
+      semantic_type: visitjeju_schedule_id
       null_rate: 0.0
       sample_values:
         - 오직 제주에서만 가능한 여행
@@ -51,12 +54,22 @@ schema:
         min: '2016-12-25'
         max: '2024-12-17'
         unique: 167
+  foreign_keys:
+    - fields:
+        - 여행일정
+      reference:
+        key: visitjeju_schedule_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -93,7 +106,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15049997-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: visitjeju_schedule_id(여행일정)'
     evidence:
       - type: measured
         source: probe/stats/15049997.json
@@ -158,8 +171,6 @@ verification:
   run: probe/runs/15049997.json
   stats: probe/stats/15049997.json
   data: probe/data/15049997/
-status: active
-summary_user: 제주관광공사 관광정보 플랫폼 비짓제주에서 이용자가 여행일정을 찜할 때마다 쌓인 기록을 건별로 담은 파일로, 찜한 여행일정과 등록일시 두 항목만 있다(포털 설명 기준 4,116건). 비짓제주 이용자가 어떤 여행일정을 많이 찜했는지, 찜이 언제 몰리는지 살펴 인기 일정이나 일정 콘텐츠 기획 방향을 보려는 관광 마케팅 담당자·분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 여행일정 이름을 맞추는 방식으로만 이어 쓸 수 있다.
 limits: 찜한 이용자 정보나 일정의 지역·장소 코드가 없어 TourAPI 콘텐츠 등 다른 데이터와 키로 바로 연결되지 않고 공간 분석도 못 한다. 범위는 전국·비공간으로 분류되어 있지만, 내용은 비짓제주 한 플랫폼의 찜 기록이다.
 review:
   summary: draft
@@ -171,3 +182,4 @@ review:
     - c-15049997-03
     - c-15049997-04
   dropped_citations: 0
+status: active

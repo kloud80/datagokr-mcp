@@ -1,5 +1,3 @@
-# Dataset 15126639 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126639'
 tier: verified
 title: 행정안전부 한국지역정보개발원_(전국 통합데이터) 전국 공영자전거 실시간 정보
@@ -146,6 +144,7 @@ schema:
     - name: lcgvmnInstCd
       title: 지자체 코드(1100000000)
       type: number
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - '1100000000'
@@ -167,6 +166,7 @@ schema:
     - name: rntstnId
       title: 대여소ID(ST-10)
       type: string
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - ST-10
@@ -232,6 +232,7 @@ schema:
     - name: lcgvmnInstCd
       title: 지자체 코드(1100000000)
       type: number
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - '1100000000'
@@ -253,6 +254,7 @@ schema:
     - name: rntstnId
       title: 대여소ID(ST-10)
       type: string
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - ST-10
@@ -434,6 +436,7 @@ schema:
     - name: lcgvmnInstCd
       title: 지자체 코드(1100000000)
       type: number
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - '1100000000'
@@ -455,6 +458,7 @@ schema:
     - name: rntstnId
       title: 대여소ID(ST-10)
       type: string
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - ST-10
@@ -516,6 +520,16 @@ schema:
         unique: 124
   foreign_keys:
     - fields:
+        - lcgvmnInstCd
+      reference:
+        key: instt_cd
+      evidence: measured
+    - fields:
+        - rntstnId
+      reference:
+        key: public_bike_station_id
+      evidence: measured
+    - fields:
         - lat
       reference:
         key: coord
@@ -534,6 +548,13 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2023-02-08 ~ 2026-09-30
+grain:
+  space: point
+  space_fields:
+    - lat
+    - lot
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
@@ -579,7 +600,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15126639-03
     kind: key
-    value: '실측 조인 키: coord(lat), address(roadNmAddr), address(lotnoAddr)'
+    value: '실측 조인 키: instt_cd(lcgvmnInstCd), public_bike_station_id(rntstnId), coord(lat), address(roadNmAddr), address(lotnoAddr)'
     evidence:
       - type: measured
         source: probe/stats/15126639.json

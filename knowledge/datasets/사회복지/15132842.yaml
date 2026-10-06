@@ -1,4 +1,5 @@
-# Dataset 15132842 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132842 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132842'
 tier: verified
 title: 성평등가족부_청소년 자기도전포상제 포상담당관 정보 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 책임포상담당자
   - 청소년 포상제 운영기관 담당자
   - 포상제 지도자
+summary_user: 청소년 자기도전포상제 포상담당관을 건별로 담으며, 담당관이 속한 시설 일련번호(fcltySn), 책임포상담당자 여부, 등록일시를 전국 범위로 제공한다. 포상제 운영기관이나 분석가가 특정 시설에 책임 포상담당자가 지정돼 있는지, 언제 등록됐는지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 같은 기관의 포상제 시설 정보와 시설물일련번호 같은 기관 내부 코드로만 연결된다.
 description_portal: 청소년 자기도전 포상제 포상담당관 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 책임포상담당자여부, 시설물일련번호, 등록일시의 정보를 확인할 수 있습니다.기관별로 지정된 책임자의 유무를 파악하고, 포상제 운영의 신뢰성과 공정성을 높이는 데 중요한 기준으로 작용할 수 있으며, 담당자 정보를 통해 특정 시설의 관리 체계를 명확히 하여, 운영의 책임 소재를 구체적으로 파악하는 것이 가능합니다. 등록일시 데이터를 활용하면 포상담당관의 배정 및 교체 이력을 추적할 수 있어 장기적인 인력 운영 계획 수립에도 도움이 됩니다. 청소년 대상 활동의 질적 제고와 공정한 포상제 운영을 위한 기초 자료로 다양하게 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -66,6 +68,7 @@ schema:
     - name: fcltySn
       title: 시설물일련번호
       type: number
+      semantic_type: youth_fclty_sn
       null_rate: 0.0
       sample_values:
         - '1'
@@ -93,12 +96,22 @@ schema:
         - N
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - fcltySn
+      reference:
+        key: youth_fclty_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - regDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -143,7 +156,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132842-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_fclty_sn(fcltySn)'
     evidence:
       - type: measured
         source: probe/stats/15132842.json
@@ -197,8 +210,6 @@ verification:
   run: probe/runs/15132842.json
   stats: probe/stats/15132842.json
   data: probe/data/15132842/
-status: active
-summary_user: 청소년 자기도전포상제 포상담당관을 건별로 담으며, 담당관이 속한 시설 일련번호(fcltySn), 책임포상담당자 여부, 등록일시를 전국 범위로 제공한다. 포상제 운영기관이나 분석가가 특정 시설에 책임 포상담당자가 지정돼 있는지, 언제 등록됐는지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 같은 기관의 포상제 시설 정보와 시설물일련번호 같은 기관 내부 코드로만 연결된다.
 limits: 담당자 이름·연락처·시설명·주소는 없어 이 데이터만으로는 시설이나 지역을 특정할 수 없고 공간 분석도 되지 않는다. 다른 기관 데이터와 잇는 공통 키가 없으며, 이벤트성으로 생성된 뒤 바뀌지 않는 성격이라 교체 이력이 계속 갱신된다고 보기 어렵다.
 review:
   summary: draft
@@ -211,3 +222,4 @@ review:
     - c-15132842-03
     - c-15132842-04
   dropped_citations: 0
+status: active

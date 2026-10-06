@@ -1,0 +1,262 @@
+# Dataset 15150346 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15150346'
+tier: verified
+title: 행정안전부_공통기반_고속도로_구간_상세
+sector: 교통물류/도로/traffic-realtime
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15150346/openapi.do
+synonyms:
+  - 일상생활안전
+  - 교통안전
+  - 지점관리
+  - 긴급구조
+  - 상황파악
+  - 고속도로 링크
+  - 고속도로 노선 구간
+  - 링크 순번
+  - 국가교통정보센터 링크
+  - 고속도로 방향별 구간
+  - 재난안전데이터 공유플랫폼 고속도로
+summary_user: 국가교통정보센터가 제공하는 고속도로 구간 상세 정보를 재난안전데이터 공유플랫폼을 거쳐 전국 범위로 담는 데이터로, 고속도로 ID·방향 코드·링크 순번·링크 ID와 시도·시군구 이름, 등록·수정 일시를 행 단위로 가진다. 교통 분석가가 '특정 고속도로의 상행·하행 구간이 어떤 링크 순서로 이어지고 어느 시군구를 지나는가'를 파악해 링크별 실시간 속도·돌발 정보를 노선 단위로 묶어 볼 때 쓴다. 링크 ID(LNK_ID)로 같은 체계의 실시간 소통 데이터와 맞춰 볼 수 있으나 실측상 전역 조인 키는 확인되지 않았고, 시도·시군구는 이름으로만 매핑된다.
+description_portal: 행정안전부에서는 「재난 및 안전관리 기본법」에 따라 데이터 기반 재난 및 안전관리체제 확립 및 재난안전데이터 수집·연계·분석·활용·공유·공개를 위하여 재난안전데이터통합관리시스템인 '재난안전데이터 공유플랫폼' 구축·운영하여 안전분야 공공데이터를 제공하고 있습니다.- 재난안전데이터 공유플랫폼(https://www.safetydata.go.kr)과 공공데이터포털에서 연계하여 제공하고 있습니다.- 해당 데이터는 국토교통부 국가교통정보센터에서 제공하고 있는 정보입니다.
+team:
+  dept: 재난안전데이터과
+services:
+  - op: DSSP-IF-20020
+    name: DSSP-IF-20020
+    endpoint: https://www.safetydata.go.kr/V2/api/DSSP-IF-20020
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: www.safetydata.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: EPWY_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0101'
+        - '0141'
+        - '0301'
+      stats:
+        min: 10
+        p50: 155
+        max: 5510
+        unique: 27
+    - name: DRTN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+        - 방향코드
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 3
+    - name: LNK_SQNC
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '16'
+        - '34'
+        - '44'
+      stats:
+        min: 3
+        p50: 37
+        max: 143
+        unique: 63
+    - name: LNK_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 링크ID
+        - '3330053900'
+        - '3330050700'
+      stats:
+        min: 1140278800
+        p50: 3100059950
+        max: 3960271500
+        unique: 101
+    - name: CTPV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전라남도
+        - 전라북도
+        - 울산광역시
+      stats:
+        unique: 12
+    - name: SGG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보성군
+        - 울주군
+        - 남원시
+      stats:
+        unique: 34
+    - name: REG_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2021/01/01 01:00:00.000000000
+        - 2024/12/27 17:37:00.000000000
+        - 등록일시
+      stats:
+        min: '2021-01-01'
+        max: '2024-12-27'
+        unique: 3
+    - name: MDFCN_DT
+      type: date
+      null_rate: 0.0396
+      sample_values:
+        - 2021/01/01 01:00:00.000000000
+        - 수정일시
+      stats:
+        min: '2021-01-01'
+        max: '2021-01-01'
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - SGG_NM
+  space_via: name
+  time: day
+  time_fields:
+    - REG_DT
+    - MDFCN_DT
+cycle: default
+classification:
+  subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5182
+  rank_in_sector: 2092
+  brm: 교통물류 - 도로
+  why: 재난안전데이터공유플랫폼 (샘플 다운로드)
+claims:
+  - id: c-15150346-01
+    kind: access
+    value: 외부 사이트 www.safetydata.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15150346.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.safetydata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15150346-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150346-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15150346.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150346-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15150346.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150346-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15150346-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15150346-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15150346.json
+  stats: probe/stats/15150346.json
+  data: probe/data/15150346/
+limits: 포털 활용신청과 별개로 safetydata.go.kr 인증키(KEY 파라미터)가 따로 필요하다. 표준 행정코드 같은 전역 조인 키가 없어 다른 데이터와는 이름 매핑이나 같은 기관 코드로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15150346-01
+    - c-15150346-03
+    - c-15150346-04
+    - c-15150346-06
+  dropped_citations: 0
+status: active

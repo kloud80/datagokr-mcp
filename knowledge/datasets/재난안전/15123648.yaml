@@ -1,4 +1,5 @@
-# Dataset 15123648 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123648 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123648'
 tier: verified
 title: 국토교통부_특수교재난정보
@@ -23,6 +24,7 @@ synonyms:
   - 일반국도 특수교
   - 교량 안전 모니터링
   - 계측시스템 코드
+summary_user: 일반국도 특수교량 33개의 계측시스템에서 재난 시 쓰는 센서 채널 정보를 교량·채널 단위로 담은 코드성 목록 파일(csv, 약 5KB)로, 교량코드·교량명, 채널코드, 데이터 종류와 비교값 구분을 담는다. 도로·교량 안전 분석가가 특정 특수교량에 어떤 종류의 계측 채널이 있고 어떤 기준값과 비교하는지 확인할 때 쓴다. 전역 조인 키는 없어서 특수교량코드나 특수교량명을 같은 기관의 교량·계측 데이터와 이름·코드로 맞춰 이어 쓴다.
 description_portal: 특수교 재난정보는 국토교통부 도로시설안전과에서 관리 중인 일반국도 상의 특수교량 33개에서 계측시스템을 통해 재난 시 활용하는  정보(센서채널 코드, 데이터 종류, 데이터종류명, 비교값 구분, 비교값구분명) 등으로 구성된 데이터입니다.파일 내 항목별 코드 설명은 특수교통합관리계측시스템 사용자 매뉴얼을 참고해 주시기 바랍니다.
 applicable_legislation:
   - law: 도로법
@@ -48,6 +50,7 @@ schema:
   fields:
     - name: 특수교량코드
       type: code
+      semantic_type: special_bridge_cd
       null_rate: 0.0
       sample_values:
         - SBB
@@ -107,6 +110,12 @@ schema:
         - 정적데이타
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 특수교량코드
+      reference:
+        key: special_bridge_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -153,7 +162,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123648-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: special_bridge_cd(특수교량코드)'
     evidence:
       - type: measured
         source: probe/stats/15123648.json
@@ -228,8 +237,6 @@ verification:
   run: probe/runs/15123648.json
   stats: probe/stats/15123648.json
   data: probe/data/15123648/
-status: active
-summary_user: 일반국도 특수교량 33개의 계측시스템에서 재난 시 쓰는 센서 채널 정보를 교량·채널 단위로 담은 코드성 목록 파일(csv, 약 5KB)로, 교량코드·교량명, 채널코드, 데이터 종류와 비교값 구분을 담는다. 도로·교량 안전 분석가가 특정 특수교량에 어떤 종류의 계측 채널이 있고 어떤 기준값과 비교하는지 확인할 때 쓴다. 전역 조인 키는 없어서 특수교량코드나 특수교량명을 같은 기관의 교량·계측 데이터와 이름·코드로 맞춰 이어 쓴다.
 limits: 실제 계측값이나 경보 이력은 없고, 채널·데이터 종류·비교값 구분의 코드 정의만 담는다. 항목별 코드의 뜻은 특수교통합관리계측시스템 사용자 매뉴얼을 따로 참고해야 하며, 명세상 갱신은 연간·이벤트 주기다.
 review:
   summary: draft
@@ -242,3 +249,4 @@ review:
     - c-15123648-03
     - c-15123648-04
   dropped_citations: 0
+status: active

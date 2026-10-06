@@ -1,4 +1,3 @@
-# Dataset 15064519 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15064519'
 tier: verified
 title: 한국교통안전공단_철도자격관리시스템_유관기관 정보
@@ -21,6 +20,7 @@ synonyms:
   - 철도종사자 자격 지정기관
   - 철도 운전면허 검사기관
   - 철도자격 유관기관 목록
+summary_user: 철도자격관리시스템에 등록된 신체검사·적성검사·교육훈련기관 등 철도 유관기관을 기관 단위로 한 행씩 담은 전국 범위 파일로, 기관 종류, 기관코드·기관명, 주소·우편번호, 대표전화, 사용 여부를 담는다. 철도 종사자 자격을 준비하는 사람이 "신체검사나 적성검사를 받을 수 있는 지정 기관이 어디이고 연락처가 무엇인가"를 찾거나, 분석가가 유관기관의 지역 분포를 보는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 실측 컬럼에서 확인되지 않아, 기관명 매칭이나 같은 기관(한국교통안전공단)의 기관코드로만 연결한다.
 description_portal: 한국교통안전공단 철도자격관리시스템의 신체검사 데이터, 적성검사 데이터, 교욱훈련기관 데이터 등 철도 유관기관 데이터 입니다.
 applicable_legislation:
   - law: 철도안전법
@@ -84,6 +84,7 @@ schema:
         unique: 13
     - name: 기관코드
       type: string
+      semantic_type: rail_related_org_cd
       null_rate: 0.0
       sample_values:
         - '1052'
@@ -162,12 +163,27 @@ schema:
         - N
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 기관코드
+      reference:
+        key: rail_related_org_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+    - 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 영문 테이블명
 cycle: default
 classification:
   subsector_name: 철도 안전·사고
@@ -204,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064519-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_related_org_cd(기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15064519.json
@@ -268,8 +284,6 @@ verification:
   run: probe/runs/15064519.json
   stats: probe/stats/15064519.json
   data: probe/data/15064519/
-status: active
-summary_user: 철도자격관리시스템에 등록된 신체검사·적성검사·교육훈련기관 등 철도 유관기관을 기관 단위로 한 행씩 담은 전국 범위 파일로, 기관 종류, 기관코드·기관명, 주소·우편번호, 대표전화, 사용 여부를 담는다. 철도 종사자 자격을 준비하는 사람이 "신체검사나 적성검사를 받을 수 있는 지정 기관이 어디이고 연락처가 무엇인가"를 찾거나, 분석가가 유관기관의 지역 분포를 보는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 실측 컬럼에서 확인되지 않아, 기관명 매칭이나 같은 기관(한국교통안전공단)의 기관코드로만 연결한다.
 limits: 전역 조인 키가 없어 다른 기관 데이터와 붙이려면 기관명·주소 문자열 매칭이 필요하다. 유관기관 종류코드·지역코드의 코드표가 명세에 없어 코드 값의 뜻은 별도로 확인해야 하고, 사용 여부 필드로 현재 운영 기관을 걸러 써야 한다.
 review:
   summary: draft
@@ -281,3 +295,4 @@ review:
     - c-15064519-03
     - c-15064519-04
   dropped_citations: 0
+status: active

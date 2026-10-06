@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 표준지점번호
       type: number
+      semantic_type: kma_station_cd
       null_rate: 0.0
       sample_values:
         - '1920'
@@ -49,6 +50,7 @@ schema:
         unique: 151
     - name: 기관지점번호
       type: number
+      semantic_type: npark_aws_stn_id
       null_rate: 0.0
       sample_values:
         - '235200'
@@ -126,6 +128,16 @@ schema:
         unique: 2
   foreign_keys:
     - fields:
+        - 표준지점번호
+      reference:
+        key: kma_station_cd
+      evidence: measured
+    - fields:
+        - 기관지점번호
+      reference:
+        key: npark_aws_stn_id
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -143,6 +155,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
@@ -180,7 +198,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15062932-03
     kind: key
-    value: '실측 조인 키: address(주소), coord(위도), coord(경도)'
+    value: '실측 조인 키: kma_station_cd(표준지점번호), npark_aws_stn_id(기관지점번호), address(주소), coord(위도), coord(경도)'
     evidence:
       - type: measured
         source: probe/stats/15062932.json

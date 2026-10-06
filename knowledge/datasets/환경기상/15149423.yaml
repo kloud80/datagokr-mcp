@@ -1,4 +1,5 @@
-# Dataset 15149423 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15149423 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15149423'
 tier: verified
 title: 한국환경공단_유독물GHS 정보 조회 서비스
@@ -23,6 +24,7 @@ synonyms:
   - 유해위험문구
   - M계수
   - 화학물질 유해성
+summary_user: 유독물 물질별로 국문·영문 물질명, CAS번호, 물질유형·고유번호, 신호어, M계수(독성계수), UN번호, GHS 그림문자 코드와 유해성 분류(항목·등급·유해위험코드)를 담는 전국 범위 조회 API다. 사업장 안전담당자나 분석가가 "이 CAS번호 물질의 GHS 신호어와 그림문자, 유해성 분류 등급은 무엇인가"를 확인해 경고표지·물질안전 관리에 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 화학물질 취급·배출 데이터와는 CAS번호나 물질명을 기준으로 이름·코드를 맞춰 잇는다.
 description_portal: 영문 물질명, CAS번호, 고유번호 등을 기준으로 물질명(국문, 영문), 물질유형 및 고유번호, 신호어, M계수, UN번호, 그림문자코드, 유해성분류(항목명, 분류등급, 유해위험코드) 등을 제공하는 유독물GHS 정보 조회 서비스  부가설명 화학물질관리법에 따라 화학물질 통계 조사 및 배출량 조사 결과, 화학물질관리법 위반 사업장의 취급 정보를 국민에게 공개하여 국민의 알 권리를 충족시키고, 기업의 자발적인 안전 관리를 유도하며, 지방자치단체의 화학 사고 대비를 돕는 정보 시스템 입니다 GHS관련된 정보가 들어가있음
 team:
   dept: 화학물질관리처 화학물질정보부
@@ -73,6 +75,7 @@ schema:
     - name: sbstnId
       title: 물질ID
       type: number
+      semantic_type: chem_sbstn_id
       null_rate: 0.0
       sample_values:
         - '1006'
@@ -84,6 +87,7 @@ schema:
     - name: casNo
       title: CAS번호
       type: code
+      semantic_type: cas_no
       null_rate: 0.0
       sample_values:
         - 2437-25-4
@@ -153,6 +157,17 @@ schema:
         - "[{'hrmflnClsfArtclNm': '피부 부식성/자극성', 'hrmDngrCd': 'H315', 'clsfGrd': '2', 'hrmPr"
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - sbstnId
+      reference:
+        key: chem_sbstn_id
+      evidence: measured
+    - fields:
+        - casNo
+      reference:
+        key: cas_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -202,7 +217,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15149423-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: chem_sbstn_id(sbstnId), cas_no(casNo)'
     evidence:
       - type: measured
         source: probe/stats/15149423.json
@@ -267,8 +282,6 @@ verification:
   run: probe/runs/15149423.json
   stats: probe/stats/15149423.json
   data: probe/data/15149423/
-status: active
-summary_user: 유독물 물질별로 국문·영문 물질명, CAS번호, 물질유형·고유번호, 신호어, M계수(독성계수), UN번호, GHS 그림문자 코드와 유해성 분류(항목·등급·유해위험코드)를 담는 전국 범위 조회 API다. 사업장 안전담당자나 분석가가 "이 CAS번호 물질의 GHS 신호어와 그림문자, 유해성 분류 등급은 무엇인가"를 확인해 경고표지·물질안전 관리에 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 화학물질 취급·배출 데이터와는 CAS번호나 물질명을 기준으로 이름·코드를 맞춰 잇는다.
 limits: 물질 단위의 비공간 정보라 사업장 위치·취급량·배출량은 담지 않는다. 검증된 전역 조인 키가 없어 다른 데이터와 연결할 때는 CAS번호·물질명 매핑의 정합성을 직접 확인해야 한다.
 review:
   summary: draft
@@ -280,3 +293,4 @@ review:
     - c-15149423-03
     - c-15149423-04
   dropped_citations: 0
+status: active

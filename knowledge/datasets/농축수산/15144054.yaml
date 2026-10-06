@@ -49,6 +49,7 @@ schema:
         unique: 1
     - name: 신청일련번호
       type: number
+      semantic_type: agri_project_aply_sn
       null_rate: 0.0
       sample_values:
         - '42974'
@@ -98,6 +99,7 @@ schema:
         unique: 2
     - name: 농업경영체등록번호
       type: number
+      semantic_type: farm_business_no
       null_rate: 0.8
       sample_values:
         - '1002980770'
@@ -697,9 +699,30 @@ schema:
         - 미개시자
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 신청일련번호
+      reference:
+        key: agri_project_aply_sn
+      evidence: measured
+    - fields:
+        - 농업경영체등록번호
+      reference:
+        key: farm_business_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 읍면동일련번호
+  space_via: name
+  time: day
+  time_fields:
+    - 경영주등록일
+    - 신청일시
+    - 접수일시
 cycle: default
 classification:
   subsector_name: 농업경영체 (등록 정보·농업법인·영농조합·후계농)
@@ -736,7 +759,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15144054-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_project_aply_sn(신청일련번호), farm_business_no(농업경영체등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15144054.json

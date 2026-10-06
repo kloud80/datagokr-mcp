@@ -1,4 +1,5 @@
-# Dataset 15089165 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15089165 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15089165'
 tier: verified
 title: 울산시설공단_친환경차량 보유현황
@@ -21,6 +22,7 @@ synonyms:
   - 업무용 차량 목록
   - 전기차 수소차 보유
   - 울산 공용차량
+summary_user: 울산시설공단 각 부서가 운용하는 친환경 차량을 한 대씩 담은 보유 목록으로, 부서명·차량번호·차량명·등록일자·배기량·승차인원·유종 등과 기준일자를 담으며 CSV 파일 크기가 637바이트인 소규모 자료다. 공공기관 친환경차 도입 현황을 살피는 분석가나 시민이 '울산시설공단은 어떤 연료의 친환경차를 몇 대, 어느 부서에서 운용하는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 다른 기관 차량 보유현황과는 유종·차량명 같은 이름 매핑으로만 견주어 쓴다.
 description_portal: 울산시설공단에서 보유하고 있는 친환경 차량에 대한 데이터를 다양한 항목별로 상세하게 제공합니다. 이 데이터는 공단 소속 각 부서에서 운용 중인 친환경 차량의 정보를 포함하고 있으며, 주요 항목으로는 차량을 관리하는 부서명, 차량의 고유 식별번호인 차량번호, 차량명, 차량 구분, 차량이 등록된 날짜인 등록 일자, 최대적재량, 배기량, 승차 가능 인원수, 기어변속 방식, 사용 연료 종류, 기준일자가 포함되어 있습니다. 이 정보는 울산시설공단의 친환경 정책 추진 현황과 차량 운영의 투명성을 높이는 데 기여하며, 공공부문의 지속 가능한 교통수단 도입과 관련된 실질적인 통계 자료로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 6
     - name: 차량번호
       type: code
+      semantic_type: vhcl_no
       null_rate: 0.0
       sample_values:
         - 94소0941
@@ -130,12 +133,23 @@ schema:
         min: '2026-05-11'
         max: '2026-05-11'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 차량번호
+      reference:
+        key: vhcl_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일자
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -173,7 +187,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15089165-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_no(차량번호)'
     evidence:
       - type: measured
         source: probe/stats/15089165.json
@@ -238,8 +252,6 @@ verification:
   run: probe/runs/15089165.json
   stats: probe/stats/15089165.json
   data: probe/data/15089165/
-status: active
-summary_user: 울산시설공단 각 부서가 운용하는 친환경 차량을 한 대씩 담은 보유 목록으로, 부서명·차량번호·차량명·등록일자·배기량·승차인원·유종 등과 기준일자를 담으며 CSV 파일 크기가 637바이트인 소규모 자료다. 공공기관 친환경차 도입 현황을 살피는 분석가나 시민이 '울산시설공단은 어떤 연료의 친환경차를 몇 대, 어느 부서에서 운용하는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 다른 기관 차량 보유현황과는 유종·차량명 같은 이름 매핑으로만 견주어 쓴다.
 limits: 실측 컬럼에 공통 조인 키가 없어 자동차 등록·검사 원장 등과 키로 직접 연결할 수 없다. 범위는 울산시설공단 보유 차량에 한정되며, 지역 전체 친환경차 통계로 쓸 수 없다.
 review:
   summary: draft
@@ -251,3 +263,4 @@ review:
     - c-15089165-03
     - c-15089165-04
   dropped_citations: 0
+status: active

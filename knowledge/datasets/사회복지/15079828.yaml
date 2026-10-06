@@ -1,4 +1,5 @@
-# Dataset 15079828 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15079828 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15079828'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 월별신청현황-연령소득기준별 정보서비스
@@ -22,6 +23,7 @@ synonyms:
   - 아이돌봄 통계
   - 돌봄 격차
   - 시간제 돌봄 신청건수
+summary_user: 아이돌봄 신청건수를 기준연월·아이돌봄기관별로 집계해, 0세부터 12세까지 연령별로 소득기준 유형(가형~라형)마다 나눠 담은 전국 단위 비공간 통계다. 지자체·정책 분석가가 "어느 기관 관할에서 저소득 유형 신청이 몰리고, 어떤 연령대 돌봄 수요가 큰가"를 월별로 비교할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 다른 아이돌봄 데이터와 기관번호(childCareInstNo)·상위기관번호 또는 기관명 매칭으로만 이어 쓴다.
 description_portal: 아이돌봄 월별신청 현황 연령소득기준별 정보를 제공하는 오픈API입니다. 해당 개방 데이터를 통해 기준연월, 아이돌봄기관명, 돌봄구분명, 상위아이돌봄기관명, 0세부터 12세까지 각 연령별로 가형부터 라형까지의 신청건수 등의 정보를 확인할 수 있습니다. 사회경제적 요인에 따른 돌봄 수요의 차이를 비교 분석할 수 있게 하며, 가형부터 라형까지 구분된 자료는 정책대상별 형평성과 지원 적절성을 검토하는 데 중요한 기초 자료가 됩니다. 특히 다자녀 가구나 저소득층 집중도를 확인할 수 있어 맞춤형 지원 전략 수립에 도움을 줍니다. 돌봄 격차 해소 및 소득계층 맞춤 정책 설계에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -56,6 +58,7 @@ schema:
         unique: 2
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0396
@@ -98,6 +101,7 @@ schema:
         unique: 2
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -748,6 +752,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -797,7 +812,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15079828-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15079828.json
@@ -851,8 +866,6 @@ verification:
   run: probe/runs/15079828.json
   stats: probe/stats/15079828.json
   data: probe/data/15079828/
-status: active
-summary_user: 아이돌봄 신청건수를 기준연월·아이돌봄기관별로 집계해, 0세부터 12세까지 연령별로 소득기준 유형(가형~라형)마다 나눠 담은 전국 단위 비공간 통계다. 지자체·정책 분석가가 "어느 기관 관할에서 저소득 유형 신청이 몰리고, 어떤 연령대 돌봄 수요가 큰가"를 월별로 비교할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 다른 아이돌봄 데이터와 기관번호(childCareInstNo)·상위기관번호 또는 기관명 매칭으로만 이어 쓴다.
 limits: 건별 신청 원천이 아니라 기관·월 단위 집계라 개별 가구나 실제 이용·지원 결과는 알 수 없다. 좌표·행정구역 코드가 없어 지도화나 시군구 통계와 직접 결합이 어렵고, 호출에는 serviceKey가 필요하며 개발계정은 하루 3,000회로 제한된다.
 review:
   summary: draft
@@ -864,3 +877,4 @@ review:
     - c-15079828-03
     - c-15079828-04
   dropped_citations: 0
+status: active

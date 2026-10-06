@@ -1,4 +1,5 @@
-# Dataset 15121278 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121278 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121278'
 tier: verified
 title: 국민건강보험공단_의료급여종합전문병원관리
@@ -21,6 +22,7 @@ synonyms:
   - 의료급여 병원 목록
   - 요양기관 등록 폐쇄 이력
   - 의료급여 지정기관
+summary_user: 국민건강보험공단이 관리하는 의료급여 기관 중 종합전문병원의 기관별 등록·변경·폐쇄 이력을 담은 전국 단위 소형 파일(csv 약 2KB)로, 요양기관기호·기관 구분·등록일자·폐쇄일자·변경일시를 기관 한 건씩 담는다. 의료급여 업무 담당자나 분석가가 어떤 종합전문병원이 언제 의료급여기관으로 등록되거나 폐쇄·변경됐는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 요양기관기호를 같은 기관 코드 체계를 쓰는 요양기관 원장 자료와 맞추거나 기관명·코드 매핑으로 이어 써야 한다.
 description_portal: '□ 데이터 개요본 데이터는 국민건강보험공단이 관리하는 의료급여 기관 중 종합전문병원에 대한 정보를 체계적으로 관리하기 위해 구축된 자료입니다.의료급여기관 중 종합전문병원의 자료 등록, 변경, 폐쇄 내역을 관리하기 위한 통계 자료입니다.□ 주요 내용요양기관 구분: 의료급여 기관의 종류 구분자료등록일자: 해당 기관 자료가 최초 등록된 날짜자료폐쇄일자: 기관 자료가 폐쇄된 날짜 (해당 시)자료변경일자: 기관 자료가 변경된 날짜※ 본 데이터는 의료급여 종합전문병원 관련 기관 현황과 변경사항 파악 및 관리에 활용됩니다.'
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 요양기관기호
       type: string
+      semantic_type: medical_inst_cd
       null_rate: 0.0
       sample_values:
         - HOSP1
@@ -84,12 +87,24 @@ schema:
         min: '2018-01-05'
         max: '2022-07-29'
         unique: 4
+  foreign_keys:
+    - fields:
+        - 요양기관기호
+      reference:
+        key: medical_inst_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 자료등록일자
+    - 자료폐쇄일자
+    - 자료변경일시
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -126,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121278-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: medical_inst_cd(요양기관기호)'
     evidence:
       - type: measured
         source: probe/stats/15121278.json
@@ -191,8 +206,6 @@ verification:
   run: probe/runs/15121278.json
   stats: probe/stats/15121278.json
   data: probe/data/15121278/
-status: active
-summary_user: 국민건강보험공단이 관리하는 의료급여 기관 중 종합전문병원의 기관별 등록·변경·폐쇄 이력을 담은 전국 단위 소형 파일(csv 약 2KB)로, 요양기관기호·기관 구분·등록일자·폐쇄일자·변경일시를 기관 한 건씩 담는다. 의료급여 업무 담당자나 분석가가 어떤 종합전문병원이 언제 의료급여기관으로 등록되거나 폐쇄·변경됐는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 요양기관기호를 같은 기관 코드 체계를 쓰는 요양기관 원장 자료와 맞추거나 기관명·코드 매핑으로 이어 써야 한다.
 limits: 기관명·주소·진료과·병상 같은 기관 기본정보는 없어, 이 파일만으로는 어느 병원인지 식별하기 어렵다. 공용 조인 키가 확인되지 않아 심평원 요양기관 API(ykiho) 체인과 바로 연결된다고 보장할 수 없다.
 review:
   summary: draft
@@ -205,3 +218,4 @@ review:
     - c-15121278-04
     - c-15121278-06
   dropped_citations: 0
+status: active

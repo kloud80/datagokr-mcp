@@ -1,4 +1,5 @@
-# Dataset 15073876 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073876 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073876'
 tier: verified
 title: 식품의약품안전처_의료기기 예비 심의내역
@@ -21,6 +22,7 @@ synonyms:
   - 의료기기 광고 예비심의 결과
   - 광고심의번호 조회
   - 의료기기 광고 위반 여부
+summary_user: 의료기기 광고의 본심의 전에 자율심의기구가 실시한 예비심의를 건별로 담으며, 심의결과일자·심의번호·예비심의 결과·광고업체명·대표품목허가번호·대표품목명이 포함되고 범위는 전국입니다. 의료기기 광고를 준비하는 사업자가 비슷한 품목·문구가 예비심의에서 어떤 결과를 받았는지 확인하는 데 쓰고, 분석가는 최초·이전 광고심의번호를 따라 한 광고의 심의 이력을 추적하는 데 씁니다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 대표품목허가번호나 품목명을 의료기기 품목허가 데이터와 이름·번호로 대조하는 방식으로만 연결합니다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 관리하는 의료기기 예비 심의내역 정보입니다. 누구든지 의료기기의 광고를 하려는 경우에는 미리 해당 광고가 의료기기법령에 따른 금지되는 광고 위반여부에 대해 자율심의기구의 심의를 받아야 합니다. 의료기기 광고의 본심의 이전에 실시되는 예비심의 과정의 상세한 결과를 체계적으로 관리하여 광고 제작 시 사전 검토 자료로 활용할 수 있도록 지원합니다. 이 데이터는 결과통보 항목에 심의결과일자와 심의번호 결과를 포함하여 각 예비심의 건의 최종 처리 현황을 명확히 보여줍니다. 최초광고심의번호와 이전광고심의번호는 심의 과정의 연속성을 추적할 수 있게 하고 대표품목허가번호와 대표품목명으로 광고 대상 의료기기를 정확히 특정할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -129,6 +131,7 @@ schema:
         unique: 989
     - name: RPRS_PRDLST_PRMSN_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허01-764호
@@ -153,12 +156,23 @@ schema:
         - 반려
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - RPRS_PRDLST_PRMSN_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - RSLT_NTFCTN_DLBR_RSLT_YMD
+    - PRE_REVIEW_DATE
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -203,7 +217,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073876-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_permit_no(RPRS_PRDLST_PRMSN_NO)'
     evidence:
       - type: measured
         source: probe/stats/15073876.json
@@ -268,8 +282,6 @@ verification:
   run: probe/runs/15073876.json
   stats: probe/stats/15073876.json
   data: probe/data/15073876/
-status: active
-summary_user: 의료기기 광고의 본심의 전에 자율심의기구가 실시한 예비심의를 건별로 담으며, 심의결과일자·심의번호·예비심의 결과·광고업체명·대표품목허가번호·대표품목명이 포함되고 범위는 전국입니다. 의료기기 광고를 준비하는 사업자가 비슷한 품목·문구가 예비심의에서 어떤 결과를 받았는지 확인하는 데 쓰고, 분석가는 최초·이전 광고심의번호를 따라 한 광고의 심의 이력을 추적하는 데 씁니다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 대표품목허가번호나 품목명을 의료기기 품목허가 데이터와 이름·번호로 대조하는 방식으로만 연결합니다.
 limits: 다른 데이터와 바로 붙일 공통 키가 없어 품목허가번호·업체명 문자열 매칭에 의존해야 합니다. 개발계정은 하루 10,000회 호출 제한이 있습니다.
 review:
   summary: draft
@@ -281,3 +293,4 @@ review:
     - c-15073876-03
     - c-15073876-04
   dropped_citations: 0
+status: active

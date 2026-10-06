@@ -1,4 +1,5 @@
-# Dataset 15055563 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15055563 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15055563'
 tier: verified
 title: 건강보험심사평가원_의원급 표시과목별 행위 통계
@@ -21,6 +22,7 @@ synonyms:
   - 행위코드별 청구금액
   - 건강보험 행위 통계
   - 의원 진료비 통계
+summary_user: 의원급 의료기관의 진료년도별·표시과목별·행위코드별로 환자수, 명세서 청구건수, 총사용량, 진료행위 청구금액을 집계한 전국 단위 통계 파일이며, 건강보험 심사 결정분을 기준으로 한다. 분석가나 의료 정책 담당자가 '내과 의원에서 어떤 진료행위가 가장 많이 청구되고 금액은 얼마인가' 같은 과목별 진료행위 이용 규모를 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 행위코드를 심평원 의·치과 수가파일의 행위명과 맞추거나 표시과목 이름으로 매핑해 이어 쓴다.
 description_portal: '의원급 의료기관의 표시과목별 행위 통계 / 진료년도 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2025.1월~12월, 심사년월: 2025.1월~2026.4월 / 보험자: 건강보험 ※ 2019년 진료분부터 서면, DRG 청구건은 제외되었습니다.※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출되었습니다.※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있습니다.※ 행위코드는 건강보험심사평가원 홈페이지(www.hira.or.kr) > 제도·정책 > 보험인정기준 > 자료실에서 확인하실 수 있습니다. (의·치과 수가파일(전체판))'
 applicable_legislation:
   - law: 국민건강보험법
@@ -58,6 +60,7 @@ schema:
         unique: 27
     - name: 행위코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - D0002
@@ -113,12 +116,22 @@ schema:
         p50: 1969638
         max: 1035960000000
         unique: 25686
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -155,7 +168,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15055563-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(행위코드)'
     evidence:
       - type: measured
         source: probe/stats/15055563.json
@@ -233,8 +246,6 @@ verification:
   run: probe/runs/15055563.json
   stats: probe/stats/15055563.json
   data: probe/data/15055563/
-status: active
-summary_user: 의원급 의료기관의 진료년도별·표시과목별·행위코드별로 환자수, 명세서 청구건수, 총사용량, 진료행위 청구금액을 집계한 전국 단위 통계 파일이며, 건강보험 심사 결정분을 기준으로 한다. 분석가나 의료 정책 담당자가 '내과 의원에서 어떤 진료행위가 가장 많이 청구되고 금액은 얼마인가' 같은 과목별 진료행위 이용 규모를 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 행위코드를 심평원 의·치과 수가파일의 행위명과 맞추거나 표시과목 이름으로 매핑해 이어 쓴다.
 limits: 요양기관 식별 코드가 없어 개별 의원 단위나 지역별 분석은 할 수 없고 전국 집계로만 본다. 환자수는 범주 내 중복만 제거한 값이라 과목·행위를 단순 합산하면 중복이 생기며, 2019년 진료분부터 서면·DRG 청구건은 빠져 있다.
 review:
   summary: draft
@@ -246,3 +257,4 @@ review:
     - c-15055563-04
     - c-15055563-01
   dropped_citations: 0
+status: active

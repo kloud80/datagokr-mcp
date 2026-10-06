@@ -1,4 +1,3 @@
-# Dataset 15080899 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15080899'
 tier: verified
 title: 한국보훈복지의료공단_보훈병원 위탁병원 정보(위도 경도 포함)
@@ -21,6 +20,7 @@ synonyms:
   - 위탁병원 위치
   - 보훈병원 협력병원
   - 보훈 의료기관 좌표
+summary_user: 보훈대상자가 진료받을 수 있는 보훈병원 위탁병원을 기관 한 곳 단위로 담은 전국 목록으로, 병원명·주소·시도/시군구·전화·팩스·우편번호·위도·경도·사용 여부를 포함한다. 국가유공자나 그 가족이 '우리 동네에서 가장 가까운 보훈 위탁병원이 어디인가'를 찾거나, 분석가가 지역별 위탁병원 분포와 보훈병원 접근성 공백을 지도로 확인하는 데 쓴다. 전역 조인 키가 없어 다른 의료기관 데이터와는 병원명·주소로 대조하거나 위도·경도 좌표로 공간 결합해 이어 쓴다.
 description_portal: '보훈병원 위탁병원에 대한 진료정보 제공보훈병원: 보훈병원은 1981년 보훈공단 설립 이후 250병상 규모의 원호병원에서 출발하여 정부의 보훈대상자 의료지원 범위 확대 및 고령화에 따른 복합·만성질환으로 의료수요가 증가함에 따라 의료시설을 단계적으로 확충하였으며 자세한 소재지는 아래와 같음1. 중앙보훈병원(강동구 진황도로 61길 53)2. 부산보훈병원(사상구 백양대로 420)3. 광주보훈병원(광산구 첨단월봉로 99)4. 대구보훈병원(달서구 월곡로 60)5. 대전보훈병원(대덕구 대청로 82번길 147)6. 인천보훈병원(미추홀구 인주대로 138)'
 team:
   dept: 정보지원부
@@ -126,6 +126,7 @@ schema:
         unique: 100
     - name: pid
       type: number
+      semantic_type: bohun_consign_hosp_cd
       null_rate: 0.0
       sample_values:
         - '1'
@@ -191,12 +192,27 @@ schema:
         p50: 49705
         max: 63585
         unique: 100
+  foreign_keys:
+    - fields:
+        - pid
+      reference:
+        key: bohun_consign_hosp_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - latitude
+    - longitude
+  space_via: coord
+  time: day
+  time_fields:
+    - date_time
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -240,7 +256,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080899-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bohun_consign_hosp_cd(pid)'
     evidence:
       - type: measured
         source: probe/stats/15080899.json
@@ -305,8 +321,6 @@ verification:
   run: probe/runs/15080899.json
   stats: probe/stats/15080899.json
   data: probe/data/15080899/
-status: active
-summary_user: 보훈대상자가 진료받을 수 있는 보훈병원 위탁병원을 기관 한 곳 단위로 담은 전국 목록으로, 병원명·주소·시도/시군구·전화·팩스·우편번호·위도·경도·사용 여부를 포함한다. 국가유공자나 그 가족이 '우리 동네에서 가장 가까운 보훈 위탁병원이 어디인가'를 찾거나, 분석가가 지역별 위탁병원 분포와 보훈병원 접근성 공백을 지도로 확인하는 데 쓴다. 전역 조인 키가 없어 다른 의료기관 데이터와는 병원명·주소로 대조하거나 위도·경도 좌표로 공간 결합해 이어 쓴다.
 limits: 표준 기관 코드 같은 공통 키가 없어 건강보험 요양기관 정보나 LOCALDATA 인허가 자료와 정확히 1:1로 연결하려면 이름·주소 매칭이 필요하다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하며, 개발계정은 하루 100,000회로 제한된다.
 review:
   summary: draft
@@ -318,3 +332,4 @@ review:
     - c-15080899-03
     - c-15080899-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15131504 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15131504 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15131504'
 tier: verified
 title: 한국동서발전(주)_비산먼지 및 소음정보
@@ -21,6 +22,7 @@ synonyms:
   - 비산먼지 농도
   - 소음 데시벨
   - 동서발전 환경 모니터링
+summary_user: 한국동서발전 당진 발전소의 특정 위치에서 측정한 비산먼지 수치, 소음 수치(데시벨), 실내 온도를 사업소·측정 호기·측정 일자별로 담은 파일로, 특정 일자의 시간대별 값과 일평균 값(자료종류)으로 나뉜다. 발전소 인근 주민이나 환경 분석가가 "당진 발전소 주변의 비산먼지와 소음이 시간대별로 어떻게 변하는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 사업소 이름이나 측정 일자로 맞춰 연결해야 한다.
 description_portal: 한국동서발전에서 운영 중인 당진 발전소의 비산먼지 및 소음정보 데이터는 발전소 주변 환경에 대한 모니터링을 목적으로 구축된 자료로, ‘특정 일자에 시간대별 정보’와 ‘일평균 정보’로 구성되어 있습니다. 해당 데이터는 비산먼지 수치, 소음 수치(데시벨), 실내 온도(℃) 등의 항목으로 구성되어 있으며, 당진 발전소의 특정 위치에서 측정된 실시간 환경 정보를 기반으로 대기질 및 소음 수준을 확인할 수 있습니다. 이 데이터는 대기 중 미세 입자 확산 정도와 소음의 시간별 변화 양상을 파악할 수 있어, 발전소 운영이 인근 지역 환경에 미치는 영향을 정량적으로 평가하는 데 유용합니다.학계 및 연구기관에서는 이 데이터를 활용해 발전소 주변의 비산먼지 발생 특성 분석, 소음 공해의 시공간적 분포 연구, 실내 온도와 환경 수치 간의 상관관계 분석 등을 수행할 수 있습니다.또한, 환경 민감 지역과의 비교를 통해 발전소 입지에 따른 환경적 영향 수준을 파악하거나, 공공기관의 환경관리 성과를 모니터링하고 환경 규제 준수 여부를 검토하는 실증 자료로도 활용될 수 있습니다.
 applicable_legislation:
   - law: 대기환경보전법
@@ -40,6 +42,7 @@ schema:
   fields:
     - name: 사업소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진
@@ -108,12 +111,22 @@ schema:
         p50: 15.555
         max: 20.38
         unique: 91
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 측정 일자
 cycle: default
 classification:
   subsector_name: 환경 측정 실시간 (환경방사선·소음·악취·라돈·S-DoT 센서·중금속)
@@ -150,7 +163,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15131504-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15131504.json
@@ -214,8 +227,6 @@ verification:
   run: probe/runs/15131504.json
   stats: probe/stats/15131504.json
   data: probe/data/15131504/
-status: active
-summary_user: 한국동서발전 당진 발전소의 특정 위치에서 측정한 비산먼지 수치, 소음 수치(데시벨), 실내 온도를 사업소·측정 호기·측정 일자별로 담은 파일로, 특정 일자의 시간대별 값과 일평균 값(자료종류)으로 나뉜다. 발전소 인근 주민이나 환경 분석가가 "당진 발전소 주변의 비산먼지와 소음이 시간대별로 어떻게 변하는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 사업소 이름이나 측정 일자로 맞춰 연결해야 한다.
 limits: 내려받은 파일이 zip 1,969바이트로 작아 장기간·다지점 추세 분석에는 적합하지 않을 수 있다. 조인 키가 없어 대기질 측정망 등 외부 데이터와 직접 결합되지 않고 이름·일자 매핑이 필요하다.
 review:
   summary: draft
@@ -226,3 +237,4 @@ review:
     - c-15131504-01
     - c-15131504-03
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15091491 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15091491 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15091491'
 tier: verified
 title: 한국가스안전공사_KGS Code(상세기준) 현황_액화석유가스법
@@ -25,6 +26,7 @@ synonyms:
   - 가스안전 기술기준
   - LPG 충전소 시설기준
   - 가스시설 검사기준
+summary_user: 한국가스안전공사가 보유한 액화석유가스(LPG) 분야 KGS Code(가스안전 시설·검사·기술 상세기준) 목록을 코드 한 건당 한 행으로 담으며, 분류·코드번호·코드명·최신버전·내용쪽수로 구성된 전국 단위 비공간 현황표다(CSV 약 6KB). LPG 충전소·저장시설 사업자나 설계·검사 실무자가 "LPG 시설에 적용되는 KGS 코드가 무엇이고 최신 버전은 몇 번인가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 코드번호·코드명 문자열 매핑으로만 연결하며, 같은 기관의 고압가스법·도시가스법 KGS Code 현황 등과 코드번호로 나란히 비교하는 정도로 이어 쓴다.
 description_portal: 'KGS Code는 정부에서 승인한 가스안전분야 시설,검사,기술 상세기준으로, 한국가스안전공사에서 보유하고 있는 액화석유가스 코드 현황 데이터입니다.해당 데이터는 분류, 코드번호, 코드명, 최신버전, 내용쪽수로 구성되어 있습니다.액화석유가스 관련 KGS코드 최신정보를 쉽게 확인 할 수 있습니다.※  KGS Code : 가스 관계 법령에서 정한 시설·기술·검사 등의 기술적인 사항을 상세기준으로 정하여 코드화한 것으로, 가스기술 기준위원회에서 심의·의결하고 산업통상자원부에서 승인한 가스안전 분야의 기술기준입니다.※  해당 데이터는 연간 주기로 업데이트 됩니다.※  2025년 데이터기준일 기준 현황입니다.-  데이터기준일 : 2025년 9월 15일'
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 2
     - name: 코드번호
       type: string
+      semantic_type: kgs_code_no
       null_rate: 0.0
       sample_values:
         - KGS AA231
@@ -85,12 +88,22 @@ schema:
         p50: 38
         max: 165
         unique: 42
+  foreign_keys:
+    - fields:
+        - 코드번호
+      reference:
+        key: kgs_code_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최신버전
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -127,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15091491-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kgs_code_no(코드번호)'
     evidence:
       - type: measured
         source: probe/stats/15091491.json
@@ -192,8 +205,6 @@ verification:
   run: probe/runs/15091491.json
   stats: probe/stats/15091491.json
   data: probe/data/15091491/
-status: active
-summary_user: 한국가스안전공사가 보유한 액화석유가스(LPG) 분야 KGS Code(가스안전 시설·검사·기술 상세기준) 목록을 코드 한 건당 한 행으로 담으며, 분류·코드번호·코드명·최신버전·내용쪽수로 구성된 전국 단위 비공간 현황표다(CSV 약 6KB). LPG 충전소·저장시설 사업자나 설계·검사 실무자가 "LPG 시설에 적용되는 KGS 코드가 무엇이고 최신 버전은 몇 번인가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 코드번호·코드명 문자열 매핑으로만 연결하며, 같은 기관의 고압가스법·도시가스법 KGS Code 현황 등과 코드번호로 나란히 비교하는 정도로 이어 쓴다.
 limits: 코드 목록과 버전 현황만 담고 기준 본문 내용이나 개정 이력은 없으며, 충전소 위치·유가 등 시설 단위 데이터와 이을 공통 키도 없다. 행정구역 구분이 없는 전국 단위 목록이라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -205,3 +216,4 @@ review:
     - c-15091491-03
     - c-15091491-04
   dropped_citations: 0
+status: active

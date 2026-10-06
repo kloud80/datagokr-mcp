@@ -1,4 +1,5 @@
-# Dataset 15067629 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067629 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067629'
 tier: verified
 title: 국가철도공단_철도 특허 정보
@@ -22,6 +23,7 @@ synonyms:
   - 철도산업 지식재산
   - 철도 발명
   - 출원인별 특허
+summary_user: 철도산업과 관련된 국내 특허출원을 한 건씩 모아 발명의 명칭, 출원일자, 출원번호, 출원인, 요약내용을 담은 전국 범위의 파일 데이터(CSV 약 4.9MB)이다. 철도 기술 연구자나 관련 사업자가 특정 기술 분야에서 어떤 기관·기업이 언제 특허를 출원했는지, 출원 추세가 어떤지를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 출원인 이름 등으로만 연결되며, 특허의 상세 내용은 출원번호로 특허정보원 키프리스에서 따로 조회해 이어 본다.
 description_portal: 철도와 관련 특허 정보를 제공합니다.특허정보원에서 제공하는 특허자료중 철도산업과 관련 있는 자료들을 수집하여 제공합니다.특허출원정보중 발명의명칭 및 출원일자/출원인의 정보를 제공합니다.수집된 특허의 내용에 대한 요약내용도 제공합니다.철도관련 특허정보는 출원년도가 1976 년부터 2025년 현재까지 공개된 자료의 요약내용과 출원인 정보를 제공합니다.특허의 상세한 내용은 특허정보원 키프리스에서 출원번호로 검색하시면 됩니다.(제공정보:발명의명칭,출원일자,요약내용,출원번호,출원인,출원정보)
 accrual_periodicity: 연간
 team:
@@ -73,6 +75,7 @@ schema:
         unique: 1796
     - name: 출원번호
       type: number
+      semantic_type: kipo_appl_no
       null_rate: 0.0
       sample_values:
         - '1020130018111 '
@@ -83,12 +86,22 @@ schema:
         p50: 1020160031205.5
         max: 2020230001016
         unique: 6193
+  foreign_keys:
+    - fields:
+        - 출원번호
+      reference:
+        key: kipo_appl_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 출원일자
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -124,7 +137,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067629-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kipo_appl_no(출원번호)'
     evidence:
       - type: measured
         source: probe/stats/15067629.json
@@ -178,8 +191,6 @@ verification:
   run: probe/runs/15067629.json
   stats: probe/stats/15067629.json
   data: probe/data/15067629/
-status: active
-summary_user: 철도산업과 관련된 국내 특허출원을 한 건씩 모아 발명의 명칭, 출원일자, 출원번호, 출원인, 요약내용을 담은 전국 범위의 파일 데이터(CSV 약 4.9MB)이다. 철도 기술 연구자나 관련 사업자가 특정 기술 분야에서 어떤 기관·기업이 언제 특허를 출원했는지, 출원 추세가 어떤지를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 출원인 이름 등으로만 연결되며, 특허의 상세 내용은 출원번호로 특허정보원 키프리스에서 따로 조회해 이어 본다.
 limits: 요약과 출원 정보만 담고 청구항·등록 여부 같은 상세 내용은 없어 출원번호로 키프리스를 따로 조회해야 한다. 표준 조인 키가 없어 다른 데이터와 붙일 때는 출원인 이름 매칭에 의존해야 한다.
 review:
   summary: draft
@@ -191,3 +202,4 @@ review:
     - c-15067629-03
     - c-15067629-04
   dropped_citations: 0
+status: active

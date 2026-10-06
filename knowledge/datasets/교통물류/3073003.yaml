@@ -1,4 +1,5 @@
-# Dataset 3073003 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3073003 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3073003'
 tier: verified
 title: 대구교통공사_승강기현황
@@ -24,6 +25,7 @@ synonyms:
   - 교통약자 편의시설
   - 지하철역 엘리베이터 위치
   - 승강기 제조사 규격
+summary_user: 대구 도시철도 1·2·3호선 역사별 에스컬레이터·엘리베이터를 설비(호기) 한 대당 한 행으로 담은 현황 파일로, 호선·역명·설비 구분과 함께 층별 운행 구간, 운행방향, 제조사, 규격을 기록한다(CSV 약 120KB). 교통약자나 이용객이 특정 역에 엘리베이터가 어느 층 사이를 오가는지 확인하거나, 시설 담당자가 제조사·규격별 점검·유지보수 대상을 정리하는 데 쓴다. 전역 조인 키는 없어 역명·호선 이름으로 같은 기관의 역 정보나 승하차 데이터와 맞춰 이어 쓴다.
 description_portal: '[ESG-Social] 본 데이터는 대구교통공사의 ESG 사회(Social) 분야 교통약자 이동권 운영정보 데이터로, 도시철도 1·2·3호선 각 역사에서 운영 중인 에스컬레이터 및 엘리베이터 등 승강 설비 현황 정보를 제공합니다. 데이터에는 제조사, 규격(형식·적재용량 등), 운행 위치, 설치 방향(상·하행), 운행상태 등의 주요 항목이 포함되어 있으며, 역사 내 승강 설비 운영 현황을 파악하고 이용 편의 및 시설 관리를 위한 기초자료로 활용할 수 있습니다. 해당 데이터는 승강 설비별 운영 현황 분석, 점검 및 유지보수 계획 수립, 설비 관리 효율화 등에 활용할 수 있으며, 교통약자를 포함한 도시철도 이용객의 이동 편의 향상과 접근성 개선을 위한 자료로 활용됩니다. 본 데이터는 운영 장비 변경 및 상태 변동 등 데이터 변경 사항 발생 시 갱신됩니다.'
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 호선
       type: number
+      semantic_type: urban_rail_line_no
       null_rate: 0.0
       sample_values:
         - '2'
@@ -66,6 +69,7 @@ schema:
         unique: 2
     - name: 호기
       type: code
+      semantic_type: daegu_metro_ev_no
       null_rate: 0.0
       sample_values:
         - '#1'
@@ -204,6 +208,17 @@ schema:
         - 1000형
       stats:
         unique: 8
+  foreign_keys:
+    - fields:
+        - 호선
+      reference:
+        key: urban_rail_line_no
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: daegu_metro_ev_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -245,7 +260,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3073003-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: urban_rail_line_no(호선), daegu_metro_ev_no(호기)'
     evidence:
       - type: measured
         source: probe/stats/3073003.json
@@ -299,8 +314,6 @@ verification:
   run: probe/runs/3073003.json
   stats: probe/stats/3073003.json
   data: probe/data/3073003/
-status: active
-summary_user: 대구 도시철도 1·2·3호선 역사별 에스컬레이터·엘리베이터를 설비(호기) 한 대당 한 행으로 담은 현황 파일로, 호선·역명·설비 구분과 함께 층별 운행 구간, 운행방향, 제조사, 규격을 기록한다(CSV 약 120KB). 교통약자나 이용객이 특정 역에 엘리베이터가 어느 층 사이를 오가는지 확인하거나, 시설 담당자가 제조사·규격별 점검·유지보수 대상을 정리하는 데 쓴다. 전역 조인 키는 없어 역명·호선 이름으로 같은 기관의 역 정보나 승하차 데이터와 맞춰 이어 쓴다.
 limits: 표준 역 코드 같은 공통 키가 없어 다른 데이터와는 역명·호선 문자열 매칭으로만 연결되며, 표기 차이에 주의해야 한다. 포털 메타의 범위는 '전국'으로 표기돼 있으나 실제 내용은 대구 도시철도 역사에 한정된다.
 review:
   summary: draft
@@ -312,3 +325,4 @@ review:
     - c-3073003-03
     - c-3073003-04
   dropped_citations: 0
+status: active

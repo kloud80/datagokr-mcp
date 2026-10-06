@@ -1,4 +1,5 @@
-# Dataset 15156950 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156950 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156950'
 tier: verified
 title: 한국중부발전(주)_일자별 온배수 배출량 정보 조회 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 호기별 온배수
   - 발전소 수질 영향
   - 온배수 사용량
+summary_user: 한국중부발전 발전소의 온배수 배출량을 연월·발전소·호기 단위로 담은 집계 데이터로, 발전소명(pptnm)·호기명·사용량 항목을 제공한다. 발전소 주변 수질이나 해양 환경을 살피는 분석가가 특정 발전소 호기에서 어느 달에 온배수가 얼마나 나왔는지 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소명·호기명 같은 이름 매핑이나 같은 기관의 다른 배출 측정 데이터와만 이어 쓰며, 주변 기상·환경 데이터와 발전소 단위로 맞대어 볼 수 있다.
 description_portal: 년, 월, 발전소, 호기를 기준으로 기간동안 사용한 온배수 배출량을 조회 하는 중부발전 온배수 배출량 정보 조회 서비스 입니다.
 team:
   dept: ICT기획부
@@ -74,6 +76,7 @@ schema:
     - name: pptnm
       title: 발전소명
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - 보령
@@ -82,6 +85,7 @@ schema:
     - name: hoginm
       title: 호기명
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - 3호기
@@ -100,12 +104,27 @@ schema:
         p50: 46692480
         max: 64131840
         unique: 3
+  foreign_keys:
+    - fields:
+        - pptnm
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
+    - fields:
+        - hoginm
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - ym
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -149,7 +168,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156950-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komipo_plant_unit(pptnm), komipo_plant_unit(hoginm)'
     evidence:
       - type: measured
         source: probe/stats/15156950.json
@@ -214,8 +233,6 @@ verification:
   run: probe/runs/15156950.json
   stats: probe/stats/15156950.json
   data: probe/data/15156950/
-status: active
-summary_user: 한국중부발전 발전소의 온배수 배출량을 연월·발전소·호기 단위로 담은 집계 데이터로, 발전소명(pptnm)·호기명·사용량 항목을 제공한다. 발전소 주변 수질이나 해양 환경을 살피는 분석가가 특정 발전소 호기에서 어느 달에 온배수가 얼마나 나왔는지 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소명·호기명 같은 이름 매핑이나 같은 기관의 다른 배출 측정 데이터와만 이어 쓰며, 주변 기상·환경 데이터와 발전소 단위로 맞대어 볼 수 있다.
 limits: 표준 코드나 좌표 같은 공통 조인 키가 없어 다른 기관 데이터와 연결하려면 발전소명 문자열 매핑이 필요하다. 개발계정은 하루 1,000회 호출로 제한된다.
 review:
   summary: draft
@@ -228,3 +245,4 @@ review:
     - c-15156950-04
     - c-15156950-06
   dropped_citations: 0
+status: active

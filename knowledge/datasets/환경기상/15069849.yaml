@@ -1,4 +1,5 @@
-# Dataset 15069849 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069849 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069849'
 tier: verified
 title: 해양환경공단_해양환경측정망(CTD)_항만
@@ -24,6 +25,7 @@ synonyms:
   - 해양환경측정망
   - 항만 해역 조사
   - 수심별 수온
+summary_user: 해양환경공단 해양환경측정망 중 항만 해역 조사정점에서 CTD 센서로 잰 수온·염분을 수심별로 담은 건별 관측 파일로, 생태구·정점명·관측년도·관측월 단위로 기록된다(CSV 약 21KB). 연구기관·지자체 분석가가 특정 항만에서 계절별로 수온·염분 성층이 어떻게 달라지는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양수질 측정 자료와는 정점명·관측년월을 이름 기준으로 맞추거나 같은 기관 자료끼리 이어 쓴다.
 description_portal: 해양환경공단이 운영하는 해양환경측정망 중 항만 해역을 대상으로 수행된 CTD 조사자료를 제공합니다. 본 데이터는 수심, 수온, 염분 등 항만 내 수질의 수직분포 특성을 포함하고 있으며, 선박 출입, 정체수역 특성 등으로 인해 복잡한 수질 변화를 보이는 항만환경을 정밀하게 진단하는 데 활용됩니다. 조사는 항만별 조사정점에서 수심별로 CTD 센서를 이용해 수행되며, 수질의 시공간적 변화, 오염 특성, 외부 유입 영향 등을 분석할 수 있습니다. 데이터는 항만명, 조사정점, 항목별 측정값, 조사시기 등으로 구성되며, 공공기관, 연구기관, 지자체 등에서 항만 수질평가, 오염원 추적, 정책 수립 등의 기초자료로 활용됩니다.
 applicable_legislation:
   - law: 해양환경관리법
@@ -50,6 +52,7 @@ schema:
         unique: 5
     - name: 정점명
       type: code
+      semantic_type: meis_stnpnt_cd
       null_rate: 0.0
       sample_values:
         - 다대포항 H01
@@ -114,12 +117,22 @@ schema:
         p50: 32.93
         max: 34.57
         unique: 250
+  foreign_keys:
+    - fields:
+        - 정점명
+      reference:
+        key: meis_stnpnt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 관측년도
 cycle: default
 classification:
   subsector_name: 해양 수질 측정 (해양수질자동측정망·해양환경측정망 실시간)
@@ -156,7 +169,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069849-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meis_stnpnt_cd(정점명)'
     evidence:
       - type: measured
         source: probe/stats/15069849.json
@@ -220,8 +233,6 @@ verification:
   run: probe/runs/15069849.json
   stats: probe/stats/15069849.json
   data: probe/data/15069849/
-status: active
-summary_user: 해양환경공단 해양환경측정망 중 항만 해역 조사정점에서 CTD 센서로 잰 수온·염분을 수심별로 담은 건별 관측 파일로, 생태구·정점명·관측년도·관측월 단위로 기록된다(CSV 약 21KB). 연구기관·지자체 분석가가 특정 항만에서 계절별로 수온·염분 성층이 어떻게 달라지는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양수질 측정 자료와는 정점명·관측년월을 이름 기준으로 맞추거나 같은 기관 자료끼리 이어 쓴다.
 limits: 정점 좌표나 표준 코드가 없어 다른 데이터와 자동으로 결합하기 어렵고, 정점명 매핑을 직접 해야 한다. 활용신청 없이 받는 단일 파일이라 API로 실시간 조회는 하지 않는다.
 review:
   summary: draft
@@ -233,3 +244,4 @@ review:
     - c-15069849-03
     - c-15069849-04
   dropped_citations: 0
+status: active

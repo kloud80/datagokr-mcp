@@ -1,4 +1,5 @@
-# Dataset 15073566 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073566 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073566'
 tier: verified
 title: 한국장학재단_공시연계_등록금책정고려요소
@@ -21,6 +22,7 @@ synonyms:
   - 대학알리미
   - 등록금심의위원회
   - 등록금 책정 기준
+summary_user: 2012년도 대학정보공시 '등록금 산정근거' 항목 중 등록금 책정 고려요소를 대학별·조사년도·본분교·적용년도 단위로 담은 공시 원자료 파일(CSV)로, 고려요소명별로 고려했는지 여부와 내용을 기록한다. 학생·학부모나 교육정책 분석가가 특정 대학이 등록금을 정할 때 어떤 요소(물가, 재정 수입·지출 등)를 고려했다고 공시했는지 대학 간에 비교하는 데 쓴다. 전역 조인 키가 없어 다른 대학 공시 데이터와는 학교명·본분교 구분을 이름으로 맞춰 이어 써야 한다.
 description_portal: ㅇ 2012년도 대학정보공시 [9-가-1. 등록금 산정근거] 중 등록금 책정 고려요소에 관한 데이터로대학정보공시 대상 대학별 조사년도, 본분교 구분, 적용년도, 고려요소명, 고려여부 등의 데이터를 제공하고 있습니다.등록금 산정근거는 대학에서 등록금을 산정할 때 활용한 근거 자료로서 수입지출 내역, 등록금심의위원회 구성, 평균등록금 인상률 정보 등이 포함되어 있으며,고등교육법에 따라 등록금 인상률은 최근 3개 연도 평균 소비자 물가 상승률의 1.5배를 초과하지 않은 범위내에서 산정해야 합니다.※ 대학정보공시는 「교육관련기관의 정보공개에 관한 특례법 」에 근거하여 대학정보를 정기적으로 또는  수시로 공시하는 것을 말하여, 공시범위는 학생, 교원, 재정, 교육 여건 등 다양한 항목을 포함합니다. 공시된 정보는 대학알리미 사이트 등을 통해서 확인 가능합니다.
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -73,6 +75,7 @@ schema:
         unique: 2
     - name: 학교명
       type: code
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 인천가톨릭대학교
@@ -145,12 +148,22 @@ schema:
         - 해당없음
       stats:
         unique: 19
+  foreign_keys:
+    - fields:
+        - 학교명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최초등록일자
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -187,7 +200,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073566-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: univ_school_cd(학교명)'
     evidence:
       - type: measured
         source: probe/stats/15073566.json
@@ -251,8 +264,6 @@ verification:
   run: probe/runs/15073566.json
   stats: probe/stats/15073566.json
   data: probe/data/15073566/
-status: active
-summary_user: 2012년도 대학정보공시 '등록금 산정근거' 항목 중 등록금 책정 고려요소를 대학별·조사년도·본분교·적용년도 단위로 담은 공시 원자료 파일(CSV)로, 고려요소명별로 고려했는지 여부와 내용을 기록한다. 학생·학부모나 교육정책 분석가가 특정 대학이 등록금을 정할 때 어떤 요소(물가, 재정 수입·지출 등)를 고려했다고 공시했는지 대학 간에 비교하는 데 쓴다. 전역 조인 키가 없어 다른 대학 공시 데이터와는 학교명·본분교 구분을 이름으로 맞춰 이어 써야 한다.
 limits: 실측 컬럼에 대학 코드 같은 공통 키가 없어 다른 데이터와는 학교명 매핑으로만 연결되며, 이름 표기 차이에 주의해야 한다. 범위는 전국이지만 지역 정보가 없는 비공간 자료다.
 review:
   summary: draft
@@ -264,3 +275,4 @@ review:
     - c-15073566-03
     - c-15073566-04
   dropped_citations: 0
+status: active

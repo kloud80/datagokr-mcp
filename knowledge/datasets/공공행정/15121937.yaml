@@ -1,4 +1,5 @@
-# Dataset 15121937 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121937 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121937'
 tier: verified
 title: 행정안전부_공공데이터포털 목록 메타정보
@@ -24,6 +25,7 @@ synonyms:
   - 공공데이터 메타데이터
   - 데이터 목록 현황
   - 제공기관별 개방 데이터
+summary_user: 공공기관이 공공데이터포털에 등록해 개방 중인 데이터 목록을 한 행씩 담은 메타정보 파일로, 목록키·목록명·키워드·제공기관명과 코드·목록유형(FILE/API)·서비스유형·데이터포맷·요청변수·출력결과·제공주기·전체행을 포함한다(CSV 약 24.6MB). 분석가나 에이전트가 "어느 기관이 어떤 주기로, 어떤 형식의 데이터를 API나 파일로 개방하고 있는가"를 찾거나 목적에 맞는 데이터셋 후보를 고를 때 쓴다. 전역 조인 키는 없어 목록키로 개별 데이터셋 페이지를 찾거나, 제공기관명·제공기관코드로 행정표준코드 같은 기관 코드 원장과 이름·코드 매핑으로 잇는다.
 description_portal: 공공기관이 공공데이터포털에 등록하여 개방중인 목록의 메타정보(목록키, 목록명, 키워드, 제공기관명, 제공기관코드, 목록유형, 서비스유형, 데이터포맷 , 요청변수, 출력결과, 주기, 전체행)를 제공합니다.목록키는 데이터 목록을 식별하는 고유 키, 목록명은 데이터 목록의 명칭, 키워드는 데이터 검색을 위한 주요 키워드, 제공기관명 및 코드는 데이터를 제공하는 기관의 명칭 및 코드 입니다. 목록유형에는 FILE, API로 구분, 데이터포맷은 CSV,  XLSX, HWPX, PDF, JSON+XML,  JSON, XML 등으로 구분, 주기는 연간, 반기, 분기, 월간, 주간, 수시 등으로 구분, 서비스유형은 FILE, LINK, REST 등으로 구분됩니다.
 accrual_periodicity: 연간
 team:
@@ -76,6 +78,7 @@ schema:
         unique: 1235
     - name: 제공기관코드
       type: code
+      semantic_type: instt_cd
       null_rate: 0.0001
       sample_values:
         - '6110000'
@@ -149,6 +152,12 @@ schema:
         p50: 26
         max: 219394889
         unique: 9417
+  foreign_keys:
+    - fields:
+        - 제공기관코드
+      reference:
+        key: instt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -192,7 +201,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121937-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: instt_cd(제공기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15121937.json
@@ -246,8 +255,6 @@ verification:
   run: probe/runs/15121937.json
   stats: probe/stats/15121937.json
   data: probe/data/15121937/
-status: active
-summary_user: 공공기관이 공공데이터포털에 등록해 개방 중인 데이터 목록을 한 행씩 담은 메타정보 파일로, 목록키·목록명·키워드·제공기관명과 코드·목록유형(FILE/API)·서비스유형·데이터포맷·요청변수·출력결과·제공주기·전체행을 포함한다(CSV 약 24.6MB). 분석가나 에이전트가 "어느 기관이 어떤 주기로, 어떤 형식의 데이터를 API나 파일로 개방하고 있는가"를 찾거나 목적에 맞는 데이터셋 후보를 고를 때 쓴다. 전역 조인 키는 없어 목록키로 개별 데이터셋 페이지를 찾거나, 제공기관명·제공기관코드로 행정표준코드 같은 기관 코드 원장과 이름·코드 매핑으로 잇는다.
 limits: 데이터 자체가 아니라 목록 메타정보이므로 각 데이터셋의 실제 값이나 품질은 알 수 없다. 다른 데이터와 직접 붙일 공통 키가 없어 기관명·기관코드 매핑에 의존해야 한다.
 review:
   summary: draft
@@ -260,3 +267,4 @@ review:
     - c-15121937-04
     - c-15121937-06
   dropped_citations: 0
+status: active

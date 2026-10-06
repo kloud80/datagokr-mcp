@@ -1,4 +1,5 @@
-# Dataset 15061950 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061950 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061950'
 tier: verified
 title: 국토교통부_세계공항_코드
@@ -21,6 +22,7 @@ synonyms:
   - 세계 공항 목록
   - 공항명 한글 표기
   - 국제공항 코드 마스터
+summary_user: 전 세계 공항의 영문·한글 공항명과 IATA 3자리·ICAO 4자리 코드, 운영 상태(기존공항·폐쇄공항 등)를 공항 한 곳당 한 행으로 담은 코드 마스터 파일(CSV 약 33만 바이트)이다. 항공 통계나 운항 데이터에 찍힌 'LCG', 'LECO' 같은 공항 코드를 사람이 읽는 한글 공항명으로 바꾸려는 분석가나 시스템 구축자가 쓴다. 실측상 전역 조인 키로 확인된 컬럼은 없으며, 운항·항공통계·노선 데이터와는 IATA·ICAO 코드 값이나 공항명을 직접 맞춰 매핑하는 방식으로 잇는다.
 description_portal: '데이터 개요**「국토교통부_세계공항_코드」**는 전 세계 공항의 표준 식별코드와 관련 정보를 제공하는 데이터로, 항공운송 관리, 노선 설계, 항공정보시스템 연계 등에 활용할 수 있는 기초 자료입니다.해당 데이터는 영문 공항명, 한글 공항명, IATA 코드, ICAO 코드, 공항 운영 상태 항목으로 구성되어 있으며, 신규 공항을 제외한 현재 운영 중인 공항을 중심으로 수록되어 있습니다.데이터 제공 항목영문공항명국제적으로 통용되는 공항의 영문 명칭한글공항명공항의 공식 한글 표기공항코드1 (IATA)국제항공운송협회(IATA)에서 지정한 3자리 공항 코드공항코드2 (ICAO)국제민간항공기구(ICAO)에서 지정한 4자리 공항 코드공항운영상태구분현재 운영 여부(예: 기존공항, 폐쇄공항 등)활용 안내항공 노선 분석 및 국제 연결성 비교공항 관련 정보시스템 구축 (예약, 수하물 연계 등)국제 항공통계 및 시장 조사 보고서 작성공항 운영 현황 관리 및 정책 수립용 참조자료데이터 해석 시 유의사항데이터는 신규 개항이나 폐쇄된 공항 정보를 포함하지 않으며, 현존 운영 공항에 한해 제공됩니다.코드 중복이나 변경 이력은 IATA 및 ICAO의 최신 공식자료와 비교 검토 후 사용해야 정확성을 보장할 수 있습니다.공항 코드 활용 시, 국가별 시간대, 위치좌표, 항공기 운항규모 등 추가 정보와의 병행 분석이 필요할 수 있습니다.데이터 구성 예시영문공항명한글공항IATAICAO공항운영상태구분A Coruna Airport아코루냐 공항LCGLECO기존공항Aalborg Airport올보르 공항AALEKYT기존공항Aarhus Airport오르후스 공항AAREKAH기존공항'
 accrual_periodicity: 연간
 team:
@@ -52,6 +54,7 @@ schema:
         unique: 5463
     - name: 공항코드1(IATA)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0315
       sample_values:
         - ANI
@@ -61,6 +64,7 @@ schema:
         unique: 5306
     - name: 공항코드2(ICAO)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.1339
       sample_values:
         - UASP
@@ -75,6 +79,17 @@ schema:
         - 기존공항
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 공항코드1(IATA)
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - 공항코드2(ICAO)
+      reference:
+        key: airport_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -117,7 +132,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061950-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: airport_cd(공항코드1(IATA)), airport_cd(공항코드2(ICAO))'
     evidence:
       - type: measured
         source: probe/stats/15061950.json
@@ -182,8 +197,6 @@ verification:
   run: probe/runs/15061950.json
   stats: probe/stats/15061950.json
   data: probe/data/15061950/
-status: active
-summary_user: 전 세계 공항의 영문·한글 공항명과 IATA 3자리·ICAO 4자리 코드, 운영 상태(기존공항·폐쇄공항 등)를 공항 한 곳당 한 행으로 담은 코드 마스터 파일(CSV 약 33만 바이트)이다. 항공 통계나 운항 데이터에 찍힌 'LCG', 'LECO' 같은 공항 코드를 사람이 읽는 한글 공항명으로 바꾸려는 분석가나 시스템 구축자가 쓴다. 실측상 전역 조인 키로 확인된 컬럼은 없으며, 운항·항공통계·노선 데이터와는 IATA·ICAO 코드 값이나 공항명을 직접 맞춰 매핑하는 방식으로 잇는다.
 limits: 공식 조인 키가 지정돼 있지 않아 다른 데이터와 연결하려면 코드·이름 문자열을 직접 대조해야 한다. 위치좌표·시간대 같은 공항 속성은 없으므로 지도·거리 분석에는 따로 자료가 필요하다.
 review:
   summary: draft
@@ -195,3 +208,4 @@ review:
     - c-15061950-03
     - c-15061950-06
   dropped_citations: 0
+status: active

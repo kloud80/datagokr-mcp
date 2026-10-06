@@ -1,4 +1,3 @@
-# Dataset 15157090 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15157090'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_환경영향평가_위생공중보건정보
@@ -21,6 +20,7 @@ synonyms:
   - 중금속 대기농도
   - 개발사업 환경조사지점
   - EIA 공중보건
+summary_user: 환경영향평가 사업의 위생공중보건 분야 조사지점(지점명·주소·X/Y좌표·조사기간)별로 조사차수마다 측정한 유해대기물질 농도(시안화수소·암모니아·황화수소·벤젠·포름알데히드·중금속 등)를 담은 건별 조사 원천 파일로, 범위는 전국이다. 개발사업 예정지 주변 주민이나 분석가가 특정 사업 인근에서 평가 당시 벤젠·황화수소 같은 유해물질이 얼마나 측정됐는지 확인하는 데 쓴다. 실측상 전역 조인 키는 없어서, 사업코드로 같은 기관의 다른 환경영향평가 항목별·협의 현황 데이터와 잇거나 좌표·주소로 사업구역·토지이용 데이터와 공간 대조해 쓴다.
 description_portal: 환경부 국립환경과학원 환경영향평가 사업의 위생공중보건분야에 조사지점(조사지점명, X좌표,Y좌표, 주소, 조사시작일, 조사종료일) 에 대한 정보 및 조사 속성정보(조사차수, 시안화수소(HCN)(ppm), 스타이렌(C8H8)(ppm), 염화수소(HCL) (ppm), 암모니아(NH₃) (ppm), 황화수소(H2S) (ppm), 벤젠(C6H6) (㎍ /㎥), 수은(Hg) (㎍ /㎥), 니켈(Ni) (㎍ /㎥), 6가크롬(Cr6+) (㎍ /㎥), 카드뮴(Cd) (㎍ /㎥), 비소(As) (㎍ /㎥), 포름알데히드(HCHO )(㎍ /㎥), 염화비닐(VC) (ppm)) 대한 측정한 환경영향평가 위생공중보건분야에 대한 조사 정보 데이터를 제공하는 서비스입니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +34,7 @@ schema:
   fields:
     - name: 사업코드
       type: string
+      semantic_type: eia_biz_cd
       null_rate: 0.0
       sample_values:
         - DG2010B006
@@ -304,12 +305,29 @@ schema:
         - YND2015B002
       stats:
         unique: 25
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: eia_biz_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - X좌표
+    - Y좌표
+  space_via: coord
+  time: day
+  time_fields:
+    - 조사시작일
+    - 조사종료일
+    - 생성일
 cycle: event
 classification:
   subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
@@ -351,7 +369,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157090-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eia_biz_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15157090.json
@@ -416,8 +434,6 @@ verification:
   run: probe/runs/15157090.json
   stats: probe/stats/15157090.json
   data: probe/data/15157090/
-status: active
-summary_user: 환경영향평가 사업의 위생공중보건 분야 조사지점(지점명·주소·X/Y좌표·조사기간)별로 조사차수마다 측정한 유해대기물질 농도(시안화수소·암모니아·황화수소·벤젠·포름알데히드·중금속 등)를 담은 건별 조사 원천 파일로, 범위는 전국이다. 개발사업 예정지 주변 주민이나 분석가가 특정 사업 인근에서 평가 당시 벤젠·황화수소 같은 유해물질이 얼마나 측정됐는지 확인하는 데 쓴다. 실측상 전역 조인 키는 없어서, 사업코드로 같은 기관의 다른 환경영향평가 항목별·협의 현황 데이터와 잇거나 좌표·주소로 사업구역·토지이용 데이터와 공간 대조해 쓴다.
 limits: 사업코드 외에 행정구역 코드 같은 공통 키가 없어 다른 기관 데이터와는 이름·주소·좌표 매핑으로만 연결된다. 갱신은 수시로 이뤄지는 이벤트성 자료이며, 평가 시점의 조사값이라 현재 대기질을 나타내지 않는다.
 review:
   summary: draft
@@ -431,3 +447,4 @@ review:
     - c-15157090-04
     - c-15157090-06
   dropped_citations: 0
+status: active

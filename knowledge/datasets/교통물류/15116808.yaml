@@ -1,4 +1,3 @@
-# Dataset 15116808 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15116808'
 tier: verified
 title: 한국교통안전공단_부품제작자 등록현황
@@ -22,6 +21,7 @@ synonyms:
   - 좌석안전띠 제조사
   - 안전삼각대 인증업체
   - 자동차휠 제작자
+summary_user: 자동차부품자기인증시스템에 등록된 부품제작자를 업체별로 담은 전국 목록 파일(CSV, 약 15KB)로, 등록번호·제작자명·제작구분·부품명·대표자·주소·최초등록일·최근변경일 등을 담는다. 브레이크호스·좌석안전띠·안전삼각대·자동차휠 같은 자기인증 대상 부품을 파는 업체가 정식 등록된 제작자인지, 어느 지역에 어떤 부품 제작자가 있는지 확인하는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 업체명·주소나 등록번호를 이름 매칭으로 이어 써야 한다.
 description_portal: 한국교통안전공단 자동차부품자기인증 시스템에 등록된 부품제작자 등록 현황 데이터입니다.자동차관리법 시행령 제8조의2에 따른 13종의 부품(브레이크호스, 브레이크라이닝, 좌석안전띠, 안전삼각대, 자동차휠, 후부반사지, 후부반사판 등)을 국내에서 판매, 유통하고자 하는 자는자동차관리법 제30조의2에 따라 부품제작자로 등록하여야 합니다. 신청서류를 준비하여 국토교통부에 신청하여 등록할 수 있습니다.이 데이터는 데이터 등록시점까지 자동차부품자기인증시스템에 등록되어있는 부품제작자 목록을 담고 있습니다.
 applicable_legislation:
   - law: 자동차관리법
@@ -53,6 +53,7 @@ schema:
         unique: 78
     - name: 등록번호
       type: string
+      semantic_type: part_maker_rgst_no
       null_rate: 0.0
       sample_values:
         - 4C
@@ -167,12 +168,28 @@ schema:
         p50: 0
         max: 16
         unique: 12
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: part_maker_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 최초등록일
+    - 최근변경일
+    - 계약종료일
 cycle: default
 classification:
   subsector_name: 교통안전 (안전지수·교통문화·안전시설·교육)
@@ -209,7 +226,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15116808-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: part_maker_rgst_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15116808.json
@@ -273,8 +290,6 @@ verification:
   run: probe/runs/15116808.json
   stats: probe/stats/15116808.json
   data: probe/data/15116808/
-status: active
-summary_user: 자동차부품자기인증시스템에 등록된 부품제작자를 업체별로 담은 전국 목록 파일(CSV, 약 15KB)로, 등록번호·제작자명·제작구분·부품명·대표자·주소·최초등록일·최근변경일 등을 담는다. 브레이크호스·좌석안전띠·안전삼각대·자동차휠 같은 자기인증 대상 부품을 파는 업체가 정식 등록된 제작자인지, 어느 지역에 어떤 부품 제작자가 있는지 확인하는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 업체명·주소나 등록번호를 이름 매칭으로 이어 써야 한다.
 limits: 공통 코드 기반의 조인 키가 없어 사업자 정보나 다른 기관 데이터와 정확히 연결하기 어렵다. 파일은 데이터 등록 시점의 등록 목록이라 이후 신규 등록·변경은 반영되지 않을 수 있다.
 review:
   summary: draft
@@ -286,3 +301,4 @@ review:
     - c-15116808-03
     - c-15116808-04
   dropped_citations: 0
+status: active

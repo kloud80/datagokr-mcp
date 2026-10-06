@@ -1,4 +1,5 @@
-# Dataset 15083392 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083392 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083392'
 tier: verified
 title: 한국서부발전(주)_연료도입실적
@@ -24,6 +25,7 @@ synonyms:
   - 석탄 도입 실적
   - 발전사 연료 구매량
   - 월별 연료 도입
+summary_user: 한국서부발전이 들여온 발전용 연료의 도입 실적을 월(년월)·연료(자재번호·연료명)별 수량과 단위로 담은 파일로, 예시 행은 2021년 1월 유연탄 112,169톤(MT) 형태이며 csv 약 31KB 규모입니다. 에너지 분석가나 연구자가 한국서부발전의 유연탄 등 연료 도입량이 월별·연도별로 어떻게 변했는지, 국제 연료가격이나 공급망 이슈 시기에 도입량이 달라졌는지를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전사 연료 실적이나 연료가격 자료와는 년월과 연료명을 이름 매핑해 맞춰 이어 쓴다.
 description_portal: 한국서부발전 연료도입 현황 정보입니다. 한국서부발전의 연료 도실적 데이터는 발전소 운영에 필요한 주요 연료의 월별 및 연도별 도입 현황을 기록한 자료로, 안정적인 전력 생산을 위한 연료 수급 구조를 보여줍니다. 이 데이터는 년월,자재번호,수량(톤),단위,연료명등이 포함됩니다. 또한 발전소별 투입 계획과 실제 도입 실적을 비교해 수급 안정성을 평가할 수 있으며, 국제 연료 가격 변동이나 공급망 이슈에 따른 영향을 정량적으로 파악할 수 있습니다.- 데이터 예) 2021-01,10011,112169,MT,유연탄
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 150
     - name: 자재번호
       type: number
+      semantic_type: ewp_material_no
       null_rate: 0.0
       sample_values:
         - '10011'
@@ -86,12 +89,22 @@ schema:
         - 유기성고형연료
       stats:
         unique: 7
+  foreign_keys:
+    - fields:
+        - 자재번호
+      reference:
+        key: ewp_material_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 년월
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -128,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083392-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_material_no(자재번호)'
     evidence:
       - type: measured
         source: probe/stats/15083392.json
@@ -193,8 +206,6 @@ verification:
   run: probe/runs/15083392.json
   stats: probe/stats/15083392.json
   data: probe/data/15083392/
-status: active
-summary_user: 한국서부발전이 들여온 발전용 연료의 도입 실적을 월(년월)·연료(자재번호·연료명)별 수량과 단위로 담은 파일로, 예시 행은 2021년 1월 유연탄 112,169톤(MT) 형태이며 csv 약 31KB 규모입니다. 에너지 분석가나 연구자가 한국서부발전의 유연탄 등 연료 도입량이 월별·연도별로 어떻게 변했는지, 국제 연료가격이나 공급망 이슈 시기에 도입량이 달라졌는지를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전사 연료 실적이나 연료가격 자료와는 년월과 연료명을 이름 매핑해 맞춰 이어 쓴다.
 limits: 전국 단위 비공간 자료로 발전소별·지역별 도입 내역은 나뉘어 있지 않으며, 전역 조인 키가 없어 다른 데이터와는 년월·연료명 이름 매핑으로만 연결된다. 전력거래소식 실시간·일별 수급 자료가 아니라 월 단위 도입 실적이므로 오늘의 전력수급 판단에는 쓰지 못한다.
 review:
   summary: draft
@@ -207,3 +218,4 @@ review:
     - c-15083392-04
     - c-15083392-06
   dropped_citations: 0
+status: active

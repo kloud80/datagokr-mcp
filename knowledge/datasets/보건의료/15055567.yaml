@@ -1,4 +1,5 @@
-# Dataset 15055567 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15055567 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15055567'
 tier: verified
 title: 건강보험심사평가원_병원급이상 진료과목별 상병 통계
@@ -22,6 +23,7 @@ synonyms:
   - 심평원 진료비 통계
   - 병원 진료과목 상병
   - 요양급여비용
+summary_user: 병원급 이상 의료기관(약국 제외, 양방만)의 건강보험 진료비를 진료년도·진료과목·3단 주상병코드별로 집계해 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 단위 통계 파일이다. 분석가가 '특정 진료과에서 어떤 상병의 환자가 많고 진료비가 얼마나 드는가'처럼 진료과별 질병 부담과 진료비 규모를 비교할 때 쓴다. 전역 조인 키는 없고, 주상병코드(질병분류 코드)와 진료과목 이름으로 다른 상병·진료과 통계와 맞춰 이어 쓴다.
 description_portal: '병원급 이상 의료기관의 진료과목별 3단상병별 건강보험 진료비 통계 / 진료년도 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2022년 1월~12월, 심사년월: 2022년 1월~2023년 4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 양방만 포함※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 질병은 주상병 기준이며 의료기관에서 의사가 진료 시 환자의 호소, 증세에 따라 일차적으로 진단명을 부여하여 진료비 청구가 이루어짐에 따라 실제 최종 확정된 질병과는 차이가 발생할 수 있음※ 요양급여비용총액은 요양기관에서 건강보험 환자의 진료에 소요된 비용(비급여 제외)으로 보험자부담금과 본인부담금을 합한 금액임※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있음'
 applicable_legislation:
   - law: 국민건강보험법
@@ -59,6 +61,7 @@ schema:
         unique: 48
     - name: 주상병코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - S02
@@ -126,12 +129,22 @@ schema:
         p50: 6464000
         max: 1486505056360
         unique: 28276
+  foreign_keys:
+    - fields:
+        - 주상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -168,7 +181,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15055567-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(주상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15055567.json
@@ -246,8 +259,6 @@ verification:
   run: probe/runs/15055567.json
   stats: probe/stats/15055567.json
   data: probe/data/15055567/
-status: active
-summary_user: 병원급 이상 의료기관(약국 제외, 양방만)의 건강보험 진료비를 진료년도·진료과목·3단 주상병코드별로 집계해 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 단위 통계 파일이다. 분석가가 '특정 진료과에서 어떤 상병의 환자가 많고 진료비가 얼마나 드는가'처럼 진료과별 질병 부담과 진료비 규모를 비교할 때 쓴다. 전역 조인 키는 없고, 주상병코드(질병분류 코드)와 진료과목 이름으로 다른 상병·진료과 통계와 맞춰 이어 쓴다.
 limits: 요양기관 식별 키(ykiho 등)가 없어 개별 병원 단위 분석이나 요양기관 원장 데이터와의 직접 연결은 안 되고, 이름·코드 매핑으로만 연결된다. 환자수는 범주 내 중복만 제거한 값이라 다른 범주와 단순 합산하면 중복이 생기며, 주상병은 청구 시 진단명이라 최종 확정 질병과 다를 수 있다. 비급여 진료비는 포함되지 않는다.
 review:
   summary: draft
@@ -259,3 +270,4 @@ review:
     - c-15055567-03
     - c-15055567-04
   dropped_citations: 0
+status: active

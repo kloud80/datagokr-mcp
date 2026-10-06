@@ -103,6 +103,7 @@ schema:
         unique: 32
     - name: 호출부호
       type: code
+      semantic_type: vessel_id
       null_rate: 0.525
       sample_values:
         - 3FSP9
@@ -112,6 +113,7 @@ schema:
         unique: 14
     - name: 국제해사기구식별번호
       type: number
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - '9066710'
@@ -324,9 +326,25 @@ schema:
         min: '2024-08-02'
         max: '2025-08-05'
         unique: 76
+  foreign_keys:
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - 국제해사기구식별번호
+      reference:
+        key: vessel_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최초등록일시
+    - 최종수정일시
 cycle: default
 classification:
   subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
@@ -363,7 +381,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15133069-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(호출부호), vessel_id(국제해사기구식별번호)'
     evidence:
       - type: measured
         source: probe/stats/15133069.json

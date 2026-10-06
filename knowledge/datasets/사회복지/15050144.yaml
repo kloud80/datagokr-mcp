@@ -1,4 +1,5 @@
-# Dataset 15050144 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15050144 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15050144'
 tier: verified
 title: 한국노인인력개발원_노인일자리 대한노인회모집정보
@@ -22,6 +23,7 @@ synonyms:
   - 사회서비스형 일자리
   - 노인일자리 사업 목록
   - 시니어 일자리
+summary_user: 대한노인회가 운영하는 노인일자리 사업의 모집 정보를 사업 건별로 담은 전국 단위 CSV 파일(약 443KB)로, 사업번호·사업연도·사업명·사업계획서 변경순번을 기록한다. 노인일자리 정책 담당자나 연구자가 '올해 대한노인회가 어떤 노인일자리 사업을 모집했고 연도별로 어떻게 달라졌나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매핑이나 같은 기관(한국노인인력개발원) 데이터의 사업번호로만 이을 수 있다.
 description_portal: 이 데이터는 노인일자리 사업 중 대한노인회가 운영하는 모집 관련 정보를 제공하는 자료입니다. 사업번호, 사업명, 사업연도, 사업계획서 승인번호 등 주요 항목이 포함되어 있으며, 사회복지형, 공익활동형, 사회서비스형 등 다양한 노인일자리 사업의 모집 현황을 체계적으로 기록하고 있습니다. 이를 통해 노인회 중심의 일자리 참여 기회를 한눈에 파악할 수 있으며, 지역별·사업별로 어떤 모집이 이루어지고 있는지 비교·분석할 수 있습니다. CSV 형식으로 제공되어 데이터 가공과 분석이 용이하고, 정기적으로 갱신되어 최신 모집 정보를 반영하므로 기관 및 연구자, 정책 담당자가 사업 운영 현황과 수요 변화를 파악하는 데 유용한 자료입니다. 특히 노인 참여 확대와 지역사회 기반 일자리 창출 정책의 성과를 점검하는 근거 자료로 활용도가 높습니다.
 accrual_periodicity: 연간
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 사업번호
       type: string
+      semantic_type: senior_job_proj_no
       null_rate: 0.0
       sample_values:
         - 2024-13887
@@ -73,12 +76,22 @@ schema:
         - 시니어컨설턴트
       stats:
         unique: 8464
+  foreign_keys:
+    - fields:
+        - 사업번호
+      reference:
+        key: senior_job_proj_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 사업연도
 cycle: default
 classification:
   subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
@@ -115,7 +128,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050144-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: senior_job_proj_no(사업번호)'
     evidence:
       - type: measured
         source: probe/stats/15050144.json
@@ -180,8 +193,6 @@ verification:
   run: probe/runs/15050144.json
   stats: probe/stats/15050144.json
   data: probe/data/15050144/
-status: active
-summary_user: 대한노인회가 운영하는 노인일자리 사업의 모집 정보를 사업 건별로 담은 전국 단위 CSV 파일(약 443KB)로, 사업번호·사업연도·사업명·사업계획서 변경순번을 기록한다. 노인일자리 정책 담당자나 연구자가 '올해 대한노인회가 어떤 노인일자리 사업을 모집했고 연도별로 어떻게 달라졌나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매핑이나 같은 기관(한국노인인력개발원) 데이터의 사업번호로만 이을 수 있다.
 limits: 표준 시설코드나 행정구역 코드가 없어 사회복지시설·장기요양기관 데이터나 지역 통계와 바로 결합하기 어렵다. 범위는 전국이지만 비공간 자료여서 지도 표시나 시군구별 비교에는 별도 매핑이 필요하다.
 review:
   summary: draft
@@ -193,3 +204,4 @@ review:
     - c-15050144-03
     - c-15050144-04
   dropped_citations: 0
+status: active

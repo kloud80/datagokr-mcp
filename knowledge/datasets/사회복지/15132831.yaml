@@ -1,4 +1,5 @@
-# Dataset 15132831 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132831 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132831'
 tier: verified
 title: 성평등가족부_청소년 자기도전포상제 광역 중앙기관 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 포상제 연락처
   - 광역시도 청소년 기관 목록
   - 청소년활동 운영기관 주소
+summary_user: 청소년 자기도전포상제를 운영하는 광역시도·중앙 기관을 기관 한 곳당 한 건으로 담은 목록으로, 기관명·주소·우편번호·전화·팩스·대표자·홈페이지 주소와 사용 여부를 전국 범위로 제공한다. 청소년이나 학부모가 '우리 지역에서 포상제를 문의하거나 신청하려면 어느 기관에 연락해야 하나'를 확인하는 데 쓰고, 담당자는 관할 기관 현황을 파악하는 데 쓴다. 전역 조인 키가 없어 다른 청소년 시설·활동 데이터와는 기관명이나 주소(시도) 매칭으로만 잇는다.
 description_portal: 청소년 자기도전포상제 광역 중앙기관 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 수정일시, 광역시도중앙시설의 기관명, 우편번호, 주소, 전화번호, 팩스번호, 시설사용여부, 대표자명, URL주소 등의 내용을 확인할 수 있습니다.포상제 운영 주체의 접근성과 신뢰도를 높이는 데 기여하며, 기관별 주소, 대표자, 시설 사용여부 등의 정보는 관할 기관 현황 파악 및 지역별 담당자 배치 시 참고자료가 됩니다. 청소년 또는 학부모가 직접 연락을 취하거나 포상제 활동기관을 선택하는 데 유용한 기준으로 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -67,6 +69,7 @@ schema:
     - name: mctpvCntrlFcltSn
       title: 광역시도중앙시설일련번호
       type: number
+      semantic_type: award_mctpv_fclt_sn
       null_rate: 0.0
       sample_values:
         - '247'
@@ -199,12 +202,29 @@ schema:
         p50: 20170829
         max: 20240422
         unique: 6
+  foreign_keys:
+    - fields:
+        - mctpvCntrlFcltSn
+      reference:
+        key: award_mctpv_fclt_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sido
+  space_fields:
+    - mctpvCntrlFcltSn
+    - mctpvCntrlFcltTypeCd
+    - mctpvCntrlFcltInstNm
+  space_via: name
+  time: day
+  time_fields:
+    - regDt
+    - mdfcnDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -249,7 +269,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132831-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_mctpv_fclt_sn(mctpvCntrlFcltSn)'
     evidence:
       - type: measured
         source: probe/stats/15132831.json
@@ -303,8 +323,6 @@ verification:
   run: probe/runs/15132831.json
   stats: probe/stats/15132831.json
   data: probe/data/15132831/
-status: active
-summary_user: 청소년 자기도전포상제를 운영하는 광역시도·중앙 기관을 기관 한 곳당 한 건으로 담은 목록으로, 기관명·주소·우편번호·전화·팩스·대표자·홈페이지 주소와 사용 여부를 전국 범위로 제공한다. 청소년이나 학부모가 '우리 지역에서 포상제를 문의하거나 신청하려면 어느 기관에 연락해야 하나'를 확인하는 데 쓰고, 담당자는 관할 기관 현황을 파악하는 데 쓴다. 전역 조인 키가 없어 다른 청소년 시설·활동 데이터와는 기관명이나 주소(시도) 매칭으로만 잇는다.
 limits: 공통 기관코드 같은 조인 키가 없어 다른 데이터와 정확히 연결하기 어렵고, 기관명·주소 문자열 매칭에 의존해야 한다. 이벤트성 주기로 생성 후 바뀌지 않는 데이터로 분류되어 있으므로, 현재 운영 여부는 사용 여부 값과 수정일시를 함께 확인한다.
 review:
   summary: draft
@@ -316,3 +334,4 @@ review:
     - c-15132831-03
     - c-15132831-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15121008 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121008 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121008'
 tier: verified
 title: 한국산업안전보건공단_국내재해사례 게시판 첨부파일 정보 조회서비스
@@ -24,6 +25,7 @@ synonyms:
   - 산재 사고사례
   - 안전보건공단 게시판 파일
   - 중대재해 사례 보고서
+summary_user: 한국산업안전보건공단 홈페이지의 국내재해사례 게시판 글마다 달린 첨부파일의 파일명과 다운로드 경로를 게시판 번호(boardno) 단위로 담는 API이며, 범위는 전국이고 지역 구분이 없다. 산업안전 담당자나 분석가가 특정 재해사례 글의 원문 첨부자료(보고서·자료 파일)를 내려받으려 할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 국내재해사례 게시판 목록 데이터와 게시판 번호로 이어 쓰는 것이 사실상 유일한 연결 방법이다.
 description_portal: '한국산업안전보건공단 홈페이지(www.kosha.or.kr)에서 제공 중인 국내재해사례 게시판 첨부파일 정보를 실시간으로 조회하실 수 있도록 제공하는 데이터입니다.*요청메세지 명세ServiceKey :공공데이터포털에서 발급받은 인증키boardno : 국내재해사례 게시판 번호numOfRows : 한 페이지 결과 수pageNo : 페이지 번호callApiId : 국내재해사례 게시판 첨부파일 조회(필수입력 고정값)*응답메세지 명세boardno : 국내재해사례 게시판 번호filepath : 첨부파일 다운로드 경로filenm : 첨부파일명'
 team:
   dept: 디지털계획부
@@ -86,6 +88,7 @@ schema:
     - name: boardno
       title: 게시판 번호
       type: date
+      semantic_type: kosha_disaster_board_no
       null_rate: 0.0
       sample_values:
         - 20250625101629Z7GLYM
@@ -93,12 +96,22 @@ schema:
         min: '2025-06-25'
         max: '2025-06-25'
         unique: 1
+  foreign_keys:
+    - fields:
+        - boardno
+      reference:
+        key: kosha_disaster_board_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - boardno
 cycle: default
 classification:
   subsector_name: 산업재해·산재보험 (국내재해사례·사고사망·건설업 일별 중대재해·산재 판례/질병판정/심사결정·요양 승인)
@@ -142,7 +155,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121008-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosha_disaster_board_no(boardno)'
     evidence:
       - type: measured
         source: probe/stats/15121008.json
@@ -196,8 +209,6 @@ verification:
   run: probe/runs/15121008.json
   stats: probe/stats/15121008.json
   data: probe/data/15121008/
-status: active
-summary_user: 한국산업안전보건공단 홈페이지의 국내재해사례 게시판 글마다 달린 첨부파일의 파일명과 다운로드 경로를 게시판 번호(boardno) 단위로 담는 API이며, 범위는 전국이고 지역 구분이 없다. 산업안전 담당자나 분석가가 특정 재해사례 글의 원문 첨부자료(보고서·자료 파일)를 내려받으려 할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 국내재해사례 게시판 목록 데이터와 게시판 번호로 이어 쓰는 것이 사실상 유일한 연결 방법이다.
 limits: 첨부파일 정보만 담고 재해 내용·업종·발생일 같은 사례 본문 정보는 없어서, 이 데이터만으로는 재해 분석을 하지 못한다. 게시판 번호를 미리 알아야 조회할 수 있고, 다른 기관 데이터와 공통 코드로 묶이지 않는다. 개발계정은 하루 1,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -209,3 +220,4 @@ review:
     - c-15121008-03
     - c-15121008-04
   dropped_citations: 0
+status: active

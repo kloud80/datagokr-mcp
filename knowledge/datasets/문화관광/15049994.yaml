@@ -1,4 +1,5 @@
-# Dataset 15049994 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049994 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049994'
 tier: verified
 title: 제주관광공사_제주관광정보시스템(VISIT JEJU)_여행세부일정
@@ -21,6 +22,7 @@ synonyms:
   - 관광 일정 이용자 기록
   - 제주 관광지 방문 순서
   - VISIT JEJU 일정
+summary_user: 비짓제주 이용자가 여행일정을 만들고 세부일정을 등록할 때 쌓인 기록을 세부일정 한 건 단위로 담은 원천 파일로, 일정 제목·방문 콘텐츠명·대표일정 여부·여행일수·시작/종료 시간·장소 구분·등록/수정 일시가 들어 있으며 포털 설명상 전체 146,508건이다. 관광 기획자나 분석가가 '비짓제주 이용자들이 일정에 어떤 관광지를 많이 넣고, 하루에 몇 곳을 어떤 시간대로 도는가'를 파악하거나 일정 추천 서비스를 만드는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 TourAPI contentId 같은 코드로 바로 붙지 않으며, 콘텐츠명을 비짓제주 관광지 정보와 이름으로 맞추거나 여행일정아이디로 같은 기관의 여행일정 데이터와 묶어 쓴다.
 description_portal: 제주관광공사에서 운영하는 제주관광정보플랫폼 비짓제주의 여행세부일정 내역입니다.해당 데이터는 사용자가 여행일정을 생성하고 세부일정을 등록할 때 생성되어 데이터베이스에 저장합니다.개방데이터 항목은 일련번호, 여행일정타이틀, 콘텐츠명, 대표일정여부, 여행일자이며 전체 데이터 수는 146,508건(데이터 기준일 기준)입니다.해당 데이터를 통해 비짓제주 플랫폼 내 상세 여행일정 구성 현황 파악, 이용자 맞춤형 일정 추천 서비스 개발, 여행코스 세부 계획 지원, 이용자 참여 증진 및 커뮤니티 활성화, 관광 콘텐츠 기획 및 마케팅 전략 수립 등 다양한 분야에 활용할 수 있을 것으로 기대됩니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 100000
     - name: 여행일정아이디
       type: number
+      semantic_type: visitjeju_schedule_id
       null_rate: 0.0
       sample_values:
         - '5921'
@@ -142,12 +145,23 @@ schema:
         min: '2018-04-13'
         max: '2023-09-29'
         unique: 1295
+  foreign_keys:
+    - fields:
+        - 여행일정아이디
+      reference:
+        key: visitjeju_schedule_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
+    - 수정일시
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -184,7 +198,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15049994-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: visitjeju_schedule_id(여행일정아이디)'
     evidence:
       - type: measured
         source: probe/stats/15049994.json
@@ -249,8 +263,6 @@ verification:
   run: probe/runs/15049994.json
   stats: probe/stats/15049994.json
   data: probe/data/15049994/
-status: active
-summary_user: 비짓제주 이용자가 여행일정을 만들고 세부일정을 등록할 때 쌓인 기록을 세부일정 한 건 단위로 담은 원천 파일로, 일정 제목·방문 콘텐츠명·대표일정 여부·여행일수·시작/종료 시간·장소 구분·등록/수정 일시가 들어 있으며 포털 설명상 전체 146,508건이다. 관광 기획자나 분석가가 '비짓제주 이용자들이 일정에 어떤 관광지를 많이 넣고, 하루에 몇 곳을 어떤 시간대로 도는가'를 파악하거나 일정 추천 서비스를 만드는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 TourAPI contentId 같은 코드로 바로 붙지 않으며, 콘텐츠명을 비짓제주 관광지 정보와 이름으로 맞추거나 여행일정아이디로 같은 기관의 여행일정 데이터와 묶어 쓴다.
 limits: 관광지 코드나 좌표가 없어 다른 관광 데이터와는 이름 매칭으로만 연결되므로 표기 차이로 누락·오매칭이 생길 수 있다. 범위는 비공간 데이터로 분류되어 지역 단위 분석에는 별도 위치 정보가 필요하다.
 review:
   summary: draft
@@ -262,3 +274,4 @@ review:
     - c-15049994-03
     - c-15049994-04
   dropped_citations: 0
+status: active

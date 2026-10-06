@@ -1,4 +1,5 @@
-# Dataset 15113893 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15113893 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15113893'
 tier: verified
 title: 한국장학재단_학자금대출 상품별 한도금액 기준
@@ -24,6 +25,7 @@ synonyms:
   - 농촌출신 학자금융자
   - 학기당 대출금액
   - 장학재단 대출
+summary_user: 한국장학재단의 학자금대출 상품(일반상환, 취업후상환, 농촌출신대학(원)생 융자 등)별로 한 학기에 실행 가능한 최고·최저 기준금액을 상품 단위로 정리한 전국 단위 기준표로, 518바이트 크기의 작은 CSV 파일입니다. 대학(원)생이나 학부모가 "취업후상환 학자금대출로 한 학기에 최대 얼마까지 빌릴 수 있나"처럼 상품별 대출 한도를 확인하거나, 분석가가 상품 간 한도를 비교할 때 쓴다. 공통 조인 키는 없어서, 다른 학자금대출 실적·이용 데이터와는 대출상품명을 이름으로 맞춰 이어 쓴다.
 description_portal: 한국장학재단에서는 경제적 여건에 관계없이 능력과 의지가 있는 학생이면 누구나 균등한 고등교육 기회를 가질 수 있도록 다양한 대출제도를 운영하고 있습니다. 해당 데이터는 일반상환학자금대출, 취업후상환 학자금대출, 농촌출신대학(원)생 학자금융자 등 재단 대출상품별로 한 학기에 최대 실행 가능한 금액과 최저 실행 가능한 금액에 관한 정보입니다 ※ 학기별 한도가 없는 경우에는 "한도없음"으로 표시 ※ 실제 실행 가능한 금액은 해당학생이 소속된 고등교육기관 및 신청상품 등에 따라 상이할 수 있음학자금대출 상품에 관한 자세한 정보는 재단 홈페이지(https://www.kosaf.go.kr/ko/tuition.do?pg=tuition_main)를 참고바랍니다.
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -41,6 +43,7 @@ schema:
   fields:
     - name: 대출상품명
       type: code
+      semantic_type: kosaf_loan_product
       null_rate: 0.0
       sample_values:
         - 일반상환학자금_등록금
@@ -66,6 +69,12 @@ schema:
         - '1'
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 대출상품명
+      reference:
+        key: kosaf_loan_product
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -108,7 +117,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15113893-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_loan_product(대출상품명)'
     evidence:
       - type: measured
         source: probe/stats/15113893.json
@@ -172,8 +181,6 @@ verification:
   run: probe/runs/15113893.json
   stats: probe/stats/15113893.json
   data: probe/data/15113893/
-status: active
-summary_user: 한국장학재단의 학자금대출 상품(일반상환, 취업후상환, 농촌출신대학(원)생 융자 등)별로 한 학기에 실행 가능한 최고·최저 기준금액을 상품 단위로 정리한 전국 단위 기준표로, 518바이트 크기의 작은 CSV 파일입니다. 대학(원)생이나 학부모가 "취업후상환 학자금대출로 한 학기에 최대 얼마까지 빌릴 수 있나"처럼 상품별 대출 한도를 확인하거나, 분석가가 상품 간 한도를 비교할 때 쓴다. 공통 조인 키는 없어서, 다른 학자금대출 실적·이용 데이터와는 대출상품명을 이름으로 맞춰 이어 쓴다.
 limits: 상품별 기준 한도만 담고 있어 개별 학생이 실제로 받을 수 있는 금액은 알 수 없으며, 실제 실행 금액은 소속 고등교육기관과 신청 상품에 따라 달라진다. 학기별 한도가 없는 상품은 금액 대신 "한도없음"이라는 문자열로 표시되므로 숫자로 계산할 때 따로 처리해야 한다. 다른 데이터와 묶을 전역 조인 키가 없어 상품명 매핑에 의존해야 한다.
 review:
   summary: draft
@@ -185,3 +192,4 @@ review:
     - c-15113893-03
     - c-15113893-04
   dropped_citations: 0
+status: active

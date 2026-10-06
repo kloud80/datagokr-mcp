@@ -1,4 +1,5 @@
-# Dataset 15132552 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132552 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132552'
 tier: verified
 title: 성평등가족부_국제청소년성취포상제 활동영역이력 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 청소년 봉사·자기개발 활동
   - 활동영역 이력
   - 청소년 성취 기록
+summary_user: 국제청소년성취포상제에 참여한 청소년이 영역별로 수행한 활동 이력을 입회일련번호·변경순번 단위의 건별 기록으로 담으며, 활동명·성공목표·활동 시작/종료일·활동계획 요청/확인일시·완료 요청/확인일시·제출확인 여부를 포함한다. 청소년 활동 운영자나 분석가가 "어느 활동영역에서 계획 확인부터 완료 확인까지 오래 걸리거나 완료되지 않는 활동이 많은가"를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 입회일련번호(admSn)와 활동영역코드로 같은 기관의 포상제 관련 다른 데이터와만 이어 쓸 수 있고, 행정구역 정보가 없는 전국·비공간 자료라 지역 통계와는 직접 연결되지 않는다.
 description_portal: 국제 청소년 성취포상제 활동영역이력 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 정보 서비스의 활동명, 성공목표내용, 활동 시작/종료 일자, 활동완료 확인/요청 일시, 활동계획 요청/확인일시, 제출확인 여부 등의 내용을 확일할 수 있습니다.청소년이 수행한 활동의 영역별 이력을 기록한 데이터로 각 활동의 성공목표, 일정, 계획 수립 및 실행여부 등 전반적인 운영 과정을 확인할 수 있습니다. 이러한 정보는 특정 활동영역에서 나타나는 반복적인 문제점이나 성취 경향을 분석하는 데 효과적이며, 활동에 대한 평가 기준 마련과 성취도 향상 전략 수립에도 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -72,6 +74,7 @@ schema:
     - name: admSn
       title: 입회일련번호
       type: number
+      semantic_type: award_adm_sn
       null_rate: 0.0
       sample_values:
         - '91'
@@ -258,12 +261,24 @@ schema:
         p50: 20100702.5
         max: 20171204
         unique: 115
+  foreign_keys:
+    - fields:
+        - admSn
+      reference:
+        key: award_adm_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - actvCmptnIdntyDt
+    - actvCmptnDmndDt
+    - regDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -308,7 +323,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132552-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_adm_sn(admSn)'
     evidence:
       - type: measured
         source: probe/stats/15132552.json
@@ -362,8 +377,6 @@ verification:
   run: probe/runs/15132552.json
   stats: probe/stats/15132552.json
   data: probe/data/15132552/
-status: active
-summary_user: 국제청소년성취포상제에 참여한 청소년이 영역별로 수행한 활동 이력을 입회일련번호·변경순번 단위의 건별 기록으로 담으며, 활동명·성공목표·활동 시작/종료일·활동계획 요청/확인일시·완료 요청/확인일시·제출확인 여부를 포함한다. 청소년 활동 운영자나 분석가가 "어느 활동영역에서 계획 확인부터 완료 확인까지 오래 걸리거나 완료되지 않는 활동이 많은가"를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 입회일련번호(admSn)와 활동영역코드로 같은 기관의 포상제 관련 다른 데이터와만 이어 쓸 수 있고, 행정구역 정보가 없는 전국·비공간 자료라 지역 통계와는 직접 연결되지 않는다.
 limits: 지역 단위 컬럼이 없는 전국·비공간 데이터여서 시군구·시도별 분석에는 쓰지 못한다. 전역 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑으로만 연결할 수 있다. 이벤트 주기로 분류된 데이터라 정기 갱신을 전제로 해석하지 않는다.
 review:
   summary: draft
@@ -376,3 +389,4 @@ review:
     - c-15132552-03
     - c-15132552-04
   dropped_citations: 0
+status: active

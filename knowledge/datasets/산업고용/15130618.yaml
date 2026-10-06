@@ -1,4 +1,5 @@
-# Dataset 15130618 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15130618 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15130618'
 tier: verified
 title: 한국남동발전㈜_시간대별 화력 발전실적 현황
@@ -21,6 +22,7 @@ synonyms:
   - 발전기별 출력
   - 석탄화력 발전량
   - 발전소 일별 발전실적
+summary_user: 한국남동발전 화력 발전소의 발전기(호기)별 하루 발전실적을 일자 단위로 담고, 1시~24시 시간대별 발전량과 일 총량·평균·최대·최소를 한 행에 펼쳐 둔 데이터다. 특정 화력 호기가 어느 시간대에 얼마나 발전했는지, 하루 중 출력이 언제 정점이었는지를 확인하려는 에너지 분석가나 연구자가 쓴다. 전역 조인 키는 없고 발전소코드(ippt)·호기코드·발전소명과 일자로 같은 기관의 다른 발전실적 데이터와만 이어 붙인다.
 description_portal: 해당 데이터는 한국남동발전에서 제공하는 시간대별 화력 발전 실적 현황입니다. 한국남동발전의 발전소별 시간대별로 태양광 발전 실적에 관한 데이터를 제공하고 있으며, 발전소의 각 발전기(호기)별로 총량(KW), 평균(KWh), 최대(KWh), 최소(KWh) 등의 핵심 데이터를 포함하고 있습니다. 시간대별 화력 발전실적 현황 데이터는 날씨에 따라 변동성이 큰 태양광 발전량을 정확히 예측하고, 안정적인 전력 계통 운영 계획 및 신재생에너지 정책을 수립하는 데 중요한 기초 및 핵심 자료로 활용될 수 있습니다.
 team:
   dept: AX전략부
@@ -75,6 +77,7 @@ schema:
     - name: ippt
       title: 발전소코드
       type: code
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - '8643'
@@ -85,6 +88,7 @@ schema:
     - name: hogi
       title: 호기코드
       type: code
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -510,12 +514,27 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - ippt
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
+    - fields:
+        - hogi
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - dgenYmd
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -559,7 +578,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15130618-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koen_ippt_unit(ippt), koen_ippt_unit(hogi)'
     evidence:
       - type: measured
         source: probe/stats/15130618.json
@@ -624,8 +643,6 @@ verification:
   run: probe/runs/15130618.json
   stats: probe/stats/15130618.json
   data: probe/data/15130618/
-status: active
-summary_user: 한국남동발전 화력 발전소의 발전기(호기)별 하루 발전실적을 일자 단위로 담고, 1시~24시 시간대별 발전량과 일 총량·평균·최대·최소를 한 행에 펼쳐 둔 데이터다. 특정 화력 호기가 어느 시간대에 얼마나 발전했는지, 하루 중 출력이 언제 정점이었는지를 확인하려는 에너지 분석가나 연구자가 쓴다. 전역 조인 키는 없고 발전소코드(ippt)·호기코드·발전소명과 일자로 같은 기관의 다른 발전실적 데이터와만 이어 붙인다.
 limits: 실측 컬럼에서 다른 기관 데이터와 공통으로 쓰는 조인 키를 찾지 못해 이름 매칭이나 남동발전 자체 코드로만 연결된다. 포털 설명에 태양광 문구가 섞여 있으나 제목·필드 기준으로는 화력 호기별 실적으로 보고 해석해야 하며, 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -637,3 +654,4 @@ review:
     - c-15130618-03
     - c-15130618-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15118330 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15118330 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15118330'
 tier: verified
 title: 한국전력거래소_경상남도 태양광발전 전력거래소 회원사 현황
@@ -21,6 +22,7 @@ synonyms:
   - 전력거래소 회원 현황
   - 신재생 발전사업자
   - 경상남도 발전사업자
+summary_user: 2023년 8월 기준 경상남도에 태양광 발전기를 둔 전력거래소 회원사를 회원사 한 곳당 한 행으로 담은 목록 파일로, 회원명·법인/개인 구분·대표자명·사업자번호가 들어 있다(발전기 미등록 회원사는 빠짐). 경남 지역 태양광 발전사업자가 전력시장 회원으로 누가 있는지, 특정 업체가 회원사인지 확인하려는 사업자나 분석가가 쓴다. 전역 조인 키는 없으며, 사업자번호나 회원명을 기준으로 태양광 발전사업 허가 원장 같은 다른 사업자 목록과 이름·번호를 맞춰 대조하는 방식으로만 이어 쓴다.
 description_portal: ㅇ 한국전력거래소는 전력을 생산하는 발전사업자, 전력을 수요지까지 전달하는 송배전사업자, 전력을 구매하여 판매하는 판매사업자, 전력을 사용하는 소비자 등으로 구성되는 전력시장에서 전력의 판매 및 구매 활동을 실시간으로 운영, 감시하는 "전력시장 운영 업무"와 전력 수요에 맞춰 전력 생산량을 결정하고 이를 안정적으로 수요지에 공급되도록 하는 "전력계통 운영 업무"등을 전담하고 있습니다.ㅇ 2023년 8월 기준 경상남도 소재 태양광 발전기를 보유한 전력거래소 회원사 현황입니다. * 발전기 미등록 회원사 제외
 accrual_periodicity: 수시
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 323
     - name: 회원명
       type: string
+      semantic_type: kpx_member
       null_rate: 0.0
       sample_values:
         - 한국수력원자력(주)
@@ -72,6 +75,7 @@ schema:
         unique: 251
     - name: 사업자번호
       type: string
+      semantic_type: bizno
       null_rate: 0.1362
       sample_values:
         - 120-86-18943
@@ -79,6 +83,17 @@ schema:
         - 120-86-19205
       stats:
         unique: 279
+  foreign_keys:
+    - fields:
+        - 회원명
+      reference:
+        key: kpx_member
+      evidence: measured
+    - fields:
+        - 사업자번호
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -121,7 +136,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15118330-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_member(회원명), bizno(사업자번호)'
     evidence:
       - type: measured
         source: probe/stats/15118330.json
@@ -186,8 +201,6 @@ verification:
   run: probe/runs/15118330.json
   stats: probe/stats/15118330.json
   data: probe/data/15118330/
-status: active
-summary_user: 2023년 8월 기준 경상남도에 태양광 발전기를 둔 전력거래소 회원사를 회원사 한 곳당 한 행으로 담은 목록 파일로, 회원명·법인/개인 구분·대표자명·사업자번호가 들어 있다(발전기 미등록 회원사는 빠짐). 경남 지역 태양광 발전사업자가 전력시장 회원으로 누가 있는지, 특정 업체가 회원사인지 확인하려는 사업자나 분석가가 쓴다. 전역 조인 키는 없으며, 사업자번호나 회원명을 기준으로 태양광 발전사업 허가 원장 같은 다른 사업자 목록과 이름·번호를 맞춰 대조하는 방식으로만 이어 쓴다.
 limits: 2023년 8월 한 시점의 현황이라 이후 가입·탈퇴는 반영되지 않고, 실시간 수급·발전량 정보는 담지 않는다. 표준 조인 키가 없어 다른 데이터와는 이름이나 사업자번호 매칭으로만 연결된다.
 review:
   summary: draft
@@ -199,3 +212,4 @@ review:
     - c-15118330-03
     - c-15118330-07
   dropped_citations: 0
+status: active

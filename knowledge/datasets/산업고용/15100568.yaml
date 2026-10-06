@@ -1,4 +1,5 @@
-# Dataset 15100568 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100568 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100568'
 tier: verified
 title: 한국에너지공단_급수처리시설 인증제품 정보조회 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 정수 설비 인증번호
   - 에너지공단 인증제품
   - 급수처리시설 인증 현황
+summary_user: 한국에너지공단이 인증한 급수처리시설 제품을 모델 단위로 담은 원장 API로, 업체명·모델명·종류·인증번호·인증일·인증 종료일·상태·제조국 등을 제공한다. 정수장·상수도·건물 급수 설비 제품을 고르는 기관이나 업체가 "이 모델이 인증을 받았고 지금도 유효한가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 업체명·모델명 같은 이름 매칭이나 같은 기관의 인증번호로만 이어 쓴다.
 description_portal: 본 데이터는 수처리 분야에서 사용되는 급수처리시설 및 관련 제품 중 「환경기술 및 환경산업 지원법」 또는 「수도법」 등 관련 법규에 따라 정부가 지정하거나 공인된 인증을 획득한 인증제품들의 상세 정보를 제공합니다. 깨끗하고 안전한 물 공급은 국민 건강과 직결되는 중요한 공공 서비스이며, 이를 위해서는 급수처리시설의 성능과 안전성이 확보되어야 합니다. 이 데이터셋은 공신력 있는 인증을 받은 급수처리시설 제품의 정보를 투명하게 공개하여, 제품의 신뢰도를 높이고 시장의 건전한 발전을 도모하는 데 목적이 있습니다. 이를 통해 정수장, 상수도 시설, 건물 내 급수 시스템 등에 사용되는 제품을 선정하는 기관이나 기업은 검증된 제품을 쉽게 찾을 수 있으며, 제조사들은 친환경적이고 고품질의 제품 개발을 유도받아 국민에게 안전한 물을 공급하는 데 기여합니다.
 team:
   dept: 데이터플랫폼팀
@@ -117,6 +119,7 @@ schema:
         unique: 43
     - name: CERTIFICATION_NO
       type: string
+      semantic_type: water_treat_cert_no
       null_rate: 0.0
       sample_values:
         - 음향 제1호
@@ -133,12 +136,24 @@ schema:
         min: '2022-03-25'
         max: '2022-03-25'
         unique: 1
+  foreign_keys:
+    - fields:
+        - CERTIFICATION_NO
+      reference:
+        key: water_treat_cert_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - FINISH_DD
+    - CERTIFICATION_DD
+    - DATA_REG_DT
 cycle: default
 classification:
   subsector_name: 효율등급·인증 제품 (에너지소비효율·고효율기자재·자동차 연비·건축물 에너지효율등급·K-RE100)
@@ -182,7 +197,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100568-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: water_treat_cert_no(CERTIFICATION_NO)'
     evidence:
       - type: measured
         source: probe/stats/15100568.json
@@ -247,8 +262,6 @@ verification:
   run: probe/runs/15100568.json
   stats: probe/stats/15100568.json
   data: probe/data/15100568/
-status: active
-summary_user: 한국에너지공단이 인증한 급수처리시설 제품을 모델 단위로 담은 원장 API로, 업체명·모델명·종류·인증번호·인증일·인증 종료일·상태·제조국 등을 제공한다. 정수장·상수도·건물 급수 설비 제품을 고르는 기관이나 업체가 "이 모델이 인증을 받았고 지금도 유효한가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 업체명·모델명 같은 이름 매칭이나 같은 기관의 인증번호로만 이어 쓴다.
 limits: 공통 조인 키가 없어 다른 인증·인허가 데이터와 정확히 연결되지 않고 이름 매칭에 기대야 한다. 전국 범위의 비공간 데이터라 설치 위치나 지역별 분석에는 쓸 수 없다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -261,3 +274,4 @@ review:
     - c-15100568-04
     - c-15100568-06
   dropped_citations: 0
+status: active

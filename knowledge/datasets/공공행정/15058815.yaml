@@ -1,5 +1,3 @@
-# Dataset 15058815 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058815'
 tier: verified
 title: 조달청_나라장터 공공데이터개방표준서비스
@@ -163,6 +161,7 @@ schema:
     - name: untyCntrctNo
       title: 조달청 나라장터g2b.go.kr)에서 조달청에서 발주하는 중앙조달과 자체조달기관에서 발생되는 자체조달 계약의 통합 관리를 위해 채번되는 번호
       type: string
+      semantic_type: g2b_unty_cntrct_no
       null_rate: 0.0
       sample_values:
         - R26TA0225667201
@@ -302,6 +301,7 @@ schema:
     - name: bidNtceNo
       title: 입찰공고를 관리하기 위한 번호이며 조달청나라장터 공고건의 형식은    년도(4)+월(2)+순번(5)이며 나라장터 외 (자체)전자조달시스템(이하 이 표에서 “기타 전자조달시스템”이라 함) 보유기관은 각 기관별 형식 별
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.658
       sample_values:
         - R26BK01715278
@@ -612,6 +612,16 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - untyCntrctNo
+      reference:
+        key: g2b_unty_cntrct_no
+      evidence: measured
+    - fields:
+        - bidNtceNo
+      reference:
+        key: bid_ntce_no
+      evidence: measured
+    - fields:
         - rprsntCorpBizrno
       reference:
         key: bizno
@@ -620,6 +630,17 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2026-09-29 ~ 2027-01-26
+grain:
+  space: sgg
+  space_fields:
+    - cntrctInsttOfcl
+    - rprsntCorpAdrs
+  space_via: address
+  time: day
+  time_fields:
+    - cntrctCnclsDate
+    - cntrctInfoUrl
+    - opengDate
 cycle: default
 classification:
   subsector_name: 공공조달 (나라장터 전 과정)
@@ -665,7 +686,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15058815-03
     kind: key
-    value: '실측 조인 키: bizno(rprsntCorpBizrno)'
+    value: '실측 조인 키: g2b_unty_cntrct_no(untyCntrctNo), bid_ntce_no(bidNtceNo), bizno(rprsntCorpBizrno)'
     evidence:
       - type: measured
         source: probe/stats/15058815.json

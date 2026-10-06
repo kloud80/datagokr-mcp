@@ -1,0 +1,222 @@
+# Dataset 15126116 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126116'
+tier: verified
+title: 국회 국회사무처_국정감사결과보고서
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126116/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 국정감사 보고서
+  - 국감 결과
+  - 상임위원회 감사보고서
+  - 국정감사 결과
+  - 국회 감사 원문
+  - 열린국회정보 국정감사
+summary_user: 국회 상임위원회별 국정감사 결과보고서를 보고서 한 건 단위로 담으며, 보고 연도(RPT_YR)·위원회명·보고서 제목과 PDF·HWP 원문 내려받기 주소를 제공한다. 국정감사를 추적하는 시민·기자·연구자가 특정 연도에 특정 위원회가 어떤 감사 결과를 보고했는지 찾아 원문을 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 의정활동·의안 데이터와는 위원회명이나 연도로 이름을 맞춰 연결해야 한다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: AUDITREPORTRESULT
+    name: AUDITREPORTRESULT
+    endpoint: https://open.assembly.go.kr/portal/openapi/AUDITREPORTRESULT
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: RPT_YR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2024'
+        - '2017'
+        - '2018'
+      stats:
+        min: 2016
+        p50: 2020
+        max: 2025
+        unique: 10
+    - name: CMIT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 정무위원회
+        - 외교통일위원회
+        - 행정안전위원회
+      stats:
+        unique: 21
+    - name: RPT_TTL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2024년도 국정감사 결과보고서()
+        - 2017년도 국정감사 결과보고서()
+        - 2018년도 국정감사 결과보고서()
+      stats:
+        unique: 10
+    - name: PDF_DWLD_URL
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://likms.assembly.go.kr/inspection/result/2025/pdf/000631589.PDF
+        - https://likms.assembly.go.kr/inspection/result/2025/pdf/000631588.PDF
+        - https://likms.assembly.go.kr/inspection/result/2025/pdf/000631587.PDF
+      stats:
+        unique: 100
+    - name: HWP_DWLD_URL
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://likms.assembly.go.kr/inspection/result/2025/hwp/000631589.HWP
+        - https://likms.assembly.go.kr/inspection/result/2025/hwp/000631588.HWP
+        - https://likms.assembly.go.kr/inspection/result/2025/hwp/000631587.HWP
+      stats:
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7183
+  rank_in_sector: 54
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 열린국회정보 (인증키)
+claims:
+  - id: c-15126116-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126116.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126116-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126116-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126116.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126116-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126116.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126116-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126116-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126116-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126116.json
+  stats: probe/stats/15126116.json
+  data: probe/data/15126116/
+limits: open.assembly.go.kr 전용 인증키(KEY)가 필요하며 포털 활용신청과는 별개다. 보고서 본문 내용은 컬럼에 없고 원문 파일 링크로만 제공되며, 공통 코드 키가 없어 다른 데이터와 정확히 조인하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126116-01
+    - c-15126116-03
+    - c-15126116-04
+  dropped_citations: 0
+status: active

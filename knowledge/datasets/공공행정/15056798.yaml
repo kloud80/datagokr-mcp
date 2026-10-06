@@ -1,4 +1,5 @@
-# Dataset 15056798 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056798 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056798'
 tier: verified
 title: 한국지역정보개발원_경영정보 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 지방공기업 당기순이익
   - 지방공기업 예산
   - 통합경영공시
+summary_user: 지방공기업 통합경영공시에 올라온 지방공기업별 연도별 경영정보를 기관 단위로 담는 전국 범위 집계 데이터로, 자산·부채·자본, 영업이익·경상이익·당기순이익, 사업예산과 자본예산의 수입·지출을 포함한다. 분석가나 지역 주민이 '우리 지역 도시공사의 부채가 최근 몇 년 사이 얼마나 늘었고 당기순이익은 흑자인가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 지방공기업 공시 데이터와는 기관명(ENT_NAME)과 연도(AC_YEAR)를 맞춰 이름 매핑으로만 이어 쓴다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 경영정보 자료에는 기관별, 자산, 부채, 자본, 영업이익, 경상이익, 당기순이익, 사업예산/수입, 사업예산/지출, 자본예산/수입, 자본예산/지출 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -90,6 +92,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 고성군상수도
@@ -227,12 +230,22 @@ schema:
         p50: 13401
         max: 5637254
         unique: 412
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -276,7 +289,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056798-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15056798.json
@@ -330,8 +343,6 @@ verification:
   run: probe/runs/15056798.json
   stats: probe/stats/15056798.json
   data: probe/data/15056798/
-status: active
-summary_user: 지방공기업 통합경영공시에 올라온 지방공기업별 연도별 경영정보를 기관 단위로 담는 전국 범위 집계 데이터로, 자산·부채·자본, 영업이익·경상이익·당기순이익, 사업예산과 자본예산의 수입·지출을 포함한다. 분석가나 지역 주민이 '우리 지역 도시공사의 부채가 최근 몇 년 사이 얼마나 늘었고 당기순이익은 흑자인가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 지방공기업 공시 데이터와는 기관명(ENT_NAME)과 연도(AC_YEAR)를 맞춰 이름 매핑으로만 이어 쓴다.
 limits: 기관 코드 같은 공통 키가 없어 다른 데이터와 붙이려면 기관명 표기를 직접 맞춰야 한다. 행정단위는 전국으로만 구분되고 공간 정보가 없어 지역별 집계나 지도 표시는 기관명으로 지역을 따로 판별해야 한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -343,3 +354,4 @@ review:
     - c-15056798-03
     - c-15056798-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15127660 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15127660'
 tier: verified
 title: 해양수산부_연안정비_준공시설물시설현황정보
@@ -22,6 +21,7 @@ synonyms:
   - 연안 피해 점검
   - 호안 준공 현황
   - 연안관리 시설물
+summary_user: 연안정비사업으로 준공된 시설물을 건별로 담으며, 시설현황(착공·준공일자, 규모, 상태)과 보수·보강 이력, 피해 점검 이력, 시설물 이미지, 일반현황을 5개 오퍼레이션으로 나눠 제공하고, 범위는 전국·개별 시설 단위다. 지자체·연안관리 담당자나 연구자가 '특정 연안정비 시설물이 언제 준공됐고 이후 어떤 보수·보강 공사와 피해 점검을 거쳤는가'를 확인하고 점검 계획을 세우는 데 쓴다. 오퍼레이션끼리는 연안정비사업개요번호(cimpBsnsSmrNo)·시설물번호·사후관리번호로 이어 붙이지만, 다른 데이터셋과 공유하는 전역 조인 키는 없어 외부 데이터와는 시설물명·위치 같은 이름 매핑으로만 연결한다.
 description_portal: 이 데이터는 해양수산부에서 연안정비 관련 준공시설물 정보를 제공하기 위해 수집한 데이터입니다.  본 데이터의 주요 내용은 준공시설물의 시설현황, 보수/보강 이력, 시설물 이미지 정보, 시설물 피해 이력, 시설물 일반현황 조회에 따라 시설물 준공연도, 사업구분, 시설물 위치 등 정보로 구성되어 있습니다.  본 데이터는 연안정비사업의 완료 지점 및 시설물 분포 현황을 확인하거나, 준공 연도별 시설물 관리 및 점검 계획 수립, 지역별 연안정비사업 이력 파악, 법적 고시 현황 확인 등 연안 관리 및 행정 업무, 연구 자료로 활용될 수 있습니다.
 team:
   dept: 해양공간정책과
@@ -212,6 +212,7 @@ schema:
     - name: cimpBsnsSmrNo
       title: 연안정비사업개요번호
       type: number
+      semantic_type: coastal_maint_biz_no
       null_rate: 0.0
       sample_values:
         - '10235'
@@ -327,6 +328,7 @@ schema:
     - name: cimpBsnsSmrNo
       title: 연안정비사업개요번호
       type: number
+      semantic_type: coastal_maint_biz_no
       null_rate: 0.0
       sample_values:
         - '10111'
@@ -479,6 +481,7 @@ schema:
     - name: cimpBsnsSmrNo
       title: 연안정비사업개요번호
       type: number
+      semantic_type: coastal_maint_biz_no
       null_rate: 0.0
       sample_values:
         - '10703'
@@ -636,6 +639,7 @@ schema:
     - name: cimpBsnsSmrNo
       title: 연안정비사업개요번호
       type: number
+      semantic_type: coastal_maint_biz_no
       null_rate: 0.0
       sample_values:
         - '1185'
@@ -749,6 +753,7 @@ schema:
     - name: cimpBsnsSmrNo
       title: 연안정비사업개요번호
       type: number
+      semantic_type: coastal_maint_biz_no
       null_rate: 0.0
       sample_values:
         - '1019'
@@ -953,12 +958,28 @@ schema:
       op: /getMaintenanceCompletionNomalInfo
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - cimpBsnsSmrNo
+      reference:
+        key: coastal_maint_biz_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - cimpCptFctLcAddr
+  space_via: address
+  time: day
+  time_fields:
+    - cimpFctStwYmd
+    - cimpFctCptYmd
+    - cstHmdmHistChkSymd
 cycle: default
 classification:
   subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
@@ -1002,7 +1023,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15127660-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: coastal_maint_biz_no(cimpBsnsSmrNo)'
     evidence:
       - type: measured
         source: probe/stats/15127660.json
@@ -1067,8 +1088,6 @@ verification:
   run: probe/runs/15127660.json
   stats: probe/stats/15127660.json
   data: probe/data/15127660/
-status: active
-summary_user: 연안정비사업으로 준공된 시설물을 건별로 담으며, 시설현황(착공·준공일자, 규모, 상태)과 보수·보강 이력, 피해 점검 이력, 시설물 이미지, 일반현황을 5개 오퍼레이션으로 나눠 제공하고, 범위는 전국·개별 시설 단위다. 지자체·연안관리 담당자나 연구자가 '특정 연안정비 시설물이 언제 준공됐고 이후 어떤 보수·보강 공사와 피해 점검을 거쳤는가'를 확인하고 점검 계획을 세우는 데 쓴다. 오퍼레이션끼리는 연안정비사업개요번호(cimpBsnsSmrNo)·시설물번호·사후관리번호로 이어 붙이지만, 다른 데이터셋과 공유하는 전역 조인 키는 없어 외부 데이터와는 시설물명·위치 같은 이름 매핑으로만 연결한다.
 limits: 외부 데이터와 직접 결합할 전역 조인 키가 없어 행정구역 코드 등으로 바로 묶을 수 없고, 이름·위치 매칭이 필요하다. 포털 활용신청(자동승인) 후 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -1080,3 +1099,4 @@ review:
     - c-15127660-03
     - c-15127660-04
   dropped_citations: 0
+status: active

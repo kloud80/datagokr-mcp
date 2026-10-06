@@ -73,6 +73,7 @@ schema:
         unique: 234
     - name: 사유림산림사업번호
       type: number
+      semantic_type: private_forest_project_no
       null_rate: 0.0
       sample_values:
         - '509018508201900013'
@@ -93,6 +94,7 @@ schema:
         unique: 2
     - name: 필지고유번호(PNU)
       type: number
+      semantic_type: pnu
       null_rate: 0.0
       sample_values:
         - '4683039022200480002'
@@ -144,9 +146,25 @@ schema:
         p50: 8400
         max: 4000000000
         unique: 5095
+  foreign_keys:
+    - fields:
+        - 사유림산림사업번호
+      reference:
+        key: private_forest_project_no
+      evidence: measured
+    - fields:
+        - 필지고유번호(PNU)
+      reference:
+        key: pnu
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: parcel
+  space_fields:
+    - 필지고유번호(PNU)
+  space_via: code
 cycle: default
 classification:
   subsector_name: 산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)
@@ -183,7 +201,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15093779-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: private_forest_project_no(사유림산림사업번호), pnu(필지고유번호(PNU))'
     evidence:
       - type: measured
         source: probe/stats/15093779.json

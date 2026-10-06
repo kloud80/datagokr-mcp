@@ -1,4 +1,5 @@
-# Dataset 15150112 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15150112 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150112'
 tier: verified
 title: 성평등가족부_청소년활동 봉사활동 신청 완료취소 이력 정보
@@ -21,6 +22,7 @@ synonyms:
   - 자원봉사 신청 현황
   - 청소년 자원봉사
   - 봉사시간 이수
+summary_user: 청소년 봉사활동 신청 건별로 완료·취소 등 진행 이력을 담은 원천 기록으로, 이력일련번호·신청번호·프로그램번호와 활동상태, 진행일자, 활동 시작·종료 일시, 참여여부, 교육이수시간, 성별, 담당자 의견을 전국 범위로 제공한다. 청소년활동 담당자나 분석가가 "봉사활동 프로그램별로 신청 후 취소되는 비율과 실제 참여·이수 시간은 어떤가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 같은 기관의 프로그램번호(prgrmNo)나 신청번호로 동일 기관의 봉사활동 프로그램·신청 정보와만 맞춰 이어 쓴다.
 description_portal: 성평등가족부 청소년활동 봉사활동 신청 완료취소 이력 정보는 청소년이 봉사활동 신청 후 완료 또는 취소한 내역을 체계적으로 기록하고 관리하기 위해 제공되는 자료입니다. 참여자 정보, 신청 활동명, 신청 일자, 완료·취소 상태, 관련 승인 내역 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 신청 및 취소 현황 모니터링, 참여자 안내, 정책 분석, 프로그램 운영 관리, 기록 관리, 교육 지도, 프로그램 개선 등 다양한 목적으로 활용할 수 있습니다. 또한 이력 정보는 봉사활동 참여 현황 분석과 프로그램 신뢰성 확보에도 중요한 자료입니다.
 team:
   dept: 정보통계담당관실
@@ -76,6 +78,7 @@ schema:
     - name: prgrmNo
       title: 프로그램번호
       type: number
+      semantic_type: vltr_prgrm_no
       null_rate: 0.0
       sample_values:
         - '9768318'
@@ -102,6 +105,7 @@ schema:
     - name: prgrmMngNo
       title: 프로그램관리번호
       type: string
+      semantic_type: vltr_prgrm_no
       null_rate: 0.0
       sample_values:
         - CPPG020001250811-9768318
@@ -249,6 +253,17 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - prgrmNo
+      reference:
+        key: vltr_prgrm_no
+      evidence: measured
+    - fields:
+        - prgrmMngNo
+      reference:
+        key: vltr_prgrm_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -299,7 +314,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15150112-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vltr_prgrm_no(prgrmNo), vltr_prgrm_no(prgrmMngNo)'
     evidence:
       - type: measured
         source: probe/stats/15150112.json
@@ -353,8 +368,6 @@ verification:
   run: probe/runs/15150112.json
   stats: probe/stats/15150112.json
   data: probe/data/15150112/
-status: active
-summary_user: 청소년 봉사활동 신청 건별로 완료·취소 등 진행 이력을 담은 원천 기록으로, 이력일련번호·신청번호·프로그램번호와 활동상태, 진행일자, 활동 시작·종료 일시, 참여여부, 교육이수시간, 성별, 담당자 의견을 전국 범위로 제공한다. 청소년활동 담당자나 분석가가 "봉사활동 프로그램별로 신청 후 취소되는 비율과 실제 참여·이수 시간은 어떤가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 같은 기관의 프로그램번호(prgrmNo)나 신청번호로 동일 기관의 봉사활동 프로그램·신청 정보와만 맞춰 이어 쓴다.
 limits: 지역 단위 행정코드가 없는 전국·비공간 자료라 시군구·시도별 분석으로 바로 잇기 어렵다. 이벤트 시점에 생성된 뒤 바뀌지 않는 이력이며, 개발계정 호출은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -367,3 +380,4 @@ review:
     - c-15150112-03
     - c-15150112-04
   dropped_citations: 0
+status: active

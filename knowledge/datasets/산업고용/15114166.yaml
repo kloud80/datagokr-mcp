@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 충전소ID
       type: number
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - '137'
@@ -58,6 +59,7 @@ schema:
         unique: 4745
     - name: 충전기ID
       type: number
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - '5'
@@ -88,6 +90,7 @@ schema:
         unique: 4
     - name: 한국환경공단 연계 코드
       type: string
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - KEPS000137
@@ -97,6 +100,7 @@ schema:
         unique: 4780
     - name: 한국전력공사 관리코드
       type: string
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - KEPE000005
@@ -104,6 +108,27 @@ schema:
         - KEPE000598
       stats:
         unique: 11245
+  foreign_keys:
+    - fields:
+        - 충전소ID
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
+        - 충전기ID
+      reference:
+        key: ev_charger_id
+      evidence: measured
+    - fields:
+        - 한국환경공단 연계 코드
+      reference:
+        key: ev_charger_id
+      evidence: measured
+    - fields:
+        - 한국전력공사 관리코드
+      reference:
+        key: ev_charger_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -143,7 +168,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15114166-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fuel_station_id(충전소ID), ev_charger_id(충전기ID), ev_charger_id(한국환경공단 연계 코드), ev_charger_id(한국전력공사 관리코드)'
     evidence:
       - type: measured
         source: probe/stats/15114166.json

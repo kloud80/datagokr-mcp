@@ -1,4 +1,3 @@
-# Dataset 15073910 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073910'
 tier: verified
 title: 식품의약품안전처_의료기기 GMP 대체교부품목
@@ -22,6 +21,7 @@ synonyms:
   - GMP 인증서 재교부
   - 의료기기 제조자 정보
   - 의료기기 품목허가
+summary_user: 대체 재발급된 의료기기 GMP 적합인정서를 품목 단위로 담은 건별 원천 데이터로, 재발급 순번·심사신청 품목허가번호·품목군·분류번호·품목명·모델명·제조의뢰자와 제조자(국가·명칭·주소)를 전국 범위로 담는다. 의료기기 제조·수입업체나 품질 담당자가 "이 품목의 GMP 적합인정서가 대체 재발급됐는지, 실제 제조자는 어느 나라 어느 업체인지"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 다른 데이터와는 품목명·업체명 같은 이름 매핑이나 같은 식약처 데이터의 품목허가번호·분류번호(MDEQ_CLSF_NO)로만 이어 쓴다.
 description_portal: 해당 공공데이터는 대체 재발급된 의료기기 GMP 적합인정서 데이터를 체계적으로 제공하는 목적으로 수집되었습니다.- 이 공공데이터의 세부 항목으로는 재발급 적합인정번호, 심사신청 품목허가번호, 품목군명, 분류번호, 품목명, 모델명, 제조의뢰자(국가·명칭), 제조자(국가·명칭·주소) 등이 포함되어 있습니다. - 이 공공데이터를 통해 사용자는 제조·수입업체는 재발급된 적합인정서의 승인 배경과 유효성 정보를 즉시 확인할 수 있으며, 품질관리 위험 파악, 사실관계 확인 등 다양한 활용이 기대됩니다.
 team:
   dept: 데이터혁신기획팀
@@ -69,6 +69,7 @@ schema:
         unique: 82
     - name: PRDGR_CD
       type: string
+      semantic_type: meddev_prdgr_cd
       null_rate: 0.0
       sample_values:
         - A56
@@ -87,6 +88,7 @@ schema:
         unique: 24
     - name: MDEQ_CLSF_NO
       type: string
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - A83080.01
@@ -96,6 +98,7 @@ schema:
         unique: 302
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.181
       sample_values:
         - '2013005374'
@@ -135,6 +138,7 @@ schema:
         unique: 71
     - name: MANUF_NATN_CD
       type: code
+      semantic_type: country_cd
       null_rate: 0.593
       sample_values:
         - 미국
@@ -169,6 +173,27 @@ schema:
         - 추간체고정재
       stats:
         unique: 355
+  foreign_keys:
+    - fields:
+        - PRDGR_CD
+      reference:
+        key: meddev_prdgr_cd
+      evidence: measured
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MANUF_NATN_CD
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -219,7 +244,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073910-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_prdgr_cd(PRDGR_CD), meddev_clsf_no(MDEQ_CLSF_NO), meddev_item_sn(MDEQ_PRDLST_SN), country_cd(MANUF_NATN_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073910.json
@@ -284,8 +309,6 @@ verification:
   run: probe/runs/15073910.json
   stats: probe/stats/15073910.json
   data: probe/data/15073910/
-status: active
-summary_user: 대체 재발급된 의료기기 GMP 적합인정서를 품목 단위로 담은 건별 원천 데이터로, 재발급 순번·심사신청 품목허가번호·품목군·분류번호·품목명·모델명·제조의뢰자와 제조자(국가·명칭·주소)를 전국 범위로 담는다. 의료기기 제조·수입업체나 품질 담당자가 "이 품목의 GMP 적합인정서가 대체 재발급됐는지, 실제 제조자는 어느 나라 어느 업체인지"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 다른 데이터와는 품목명·업체명 같은 이름 매핑이나 같은 식약처 데이터의 품목허가번호·분류번호(MDEQ_CLSF_NO)로만 이어 쓴다.
 limits: 전역 조인 키가 없어 심평원 급여 목록 등 다른 기관 데이터와 바로 연결하기 어렵고, 이름·코드 매핑에 의존해야 한다. 호출에는 포털 활용신청(자동승인) 후 받은 serviceKey가 필요하며 개발계정은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -297,3 +320,9 @@ review:
     - c-15073910-03
     - c-15073910-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - MNUFTR_ADDR
+  space_via: address

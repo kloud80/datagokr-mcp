@@ -1,4 +1,3 @@
-# Dataset 15151169 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15151169'
 tier: verified
 title: 한국승강기안전공단_(신)승강기사고및고장이력 조회 서비스
@@ -20,6 +19,7 @@ synonyms:
   - 승강기 고유번호 조회
   - 승강기 응급조치
   - 에스컬레이터 고장
+summary_user: 전국 승강기의 사고·고장 이력을 건별로 담고, 승강기마다 고유번호·건물명·주소·시도/시군구, 승강기 형식·종류·정격속도·적재하중·최대정원·제조업체·설치일자와 함께 발생일자와 사고내용 및 응급조치를 제공한다. 건물 관리자나 분석가가 "우리 건물 승강기에 어떤 고장·사고가 언제 있었고 어떻게 조치됐나", "특정 제조업체나 형식의 승강기에서 사고가 잦은가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 승강기 데이터와는 승강기고유번호(elevatorNo)나 건물명·주소·시군구명 같은 이름 매핑, 또는 같은 기관 데이터의 코드로만 연결한다.
 description_portal: 승강기사고및고장이력 서비스로 승강기고유번호, 건물명, 건물주소1, 건물주소2, 시도명, 시군구명, 승강기호기, 승강기구분, 승강기형식, 승강기세부형식, 승강기종류, 설치장소, 운행층수, 정격속도, 적재하중, 최대정원, 제조업체명, 최초설치일자, 설치일자, 발생일자, 사고내용 및 응급조치를 자료생성일자 또는 승강기고유번호로 조회할 수 있습니다.
 team:
   dept: 디지털총괄실
@@ -110,6 +110,7 @@ schema:
     - name: elevatorNo
       title: 승강기고유번호
       type: number
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - '0030504'
@@ -262,12 +263,25 @@ schema:
         - 강서구
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - elevatorNo
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - address1
+    - address2
+    - sigungu
+  space_via: address
 cycle: default
 classification:
   subsector_name: 미분류 (재구성 후 잔여)
@@ -310,7 +324,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151169-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(elevatorNo)'
     evidence:
       - type: measured
         source: probe/stats/15151169.json
@@ -376,8 +390,6 @@ verification:
   run: probe/runs/15151169.json
   stats: probe/stats/15151169.json
   data: probe/data/15151169/
-status: active
-summary_user: 전국 승강기의 사고·고장 이력을 건별로 담고, 승강기마다 고유번호·건물명·주소·시도/시군구, 승강기 형식·종류·정격속도·적재하중·최대정원·제조업체·설치일자와 함께 발생일자와 사고내용 및 응급조치를 제공한다. 건물 관리자나 분석가가 "우리 건물 승강기에 어떤 고장·사고가 언제 있었고 어떻게 조치됐나", "특정 제조업체나 형식의 승강기에서 사고가 잦은가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 승강기 데이터와는 승강기고유번호(elevatorNo)나 건물명·주소·시군구명 같은 이름 매핑, 또는 같은 기관 데이터의 코드로만 연결한다.
 limits: 전역 조인 키가 확인되지 않아 다른 기관 데이터와 붙일 때 주소·건물명 매칭에 의존해야 한다. 조회는 자료생성일자 또는 승강기고유번호 조건으로만 가능하며, serviceKey가 필요하고 개발계정은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -389,3 +401,4 @@ review:
     - c-15151169-03
     - c-15151169-04
   dropped_citations: 0
+status: active

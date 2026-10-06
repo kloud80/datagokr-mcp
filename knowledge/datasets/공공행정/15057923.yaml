@@ -1,4 +1,5 @@
-# Dataset 15057923 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057923 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057923'
 tier: verified
 title: 한국지역정보개발원_상용정규직 평균임금 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 공기업 인건비
   - 1인당 평균임금
   - 지방공공기관 보수
+summary_user: 지방공기업별·연도별로 상용정규직(무기계약직·청원경찰 등) 근로자의 기본급, 수당, 시간외근무수당, 성과급, 급여성복리후생비 등 임금 항목과 직원수·평균근속년수·1인당 평균임금을 집계해 담은 전국 단위 경영공시 자료다. 구직자나 분석가가 "특정 지방공기업의 무기계약직 1인당 평균임금은 얼마이고 다른 기관과 비교해 어느 수준인가"를 확인하는 데 쓴다. 전역 조인 키는 없어 기관명(ENT_NAME)과 연도(AC_YEAR)를 기준으로 같은 통합경영공시의 일반정규직 평균임금·지방공기업 목록 등과 이름 매핑으로 연결한다.
 description_portal: 이 자료는 지방공기업법 제46조에 근거하여 행정안전부가 통합경영공시를 통해 수집·관리하는 경영정보 중 하나로, 지방공기업의 상용정규직 근로자의 평균임금을 집계한 정보입니다. 상용정규직은 무기계약직, 청원경찰 등 일정한 근로계약을 기반으로 근무하는 인력을 포함하며, 일반정규직과 구분하여 공시됩니다. 해당 데이터는 성별, 근속년수, 수당 및 복리후생비를 포함한 세부 임금 항목을 종합하여 산출되며, 지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 매년 정기적으로 공개됩니다. 이러한 정보는 지방공기업 인건비 구조의 투명성을 확보하고, 공공기관 임금 수준의 합리적 비교 및 정책 수립의 기초자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -90,6 +92,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -237,12 +240,22 @@ schema:
         p50: 42211
         max: 75488
         unique: 138
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - S_WYEAR_WMONTH
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -286,7 +299,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057923-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15057923.json
@@ -340,8 +353,6 @@ verification:
   run: probe/runs/15057923.json
   stats: probe/stats/15057923.json
   data: probe/data/15057923/
-status: active
-summary_user: 지방공기업별·연도별로 상용정규직(무기계약직·청원경찰 등) 근로자의 기본급, 수당, 시간외근무수당, 성과급, 급여성복리후생비 등 임금 항목과 직원수·평균근속년수·1인당 평균임금을 집계해 담은 전국 단위 경영공시 자료다. 구직자나 분석가가 "특정 지방공기업의 무기계약직 1인당 평균임금은 얼마이고 다른 기관과 비교해 어느 수준인가"를 확인하는 데 쓴다. 전역 조인 키는 없어 기관명(ENT_NAME)과 연도(AC_YEAR)를 기준으로 같은 통합경영공시의 일반정규직 평균임금·지방공기업 목록 등과 이름 매핑으로 연결한다.
 limits: 기관 코드 같은 전역 조인 키가 없어 다른 데이터와는 기관명 문자열 매칭으로만 붙일 수 있어 표기 차이에 주의해야 한다. 기관 단위 집계라 개인별 임금이나 성별·근속구간별 세부 분포는 이 필드로 확인할 수 없다.
 review:
   summary: draft
@@ -353,3 +364,4 @@ review:
     - c-15057923-04
     - c-15057923-01
   dropped_citations: 0
+status: active

@@ -38,6 +38,7 @@ schema:
   fields:
     - name: 지사코드
       type: number
+      semantic_type: kdhc_branch_cd
       null_rate: 0.0
       sample_values:
         - '310'
@@ -59,6 +60,7 @@ schema:
         unique: 17
     - name: 발전기 코드
       type: string
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - '9'
@@ -68,6 +70,7 @@ schema:
         unique: 92
     - name: 발전소명
       type: string
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 광교복합ST
@@ -152,9 +155,29 @@ schema:
         min: '2014-12-22'
         max: '2023-03-17'
         unique: 17
+  foreign_keys:
+    - fields:
+        - 지사코드
+      reference:
+        key: kdhc_branch_cd
+      evidence: measured
+    - fields:
+        - 발전기 코드
+      reference:
+        key: power_plant_id
+      evidence: measured
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일자
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -191,7 +214,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15124182-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kdhc_branch_cd(지사코드), power_plant_id(발전기 코드), power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15124182.json

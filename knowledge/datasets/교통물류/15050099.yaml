@@ -1,4 +1,5 @@
-# Dataset 15050099 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15050099 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15050099'
 tier: verified
 title: 한국철도공사_동해남부선 운행시간표(휴토하행)
@@ -24,6 +25,7 @@ synonyms:
   - 광역전철 동해선
   - 하행 열차 정차시각
   - 기장 열차 시간
+summary_user: 동해남부선(부전~일광 구간 역 포함)의 휴일·토요일 하행 열차별 시간표로, 열차번호·출발역·종착역과 부전·거제·동래·센텀·송정·기장·일광 등 정차역별 정차 시각을 열차 한 편당 한 행으로 담은 작은 CSV 파일(약 7.9KB)이다. 주말에 부산 도심에서 기장·일광 방향으로 가는 이용자가 특정 역에서 몇 시에 열차가 있는지, 배차 간격이 어떤지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 역 이름 매핑이나 같은 기관(한국철도공사)의 평일·상행 시간표 등과 이름으로만 이어 쓴다.
 description_portal: 이 데이터는 동해남부선의 휴일 및 토요일 하행(남하) 운행시간표로서, 열차별 시발역과 종착역, 그리고 각 정차역별 정차 시각 정보를 상세히 제공합니다. 이를 통해 각 열차의 이동 경로와 모든 정차역의 도착·출발 시간을 명확하게 파악할 수 있습니다.이 자료를 분석하면 휴일·토요일 하행선 시간대별 열차 배차 간격, 특정 구간 및 시간대의 운행 집중도, 혼잡 구간 및 시간, 환승역 연계 일정, 구간별 이동 소요 시간 등 다양한 인사이트를 도출할 수 있습니다. 이를 통해 휴일·토요일의 교통 흐름 특성을 반영한 배차 및 운행 전략, 정차역별 서비스 개선, 운영 효율성 제고, 역별 이용자 편의성 확대, 노선별 운행 인프라 최적화 등에 실질적으로 활용할 수 있습니다.따라서 이 데이터는 열차 운행 전략 및 시간표 개편, 휴일∙토요일 배차 및 혼잡구간 관리, 환승 안내 서비스, 역별 교통 연계성 분석, 수송력 개선 등 다양한 분야에서 주요 참고자료로 활용될 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -51,6 +53,7 @@ schema:
         unique: 1
     - name: 열차번호
       type: code
+      semantic_type: korail_train_no
       null_rate: 0.0
       sample_values:
         - K8501
@@ -184,6 +187,12 @@ schema:
         - 06:53:00
       stats:
         unique: 44
+  foreign_keys:
+    - fields:
+        - 열차번호
+      reference:
+        key: korail_train_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -226,7 +235,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050099-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: korail_train_no(열차번호)'
     evidence:
       - type: measured
         source: probe/stats/15050099.json
@@ -291,8 +300,6 @@ verification:
   run: probe/runs/15050099.json
   stats: probe/stats/15050099.json
   data: probe/data/15050099/
-status: active
-summary_user: 동해남부선(부전~일광 구간 역 포함)의 휴일·토요일 하행 열차별 시간표로, 열차번호·출발역·종착역과 부전·거제·동래·센텀·송정·기장·일광 등 정차역별 정차 시각을 열차 한 편당 한 행으로 담은 작은 CSV 파일(약 7.9KB)이다. 주말에 부산 도심에서 기장·일광 방향으로 가는 이용자가 특정 역에서 몇 시에 열차가 있는지, 배차 간격이 어떤지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 역 이름 매핑이나 같은 기관(한국철도공사)의 평일·상행 시간표 등과 이름으로만 이어 쓴다.
 limits: 역 코드 같은 공통 키가 없어 승하차·혼잡 데이터와 연결하려면 역 이름을 직접 맞춰야 한다. 분석용 원천이라기보다 서비스용 조회 성격의 시간표이며 휴일·토요일 하행만 담아 평일이나 상행 운행은 알 수 없다.
 review:
   summary: draft
@@ -304,3 +311,4 @@ review:
     - c-15050099-03
     - c-15050099-06
   dropped_citations: 0
+status: active

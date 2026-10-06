@@ -1,4 +1,5 @@
-# Dataset 15061195 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061195 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061195'
 tier: verified
 title: 금융위원회_금융통계공통(신탁)정보
@@ -24,6 +25,7 @@ synonyms:
   - 보험사 신탁
   - 금융통계정보시스템
   - 신탁회사 현황
+summary_user: 증권사·보험사·부동산신탁회사의 신탁 관련 통계를 금융회사별·기준년월(basYm)별로 담으며, 인원 현황, 신탁보수금액과 상세내역, 신탁회사 현황 등 6개 오퍼레이션으로 나뉜 전국 단위 비공간 데이터다. 분석가가 특정 업권이나 회사의 신탁업무 인력 규모와 신탁보수 수익 구조가 기간에 따라 어떻게 변했는지 비교하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융회사 기본·재무·지배구조 등 다른 금융회사 원장 데이터와 회사 단위로 이어 쓴다.
 description_portal: '금융통계공통(신탁)정보는 금융업권별 신탁 관련 통계를 제공하는 데이터입니다. 증권사, 보험사, 부동산신탁회사의 인원 현황과 신탁보수금액, 회사 현황 등을 기준년월별로 조회할 수 있습니다.이 데이터는 6개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.1. 증권사 인원 현황 조회 : 증권사별 신탁업무 인원 수 및 변동 현황을 조회합니다.2. 보험사 인원 현황 조회 : 보험사별 신탁업무 인력 구성 및 증감 현황을 제공합니다.3. 부동산신탁회사 인원 현황 조회 : 부동산신탁회사별 인원 수 및 신탁 관련 조직 규모를 조회합니다.4. 신탁보수금액 조회 : 업권별 신탁보수 총액, 항목별 수익 구조 등을 조회합니다.5. 신탁회사 현황 조회 : 각 업권별 신탁회사 수, 분류, 구조 등 일반 현황 정보를 제공합니다.6. 신탁보수 상세내역 조회 : 신탁보수금액의 항목별 세부 구성 및 통계를 조회합니다.'
 team:
   dept: 금융공공데이터팀
@@ -72,6 +74,7 @@ schema:
         unique: 22
     - name: fncoCd
       type: code
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010001'
@@ -346,6 +349,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -395,7 +403,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061195-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061195.json
@@ -460,8 +468,6 @@ verification:
   run: probe/runs/15061195.json
   stats: probe/stats/15061195.json
   data: probe/data/15061195/
-status: active
-summary_user: 증권사·보험사·부동산신탁회사의 신탁 관련 통계를 금융회사별·기준년월(basYm)별로 담으며, 인원 현황, 신탁보수금액과 상세내역, 신탁회사 현황 등 6개 오퍼레이션으로 나뉜 전국 단위 비공간 데이터다. 분석가가 특정 업권이나 회사의 신탁업무 인력 규모와 신탁보수 수익 구조가 기간에 따라 어떻게 변했는지 비교하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융회사 기본·재무·지배구조 등 다른 금융회사 원장 데이터와 회사 단위로 이어 쓴다.
 limits: 6개 오퍼레이션 중 실호출로 확인된 것은 1개뿐이어서 나머지 오퍼레이션의 응답은 따로 확인해야 한다. 호출에는 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다. 금융회사 단위 업권 통계이므로 개별 신탁상품이나 위탁자 단위 정보는 담지 않는다.
 review:
   summary: draft
@@ -474,3 +480,4 @@ review:
     - c-15061195-04
     - c-15061195-06
   dropped_citations: 0
+status: active

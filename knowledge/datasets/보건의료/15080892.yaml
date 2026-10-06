@@ -1,4 +1,5 @@
-# Dataset 15080892 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15080892 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080892'
 tier: verified
 title: 한국보훈복지의료공단_중앙보훈병원 욕창진료센터 환자 진단정보
@@ -22,6 +23,7 @@ synonyms:
   - 욕창 치료 기간
   - 보훈대상자 진료
   - 상처 치료 센터
+summary_user: 중앙보훈병원 욕창진료센터 환자의 진료 건별 진단 정보를 담는 API로, 환자번호(PT_NO) 단위로 진료 시작일·종료일, 종료사유, 진단 코드와 진단명, 입원·처방 관련 일자를 제공합니다. 병원 운영 분석가나 연구자가 보훈병원 욕창 환자는 어떤 진단으로 얼마 동안 치료받고 어떤 사유로 치료를 마치는지를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 진단 코드(DISS_CD)·진단명 같은 이름·코드 매핑이나 같은 기관의 다른 보훈병원 데이터와만 이어 쓴다.
 description_portal: '보훈병원 환자의 진료시작일,종료일,종료사유,진단명,치료부위명,치료단계.소요시간 등에 대한 데이터보훈병원: 보훈병원은 1981년 보훈공단 설립 이후 250병상 규모의 원호병원에서 출발하여 정부의 보훈대상자 의료지원 범위 확대 및 고령화에 따른 복합·만성질환으로 의료수요가 증가함에 따라 의료시설을 단계적으로 확충하였으며 자세한 소재지는 아래와 같음1. 중앙보훈병원(강동구 진황도로 61길 53)2. 부산보훈병원(사상구 백양대로 420)3. 광주보훈병원(광산구 첨단월봉로 99)4. 대구보훈병원(달서구 월곡로 60)5. 대전보훈병원(대덕구 대청로 82번길 147)6. 인천보훈병원(미추홀구 인주대로 138)'
 team:
   dept: 정보지원부
@@ -67,6 +69,7 @@ schema:
         unique: 100
     - name: DISS_CD
       type: number
+      semantic_type: drug_cd
       null_rate: 0.83
       sample_values:
         - '88152'
@@ -156,6 +159,7 @@ schema:
         unique: 91
     - name: PT_NO
       type: string
+      semantic_type: bohun_patient_no
       null_rate: 0.0
       sample_values:
         - AByJkHIu
@@ -174,12 +178,29 @@ schema:
         min: '2008-05-26'
         max: '2025-04-29'
         unique: 89
+  foreign_keys:
+    - fields:
+        - DISS_CD
+      reference:
+        key: drug_cd
+      evidence: measured
+    - fields:
+        - PT_NO
+      reference:
+        key: bohun_patient_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - DCUR_ORD_DATE
+    - END_DATE
+    - FR_DATE
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -223,7 +244,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080892-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(DISS_CD), bohun_patient_no(PT_NO)'
     evidence:
       - type: measured
         source: probe/stats/15080892.json
@@ -288,8 +309,6 @@ verification:
   run: probe/runs/15080892.json
   stats: probe/stats/15080892.json
   data: probe/data/15080892/
-status: active
-summary_user: 중앙보훈병원 욕창진료센터 환자의 진료 건별 진단 정보를 담는 API로, 환자번호(PT_NO) 단위로 진료 시작일·종료일, 종료사유, 진단 코드와 진단명, 입원·처방 관련 일자를 제공합니다. 병원 운영 분석가나 연구자가 보훈병원 욕창 환자는 어떤 진단으로 얼마 동안 치료받고 어떤 사유로 치료를 마치는지를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 진단 코드(DISS_CD)·진단명 같은 이름·코드 매핑이나 같은 기관의 다른 보훈병원 데이터와만 이어 쓴다.
 limits: 다른 기관 데이터와 직접 맞물리는 공통 키가 없어 이름·코드 매핑에 의존해야 합니다. 필드 명세에 의미 설명이 비어 있어 일자·코드 필드의 정확한 뜻은 실제 응답값을 보고 해석해야 합니다. 범위는 전국·비공간으로 분류되어 있지만 담긴 내용은 중앙보훈병원 한 곳의 욕창진료센터 환자에 한정됩니다.
 review:
   summary: draft
@@ -301,3 +320,4 @@ review:
     - c-15080892-03
     - c-15080892-04
   dropped_citations: 0
+status: active

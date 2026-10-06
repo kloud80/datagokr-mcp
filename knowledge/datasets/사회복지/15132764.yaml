@@ -1,4 +1,5 @@
-# Dataset 15132764 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132764 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132764'
 tier: verified
 title: 성평등가족부_청소년 자기도전포상제 입회정보 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 청소년 활동 입회
   - 청소년 수련시설 운영기관
   - 온라인 오프라인 참여
+summary_user: 청소년 자기도전포상제 입회 건별 정보를 담으며, 포상단계·입회상태·입회구분·입회신청상태 코드와 입회등록일자, 온·오프라인 구분, 운영기관과 광역시도 중앙시설명을 함께 제공한다. 청소년 정책 담당자나 분석가가 어느 운영기관·시도 중앙시설에서 어떤 포상단계로 몇 명이 입회했는지, 온라인과 오프라인 참여 비중이 어떻게 다른지 살피는 데 쓴다. 전역 조인 키는 없어서 운영기관명·광역시도중앙시설기관명 같은 이름이나 같은 기관의 일련번호(운영기관일련번호 등)로만 청소년 시설·활동 데이터와 맞춰 이어 쓴다.
 description_portal: 청소년 자기도전 포상제 입회 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 온/오프라인 구분명, 포상단계코드, 광역시도중앙시설 기관명, 운영기관명, 입회구분코드 등의 내용을 확인할 수 있습니다.다양한 기준으로 참여자 분류가 가능하여 정책 수립 시 정밀한 타깃 설정이 가능하고 온·오프라인 구분에 따라 프로그램 운영 방식의 개선점을 모색할 수 있습니다. 기관별 입회자 추이를 통해 수요 예측이나 기관 간 균형 발전을 위한 참고자료가 될 수 있습니다. 지역 기반 통계 분석을 통해 자기도전포상제의 확산 전략 수립에도 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -77,6 +79,7 @@ schema:
     - name: mctpvCntrlFcltSn
       title: 광역시도중앙시설일련번호
       type: number
+      semantic_type: award_mctpv_fclt_sn
       null_rate: 0.0
       sample_values:
         - '5842'
@@ -209,12 +212,28 @@ schema:
         p50: 488002
         max: 488002
         unique: 2
+  foreign_keys:
+    - fields:
+        - mctpvCntrlFcltSn
+      reference:
+        key: award_mctpv_fclt_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - mctpvCntrlFcltSn
+    - mctpvCntrlFcltInstNm
+  space_via: name
+  time: day
+  time_fields:
+    - regDt
+    - mdfcnDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -259,7 +278,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132764-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_mctpv_fclt_sn(mctpvCntrlFcltSn)'
     evidence:
       - type: measured
         source: probe/stats/15132764.json
@@ -313,8 +332,6 @@ verification:
   run: probe/runs/15132764.json
   stats: probe/stats/15132764.json
   data: probe/data/15132764/
-status: active
-summary_user: 청소년 자기도전포상제 입회 건별 정보를 담으며, 포상단계·입회상태·입회구분·입회신청상태 코드와 입회등록일자, 온·오프라인 구분, 운영기관과 광역시도 중앙시설명을 함께 제공한다. 청소년 정책 담당자나 분석가가 어느 운영기관·시도 중앙시설에서 어떤 포상단계로 몇 명이 입회했는지, 온라인과 오프라인 참여 비중이 어떻게 다른지 살피는 데 쓴다. 전역 조인 키는 없어서 운영기관명·광역시도중앙시설기관명 같은 이름이나 같은 기관의 일련번호(운영기관일련번호 등)로만 청소년 시설·활동 데이터와 맞춰 이어 쓴다.
 limits: 다른 데이터와 공통으로 쓰는 코드 키가 없어 기관명 매핑에 의존해야 하고, 지역 정보가 기관명 수준에 그쳐 공간 분석에는 맞지 않는다. 데이터는 이벤트 단위로 생성된 뒤 바뀌지 않는 성격이므로 수시 갱신을 전제로 해석하지 않는다. 호출은 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -327,3 +344,4 @@ review:
     - c-15132764-03
     - c-15132764-04
   dropped_citations: 0
+status: active

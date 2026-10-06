@@ -1,0 +1,187 @@
+# Dataset 15139445 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139445'
+tier: verified
+title: 기상청_고층기상관측 지점정보 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139445/openapi.do
+synonyms:
+  - 고층기상관측
+  - 레윈존데
+  - 연직바람관측
+  - 존데
+  - 라디오존데
+  - 레윈존데 지점
+  - 라디오존데 관측소
+  - 연직바람관측장비
+  - 상층 관측지점
+  - 고층관측소 위치
+  - 기상청 API허브 지점정보
+  - 윈드프로파일러
+description_portal: 고층기상관측 지점에 대한 지점번호, 관측 시작일과 종료일, 위 · 경도 등 이력정보와 주변 환경 등에 대한 정보를 조회할 수 있습니다.고층관측에는 레윈존데(Lewinsonde), 연직바람관측장비 등 상층 고도별 기온, 습도, 풍향, 풍속 등을 측정하는 장비가 포함됩니다.고층관측 지점정보 API를 통해 얻을 수 있는 정보에는 다음이 포함됩니다지점번호(각 지점을 식별하는 고유 ID), 지점명(지점의 명칭), 위도, 경도, 해발고도(지점의 해발 높이 (m)), 관측 시작·종료일(해당 지점에서 고층관측이 시작된 날짜 및 종료되었거나 현재 운영 중인 경우 종료일 정보가 없을 수 있음 )
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: stn_inf.php
+    name: stn_inf.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/stn_inf.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: inf
+        required: true
+        example: UPP
+      - name: stn
+        required: true
+      - name: tm
+        required: true
+        example: '202211300900'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 47001  128.85535000   37.80456000 11           78.90 105 북강릉(비)           Bukgan
+        - '47058    0.00000000    0.00000000 11            0.00   0 북한(시험중)         ----   '
+        - 47102  124.71241000   37.97396000 10           36.00 102 백령도               Baeng
+      stats:
+        unique: 23
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6891
+  rank_in_sector: 111
+  brm: 환경기상 - 대기
+  why: 고층관측 지점 좌표 목록
+claims:
+  - id: c-15139445-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139445.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139445-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139445-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139445.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139445-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139445.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139445-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139445-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139445-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139445.json
+  stats: probe/stats/15139445.json
+  data: probe/data/15139445/
+status: active
+summary_user: 기상청 고층기상관측(레윈존데·연직바람관측장비 등) 지점별로 지점번호, 지점명, 위도·경도, 해발고도, 관측 시작·종료일 같은 이력과 주변 환경 정보를 담는 전국 범위의 지점 메타데이터이다. 분석가가 특정 지역 상공의 고도별 기온·바람 자료를 쓰기 전에 "그 시기에 어느 고층관측 지점이 어디서 운영됐는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 고층기상 관측자료와는 지점번호·지점명 매핑이나 같은 기상청 코드로 연결한다.
+limits: 이 서비스는 지점 정보만 담고 고도별 기온·습도·바람 같은 관측값 자체는 담지 않는다. 호출하려면 포털 활용신청과 별개로 apihub.kma.go.kr 인증키(KEY)를 따로 받아야 한다. 운영 중인 지점은 종료일이 비어 있을 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139445-01
+    - c-15139445-03
+    - c-15139445-04
+    - c-15139445-06
+  dropped_citations: 0

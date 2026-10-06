@@ -76,6 +76,7 @@ schema:
     - name: cmpn119scNm
       title: 센터명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 현장대응단
@@ -97,6 +98,7 @@ schema:
     - name: bildSn
       title: 건축물일련번호
       type: number
+      semantic_type: fire_obj_bild_sn
       null_rate: 0.0
       sample_values:
         - '11000000105228'
@@ -344,9 +346,19 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - cmpn119scNm
+      reference:
+        key: fire_center
+      evidence: measured
+    - fields:
         - bassAdres
       reference:
         key: address
+      evidence: measured
+    - fields:
+        - bildSn
+      reference:
+        key: fire_obj_bild_sn
       evidence: measured
     - fields:
         - yCrdntVal
@@ -362,6 +374,12 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2002-01-01 ~ 2025-09-08
+grain:
+  space: point
+  space_fields:
+    - yCrdntVal
+    - xCrdntVal
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -406,7 +424,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15155780-03
     kind: key
-    value: '실측 조인 키: address(bassAdres), coord(yCrdntVal), coord(xCrdntVal)'
+    value: '실측 조인 키: fire_center(cmpn119scNm), address(bassAdres), fire_obj_bild_sn(bildSn), coord(yCrdntVal), coord(xCrdntVal)'
     evidence:
       - type: measured
         source: probe/stats/15155780.json

@@ -1,4 +1,5 @@
-# Dataset 15064250 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064250 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064250'
 tier: verified
 title: 한국도로공사_휴게소 반려동물 편의시설(놀이터) 현황
@@ -24,6 +25,7 @@ synonyms:
   - 반려동물 동반 휴게소
   - 도그런 휴게소
   - 애견 동반 고속도로
+summary_user: 한국도로공사가 운영하는 고속도로 휴게소에 설치된 반려동물 놀이터를 휴게소별로 한 행씩 담은 현황 파일로, 휴게소명·시설 종류·위치·운영시간·휴장일·설치연도를 수록하며 범위는 전국이다. 반려동물과 고속도로를 이용하는 운전자가 경유할 휴게소에 놀이터가 있는지, 몇 시까지 여는지, 쉬는 날은 언제인지를 미리 확인하는 데 쓴다. 전역 조인 키가 없어 다른 휴게소 데이터(주유소·편의시설 등)와는 휴게소명 문자열을 맞춰 연결해야 한다.
 description_portal: 본 데이터는 한국도로공사가 운영 중인 고속도로 휴게소에 설치된 반려동물 편의시설 중 놀이터에 대한 현황을 수록한 자료이다. 수록 항목은 휴게소명, 편의시설 위치, 운영시간, 휴장일, 설치년도이며, 반려동물 동반 고객의 편의 증진을 위한 기초 정보를 제공한다. 해당 데이터는 이용자가 목적지 인근 또는 경유지 휴게소의 반려동물 놀이터 유무 및 운영 정보를 사전에 확인할 수 있도록 구성되었으며, 고속도로 이용 환경의 질적 향상을 위한 정책 수립 및 민간 활용에도 기여할 수 있다. 본 자료는 국민의 수요 기반 공공서비스 강화를 위해 정기적으로 점검 및 갱신되며, 반려동물 친화적인 도로환경 조성을 위한 기반자료로 활용이 가능하다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 휴게소명
       type: code
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 남한강
@@ -89,12 +92,22 @@ schema:
         p50: 2019
         max: 2025
         unique: 8
+  foreign_keys:
+    - fields:
+        - 휴게소명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 설치연도
 cycle: default
 classification:
   subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
@@ -131,7 +144,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064250-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(휴게소명)'
     evidence:
       - type: measured
         source: probe/stats/15064250.json
@@ -185,8 +198,6 @@ verification:
   run: probe/runs/15064250.json
   stats: probe/stats/15064250.json
   data: probe/data/15064250/
-status: active
-summary_user: 한국도로공사가 운영하는 고속도로 휴게소에 설치된 반려동물 놀이터를 휴게소별로 한 행씩 담은 현황 파일로, 휴게소명·시설 종류·위치·운영시간·휴장일·설치연도를 수록하며 범위는 전국이다. 반려동물과 고속도로를 이용하는 운전자가 경유할 휴게소에 놀이터가 있는지, 몇 시까지 여는지, 쉬는 날은 언제인지를 미리 확인하는 데 쓴다. 전역 조인 키가 없어 다른 휴게소 데이터(주유소·편의시설 등)와는 휴게소명 문자열을 맞춰 연결해야 한다.
 limits: 휴게소 코드나 좌표 같은 공통 키가 없어 다른 데이터와 이으려면 휴게소명 표기를 직접 맞춰야 한다. 위치는 휴게소 내 설치 장소 설명일 뿐 지도 좌표가 아니어서 공간 분석에는 바로 쓸 수 없다.
 review:
   summary: draft
@@ -198,3 +209,4 @@ review:
     - c-15064250-03
     - c-15064250-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15057387 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057387 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057387'
 tier: verified
 title: 예금보험공사_영업정지저축은행 자산건전성 보고서 조회 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 보험사고 저축은행
   - 부보금융회사 종합정보
   - 저축은행 부실채권
+summary_user: 영업정지 처분을 받은 저축은행의 보험사고 발생 이전 자산건전성 보고서를 기준연월(baseYm)·금융회사·항목 단위로 담는 API이며, 항목별 건수와 금액이 함께 제공되고 범위는 전국이다. 학계·연구기관이나 금융당국 분석가가 '과거 영업정지된 저축은행들은 사고 전 부실 관련 자산이 어떤 규모로 쌓였는가'를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 예금보험공사의 영업정지 저축은행 재무상태표·손익계산서 등 다른 보고서와는 금융회사명(fnccmpNm)과 기준연월로 맞춰 이어 쓴다.
 description_portal: (부보금융회사 종합정보) - 영업정지 처분을 부과받은 저축은행에 대해 보험사고가 발생하기 이전 작성되었던 재무상태표, 손이계산서 및 수신과 여수신, 수익성과 유동성, 자본적정성과 자산건전성 등의 재무제표 관련 정보 활용 요청 증가에 따라 예금보험공사는 동 정보를 제공하고 있습니다. - 개방데이터는 영업정지 저축은행에 대한 보험사고 발생 이전까지의 BS/PL 및 여수신, 수익성, 유동성, 자본적정성, 자산건전성 관련 주요 재무보고서입니다. - 학계·연구기관은 현 저축은행을 비롯한 다양한 금융업권에서 과거 영업정지 처분을 받은 저축은행들의 재무제표를 활용하여 연구 등에 활용하고, 관계기관은 동 정보를 공유받아 금융계약자들의 보호를 비롯한 금융시장 안정에 기여할 수 있습니다.
 team:
   dept: 저축은행리스크관리부
@@ -77,6 +79,7 @@ schema:
         unique: 28
     - name: colnCd
       type: code
+      semantic_type: kdic_coln_cd
       null_rate: 0.0
       sample_values:
         - A
@@ -189,6 +192,12 @@ schema:
         p50: 0
         max: 27915
         unique: 85
+  foreign_keys:
+    - fields:
+        - colnCd
+      reference:
+        key: kdic_coln_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -239,7 +248,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057387-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kdic_coln_cd(colnCd)'
     evidence:
       - type: measured
         source: probe/stats/15057387.json
@@ -304,8 +313,6 @@ verification:
   run: probe/runs/15057387.json
   stats: probe/stats/15057387.json
   data: probe/data/15057387/
-status: active
-summary_user: 영업정지 처분을 받은 저축은행의 보험사고 발생 이전 자산건전성 보고서를 기준연월(baseYm)·금융회사·항목 단위로 담는 API이며, 항목별 건수와 금액이 함께 제공되고 범위는 전국이다. 학계·연구기관이나 금융당국 분석가가 '과거 영업정지된 저축은행들은 사고 전 부실 관련 자산이 어떤 규모로 쌓였는가'를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 예금보험공사의 영업정지 저축은행 재무상태표·손익계산서 등 다른 보고서와는 금융회사명(fnccmpNm)과 기준연월로 맞춰 이어 쓴다.
 limits: 다른 데이터와 공통 코드로 바로 결합할 전역 키가 없어 금융회사명 매핑에 의존해야 한다. 공간 정보가 없는 전국 단위 데이터라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -318,3 +325,4 @@ review:
     - c-15057387-04
     - c-15057387-06
   dropped_citations: 0
+status: active

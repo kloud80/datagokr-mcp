@@ -1,4 +1,3 @@
-# Dataset 3074447 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '3074447'
 tier: verified
 title: 산업통상부_광물자원 보고서 목록
@@ -23,6 +22,7 @@ synonyms:
   - 광업지적
   - 광종별 광산 목록
   - 광물탐사 자료
+summary_user: 광물자원 조사 보고서(굴진효과조사·기본조사·기술조사·물리탐사·시추결과·정밀조사 6종)의 목록을 보고서 한 건당 한 행으로 담은 전국 범위 파일(CSV 약 1MB)로, 보고서 종류·작성연도·광산명·광종·소재지·광업지적·보고서번호를 담는다. 광산 개발을 검토하는 사업자나 연구자가 특정 지역이나 광종에 대해 어떤 조사가 언제 이뤄졌고 원 보고서 번호가 무엇인지 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 광업권·토석채취허가 등 다른 데이터와는 광업지적·광산명·소재지 같은 이름·주소 매칭으로만 이어 쓴다.
 description_portal: 산업통상자원부에서는 광물 자원의 효율적 개발과 체계적 관리를 위해 다양한 조사 보고서를 목록 형태로 제공하고 있습니다. 이에는 굴진효과조사, 기본조사, 기술조사, 물리탐사, 시추결과, 정밀조사 등 여섯 가지 유형이 포함되며, 각 보고서에는 광종, 광산명, 소재지, 광업지적, 보고서번호, 작성연도 등의 주요 정보가 담겨 있습니다. 이러한 자료는 광산 개발의 기초 데이터를 확보하고 국가 정책 수립, 산업 전략 마련, 학술 연구 등에 폭넓게 활용될 수 있도록 구성되어 있습니다.* 총 6종류의 보고서의 목록을(광종, 광산명, 소재지, 광업지적, 보고서번호, 작성연도 등) 제공
 accrual_periodicity: 연간
 team:
@@ -93,6 +93,7 @@ schema:
         unique: 3039
     - name: 광업지적
       type: string
+      semantic_type: mining_cadastre_no
       null_rate: 0.3489
       sample_values:
         - 호명_063
@@ -109,12 +110,26 @@ schema:
         - 12정-001
       stats:
         unique: 6570
+  foreign_keys:
+    - fields:
+        - 광업지적
+      reference:
+        key: mining_cadastre_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: year
+  time_fields:
+    - 작성연도
 cycle: default
 classification:
   subsector_name: 광업·토석채취 (광업권·토석채취허가·채석단지·골재·폐광산)
@@ -151,7 +166,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3074447-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: mining_cadastre_no(광업지적)'
     evidence:
       - type: measured
         source: probe/stats/3074447.json
@@ -216,8 +231,6 @@ verification:
   run: probe/runs/3074447.json
   stats: probe/stats/3074447.json
   data: probe/data/3074447/
-status: active
-summary_user: 광물자원 조사 보고서(굴진효과조사·기본조사·기술조사·물리탐사·시추결과·정밀조사 6종)의 목록을 보고서 한 건당 한 행으로 담은 전국 범위 파일(CSV 약 1MB)로, 보고서 종류·작성연도·광산명·광종·소재지·광업지적·보고서번호를 담는다. 광산 개발을 검토하는 사업자나 연구자가 특정 지역이나 광종에 대해 어떤 조사가 언제 이뤄졌고 원 보고서 번호가 무엇인지 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 광업권·토석채취허가 등 다른 데이터와는 광업지적·광산명·소재지 같은 이름·주소 매칭으로만 이어 쓴다.
 limits: 보고서 본문이나 조사 결과 수치는 없고 목록 정보만 담는다. 공통 코드 키가 없어 다른 광업 원장과의 연결은 광산명·소재지·광업지적 문자열 매칭에 의존하므로 표기 차이를 정리해야 한다.
 review:
   summary: draft
@@ -229,3 +242,4 @@ review:
     - c-3074447-03
     - c-3074447-04
   dropped_citations: 0
+status: active

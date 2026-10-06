@@ -1,0 +1,206 @@
+# Dataset 15122298 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15122298'
+tier: verified
+title: 국민건강보험공단_진료이력질병군분류기준
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15122298/fileData.do
+synonyms:
+  - 건강보험
+  - 진료이력
+  - 질병군
+  - 진료지원플랫폼
+  - 요양기관
+  - 질병군 분류
+  - 상병코드 기준
+  - KCD 상병코드
+  - 진료이력 분류
+  - 요양기관정보마당
+  - 질병분류 코드표
+summary_user: 국민건강보험공단이 요양기관정보마당 '진료지원플랫폼'에서 진료이력 질병군 분류에 쓰는 기준표로, 분류에 포함되는 KCD 상병코드를 한 행씩 담고 코드 길이와 시스템 등록·변경일시를 함께 싣는다. 요양기관이나 분석가가 환자 진료이력의 상병코드를 질병군으로 묶을 때, 특정 상병코드가 이 분류 기준에 들어가는지와 언제 등록·변경됐는지를 확인하는 데 쓴다. 상병코드(drug_cd)를 키로 KCD 상병 마스터나 상병코드가 들어 있는 진료·처방 통계와 이어 쓴다.
+description_portal: '본 데이터는 국민건강보험공단이 요양기관정보마당 내 ‘진료지원플랫폼’ 서비스를 통해 요양기관에 진료이력 정보를 지원하기 위해 구축한 질병군 분류 기준 자료입니다.□ 데이터 개요o 목적: 요양기관이 환자의 진료이력을 분석하거나 질병군 기반의 진료 지원 서비스를 활용할 수 있도록 하기 위한 기준 데이터o 내용: 진료이력 상병코드에 대한 질병군 분류 기준 및 해당 상병의 시스템 등록·변경일 등 관리 정보- 상병코드: 해당 질병군 분류 기준에 포함되는 KCD 상병 코드- 길이: 상병코드의 문자열 길이- 시스템등록일시- 시스템변경일시'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_진료이력질병군분류기준_20230831.csv
+    url: https://www.data.go.kr/data/15122298/fileData.do
+    format: csv
+    size: 110955
+schema:
+  fields:
+    - name: 상병코드
+      type: string
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - I501
+        - B150
+        - B159
+      stats:
+        unique: 2398
+    - name: 길이
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '5'
+        - '3'
+      stats:
+        min: 3
+        p50: 4
+        max: 10
+        unique: 5
+    - name: 시스템등록일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2022-09-29 15:29
+        - 2022-11-24 19:21
+      stats:
+        min: '2022-09-29'
+        max: '2022-11-24'
+        unique: 2
+    - name: 시스템변경일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2022-09-29 15:29
+        - 2022-11-24 19:21
+      stats:
+        min: '2022-09-29'
+        max: '2022-11-24'
+        unique: 2
+  foreign_keys:
+    - fields:
+        - 상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 시스템등록일시
+    - 시스템변경일시
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3467
+  rank_in_sector: 334
+  brm: 보건의료 - 건강보험
+  why: 기관 분석 핵심 원장 — 국민건강보험공단
+claims:
+  - id: c-15122298-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 110955 bytes) — 활용신청 없이 받음. 2026-10-06 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15122298.json
+        observed_at: '2026-10-06'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15122298-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15122298-03
+    kind: key
+    value: '실측 조인 키: drug_cd(상병코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15122298.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15122298-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15122298.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15122298-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15122298-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15122298-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-06'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15122298.json
+  stats: probe/stats/15122298.json
+  data: probe/data/15122298/
+limits: 전국 단위의 비공간 코드 기준표라 지역별·기관별 진료 실적이나 환자 수는 담지 않는다. 조인 키가 drug_cd라는 이름으로 잡혀 있지만 실제 내용은 약품코드가 아니라 KCD 상병코드이므로, 약품코드와 잘못 연결하지 않도록 주의한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15122298-01
+    - c-15122298-03
+    - c-15122298-04
+    - c-15122298-06
+  dropped_citations: 0
+status: active

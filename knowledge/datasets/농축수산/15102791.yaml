@@ -50,6 +50,7 @@ schema:
         unique: 31
     - name: 산지조합코드
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '328'
@@ -71,6 +72,7 @@ schema:
         unique: 70
     - name: 위판장코드
       type: number
+      semantic_type: fish_auction_mkt_cd
       null_rate: 0.0
       sample_values:
         - '328003'
@@ -92,6 +94,7 @@ schema:
         unique: 94
     - name: 수산물표준코드
       type: number
+      semantic_type: fish_species_cd
       null_rate: 0.0
       sample_values:
         - '615001'
@@ -228,10 +231,31 @@ schema:
         min: '2026-08-31'
         max: '2026-08-31'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 산지조합코드
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
+    - fields:
+        - 위판장코드
+      reference:
+        key: fish_auction_mkt_cd
+      evidence: measured
+    - fields:
+        - 수산물표준코드
+      reference:
+        key: fish_species_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-08-01 ~ 2026-08-31
+grain:
+  time: day
+  time_fields:
+    - 위판일자
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
@@ -272,7 +296,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15102791-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(산지조합코드), fish_auction_mkt_cd(위판장코드), fish_species_cd(수산물표준코드)'
     evidence:
       - type: measured
         source: probe/stats/15102791.json

@@ -1,4 +1,5 @@
-# Dataset 15062535 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15062535 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062535'
 tier: verified
 title: 경상남도_문화재 현황
@@ -19,6 +20,7 @@ synonyms:
   - 국가유산 목록
   - 지정문화재 현황
   - 경남 유적
+summary_user: 경상남도 내 문화재를 한 건씩 담은 목록으로, 문화재명(heritageNm)·지정번호·소재 시군구·등록일자 등을 시군구 단위로 조회하는 API이다. 경남의 특정 시군에 어떤 지정 문화재가 있고 언제 지정·등록됐는지 확인하려는 지역 주민·여행자·분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 시군구명·문화재명 같은 이름 매핑으로만 잇고, 국가유산청 API의 종목코드·지정번호 체계와 직접 맞물리지는 않는다.
 description_portal: 경상남도 문화재의 명칭, 보유자, 성별, 내역 등을 조회하는 경상남도 문화재 현황 조회 서비스
 team:
   dept: 역사문화유산과
@@ -96,6 +98,14 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - signguNm
+  space_via: name
+  time: day
+  time_fields:
+    - registDate
 cycle: default
 classification:
   subsector_name: 유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)
@@ -204,8 +214,6 @@ verification:
   run: probe/runs/15062535.json
   stats: probe/stats/15062535.json
   data: probe/data/15062535/
-status: active
-summary_user: 경상남도 내 문화재를 한 건씩 담은 목록으로, 문화재명(heritageNm)·지정번호·소재 시군구·등록일자 등을 시군구 단위로 조회하는 API이다. 경남의 특정 시군에 어떤 지정 문화재가 있고 언제 지정·등록됐는지 확인하려는 지역 주민·여행자·분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 시군구명·문화재명 같은 이름 매핑으로만 잇고, 국가유산청 API의 종목코드·지정번호 체계와 직접 맞물리지는 않는다.
 limits: 국가유산청 API의 종목코드·지정번호·시도코드나 소재지 필지번호(PNU) 같은 공통 키가 없어, 다른 유산 데이터와 정확히 매칭하려면 이름 대조가 필요하다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -218,3 +226,4 @@ review:
     - c-15062535-04
     - c-15062535-06
   dropped_citations: 0
+status: active

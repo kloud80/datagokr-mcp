@@ -364,6 +364,7 @@ schema:
     - name: fid
       title: 각 스케줄에 따른 편명 별 유니크 코드값(랜덤생성)
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '0000000000000012817744'
@@ -378,6 +379,7 @@ schema:
     - name: flightid
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - ZE781A
@@ -408,6 +410,7 @@ schema:
     - name: masterflightid
       title: 코드쉐어 마스터 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.594
       sample_values:
         - KE1402
@@ -456,6 +459,7 @@ schema:
     - name: arrvAirportCode
       title: 도착공항코드(IATA)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -467,6 +471,7 @@ schema:
     - name: depAirportCode
       title: 출발공항코드(IATA)
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -492,6 +497,7 @@ schema:
     - name: fid
       title: 각 스케줄에 따른 편명 별 유니크 코드값(랜덤생성)
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '0000000000000013162174'
@@ -582,6 +588,7 @@ schema:
     - name: masterflightid
       title: 코드쉐어 마스터 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.687
       sample_values:
         - SQ616
@@ -593,6 +600,7 @@ schema:
     - name: flightid
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - LJ1432
@@ -636,6 +644,7 @@ schema:
     - name: depAirportCode
       title: 출발공항코드(IATA)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -699,6 +708,7 @@ schema:
     - name: fid
       title: 각 스케줄에 따른 편명 별 유니크 코드값(랜덤생성)
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '0000000000000013147809'
@@ -792,6 +802,7 @@ schema:
     - name: masterflightid
       title: 코드쉐어 마스터 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.624
       sample_values:
         - BX8101
@@ -803,6 +814,7 @@ schema:
     - name: flightid
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - LJ452
@@ -1280,10 +1292,42 @@ schema:
       op: /detail
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - fid
+      reference:
+        key: kac_fid
+      evidence: measured
+    - fields:
+        - flightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - masterflightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - arrvAirportCode
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - depAirportCode
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-09-29 ~ 2026-10-03
+grain:
+  time: realtime
+  time_fields:
+    - estimateddatetime
+    - scheduledatetime
+    - scheduledatetime
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -1328,7 +1372,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15158625-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kac_fid(fid), flight_no(flightid), flight_no(masterflightid), airport_cd(arrvAirportCode), airport_cd(depAirportCode)'
     evidence:
       - type: measured
         source: probe/stats/15158625.json

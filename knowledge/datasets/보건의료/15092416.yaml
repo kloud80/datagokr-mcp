@@ -1,4 +1,5 @@
-# Dataset 15092416 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092416 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092416'
 tier: verified
 title: 한국건강증진개발원_국가금연지원서비스 실적(교육)
@@ -22,6 +23,7 @@ synonyms:
   - 사업장 금연교육
   - 금연지원서비스
   - 청소년 흡연예방
+summary_user: 전국 보건소 등 국가금연지원서비스 제공 기관별로 금연교육 횟수와 교육장소(내소·학교·직장·기타), 교육대상(미취학·초등·중등·고등·성인·노인·임산부·기타)별 실적을 집계해 담은 CSV 파일(약 20KB)이다. 지자체 보건 담당자나 분석가가 "우리 지역 보건소는 학교·사업장 출강 금연교육을 다른 지역보다 얼마나 하고 있나"를 비교하는 데 쓴다. 실측 컬럼에 보건소코드·시군구코드 같은 전역 조인 키가 없어, 다른 보건소·지역 데이터와는 지역명·기관명(기관명)을 맞춰 연결해야 한다.
 description_portal: 국가금연지원서비스를 제공하는 기관의 교육실시 현황 데이터로 일자, 제목, 교육장소(내소/학교/직장/기타),교육대상(미취학/초등/중등/고등/성인/노인/임산부/기타) 및 첨부파일의 항목을 제공합니다. 실적 입력에 대한 부분은 매월 진행 해야합니다.교육대상 관련 제한은 따로 없으며, 점점 흡연예방의 중요성이 강조됨에 따라 유치원/어린이집, 학교 등으로 출강하여 금연교육을 하고 있습니다. 또한 시군구 내의 사업장으로 교육을 나가 금연의 중요성, 흡연 위해 등 금연환경 조성에 대한 교육도 할 수 있습니다.- 전국 보건소
 accrual_periodicity: 연간
 team:
@@ -51,6 +53,7 @@ schema:
         unique: 17
     - name: 기관명
       type: string
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 서울 강남구보건소
@@ -214,6 +217,12 @@ schema:
         p50: 0
         max: 27982
         unique: 36
+  foreign_keys:
+    - fields:
+        - 기관명
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -256,7 +265,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092416-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(기관명)'
     evidence:
       - type: measured
         source: probe/stats/15092416.json
@@ -321,8 +330,6 @@ verification:
   run: probe/runs/15092416.json
   stats: probe/stats/15092416.json
   data: probe/data/15092416/
-status: active
-summary_user: 전국 보건소 등 국가금연지원서비스 제공 기관별로 금연교육 횟수와 교육장소(내소·학교·직장·기타), 교육대상(미취학·초등·중등·고등·성인·노인·임산부·기타)별 실적을 집계해 담은 CSV 파일(약 20KB)이다. 지자체 보건 담당자나 분석가가 "우리 지역 보건소는 학교·사업장 출강 금연교육을 다른 지역보다 얼마나 하고 있나"를 비교하는 데 쓴다. 실측 컬럼에 보건소코드·시군구코드 같은 전역 조인 키가 없어, 다른 보건소·지역 데이터와는 지역명·기관명(기관명)을 맞춰 연결해야 한다.
 limits: 표준 조인 키가 없어 지역사회 건강조사 등 시군구 지표와 붙이려면 기관명·지역명을 직접 매핑해야 한다. 기관 단위 집계라 개별 교육의 일자·제목·장소 같은 건별 내역은 이 파일에 없다.
 review:
   summary: draft
@@ -335,3 +342,4 @@ review:
     - c-15092416-04
     - c-15092416-06
   dropped_citations: 0
+status: active

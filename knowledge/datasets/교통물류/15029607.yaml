@@ -1,4 +1,5 @@
-# Dataset 15029607 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15029607 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15029607'
 tier: verified
 title: 해양수산부_화물운임공표정보
@@ -22,6 +23,7 @@ synonyms:
   - 해운 운임 신고
   - 항로별 운임
   - 선사 운임표
+summary_user: 선사·업체가 공표한 화물운임을 공표번호 단위로 담은 건별 원천 데이터로, 공표일·발효일, 항로, 적하·양하 항구, 컨테이너 종류·크기, 수출입 구분과 함께 기본운임(OF)·유류할증료(BAF)·통화할증료(CAF) 등 부대운임을 통화별로 담는다. 화주나 물류기업이 특정 항로·컨테이너 규격의 공표운임을 업체별로 비교하거나, 연구자가 공표 시점에 따른 운임 변동을 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 항만 물류 데이터와는 항구코드·항구명이나 업체명을 매핑해서만 이어 쓴다.
 description_portal: 이 데이터는 해양수산부에서 화물운임 공표 정보를 제공하기 위해 수집한 데이터입니다.  공표번호, 항구코드 등 입력 파라미터를 이용하여 데이터를 호출하실 수 있으며, 본 데이터의 주요 내용은 운임공표번호, 공표일, 업체명, 적하/양하항구정보, 각종 운임 통화구분과 요금정보 등으로 구성되어 있습니다.  본 데이터는 해운회사나 물류기업에서 화물 운송 시 운임정보 확인 및 비교, 자체 물류비 산정 자료로 활용될 수 있으며, 정부 및 관련 기관에서는 운임정보 분석과 화물운임 관련 정책 수립 자료로 사용할 수 있습니다. 또한 연구기관에서 해운운임의 변동요인이나 시장 구조를 분석하는 데 참고자료로 활용할 수 있습니다.
 team:
   dept: 항만물류산업과
@@ -158,6 +160,7 @@ schema:
     - name: dmstcPrtCd
       title: 적하항구코드(v1)
       type: code
+      semantic_type: port_cd
       null_rate: 1.0
       stats:
         unique: 0
@@ -170,6 +173,7 @@ schema:
     - name: forcontrPrtCd
       title: 양하항구코드(v1)
       type: code
+      semantic_type: port_cd
       null_rate: 1.0
       stats:
         unique: 0
@@ -701,12 +705,28 @@ schema:
         - 공표의무자가 공표할 필요가 있다고 판단하는 사항
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - dmstcPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
+    - fields:
+        - forcontrPrtCd
+      reference:
+        key: port_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  category:
+    - hs_cd
+  category_fields:
+    - frghtCd
 cycle: default
 classification:
   subsector_name: 항만 물류 (화물·컨테이너 반출입·물동량·하역·해운 운송사업)
@@ -750,7 +770,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15029607-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: port_cd(dmstcPrtCd), port_cd(forcontrPrtCd)'
     evidence:
       - type: measured
         source: probe/stats/15029607.json
@@ -815,8 +835,6 @@ verification:
   run: probe/runs/15029607.json
   stats: probe/stats/15029607.json
   data: probe/data/15029607/
-status: active
-summary_user: 선사·업체가 공표한 화물운임을 공표번호 단위로 담은 건별 원천 데이터로, 공표일·발효일, 항로, 적하·양하 항구, 컨테이너 종류·크기, 수출입 구분과 함께 기본운임(OF)·유류할증료(BAF)·통화할증료(CAF) 등 부대운임을 통화별로 담는다. 화주나 물류기업이 특정 항로·컨테이너 규격의 공표운임을 업체별로 비교하거나, 연구자가 공표 시점에 따른 운임 변동을 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 항만 물류 데이터와는 항구코드·항구명이나 업체명을 매핑해서만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터셋과 직접 결합되지 않고, 이름·코드 매핑이 필요하다. 공표된 운임 정보이므로 항만별 물동량이나 화물 건별 반출입 실적은 담지 않는다.
 review:
   summary: draft
@@ -829,3 +847,4 @@ review:
     - c-15029607-04
     - c-15029607-06
   dropped_citations: 0
+status: active

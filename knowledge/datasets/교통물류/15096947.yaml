@@ -1,0 +1,206 @@
+# Dataset 15096947 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15096947'
+tier: verified
+title: 제주특별자치도_대중교통(시내·외 버스) 연도별 수송 인원 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15096947/fileData.do
+synonyms:
+  - 승차
+  - 탑승
+  - 버스
+  - 제주버스수송인원
+  - 시내버스
+  - 시외버스
+  - 연도별통계
+  - 승객수
+  - 제주 버스 승객 수
+  - 제주 시내버스 이용객
+  - 제주 시외버스 수송실적
+  - 제주 대중교통 이용 추세
+  - 버스 수송인원 통계
+  - 제주 대중교통 체계 개편
+summary_user: 제주특별자치도가 집계한 시내·외 버스 수송 인원을 연도와 버스 구분(시내·시외 등)별로 담은 연 단위 집계 통계로, 포털 설명상 2001~2020년을 다루며 2017년 시내·시외 통합 이후 변화도 포함한다. 교통 분석가나 정책 담당자가 '제주 버스 이용객이 2017년 대중교통 개편 전후로 어떻게 달라졌나' 같은 연도별 이용 추세를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기준 연도를 맞춰 인구·관광객 통계 등과 나란히 놓고 비교하는 방식으로만 이어 쓴다.
+description_portal: 이 데이터셋은 2001년부터 2020년까지 제주특별자치도청이 집계한 제주 지역 시내·외 버스의 연도별 수송 인원 정보를 체계적으로 정리한 공공 통계자료이다. 버스 구분(시내버스, 시외버스 등)에 따라 연도별 승객 수가 구분되어 있으며, 2017년부터 시내와 시외 버스가 통합된 이후의 변화도 포함하고 있다. 이 정보는 제주 지역의 대중교통 이용 추세를 분석하거나, 교통 정책 수립, 버스 노선 운영 효율성 검토, 승객 수 변동과 인구 및 관광객 변화 간 상관관계 분석 등에 활용 가능하다. 또한 대중교통 활성화 방안 마련, 환경 영향 평가, 도시계획 또는 지속가능한 교통 인프라 구축을 위한 기초자료로서 유용하며, 다양한 연구 및 행정 목적으로 신뢰성 있게 사용될 수 있다.
+accrual_periodicity: 수시
+team:
+  dept: 제주특별자치도 우주모빌리티과
+services:
+  - op: preview
+    name: preview
+    endpoint: https://jejudatahub.net/api/data/view?id=1021
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: jejudatahub.net
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: "\uFEFF기준 연도"
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2015'
+        - '2016'
+        - '2017'
+      stats:
+        min: 2015
+        p50: 2017.5
+        max: 2020
+        unique: 6
+    - name: 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 계
+        - 시외버스
+        - 시내버스
+      stats:
+        unique: 3
+    - name: 수송 인원(명)
+      type: number
+      null_rate: 0.4444
+      sample_values:
+        - '56381765'
+        - '16484590'
+        - '39897175'
+      stats:
+        min: 16484590
+        p50: 53377595
+        max: 64845997
+        unique: 10
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - "\uFEFF기준 연도"
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4331
+  rank_in_sector: 3423
+  brm: 교통물류 - 도로
+  why: 제주데이터허브 (상세 페이지 미리보기 — 원본·API는 projectKey)
+claims:
+  - id: c-15096947-01
+    kind: access
+    value: 외부 사이트 jejudatahub.net 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15096947.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 jejudatahub.net
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15096947-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15096947-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15096947.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15096947-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15096947.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15096947-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15096947-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15096947-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15096947.json
+  stats: probe/stats/15096947.json
+  data: probe/data/15096947/
+limits: 연도·버스 구분 단위 집계라 노선·정류장·시간대별 승하차는 알 수 없다. 원본은 외부 사이트(jejudatahub.net)에서 별도 인증키로 호출해야 하며 포털 활용신청과는 별개다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15096947-01
+    - c-15096947-03
+    - c-15096947-04
+  dropped_citations: 0
+status: active

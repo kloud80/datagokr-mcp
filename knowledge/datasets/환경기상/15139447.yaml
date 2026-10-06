@@ -1,0 +1,186 @@
+# Dataset 15139447 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139447'
+tier: verified
+title: 기상청_레이더 합성자료 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139447/openapi.do
+synonyms:
+  - 레이더
+  - 합성자료
+  - 이진자료
+  - 에코코
+  - 강수
+  - 레이더 영상
+  - 강수 레이더
+  - 레이더 합성영상
+  - 비구름 이동
+  - 기상레이더 강수량
+  - CAPPI
+  - 레이더 반사도
+  - 실시간 강수 감시
+description_portal: '레이더 강수량은 각각의 레이더 관측소에서 생산된 관측자료를 합성하여 우리나라 전역의 레이더 합성영상자료를 산출하고, 이를 활용하여 우리나라에 영향을 주는 강수의 범위와 이동경향감시 분석 등에 이용합니다.기상청에서 운영하고 있는 현업용 기상레이더 10개 지점의 자료를 이용하여 생산한 자료를 제공합니다. CM1, CM1B, CMI 자료는 2019년 이후로 생산 중단되고, QCD CPP, PPI, CMX로 대체하여 제공 중이니 이용에 참고하시기 바랍니다.생산주기: 분(10분 주기)보유기간: 2016년 ~ 현재'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: rdr_cmp_file.php
+    name: rdr_cmp_file.php
+    endpoint: https://apihub.kma.go.kr/api/typ04/url/rdr_cmp_file.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '202107151200'
+      - name: data
+        required: true
+        example: bin
+      - name: cmp
+        required: true
+        example: cpp
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - "\0"
+        - "\x1F�\b\0\0\0\0\0\0\x03��\t�ew]��S]��~��.(�(��<\x06Dd\x04!���Dv� ;��U\x11�0=\x02\x02F\x04�`�\x18�\x0E"
+        - Ȧ`��
+      stats:
+        unique: 99
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6064
+  rank_in_sector: 310
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139447-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139447.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139447-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139447-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139447.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139447-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139447.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139447-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139447-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139447-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139447.json
+  stats: probe/stats/15139447.json
+  data: probe/data/15139447/
+status: active
+summary_user: 기상청이 운영하는 현업용 기상레이더 10개 지점의 관측자료를 합성해 만든 전국 레이더 합성영상(강수) 자료를 10분 주기로 담으며, 포털 설명상 보유기간은 2016년부터 현재까지입니다. 기상 분석가나 방재 담당자가 "지금 비구름이 어디에 있고 어느 방향으로 이동하나"처럼 강수 범위와 이동 경향을 감시·분석할 때 쓴다. 실측 컬럼에서 다른 데이터와 잇는 공통 조인 키는 없어, 같은 기관(기상청)의 ASOS·AWS 관측자료와는 시각 기준으로 맞추거나 이름 매핑으로 이어 써야 한다.
+limits: 포털 활용신청과 별개로 기상청 API허브(apihub.kma.go.kr)의 인증키를 받아 경로 파라미터(KEY)로 넣어야 호출된다. 전국 단위 비공간 자료로 분류되어 행정구역 코드로 바로 집계·연결할 수 없다. 포털 설명에 따르면 CM1·CM1B·CMI 자료는 2019년 이후 생산이 중단되고 QCD CPP·PPI·CMX로 대체되었으므로 기간별 자료 종류를 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139447-01
+    - c-15139447-03
+    - c-15139447-04
+    - c-15139447-06
+  dropped_citations: 0

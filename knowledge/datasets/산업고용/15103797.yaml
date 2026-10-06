@@ -1,4 +1,5 @@
-# Dataset 15103797 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103797 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103797'
 tier: verified
 title: 한국동서발전(주)_발전 용수 사용량
@@ -22,6 +23,7 @@ synonyms:
   - 물-에너지 연계
   - 동서발전 수자원
   - 공업용수 사용량
+summary_user: 한국동서발전 발전소별로 연월마다 취수원(하천·호수·지하수 등)과 용수 사용량(톤)을 기록한 집계 파일이며, 약 17KB 크기의 CSV로 제공된다. 연구자나 환경·에너지 분석가가 '어느 발전소가 어떤 취수원에서 계절별로 물을 얼마나 쓰는가'처럼 발전소 수자원 부담과 물-에너지 연계를 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 발전소명 이름 매칭으로만 발전소 원장·발전량·배출 데이터 등 같은 기관 데이터와 연결한다.
 description_portal: 한국동서발전의 각 발전소별 발전 용수 사용량 정보는 발전소 운영 시 사용되는 용수 자원의 규모를 파악하기 위해 제공되는 데이터입니다.이 데이터는 연월, 발전소명, 취수원(하천, 호수, 지하수 등), 용수 사용량(톤) 등의 항목으로 구성되어 있으며, 각 발전소가 특정 시점에 어느 정도의 수자원을 활용했는지를 정량적으로 확인할 수 있도록 설계되어 있습니다.용수 사용량은 발전소의 냉각, 보일러 운전, 환경 설비 운영 등 다양한 목적에 따라 사용되며, 물 사용 효율성, 지역 수자원 부담 수준, 환경 지속가능성 등을 평가하는 데 중요한 지표가 됩니다.학계 및 연구기관에서는 이 데이터를 활용하여 발전소별 수자원 사용 패턴 분석, 계절별 용수 사용량 변화 추이, 취수원 유형별 수요 구조 등을 연구할 수 있으며,기후 변화와 가뭄 등 환경 변수에 따른 발전소 운영 리스크 평가, 물-에너지 연계성(Water-Energy Nexus) 분석, 친환경 에너지 정책 수립을 위한 기초자료로도 유용하게 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 60
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 한국동서발전㈜ 당진발전본부
@@ -74,12 +77,22 @@ schema:
         p50: 67729.5
         max: 865794
         unique: 251
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
@@ -116,7 +129,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103797-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15103797.json
@@ -181,8 +194,6 @@ verification:
   run: probe/runs/15103797.json
   stats: probe/stats/15103797.json
   data: probe/data/15103797/
-status: active
-summary_user: 한국동서발전 발전소별로 연월마다 취수원(하천·호수·지하수 등)과 용수 사용량(톤)을 기록한 집계 파일이며, 약 17KB 크기의 CSV로 제공된다. 연구자나 환경·에너지 분석가가 '어느 발전소가 어떤 취수원에서 계절별로 물을 얼마나 쓰는가'처럼 발전소 수자원 부담과 물-에너지 연계를 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 발전소명 이름 매칭으로만 발전소 원장·발전량·배출 데이터 등 같은 기관 데이터와 연결한다.
 limits: 발전소 코드 같은 공통 키가 없어 다른 데이터와 붙일 때 발전소명 표기를 직접 맞춰야 한다. 행정구역 단위 공간 정보가 없는 전국·비공간 데이터라 지역별 수자원 분석에는 발전소 위치를 따로 매핑해야 한다.
 review:
   summary: draft
@@ -194,3 +205,4 @@ review:
     - c-15103797-03
     - c-15103797-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15128813 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15128813'
 tier: verified
 title: 한국장학재단_국가근로장학금 지원인원
@@ -21,6 +20,7 @@ synonyms:
   - 취업연계 장학금
   - 대학생 근로장학 통계
   - 한국장학재단 장학금 통계
+summary_user: 국가근로장학금 지원인원을 사업연도(해당연도 3월~차년도 2월)·학기·대학설립유형·대학소재지와 근로유형별 참여 여부(교내·교외·장애봉사·외국인봉사·취업연계) 조합으로 집계한 전국 범위 파일 데이터(CSV 약 51KB)다. 정책 분석가나 연구자가 '어느 지역·어떤 설립유형 대학에서 국가근로장학생이 몇 명이고, 취업연계형 참여 비중은 어떻게 변하는가'를 확인하는 데 쓴다. 전역 조인 키는 없으므로 다른 장학·학자금 통계나 대학 공시 자료와는 대학소재지(시도명)·설립유형 이름을 맞춰 붙여 쓴다.
 description_portal: '국가근로장학금의 사업연도 기준 학기별, 대학유형별, 대학소재지별 등 장학금 지원인원 데이터입니다.※ 국가근로장학금 사업연도: 해당연도 3월 ~ 차년도 2월 제공하는 데이터 항목은 사업연도, 상품명, 학기, 대학설립유형, 대학소재지, 일반교내 근로참여여부, 장애봉사유형참여여부, 외국인봉사유형참여여부, 일반교외근로참여여부, 취업연계유형참여여부, 지원인원입니다.(국가근로장학금 사업) 저소득층 대학생에게 학자금(등록금과 생활비) 마련을 위한 근로 기회를 제공하고, 그에 따른 장학금을 지급함으로써 안정적인 학업 여건 조성 및 취업 역량을 제고하는 사업입니다.→ 사업 상세 정보는 "한국장학재단 홈페이지 > 장학금 > 국가근로 및 취업연계 장학금 > 국가근로장학금"을 참고 바랍니다.'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -50,6 +50,7 @@ schema:
         unique: 1
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 국가근로장학금
@@ -136,12 +137,26 @@ schema:
         p50: 144.5
         max: 1700
         unique: 388
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 대학소재지
+  space_via: address
+  time: year
+  time_fields:
+    - 사업연도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -178,7 +193,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15128813-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_scholarship_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15128813.json
@@ -242,8 +257,6 @@ verification:
   run: probe/runs/15128813.json
   stats: probe/stats/15128813.json
   data: probe/data/15128813/
-status: active
-summary_user: 국가근로장학금 지원인원을 사업연도(해당연도 3월~차년도 2월)·학기·대학설립유형·대학소재지와 근로유형별 참여 여부(교내·교외·장애봉사·외국인봉사·취업연계) 조합으로 집계한 전국 범위 파일 데이터(CSV 약 51KB)다. 정책 분석가나 연구자가 '어느 지역·어떤 설립유형 대학에서 국가근로장학생이 몇 명이고, 취업연계형 참여 비중은 어떻게 변하는가'를 확인하는 데 쓴다. 전역 조인 키는 없으므로 다른 장학·학자금 통계나 대학 공시 자료와는 대학소재지(시도명)·설립유형 이름을 맞춰 붙여 쓴다.
 limits: 개별 학생·대학 단위가 아닌 유형별 집계 인원만 담아 대학별·개인별 분석이나 지급액 분석에는 쓸 수 없다. 공통 코드 키가 없어 다른 데이터와 연결할 때는 지역명·유형명을 직접 매핑해야 한다.
 review:
   summary: draft
@@ -255,3 +268,4 @@ review:
     - c-15128813-03
     - c-15128813-04
   dropped_citations: 0
+status: active

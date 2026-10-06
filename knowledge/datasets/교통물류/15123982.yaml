@@ -1,0 +1,201 @@
+# Dataset 15123982 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123982'
+tier: verified
+title: 경기도_버스 영업소 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123982/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 버스업체
+  - 버스운수사
+  - 터미널
+  - 버스영업소
+  - 운송업체
+  - 버스 차고지
+  - 버스회사 영업소
+  - 운수업체 영업소
+  - BMS 영업소
+  - 경기버스 업체
+  - 버스 터미널 목록
+  - 시내버스 회사
+summary_user: 경기도 버스운송관리시스템(BMS)에 등록된 버스 영업소를 한 행씩 담은 목록으로, 영업소 식별자(buzplc_id), 소속 버스 업체 식별자, 영업소명('동서울터미널', '남부영업소' 등)으로 이루어진다. 교통 분석가가 "어느 버스 업체가 어떤 영업소·터미널을 거점으로 운영하는가"를 파악하거나 노선·차량 데이터의 업체·영업소 코드를 이름으로 풀어 읽을 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 경기도 BMS 계열 데이터와는 업체ID·영업소ID 같은 기관 내부 코드로, 그 밖의 데이터와는 영업소명·업체명 같은 이름 매핑으로만 잇는다.
+description_portal: 이 데이터는 경기도 버스운송관리시스템(BMS)에 등록된 버스 영업소 정보를 담고 있습니다. 각 버스 영업소에 대해 고유 식별자인 '영업소ID'와 이를 소유한 버스 회사의 '업체ID', 그리고 실제 운영되는 '영업소명'이 포함되어 있습니다. 이 정보는 교통카드 데이터, 노선정보, 차량정보 등과 연계하여 대중교통 운행 실태를 분석하거나, 지역별 대중교통 인프라 현황을 파악하는 데 활용될 수 있습니다. 또한 터미널이나 차고지 위치 분석, 업체별 버스 운행 효율성 분석, 교통정책 수립 자료 등으로 활용될 수 있습니다. 영업소명에는 '동서울터미널', '고양터미널', '남부영업소'와 같이 실제 운영 장소를 식별할 수 있는 명칭이 제공됩니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: buzplc_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4153619'
+        - '4153620'
+        - '4153621'
+      stats:
+        min: 4100100
+        p50: 4100321.5
+        max: 4155203
+        unique: 100
+    - name: entrps_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4100200'
+        - '4100300'
+        - '4100400'
+      stats:
+        min: 4100100
+        p50: 4100300
+        max: 4155200
+        unique: 12
+    - name: buzplc_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 광주터미널
+        - 죽전영업소
+        - 영통영업소
+      stats:
+        unique: 63
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3873
+  rank_in_sector: 3905
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15123982-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123982.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15123982-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123982-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123982.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123982-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123982.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123982-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123982-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123982-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123982.json
+  stats: probe/stats/15123982.json
+  data: probe/data/15123982/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 공공데이터포털 활용신청과는 별개다. 위치 좌표가 없는 비공간 데이터라 영업소·차고지 위치 분석에는 주소·좌표를 따로 붙여야 하고, 표준 코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 이름 매칭에 의존한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15123982-01
+    - c-15123982-03
+    - c-15123982-04
+  dropped_citations: 0
+status: active

@@ -1,0 +1,211 @@
+# Dataset 15151650 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151650'
+tier: verified
+title: 경기도_데이터분석 카드매출 행정동 집계
+sector: 공공행정/일반행정/civic-facilities
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151650/fileData.do
+synonyms:
+  - 데이터분석포털
+  - 분석시스템
+  - 행정동별
+  - 소비통계
+  - 매출정보
+  - 소비분석
+  - 카드매출
+  - 행정동 매출
+  - 업종별 소비
+  - 상권 분석
+  - 지역 소비 통계
+  - 경기도 카드소비
+  - 읍면동 매출
+summary_user: 경기도 행정동(읍면동) 단위로 기준년월별 카드매출 금액을 중분류업종별로 집계한 자료로, 건별 거래가 아닌 집계값(매출금액)을 담는다. 지자체 분석가나 상권을 보는 사업자가 '우리 동네에서 어떤 업종에 소비가 몰리고 월별로 어떻게 변하는가'를 확인하는 데 쓴다. 행정동코드(admdong_cd)로 행정동 경계·인구 자료와 맞춰 볼 수 있으나, 실측 컬럼에서 전역 조인 키는 확인되지 않아 코드·이름 매핑을 거쳐 연결해야 한다.
+description_portal: 이 데이터는 특정 기준년월을 기준으로 각 행정동 단위에서 발생한 카드매출 내역을 중분류업종별로 집계한 자료입니다. 주요 항목은 기준년월, 행정동코드, 중분류업종코드, 매출금액으로 구성되어 있으며, 각 업종코드는 특정 산업군(예:숙박업, 유통업, 농업 등)을 나타냅니다. 이 데이터는 소비행태 분석, 지역경제 진단, 상권 분석, 공공정책 수립 등에 활용할 수 있으며, 지역 단위로 세밀한 매출 흐름을 파악하는 데 유용합니다. 행정동코드를 활용하면 공간 데이터와 연계하여 지도 기반의 시각화 및 공간 분석도 가능하며, 중분류업종코드는 업종별 소비 비중을 비교 분석하는 데 효과적입니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: crtr_ym
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202501'
+      stats:
+        min: 202501
+        p50: 202501
+        max: 202501
+        unique: 1
+    - name: admdong_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4122031000'
+        - '4122025900'
+        - '4122032000'
+      stats:
+        min: 4122025900
+        p50: 4122031000
+        max: 4122032000
+        unique: 3
+    - name: mdclass_indutype_cd
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Q06
+        - Q07
+        - Q08
+      stats:
+        unique: 66
+    - name: sls_amt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3928601.2'
+        - '1037889.0'
+        - '1609106.2'
+      stats:
+        min: 849.68
+        p50: 1357815
+        max: 1436091260
+        unique: 100
+coverage:
+  spatial: 시도
+  admin_unit: 읍면동
+cycle: default
+classification:
+  subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2943
+  rank_in_sector: 891
+  brm: 공공행정 - 일반행정
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151650-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151650.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151650-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151650-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151650.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151650-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 읍면동
+    evidence:
+      - type: measured
+        source: probe/runs/15151650.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151650-06
+    kind: admin_note
+    value: "세부 부문 '생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)'의 가치: 좌표 있는 생활 시설 원장 — 공공시설 개방·무인민원은 표준데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#civic-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151650-07
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 일반행정 (10,088건)] 대부분 기관 운영 자료라 먼저 배제(`general-admin-deferred`). 개체 단위 데이터는 원래 부문으로 옮김 — 의회·의안 → 국정운영, 도서관 → 문화예술, 승강기·시설물 안전·대피·방범·치안·소방 → 재난안전, AED → 응급의료, 도로굴착·따릉이·교통사고 → 도로, 공원 → 공원녹지, 도로명주소 → 우정, 지명 → 공간정보, 지적기준점 → 토지·지적, 토지수용 재결 → 도시개발·정비, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L717
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151650-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151650.json
+  stats: probe/stats/15151650.json
+  data: probe/data/15151650/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 공공데이터포털 활용신청과는 별개다. 실측상 다른 데이터와 바로 붙는 전역 조인 키가 없어 행정동코드·업종코드 체계를 직접 대조해야 하고, 업종코드의 의미를 풀 코드표는 입력에서 확인되지 않았다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151650-01
+    - c-15151650-03
+    - c-15151650-04
+  dropped_citations: 0
+status: active

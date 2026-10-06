@@ -1,0 +1,252 @@
+# Dataset 15157169 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157169'
+tier: verified
+title: 한전케이피에스주식회사_안전보건경영시스템 인증현황
+sector: 재난안전/안전관리/excluded-rest
+agency:
+  id: B551881
+  name: 한전케이피에스주식회사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157169/openapi.do
+synonyms:
+  - 안전
+  - 보건
+  - ISO
+  - 한국전력
+  - KPS
+  - 인증
+  - 경영
+  - KOSHA-MS 인증
+  - ISO 45001
+  - 안전보건경영 인증
+  - 한전KPS 사업소 인증
+  - 인증 유효기간
+  - 산업안전 인증현황
+description_portal: 한전 KPS의 사업소명, 인증종류, 유효기간 등을 기준으로  인증기관, 취득일, 유효기간 등 안전보건경영시스템 인증현황을 조회하는 안전보건경영시스템 인증 현황 조회 서비스입니다. 사업소별로 안전보건경영시스템 인증여부와 유효기간 시작일 및 만료일 등을 확인할 수 있습니다. 이자료는 안전보건 경영의 정착도, 법적 준수 수준, 외부 심사 대응 준비 등에 활용될 수 있으며 안전관리 담당자 및 경영진이 전략적 의사결정을 내릴 때 핵심 관리지표 역할을 할 수 있습니다.산업안전보건법에 따른 안전보건관리체계 구축·운영 및 공공기관의 사회적 책임 이행을 위해 사업소별 안전보건경영시스템 인증 현황을 관리·보유하고 있습니다.
+team:
+  dept: 경영지원처 정보시스템부
+services:
+  - op: /certification
+    name: 사업소별 안전관리시스템 인증현황
+    endpoint: https://apis.data.go.kr/B551881/safety-n-health/certification
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: type
+        required: false
+        desc: response type 에 대한 명시 JSON/XML(명시안하면 XML)
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 1000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: businessSite
+      title: 사업소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 영흥사업처
+        - 월성1사업소
+        - 한전KPS본사
+      stats:
+        unique: 70
+    - name: plannedPlant
+      title: 계획플랜트
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2120'
+        - '3210'
+        - '1000'
+      stats:
+        min: 1000
+        p50: 2685
+        max: 9530
+        unique: 70
+    - name: certificationsStatus
+      title: 인증상태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인증
+        - 심사중
+      stats:
+        unique: 2
+    - name: regNm
+      title: 등록번호
+      type: string
+      null_rate: 0.0725
+      sample_values:
+        - '242'
+        - '243'
+        - SMC-0289
+      stats:
+        unique: 155
+    - name: auditType
+      title: 심사종류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KOSHA-MS
+        - ISO45001
+      stats:
+        unique: 2
+    - name: validFrom
+      title: 유효기간(시작일)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '0000-00-00'
+        - '2022-10-01'
+        - '2019-10-01'
+      stats:
+        min: '2004-10-01'
+        max: '2027-07-01'
+        unique: 202
+    - name: validTo
+      title: 유효기간(종료일)
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '0000-00-00'
+        - '2025-09-30'
+        - '2024-10-06'
+      stats:
+        min: '2021-04-14'
+        max: '2029-02-24'
+        unique: 191
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - validFrom
+    - validTo
+cycle: default
+classification:
+  subsector_name: 제외 대상
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.4717
+  brm: 재난안전 - 안전관리
+  why: 기관 분석 핵심 원장 — 한전케이피에스주식회사
+claims:
+  - id: c-15157169-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 1,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157169.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157169.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '1000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15157169-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157169-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157169.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157169-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157169.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157169-06
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157169-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157169.json
+  stats: probe/stats/15157169.json
+  data: probe/data/15157169/
+status: active
+summary_user: 한전KPS의 사업소별 안전보건경영시스템 인증 현황을 건별로 담으며, 인증상태·등록번호·심사종류와 유효기간 시작일·종료일을 포함하고 범위는 전국·비공간이다. 안전관리 담당자나 협력 사업자가 '특정 한전KPS 사업소의 안전보건경영시스템 인증이 지금 유효한지, 언제 만료되는지'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업소명(businessSite) 같은 이름 매핑이나 같은 기관 데이터로만 이어 쓴다.
+limits: 전역 조인 키가 없어 행정구역 코드나 시설 원장과 직접 결합할 수 없고, 사업소명 문자열 매칭에 의존해야 한다. 개발계정은 하루 1,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15157169-01
+    - c-15157169-03
+    - c-15157169-04
+  dropped_citations: 0

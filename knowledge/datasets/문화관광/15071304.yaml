@@ -1,4 +1,5 @@
-# Dataset 15071304 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15071304 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15071304'
 tier: verified
 title: 문화체육관광부_국립아시아문화전당_공연 전시 등 거래창구 거래내역
@@ -22,6 +23,7 @@ synonyms:
   - 전시 입장권 판매 현황
   - 공연 요금정보
   - 광주 아시아문화전당 프로그램
+summary_user: 국립아시아문화전당의 공연·전시 등 프로그램별로 판매 창구(현장, PC, 기타 온라인 등)를 한 행씩 기록한 파일로, 구분·장르·대상·상영시간·공연 기간·요금정보를 함께 담는다(약 14KB 규모의 CSV). 문화기관 운영자나 분석가가 "이 전당의 어떤 장르·대상 프로그램이 어느 판매 창구로 팔렸는가"를 살펴보는 데 쓴다. 전역 조인 키가 없어 KOPIS 공연ID 같은 외부 키로 바로 연결되지 않으며, 다른 공연 데이터와는 공연명·기간을 이름으로 맞춰 이어 쓴다.
 description_portal: '국립아시아문화전당의 공연·전시 등 프로그램에 대해, 판매 창구 유형별 거래 현황을 제공하는 데이터입니다. 각 행은 하나의 프로그램과 해당 프로그램의 판매 창구(예: 현장, PC, 기타 온라인 등)에 대해 기록된 거래 정보를 나타냅니다. 제공 데이터 항목은 구분, 공연명, 장르, 대상, 상영시간(분), 공연시작일, 공연종료일, 요금정보, 창구이며, 프로그램의 기본 속성(구분·장르·대상·상영시간·기간)과 함께, 요금 체계 관련 정보(요금정보), 판매가 이뤄진 창구(창구)를 포함합니다. 이 데이터를 통해 프로그램별·창구별 거래 규모와 분포를 파악하고, 채널 특성에 따른 행사, 공연에 따른 장르 등을 분석할 수 있습니다. 또한 기간 정보(공연시작일·공연종료일)와 결합하여 특정 시기 또는 회차 단위의 판매 양상을 비교하는 등 운영·정산·보고서 작성에 활용 가능합니다.'
 accrual_periodicity: 수시
 team:
@@ -126,6 +128,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공연시작일
+    - 공연종료일
 cycle: event
 classification:
   subsector_name: 공연 (KOPIS 공연 목록·공연장·예매/매출)
@@ -231,8 +238,6 @@ verification:
   run: probe/runs/15071304.json
   stats: probe/stats/15071304.json
   data: probe/data/15071304/
-status: active
-summary_user: 국립아시아문화전당의 공연·전시 등 프로그램별로 판매 창구(현장, PC, 기타 온라인 등)를 한 행씩 기록한 파일로, 구분·장르·대상·상영시간·공연 기간·요금정보를 함께 담는다(약 14KB 규모의 CSV). 문화기관 운영자나 분석가가 "이 전당의 어떤 장르·대상 프로그램이 어느 판매 창구로 팔렸는가"를 살펴보는 데 쓴다. 전역 조인 키가 없어 KOPIS 공연ID 같은 외부 키로 바로 연결되지 않으며, 다른 공연 데이터와는 공연명·기간을 이름으로 맞춰 이어 쓴다.
 limits: KOPIS 공연ID·공연장ID 같은 공통 키가 없어 다른 공연 목록·예매 데이터와의 결합은 공연명 매칭에 의존한다. 명세상 수시·이벤트성으로 생성되는 파일이라 정기 갱신을 전제로 시계열을 만들기 어렵다. 국립아시아문화전당 한 기관의 프로그램만 담아 전국 공연 시장을 대표하지 않는다.
 review:
   summary: draft
@@ -245,3 +250,4 @@ review:
     - c-15071304-03
     - c-15071304-06
   dropped_citations: 0
+status: active

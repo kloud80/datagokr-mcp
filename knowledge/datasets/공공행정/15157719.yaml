@@ -1,5 +1,3 @@
-# Dataset 15157719 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157719'
 tier: verified
 title: 한국자산관리공사_차세대 온비드 정부재산목록 국유일반재산 조회서비스
@@ -140,18 +138,21 @@ schema:
     - name: ltnoPnu
       title: 지번PNU코드
       type: code
+      semantic_type: pnu
       null_rate: 1.0
       stats:
         unique: 0
     - name: rdnmPnu
       title: 도로명PNU코드
       type: code
+      semantic_type: pnu
       null_rate: 1.0
       stats:
         unique: 0
     - name: cltrUsgLclsCtgrId
       title: 용도대분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10000'
@@ -163,6 +164,7 @@ schema:
     - name: cltrUsgMclsCtgrId
       title: 용도중분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10100'
@@ -175,6 +177,7 @@ schema:
     - name: cltrUsgSclsCtgrId
       title: 용도소분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10101'
@@ -309,6 +312,32 @@ schema:
         - 국방부 내 토지
       stats:
         unique: 453
+  foreign_keys:
+    - fields:
+        - ltnoPnu
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - rdnmPnu
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
+        - cltrUsgLclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
+    - fields:
+        - cltrUsgMclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
+    - fields:
+        - cltrUsgSclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -356,7 +385,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15157719-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: pnu(ltnoPnu), pnu(rdnmPnu), onbid_usg_ctgr_id(cltrUsgLclsCtgrId), onbid_usg_ctgr_id(cltrUsgMclsCtgrId), onbid_usg_ctgr_id(cltrUsgSclsCtgrId)'
     evidence:
       - type: measured
         source: probe/stats/15157719.json
@@ -425,3 +454,10 @@ review:
     - c-15157719-06
   dropped_citations: 0
 status: active
+grain:
+  space: sgg
+  space_fields:
+    - zadrNm
+    - cltrRadr
+    - locVntyPscdCont
+  space_via: address

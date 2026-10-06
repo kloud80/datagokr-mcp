@@ -1,4 +1,5 @@
-# Dataset 15156709 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156709 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156709'
 tier: verified
 title: 한국서부발전(주)_기상관측 정보 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 서부발전 기상 데이터
   - 설비 기상 센서
   - 풍속 풍향 관측
+summary_user: 한국서부발전 설비(태양광 발전 설비로 보이는 모듈 온도·경사면 일사량 포함)가 위치한 곳의 기상 관측값을 설비 아이디와 측정 시각 단위로 담은 건별 관측 API로, 환경 온도·모듈 온도·풍향·풍속·강수량·습도·경사면/수평면 일사량과 설비 상태·알람 정보를 제공한다. 발전량 분석가나 에너지 사업자가 '특정 설비 위치의 일사량과 모듈 온도가 시간대별로 어떻게 변했고 장비 이상은 없었나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 기상청 관측지점 자료 등과는 설비 아이디(eqpm_id)·측정 시각을 기준으로 이름·위치 매핑을 거치거나 같은 기관 자료끼리만 연결한다.
 description_portal: 한국서부발전에서 제공하는 기상관측 정보 조회 서비스는 설비 아이디, 측정시간, 설비상태코드, 알람상세, 환경온도, 모듈온도, 풍향, 풍속, 강수량, 습도, 경사면 일사량, 누적경사면 일사량, 수평면 일사량, 누적수평면 일사량, 로컬 시간으로 구성됩니다. 이 데이터는 설비가 위치한 환경의 기상 조건을 기록하며, 온도, 풍향, 풍속, 강수량, 습도, 일사량 등 기상 요소를 측정합니다. 설비상태코드와 알람상세는 관측 장비의 운전 상태와 이상 여부를 확인하는 데 사용됩니다. 측정시간과 로컬 시간 정보를 통해 각 관측 값의 시점을 파악할 수 있습니다.
 team:
   dept: 디지털운영부
@@ -116,6 +118,7 @@ schema:
     - name: eqpm_id
       title: 설비 아이디
       type: code
+      semantic_type: ewp_renew_eqpm_id
       null_rate: 0.0
       sample_values:
         - 1f4db148-0f01-4854-b34c-df0fc8f30059
@@ -183,12 +186,22 @@ schema:
         p50: 1
         max: 1
         unique: 1
+  foreign_keys:
+    - fields:
+        - eqpm_id
+      reference:
+        key: ewp_renew_eqpm_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - msrmt_hr
 cycle: default
 classification:
   subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
@@ -232,7 +245,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156709-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_eqpm_id(eqpm_id)'
     evidence:
       - type: measured
         source: probe/stats/15156709.json
@@ -297,8 +310,6 @@ verification:
   run: probe/runs/15156709.json
   stats: probe/stats/15156709.json
   data: probe/data/15156709/
-status: active
-summary_user: 한국서부발전 설비(태양광 발전 설비로 보이는 모듈 온도·경사면 일사량 포함)가 위치한 곳의 기상 관측값을 설비 아이디와 측정 시각 단위로 담은 건별 관측 API로, 환경 온도·모듈 온도·풍향·풍속·강수량·습도·경사면/수평면 일사량과 설비 상태·알람 정보를 제공한다. 발전량 분석가나 에너지 사업자가 '특정 설비 위치의 일사량과 모듈 온도가 시간대별로 어떻게 변했고 장비 이상은 없었나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 기상청 관측지점 자료 등과는 설비 아이디(eqpm_id)·측정 시각을 기준으로 이름·위치 매핑을 거치거나 같은 기관 자료끼리만 연결한다.
 limits: 전역 조인 키가 없어 기상청 ASOS·AWS 관측지점번호나 행정구역 코드로 바로 붙일 수 없고, 범위가 전국·비공간으로 표기되어 있어 설비 위치 좌표는 이 데이터만으로 알 수 없다. 개발계정은 하루 1,000회 호출로 제한된다.
 review:
   summary: draft
@@ -310,3 +321,4 @@ review:
     - c-15156709-03
     - c-15156709-04
   dropped_citations: 0
+status: active

@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 배타적경제수역(EEZ)신청번호
       type: number
+      semantic_type: eez_application_no
       null_rate: 0.0
       sample_values:
         - '200000001'
@@ -88,6 +89,7 @@ schema:
         unique: 14
     - name: 국가코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0031
       sample_values:
         - JP
@@ -163,6 +165,7 @@ schema:
         unique: 33
     - name: 호출부호명
       type: string
+      semantic_type: vessel_id
       null_rate: 0.0062
       sample_values:
         - SEIKOUMARU
@@ -409,12 +412,34 @@ schema:
         min: '2023-06-29'
         max: '2023-06-29'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 배타적경제수역(EEZ)신청번호
+      reference:
+        key: eez_application_no
+      evidence: measured
+    - fields:
+        - 국가코드
+      reference:
+        key: country_cd
+      evidence: measured
+    - fields:
+        - 호출부호명
+      reference:
+        key: vessel_id
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 허가신청일자
+    - 허가일자
+    - 최초생성시점
 cycle: default
 classification:
   subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
@@ -451,7 +476,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15115863-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eez_application_no(배타적경제수역(EEZ)신청번호), country_cd(국가코드), vessel_id(호출부호명)'
     evidence:
       - type: measured
         source: probe/stats/15115863.json

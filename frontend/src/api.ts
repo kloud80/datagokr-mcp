@@ -76,6 +76,7 @@ export interface Plan {
   summary: string
   datasets: PlanDataset[]
   joins: PlanJoin[]
+  aligned?: { kind: 'aligned'; left: string; right: string; align: { space?: string; time?: string; category?: string; rules: string[]; label: string }; note: string }[]
   pipeline: { step: number; do: string; dataset?: string; edge?: string; note?: string }[]
   schedule?: { reason: string } | null
   candidates: { id: string; title: string; status?: string | null; blocked_by?: string | null }[]
@@ -221,6 +222,8 @@ export interface DocsData {
   channels: Record<string, number>
   edges: { by_rel: Record<string, number>; by_rule: Record<string, number>; rate: Record<string, number>; hubs: { id: string; name: string; edges: number }[]; via_mapping: number }
   rules: Record<string, string>
+  grain?: { space: Record<string, number>; time: Record<string, number>; category: Record<string, number>; with_space: number; no_edge_with_space: number }  // 서버가 옛 판이면 없다
+  agencies?: Agencies  // 서버가 옛 판이면 없다
   claims: { by_kind: Record<string, number>; by_evidence: Record<string, number>; grounded: Record<string, number> }
   keys: { id: string; name: string; type: string; datasets: number }[]
   contexts: { id: string; name: string; dimension?: string; question?: string; members: number; recipe: boolean }[]
@@ -242,9 +245,20 @@ export interface SiteRow {
   total: number
   targets: number
   verified: number
-  key: '보유·검증' | '보유' | '미보유' | '키 불필요'
+  key: '보유·검증' | '보유' | '미보유' | '키 불필요' | '가입 불필요(견본)' | '승인·신청 대기'
   env: string
   how: string
+}
+
+export interface AgencyRow {
+  id: string; name: string; type: string; tier: string; catalog?: number; verified?: number; core?: number
+  edges_within?: number; edges_across?: number; portal?: string | null; note?: string | null
+  systems: { name: string; n: number; core: number }[]; keys: string[]; relations: number; core_missing: number; gaps: string[]
+}
+
+export interface Agencies {
+  total: number; tiers: Record<string, number>; types: Record<string, number>; analyzed: number
+  systems: number; relations: number; core_missing: number; detail: AgencyRow[]
 }
 
 export interface SiteCoverage {

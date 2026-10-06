@@ -1,4 +1,5 @@
-# Dataset 15103242 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103242 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103242'
 tier: verified
 title: 한국전력거래소_회원사별 전력거래실적
@@ -22,6 +23,7 @@ synonyms:
   - 일별 전력거래량
   - 발전사 거래전력량
   - KPX 거래실적
+summary_user: 한국전력거래소 전력시장에 참여하는 회원사별로 날짜(거래일자)마다 설비용량과 전력거래량을 담은 전국 범위 데이터로, 회원사 이름(companyNm) 단위의 행으로 내려온다. 에너지 분석가나 발전·판매 사업자가 '특정 발전회사가 특정 날짜에 시장에서 얼마나 거래했고 설비용량은 얼마였나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 전력 데이터와는 회원사 이름 매핑이나 같은 기관(전력거래소) 데이터의 날짜·이름 기준으로만 이어 쓴다.
 description_portal: ㅇ 전력시장은 발전소에서 생산한 전기를 판매하기 위해 한 곳으로 모은다는 의미에서 풀(POOL)이라고도 부릅니다.ㅇ 전력거래소는 전력시장 운영규칙에 따라 입찰, 정산, 계량, 시장감시, 정보공개, 분쟁조정 등 공정하고 투명한 시장 운영업무를 맡고 있으며, 전력시장을 통해 전력을 판매하는 발전회사와 전력을 구매하는 판매회사, 구역전기사업자, 또는 대규모 소비자(직접구매자)가 참여하여 전력의 거래가격과 거래량을 결정합니다.ㅇ 해당목록은 한국전력거래소 전력시장에서 전력을 거래하고 있는 회원사별 설비용량과 전력거래량을 날짜별로 조회 할 수 있는 서비스입니다.
 team:
   dept: 전사AX총괄팀
@@ -63,6 +65,7 @@ schema:
   fields:
     - name: companyNm
       type: code
+      semantic_type: kpx_member
       null_rate: 0.0
       sample_values:
         - 기타
@@ -128,6 +131,12 @@ schema:
         p50: 25482944847
         max: 84005978469
         unique: 7
+  foreign_keys:
+    - fields:
+        - companyNm
+      reference:
+        key: kpx_member
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -177,7 +186,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103242-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_member(companyNm)'
     evidence:
       - type: measured
         source: probe/stats/15103242.json
@@ -242,8 +251,6 @@ verification:
   run: probe/runs/15103242.json
   stats: probe/stats/15103242.json
   data: probe/data/15103242/
-status: active
-summary_user: 한국전력거래소 전력시장에 참여하는 회원사별로 날짜(거래일자)마다 설비용량과 전력거래량을 담은 전국 범위 데이터로, 회원사 이름(companyNm) 단위의 행으로 내려온다. 에너지 분석가나 발전·판매 사업자가 '특정 발전회사가 특정 날짜에 시장에서 얼마나 거래했고 설비용량은 얼마였나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 전력 데이터와는 회원사 이름 매핑이나 같은 기관(전력거래소) 데이터의 날짜·이름 기준으로만 이어 쓴다.
 limits: 표준 조인 키가 없어 발전소 원장·인허가 데이터와 연결하려면 회사명 문자열을 직접 맞춰야 한다. 행정구역 구분이 없는 전국·비공간 데이터라 지역별 거래량은 볼 수 없고, 개발계정은 하루 100회로 호출이 제한된다.
 review:
   summary: draft
@@ -256,3 +263,4 @@ review:
     - c-15103242-04
     - c-15103242-06
   dropped_citations: 0
+status: active

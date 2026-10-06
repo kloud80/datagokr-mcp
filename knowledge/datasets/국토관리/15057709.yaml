@@ -1,0 +1,309 @@
+# Dataset 15057709 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057709'
+tier: verified
+title: 경기도_상수도 보급 집계 현황
+sector: 국토관리/수자원/water-supply
+domain: 국토관리/기반시설
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057709/openapi.do
+synonyms:
+  - 상수도
+  - 급수인구
+  - 보급률
+  - 상하수도
+  - 수도통계
+  - 시군정보
+  - 시설용량
+  - 수자원관리
+  - 상수도 보급률
+  - 수돗물 보급
+  - 정수시설 용량
+  - 광역상수도
+  - 지방상수도
+  - 경기도 시군별 상수도
+summary_user: 경기도 시군별 상수도 보급 현황을 연도(SUM_YY)·시군 단위로 집계한 자료로, 총인구수·급수인구수·보급률과 광역·지방·타시도 정수시설의 하루 처리용량(㎥/일)을 담는다. 분석가나 지자체 담당자가 '경기도에서 상수도 보급률이 낮은 시군은 어디이고, 광역상수도와 타시도 공급에 얼마나 기대는가' 같은 지역 간 보급격차 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 시군명·시군코드(SIGUN_CD)를 이름·코드 매핑하거나 같은 기관(경기도) 데이터의 코드로만 잇는다.
+description_portal: '이 데이터는 경기도 내 시군별 상수도 보급 현황을 연도별로 집계한 자료로, 총인구수 대비 급수인구수와 상수도 보급률, 광역 및 지방상수도 시설용량 정보를 포함합니다. 데이터 항목에는 시군명, 시군코드, 총인구수, 급수인구수, 보급률(%) 외에도 광역·지방·타시도 상수도 시설의 일일 처리용량이 포함되어 있으며, 수자원 인프라의 효율성 분석, 지역 간 상수도 보급격차 평가, 환경정책 수립 등에 활용될 수 있습니다. API는 인증키 기반으로 제공되며 XML 또는 JSON 형식으로 접근 가능하며, 시군명 또는 코드 기반 조건 검색이 가능합니다.-급수인구수: 상수도를 통해 정수된 물을 공급받는 인구 수를 의미합니다.-보급률: 해당 지역의 총인구수 대비 상수도 급수 인구 비율을 나타내는 지표입니다.-광역시설용량: 여러 시군에 걸쳐 운영되는 대규모 정수시설의 하루 처리 용량을 의미하며, 단위는 ㎥/일입니다.-지방시설용량: 단일 시군 내에 위치한 상수도 정수시설의 하루 처리 용량입니다.-타시도시설용량: 경기도 외 다른 시도에 위치한 정수시설을 통해 공급받는 수돗물의 하루 처리 용량을 말합니다.'
+team:
+  dept: AI데이터행정과
+services:
+  - op: WaterSupplySupply
+    name: WaterSupplySupply
+    endpoint: https://openapi.gg.go.kr/WaterSupplySupply
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원시
+        - 용인시
+        - 고양시
+      stats:
+        unique: 5
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41110'
+        - '41460'
+        - '41280'
+      stats:
+        min: 41110
+        p50: 41280
+        max: 41590
+        unique: 5
+    - name: TOT_POPLTN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1216965'
+        - '1093665'
+        - '1090339'
+      stats:
+        min: 922092
+        p50: 1090339
+        max: 1216965
+        unique: 5
+    - name: WTRSUPL_POPLTN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1216459'
+        - '1087868'
+        - '1088144'
+      stats:
+        min: 922033
+        p50: 1087868
+        max: 1216459
+        unique: 5
+    - name: SUPPLY_RT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100.0'
+        - '99.5'
+        - '99.8'
+      stats:
+        min: 99.5
+        p50: 100
+        max: 100
+        unique: 3
+    - name: METROPL_FACLT_CAPA
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '515000.0'
+        - '248000.0'
+        - '492000.0'
+      stats:
+        min: 213000
+        p50: 475000
+        max: 515000
+        unique: 5
+    - name: LOCAL_FACLT_CAPA
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '100000.0'
+        - '280000.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 280000
+        unique: 3
+    - name: OTHRSIDO_FACLT_CAPA
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2100.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 2100
+        unique: 2
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5632
+  rank_in_sector: 344
+  brm: 환경기상 - 상하수도·수질
+  sector_rule: water-core-scattered
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15057709-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057709.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15057709-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057709-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057709.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057709-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057709.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057709-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15057709-06
+    kind: admin_note
+    value: "세부 부문 '상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)'의 가치: 정수장별 월 수질검사 = 시민 상시 수요, 정수장코드·지자체 상수도사업본부 다수"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#water-supply
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057709-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057709-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057709.json
+  stats: probe/stats/15057709.json
+  data: probe/data/15057709/
+limits: 경기도 외부 사이트(data.gg.go.kr) 전용 인증키가 path 파라미터로 필요하며 공공데이터포털 활용신청과는 별개다. 시도 범위의 비공간 집계라 정수장·급수구역 단위 분석이나 좌표 기반 연계에는 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15057709-01
+    - c-15057709-03
+    - c-15057709-04
+  dropped_citations: 0
+status: active

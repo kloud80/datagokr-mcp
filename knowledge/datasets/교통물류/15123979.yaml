@@ -1,0 +1,200 @@
+# Dataset 15123979 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123979'
+tier: verified
+title: 경기도_BMS 사용자 문의사항
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123979/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 버스문의
+  - 버스게시판
+  - 민원
+  - 오류
+  - 질문
+  - 버스운송관리시스템 문의
+  - BMS 게시판
+  - 경기도 버스 민원
+  - 버스 운수사 시스템 문의
+  - BMS 질의응답
+  - 버스 관리시스템 오류 문의
+summary_user: 경기도 버스운송관리시스템(BMS) 사용자가 올린 문의 게시글을 글 한 건 단위로 담은 원천 자료로, 게시판 일련번호·제목·등록일자만 들어 있다. 운수사·지자체 담당자나 분석가가 노선 정보 오류, 차량 등록 에러, 차대번호 중복 같은 시스템 문의가 어떤 유형으로 언제 몰렸는지 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 버스 노선·정류장 데이터와는 직접 연결되지 않고, 제목의 노선명 같은 이름 매칭이나 같은 기관 자료로만 느슨하게 이어 쓴다.
+description_portal: 이 데이터는 경기도 버스운송관리시스템(BMS)을 이용하는 사용자들의 문의사항을 기록한 게시판 형식의 자료입니다. 주요 항목은 '게시판 일련번호', '제목', '등록일자'로 구성되어 있으며, 사용자들이 시스템 사용 중 겪은 문제나 개선 요청사항, 정보 문의 등을 담고 있습니다. 문의 내용에는 노선 정보 오류, 차량 등록 에러, 막차시간, 운행정보 등록 문제, 차대번호 중복, 차령만료일 수정 등 다양한 실무적 이슈가 포함되어 있습니다. 이 데이터를 활용하면 사용자 불편사항의 유형별 분석, 시스템 개선 방향 도출, 민원 대응 우선순위 설정, 버스운송관리시스템의 운영 효율성 향상 등을 위한 기반자료로 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: board_sn
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34861'
+        - '34901'
+        - '34921'
+      stats:
+        min: 33541
+        p50: 34911
+        max: 35761
+        unique: 100
+    - name: title
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 제목 글자 수는 30자로 제한됩니다.
+        - 일괄등록 오류
+        - test
+      stats:
+        unique: 83
+    - name: reg_ymd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20211201'
+        - '20220222'
+        - '20211125'
+      stats:
+        min: 20201120
+        p50: 20210967
+        max: 20220228
+        unique: 69
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3473
+  rank_in_sector: 4284
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15123979-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123979.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15123979-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123979-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123979.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123979-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123979.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123979-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123979-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123979-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123979.json
+  stats: probe/stats/15123979.json
+  data: probe/data/15123979/
+limits: 문의 본문과 답변 없이 제목과 등록일자만 있어 세부 내용이나 처리 결과는 알 수 없다. 호출에는 포털 활용신청과 별개로 외부 사이트(data.gg.go.kr) 인증키가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15123979-01
+    - c-15123979-03
+    - c-15123979-04
+  dropped_citations: 0
+status: active

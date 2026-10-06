@@ -1,4 +1,5 @@
-# Dataset 15106292 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15106292 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106292'
 tier: verified
 title: 한국서부발전(주)_풍력 발전 현황
@@ -23,6 +24,7 @@ synonyms:
   - 서부발전 풍력
   - 신재생 발전 실적
   - 풍력 이용률
+summary_user: 한국서부발전이 운영하는 풍력 발전기별로 하루 단위 행에 설비용량(MW)과 1시부터 24시까지 시간대별 발전량을 담은 파일 데이터(CSV, 약 64만 바이트)다. 분석가가 특정 풍력 발전기의 시간대·계절별 출력 패턴이나 설비용량 대비 이용률을 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전기명·날짜(년월일)를 이름 매칭하거나 같은 기관 자료끼리만 이어 쓴다.
 description_portal: 한국서부발전의 풍력발전 현황 데이터입니다. 한국서부발전의 풍력발전 시간대별 데이터는 풍력 설비의 발전 특성과 운영 효율성을 정밀하게 파악할 수 있도록 시간 단위로 집계된 발전 현황 자료입니다. 이 데이터에는 발전소별 설비용량, 시간대별 발전량 등이 기록되며, 기상 조건에 따른 변동성도 함께 반영됩니다. 특히 풍속과 풍향의 변화가 발전량에 직접적으로 영향을 미치기 때문에, 시간대별 데이터를 통해 특정 시간대나 계절의 출력 패턴을 분석할 수 있습니다. 이를 활용하면 전력 계통의 안정적 운영을 위한 예측 모델을 정교화하고, 출력변동에 대응하는 보완 전원 운영 전략도 수립할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 발전기명
       type: code
+      semantic_type: ewp_renew_generator
       null_rate: 0.0
       sample_values:
         - 화순 풍력 발전소
@@ -353,12 +356,22 @@ schema:
         p50: 2850.51
         max: 14071032
         unique: 2676
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: ewp_renew_generator
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 년월일
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -395,7 +408,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15106292-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_generator(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15106292.json
@@ -460,8 +473,6 @@ verification:
   run: probe/runs/15106292.json
   stats: probe/stats/15106292.json
   data: probe/data/15106292/
-status: active
-summary_user: 한국서부발전이 운영하는 풍력 발전기별로 하루 단위 행에 설비용량(MW)과 1시부터 24시까지 시간대별 발전량을 담은 파일 데이터(CSV, 약 64만 바이트)다. 분석가가 특정 풍력 발전기의 시간대·계절별 출력 패턴이나 설비용량 대비 이용률을 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전기명·날짜(년월일)를 이름 매칭하거나 같은 기관 자료끼리만 이어 쓴다.
 limits: 발전소 코드 같은 공통 키가 없어 전력거래소 발전원별 자료 등과 자동으로 붙지 않고 발전기명 수작업 매핑이 필요하다. 전국·비공간 데이터로 발전기 위치나 지역 단위 분석에는 바로 쓰기 어렵다.
 review:
   summary: draft
@@ -473,3 +484,4 @@ review:
     - c-15106292-03
     - c-15106292-04
   dropped_citations: 0
+status: active

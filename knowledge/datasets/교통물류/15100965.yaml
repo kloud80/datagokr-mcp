@@ -56,6 +56,7 @@ schema:
         unique: 5631
     - name: 공항코드1(IATA)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0593
       sample_values:
         - ANI
@@ -65,6 +66,7 @@ schema:
         unique: 5312
     - name: 공항코드2(ICAO)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.159
       sample_values:
         - UASP
@@ -80,6 +82,17 @@ schema:
         - 신규공항
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 공항코드1(IATA)
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - 공항코드2(ICAO)
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -119,7 +132,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15100965-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: airport_cd(공항코드1(IATA)), airport_cd(공항코드2(ICAO))'
     evidence:
       - type: measured
         source: probe/stats/15100965.json

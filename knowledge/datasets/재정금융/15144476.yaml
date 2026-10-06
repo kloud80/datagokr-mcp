@@ -1,4 +1,5 @@
-# Dataset 15144476 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15144476 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15144476'
 tier: verified
 title: 한국무역보험공사_업종등급목록
@@ -25,6 +26,7 @@ synonyms:
   - 무역보험 업종분류
   - 업종 대분류 중분류
   - 상위업종
+summary_user: 한국무역보험공사가 보유한 업종 목록을 업종 코드·업종명·상위 업종 코드·업종 등급(4단계 업종클래스) 단위로 담은 코드표이며, 포털 설명상 제11차 한국표준산업분류(KSIC)를 따르고 범위는 전국·비공간입니다. 수출 기업이나 분석가가 "특정 대분류 업종 아래 어떤 세부 업종코드가 있는가"를 확인해 무역보험공사의 수출결제정보·FIND BUYER 조회 조건으로 쓰는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 업종 코드나 업종명을 KSIC 기반 다른 데이터와 이름·코드로 매핑하거나 같은 기관의 코드로만 연결한다.
 description_portal: 한국무역보험공사에서 보유한 업종의 등급별 목록 자료입니다. 업종목록은 4단계 업종클래스 및 상위업종으로 분류되며 각 업종코드, 업종명으로 구성됩니다. 업종 데이터는 제 11차 한국표준산업분류코드(KSIC)를 따릅니다. 업종코드를 구성하는 숫자 데이터를 통해 대분류, 중분류, 소분류를 구별할 수 있습니다. 본 API를 통해 각 대분류 업종 별 상세 업종코드 데이터를 수집하고, 이를 수출결제정보 및 FIND BUYER SYSTEM 조회에 활용할 수 있습니다. 또한, 업종클래스별 업종코드, 상위업종별 업종코드 등 업종 그룹화를 통해 여러 유사 업종에 대한 데이터를 확인할 수 있습니다.
 team:
   dept: AI디지털총괄실
@@ -59,6 +61,7 @@ schema:
     - name: industryCd
       title: 업종 코드
       type: number
+      semantic_type: ksure_industry_cd
       null_rate: 0.0
       sample_values:
         - '0111'
@@ -72,6 +75,7 @@ schema:
     - name: parentIndustryCd
       title: 상위 업종 코드
       type: number
+      semantic_type: ksure_industry_cd
       null_rate: 0.0
       sample_values:
         - '011'
@@ -101,6 +105,17 @@ schema:
         p50: 3
         max: 3
         unique: 1
+  foreign_keys:
+    - fields:
+        - industryCd
+      reference:
+        key: ksure_industry_cd
+      evidence: measured
+    - fields:
+        - parentIndustryCd
+      reference:
+        key: ksure_industry_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -150,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15144476-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ksure_industry_cd(industryCd), ksure_industry_cd(parentIndustryCd)'
     evidence:
       - type: measured
         source: probe/stats/15144476.json
@@ -204,8 +219,6 @@ verification:
   run: probe/runs/15144476.json
   stats: probe/stats/15144476.json
   data: probe/data/15144476/
-status: active
-summary_user: 한국무역보험공사가 보유한 업종 목록을 업종 코드·업종명·상위 업종 코드·업종 등급(4단계 업종클래스) 단위로 담은 코드표이며, 포털 설명상 제11차 한국표준산업분류(KSIC)를 따르고 범위는 전국·비공간입니다. 수출 기업이나 분석가가 "특정 대분류 업종 아래 어떤 세부 업종코드가 있는가"를 확인해 무역보험공사의 수출결제정보·FIND BUYER 조회 조건으로 쓰는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 업종 코드나 업종명을 KSIC 기반 다른 데이터와 이름·코드로 매핑하거나 같은 기관의 코드로만 연결한다.
 limits: 다른 데이터셋과 바로 붙는 공통 조인 키가 확인되지 않아 KSIC 코드·업종명 매핑을 직접 해야 한다. 개발계정은 하루 5,000회 호출로 제한된다.
 review:
   summary: draft
@@ -217,3 +230,4 @@ review:
     - c-15144476-03
     - c-15144476-04
   dropped_citations: 0
+status: active

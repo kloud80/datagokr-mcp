@@ -1,4 +1,5 @@
-# Dataset 15106334 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15106334 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106334'
 tier: verified
 title: 한국동서발전(주)_발전소별 석탄 재활용 현황
@@ -21,6 +22,7 @@ synonyms:
   - 발전 부산물
   - 화력발전소 폐기물
   - 자원순환
+summary_user: 한국동서발전 석탄화력 발전소별·연도별 석탄재(비회·저회)의 발생량과 재활용량을 만톤 단위 집계로 담는다. 연구자나 정책 분석가가 '어느 발전소의 비회 재활용률이 해마다 어떻게 변했나' 같은 자원순환 실적 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소 이름(pwrSta)과 연도를 맞춰 붙이거나 같은 기관의 대기오염물질·수질 측정 데이터와 이어 쓴다.
 description_portal: 한국동서발전에서 오픈API 형태로 제공하는 발전소별 석탄재 재활용 현황 데이터입니다. 이 데이터는 연도별, 발전소별로 비회 발생량·재활용량(만톤), 저회 발생량·재활용량(만톤) 등을 포함하고 있으며, 표준화된 형식을 통해 다양한 시스템과 연계하여 자동화된 데이터 수집·분석이 가능합니다. 이러한 구조를 통해 학계 및 연구기관은 발전소별 자원순환 실적, 연도별 재활용 추이, 발전 부산물의 활용 효율 등을 종합적으로 분석하고, 자원 재활용 정책 개발, 발전소 폐기물 최소화 방안 도출, 에너지 산업의 지속 가능성 제고를 위한 기초 자료로 활용할 수 있습니다.
 team:
   dept: ICT기획부
@@ -82,6 +84,7 @@ schema:
     - name: pwrSta
       title: 발전소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 동해
@@ -131,12 +134,22 @@ schema:
         p50: 18.6
         max: 18.6
         unique: 1
+  foreign_keys:
+    - fields:
+        - pwrSta
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - year
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -180,7 +193,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15106334-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(pwrSta)'
     evidence:
       - type: measured
         source: probe/stats/15106334.json
@@ -245,8 +258,6 @@ verification:
   run: probe/runs/15106334.json
   stats: probe/stats/15106334.json
   data: probe/data/15106334/
-status: active
-summary_user: 한국동서발전 석탄화력 발전소별·연도별 석탄재(비회·저회)의 발생량과 재활용량을 만톤 단위 집계로 담는다. 연구자나 정책 분석가가 '어느 발전소의 비회 재활용률이 해마다 어떻게 변했나' 같은 자원순환 실적 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소 이름(pwrSta)과 연도를 맞춰 붙이거나 같은 기관의 대기오염물질·수질 측정 데이터와 이어 쓴다.
 limits: 표준 발전소 코드 같은 공통 키가 없어 다른 기관 데이터와 연결하려면 발전소 이름을 직접 매핑해야 한다. 지역 좌표가 없는 비공간 데이터라 지도·행정구역 단위 분석에는 별도 위치 정보가 필요하다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -259,3 +270,4 @@ review:
     - c-15106334-04
     - c-15106334-06
   dropped_citations: 0
+status: active

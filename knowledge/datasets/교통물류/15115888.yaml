@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 선박번호1
       type: code
+      semantic_type: vessel_id
       null_rate: 0.1694
       sample_values:
         - BS
@@ -115,6 +116,7 @@ schema:
         unique: 4587
     - name: IMO 번호
       type: number
+      semantic_type: vessel_id
       null_rate: 0.7819
       sample_values:
         - '-'
@@ -127,6 +129,7 @@ schema:
         unique: 2236
     - name: 호출부호
       type: string
+      semantic_type: vessel_id
       null_rate: 0.7662
       sample_values:
         - '-'
@@ -134,6 +137,22 @@ schema:
         - DSFB
       stats:
         unique: 2334
+  foreign_keys:
+    - fields:
+        - 선박번호1
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - IMO 번호
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -173,7 +192,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15115888-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(선박번호1), vessel_id(IMO 번호), vessel_id(호출부호)'
     evidence:
       - type: measured
         source: probe/stats/15115888.json

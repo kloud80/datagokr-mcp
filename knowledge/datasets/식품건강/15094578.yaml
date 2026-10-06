@@ -1,4 +1,5 @@
-# Dataset 15094578 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15094578 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15094578'
 tier: verified
 title: 식품의약품안전처_마스크 회수 제품 정보
@@ -22,6 +23,7 @@ synonyms:
   - 마스크 판매중지
   - 불량 마스크
   - 회수 대상 마스크 조회
+summary_user: 마스크 제조·유통 업체의 회수 대상 제품을 제품 건별로 담은 전국 단위 비공간 데이터로, 필드 목록에는 제품명, 업체명, 위탁제조업체, 허가일자, 분류, 바코드, 효능·용법·주의사항, 저장방법, 유효기간, 포장단위 등이 들어 있습니다. 소비자나 약국·유통 사업자가 "지금 팔거나 쓰고 있는 이 마스크가 회수 대상인가"를 확인하는 데 쓰고, 분석가는 마스크 회수 현황과 품질 대응을 점검하는 데 씁니다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 업체명·제품명 매핑으로 잇습니다. 연결 대상은 같은 식약처의 회수·판매중지·행정처분 데이터나 의약외품 허가 정보이며, 사업자등록번호로 보이는 필드(BIZRNO)가 있지만 조인 키로 검증되지는 않았습니다.
 description_portal: 식품의약품안전처에서 제공하는 마스크 회수 제품 정보 데이터는 마스크 제조 및 유통 업체의 회수 대상 제품 현황을 조회할 수 있도록 구성된 공공데이터입니다. 주요 제공 항목으로는 제품명, 업체명, 회수사유, 제조번호(제조일자), 회수명령일자, 공개마감일자 등이 포함되어 있어, 어떤 제품이 왜 언제 회수되었는지를 명확히 확인할 수 있습니다. 이를 통해  마스크 회수 경위를 추적하고, 소비자에게 해당 정보를 알리거나 시장 감시, 품질 대응 현황 분석, 정책 평가 등을 위한 기초 자료로 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -191,6 +193,7 @@ schema:
         unique: 6
     - name: BIZRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '6068550310'
@@ -201,12 +204,22 @@ schema:
         p50: 4758101686
         max: 8988102573
         unique: 45
+  foreign_keys:
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PRDLST_PRMSN_YMD
 cycle: event
 classification:
   subsector_name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
@@ -251,7 +264,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15094578-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15094578.json
@@ -316,8 +329,6 @@ verification:
   run: probe/runs/15094578.json
   stats: probe/stats/15094578.json
   data: probe/data/15094578/
-status: active
-summary_user: 마스크 제조·유통 업체의 회수 대상 제품을 제품 건별로 담은 전국 단위 비공간 데이터로, 필드 목록에는 제품명, 업체명, 위탁제조업체, 허가일자, 분류, 바코드, 효능·용법·주의사항, 저장방법, 유효기간, 포장단위 등이 들어 있습니다. 소비자나 약국·유통 사업자가 "지금 팔거나 쓰고 있는 이 마스크가 회수 대상인가"를 확인하는 데 쓰고, 분석가는 마스크 회수 현황과 품질 대응을 점검하는 데 씁니다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 업체명·제품명 매핑으로 잇습니다. 연결 대상은 같은 식약처의 회수·판매중지·행정처분 데이터나 의약외품 허가 정보이며, 사업자등록번호로 보이는 필드(BIZRNO)가 있지만 조인 키로 검증되지는 않았습니다.
 limits: 갱신은 이벤트 단위로 생성된 뒤 바뀌지 않는 방식으로 분류되어 있어, 실시간 회수 현황의 최신성은 따로 확인해야 합니다. 지역(행정단위) 구분이 없는 전국·비공간 데이터라 지역별 분석에는 쓸 수 없고, 공식 조인 키가 없어 다른 데이터와는 이름 매핑으로만 연결됩니다. 포털 설명에 나온 회수사유·회수명령일자는 제공 필드 목록에서 확인되지 않으므로, 실제 응답 항목을 먼저 점검해야 합니다.
 review:
   summary: draft
@@ -331,3 +342,4 @@ review:
     - c-15094578-04
     - c-15094578-06
   dropped_citations: 0
+status: active

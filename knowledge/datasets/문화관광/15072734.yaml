@@ -1,4 +1,3 @@
-# Dataset 15072734 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15072734'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_혁신성장
@@ -22,6 +21,7 @@ synonyms:
   - 뉴스 키워드
   - 개체명 추출
   - 언론 담론 분석
+summary_user: 빅카인즈에서 수집한 혁신성장 관련 뉴스를 기사 한 건씩 담은 메타데이터로, 보도 일자·언론사·기고자·제목·통합분류(1~3단계)·사건/사고 분류·개체명(인물·기업/기관·지역)·중요키워드를 담으며 CSV 파일 한 개(약 27MB)로 받는다. 연구자나 정책 담당자가 '시기별로 디지털 전환·스타트업 육성 같은 혁신성장 주제가 언론에 얼마나 자주, 어떤 기업·인물과 함께 보도됐는가'를 살피는 담론 분석에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 언론사명·기업/기관명·지역명 같은 이름 매핑으로만 이어 쓴다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 혁신성장 관련 뉴스 메타정보입니다. 각 기사에는 주소, 보도 일자, 언론사, 기고자, 제목, 통합분류(1~3단계), 사건/사고 여부, 개체명(인물·지역·기업), 키워드, 특성추출 값, 본문 내용, 원본 주소 등이 포함되어 있어, 기사 단위의 구조적·내용 분석이 가능합니다.본 자료는 언론 보도를 통해 혁신성장이라는 가치가 어떻게 담론화되었는지를 다양한 관점에서 보여줍니다. 예컨대 디지털 전환, 기술 혁신, 벤처 및 스타트업 육성, 정책 지원과 투자 유인, 미래 산업 육성 전략 등이 주요 주제로 드러날 수 있습니다. 이를 통해 시기별 언론의 혁신성장 담론 강도, 특정 산업 분야별 주목도 변화, 주요 기업 및 인물의 역할 부각 여부, 정책 제안과 사회적 반응 간 연관성 등을 정밀하게 분석할 수 있습니다. 정책 입안자, 학계, 산업계, 언론 연구자 등은 이 데이터를 바탕으로 혁신성장 전략의 담론 흐름을 파악하고, 사회적 합의 형성 과정 및 언론의 역할 변화를 탐색하는 데 활용할 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -50,6 +50,7 @@ schema:
         unique: 3
     - name: 주소
       type: date
+      semantic_type: bigkinds_article_url
       null_rate: 0.0
       sample_values:
         - http://www.bigkinds.or.kr/news/newsDetailView.do?newsId=02100501.201702051734190
@@ -72,6 +73,7 @@ schema:
         unique: 641
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 매일경제
@@ -187,12 +189,32 @@ schema:
         - 서울포럼,서울포럼_부대행사,서울,서울경제신문,ai,글로벌_포럼,신라호텔,부대행사,재레드_다이아몬드_교수,드론,재레드,바이오_혁명,글로벌_드론,한
       stats:
         unique: 27940
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: bigkinds_article_url
+      evidence: measured
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 주소
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -229,7 +251,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072734-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bigkinds_article_url(주소), kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15072734.json
@@ -304,8 +326,6 @@ verification:
   run: probe/runs/15072734.json
   stats: probe/stats/15072734.json
   data: probe/data/15072734/
-status: active
-summary_user: 빅카인즈에서 수집한 혁신성장 관련 뉴스를 기사 한 건씩 담은 메타데이터로, 보도 일자·언론사·기고자·제목·통합분류(1~3단계)·사건/사고 분류·개체명(인물·기업/기관·지역)·중요키워드를 담으며 CSV 파일 한 개(약 27MB)로 받는다. 연구자나 정책 담당자가 '시기별로 디지털 전환·스타트업 육성 같은 혁신성장 주제가 언론에 얼마나 자주, 어떤 기업·인물과 함께 보도됐는가'를 살피는 담론 분석에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 언론사명·기업/기관명·지역명 같은 이름 매핑으로만 이어 쓴다.
 limits: 기사 단위 메타정보라서 공식 통계나 등록번호·사업자번호 같은 표준 코드로 다른 원장과 바로 결합할 수 없다. 개체명·지역은 이름 문자열이라 다른 데이터와 맞추려면 이름 정제와 매핑이 필요하다.
 review:
   summary: draft
@@ -317,3 +337,4 @@ review:
     - c-15072734-03
     - c-15072734-04
   dropped_citations: 0
+status: active

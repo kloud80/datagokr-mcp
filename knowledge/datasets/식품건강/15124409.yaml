@@ -1,0 +1,251 @@
+# Dataset 15124409 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15124409'
+tier: verified
+title: 경기도_식품 중 방사능 검사결과
+sector: 식품건강/식품의약안전/food-safety-alerts
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15124409/fileData.do
+synonyms:
+  - 방사능
+  - 농수산물
+  - 가공식품
+  - 유통식품안전
+  - 식품안전관리
+  - 식품방사능
+  - 방사능 검사
+  - 세슘 검출
+  - 요오드 검출
+  - 방사성 물질 식품
+  - 수산물 방사능
+  - 경기도 보건환경연구원
+  - 유통식품 안전검사
+summary_user: '경기도 내 유통 식품을 검사한 방사능 결과를 검사 건별로 담으며, 검사기간·분류·품목명·수거지역과 요오드·세슘 검출 내역, 판정 결과가 들어 있다. 소비자나 식품 안전 분석가가 특정 품목(예: 수산물)에서 세슘이나 요오드가 검출된 적이 있는지, 판정이 적합이었는지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 식품 안전 데이터(회수·부적합·잔류농약 검사 등)와는 품목명이나 지역명을 직접 맞춰 이어야 한다.'
+description_portal: '이 데이터는 경기도 내 유통 중인 식품에 대한 방사능 검사 결과를 담고 있으며, 검사 대상은 주로 요오드-131, 세슘-134, 세슘-137로 대표되는 방사성 물질입니다. 식품 유통 단계에서의 방사능 검사는 소비자의 건강을 보호하고 식품의 안전성을 확보하기 위한 필수 조치입니다.최신 검사 결과는 경기도 보건환경연구원 홈페이지를 통해 주 1회 갱신되며, 식품안전 정책 및 소비자 정보 제공에 활용될 수 있습니다.URL: https://www.gg.go.kr/gg_health/bbs/board.do?bsIdx=731&menuId=3189'
+accrual_periodicity: 연간
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: insp_perd
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2024.04.01.~2024.04.08.
+        - 2024.03.21.~2024.03.26.
+        - 2024.03.26.~2024.04.02.
+      stats:
+        min: '2024-03-18'
+        max: '2024-04-03'
+        unique: 23
+    - name: class_dtls
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타 수산물가공품
+        - 기타 건포류
+        - 참돔
+      stats:
+        unique: 31
+    - name: prodlst_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 고등어
+        - 삼치
+        - 우럭
+      stats:
+        unique: 72
+    - name: prdc_hno
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국내산
+        - 중국
+        - 러시아
+      stats:
+        unique: 12
+    - name: tkaway_region
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - 용인시
+        - 성남시
+      stats:
+        unique: 14
+    - name: iod_detect_dtls
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 불검출
+      stats:
+        unique: 1
+    - name: sesium_detect_dtls
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 불검출
+      stats:
+        unique: 1
+    - name: jgmt_dtls
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 적합
+      stats:
+        unique: 1
+    - name: rm
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - insp_perd
+cycle: event
+classification:
+  subsector_name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3945
+  rank_in_sector: 1345
+  brm: 식품건강 - 식품의약안전
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15124409-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15124409.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15124409-02
+    kind: cadence
+    value: 명세상 연간 · 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124409-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124409.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124409-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15124409.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124409-06
+    kind: admin_note
+    value: "세부 부문 '회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독'의 가치: 회수·판매중지는 실시간 소비자 안전, 행정처분은 업소 건별 이력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#food-safety-alerts
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124409-07
+    kind: admin_note
+    value: '[식품건강 - 식품의약안전 · 결정] 식품 인허가 업소(`food-business-licenses`)·위생 지정(`hygiene-designations`)·회수/판매중지/행정처분/부적합(`food-safety-alerts`)·수입식품(`imported-food`)·'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L669
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124409-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15124409.json
+  stats: probe/stats/15124409.json
+  data: probe/data/15124409/
+limits: data.gg.go.kr의 별도 인증키(KEY)가 필요하며, 이 키는 공공데이터포털 활용신청과 별개다. 명세상 갱신 주기는 연간·이벤트로 되어 있지만 포털 설명에는 주 1회 갱신으로 적혀 있어, 최신 반영 시점은 직접 확인해야 한다. 업소나 제품을 식별하는 공통 코드가 없어 업소별 이력 추적이나 인허가 데이터와의 정확한 연결은 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15124409-01
+    - c-15124409-02
+    - c-15124409-03
+    - c-15124409-04
+    - c-15124409-07
+  dropped_citations: 0
+status: active

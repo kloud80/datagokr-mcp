@@ -1,4 +1,5 @@
-# Dataset 15121215 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121215 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121215'
 tier: verified
 title: 한국철도공사_여행센터 전화번호
@@ -24,6 +25,7 @@ synonyms:
   - 코레일 역 문의 전화
   - 역별 대표전화
   - 여행센터 연락망
+summary_user: 한국철도공사 여행센터의 전화번호를 역(예발역코드·역명) 단위로 담은 소규모 CSV 파일(약 2.3KB)로, 대표번호 여부와 등록·변경 일시가 함께 들어 있다. 철도 이용객이나 여행업 종사자가 '이 역 여행센터에 전화하려면 어느 번호로 걸어야 하나'를 찾거나, 안내책자·콜센터 연락망을 만들 때 쓴다. 전역 조인 키는 없어 다른 철도 데이터와는 역명이나 같은 기관의 역 코드(예발역코드)를 맞춰서만 이어 쓴다.
 description_portal: 이 데이터는 한국철도공사가 운영하는 여행센터의 전화번호 정보를 제공합니다. 각 여행센터의 역별 코드와 함께 해당 역명도 함께 표기되어 있어, 사용자는 코드만으로도 어떤 역의 여행센터인지 쉽게 파악할 수 있습니다. 대표번호 여부, 전화번호 등록일 등 전화번호에 대한 상세 항목도 포함되어 있습니다.이를 통해 확인할 수 있는 것은 전국 주요 철도역 여행센터의 전화번호와 위치(역명) 매칭 현황입니다. 예를 들어, 특정 역의 여행센터 연락처를 빠르게 찾거나, 역명과 코드를 기준으로 여러 역의 연락망을 구축하고 비교할 수 있습니다. 또한 전화번호의 업데이트 시점 등을 확인해 최신 정보 제공 여부도 점검 가능합니다.해당 데이터는 철도 이용객의 문의 및 예약, 민원 안내, 지역별 고객 지원 시스템 개선 등에 참고자료로 활용될 수 있습니다. 특히 여행·관광 업계 종사자, 교통 관련 기관, 또는 콜센터 운영 및 안내체계 구축 시 실무적으로 유용하며, 역별 서비스 품질 평가, 연락망 관리, 대국민 안내책자 제작 등에서도 중요한 기초자료가 됩니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 예발역코드
       type: number
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '42'
@@ -95,12 +98,23 @@ schema:
         min: '2015-06-15'
         max: '2023-07-18'
         unique: 19
+  foreign_keys:
+    - fields:
+        - 예발역코드
+      reference:
+        key: rail_station_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
+    - 변경일시
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -136,7 +150,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121215-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_station_cd(예발역코드)'
     evidence:
       - type: measured
         source: probe/stats/15121215.json
@@ -190,8 +204,6 @@ verification:
   run: probe/runs/15121215.json
   stats: probe/stats/15121215.json
   data: probe/data/15121215/
-status: active
-summary_user: 한국철도공사 여행센터의 전화번호를 역(예발역코드·역명) 단위로 담은 소규모 CSV 파일(약 2.3KB)로, 대표번호 여부와 등록·변경 일시가 함께 들어 있다. 철도 이용객이나 여행업 종사자가 '이 역 여행센터에 전화하려면 어느 번호로 걸어야 하나'를 찾거나, 안내책자·콜센터 연락망을 만들 때 쓴다. 전역 조인 키는 없어 다른 철도 데이터와는 역명이나 같은 기관의 역 코드(예발역코드)를 맞춰서만 이어 쓴다.
 limits: 실측 컬럼에 표준 조인 키가 없어 다른 기관 데이터와 결합하려면 역명 매핑이 필요하다. 전국 범위지만 비공간 데이터라 좌표나 행정구역 정보는 없다.
 review:
   summary: draft
@@ -203,3 +215,4 @@ review:
     - c-15121215-03
     - c-15121215-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 3075821 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3075821 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3075821'
 tier: verified
 title: 법무부_국적 및 연령별 체류외국인 현황
@@ -21,6 +22,7 @@ synonyms:
   - 외국인 성별 연령 분포
   - 출입국 통계연보
   - 외국인 인구 현황
+summary_user: 국내 체류 외국인을 대륙·국적·성별로 나누고 0~4세부터 60세 이상까지 5세 단위 연령대별 인원을 담은 전국 단위 집계 파일로, 해당 연도말 시점 기준이며 불법체류자와 단기(관광) 체류자까지 포함한다. 분석가나 정책 담당자가 '특정 국적 체류 외국인 중 20~30대 비중이 얼마인가', '국적별 성비와 연령 구조가 어떻게 다른가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국적명·대륙명 같은 이름 매핑으로만 이어 쓰며, 지역 정보가 없어 시군구 주민등록 인구와 직접 연결되지는 않는다.
 description_portal: 국내 체류 외국인의 체류자격별 연령별 통계입니다.연령은 5세 단위로 구분하여 제공하고 있습니다.해당 통계의 원본 통계는 출입국외국인정책본부 홈페이지의 통계연보에서 찾으실 수 있습니다.출입국외국인정책본부 홈페이지- 빅데이터 통계 - 통계연보 - 엑셀파일 모음집 - 연령 및 체류자격별 체류외국인 현황https://www.immigration.go.kr/immigration/1570/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjglMkY1OTY0NjQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2체류외국인은 해당 연도말 시점 기준 통계이며 불법체류자, 단기(관광) 등 모두 포함한 통계입니다.
 applicable_legislation:
   - law: 출입국관리법
@@ -47,6 +49,7 @@ schema:
         unique: 7
     - name: 국적
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 미국
@@ -219,6 +222,12 @@ schema:
         p50: 4
         max: 121544
         unique: 109
+  foreign_keys:
+    - fields:
+        - 국적
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -261,7 +270,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3075821-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적)'
     evidence:
       - type: measured
         source: probe/stats/3075821.json
@@ -336,8 +345,6 @@ verification:
   run: probe/runs/3075821.json
   stats: probe/stats/3075821.json
   data: probe/data/3075821/
-status: active
-summary_user: 국내 체류 외국인을 대륙·국적·성별로 나누고 0~4세부터 60세 이상까지 5세 단위 연령대별 인원을 담은 전국 단위 집계 파일로, 해당 연도말 시점 기준이며 불법체류자와 단기(관광) 체류자까지 포함한다. 분석가나 정책 담당자가 '특정 국적 체류 외국인 중 20~30대 비중이 얼마인가', '국적별 성비와 연령 구조가 어떻게 다른가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국적명·대륙명 같은 이름 매핑으로만 이어 쓰며, 지역 정보가 없어 시군구 주민등록 인구와 직접 연결되지는 않는다.
 limits: 전국·비공간 집계라 시군구 등 지역별 외국인 분포나 월별 추이는 알 수 없다. 조인 키가 없어 다른 출입국 통계와 붙이려면 국적·대륙 이름을 직접 맞춰야 한다.
 review:
   summary: draft
@@ -350,3 +357,4 @@ review:
     - c-3075821-04
     - c-3075821-06
   dropped_citations: 0
+status: active

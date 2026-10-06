@@ -1,4 +1,5 @@
-# Dataset 15094451 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15094451 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15094451'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_한류
@@ -21,6 +22,7 @@ synonyms:
   - 뉴스 키워드 분석
   - 언론 보도 빈도
   - 한국 문화 콘텐츠 보도
+summary_user: 빅카인즈 뉴스 데이터베이스에서 모은 한류 관련 기사를 기사 한 건당 한 행으로 담은 메타데이터 파일(CSV, 약 226KB)로, 일자·언론사·제목·통합 분류·키워드·특성추출 항목이 들어 있다. 연구자나 정책 담당자가 "어느 시기에 어떤 언론사가 한류를 얼마나 자주, 어떤 키워드로 보도했는가"를 살펴볼 때 쓴다. 실측 컬럼에는 다른 데이터와 이을 공통 조인 키가 없어서, 일자나 언론사 이름, 키워드 문자열을 기준으로 다른 빅카인즈 주제별 메타데이터나 통계와 맞춰 써야 한다.
 description_portal: 이 데이터는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 구축된 한류 관련 뉴스 분석 메타정보 자료입니다. 한류는 K-팝, 드라마, 영화, 게임, 패션 등 다양한 한국 문화 콘텐츠가 전 세계적으로 인기를 얻으며 확산된 현상으로, 국가 브랜드와 문화 산업 성장에 큰 기여를 하고 있습니다. 본 자료는 국내 주요 신문과 방송에서 보도된 한류 관련 기사들을 수집·분석하여, 특정 시기별 키워드와 보도 빈도의 변화를 확인할 수 있도록 구성되었습니다. 이를 통해 한류가 문화 산업, 외교, 경제, 사회적 인식에 어떤 영향을 미쳤는지, 그리고 글로벌 팬덤과 문화 교류가 어떻게 언론에 반영되었는지를 파악할 수 있습니다. 또한 학술 연구, 국제 문화 교류 정책 수립, 산업 전략 마련, 교육 현장 등 다양한 분야에서 활용 가능한 기초 자료를 제공하여, 한류 확산의 흐름과 의미를 심층적으로 이해하는 데 도움을 줍니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 208
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 세계일보
@@ -94,12 +97,22 @@ schema:
         - 카섹스,삼척군,도계읍,쇠고랑,허암기자,특수강도혐의,2명,강원도,박정수씨,후평동,박정수,황지동,강릉경찰서,손정현씨,씨등,춘천,손정현,춘천시,태백시
       stats:
         unique: 263
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15094451-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15094451.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15094451.json
   stats: probe/stats/15094451.json
   data: probe/data/15094451/
-status: active
-summary_user: 빅카인즈 뉴스 데이터베이스에서 모은 한류 관련 기사를 기사 한 건당 한 행으로 담은 메타데이터 파일(CSV, 약 226KB)로, 일자·언론사·제목·통합 분류·키워드·특성추출 항목이 들어 있다. 연구자나 정책 담당자가 "어느 시기에 어떤 언론사가 한류를 얼마나 자주, 어떤 키워드로 보도했는가"를 살펴볼 때 쓴다. 실측 컬럼에는 다른 데이터와 이을 공통 조인 키가 없어서, 일자나 언론사 이름, 키워드 문자열을 기준으로 다른 빅카인즈 주제별 메타데이터나 통계와 맞춰 써야 한다.
 limits: 전역 조인 키가 없어 다른 데이터와는 이름이나 날짜를 직접 맞춰야만 연결된다. 범위는 전국 단위의 비공간 자료여서 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15094451-03
     - c-15094451-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,223 @@
+# Dataset 15095714 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15095714'
+tier: verified
+title: 제주특별자치도_시도별 문화재 지정 현황
+sector: 문화관광/문화재/heritage-registry
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15095714/openapi.do
+synonyms:
+  - 문화재
+  - 기념물
+  - 국보
+  - 문화재 통계
+  - 국가유산 지정 건수
+  - 시도별 문화유산 현황
+  - 국가지정문화재 수
+  - 시도지정문화재
+  - KOSIS 문화재
+  - 제주데이터허브
+summary_user: 전국 시도별로 연도·문화재 대분류·소분류에 따른 지정(등록) 건수를 담은 집계 통계로, 포털 설명상 2016~2020년 범위이며 KOSIS 국가통계포털이 원 제공처입니다. 분석가나 연구자가 "시도별로 국가지정·시도지정 문화재가 몇 건이고 5년 사이 어떻게 늘었나"를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 시도명(시도)을 이름으로 매핑해 다른 시도 단위 통계와 붙여야 하며, 개별 유산 목록이 필요하면 종목코드·지정번호를 가진 국가유산청 자체 API를 따로 써야 합니다.
+description_portal: '전국 시도별 문화재 지정 현황 데이터로, 2016~2020년까지 연도, 시도, 문화재 대분류, 문화재 소분류에 따른 등록 건수 정보를 제공합니다.- 데이터 제공처: KOSIS 국가통계포털'
+team:
+  dept: 디지털혁신과
+services:
+  - op: preview
+    name: preview
+    endpoint: https://jejudatahub.net/api/data/view?id=880
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: jejudatahub.net
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: "\uFEFF기준 연도"
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2017'
+        - '2016'
+      stats:
+        min: 2016
+        p50: 2017
+        max: 2017
+        unique: 2
+    - name: 시도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제주
+        - 서울
+        - 부산
+      stats:
+        unique: 3
+    - name: 문화재대분류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지정문화재
+        - 국가등록문화재
+      stats:
+        unique: 2
+    - name: 문화재소분류
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국보
+        - 보물
+        - 사적
+      stats:
+        unique: 8
+    - name: 등록건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7'
+        - '5'
+        - '0'
+      stats:
+        min: 0
+        p50: 10.5
+        max: 683
+        unique: 18
+coverage:
+  spatial: 시도
+  admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도
+  space_via: name
+  time: year
+  time_fields:
+    - "\uFEFF기준 연도"
+cycle: default
+classification:
+  subsector_name: 유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4582
+  rank_in_sector: 469
+  brm: 문화관광 - 관광
+  sector_rule: tourism-misfiled-heritage
+  why: 제주데이터허브 (상세 페이지 미리보기 — 원본·API는 projectKey)
+claims:
+  - id: c-15095714-01
+    kind: access
+    value: 외부 사이트 jejudatahub.net 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15095714.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 jejudatahub.net
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15095714-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095714-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095714.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095714-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시도
+    evidence:
+      - type: measured
+        source: probe/runs/15095714.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095714-06
+    kind: admin_note
+    value: "세부 부문 '유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)'의 가치: 종목코드+지정번호(ccbaKdcd·ccbaAsno·ccbaCtcd), 소재지 PNU. 국가유산청 자체 API 병존"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#heritage-registry
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15095714-07
+    kind: admin_note
+    value: '[문화관광 - 문화예술 · 문화재 · 문화체육관광일반 · 문화재] 유산 지정·등록·보호구역·발굴조사·박물관 소장/아카이브·전통/무형. 관람·행사·관리/재난 배제 (`heritage-deferred`, `heritage-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L588
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095714-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15095714.json
+  stats: probe/stats/15095714.json
+  data: probe/data/15095714/
+limits: 건수 집계라서 개별 문화재의 이름·위치·지정번호는 알 수 없고, 행정단위는 시도까지만 있다. 호출에는 포털 활용신청과 별개로 jejudatahub.net 인증키(path 파라미터 KEY)가 필요합니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15095714-01
+    - c-15095714-03
+    - c-15095714-04
+    - c-15095714-06
+  dropped_citations: 0
+status: active

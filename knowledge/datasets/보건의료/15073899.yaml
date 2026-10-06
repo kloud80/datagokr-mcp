@@ -1,4 +1,5 @@
-# Dataset 15073899 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073899 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073899'
 tier: verified
 title: 식품의약품안전처_의료기기 형명정보
@@ -21,6 +22,7 @@ synonyms:
   - 의료기기 취소취하
   - 의료기기 상품명
   - 식약처 의료기기 형명
+summary_user: 식약처가 허가·신고한 의료기기의 형명(모델명)을 품목일련번호 단위로 담은 전국 범위 API로, 허가번호·품목명·허가일자, 취소·취하 여부와 일자, 상품명과 모델명, 수출 여부를 함께 제공한다. 병원 구매 담당자나 유통업자가 특정 모델명의 의료기기가 정식 허가를 받았는지, 허가가 취소·취하되지 않았는지 확인하는 데 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 전역 조인 키는 확인되지 않아, 의료기기 품목허가 데이터 등과는 허가번호(MEDDEV_ITEM_NO)나 품목명 같은 이름·코드 매칭으로 이어 써야 한다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 제공하는 의료기기 형명정보(모델명정보)입니다.  이 공공데이터는 의료기기품목일련번호를 통해 각 의료기기를 고유하게 식별하며 기관지역구분과 업종으로 제품의 분류 체계를 제공합니다 허가신고구분과 의료기기품목허가번호로 공식 승인 상태를 확인할 수 있고 품목명과 허가일자로 승인 시점을 파악할 수 있습니다 취소취하구분코드와 취소취하일자는 허가가 철회된 제품의 현황을 보여주어 현재 유통 가능한 제품을 명확히 구분할 수 있습니다 상품명과 일련번호 형명 정보는 실제 유통되는 제품의 구체적인 모델과 형태를 제공합니다.
 team:
   dept: 데이터혁신기획팀
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '124'
@@ -81,6 +84,7 @@ schema:
         unique: 2
     - name: MEDDEV_ITEM_NO
       type: date
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 서울 수신 06-1682 호
@@ -169,12 +173,29 @@ schema:
         - 예
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - MEDDEV_ITEM_NO
+    - PRMSN_YMD
+    - DSCTN_RTRCN_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -219,7 +240,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073899-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN), meddev_permit_no(MEDDEV_ITEM_NO)'
     evidence:
       - type: measured
         source: probe/stats/15073899.json
@@ -284,8 +305,6 @@ verification:
   run: probe/runs/15073899.json
   stats: probe/stats/15073899.json
   data: probe/data/15073899/
-status: active
-summary_user: 식약처가 허가·신고한 의료기기의 형명(모델명)을 품목일련번호 단위로 담은 전국 범위 API로, 허가번호·품목명·허가일자, 취소·취하 여부와 일자, 상품명과 모델명, 수출 여부를 함께 제공한다. 병원 구매 담당자나 유통업자가 특정 모델명의 의료기기가 정식 허가를 받았는지, 허가가 취소·취하되지 않았는지 확인하는 데 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 전역 조인 키는 확인되지 않아, 의료기기 품목허가 데이터 등과는 허가번호(MEDDEV_ITEM_NO)나 품목명 같은 이름·코드 매칭으로 이어 써야 한다.
 limits: 전역 조인 키가 없어 다른 데이터와의 연결은 이름·코드 매핑이나 같은 기관 코드에 의존한다. 개발계정은 하루 10,000회로 호출이 제한되며, 지역 단위가 없는 비공간 전국 데이터라 지역별 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -297,3 +316,4 @@ review:
     - c-15073899-03
     - c-15073899-04
   dropped_citations: 0
+status: active

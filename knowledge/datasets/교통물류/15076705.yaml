@@ -1,0 +1,309 @@
+# Dataset 15076705 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076705'
+tier: verified
+title: 한국도로공사_VMS 표출내용 현황
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076705/openapi.do
+synonyms:
+  - 고속도로
+  - VMS
+  - 전광판
+  - 교통안내
+  - 문구
+  - 안전
+  - 사고
+  - 차단
+  - 전광표지판
+  - VMS 문구
+  - 도로전광표지
+  - 고속도로 실시간 교통정보
+  - 고속도로 돌발상황
+  - 고속도로 정체 안내
+  - 도로공사 오픈API
+summary_user: 전국 고속도로 전광표지판(VMS)마다 지금 표출 중인 교통 안내 문구를 한 건씩 담은 실시간 원천 데이터로, 노선·관리센터·방향·표지판 위치와 함께 제공된다. 운전자나 교통정보 서비스 개발자가 '지금 이 노선 이 방향 전광판에 사고·공사·정체 안내가 떠 있는가'를 확인하는 데 쓰고, 이력을 쌓으면 상습 정체·돌발 구간 분석 자료가 된다. 노선번호·표지판 ID·표준링크(stdLink)·좌표 필드는 있지만 실측에서 전역 조인 키로 확인되지 않았으므로, 같은 기관의 다른 고속도로 소통·돌발 데이터와는 노선명·센터 코드 매칭이나 좌표 근접으로 이어 쓴다.
+description_portal: '본 데이터는 전국 고속도로에 설치된 전광표지판(VMS: Variable Message Sign)에 표출되는 실시간 교통 안내 문구 현황을 제공한다.API를 통해 노선명, 관리기관, 방향, 위치 등을 기준으로 표출 중인 문구를 조회할 수 있으며, 주요 내용에는 도로 공사, 교통사고, 정체 구간, 기상특보 등이 포함된다.이 정보는 운전자가 도로 상황을 사전에 인지하여 효율적인 경로를 선택하는 데 활용될 수 있으며, 공공기관 및 민간 개발자의 실시간 교통정보 서비스 연계에도 유용하다.응답 데이터는 표출내용, 표출시각, 위치명, 문구 유형 등의 항목으로 구성되며, XML과 JSON 형식으로 제공된다.해당 API는 한국도로공사가 운영 및 관리하며, 실시간 상황을 반영하여 주기적으로 갱신된다.'
+team:
+  dept: AI데이터처
+services:
+  - op: vmsMessageSrch
+    name: vmsMessageSrch
+    endpoint: https://data.ex.co.kr/openapi/vms/vmsMessageSrch
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pageNo
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 평택화성선
+      stats:
+        unique: 2
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0170'
+      stats:
+        min: 10
+        p50: 10
+        max: 170
+        unique: 2
+    - name: vmsId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0010VME02750
+        - 0010VME02820
+        - 0010VME02830
+      stats:
+        unique: 99
+    - name: centerCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000'
+      stats:
+        min: 200000
+        p50: 200000
+        max: 200000
+        unique: 1
+    - name: centerName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울경기본부
+      stats:
+        unique: 1
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - S
+        - E
+      stats:
+        unique: 2
+    - name: vmsMessage
+      type: code
+      null_rate: 0.0505
+      sample_values:
+        - ' 1차로 버스전용차로'
+        - ' 과속금지'
+        - ' 07시-21시 한남-안성'
+      stats:
+        unique: 24
+    - name: vmsMessage2
+      type: code
+      null_rate: 0.3333
+      sample_values:
+        - ' 위반시 벌점 30점'
+        - ' 급진로 변경 절 대 금 지'
+        - ' 지정차로 위반 벌점 10점 안전거리 위반 벌점 10점'
+      stats:
+        unique: 16
+    - name: xCoord
+      type: number
+      null_rate: 0.2323
+      sample_values:
+        - '37.410770'
+        - '37.009700'
+        - '37.241720'
+      stats:
+        min: 37.00468
+        p50: 37.15598
+        max: 37.4697
+        unique: 67
+    - name: yCoord
+      type: number
+      null_rate: 0.2323
+      sample_values:
+        - '127.089570'
+        - '126.989470'
+        - '127.104750'
+      stats:
+        min: 126.98527
+        p50: 127.1022625
+        max: 127.15028
+        unique: 65
+    - name: stdLink
+      type: number
+      null_rate: 0.4545
+      sample_values:
+        - '2140055801'
+        - '2140055701'
+        - '2330026002'
+      stats:
+        min: 1210001902
+        p50: 2140055801
+        max: 2333346500
+        unique: 26
+    - name: vmsShift
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.00'
+        - '387.70'
+        - '403.20'
+      stats:
+        min: 0
+        p50: 379.2
+        max: 416.9
+        unique: 92
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6811
+  rank_in_sector: 511
+  brm: 교통물류 - 도로
+  why: 고속도로 VMS 표출 현황, 실시간 소통 부문
+claims:
+  - id: c-15076705-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076705.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076705-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076705-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076705.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 14개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076705-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076705.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076705-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076705-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076705-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076705.json
+  stats: probe/stats/15076705.json
+  data: probe/data/15076705/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr) 인증키를 발급받아 호출해야 한다. 현재 표출 상태만 돌려주므로 과거 문구 이력은 직접 주기적으로 적재해야 하고, 다른 데이터와 바로 붙는 공통 키는 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076705-01
+    - c-15076705-03
+    - c-15076705-04
+    - c-15076705-06
+  dropped_citations: 0
+status: active

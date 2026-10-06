@@ -1,0 +1,188 @@
+# Dataset 15123980 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123980'
+tier: verified
+title: 경기도_버스운수사 부대시설 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123980/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 복지시설
+  - 버스업체
+  - 운수시설
+  - 차량정보
+  - 교통시설
+  - 버스회사 차고지
+  - 운수업체 시설
+  - 버스 차고 주차장
+  - 운수종사자 휴게실
+  - BMS 시설코드
+  - 경기도 버스 운송사업자
+summary_user: 경기도 버스운송관리시스템(BMS)에서 쓰는 운수사 부대시설의 시설ID(faclt_id)와 시설명을 담은 목록으로, 사무실·차고·주차장·숙소·식당·세차장·샤워실·휴게실 같은 시설 유형을 구분한다. 분석가나 행정 담당자가 'BMS에서 운수사 부대시설은 어떤 유형으로 나뉘는가'를 확인하거나, 다른 BMS 자료의 시설 코드를 해석할 때 쓴다. 실측 컬럼에는 전역 조인 키가 없어서, 다른 경기도 BMS 자료와는 시설ID나 시설명을 맞춰 보는 방식으로만 이어 쓴다.
+description_portal: 이 데이터는 경기도 버스운송관리시스템(BMS)을 기반으로 운수사별 부대시설에 대한 정보를 제공하며, 각 항목은 '시설ID'와 '시설명'으로 구성되어 있습니다. 제공되는 시설명에는 사무실, 차고, 주차장, 숙소, 식당, 세차장, 샤워실, 휴게실 등 운수업체의 업무 및 복지를 지원하는 다양한 시설이 포함됩니다. 이 데이터를 통해 각 운수사가 보유한 부대시설의 유형과 위치를 파악할 수 있으며, 버스 운송 환경 개선, 근무 여건 분석, 교통 인프라 확충, 업체 간 시설 보유 현황 비교 등에 활용될 수 있습니다. 특히 공영차고지나 영업소 등 공공시설과 연계한 행정계획 수립에도 도움이 됩니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: faclt_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10141'
+        - '10140'
+        - '10139'
+      stats:
+        min: 10010
+        p50: 10141
+        max: 10717
+        unique: 63
+    - name: faclt_no
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 차고
+        - 자동차관련시설
+        - 사무실
+      stats:
+        unique: 46
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3501
+  rank_in_sector: 4252
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15123980-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123980.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15123980-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123980-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123980.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123980-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123980.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123980-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123980-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123980-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123980.json
+  stats: probe/stats/15123980.json
+  data: probe/data/15123980/
+limits: 필드는 시설ID와 시설명 두 개뿐이고 공간 정보가 없는 비공간 자료여서, 이 자료만으로 운수사별 보유 현황이나 시설 위치는 알 수 없다. 호출에는 포털 활용신청과 별도로 외부 사이트(data.gg.go.kr)에서 받은 인증키가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15123980-01
+    - c-15123980-03
+    - c-15123980-04
+  dropped_citations: 0
+status: active

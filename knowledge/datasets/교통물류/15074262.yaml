@@ -1,0 +1,224 @@
+# Dataset 15074262 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15074262'
+tier: verified
+title: 제주특별자치도_일일 정류소별 버스 이용자 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15074262/openapi.do
+synonyms:
+  - 제주버스
+  - 이용자
+  - 정류소
+  - 제주 버스 승하차
+  - 정류장별 이용객 수
+  - 버스 승객 통계
+  - 제주 대중교통 이용량
+  - 교통카드 이용 현황
+  - 정류소 수요
+summary_user: 제주특별자치도의 정류소별 버스 이용자 수를 일 단위로 담은 집계 데이터로, 날짜·정류소(ID·이름)마다 탑승구분·요금제·지불방법별 이용자 수(userCount)를 제공한다. 분석가나 교통 정책 담당자가 "특정 정류소에서 하루 몇 명이 승차·하차하고, 어떤 요금제와 결제수단으로 타는가"를 확인하는 데 쓴다. 전역 조인 키는 없어서 정류소 ID(stationId)나 정류소명을 제주 정류장 원장·실시간 도착정보 같은 같은 기관 데이터와 이름·코드로 맞춰 연결해야 한다.
+description_portal: 일일 정류소별 버스 이용자 정보와 관련한 분석 시작월(필수), 분석 종료월(필수), 탑승구분, 요금제, 지불방법 등의 정보서비스
+team:
+  dept: 디지털혁신과
+services:
+  - op: preview
+    name: preview
+    endpoint: https://jejudatahub.net/api/data/view?id=613
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: jejudatahub.net
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: baseDate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20190201'
+      stats:
+        min: 20190201
+        p50: 20190201
+        max: 20190201
+        unique: 1
+    - name: stationId
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6115101'
+      stats:
+        min: 6115101
+        p50: 6115101
+        max: 6115101
+        unique: 1
+    - name: stationName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서귀포시외버스터미널(가상정류소)
+      stats:
+        unique: 1
+    - name: moveType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 환승
+      stats:
+        unique: 1
+    - name: priceType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 청소년
+        - 일반
+      stats:
+        unique: 2
+    - name: payType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 카드
+      stats:
+        unique: 1
+    - name: userCount
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '7'
+        - '63'
+      stats:
+        min: 7
+        p50: 35
+        max: 63
+        unique: 2
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7003
+  rank_in_sector: 418
+  brm: 교통물류 - 도로
+  why: 제주데이터허브 (상세 페이지 미리보기 — 원본·API는 projectKey)
+claims:
+  - id: c-15074262-01
+    kind: access
+    value: 외부 사이트 jejudatahub.net 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15074262.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 jejudatahub.net
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15074262-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15074262-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15074262.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15074262-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15074262.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15074262-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15074262-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15074262-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15074262.json
+  stats: probe/stats/15074262.json
+  data: probe/data/15074262/
+limits: 호출에는 포털 활용신청과 별도로 외부 사이트 jejudatahub.net의 인증키(KEY)가 필요하고, 분석 시작월·종료월을 반드시 지정해야 한다. 전국 표준 정류장 코드 같은 전역 키가 확인되지 않아 다른 지역·기관 데이터와 바로 결합하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15074262-01
+    - c-15074262-03
+    - c-15074262-04
+    - c-15074262-06
+  dropped_citations: 0
+status: active

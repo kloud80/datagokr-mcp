@@ -1,4 +1,5 @@
-# Dataset 15037356 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15037356 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15037356'
 tier: verified
 title: 한국산업인력공단_국가기술자격 학과별 직무정보
@@ -21,6 +22,7 @@ synonyms:
   - 대학 학과 직무
   - 진로 자격 정보
   - Q-Net 학과 직무
+summary_user: 국가기술자격(기사·기능사·기술사 등)의 직무를 대학 학과별 직무와 연결한 정보를 학과 코드·학과명과 학과 직무 대분류·중분류(코드와 이름) 단위로 담는 전국 범위의 비공간 API다. 진로를 고민하는 학생이나 진로상담·교육 분석가가 '이 학과를 나오면 어떤 직무 분야의 국가기술자격과 이어지는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못해, 다른 자격 종목·시험 일정·합격률 데이터와는 학과명·직무명 같은 이름 매핑이나 한국산업인력공단 내부 코드로만 연결한다.
 description_portal: 국가기술자격 학과별 직무정보 API는 한국산업인력공단에서 시행하는 국가기술자격(ex. 기사, 기능사, 기술사 등)의 직무를 고등교육의 학과별 직무와의 정보를 알려주는 API 입니다.
 team:
   dept: 자격정보화부
@@ -86,6 +88,7 @@ schema:
         unique: 382
     - name: udeptobligcd
       type: number
+      semantic_type: qnet_oblig_fld_cd
       null_rate: 0.0
       sample_values:
         - '14'
@@ -105,6 +108,12 @@ schema:
         - 전기.전자
       stats:
         unique: 17
+  foreign_keys:
+    - fields:
+        - udeptobligcd
+      reference:
+        key: qnet_oblig_fld_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -155,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15037356-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: qnet_oblig_fld_cd(udeptobligcd)'
     evidence:
       - type: measured
         source: probe/stats/15037356.json
@@ -220,8 +229,6 @@ verification:
   run: probe/runs/15037356.json
   stats: probe/stats/15037356.json
   data: probe/data/15037356/
-status: active
-summary_user: 국가기술자격(기사·기능사·기술사 등)의 직무를 대학 학과별 직무와 연결한 정보를 학과 코드·학과명과 학과 직무 대분류·중분류(코드와 이름) 단위로 담는 전국 범위의 비공간 API다. 진로를 고민하는 학생이나 진로상담·교육 분석가가 '이 학과를 나오면 어떤 직무 분야의 국가기술자격과 이어지는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못해, 다른 자격 종목·시험 일정·합격률 데이터와는 학과명·직무명 같은 이름 매핑이나 한국산업인력공단 내부 코드로만 연결한다.
 limits: 표준 조인 키가 없어 다른 기관 데이터와 붙일 때 이름 매칭에 의존해야 한다. 개발계정은 하루 1,000회로 호출이 제한된다. 지역별 구분이 없는 전국 단위 정보라 지역 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -234,3 +241,4 @@ review:
     - c-15037356-04
     - c-15037356-06
   dropped_citations: 0
+status: active

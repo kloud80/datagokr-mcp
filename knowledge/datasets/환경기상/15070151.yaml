@@ -1,4 +1,5 @@
-# Dataset 15070151 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070151 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070151'
 tier: verified
 title: 한국환경공단_비점오염원_측정소장비현황
@@ -21,6 +22,7 @@ synonyms:
   - 수질 측정기기 제조사
   - 강우 유출수 측정소
   - 비점오염 모니터링
+summary_user: 국가 비점오염물질 측정망에서 운영 중인 측정소별 측정 장비의 모델번호·장비모델명·제조사를 담은 전국 범위 목록 파일입니다(약 38KB 규모의 CSV). 측정망을 운영·분석하는 담당자나 연구자가 어느 측정소에 어떤 제조사의 어떤 모델 장비가 설치돼 있는지 확인할 때 쓴다. 전역 조인 키는 없어서, 다른 비점오염 측정 자료와는 측정소 번호나 측정소명을 맞춰 이어 쓴다.
 description_portal: 비점오염원은 도시, 도로, 농지, 산지, 공사장 등으로서 불특정장소에서 불특정하게 수질오염물질을 배출하는 배출원입니다. 도시화 및 기후변화로 인한 강우패턴의 변화로 다양한 오염물질이 하천으로 유입됨과 강우시 발생하는 비점오염물질의 정확한 부하량과 주요 오염원의 파악 필요로 설치된 비점오염물질 측정망 운영을 통한 강우시 발생하는 오염물질의 관리 및 대책수립을 위한 기초자료 확보, 실효성 있는 정책수립에 이바지하는 목적으로 비점오염물질 측정망을 운영관리하고 있습니다.현재 운영하고 있는 국가 비점오염물질 측정망의 측정 장비에 대한 데이터로서 상세 모델 명, 제조사 정보 등을 제공합니다.
 applicable_legislation:
   - law: 물환경보전법
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 측정소 번호
       type: code
+      semantic_type: nps_msrstn_no
       null_rate: 0.0
       sample_values:
         - 1001N10
@@ -84,6 +87,12 @@ schema:
         - 파란들
       stats:
         unique: 24
+  foreign_keys:
+    - fields:
+        - 측정소 번호
+      reference:
+        key: nps_msrstn_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -126,7 +135,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070151-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: nps_msrstn_no(측정소 번호)'
     evidence:
       - type: measured
         source: probe/stats/15070151.json
@@ -190,8 +199,6 @@ verification:
   run: probe/runs/15070151.json
   stats: probe/stats/15070151.json
   data: probe/data/15070151/
-status: active
-summary_user: 국가 비점오염물질 측정망에서 운영 중인 측정소별 측정 장비의 모델번호·장비모델명·제조사를 담은 전국 범위 목록 파일입니다(약 38KB 규모의 CSV). 측정망을 운영·분석하는 담당자나 연구자가 어느 측정소에 어떤 제조사의 어떤 모델 장비가 설치돼 있는지 확인할 때 쓴다. 전역 조인 키는 없어서, 다른 비점오염 측정 자료와는 측정소 번호나 측정소명을 맞춰 이어 쓴다.
 limits: 측정값(수질 농도·부하량)은 담지 않는 장비 목록이며, 위치 좌표가 없는 비공간 자료다. 표준 조인 키가 없어 다른 데이터와는 측정소 이름·번호 매핑으로만 연결된다.
 review:
   summary: draft
@@ -203,3 +210,4 @@ review:
     - c-15070151-03
     - c-15070151-04
   dropped_citations: 0
+status: active

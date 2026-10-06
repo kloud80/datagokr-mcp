@@ -1,4 +1,5 @@
-# Dataset 15125172 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125172 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125172'
 tier: verified
 title: 성평등가족부_청소년 종합 실태조사 통계데이터 항목 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 실태조사 메타데이터
   - 청소년 조사표
   - 통계항목ID
+summary_user: 청소년 종합 실태조사의 조사 분류명·조사명·조사연도와 그에 포함된 통계항목 ID·항목명을 담은 메타데이터 목록으로, 실제 응답값이나 집계 수치가 아니라 항목 구조를 전국 단위로 담는다. 연구자나 정책 분석가가 "어느 연도 실태조사에 어떤 문항(통계항목)이 들어 있었나"를 확인해 조사표 설계나 연도 간 항목 비교에 쓴다. 전역 조인 키가 없어 다른 데이터와는 통계항목ID(statsId)나 항목명·조사명 매핑, 같은 기관 코드로만 이어 쓴다.
 description_portal: 청소년 종합 실태조사 통계데이터 항목 정보를 제공하는 오픈 API형 데이터입니다. 해당 개방 데이터는 실태조사분류명, 실태조사명, 실태조사년도, 통계항목ID, 통계항목명의 내용을 확인할 수 있습니다.조사 설계에 필요한 통계 항목 구조를 미리 파악할 수 있어 조사표 개발이나 비교 분석에 매우 유리합니다. 실태조사별로 어떤 항목이 포함되었는지를 정리함으로써 데이터 필터링이나 가공처리에 용이하며, 항목별 연관성과 변화 추이를 분석하는 데도 활용할 수 있습니다. 교육자료나 정책 보고서의 근거 자료로서 신뢰성 있는 정보를 제공하며, 객관적 통계 분석을 위한 기초 인프라로 활용될 수 있습니다. 조사 설계와 평가 기준 수립에도 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -94,6 +96,7 @@ schema:
     - name: statsId
       title: 통계항목ID
       type: string
+      semantic_type: youth_survey_stats_id
       null_rate: 0.0
       sample_values:
         - DT_154013_A
@@ -111,12 +114,22 @@ schema:
         - 직업 선택 기준
       stats:
         unique: 113
+  foreign_keys:
+    - fields:
+        - statsId
+      reference:
+        key: youth_survey_stats_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - exmnYr
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -161,7 +174,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125172-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_survey_stats_id(statsId)'
     evidence:
       - type: measured
         source: probe/stats/15125172.json
@@ -215,8 +228,6 @@ verification:
   run: probe/runs/15125172.json
   stats: probe/stats/15125172.json
   data: probe/data/15125172/
-status: active
-summary_user: 청소년 종합 실태조사의 조사 분류명·조사명·조사연도와 그에 포함된 통계항목 ID·항목명을 담은 메타데이터 목록으로, 실제 응답값이나 집계 수치가 아니라 항목 구조를 전국 단위로 담는다. 연구자나 정책 분석가가 "어느 연도 실태조사에 어떤 문항(통계항목)이 들어 있었나"를 확인해 조사표 설계나 연도 간 항목 비교에 쓴다. 전역 조인 키가 없어 다른 데이터와는 통계항목ID(statsId)나 항목명·조사명 매핑, 같은 기관 코드로만 이어 쓴다.
 limits: 지역(시도·시군구) 구분이 없는 전국·비공간 데이터라 지역 통계와 연계할 수 없고, 조사 시점에 생성된 뒤 바뀌지 않는 이벤트성 데이터다. 항목 정보만 담으므로 실제 조사 결과 수치는 이 데이터로 얻을 수 없다.
 review:
   summary: draft
@@ -229,3 +240,4 @@ review:
     - c-15125172-04
     - c-15125172-06
   dropped_citations: 0
+status: active

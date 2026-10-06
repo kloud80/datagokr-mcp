@@ -1,4 +1,5 @@
-# Dataset 15078122 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078122 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078122'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 누적아동실적현황-서비스시간대별 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 아이돌봄서비스 실적
   - 시간제 돌봄 건수
   - 아이돌보미 이용현황
+summary_user: 아이돌봄 기관별·기준연월별로 누적 돌봄 이용 건수를 0시부터 24시까지 두 시간 단위 시작 시간대로 나눠 담은 집계 데이터이며, 범위는 전국이다. 돌봄 정책 담당자나 분석가가 '야간·이른 아침 등 어느 시간대에 아이돌봄 이용이 몰리는가'를 보고 인력 배치나 야간 돌봄 확대를 검토하는 데 쓴다. 전역 조인 키는 없어 기관번호(childCareInstNo)·상위기관번호와 기관명으로 같은 기관의 다른 아이돌봄 실적 데이터나 사회복지시설 목록과 이름·코드 매핑으로만 연결한다.
 description_portal: 아이돌봄 누정아동실적현황을 서비스시간대별로 조회하여 서비스를 제공하는 오픈 API형 데이터입니다. -해당 개방 데이터는 기준연월, 아이돌봄기관명, 기관번호, 전염성 질병 아동여부, 총건수, 0시부터 24시까지를 두시간단위로 나눈 시간대별 시작 건수 등의 정보를 확인할 수 있습니다.아동 돌봄 수요의 시간적 분포를 시각적으로 분석하는 데 유용합니다. 심야 시간이나 특정 시간대에 돌봄 이용이 집중된다면, 그에 맞는 인력 배치 및 근무 체계 조정이 가능하며, 서비스 운영의 유연성과 효율성을 높이는 데 기여할 수 있습니다. 이 정보는 향후 야간 돌봄 확대나 시간제 인력 운용 개선에 활용될 수 있습니다."
 team:
   dept: 경영관리부 지능정보화팀
@@ -55,6 +57,7 @@ schema:
         unique: 2
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0396
@@ -97,6 +100,7 @@ schema:
         unique: 2
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -279,6 +283,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -328,7 +343,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078122-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078122.json
@@ -382,8 +397,6 @@ verification:
   run: probe/runs/15078122.json
   stats: probe/stats/15078122.json
   data: probe/data/15078122/
-status: active
-summary_user: 아이돌봄 기관별·기준연월별로 누적 돌봄 이용 건수를 0시부터 24시까지 두 시간 단위 시작 시간대로 나눠 담은 집계 데이터이며, 범위는 전국이다. 돌봄 정책 담당자나 분석가가 '야간·이른 아침 등 어느 시간대에 아이돌봄 이용이 몰리는가'를 보고 인력 배치나 야간 돌봄 확대를 검토하는 데 쓴다. 전역 조인 키는 없어 기관번호(childCareInstNo)·상위기관번호와 기관명으로 같은 기관의 다른 아이돌봄 실적 데이터나 사회복지시설 목록과 이름·코드 매핑으로만 연결한다.
 limits: 건별 이용 기록이 아닌 기관 단위 집계라 개별 아동·가정 단위 분석은 할 수 없고, 좌표 등 공간 정보가 없어 지도 분석에는 기관명 매핑이 따로 필요하다. 다른 데이터와 공통 코드로 바로 조인되지 않는다. 개발계정은 하루 3,000회 호출로 제한된다.
 review:
   summary: draft
@@ -395,3 +408,4 @@ review:
     - c-15078122-03
     - c-15078122-04
   dropped_citations: 0
+status: active

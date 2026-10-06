@@ -335,6 +335,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: string
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '39536'
@@ -393,6 +394,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: string
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - EBB
@@ -460,6 +462,7 @@ schema:
     - name: armySeCode
       title: 군구분코드
       type: code
+      semantic_type: mil_branch_cd
       null_rate: 0.0
       sample_values:
         - MP
@@ -587,6 +590,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: code
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - EHG
@@ -735,6 +739,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: code
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - LMH
@@ -768,6 +773,7 @@ schema:
     - name: armySeCode
       title: 군구분코드
       type: code
+      semantic_type: mil_branch_cd
       null_rate: 0.0
       sample_values:
         - MP
@@ -884,6 +890,7 @@ schema:
     - name: orntCode
       title: 발주기관코드
       type: code
+      semantic_type: d2b_org_cd
       null_rate: 0.0
       sample_values:
         - EHG
@@ -1019,9 +1026,30 @@ schema:
       op: /getOutnatnPrcurePlanList
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - dcsNo
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
+    - fields:
+        - orntCode
+      reference:
+        key: d2b_org_cd
+      evidence: measured
+    - fields:
+        - armySeCode
+      reference:
+        key: mil_branch_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - demandYear
+    - ordrYear
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -1065,7 +1093,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15158418-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(dcsNo), d2b_org_cd(orntCode), mil_branch_cd(armySeCode)'
     evidence:
       - type: measured
         source: probe/stats/15158418.json

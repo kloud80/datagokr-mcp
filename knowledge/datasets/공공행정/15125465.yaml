@@ -1,4 +1,5 @@
-# Dataset 15125465 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125465 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125465'
 tier: verified
 title: 공정거래위원회_가맹정보_가맹본부 법 위반 민사소송 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹점주 소송 이력
   - 정보공개서 소송
   - 프랜차이즈 본사 분쟁
+summary_user: 가맹본부가 가맹사업법 위반과 관련해 얽힌 민사소송을 소송 한 건 단위로 담으며, 기준년도와 가맹본부관리번호별로 원고·피고, 사건번호, 최종법원, 판결일자, 청구취지와 판결내용을 전국 범위로 제공한다. 가맹점 창업 예정자가 "계약하려는 가맹본부가 가맹점주와 소송을 벌여 진 적이 있나"를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했고, 같은 공정위 가맹정보 계열 데이터와는 가맹본부관리번호(jnghdqrtrsMnno)와 기준년도로 맞춰 쓴다. 공정거래 체인 공통 키인 사업자등록번호는 이 데이터에 없어 바로 연결되지 않는다.
 description_portal: 가맹본부 법 위반 민사소송에 대한 기준년도, 가맹본부관리번호를 이용하여 가맹본부 법위반 민사소송 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000073
@@ -165,12 +168,22 @@ schema:
         - 원고는 이사건 소를 취하하고, 피고는 위 소취하에 동의한다.
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -215,7 +228,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125465-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125465.json
@@ -280,8 +293,6 @@ verification:
   run: probe/runs/15125465.json
   stats: probe/stats/15125465.json
   data: probe/data/15125465/
-status: active
-summary_user: 가맹본부가 가맹사업법 위반과 관련해 얽힌 민사소송을 소송 한 건 단위로 담으며, 기준년도와 가맹본부관리번호별로 원고·피고, 사건번호, 최종법원, 판결일자, 청구취지와 판결내용을 전국 범위로 제공한다. 가맹점 창업 예정자가 "계약하려는 가맹본부가 가맹점주와 소송을 벌여 진 적이 있나"를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했고, 같은 공정위 가맹정보 계열 데이터와는 가맹본부관리번호(jnghdqrtrsMnno)와 기준년도로 맞춰 쓴다. 공정거래 체인 공통 키인 사업자등록번호는 이 데이터에 없어 바로 연결되지 않는다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 없어 가맹본부 이름이나 공정위 내부 관리번호로만 다른 데이터와 연결된다. 비공간 데이터라 지역별 분석에는 쓰지 못한다. 조회하려면 기준년도와 가맹본부관리번호를 알아야 한다.
 review:
   summary: draft
@@ -294,3 +305,4 @@ review:
     - c-15125465-04
     - c-15125465-07
   dropped_citations: 0
+status: active

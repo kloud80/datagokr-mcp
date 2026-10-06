@@ -1,0 +1,195 @@
+# Dataset 15159045 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15159045'
+tier: verified
+title: 기상청_도로기상관측자료
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15159045/openapi.do
+synonyms:
+  - 노면온도
+  - 노면상태
+  - 시정
+  - 강수량
+  - 기온
+  - 고속도로
+  - 도로기상
+  - 고속도로 결빙
+  - 도로 안개 시정
+  - 블랙아이스
+  - 도로기상정보시스템
+description_portal: 도로 기상상황.노면상태를 파악하기 위해 기상청에서 설치한 관측장비에서 수집한 관측자료를 제공합니다.관측지점은 366개소로 중부내륙, 서해안, 경부선, 무안광주대구선, 호남선, 새만금포항선, 통영-대전중부선, 순천완주선, 영동선, 서산영덕선, 중앙선, 호남선의지선 12개 고속도로로 구분할 수 있고, 관측소 종류는 기본, 거점, 목표(안개), 목표(결빙) 4종류가 있습니다.관측요소는 노면상태, 노면온도, 시정, 습도, 일누적강수량, 적설, 기온, 1분풍향.풍속, 최대순간풍향.풍속, 해면기압, 운고, 운량 14개입니다.
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: cctv_ana_info.php
+    name: cctv_ana_info.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/cctv_ana_info.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm1
+        required: true
+        example: '202312240000'
+      - name: tm2
+        required: true
+        example: '202312240100'
+      - name: eqp
+        required: true
+        example: 0500C00001
+      - name: disp
+        required: true
+        example: '1'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '202312240004 0500C00001                 여주 37.25253 127.65176   339.0    00     '
+        - '202312240013 0500C00001                 여주 37.25253 127.65176   339.0    00     '
+        - '202312240021 0500C00001                 여주 37.25253 127.65176   339.0    00     '
+      stats:
+        min: '2023-12-24'
+        max: '2023-12-24'
+        unique: 7
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - line
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5554
+  rank_in_sector: 491
+  brm: 환경기상 - 대기
+  why: 기관 분석 핵심 원장 — 기상청
+claims:
+  - id: c-15159045-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15159045.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15159045-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15159045-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15159045.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15159045-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15159045.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15159045-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15159045-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15159045-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15159045.json
+  stats: probe/stats/15159045.json
+  data: probe/data/15159045/
+status: active
+summary_user: 기상청이 고속도로변에 설치한 도로기상 관측장비에서 수집한 관측자료로, 포털 설명상 12개 고속도로 노선의 366개 지점(기본·거점·안개·결빙 4종)에서 노면상태·노면온도·시정·기온·강수·적설·풍향풍속 등 14개 요소를 지점별로 담는다. 도로관리 기관이나 물류·운송 사업자가 '지금 특정 고속도로 구간 노면이 결빙됐거나 안개로 시정이 나쁜가'를 확인하고, 분석가가 기상과 교통사고·통행 지연의 관계를 따지는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 다른 데이터와는 관측지점 이름·노선명(line) 매핑이나 기상청 내부 지점 코드로만 연결한다.
+limits: 포털 활용신청과 별개로 외부 사이트 apihub.kma.go.kr의 인증키(경로 파라미터 KEY)를 따로 받아야 호출된다. 행정구역 코드 같은 공통 조인 키가 없어 교통·사고 데이터와 붙이려면 지점명·노선명 매핑을 직접 만들어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15159045-01
+    - c-15159045-03
+    - c-15159045-04
+  dropped_citations: 0

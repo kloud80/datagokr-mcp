@@ -1,4 +1,3 @@
-# Dataset 15119039 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15119039'
 tier: verified
 title: 중소벤처기업진흥공단_고비즈코리아 공장정보
@@ -22,6 +21,7 @@ synonyms:
   - 주요 생산제품 공장
   - 중진공 공장정보
   - B2B 수출 공급업체
+summary_user: 고비즈코리아(Gobiz KOREA) 온라인 수출플랫폼에 가입한 국내 기업 가운데 공장을 보유한 기업의 공장 한 곳당 한 행으로, 공장명·등록일·제조인력·업종·주소(국문·영문)·주요생산제품·시설면적·생산방식·보유설비를 담은 전국 단위 파일(CSV 약 66KB)이다. 해외 바이어나 수출 지원 분석가가 특정 품목을 생산하는 국내 중소기업 공장이 어느 지역에 어느 정도 규모로 있는지 찾을 때 쓴다. 전역 조인 키는 없어 업체 일련번호로 같은 기관의 고비즈코리아 기업·상품 정보와 잇거나, 공장명·주소를 이름 매핑해 다른 공장·기업 데이터와 맞춰 쓴다.
 description_portal: 온라인수출플랫폼(Gobiz KOREA)에 회원가입한 국내 기업 중 공장을 보유하고 있는 기업의 공장정보 데이터를 제공합니다.주요 제공 데이터는 공장명, 공장 등록일, 제조인력 수, 전화번호, 팩스번호, 공장업종, 공장이 위치한 도시정보(국문, 영문), 국가코드, 주요 생산제품 등이 있습니다.*온라인수출플랫폼(Gobiz KOREA)는 해외 판로개척에 어려움을 겪고 있거나, 온라인 수출을 희망하는 국내 중소기업이 상품을 등록하고 해외바이어와 거래협상을 할 수 있는 온라인 B2B 수출플랫폼입니다.
 accrual_periodicity: 연간
 team:
@@ -47,6 +47,7 @@ schema:
         unique: 251
     - name: 업체 일련번호
       type: date
+      semantic_type: gobiz_company_no
       null_rate: 0.0
       sample_values:
         - CP20251220509446
@@ -208,12 +209,28 @@ schema:
         - pcb. 테스트장비,
       stats:
         unique: 117
+  foreign_keys:
+    - fields:
+        - 업체 일련번호
+      reference:
+        key: gobiz_company_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 공장_기본주소(국문)
+    - 공장_시군구(영문)
+  space_via: address
+  time: day
+  time_fields:
+    - 업체 일련번호
+    - 공장 등록일
 cycle: default
 classification:
   subsector_name: 거래 상대 원장 (무역보험 바이어·전략물자 거래업체/물품·수출예정·고비즈코리아 상품·기업)
@@ -250,7 +267,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119039-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gobiz_company_no(업체 일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15119039.json
@@ -304,8 +321,6 @@ verification:
   run: probe/runs/15119039.json
   stats: probe/stats/15119039.json
   data: probe/data/15119039/
-status: active
-summary_user: 고비즈코리아(Gobiz KOREA) 온라인 수출플랫폼에 가입한 국내 기업 가운데 공장을 보유한 기업의 공장 한 곳당 한 행으로, 공장명·등록일·제조인력·업종·주소(국문·영문)·주요생산제품·시설면적·생산방식·보유설비를 담은 전국 단위 파일(CSV 약 66KB)이다. 해외 바이어나 수출 지원 분석가가 특정 품목을 생산하는 국내 중소기업 공장이 어느 지역에 어느 정도 규모로 있는지 찾을 때 쓴다. 전역 조인 키는 없어 업체 일련번호로 같은 기관의 고비즈코리아 기업·상품 정보와 잇거나, 공장명·주소를 이름 매핑해 다른 공장·기업 데이터와 맞춰 쓴다.
 limits: 사업자번호 같은 공통 식별자가 없어 다른 기관 데이터와 정확히 연결하기 어렵고, 고비즈코리아에 가입한 기업의 공장만 담겨 국내 전체 공장 현황을 대표하지 않는다.
 review:
   summary: draft
@@ -317,3 +332,4 @@ review:
     - c-15119039-03
     - c-15119039-04
   dropped_citations: 0
+status: active

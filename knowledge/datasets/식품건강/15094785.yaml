@@ -46,6 +46,7 @@ schema:
   fields:
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '2014011995'
@@ -70,6 +71,7 @@ schema:
         unique: 1
     - name: MEDDEV_ITEM_NO
       type: code
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허 14-3000 호
@@ -121,12 +123,34 @@ schema:
         unique: 1
     - name: BRNO
       type: code
+      semantic_type: bizno
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PRMSN_DT
+    - RTRCN_DSCTN_DT
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -170,7 +194,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15094785-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN), meddev_permit_no(MEDDEV_ITEM_NO), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15094785.json

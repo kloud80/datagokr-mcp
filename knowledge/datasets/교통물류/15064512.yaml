@@ -1,4 +1,5 @@
-# Dataset 15064512 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064512 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064512'
 tier: verified
 title: 한국교통안전공단_철도자격관리시스템 운행구간별 코드 정보
@@ -21,6 +22,7 @@ synonyms:
   - 철도 노선 구간명
   - 운전면허 운행구간
   - 철도 구간 코드 매핑
+summary_user: 한국교통안전공단 철도자격관리시스템에서 쓰는 철도 운행구간·관제구간 코드를 담은 코드표 파일로, 행마다 테이블명, 기관·담당사무소 코드, 운행구간코드, 철도용도·노선 구분, 구간명, 사용 여부가 들어 있으며 범위는 전국이다. 철도 운전·관제 자격 관련 자료를 다루는 분석가나 사업자가 '이 운행구간코드는 어느 노선의 어떤 구간인가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못해, 같은 기관의 철도자격 데이터와 운행구간코드·기관코드로 맞추거나 구간명으로 이름 매핑해 이어 쓴다.
 description_portal: 한국교통 안전공단 철도자격관리 시스템의 철도 운행구간 데이터 및 관제구간에 대한 데이터 정보로 데이터 테이블 명, 사무소, 운행구간 등의 정보를 포함하고 있습니다.
 applicable_legislation:
   - law: 철도안전법
@@ -77,6 +79,7 @@ schema:
         unique: 4
     - name: 기관코드
       type: code
+      semantic_type: rail_related_org_cd
       null_rate: 0.0269
       sample_values:
         - 한국철도공사
@@ -145,6 +148,12 @@ schema:
         - N
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 기관코드
+      reference:
+        key: rail_related_org_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -187,7 +196,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064512-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_related_org_cd(기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15064512.json
@@ -251,8 +260,6 @@ verification:
   run: probe/runs/15064512.json
   stats: probe/stats/15064512.json
   data: probe/data/15064512/
-status: active
-summary_user: 한국교통안전공단 철도자격관리시스템에서 쓰는 철도 운행구간·관제구간 코드를 담은 코드표 파일로, 행마다 테이블명, 기관·담당사무소 코드, 운행구간코드, 철도용도·노선 구분, 구간명, 사용 여부가 들어 있으며 범위는 전국이다. 철도 운전·관제 자격 관련 자료를 다루는 분석가나 사업자가 '이 운행구간코드는 어느 노선의 어떤 구간인가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못해, 같은 기관의 철도자격 데이터와 운행구간코드·기관코드로 맞추거나 구간명으로 이름 매핑해 이어 쓴다.
 limits: 다른 기관 데이터와 바로 붙일 공통 키가 없어 연결은 이름·코드 매핑이나 같은 기관 코드에 의존한다. 비공간 데이터라 좌표나 노선 형상은 없다.
 review:
   summary: draft
@@ -264,3 +271,4 @@ review:
     - c-15064512-03
     - c-15064512-04
   dropped_citations: 0
+status: active

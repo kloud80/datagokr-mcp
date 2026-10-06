@@ -1,0 +1,209 @@
+# Dataset 15072522 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15072522'
+tier: verified
+title: 경기도_경기신용보증재단 대위변제발생 내역
+sector: 재정금융/금융/financial-products
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15072522/fileData.do
+synonyms:
+  - 소상공
+  - 보증
+  - 빚
+  - 부도
+  - 변제
+  - 손실
+  - 대위변제
+  - 신용보증 부실
+  - 보증사고
+  - 경기신보
+  - 소상공인 보증
+  - 대신 상환
+  - 시군별 대위변제액
+summary_user: 경기신용보증재단이 보증한 대출을 채무자가 갚지 못해 재단이 대신 갚은 대위변제 금액을 연도(crtr_yr)·시군(sigun_nm)·구분(일반 또는 합계)별로 집계한 자료로, 건별 원천이 아니라 집계표이며 범위는 경기도 시도 단위입니다. 정책 담당자나 분석가가 '경기도 어느 시군에서 보증 대출의 대위변제 금액이 해마다 얼마나 늘었는가'처럼 지역별 신용위험과 보증 정책의 재정 부담을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 데이터와는 시군 이름과 연도를 이름 매핑으로 맞춰 이어 쓴다.
+description_portal: 이 데이터는 경기신용보증재단이 중소기업 및 소상공인 등을 대상으로 보증한 대출에 대해 채무자가 상환하지 못했을 때 재단이 대신 상환한 대위변제 내역을 시군별·연도별로 정리한 자료입니다. 각 행은 해당 연도와 시군, 구분(일반 또는 합계), 그리고 발생한 대위변제 금액을 포함하고 있으며, 재단의 재정적 부담과 지역별 신용 상황을 파악할 수 있습니다. 이 데이터는 지역별 신용위험 분석, 보증 정책 평가, 재정 집행 효율성 분석 등에 활용될 수 있으며, 금융정책 및 지방정부의 소상공인 지원 계획 수립에도 도움이 됩니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sigun_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 포천시
+        - 하남시
+        - 화성시
+      stats:
+        unique: 7
+    - name: crtr_yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+        - '2020'
+        - '2024'
+      stats:
+        min: 2019
+        p50: 2021
+        max: 2024
+        unique: 6
+    - name: div
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반
+        - 합계
+        - 소상공
+      stats:
+        unique: 3
+    - name: amt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '299156221'
+        - '0'
+        - '293541375'
+      stats:
+        min: 0
+        p50: 3003889695.5
+        max: 43886700283
+        unique: 97
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4687
+  brm: 재정금융 - 금융
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15072522-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15072522.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15072522-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15072522-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15072522.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15072522-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15072522.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15072522-06
+    kind: admin_note
+    value: "세부 부문 '금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)'의 가치: 상품 단위 비교 원장"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#financial-products
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15072522-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15072522-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15072522.json
+  stats: probe/stats/15072522.json
+  data: probe/data/15072522/
+limits: 외부 사이트(data.gg.go.kr) 인증키가 따로 필요하며, 이 인증키는 포털 활용신청과 별개이다. 행정코드 같은 전역 조인 키가 없어 다른 데이터와는 시군 이름을 맞춰야만 연결된다. 집계값이라 업체별·보증 건별 부실 내역은 알 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15072522-01
+    - c-15072522-03
+    - c-15072522-04
+  dropped_citations: 0
+status: active

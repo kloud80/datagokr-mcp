@@ -52,6 +52,7 @@ schema:
         unique: 11760
     - name: 사업자번호
       type: string
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - 606*******
@@ -221,6 +222,11 @@ schema:
         unique: 2138
   foreign_keys:
     - fields:
+        - 사업자번호
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
         - 소재지
       reference:
         key: address
@@ -228,6 +234,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: year
+  time_fields:
+    - 지원년도
+    - 지원전년도 자산(백만원)
+    - 지원전년도 매출(백만원)
 cycle: event
 classification:
   subsector_name: 중소기업·창업 지원사업 공고 (K-Startup·중소벤처24·기업마당·지자체 지원시책)
@@ -268,7 +284,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15073345-03
     kind: key
-    value: '실측 조인 키: address(소재지)'
+    value: '실측 조인 키: bizno(사업자번호), address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15073345.json

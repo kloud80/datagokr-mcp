@@ -1,4 +1,5 @@
-# Dataset 15072485 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072485 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072485'
 tier: verified
 title: 기상청 항공기상청_세계공역예보시스템_화산재정보
@@ -21,6 +22,7 @@ synonyms:
   - 항공기상 화산
   - 화산 분출 정보
   - Volcanic Ash Advisory
+summary_user: 세계공역예보시스템(WAFS)을 통해 받은 화산재 주의보 전문을 발표 건별로 담은 파일로, 화산이름·위치·정상고도, 분출정보, 구름관측과 6·12·18시간 후 확산 예측, 원문 전문본문을 함께 싣는다. 운항 관리자나 항공 분석가가 '특정 화산 분출 때 화산재가 어느 고도·방향으로 퍼질 것으로 예보됐는가'를 확인하거나 노선별 화산재 영향 이력을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 화산이름이나 화산재주의보센터(VAAC) 이름, 발표시각을 기준으로 직접 맞춰 이어야 한다.
 description_portal: 세계공역예보센터(WAFC)는 세계공역예보시스템(WAFS)을 통해 항공기 안전 운항에 영향을 줄 수 있는 화산재 관련 정보를 제공합니다. 화산재 정보에는 화산 이름, 위치 좌표(위도·경도), 화산 정상의 고도, 분출 여부, 분출 고도, 확산 방향 및 범위 등이 포함되어 있으며, 이는 항공 노선의 안전 확보와 항공교통 흐름관리(ATFM)에 필수적인 자료로 활용되며, 해당 정보는 주로 VAAC(Volcanic Ash Advisory Center)에서 수집된 자료를 바탕으로 정제됩니다. 이와 같은 정보는 조종사, 운항 관리자, 항공사 및 관제기관 등 항공 분야 전반에 걸쳐 실시간 위험 회피 및 비행 계획 조정에 사용됩니다.
 accrual_periodicity: 연간
 team:
@@ -222,6 +224,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 발표시각
+    - 전문본문
+    - 입력시각
 cycle: default
 classification:
   subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
@@ -324,8 +332,6 @@ verification:
   run: probe/runs/15072485.json
   stats: probe/stats/15072485.json
   data: probe/data/15072485/
-status: active
-summary_user: 세계공역예보시스템(WAFS)을 통해 받은 화산재 주의보 전문을 발표 건별로 담은 파일로, 화산이름·위치·정상고도, 분출정보, 구름관측과 6·12·18시간 후 확산 예측, 원문 전문본문을 함께 싣는다. 운항 관리자나 항공 분석가가 '특정 화산 분출 때 화산재가 어느 고도·방향으로 퍼질 것으로 예보됐는가'를 확인하거나 노선별 화산재 영향 이력을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 화산이름이나 화산재주의보센터(VAAC) 이름, 발표시각을 기준으로 직접 맞춰 이어야 한다.
 limits: 공통 조인 키가 없어 예보구역·격자 기반의 다른 기상청 자료와 바로 결합되지 않고, 이름·시각 매핑으로만 연결된다. 범위는 지역 행정단위가 아닌 비공간 자료로 분류되어 있어 국내 시군구 단위 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -338,3 +344,4 @@ review:
     - c-15072485-04
     - c-15072485-06
   dropped_citations: 0
+status: active

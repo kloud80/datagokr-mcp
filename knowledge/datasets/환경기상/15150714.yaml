@@ -1,0 +1,208 @@
+# Dataset 15150714 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15150714'
+tier: verified
+title: 행정안전부_초미세먼지주의보_권역
+sector: 환경기상/대기/air-quality
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15150714/openapi.do
+synonyms:
+  - 초미세먼지
+  - 일상
+  - 신체적피해
+  - 대책수립
+  - 재난
+  - 초미세먼지 주의보
+  - PM2.5 주의보 권역
+  - 미세먼지 경보 권역
+  - 대기오염 경보 지역
+  - 재난안전데이터 공유플랫폼
+  - 주의보 발령 권역 코드
+summary_user: 초미세먼지 주의보가 발령되는 권역을 전국 범위로 담은 데이터로, 필드는 권역 코드·권역명(SAREA_NM)·시도 코드·공간정보로 보이는 항목으로 구성된다. 우리 지역이 어느 초미세먼지 주의보 권역에 속하는지 확인하거나, 주의보 발령 정보를 지역 단위로 묶어 보려는 분석가가 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 시도 코드(STDG_CTPV_CD)나 권역 이름 매핑, 또는 같은 행정안전부 재난안전데이터의 권역 코드로만 다른 데이터와 잇는다.
+description_portal: -행정안전부에서는 「재난 및 안전관리 기본법」에 따라 데이터 기반 재난 및 안전관리체제 확립 및 재난안전데이터 수집·연계·분석·활용·공유·공개를 위하여 재난안전데이터통합관리시스템인 '재난안전데이터 공유플랫폼' 구축·운영하여 안전분야 공공데이터를 제공하고 있습니다.- 재난안전데이터 공유플랫폼(https://www.safetydata.go.kr)과 공공데이터포털에서 연계 제공하고 있습니다.- 해당 데이터는 행정안전부에서 제공하는 지역 초미세먼지 주의보 일시 정보입니다."
+team:
+  dept: 재난안전데이터과
+services:
+  - op: DSSP-IF-00113
+    name: DSSP-IF-00113
+    endpoint: https://www.safetydata.go.kr/V2/api/DSSP-IF-00113
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: www.safetydata.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SAREA_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - 권역코드
+        - '2702'
+        - '5101'
+      stats:
+        min: 1101
+        p50: 4503
+        max: 5203
+        unique: 66
+    - name: SAREA_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서부권역
+        - 동부권역
+        - 중부권역
+      stats:
+        unique: 39
+    - name: STDG_CTPV_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '48'
+        - '51'
+        - '26'
+      stats:
+        min: 11
+        p50: 45
+        max: 52
+        unique: 20
+    - name: GEOM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 지오메트리
+        - POLYGON((14299594.394339601 4345694.0144232204,14299419.892659999 4345742.530491
+        - POLYGON((14315682.529660501 4552453.0239408696,14315564.292337799 4552517.171892
+      stats:
+        unique: 66
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5131
+  rank_in_sector: 610
+  brm: 환경기상 - 대기
+  why: 재난안전데이터공유플랫폼 (샘플 다운로드)
+claims:
+  - id: c-15150714-01
+    kind: access
+    value: 외부 사이트 www.safetydata.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15150714.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.safetydata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15150714-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150714-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15150714.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150714-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15150714.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15150714-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15150714-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15150714-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15150714.json
+  stats: probe/stats/15150714.json
+  data: probe/data/15150714/
+limits: 포털 활용신청과 별도로 재난안전데이터 공유플랫폼(safetydata.go.kr) 인증키를 path 파라미터로 넣어야 호출된다. 표준 조인 키가 없어 측정소 단위 대기질 데이터와 바로 결합되지 않으며, 범위는 전국이지만 비공간으로 분류돼 있어 공간정보 필드의 활용 여부는 직접 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15150714-01
+    - c-15150714-03
+    - c-15150714-04
+    - c-15150714-06
+  dropped_citations: 0
+status: active

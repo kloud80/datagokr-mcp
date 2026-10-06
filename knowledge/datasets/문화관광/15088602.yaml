@@ -1,4 +1,5 @@
-# Dataset 15088602 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15088602 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088602'
 tier: verified
 title: 한국문화정보원_공공저작물_우수저작물 목록(문서)
@@ -24,6 +25,7 @@ synonyms:
   - 자유이용 저작물
   - 저작권 개방 문서
   - 공유저작물 목록
+summary_user: 공공누리시스템에서 우수저작물로 선정된 공공저작물 중 문서 유형을 저작물 한 건당 한 행으로 담은 전국 단위 파일(CSV, 약 1.2MB)로, 저작물명·본문내용·적용일·분류·형태·URL·키워드·조회수 등을 포함한다. 창작자나 서비스 개발자가 '자유롭게 가져다 쓸 수 있는 공공 문서 저작물 중 어떤 주제의 것이 많이 조회되는가'를 찾거나 문서 저작물 현황을 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 저작물명·분류명 매핑이나 같은 기관의 저작물코드·분류코드로만 연결하며, 한국문화정보원의 다른 유형(이미지·영상 등) 우수저작물 목록과 같은 코드 체계로 나란히 보는 정도로 쓴다.
 description_portal: 공공누리시스템에서 선정한 우수저작물 중 문서 유형의 저작물 정보를 체계적으로 제공하는 데이터셋입니다. 저작물코드, 저작물명, 본문내용, 적용일, 분류코드, 분류명, 형태명, 형태코드, 저작물URL, 썸네일파일경로, 공개여부, 조회수, 키워드명, 게시판코드, 게시판명 등 다양한 항목을 포함하고 있어 문서 저작물의 관리와 활용에 적합합니다. 공공저작물의 개방 및 활용 촉진, 저작권 정책 수립, 문화산업 연구, 데이터 기반 서비스 개발 등 다양한 분야에서 활용할 수 있습니다. 또한 문서 저작물의 현황 분석과 공공문화자원의 효율적 이용에 기여하며, 연구자와 정책 담당자, 창작자 등에게 실질적인 정보를 제공합니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 저작물코드우수저작물 저작물명
       type: number
+      semantic_type: kogl_work_cd
       null_rate: 0.0
       sample_values:
         - '92629'
@@ -173,12 +176,22 @@ schema:
         - 서울 이야기 > 서울 도서관
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 저작물코드우수저작물 저작물명
+      reference:
+        key: kogl_work_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 우수저작물 저작물적용일
 cycle: default
 classification:
   subsector_name: 저작권·콘텐츠 (저작권 등록·공유마당·게임 등급·영화·음악·웹툰)
@@ -215,7 +228,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088602-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kogl_work_cd(저작물코드우수저작물 저작물명)'
     evidence:
       - type: measured
         source: probe/stats/15088602.json
@@ -269,8 +282,6 @@ verification:
   run: probe/runs/15088602.json
   stats: probe/stats/15088602.json
   data: probe/data/15088602/
-status: active
-summary_user: 공공누리시스템에서 우수저작물로 선정된 공공저작물 중 문서 유형을 저작물 한 건당 한 행으로 담은 전국 단위 파일(CSV, 약 1.2MB)로, 저작물명·본문내용·적용일·분류·형태·URL·키워드·조회수 등을 포함한다. 창작자나 서비스 개발자가 '자유롭게 가져다 쓸 수 있는 공공 문서 저작물 중 어떤 주제의 것이 많이 조회되는가'를 찾거나 문서 저작물 현황을 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 저작물명·분류명 매핑이나 같은 기관의 저작물코드·분류코드로만 연결하며, 한국문화정보원의 다른 유형(이미지·영상 등) 우수저작물 목록과 같은 코드 체계로 나란히 보는 정도로 쓴다.
 limits: 전국 단위의 비공간 데이터라 지역별 분석에는 쓰지 못한다. 공연·문화시설 등 다른 문화 데이터와 공통 키(kopis_id, 문화시설코드 등)가 없어 직접 조인되지 않는다. 문서 유형 우수저작물만 담으므로 전체 공공저작물 현황으로 해석하지 않는다.
 review:
   summary: draft
@@ -283,3 +294,4 @@ review:
     - c-15088602-04
     - c-15088602-06
   dropped_citations: 0
+status: active

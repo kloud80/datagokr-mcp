@@ -1,4 +1,5 @@
-# Dataset 15057890 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057890 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057890'
 tier: verified
 title: 식품의약품안전처_의료기기 재평가 정보
@@ -23,6 +24,7 @@ synonyms:
   - 의료기기 허가 적정성
   - 식약처 의료기기 API
   - 의료기기 품목 재평가
+summary_user: 식약처가 실시한 의료기기 재평가를 품목 건별로 담는 전국 단위 API로, 재평가년도·업체명·품목명·등급·신청일·진행 상태·재평가 결과와 결과일을 제공한다. 병원 구매 담당자나 의료기기 업체가 특정 품목이 재평가 대상이었는지, 결과가 적합으로 나왔는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 의료기기 품목허가 정보와는 품목 일련번호(MEDDEV_ITEM_SEQ)나 업체명·품목명 매핑, 사업자등록번호(BRNO)를 이용해 같은 기관 데이터끼리 맞춰 이어야 한다.
 description_portal: 국민의 건강과 안전을 확보하기 위해 식품의약품안전처가 수집·관리하는 의료기기 재평가 정보를 제공하기 위해 구축된 정보로, 의료기기의 허가정보, 회수·판매 현황, 제조소 품질관리(GMP) 관련 자료 등을 포함하며, 매년 재평가 대상 품목의 허가 적정성 여부를 분석하는 데 활용된다. 주요 제공 항목은 재평가년도, 업체명, 품목허가번호, 품목명, 재평가 결과 등이다. 해당 데이터는 의료기기 안전관리를 위한 정책 수립, 유통 중인 제품의 사후관리, 제조소 심사 시 참고자료 등으로 다양하게 활용될 수 있다.
 team:
   dept: 데이터혁신기획팀
@@ -133,6 +135,7 @@ schema:
         unique: 285
     - name: MEDDEV_ITEM_SEQ
       type: string
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - 수허 99-1154 호
@@ -213,6 +216,7 @@ schema:
         unique: 2
     - name: BRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '1068136159'
@@ -223,12 +227,28 @@ schema:
         p50: 1208703049
         max: 8878600037
         unique: 160
+  foreign_keys:
+    - fields:
+        - MEDDEV_ITEM_SEQ
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - REEVALT_NO
+    - APPLY_TERM_DATE
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -273,7 +293,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057890-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MEDDEV_ITEM_SEQ), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15057890.json
@@ -338,8 +358,6 @@ verification:
   run: probe/runs/15057890.json
   stats: probe/stats/15057890.json
   data: probe/data/15057890/
-status: active
-summary_user: 식약처가 실시한 의료기기 재평가를 품목 건별로 담는 전국 단위 API로, 재평가년도·업체명·품목명·등급·신청일·진행 상태·재평가 결과와 결과일을 제공한다. 병원 구매 담당자나 의료기기 업체가 특정 품목이 재평가 대상이었는지, 결과가 적합으로 나왔는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 의료기기 품목허가 정보와는 품목 일련번호(MEDDEV_ITEM_SEQ)나 업체명·품목명 매핑, 사업자등록번호(BRNO)를 이용해 같은 기관 데이터끼리 맞춰 이어야 한다.
 limits: 공식 조인 키가 없어 다른 데이터와 연결할 때 이름·코드 매핑에 의존해야 한다. 지역 구분이 없는 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -351,3 +369,4 @@ review:
     - c-15057890-03
     - c-15057890-04
   dropped_citations: 0
+status: active

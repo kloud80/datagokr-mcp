@@ -1,4 +1,5 @@
-# Dataset 15050145 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15050145 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15050145'
 tier: verified
 title: 한국노인인력개발원_노인일자리사업 심사정보
@@ -22,6 +23,7 @@ synonyms:
   - 노인일자리 심의
   - 어르신 일자리
   - 노인인력개발원 사업계획
+summary_user: 노인일자리 사업별 심사 현황을 사업번호·사업계획변경순번 단위의 건별 기록으로 담으며, 사업유형(공익활동형·사회서비스형·시장형·인력파견형 등), 사업년도, 사업명, 심사 상태와 단계, 최초 심의일·심의 요청일·심의 종료일을 포함한 전국 범위의 CSV 파일(약 1.2MB)이다. 정책 담당자나 분석가가 '사업유형별로 심의 요청부터 종료까지 얼마나 걸리고 승인까지 몇 단계를 거치는가'처럼 노인일자리 사업의 행정 심사 절차와 처리 기간을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매칭이나 같은 기관(한국노인인력개발원) 내부 코드로만 이어 쓸 수 있다.
 description_portal: 이 데이터는 노인일자리 사업에 대한 심사 현황을 기록한 자료로, 사업유형, 사업번호, 사업명, 심사 상태, 최초 심의일자, 심의 요청일, 심의 완료일 등 다양한 항목을 포함하고 있습니다. 공익활동형, 사회서비스형, 시장형, 인력파견형 등 각 사업 유형별로 심사 진행 상황을 체계적으로 관리할 수 있도록 구성되어 있으며, 승인 완료 및 임시 상태 등 심사 단계별 코드가 함께 제공됩니다. 이를 통해 노인일자리 사업 운영 과정에서의 행정적 절차와 평가 과정을 명확히 파악할 수 있으며, 정책 결정과 사업 성과 분석의 기초 자료로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 3
     - name: 사업번호
       type: string
+      semantic_type: senior_job_proj_no
       null_rate: 0.0
       sample_values:
         - 2024-13887
@@ -147,12 +150,24 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 사업번호
+      reference:
+        key: senior_job_proj_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최초심의일자
+    - 심의요청일
+    - 심의종료일
 cycle: default
 classification:
   subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
@@ -189,7 +204,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050145-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: senior_job_proj_no(사업번호)'
     evidence:
       - type: measured
         source: probe/stats/15050145.json
@@ -254,8 +269,6 @@ verification:
   run: probe/runs/15050145.json
   stats: probe/stats/15050145.json
   data: probe/data/15050145/
-status: active
-summary_user: 노인일자리 사업별 심사 현황을 사업번호·사업계획변경순번 단위의 건별 기록으로 담으며, 사업유형(공익활동형·사회서비스형·시장형·인력파견형 등), 사업년도, 사업명, 심사 상태와 단계, 최초 심의일·심의 요청일·심의 종료일을 포함한 전국 범위의 CSV 파일(약 1.2MB)이다. 정책 담당자나 분석가가 '사업유형별로 심의 요청부터 종료까지 얼마나 걸리고 승인까지 몇 단계를 거치는가'처럼 노인일자리 사업의 행정 심사 절차와 처리 기간을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매칭이나 같은 기관(한국노인인력개발원) 내부 코드로만 이어 쓸 수 있다.
 limits: 지역 단위 행정코드나 수행기관 코드가 없어 시군구별 분석이나 노인복지시설·장기요양기관 데이터와의 직접 결합은 어렵다. 심사상태·심사단계 코드의 뜻을 풀이한 코드표가 함께 제공되지 않으므로 해석에 주의하고, 삭제여부 값으로 삭제된 건을 걸러 써야 한다.
 review:
   summary: draft
@@ -267,3 +280,4 @@ review:
     - c-15050145-03
     - c-15050145-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 3073007 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3073007 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3073007'
 tier: verified
 title: 대구교통공사_자동개집표기 현황
@@ -25,6 +26,7 @@ synonyms:
   - 교통약자 개집표기
   - 도시철도 역사 시설
   - 휠체어 게이트
+summary_user: 대구 도시철도 1·2·3호선 역사별로 설치된 자동개집표기 수량을 형식별(1형~5형, 3-1형, 3-2형)과 장애인용(6형·7형)으로 나눠 설치 위치와 함께 담은 역 단위 현황 파일(CSV 약 5KB)이다. 교통약자 단체나 시민이 '우리 동네 역에 휠체어용 넓은 개찰구가 있는지, 몇 대인지'를 확인하거나, 분석가가 역별 개집표기 배치와 접근성 편의시설 수준을 비교하는 데 쓴다. 전역 조인 키는 없어 다른 역 단위 데이터(승하차 인원, 편의시설 등)와는 호선·역번호·역명을 이름 매핑하거나 같은 대구교통공사 데이터끼리 맞춰 잇는다.
 description_portal: '[ESG-Social] 본 데이터는 대구교통공사의 ESG 사회(Social) 분야 시민편의 및 운영정보 데이터로, 도시철도 1·2·3호선 각 역사에 설치된 자동개집표기의 운영 현황 정보를 제공합니다. 데이터에는 역번호, 역명, 타입별 개집표기 수량(1형~5형, 3-1형, 3-2형), 장애인용 개집표기(6형, 7형), 설치 위치 및 방향 등의 항목이 포함되어 있으며, 역사별 자동개집표기 구성과 설치 현황을 확인할 수 있는 자료입니다. 해당 데이터는 역사별 개집표기 운영 현황 파악, 시설물 유지관리 계획 수립, 장비 교체 및 배치 검토, 이용 환경 개선을 위한 기초자료로 활용할 수 있습니다. 또한 일반 개집표기와 교통약자용 개집표기 설치 현황을 확인하여 역사별 이용 편의시설 관리 및 접근성 개선 검토에 활용할 수 있습니다. 본 데이터는 개집표기 설치·철거·이전 등 운영 현황 변경 시 갱신됩니다.'
 accrual_periodicity: 수시
 team:
@@ -50,6 +52,7 @@ schema:
         unique: 3
     - name: 역번호
       type: number
+      semantic_type: daegu_metro_station_no
       null_rate: 0.0
       sample_values:
         - '131'
@@ -184,6 +187,12 @@ schema:
         - 상행
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 역번호
+      reference:
+        key: daegu_metro_station_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -225,7 +234,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3073007-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: daegu_metro_station_no(역번호)'
     evidence:
       - type: measured
         source: probe/stats/3073007.json
@@ -279,8 +288,6 @@ verification:
   run: probe/runs/3073007.json
   stats: probe/stats/3073007.json
   data: probe/data/3073007/
-status: active
-summary_user: 대구 도시철도 1·2·3호선 역사별로 설치된 자동개집표기 수량을 형식별(1형~5형, 3-1형, 3-2형)과 장애인용(6형·7형)으로 나눠 설치 위치와 함께 담은 역 단위 현황 파일(CSV 약 5KB)이다. 교통약자 단체나 시민이 '우리 동네 역에 휠체어용 넓은 개찰구가 있는지, 몇 대인지'를 확인하거나, 분석가가 역별 개집표기 배치와 접근성 편의시설 수준을 비교하는 데 쓴다. 전역 조인 키는 없어 다른 역 단위 데이터(승하차 인원, 편의시설 등)와는 호선·역번호·역명을 이름 매핑하거나 같은 대구교통공사 데이터끼리 맞춰 잇는다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어 다른 기관·전국 철도 데이터와 연결하려면 역명·역번호를 직접 매핑해야 한다. 설치 수량 현황만 담고 있어 개집표기별 통과 인원이나 고장 이력은 알 수 없다.
 review:
   summary: draft
@@ -291,3 +298,4 @@ review:
     - c-3073007-01
     - c-3073007-03
   dropped_citations: 0
+status: active

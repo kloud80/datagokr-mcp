@@ -1,4 +1,3 @@
-# Dataset 15073886 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073886'
 tier: verified
 title: 식품의약품안전처_의료기기 회수폐기종료보고
@@ -21,6 +20,7 @@ synonyms:
   - 폐기보고
   - 회수 완료 보고
   - 리콜 종료
+summary_user: 식약처에 제출된 의료기기 회수·폐기 종료보고를 보고 한 건 단위로 담은 원천 데이터로, 보고 구분·제출일·승인일, 업소명·업종·주소, 보고 상태, 소비자가 취해야 할 행동과 제품 이미지 ID를 전국 범위에서 제공한다. 소비자나 의료기관 구매 담당자가 특정 업체의 의료기기 회수가 끝났는지, 언제 종료가 승인됐는지 확인하는 데 쓴다. 명세에는 사업자등록번호(BRNO)와 업소명이 있으나 실측에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 업소명·사업자번호 매핑이나 같은 식약처 데이터끼리만 이어 쓴다.
 description_portal: 이 공공데이터는 의료기기 회수폐기종료보고에 관한 내용을 담고 있으며 회수폐기보고구분, 보고승인일자, 보고제출일자, 업소명, 대표자명, 업종구분코드, 업종구분명, 업소주소 등의 정보를 제공합니다. 회수의무자는 회수가 끝나면 회수 종료일로부터 5일 이내에 시행규칙 제54조제3항 또는 제57조제2항에 따른 회수종료 보고를 하여야 합니다. 회수 종료보고서는 회수의무자, 회수대상제품정보, 회수대상 제품량, 회수기간 회수결과 등의 정보를 제공하며, 회수가 법에 따라 절차대로 시행되었음을 확인할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -229,6 +229,7 @@ schema:
     - name: BRNO
       title: 사업자등록번호
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '1898102523'
@@ -237,12 +238,31 @@ schema:
         p50: 1898102523
         max: 1898102523
         unique: 1
+  foreign_keys:
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - ENTP_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - RPT_SBMSN_YMD
+    - RLS_DDLN_DT
+  category:
+    - ksic
+  category_fields:
+    - RPT_KIND_CD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -287,7 +307,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073886-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15073886.json
@@ -352,8 +372,6 @@ verification:
   run: probe/runs/15073886.json
   stats: probe/stats/15073886.json
   data: probe/data/15073886/
-status: active
-summary_user: 식약처에 제출된 의료기기 회수·폐기 종료보고를 보고 한 건 단위로 담은 원천 데이터로, 보고 구분·제출일·승인일, 업소명·업종·주소, 보고 상태, 소비자가 취해야 할 행동과 제품 이미지 ID를 전국 범위에서 제공한다. 소비자나 의료기관 구매 담당자가 특정 업체의 의료기기 회수가 끝났는지, 언제 종료가 승인됐는지 확인하는 데 쓴다. 명세에는 사업자등록번호(BRNO)와 업소명이 있으나 실측에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 업소명·사업자번호 매핑이나 같은 식약처 데이터끼리만 이어 쓴다.
 limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 품목허가·건강보험 목록 등과 코드로 바로 연결되지 않으며, 업소명이나 사업자번호를 맞추는 매핑이 필요하다. 개발계정 호출은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -365,3 +383,4 @@ review:
     - c-15073886-03
     - c-15073886-04
   dropped_citations: 0
+status: active

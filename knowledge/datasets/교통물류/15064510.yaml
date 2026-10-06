@@ -1,4 +1,5 @@
-# Dataset 15064510 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15064510 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15064510'
 tier: verified
 title: 한국교통안전공단_철도자격관리시스템 시스템 관리 코드 정보
@@ -21,6 +22,7 @@ synonyms:
   - 철도관련 기관코드
   - 경력유형 코드
   - 교통안전공단 공통코드
+summary_user: 한국교통안전공단 철도자격관리시스템에서 쓰는 시스템 관리 코드를 담은 코드표 파일로, 철도관련 기관 정보, 응시자격 코드(소지면허·경력유형·경력년수), 시스템 구성 코드를 상위코드·상세코드·코드명 단위로 담는다(CSV 약 274KB, 전국·비공간). 철도 면허·자격 데이터를 분석하는 사람이 '이 코드값은 어떤 기관·면허·경력유형을 뜻하는가', '어떤 면허와 경력이 있어야 응시자격이 되는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 철도자격 관련 데이터와는 기관코드·소지면허코드 같은 코드값이나 코드명 매핑으로만 이어 쓴다.
 description_portal: 한국교통안전공단 철도자격관리시스템의 철도관련 기관 정보 데이터, 응시자격코드 데이터, 시스템을 구성하는 데이터를 포함하고있습니다.
 applicable_legislation:
   - law: 철도안전법
@@ -104,6 +106,7 @@ schema:
         unique: 2560
     - name: 기관코드
       type: code
+      semantic_type: rail_related_org_cd
       null_rate: 0.0
       sample_values:
         - 무소속
@@ -158,6 +161,12 @@ schema:
         - N
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 기관코드
+      reference:
+        key: rail_related_org_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -200,7 +209,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064510-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rail_related_org_cd(기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15064510.json
@@ -264,8 +273,6 @@ verification:
   run: probe/runs/15064510.json
   stats: probe/stats/15064510.json
   data: probe/data/15064510/
-status: active
-summary_user: 한국교통안전공단 철도자격관리시스템에서 쓰는 시스템 관리 코드를 담은 코드표 파일로, 철도관련 기관 정보, 응시자격 코드(소지면허·경력유형·경력년수), 시스템 구성 코드를 상위코드·상세코드·코드명 단위로 담는다(CSV 약 274KB, 전국·비공간). 철도 면허·자격 데이터를 분석하는 사람이 '이 코드값은 어떤 기관·면허·경력유형을 뜻하는가', '어떤 면허와 경력이 있어야 응시자격이 되는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 철도자격 관련 데이터와는 기관코드·소지면허코드 같은 코드값이나 코드명 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 기관 데이터와 직접 결합할 수 없고, 코드명 또는 공단 내부 코드로만 연결된다. 코드 정의 테이블이라 응시자·합격자 수 같은 건별 실적은 담지 않는다.
 review:
   summary: draft
@@ -277,3 +284,4 @@ review:
     - c-15064510-03
     - c-15064510-04
   dropped_citations: 0
+status: active

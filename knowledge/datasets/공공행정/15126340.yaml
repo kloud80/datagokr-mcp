@@ -1,5 +1,3 @@
-# Dataset 15126340 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126340'
 tier: verified
 title: 공정거래위원회_전화권유판매사업자 등록변경현황 제공 서비스
@@ -71,6 +69,7 @@ schema:
     - name: prmmiMnno
       title: 인허가관리번호
       type: string
+      semantic_type: spcl_sales_prmmi_mnno
       null_rate: 0.0
       sample_values:
         - 2021-서울송파-0009
@@ -297,6 +296,11 @@ schema:
         unique: 2
   foreign_keys:
     - fields:
+        - prmmiMnno
+      reference:
+        key: spcl_sales_prmmi_mnno
+      evidence: measured
+    - fields:
         - brno
       reference:
         key: bizno
@@ -353,7 +357,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15126340-03
     kind: key
-    value: '실측 조인 키: bizno(brno), corp_rgst_no(crno)'
+    value: '실측 조인 키: spcl_sales_prmmi_mnno(prmmiMnno), bizno(brno), corp_rgst_no(crno)'
     evidence:
       - type: measured
         source: probe/stats/15126340.json
@@ -432,3 +436,10 @@ review:
     - c-15126340-07
   dropped_citations: 0
 status: active
+grain:
+  space: sgg
+  space_fields:
+    - lctnAddr
+    - rnAddr
+    - rprsvEmladr
+  space_via: address

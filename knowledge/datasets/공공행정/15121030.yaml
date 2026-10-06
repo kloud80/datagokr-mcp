@@ -1,4 +1,5 @@
-# Dataset 15121030 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121030 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121030'
 tier: verified
 title: 한국자산관리공사_온비드 용도별 코드정보
@@ -23,6 +24,7 @@ synonyms:
   - 용도별 분류코드
   - 캠코 공매 코드
   - 온비드 API 코드정보
+summary_user: '온비드 오픈API에서 쓰는 부동산·동산 물건의 용도 코드를 코드ID·코드명·상위코드·레벨(1레벨 안에 2레벨, 그 안에 3레벨)로 정리한 코드표 파일로, 건별 원천 데이터가 아니라 참조용 분류표다(csv 약 14.6KB). 온비드 공매·입찰 API를 호출하는 개발자나 분석가가 결과에 나온 용도코드가 어떤 물건 용도(예: 토지·주거용 건물·차량 등 상위 분류)에 속하는지 풀어 읽거나 용도별로 물건을 묶어 집계할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어 온비드 API 응답의 용도코드·용도명과 코드ID·코드명을 맞춰 붙이는 방식으로만 연결한다.'
 description_portal: '한국자산관리공사 온비드(Onbid) 오픈API 서비스 이용 편의성 증진을 위해 온비드 API 서비스에서 사용되는 용도별 코드정보(코드ID, 코드명, 상위코드ID, 상위코드명, 레벨)를  제공합니다.* 코드(ID) : 상위코드(ID) 안에 속하는 용도코드입니다. API를 호출하면 코드명을 결과값으로 얻을 수 있습니다.* 코드명 : 부동산 및 동산 물건 용도의 이름입니다. 코드ID* 상위코드(ID) :  코드(ID)를 묶는 상위의 용도입니다.* 상위코드명 : 코드를 묶는 상위 개념의 용도 이름입니다. * 레벨 : 각 용도코드별 범위를 나타냅니다. 숫자가 작을수록 넓은 범위를 의미하여, 1레벨안에 2레벨이 속하고, 그 안에 3레벨이 속합니다.'
 accrual_periodicity: 수시
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 코드(ID)
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10000'
@@ -88,6 +91,12 @@ schema:
         p50: 3
         max: 3
         unique: 3
+  foreign_keys:
+    - fields:
+        - 코드(ID)
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -131,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121030-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: onbid_usg_ctgr_id(코드(ID))'
     evidence:
       - type: measured
         source: probe/stats/15121030.json
@@ -185,8 +194,6 @@ verification:
   run: probe/runs/15121030.json
   stats: probe/stats/15121030.json
   data: probe/data/15121030/
-status: active
-summary_user: '온비드 오픈API에서 쓰는 부동산·동산 물건의 용도 코드를 코드ID·코드명·상위코드·레벨(1레벨 안에 2레벨, 그 안에 3레벨)로 정리한 코드표 파일로, 건별 원천 데이터가 아니라 참조용 분류표다(csv 약 14.6KB). 온비드 공매·입찰 API를 호출하는 개발자나 분석가가 결과에 나온 용도코드가 어떤 물건 용도(예: 토지·주거용 건물·차량 등 상위 분류)에 속하는지 풀어 읽거나 용도별로 물건을 묶어 집계할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어 온비드 API 응답의 용도코드·용도명과 코드ID·코드명을 맞춰 붙이는 방식으로만 연결한다.'
 limits: 이 파일은 용도 분류 코드표일 뿐 개별 물건·입찰 정보는 담지 않으며, 행정표준코드나 필지번호(PNU) 같은 전역 키가 없어 온비드 외 데이터와 직접 조인되지 않는다. 범위는 전국·비공간이다.
 review:
   summary: draft
@@ -198,3 +205,4 @@ review:
     - c-15121030-03
     - c-15121030-04
   dropped_citations: 0
+status: active

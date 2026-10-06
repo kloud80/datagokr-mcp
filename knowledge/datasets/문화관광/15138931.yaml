@@ -1,4 +1,5 @@
-# Dataset 15138931 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15138931 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15138931'
 tier: verified
 title: 한국문화정보원_문화릴레이티켓할인조회서비스
@@ -25,6 +26,7 @@ synonyms:
   - 공연 티켓 가격
   - 공연 예매 할인
   - 할인율
+summary_user: 공연 티켓 할인 정보를 티켓 한 건(티켓번호 seq) 단위로 담으며, 공연 제목·포스터, 티켓요금, 할인율, 지역, 공연장, 시작일·마감일을 전국 범위로 제공한다. 공연을 보려는 사람이 '지금 우리 지역에서 할인 중인 공연과 할인율은 얼마인가'를 확인하거나, 분석가가 지역·공연장별 할인 프로모션 현황을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 KOPIS 공연ID·공연장ID와 직접 연결되지 않으므로, 공연 제목·공연장명·지역 이름으로 맞춰 KOPIS 공연 목록·공연장 데이터와 이어 쓴다.
 description_portal: 이 데이터셋은 공연 티켓 할인 정보를 제공하는 공공데이터 OpenAPI 서비스로, 공연 제목, 포스터 이미지 및 설명, 티켓 가격, 할인율, 공연 지역, 공연장, 시작일과 종료일, 문의 연락처 등 공연과 관련한 다양한 정보를 포함합니다. 그 뿐만 아니라 사용자는 할인 중인 공연 정보를 쉽게 확인할 수 있어 문화생활 계획에 유용하며, 티켓 예매 플랫폼, 문화 이벤트 홍보, 할인 프로모션 분석 등 다양한 분야에서 활용할 수 있습니다. 해당 데이터는 최신 공연 할인 정보를 반영하여 주기적으로 갱신되며 정보 제공됩니다.
 team:
   dept: 문화포털팀
@@ -211,6 +213,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - startDate
+    - endDate
 cycle: event
 classification:
   subsector_name: 공연 (KOPIS 공연 목록·공연장·예매/매출)
@@ -332,8 +339,6 @@ verification:
   run: probe/runs/15138931.json
   stats: probe/stats/15138931.json
   data: probe/data/15138931/
-status: active
-summary_user: 공연 티켓 할인 정보를 티켓 한 건(티켓번호 seq) 단위로 담으며, 공연 제목·포스터, 티켓요금, 할인율, 지역, 공연장, 시작일·마감일을 전국 범위로 제공한다. 공연을 보려는 사람이 '지금 우리 지역에서 할인 중인 공연과 할인율은 얼마인가'를 확인하거나, 분석가가 지역·공연장별 할인 프로모션 현황을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 KOPIS 공연ID·공연장ID와 직접 연결되지 않으므로, 공연 제목·공연장명·지역 이름으로 맞춰 KOPIS 공연 목록·공연장 데이터와 이어 쓴다.
 limits: 상세 조회의 필수 파라미터 seq(티켓번호)는 목록 조회 등에서 먼저 받아 넘겨야 한다. 공연ID·공연장ID 같은 공통 키가 없어 다른 공연 데이터와는 이름 매칭으로만 연결되며, 매칭 오류에 주의해야 한다.
 review:
   summary: draft
@@ -347,3 +352,4 @@ review:
     - c-15138931-06
     - c-15138931-10
   dropped_citations: 0
+status: active

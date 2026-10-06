@@ -212,6 +212,7 @@ schema:
     - name: airFln
       title: 항공편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - BX8822
@@ -333,6 +334,7 @@ schema:
     - name: city
       title: 운항구간코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - GMP
@@ -344,6 +346,7 @@ schema:
     - name: airport
       title: 기준공항코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - GMP
@@ -642,6 +645,7 @@ schema:
     - name: city
       title: 운항구간코드
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -653,6 +657,7 @@ schema:
     - name: airport
       title: 기준공항코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - PUS
@@ -830,6 +835,7 @@ schema:
     - name: airFln
       title: 항공편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - BX8024
@@ -951,6 +957,7 @@ schema:
     - name: city
       title: 운항구간코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -962,6 +969,7 @@ schema:
     - name: airport
       title: 기준공항코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -1111,9 +1119,31 @@ schema:
         p50: 18
         max: 221
         unique: 68
+  foreign_keys:
+    - fields:
+        - airFln
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - city
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - airport
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - ufid
+    - ufid
+    - ufid
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -1157,7 +1187,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15158946-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(airFln), airport_cd(city), airport_cd(airport)'
     evidence:
       - type: measured
         source: probe/stats/15158946.json

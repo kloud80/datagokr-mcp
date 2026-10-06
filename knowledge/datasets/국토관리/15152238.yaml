@@ -1,4 +1,5 @@
-# Dataset 15152238 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15152238 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15152238'
 tier: verified
 title: 공무원연금공단_공무원임대주택 신규입주자 임대보증금 및 월임대료 조견표
@@ -22,6 +23,7 @@ synonyms:
   - 공무원연금공단 임대주택
   - 보증금 월임대료 조견표
   - 공무원 관사 임대 조건
+summary_user: 공무원연금공단이 관리하는 공무원임대주택의 신규입주자 임대료 조견표로, 지부·지역·단지·전용면적별로 임대보증금 비율(전세 100%부터 단계별)에 따라 달라지는 임대보증금과 월임대료를 천원 단위로 담은 CSV 파일(약 31KB)이다. 입주를 준비하는 공무원이 "이 단지 이 면적에서 보증금을 몇 %로 낮추면 월임대료가 얼마가 되나"를 따져 자금 계획을 세우는 데 쓴다. 전역 조인 키가 없어 다른 주택·청약 데이터와는 단지명·지역 이름을 맞춰 연결해야 한다.
 description_portal: '공무원연금공단이 관리하는 공무원임대주택 입주자가 임대보증금과 월임대료 비율을 선택할 수 있도록(임대보증금 전환 제도) 마련된 임대료 조견표입니다.본 데이터는 관할 지부, 지역, 단지명, 전용면적(㎡)을 기준으로, 임대보증금 구분(%) 비율에 따라 달라지는 임대보증금과 월임대료를 상세히 안내합니다.입주자는 전세(보증금 100%, 월임대료 0원) 형태부터 보증금을 낮추고 월임대료를 납부하는 형태까지 다양한 임대 조건을 선택할 수 있습니다.공무원 입주자가 본인의 자금 계획에 맞게 임대 조건을 설정하는 데 활용할 수 있으며, 자세한 내용은 입주공고에서 확인할 수 있습니다.(금액단위 : 천원)'
 accrual_periodicity: 연간
 team:
@@ -53,6 +55,7 @@ schema:
         unique: 17
     - name: 단지명
       type: string
+      semantic_type: gepf_rental_complex_nm
       null_rate: 0.0
       sample_values:
         - 부산범천
@@ -105,6 +108,12 @@ schema:
         p50: 151
         max: 1680
         unique: 372
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: gepf_rental_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -152,7 +161,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15152238-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gepf_rental_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15152238.json
@@ -247,8 +256,6 @@ verification:
   run: probe/runs/15152238.json
   stats: probe/stats/15152238.json
   data: probe/data/15152238/
-status: active
-summary_user: 공무원연금공단이 관리하는 공무원임대주택의 신규입주자 임대료 조견표로, 지부·지역·단지·전용면적별로 임대보증금 비율(전세 100%부터 단계별)에 따라 달라지는 임대보증금과 월임대료를 천원 단위로 담은 CSV 파일(약 31KB)이다. 입주를 준비하는 공무원이 "이 단지 이 면적에서 보증금을 몇 %로 낮추면 월임대료가 얼마가 되나"를 따져 자금 계획을 세우는 데 쓴다. 전역 조인 키가 없어 다른 주택·청약 데이터와는 단지명·지역 이름을 맞춰 연결해야 한다.
 limits: 단지 코드 같은 공통 키가 없어 다른 데이터와는 이름 매핑으로만 이을 수 있다. 명세상 연간·이벤트성으로 만들어지는 파일이라 실제 입주 조건은 해당 입주공고로 확인해야 한다.
 review:
   summary: draft
@@ -260,3 +267,4 @@ review:
     - c-15152238-02
     - c-15152238-03
   dropped_citations: 0
+status: active

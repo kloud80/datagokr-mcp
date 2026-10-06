@@ -101,6 +101,7 @@ schema:
         unique: 3
     - name: 업종코드
       type: string
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - J58222
@@ -138,6 +139,11 @@ schema:
         unique: 4
   foreign_keys:
     - fields:
+        - 업종코드
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
         - 소재지
       reference:
         key: address
@@ -146,6 +152,18 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2014-06-30 ~ 2025-12-12
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 투자일자
+  category:
+    - ksic
+  category_fields:
+    - 업종코드
 cycle: default
 classification:
   subsector_name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
@@ -186,7 +204,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15002987-03
     kind: key
-    value: '실측 조인 키: address(소재지)'
+    value: '실측 조인 키: classification_code(업종코드), address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15002987.json

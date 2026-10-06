@@ -1,4 +1,5 @@
-# Dataset 15157086 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157086 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157086'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_환경영향평가_수리수문정보
@@ -22,6 +23,7 @@ synonyms:
   - 수리수문 평가
   - 소유역 유출량
   - EIA 수문
+summary_user: 환경영향평가 대상 개발사업의 사업구역별 수리수문 평가 결과를 담은 파일로, 소유역 단위로 면적과 개발 전·중·후 홍수유출량, 산정빈도, 영구저류지 설치 전후 첨두홍수량을 기록한다. 개발사업이 하류 홍수량을 얼마나 늘리는지, 저류지가 첨두홍수량을 얼마나 줄이는지 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 기관의 다른 환경영향평가 데이터(협의 현황·사업구역 등)와 사업코드를 이름·코드 매핑으로 맞춰 연결한다.
 description_portal: 환경부 환경영향평가 사업의 수리수문에 대한 사업구역을 기준으로 하천사업의 속성(부피(m3), 연장(km), 면적(km2), 사업위치, 총연장(km), 사업구분) 정보와 사업구역을 기준으로 면적사업의 속성(산정빈도(년), 홍수유출량 개발전(m3/s), 홍수유출량 개발중(m3/s), 홍수유출량 개발후(m3/s), 홍수유출량 산정빈도(년), 영구저류지의 홍수량 저감효과 개발후 저류지 설치 전 첨두홍수량(m3/s), 영구저류지의 홍수량 저감효과 개발 후 저류지 설치 후 첨두홍수량(m3/s))을 정보를 제공하는 서비스입니다.
 accrual_periodicity: 수시
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 73290
     - name: 사업코드
       type: code
+      semantic_type: eia_biz_cd
       null_rate: 0.0
       sample_values:
         - JJ2020E003
@@ -202,12 +205,23 @@ schema:
         - Y3661
       stats:
         unique: 33
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: eia_biz_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 생성일
+    - 수정일
 cycle: event
 classification:
   subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
@@ -249,7 +263,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157086-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eia_biz_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15157086.json
@@ -314,8 +328,6 @@ verification:
   run: probe/runs/15157086.json
   stats: probe/stats/15157086.json
   data: probe/data/15157086/
-status: active
-summary_user: 환경영향평가 대상 개발사업의 사업구역별 수리수문 평가 결과를 담은 파일로, 소유역 단위로 면적과 개발 전·중·후 홍수유출량, 산정빈도, 영구저류지 설치 전후 첨두홍수량을 기록한다. 개발사업이 하류 홍수량을 얼마나 늘리는지, 저류지가 첨두홍수량을 얼마나 줄이는지 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 기관의 다른 환경영향평가 데이터(협의 현황·사업구역 등)와 사업코드를 이름·코드 매핑으로 맞춰 연결한다.
 limits: 표준 조인 키가 없어 행정구역·하천 데이터와 바로 붙일 수 없고, 범위는 전국이지만 비공간 데이터라 좌표 기반 분석에는 따로 사업구역 정보가 필요하다. 명세상 수시 갱신이며, 파일은 활용신청 없이 zip으로 받는다.
 review:
   summary: draft
@@ -329,3 +341,4 @@ review:
     - c-15157086-04
     - c-15157086-06
   dropped_citations: 0
+status: active

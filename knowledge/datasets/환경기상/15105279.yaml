@@ -1,4 +1,5 @@
-# Dataset 15105279 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15105279 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15105279'
 tier: verified
 title: 한국환경산업기술원_화학제품관리시스템_화학물질저감 우수제품 목록
@@ -22,6 +23,7 @@ synonyms:
   - 화학제품관리시스템
   - 초록누리
   - 안전확인대상 생활화학제품 신고번호
+summary_user: 한국환경산업기술원 화학제품관리시스템에서 화학물질 저감 성능이 입증된 우수제품을 제품 한 건당 한 행으로 담은 전국 단위 목록 파일(csv, 약 10KB)로, 구분·기업명·제품명·품목·신고번호를 담는다. 소비자나 구매 담당자가 '세정제·표백제·제습탈취제·워셔액 중 화학물질 저감 우수제품으로 지정된 제품과 제조 기업은 어디인가'를 확인하거나, 분석가가 기업·품목별 저감 우수제품 분포를 보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기업명·제품명 같은 이름 매칭이나 신고번호를 같은 기관(화학제품관리시스템) 자료와 맞춰 보는 방식으로만 이어 쓴다.
 description_portal: 본 데이터는 한국환경산업기술원이 운영하는 화학제품관리시스템에서 화학물질 저 감 성능이 입증된 우수제품 정보를 집계·제공하는 공공데이터입니다. 데이터는 제품별 구분, 기업명, 제품명, 품목, 신고번호 등 핵심 필드를 포함하며, 표백제·살균제·세정제·가정용 제습탈취제·자동차용 워셔액·필터 등 다양한 화학제품의 저감 우수 사례를 포괄적으로 확인할 수 있습니다. 사용자는 이를 통해 기업별 친환경 제품 개발 동향을 모니터링하고, 품목별 시장 점유율 및 기술 적용 현황을 분석하며,  환경규제 준수 여부를 검토할 수 있습니다. 또한 정책 입안자와 연구자는 신고번호를 활용해 상세 제품  정보를 연계 조회하여 인증 절차 개선, 환경표지 기준 수립, ESG 평가 지표 개발, 친환경 기술 가이드라 인 작성 등에 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -71,6 +73,7 @@ schema:
         unique: 26
     - name: 신고번호
       type: string
+      semantic_type: chem_product_report_no
       null_rate: 0.0
       sample_values:
         - (CB24-12-0886)
@@ -78,6 +81,12 @@ schema:
         - CB23-13-0562
       stats:
         unique: 78
+  foreign_keys:
+    - fields:
+        - 신고번호
+      reference:
+        key: chem_product_report_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -120,7 +129,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15105279-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: chem_product_report_no(신고번호)'
     evidence:
       - type: measured
         source: probe/stats/15105279.json
@@ -185,8 +194,6 @@ verification:
   run: probe/runs/15105279.json
   stats: probe/stats/15105279.json
   data: probe/data/15105279/
-status: active
-summary_user: 한국환경산업기술원 화학제품관리시스템에서 화학물질 저감 성능이 입증된 우수제품을 제품 한 건당 한 행으로 담은 전국 단위 목록 파일(csv, 약 10KB)로, 구분·기업명·제품명·품목·신고번호를 담는다. 소비자나 구매 담당자가 '세정제·표백제·제습탈취제·워셔액 중 화학물질 저감 우수제품으로 지정된 제품과 제조 기업은 어디인가'를 확인하거나, 분석가가 기업·품목별 저감 우수제품 분포를 보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기업명·제품명 같은 이름 매칭이나 신고번호를 같은 기관(화학제품관리시스템) 자료와 맞춰 보는 방식으로만 이어 쓴다.
 limits: 사업자번호나 좌표 같은 공통 키가 없어 사업장 인허가 원장 등과 바로 결합되지 않고 이름 매핑에 의존해야 한다. 지역 구분이 없는 전국·비공간 목록이라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -198,3 +205,4 @@ review:
     - c-15105279-03
     - c-15105279-04
   dropped_citations: 0
+status: active

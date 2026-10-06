@@ -1,4 +1,5 @@
-# Dataset 15089624 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15089624 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15089624'
 tier: verified
 title: 건강보험심사평가원_의료행위별 성별 연령군별 건강보험 진료 통계
@@ -22,6 +23,7 @@ synonyms:
   - 연령별 진료 통계
   - 의료행위 청구금액
   - 심평원 행위 통계
+summary_user: 의료행위(검사·수술 등) 행위코드별로 진료년도·성별·연령군에 따른 환자수, 명세서 청구건수, 총사용량, 청구금액을 담은 전국 단위 건강보험 진료 집계 통계입니다. 특정 검사나 수술이 어느 성별·연령대에서 얼마나 시행되고 비용이 얼마나 청구되는지 알고 싶은 분석가나 의료 관련 사업자가 시장 규모와 이용 추이를 파악하는 데 쓴다. 전역 조인 키는 없어 행위코드를 심평원 수가마스터 파일의 행위명과 코드 매핑해 붙이거나 같은 기관의 다른 행위코드 기반 통계와 코드로 이어 쓴다.
 description_portal: '의료행위(검사·수술등)별 건강보험 진료비 통계 / 진료일자 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2023.1월~12월, 심사년월: 2023.1월~2024.4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 서면, DRG 제외※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대한 심사결정한 내용을 기준으로 작성되었습니다.※ 행위코드는 건강보험심사평가원 홈페이지(www.hira.or.kr) > 제도·정책 > 보험인정기준 > 자료실 > 수가마스터 파일에서 확인하실 수 있습니다.※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있습니다.'
 applicable_legislation:
   - law: 국민건강보험법
@@ -68,6 +70,7 @@ schema:
         unique: 16
     - name: 행위코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - '10100'
@@ -123,12 +126,22 @@ schema:
         p50: 8870411.5
         max: 225475000000
         unique: 92292
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 연령군
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -165,7 +178,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15089624-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(행위코드)'
     evidence:
       - type: measured
         source: probe/stats/15089624.json
@@ -243,8 +256,6 @@ verification:
   run: probe/runs/15089624.json
   stats: probe/stats/15089624.json
   data: probe/data/15089624/
-status: active
-summary_user: 의료행위(검사·수술 등) 행위코드별로 진료년도·성별·연령군에 따른 환자수, 명세서 청구건수, 총사용량, 청구금액을 담은 전국 단위 건강보험 진료 집계 통계입니다. 특정 검사나 수술이 어느 성별·연령대에서 얼마나 시행되고 비용이 얼마나 청구되는지 알고 싶은 분석가나 의료 관련 사업자가 시장 규모와 이용 추이를 파악하는 데 쓴다. 전역 조인 키는 없어 행위코드를 심평원 수가마스터 파일의 행위명과 코드 매핑해 붙이거나 같은 기관의 다른 행위코드 기반 통계와 코드로 이어 쓴다.
 limits: 전국 단위 집계라 지역·요양기관별 분석에는 쓸 수 없고, 다른 데이터와 바로 붙일 공통 조인 키가 없어 행위코드 매핑을 따로 거쳐야 한다. 포털 설명상 환자수는 범주 안에서만 중복을 제거한 값이라 성별·연령군 범주를 단순 합산하면 중복이 생기고, 약국·서면·DRG 청구는 제외된다.
 review:
   summary: draft
@@ -257,3 +268,4 @@ review:
     - c-15089624-04
     - c-15089624-05
   dropped_citations: 0
+status: active

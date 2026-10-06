@@ -1,4 +1,5 @@
-# Dataset 15107733 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15107733 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15107733'
 tier: verified
 title: 전국초중등교과주제별학습자료표준데이터
@@ -20,6 +21,7 @@ synonyms:
   - 수업자료 목록
   - 교과별 주제 자료
   - 초중고 학습자료
+summary_user: 한국교육학술정보원이 제공하는 초·중등 교과 주제별 학습자료 목록으로, 자료 한 건마다 학습자료명·목차·페이지 번호·키워드·파일명과 확장자·출처·홈페이지 주소·작성일자를 담으며 포털에서 약 349KB 크기의 CSV 파일로 받는다. 교사·학부모·에듀테크 사업자가 '특정 교과 주제(키워드)에 맞는 학습자료가 어디에 어떤 파일 형식으로 있는가'를 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 키워드·자료명 같은 이름 매핑이나 제공기관코드로만 느슨하게 연결한다.
 description_portal: '한국교육학술정보원이 제공하는 교과주제별 학습자료*항목명: 학습자료명,페이지 번호,키워드명,파일명,목차명,확장자명,출처명,홈페이지주소,작성일자'
 distributions:
   - title: 전국초중등교과주제별학습자료표준데이터.csv
@@ -96,6 +98,7 @@ schema:
         unique: 1
     - name: 제공기관코드
       type: date
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - B550629
@@ -110,12 +113,23 @@ schema:
         - 한국교육학술정보원
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 제공기관코드
+      reference:
+        key: instt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 미상
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - 데이터기준일자
+    - 제공기관코드
 cycle: default
 classification:
   subsector_name: 학교알리미 공시·학교 단위 원장
@@ -152,7 +166,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15107733-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: instt_cd(제공기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15107733.json
@@ -217,8 +231,6 @@ verification:
   run: probe/runs/15107733.json
   stats: probe/stats/15107733.json
   data: probe/data/15107733/
-status: active
-summary_user: 한국교육학술정보원이 제공하는 초·중등 교과 주제별 학습자료 목록으로, 자료 한 건마다 학습자료명·목차·페이지 번호·키워드·파일명과 확장자·출처·홈페이지 주소·작성일자를 담으며 포털에서 약 349KB 크기의 CSV 파일로 받는다. 교사·학부모·에듀테크 사업자가 '특정 교과 주제(키워드)에 맞는 학습자료가 어디에 어떤 파일 형식으로 있는가'를 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 키워드·자료명 같은 이름 매핑이나 제공기관코드로만 느슨하게 연결한다.
 limits: 학교별·지역별 단위 정보가 없어 학교알리미 공시나 학구 데이터와 직접 결합하지 못하고, 수록 범위(교과·학년·기간)는 확인되지 않았다. 내부 검토에서 보조 등급으로 분류되어 판정이 보류된 상태다.
 review:
   summary: draft
@@ -231,3 +243,4 @@ review:
     - c-15107733-04
     - c-15107733-08
   dropped_citations: 0
+status: active

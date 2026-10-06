@@ -1,4 +1,5 @@
-# Dataset 15134782 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15134782 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15134782'
 tier: verified
 title: 국민건강보험공단_심전도감시 관련 특정 수가코드의 주상병별 진료정보
@@ -23,6 +24,7 @@ synonyms:
   - E6556
   - 상병별 진료비 통계
   - 수가코드별 진료실적
+summary_user: 심전도 침상감시(1일당), 24시간 홀터기록, 48시간 초과 7일 이내 홀터기록 세 가지 수가코드에 대해 2024년 진료분의 진료인원·진료건수·수가금액(천원)을 주상병(3단·4단 상병 시트 구분)별로 묶은 전국 단위 집계 파일이다. 의료 분석가나 의료기기·병원 사업자가 '홀터 검사가 어떤 진단명으로 가장 많이 청구되는가'처럼 심전도 감시 행위의 상병별 이용 규모와 급여 금액을 볼 때 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 주상병코드를 질병분류(KCD) 코드표와, 행위코드를 건강보험 행위 수가 목록과 코드 매핑해 이어 쓴다.
 description_portal: '1. 수가코드(행위코드_건강보험행위분류): E6544(심전도침상감시[1일당]), E6545(심전도감시-24시간홀터기록), E6556(심전도감시-홀터기록-48시간 초과 7일 이내)2. 진료년도: 2024년3. 주상병코드 및 주상병명: A~Z (시트1) 3단 상병, (시트2) 4단 상병 구분4. 진료인원 및 진료건수: 해당 구분별 진료인원(중복제외) 및 건수5. 수가금액: 해당 수가에 대한 종별가산 적용금액- 진료일 기준(한의분류 제외, 약국 제외)- 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외- 2024년 6월 심사분까지 반영- 요양기관에서 환자 진료 중 진단명이 확정되지 않은 상태에서의 호소, 증세 등에 따라 일차진단명을 부여하고 청구한 내역 중  주진단명 기준으로 발췌한 것이므로 최종 확정된 질병과는 다를 수 있음※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터(시트2 추가하여 변경)개인정보 보호를 위해 5인 미만 또는 5개 미만의 건수는 "*" 처리※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터이며 본 데이터와 무관한 건강보험제도, 개인의 자격,징수,급여, 장기요양 관련 문의는 공단 대표번호(1577-1000)로 하시기 바랍니다.'
 accrual_periodicity: 수시
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 1
     - name: 행위코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - E6544
@@ -115,12 +118,22 @@ schema:
         p50: 286
         max: 7695404
         unique: 4692
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -157,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15134782-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(행위코드)'
     evidence:
       - type: measured
         source: probe/stats/15134782.json
@@ -222,8 +235,6 @@ verification:
   run: probe/runs/15134782.json
   stats: probe/stats/15134782.json
   data: probe/data/15134782/
-status: active
-summary_user: 심전도 침상감시(1일당), 24시간 홀터기록, 48시간 초과 7일 이내 홀터기록 세 가지 수가코드에 대해 2024년 진료분의 진료인원·진료건수·수가금액(천원)을 주상병(3단·4단 상병 시트 구분)별로 묶은 전국 단위 집계 파일이다. 의료 분석가나 의료기기·병원 사업자가 '홀터 검사가 어떤 진단명으로 가장 많이 청구되는가'처럼 심전도 감시 행위의 상병별 이용 규모와 급여 금액을 볼 때 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 주상병코드를 질병분류(KCD) 코드표와, 행위코드를 건강보험 행위 수가 목록과 코드 매핑해 이어 쓴다.
 limits: 건강보험 급여실적만 담아 의료급여·비급여·한의·약국은 빠지고, 2024년 6월 심사분까지만 반영된다. 주상병은 청구 시 부여된 일차진단명 기준이라 최종 확정 질병과 다를 수 있고, 5인·5건 미만은 '*'로 가려져 합계 계산에 주의해야 한다. 지역·기관 단위 구분 없이 전국 집계만 있다.
 review:
   summary: draft
@@ -235,3 +246,4 @@ review:
     - c-15134782-03
     - c-15134782-04
   dropped_citations: 0
+status: active

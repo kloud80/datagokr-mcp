@@ -1,4 +1,5 @@
-# Dataset 15123322 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123322 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123322'
 tier: verified
 title: 기후에너지환경부 한강홍수통제소_중권역코드
@@ -23,6 +24,7 @@ synonyms:
   - 대권역 중권역
   - 홍수위험지도 권역
   - 하천 유역 구분
+summary_user: 홍수위험지도에서 쓰는 수자원단위 중 중권역의 코드와 이름, 상위 대권역코드를 담은 작은 코드표 파일(csv, 약 2.5KB)로, 전국 범위의 비공간 자료다. 홍수위험지도나 하천·유역 자료를 볼 때 '이 중권역코드가 어느 중권역이고 어느 대권역에 속하나'를 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관 자료의 중권역코드·대권역코드 값이나 중권역명으로 맞춰 이어 쓴다.
 description_portal: 제방월류, 제방파제, 내수침수 등 홍수시나리오에 따라 예상되는 최대 범람지역을 표시하는 홍수위험지도에 대하여 수자원단위 중 중권역을 표현.* 홍수위험지도란? 하천제방의 설계빈도를 초과하는 홍수가 발생하여 제방붕괴, 제방월류 등 극한의 상황이 발생한다는 가정하에 하천 주변지역의 침수범위, 침수깊이를 나타낸 지도. 이를 통해 최악의 홍수상황을 사전에 대비하고 인명 및 재산피해를 최소화하며, 지자체의 재해지도 제작, 홍수 관련 보험의 기초자료를 제공 및 수해방지대책 수립 등에 활용이 가능한 홍수 대비를 위한 기초정보. 홍수위험지도의 제방붕괴 등의 홍수 예상 시나리오는 실제 하천제방의 안정성과 무관하며, 구조물적 대책이 실패한다는 최악의 경우를 가정한 것으로서 홍수 시 가상의 최대 범람 범위 산정을 위한 것임* 수자원단위지도란? 국가 자원의 수자원개발, 계획 및 관리업무의 효율적 추진을 위하여 수자원 업무에 활용되는 자료의 수집, 분석과 관련된 기관 간 자료와 공동활용을 목적으로 지형공간 상에 대권역, 중권역 및 표준유역의 가상의 구역을 설정한 지도.
 accrual_periodicity: 수시
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 중권역코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '1001'
@@ -57,6 +60,7 @@ schema:
         unique: 117
     - name: 대권역코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '10'
@@ -67,6 +71,17 @@ schema:
         p50: 24
         max: 60
         unique: 21
+  foreign_keys:
+    - fields:
+        - 중권역코드
+      reference:
+        key: river_cd
+      evidence: measured
+    - fields:
+        - 대권역코드
+      reference:
+        key: river_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -114,7 +129,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123322-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: river_cd(중권역코드), river_cd(대권역코드)'
     evidence:
       - type: measured
         source: probe/stats/15123322.json
@@ -206,8 +221,6 @@ verification:
   run: probe/runs/15123322.json
   stats: probe/stats/15123322.json
   data: probe/data/15123322/
-status: active
-summary_user: 홍수위험지도에서 쓰는 수자원단위 중 중권역의 코드와 이름, 상위 대권역코드를 담은 작은 코드표 파일(csv, 약 2.5KB)로, 전국 범위의 비공간 자료다. 홍수위험지도나 하천·유역 자료를 볼 때 '이 중권역코드가 어느 중권역이고 어느 대권역에 속하나'를 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관 자료의 중권역코드·대권역코드 값이나 중권역명으로 맞춰 이어 쓴다.
 limits: 경계 좌표가 없는 비공간 코드표라 이것만으로 중권역 범위를 지도에 그리거나 침수범위를 알 수는 없다. 다른 기관 데이터와는 공통 키가 확인되지 않아 이름·코드 매핑을 직접 해야 하며, 갱신은 명세상 수시로 정해진 주기가 없다.
 review:
   summary: draft
@@ -220,3 +233,4 @@ review:
     - c-15123322-03
     - c-15123322-04
   dropped_citations: 0
+status: active

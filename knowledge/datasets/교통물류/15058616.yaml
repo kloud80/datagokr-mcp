@@ -1,0 +1,249 @@
+# Dataset 15058616 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058616'
+tier: verified
+title: 경기도_도로 집계 현황
+sector: 교통물류/도로/road-other
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058616/openapi.do
+synonyms:
+  - 도로현황
+  - 도로종류
+  - 노선수
+  - 포장도율
+  - 연장거리
+  - 교통정책
+  - 도로구분
+  - 도로 현황 통계
+  - 도로 포장률
+  - 도로 연장
+  - 노선 수
+  - 미포장 도로
+  - 경기도 도로 통계
+summary_user: 경기도 내 도로를 도로종류(국도·지방도·고속도로·시군도 등)와 구분별로 묶어 노선 수, 총연장(km), 포장·미포장 구간 길이, 포장도율(%)을 담은 연간 집계 통계다. 도로정책 담당자나 분석가가 "경기도에서 미포장 구간이 가장 긴 도로종류는 무엇이고 포장도율은 얼마인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도로종류명 같은 이름 매핑이나 같은 기관 코드로만 이어 쓴다.
+description_portal: ‘도로 집계 현황’ 데이터는 경기도 내 도로종류별 도로 규모와 특성을 종합적으로 파악할 수 있도록 정리된 연간 통계자료입니다. 해당 데이터는 도로종류명(ROAD_KIND_NM)과 구분명(DIV_NM)을 기준으로, 각 도로유형의 노선 수(ROUTE_CNT), 총연장(km)(EXTS), 포장된 구간의 길이(PAVE_DEGR_LENG), 미포장 구간 길이(UNPAVE_DEGR_LENG), 포장도율(%)(PAVE_DEGR_RT)을 제공합니다.이 데이터는 국도·지방도·고속도로·시군도 등 다양한 도로의 분포 상태 및 관리 현황을 분석할 수 있어, 경기도의 도로정책 수립, 유지보수 우선순위 결정, 노후구간 개량 사업 계획 등에 활용됩니다. 또한 도로 인프라에 대한 지역 간 격차 분석 및 장기 교통계획 수립의 기반 자료로 활용될 수 있습니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: RoadSideStatus
+    name: RoadSideStatus
+    endpoint: https://openapi.gg.go.kr/RoadSideStatus
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20251231'
+      stats:
+        min: 20251231
+        p50: 20251231
+        max: 20251231
+        unique: 1
+    - name: ROAD_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고속국도
+        - 일반국도
+        - 지방도
+      stats:
+        unique: 5
+    - name: DIV_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ROUTE_CNT
+      type: number
+      null_rate: 0.4
+      sample_values:
+        - '20.0'
+        - '18.0'
+        - '55.0'
+      stats:
+        min: 18
+        p50: 20
+        max: 55
+        unique: 3
+    - name: EXTS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1146.0'
+        - '1634.0'
+        - '2710.0'
+      stats:
+        min: 478
+        p50: 1634
+        max: 10314
+        unique: 5
+    - name: PAVE_DEGR_LENG
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1054.0'
+        - '1633.0'
+        - '2324.0'
+      stats:
+        min: 356
+        p50: 1633
+        max: 9563
+        unique: 5
+    - name: PAVE_DEGR_RT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100.0'
+        - '98.9'
+        - '99.2'
+      stats:
+        min: 89.7
+        p50: 99.2
+        max: 100
+        unique: 4
+    - name: UNPAVE_DEGR_LENG
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '25.0'
+        - '80.0'
+      stats:
+        min: 0
+        p50: 25
+        max: 80
+        unique: 4
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 도로 기타
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.5657
+  rank_in_sector: 1480
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058616-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058616.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058616-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058616-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058616.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058616-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058616.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058616-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058616-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058616.json
+  stats: probe/stats/15058616.json
+  data: probe/data/15058616/
+limits: 건별 노선·구간 원천이 아닌 집계값이며 공간 정보가 없어 지도 위 위치나 개별 도로 상태 분석에는 쓰지 못한다. 호출하려면 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 받아 경로 파라미터(KEY)로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058616-01
+    - c-15058616-03
+    - c-15058616-04
+  dropped_citations: 0
+status: active

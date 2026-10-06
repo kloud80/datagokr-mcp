@@ -1,4 +1,5 @@
-# Dataset 15044672 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044672 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044672'
 tier: verified
 title: 대전교통공사_에스컬레이터 설치현황
@@ -21,6 +22,7 @@ synonyms:
   - 교통약자 이동편의시설
   - 에스컬레이터 교체주기
   - 대전 1호선 역 시설
+summary_user: 대전교통공사가 운영하는 도시철도 역사의 에스컬레이터를 한 대씩 담은 설치현황 파일로, 역사명·호기·설치 위치·형식·길이·운행속도·완성검사일(최초설치일)·교체주기가 들어 있습니다. 교통약자 이동편의를 따지는 분석가나 시민이 어느 역에 에스컬레이터가 몇 대 있고 언제 설치돼 교체 시기가 다가오는지를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 역·시설 데이터와는 역사명을 이름으로 맞추거나 같은 기관의 엘리베이터 등 승강설비 현황과 묶어 쓴다.
 description_portal: '대전교통공사 승강설비 현황에스컬레이터 168대* 승강기 유지관리 법적근거 ❍ 승강기 안전관리법 제 31조 (승강기의 자체점검)     ☞ 자체점검을 월1회 이상 하고 그 결과를 승강기안전종합정보망에 입력 ❍ 승강기 안전관리법 시행령 제 28조 (자체점검을 담당할 수 있는 사람의 자격)     ☞ 유자격자에 한해 자체점검 실시 ❍ 대전광역시 일반용역 적격심사 세부기준 (이행실적 평가)     ☞ 적격심사 항목 및 배점한도, 이행실적 평가 기준 등에 따라 계약이행   능력 심사 ❍ 유지관리 주요업무    — 자체점검(월간) : 월 1회 이상 유자격자에 의한 자체점검을 실시 후 점검 결과를 10일 이내 승강기안전종합정보망에 입력    — 정기검사 준비 및 수검 : 년 1회 검사 준비 및 수검 실시    — 승강설비 이상․고장․안전사고 발생에 따른 사후 조치 실시    — 야간 및 휴일(특별행사 포함) 고장보수 대기     — 특별점검, 주요 행사에 따른 사전 점검 및 안전 활동(캠페인) 등'
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 고유번호
       type: string
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - '5800_401'
@@ -133,12 +136,22 @@ schema:
         - 2024년 교체완료
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 고유번호
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 완성검사일(최초설치일)
 cycle: default
 classification:
   subsector_name: 철도망·역·출입구·시설
@@ -175,7 +188,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15044672-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(고유번호)'
     evidence:
       - type: measured
         source: probe/stats/15044672.json
@@ -240,8 +253,6 @@ verification:
   run: probe/runs/15044672.json
   stats: probe/stats/15044672.json
   data: probe/data/15044672/
-status: active
-summary_user: 대전교통공사가 운영하는 도시철도 역사의 에스컬레이터를 한 대씩 담은 설치현황 파일로, 역사명·호기·설치 위치·형식·길이·운행속도·완성검사일(최초설치일)·교체주기가 들어 있습니다. 교통약자 이동편의를 따지는 분석가나 시민이 어느 역에 에스컬레이터가 몇 대 있고 언제 설치돼 교체 시기가 다가오는지를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 역·시설 데이터와는 역사명을 이름으로 맞추거나 같은 기관의 엘리베이터 등 승강설비 현황과 묶어 쓴다.
 limits: 표준 역 코드 같은 공통 키가 없으므로 다른 기관의 역 데이터와 붙이려면 역사명 매핑이 필요하다. 좌표 등 공간 정보가 없는 비공간 데이터이며, 고장·점검 이력은 담지 않는다.
 review:
   summary: draft
@@ -253,3 +264,4 @@ review:
     - c-15044672-03
     - c-15044672-04
   dropped_citations: 0
+status: active

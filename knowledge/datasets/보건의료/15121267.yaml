@@ -1,4 +1,5 @@
-# Dataset 15121267 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121267 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121267'
 tier: verified
 title: 국민건강보험공단_의료급여선택병의원월통계
@@ -21,6 +22,7 @@ synonyms:
   - 희귀난치성 질환 선택자
   - 의료급여 월별 통계
   - 시군구별 의료급여
+summary_user: 의료급여 수급권자의 선택병의원 현황을 시도·시군구별, 월별(구축년월)로 집계한 통계로, 선택기관·추가선택기관·선택 한의원·치과의원 수와 희귀난치성·지정 11개 질환·기타질환·자발적 참여자별 선택자 수를 전국 시군구 단위로 담는다. 보건정책 분석가나 지자체 담당자가 '우리 시군구에서 선택병의원제를 이용하는 수급권자가 어떤 질환 사유로 얼마나 되고 월별로 어떻게 변하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구 이름 매핑이나 구축년월 기준으로만 이어 쓰며, 요양기관 원장(ykiho)과 기관 단위로 연결되지 않는다.
 description_portal: '□ 데이터 개요본 데이터는 의료급여 수급권자의 선택병의원 현황을 월별로 집계한 통계자료입니다.□ 주요 내용구축년월: 통계가 집계된 연월구축시도, 구축시군구: 해당 통계의 지역 정보(시도, 시군구)선택기관: 수급권자가 선택한 기관 수추가선택기관: 추가로 선택한 기관 수선택한의원: 선택한 한의원 수선택치과의원: 선택한 치과의원 수희귀난치성: 희귀난치성 질환 관련 선택자 수11개질환: 지정 11개 질환 관련 선택자 수기타질환: 기타 질환 관련 선택자 수자발적참여자: 자발적으로 참여한 수급권자 수처리일자: 데이터 처리 일자'
 accrual_periodicity: 수시
 team:
@@ -178,6 +180,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 구축시군구
+  space_via: name
+  time: day
+  time_fields:
+    - 처리일자
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -279,8 +289,6 @@ verification:
   run: probe/runs/15121267.json
   stats: probe/stats/15121267.json
   data: probe/data/15121267/
-status: active
-summary_user: 의료급여 수급권자의 선택병의원 현황을 시도·시군구별, 월별(구축년월)로 집계한 통계로, 선택기관·추가선택기관·선택 한의원·치과의원 수와 희귀난치성·지정 11개 질환·기타질환·자발적 참여자별 선택자 수를 전국 시군구 단위로 담는다. 보건정책 분석가나 지자체 담당자가 '우리 시군구에서 선택병의원제를 이용하는 수급권자가 어떤 질환 사유로 얼마나 되고 월별로 어떻게 변하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구 이름 매핑이나 구축년월 기준으로만 이어 쓰며, 요양기관 원장(ykiho)과 기관 단위로 연결되지 않는다.
 limits: 건별 원천이 아닌 시군구 단위 집계라 개별 수급권자나 개별 선택 의료기관을 식별할 수 없다. 실측 컬럼에 공통 코드(행정구역코드·요양기관기호 등)가 없어 다른 통계와 결합할 때 지역명 매칭이 필요하다.
 review:
   summary: draft
@@ -292,3 +300,4 @@ review:
     - c-15121267-03
     - c-15121267-04
   dropped_citations: 0
+status: active

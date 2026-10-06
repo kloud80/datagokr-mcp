@@ -1,4 +1,3 @@
-# Dataset 15038341 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15038341'
 tier: verified
 title: 한전KDN(주)_나주시 버스 노선별 정류장 정보
@@ -24,6 +23,7 @@ synonyms:
   - 노선별 경유 정류장
   - 정류장 좌표
   - 나주 시내버스
+summary_user: 나주시 버스 노선마다 거치는 정류소를 노선ID·정류소ID·노선 내 순서·노선명·정류소명·위도·경도로 한 행씩 담은 원장 파일(CSV 약 28KB)이다. 나주시 이용자나 분석가가 '이 노선은 어떤 정류장을 어떤 순서로 지나며 각 정류장은 지도상 어디인가'를 확인하거나 노선도를 그리는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 버스 정보(실시간 도착 등)와는 정류소명·노선명 매핑이나 같은 기관 코드로 잇고, 위경도로 공간 결합한다.
 description_portal: 나주시 버스 노선별 정류장 정보는 각 노선에 포함된 정류소의 세부 위치와 순서 정보를 제공합니다. 데이터에는 노선ID와 정류소ID를 통해 각각의 버스 노선과 정류장을 고유하게 식별하며, 정류장별 순서로 노선 내 위치를 명확히 알 수 있습니다. 또한, 노선명과 정류소명을 통해 사용자가 쉽게 노선과 정류장을 구분할 수 있도록 하였습니다. 위도와 경도 좌표 정보가 포함되어 있어 각 정류소의 정확한 지리적 위치 파악이 가능하며, 이를 활용해 지도 기반의 경로 안내나 실시간 위치 추적 등에 활용할 수 있습니다. 이 정보는 나주시 대중교통 이용자들의 편리한 노선 탐색과 정류장 접근성 향상에 기여하며, 교통 서비스 개선과 도시 교통 관리에도 중요한 역할을 합니다. 나주시의 효율적 교통 운영과 주민 편의를 위한 필수 데이터입니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 노선ID
       type: number
+      semantic_type: bis_route_id
       null_rate: 0.0
       sample_values:
         - '7'
@@ -49,6 +50,7 @@ schema:
         unique: 9
     - name: 정류소ID
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '1250.00 '
@@ -113,6 +115,17 @@ schema:
         p50: 35.025575
         max: 35.1816317
         unique: 120
+  foreign_keys:
+    - fields:
+        - 노선ID
+      reference:
+        key: bis_route_id
+      evidence: measured
+    - fields:
+        - 정류소ID
+      reference:
+        key: transit_node_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -155,7 +168,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15038341-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bis_route_id(노선ID), transit_node_cd(정류소ID)'
     evidence:
       - type: measured
         source: probe/stats/15038341.json
@@ -220,8 +233,6 @@ verification:
   run: probe/runs/15038341.json
   stats: probe/stats/15038341.json
   data: probe/data/15038341/
-status: active
-summary_user: 나주시 버스 노선마다 거치는 정류소를 노선ID·정류소ID·노선 내 순서·노선명·정류소명·위도·경도로 한 행씩 담은 원장 파일(CSV 약 28KB)이다. 나주시 이용자나 분석가가 '이 노선은 어떤 정류장을 어떤 순서로 지나며 각 정류장은 지도상 어디인가'를 확인하거나 노선도를 그리는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 버스 정보(실시간 도착 등)와는 정류소명·노선명 매핑이나 같은 기관 코드로 잇고, 위경도로 공간 결합한다.
 limits: 표준 정류소 코드 같은 전역 조인 키가 없어 TAGO·타 지자체 데이터와 바로 결합되지 않고 이름·좌표 매칭이 필요하다. 실시간 도착·운행 정보는 담지 않는다.
 review:
   summary: draft
@@ -233,3 +244,10 @@ review:
     - c-15038341-03
     - c-15038341-04
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord

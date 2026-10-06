@@ -1,4 +1,5 @@
-# Dataset 15003783 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15003783 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15003783'
 tier: verified
 title: 한국동서발전(주)_신재생에너지 현황
@@ -21,6 +22,7 @@ synonyms:
   - 풍력 발전량
   - 발전소별 발전량
   - 재생에너지 생산량
+summary_user: 한국동서발전이 운영하는 발전소별 신재생에너지(태양광·풍력·바이오 등) 발전량을 기준일자·지역·발전소 단위로 일별 기록한 파일 데이터로, 활용신청 없이 CSV(약 56만 바이트)로 받는다. 연구자나 분석가가 특정 지역 동서발전 신재생 설비의 계절·날씨에 따른 일별 발전량 변동을 살펴보거나 기상자료와 엮어 발전량 예측모델을 만들 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소 이름이나 지역명 매핑, 또는 같은 기관 데이터로만 연결한다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소의 일간 신재생에너지 발전 현황 정보는 발전소별로 매일 생성되는 신재생에너지의 발전 실적을 확인할 수 있는 데이터입니다.해당 데이터는 기준일자, 지역, 발전소, 발전량(KWh)의 항목으로 구성되어 있으며, 일 단위로 수집된 발전량 데이터를 통해 신재생에너지의 생산 추이를 정밀하게 파악할 수 있습니다.이 자료는 각 발전소의 태양광, 풍력, 바이오 등 신재생 설비의 가동 실적을 일별로 분석할 수 있는 기초 자료로 활용되며, 특정 시기(기상조건, 계절, 지역별)의 신재생 발전량 변동성 분석에도 유용합니다.학계 및 연구기관에서는 본 데이터를 활용하여 △지역별 신재생 발전 실적 비교 △기상자료와 연계한 발전량 예측모델 개발 △신재생 전력 계통 연계 시 영향 분석 △탄소 감축 실적 정량화 연구 △정부의 에너지 전환 정책 평가 등 다양한 분석이 가능합니다.또한 에너지 수요 예측, 재생에너지 발전 설비 효율 분석, 실시간 전력 거래 전략 설계 등 실증 기반의 에너지 연구에 활용될 수 있으며, 정책적 관점에서는 신재생 보급률 향상과 에너지 자립도 평가의 기초자료로서의 활용 가치가 높습니다.
 accrual_periodicity: 연간
 team:
@@ -54,6 +56,7 @@ schema:
         unique: 5
     - name: 발전소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 동해연료전지
@@ -73,12 +76,22 @@ schema:
         p50: 95424149
         max: 361188912
         unique: 11905
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -115,7 +128,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15003783-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소)'
     evidence:
       - type: measured
         source: probe/stats/15003783.json
@@ -180,8 +193,6 @@ verification:
   run: probe/runs/15003783.json
   stats: probe/stats/15003783.json
   data: probe/data/15003783/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소별 신재생에너지(태양광·풍력·바이오 등) 발전량을 기준일자·지역·발전소 단위로 일별 기록한 파일 데이터로, 활용신청 없이 CSV(약 56만 바이트)로 받는다. 연구자나 분석가가 특정 지역 동서발전 신재생 설비의 계절·날씨에 따른 일별 발전량 변동을 살펴보거나 기상자료와 엮어 발전량 예측모델을 만들 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소 이름이나 지역명 매핑, 또는 같은 기관 데이터로만 연결한다.
 limits: 표준 발전소 코드나 행정구역 코드가 없어 태양광 발전사업 허가 표준데이터 같은 설비 원장과 바로 결합되지 않고, 이름 매칭에 의존해야 한다. 한국동서발전 운영 발전소만 담고 있어 전국 신재생 발전량 전체를 대표하지 않는다. 발전량 단위가 포털 설명은 kWh, 필드명은 Wh로 서로 달라 사용 전에 확인해야 한다.
 review:
   summary: draft
@@ -194,3 +205,4 @@ review:
     - c-15003783-04
     - c-15003783-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15066753 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15066753 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15066753'
 tier: verified
 title: 서울교통공사_우대권_역별_월별_시간대별_승하차인원정보
@@ -23,6 +24,7 @@ synonyms:
   - 역별 이용객 수
   - 무임수송
   - 서울 지하철 승객 수
+summary_user: 서울교통공사 관할 1~8호선 역별로 월 단위 우대권(경로·장애인·국가유공자 권종 합산) 승하차 인원을 승차·하차 구분과 6시 이전부터 23시 이후까지 1시간 단위 시간대별로 담은 집계 파일이며, 2020년 1회성 데이터다. 교통 분석가나 복지·상권 담당자가 '노인 등 우대권 이용자가 어느 역에서 몇 시에 많이 타고 내리는가'를 파악하는 데 쓴다. 전역 조인 키는 없어 역명·역번호·호선을 이름 매핑해 같은 기관의 역 정보나 2021년 이후 승객유형별 승하차 데이터와 이어 쓴다.
 description_portal: 서울교통공사 역별 월별 시간대별 우대권 승하차 인원 정보입니다. 해당월, 호선, 역번호, 역명, 승하차구분, 승하차인원정보 데이터 입니다. 2020년 1회성 데이터 입니다. 2021년 이후 데이터는 서울교통공사_1_8호선 역별 일별 시간대별 승객유형별 승하차인원(https://www.data.go.kr/data/15099330/fileData.do) 확인하여 주시기 바랍니다. 우대권 승하차인원은 노인(경로), 장애인 권종, 국가유공자 권종이 합쳐진 승하차인원을 의미합니다. 호선의 경우에는 청량리~서울역까지가 서울교통공사 구간이며, 4호선은 남태령 이후 구간은 한국철도공사, 불암산 이후는 남양주도시공사가 관할하고 있습니다.마지막으로, 8호선의 경우에는 암사역사공원역까지가 서울교통공사 관할이며, 나머지 구간은 구리와 남양주 도시공사가 양분하여 관할하고 있습니다.
 accrual_periodicity: 수시
 team:
@@ -72,6 +74,7 @@ schema:
         unique: 8
     - name: 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '150'
@@ -327,6 +330,12 @@ schema:
         p50: 232
         max: 3270
         unique: 1128
+  foreign_keys:
+    - fields:
+        - 역번호
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -369,7 +378,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15066753-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_fr_cd(역번호)'
     evidence:
       - type: measured
         source: probe/stats/15066753.json
@@ -434,8 +443,6 @@ verification:
   run: probe/runs/15066753.json
   stats: probe/stats/15066753.json
   data: probe/data/15066753/
-status: active
-summary_user: 서울교통공사 관할 1~8호선 역별로 월 단위 우대권(경로·장애인·국가유공자 권종 합산) 승하차 인원을 승차·하차 구분과 6시 이전부터 23시 이후까지 1시간 단위 시간대별로 담은 집계 파일이며, 2020년 1회성 데이터다. 교통 분석가나 복지·상권 담당자가 '노인 등 우대권 이용자가 어느 역에서 몇 시에 많이 타고 내리는가'를 파악하는 데 쓴다. 전역 조인 키는 없어 역명·역번호·호선을 이름 매핑해 같은 기관의 역 정보나 2021년 이후 승객유형별 승하차 데이터와 이어 쓴다.
 limits: 2020년 한 해분 1회성 데이터라 추세 비교는 2021년 이후의 별도 승객유형별 승하차 데이터셋과 이어 붙여야 한다. 노인·장애인·국가유공자 권종이 합쳐져 있어 권종별로 나눌 수 없고, 4호선 남태령 이후·8호선 암사역사공원역 이후 등 타 기관 관할 구간은 포함되지 않는다. 전역 코드가 없어 다른 기관 데이터와는 역명 매핑으로만 연결된다.
 review:
   summary: draft
@@ -447,3 +454,4 @@ review:
     - c-15066753-03
     - c-15066753-06
   dropped_citations: 0
+status: active

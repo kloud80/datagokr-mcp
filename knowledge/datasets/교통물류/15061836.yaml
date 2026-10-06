@@ -1,4 +1,5 @@
-# Dataset 15061836 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061836 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061836'
 tier: verified
 title: 대구교통공사_1호선 역 구간정보
@@ -25,6 +26,7 @@ synonyms:
   - 회차역
   - 대구 지하철 최고속도
   - 도시철도 노선 구배
+summary_user: 대구도시철도 1호선의 역별 구간정보를 역 단위 한 행씩 담은 작은 파일(csv, 약 4KB)로, 역코드·역명·역종류와 상행·하행 거리(km)·소요시간·정차시간, 표준구배, 최고·평균속도, 회차·측선·승무교대·가동 여부를 포함한다. 분석가나 운영 담당자가 '1호선에서 역 사이 거리와 소요시간이 어떻게 되고 어느 역에서 회차·승무교대가 이뤄지는가'를 확인하거나 노선 운행 특성을 분석할 때 쓴다. 전역에서 통하는 조인 키는 없어, 대구교통공사의 다른 데이터(승하차·시간표 등)와는 같은 기관의 역코드나 역명 매핑으로만 이어 쓴다.
 description_portal: '[ESG-Social] 본 데이터는 대구교통공사의 ESG 사회(Social) 분야에 해당하는 시민편의 및 운영정보 데이터로, 대구도시철도 1호선의 역별 구간정보를 제공합니다. 주요 항목은 역코드, 역종류, 역명, 승무소속 등의 기본 정보와 상행·하행 방향별 거리(km), 소요시간, 회차 여부 및 회차 시간, 표준구배, 최고속도, 평균속도 등 열차 운행과 관련된 주요 기술 정보로 구성되어 있습니다. 또한 회차선(회차키로), 측선 유무, 승무원 교대 여부, 역 운영 상태, 역 강조 여부 등 다양한 운영 정보를 포함하고 있어 역사 및 구간별 운행 특성을 체계적으로 파악할 수 있습니다. 본 자료는 열차 운행계획 수립, 노선 운영 분석, 시설 유지관리, 시스템 운영 및 유지보수 전략 수립, 데이터 기반 운영 의사결정 등을 위한 기초자료로 활용될 수 있으며, 도시철도 운영 효율성 향상과 공공교통 서비스 개선을 지원하는 자료로 활용할 수 있습니다. 본 데이터는 연 1회 정기적으로 갱신됩니다.'
 accrual_periodicity: 연간
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 역코드
       type: number
+      semantic_type: daegu_metro_station_no
       null_rate: 0.0
       sample_values:
         - '115'
@@ -245,6 +248,12 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 역코드
+      reference:
+        key: daegu_metro_station_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -287,7 +296,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061836-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: daegu_metro_station_no(역코드)'
     evidence:
       - type: measured
         source: probe/stats/15061836.json
@@ -352,8 +361,6 @@ verification:
   run: probe/runs/15061836.json
   stats: probe/stats/15061836.json
   data: probe/data/15061836/
-status: active
-summary_user: 대구도시철도 1호선의 역별 구간정보를 역 단위 한 행씩 담은 작은 파일(csv, 약 4KB)로, 역코드·역명·역종류와 상행·하행 거리(km)·소요시간·정차시간, 표준구배, 최고·평균속도, 회차·측선·승무교대·가동 여부를 포함한다. 분석가나 운영 담당자가 '1호선에서 역 사이 거리와 소요시간이 어떻게 되고 어느 역에서 회차·승무교대가 이뤄지는가'를 확인하거나 노선 운행 특성을 분석할 때 쓴다. 전역에서 통하는 조인 키는 없어, 대구교통공사의 다른 데이터(승하차·시간표 등)와는 같은 기관의 역코드나 역명 매핑으로만 이어 쓴다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어 다른 기관 철도·역 데이터와 붙이려면 역명 기준 매핑을 따로 만들어야 한다. 포털에 범위가 전국으로 표시돼 있으나 내용은 대구 1호선 한 노선에 한정되며 역 좌표는 없어 공간 분석에는 바로 쓰지 못한다.
 review:
   summary: draft
@@ -365,3 +372,4 @@ review:
     - c-15061836-03
     - c-15061836-04
   dropped_citations: 0
+status: active

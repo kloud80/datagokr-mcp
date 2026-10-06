@@ -1,4 +1,5 @@
-# Dataset 15142308 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15142308 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15142308'
 tier: verified
 title: 한국해양교통안전공단_일별 권역별 여객선 운항통계 정보
@@ -22,6 +23,7 @@ synonyms:
   - 기상특보 운항취소
   - 가보고싶은섬
   - 섬 여객선 이용객
+summary_user: 한국해양교통안전공단이 운항관리하는 연안여객선의 운항 실적을 운항일자·권역 단위로 집계한 통계로, 계획 대비 실제 운항 선박수·운항건수, 운송인원수, 기상특보로 인한 운항취소 건수를 담는다. 도서 주민·여행객의 결항 수요를 분석하는 분석가나 정책 담당자가 '특정 권역에서 기상특보 때문에 계획 대비 몇 회가 결항됐고 이용객은 얼마나 됐나' 같은 질문에 쓴다. 전역 조인 키는 없어 권역코드(sarea_cd)를 같은 기관의 연안여객선 교통정보(운항상태·항로 등) 데이터와 코드·이름 매핑으로 맞추고, 운항일자로 기상 자료와 날짜 기준으로 붙여 쓴다.
 description_portal: "해당 데이터는 한국해양교통안전공단(KOMSA)에서 국가중점데이터로 개방한 \"연안여객선 교통정보\" 관련 데이터 중 하나로 공단의 운항관리 대상 연안여객선의 일별 권역별 여객선 운항통계 정보를 포함하고 있습니다. 운항일자, 권역코드, 계획운항선박수, 운항선박수, 계획운항건수, 운항건수, 운송인원수, 운항취소기상특보건수 등이 포함된 정보 입니다. 여객선의 대중교통 편입('20.12.)에 따라 도서민, 여행객 등 여객선 이용객의 교통편의 증진을 위해 연안여객선 교통정보를 활용할 수 있습니다. * (참고)국가중점데이터: 국민, 기업 등 수요 중심으로 개방의 효과성, 시급성 등이 높은 분야를 선정하고 민간에서 활용하기 용이한 형태로 정체, 가공하여 개방된 양질의 대용량 데이터를 제공합니다.* (유의사항) 해당 통계 정보는 참고용으로 제공되는 정보로 국가 통계 등 실제 데이터와 차이가 있을 수 있으니 사용에 유의하여 주시기 바랍니다."
 team:
   dept: 해양안전실 디지털융합팀
@@ -71,6 +73,7 @@ schema:
     - name: sarea_cd
       title: 권역코드
       type: code
+      semantic_type: komsa_sarea_cd
       null_rate: 0.0
       sample_values:
         - E
@@ -165,6 +168,12 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - sarea_cd
+      reference:
+        key: komsa_sarea_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -214,7 +223,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15142308-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komsa_sarea_cd(sarea_cd)'
     evidence:
       - type: measured
         source: probe/stats/15142308.json
@@ -279,8 +288,6 @@ verification:
   run: probe/runs/15142308.json
   stats: probe/stats/15142308.json
   data: probe/data/15142308/
-status: active
-summary_user: 한국해양교통안전공단이 운항관리하는 연안여객선의 운항 실적을 운항일자·권역 단위로 집계한 통계로, 계획 대비 실제 운항 선박수·운항건수, 운송인원수, 기상특보로 인한 운항취소 건수를 담는다. 도서 주민·여행객의 결항 수요를 분석하는 분석가나 정책 담당자가 '특정 권역에서 기상특보 때문에 계획 대비 몇 회가 결항됐고 이용객은 얼마나 됐나' 같은 질문에 쓴다. 전역 조인 키는 없어 권역코드(sarea_cd)를 같은 기관의 연안여객선 교통정보(운항상태·항로 등) 데이터와 코드·이름 매핑으로 맞추고, 운항일자로 기상 자료와 날짜 기준으로 붙여 쓴다.
 limits: 권역 단위 일별 집계라 개별 항로·선박·운항편 단위의 결항 여부나 실시간 운항상태는 알 수 없다. 포털 안내상 참고용 통계로 국가 통계와 차이가 있을 수 있고, 개발계정은 하루 100회 호출 제한이 있다.
 review:
   summary: draft
@@ -293,3 +300,4 @@ review:
     - c-15142308-04
     - c-15142308-06
   dropped_citations: 0
+status: active

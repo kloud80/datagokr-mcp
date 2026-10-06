@@ -1,4 +1,5 @@
-# Dataset 15125500 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125500 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125500'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 영업 개시 절차 정보 제공 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 가맹 창업 비용
   - 정보공개서 영업개시
   - 프랜차이즈 창업 소요금액
+summary_user: 가맹사업 기준년도와 브랜드별로 가맹점이 영업을 시작하기까지의 절차를 단계(영업개시절차일련번호) 단위로 담으며, 각 단계의 구분·내용·소요기간·소요금액을 전국 범위로 제공한다. 창업 예정자가 "이 브랜드 가맹점을 열려면 어떤 절차를 거치고 기간과 비용은 얼마나 드나"를 확인하거나, 분석가가 브랜드 간 개점 준비 부담을 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 같은 기관의 가맹정보 데이터와 브랜드관리번호·가맹본부관리번호로 맞춰 이어 쓰며, 사업자등록번호 같은 공통 키로 다른 기관 데이터와 직접 연결하지는 못한다.
 description_portal: 이  API는 공정거래위원회에서 제공하는 공정거래위원회_가맹정보_브랜드 가맹점 영업 개시 절차 정보 제공 서비스입니다. 브랜드 가맹점 영업 개시 절차에 대한 기준년도, 브랜드관리번호를 기준으로 영업개시소요금액내용, 가맹사업기준년도, 브랜드관리번호, 가맹본부관리번호, 영업개시절차일련번호, 영업개시절차구분명, 영업개시절차내용, 영업개시소요기간내용 등 브랜드 가맹점 영업 개시 절차 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -81,6 +83,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -89,6 +92,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -145,12 +149,27 @@ schema:
         - '**～**P 참조'
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -195,7 +214,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125500-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125500.json
@@ -260,8 +279,6 @@ verification:
   run: probe/runs/15125500.json
   stats: probe/stats/15125500.json
   data: probe/data/15125500/
-status: active
-summary_user: 가맹사업 기준년도와 브랜드별로 가맹점이 영업을 시작하기까지의 절차를 단계(영업개시절차일련번호) 단위로 담으며, 각 단계의 구분·내용·소요기간·소요금액을 전국 범위로 제공한다. 창업 예정자가 "이 브랜드 가맹점을 열려면 어떤 절차를 거치고 기간과 비용은 얼마나 드나"를 확인하거나, 분석가가 브랜드 간 개점 준비 부담을 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 같은 기관의 가맹정보 데이터와 브랜드관리번호·가맹본부관리번호로 맞춰 이어 쓰며, 사업자등록번호 같은 공통 키로 다른 기관 데이터와 직접 연결하지는 못한다.
 limits: 전역 조인 키가 없어 가맹본부의 사업자등록번호 등으로 타 데이터와 바로 묶을 수 없고, 이름이나 공정위 내부 관리번호 매핑으로만 연결된다. 소요기간·소요금액은 텍스트 내용 필드(bsnStrtReqAmtCn 등)로 제공되므로 수치 비교 전에 정제가 필요하다. 조회 시 기준년도와 브랜드관리번호를 지정해야 하며 개발계정은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -274,3 +291,4 @@ review:
     - c-15125500-04
     - c-15125500-07
   dropped_citations: 0
+status: active

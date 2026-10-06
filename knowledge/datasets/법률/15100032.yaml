@@ -1,4 +1,5 @@
-# Dataset 15100032 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100032 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100032'
 tier: verified
 title: 법무부_40(취업자격 체류외국인) 월별 방문취업(H_2) 외국인 국적(지역)별 현황
@@ -20,6 +21,7 @@ synonyms:
   - 체류외국인 통계월보
   - 동포 방문취업
   - 취업비자 체류자 수
+summary_user: 법무부가 취업자격 체류외국인 가운데 방문취업(H-2) 자격 외국인 수를 연·월과 국적(지역)별로 집계한 전국 단위 통계 파일(CSV)입니다. 노동·이민 분석가가 "중국 동포 등 특정 국적의 방문취업 체류자가 월별로 어떻게 늘고 줄었나"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 체류외국인 통계와는 연·월과 국적명(국적지역)을 이름으로 맞춰 이어 쓰며, 시군구 구분이 없어 지역 인구 자료와 직접 연결되지 않는다.
 description_portal: 취업자격 체류외국인(C-4, E-1~E-7, E-9~E-10, H-2) 중 방문취업(H-2) 외국인의 국적(지역)별 현황을 월별로 제공위 근거는 출입국 근거는 시행령 제 23조이며 원본 통계는 출입국외국인정책본부 홈페이지의 통계월보에서 확인하실 수 있으며 경로는 아래와 같습니다.https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY1OTU0MjYlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2
 applicable_legislation:
   - law: 출입국관리법
@@ -70,6 +72,7 @@ schema:
         unique: 8
     - name: 국적지역
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 중국
@@ -89,6 +92,12 @@ schema:
         p50: 2
         max: 155578
         unique: 722
+  foreign_keys:
+    - fields:
+        - 국적지역
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -131,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100032-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적지역)'
     evidence:
       - type: measured
         source: probe/stats/15100032.json
@@ -206,8 +215,6 @@ verification:
   run: probe/runs/15100032.json
   stats: probe/stats/15100032.json
   data: probe/data/15100032/
-status: active
-summary_user: 법무부가 취업자격 체류외국인 가운데 방문취업(H-2) 자격 외국인 수를 연·월과 국적(지역)별로 집계한 전국 단위 통계 파일(CSV)입니다. 노동·이민 분석가가 "중국 동포 등 특정 국적의 방문취업 체류자가 월별로 어떻게 늘고 줄었나"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 체류외국인 통계와는 연·월과 국적명(국적지역)을 이름으로 맞춰 이어 쓰며, 시군구 구분이 없어 지역 인구 자료와 직접 연결되지 않는다.
 limits: 전국·비공간 집계라 시군구 등 지역별 분포는 알 수 없습니다. 국적 코드가 아닌 국적(지역) 이름으로만 구분되어 다른 데이터와 붙일 때 이름 매핑이 필요합니다.
 review:
   summary: draft
@@ -219,3 +226,4 @@ review:
     - c-15100032-03
     - c-15100032-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,188 @@
+# Dataset 15122960 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15122960'
+tier: verified
+title: 경기도_경기통계시스템 간행물
+sector: 공공행정/국가통계/regional-grid
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15122960/fileData.do
+synonyms:
+  - 통계간행물
+  - 통계책자
+  - 통계연보
+  - 간행정보
+  - 발간정보
+  - 통계자료
+  - 경기도 통계연보
+  - 통계 발간 현황
+  - 경기통계 간행물 목록
+  - 통계자료집
+  - 발간물 메타데이터
+  - 경기도 통계 출판물
+summary_user: 경기도 경기통계시스템에 수록된 통계 간행물 목록을 간행물 한 건 단위로 담으며, 제작 조직번호, 간행물명, 최초 발간 시점인 설립연도로 구성된다. 연구자나 통계 담당자가 '경기도에서 가축통계나 보건지표 같은 주제별 통계자료를 어느 기관이 언제부터 발간해 왔는가'를 확인해 시계열 자료 확보 가능성을 판단할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 간행물명 매핑이나 같은 기관의 조직번호(orgnzt_no)로만 이어 쓸 수 있다.
+description_portal: '이 데이터는 경기도 경기통계시스템에 수록된 간행물 정보를 정리한 자료로, 간행물을 제작한 조직번호, 간행물명, 설립연도 등의 항목으로 구성되어 있습니다. 간행물에는 지역별 통계연보, 전문 주제별 통계자료(예: 가축통계, 중소기업정보화수준평가, 보건지표 등)가 포함되며, 각 기관의 통계 발간 현황을 확인할 수 있습니다. 설립연도는 해당 간행물의 최초 발간 시점을 의미하며, 이를 통해 간행물의 발간 지속성, 시계열 분석 가능성 등을 판단할 수 있습니다. 본 데이터는 통계 발간자료 관리, 지역별·기관별 통계 간행 현황 분석, 통계정보 서비스 개선, 메타데이터 정비 등에 활용됩니다.'
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: orgnzt_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '210'
+        - '114'
+        - '113'
+      stats:
+        min: 113
+        p50: 206
+        max: 212
+        unique: 7
+    - name: papers_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 농업기계보유현황
+        - 관광호텔운영실적
+        - 경기도시군단위지역내총생산
+      stats:
+        unique: 15
+    - name: fndn_yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2004'
+        - '2002'
+        - '2003'
+      stats:
+        min: 1993
+        p50: 2000
+        max: 2006
+        unique: 14
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역 격자 (읍면동 유동인구·체류 외국인·시장 물가)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2643
+  brm: 공공행정 - 국가통계
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15122960-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15122960.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15122960-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122960-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15122960.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122960-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15122960.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122960-06
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 국가통계 (1,168건)] 통계 모음이라 SGIS 통계지리(집계구·주제도)와 읍면동 유동인구·체류 외국인·시장 물가만 남김. 부동산원 거래·임대 동향 → 주택, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L719
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15122960-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15122960.json
+  stats: probe/stats/15122960.json
+  data: probe/data/15122960/
+limits: 간행물 목록 메타데이터일 뿐 간행물 속 통계값이나 지역 단위 수치는 담지 않는다. 포털 활용신청과 별개로 외부 사이트(data.gg.go.kr)의 인증키를 받아 경로의 KEY 파라미터로 넣어 호출해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15122960-01
+    - c-15122960-03
+    - c-15122960-04
+  dropped_citations: 0
+status: active

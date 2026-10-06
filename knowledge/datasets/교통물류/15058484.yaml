@@ -1,4 +1,5 @@
-# Dataset 15058484 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058484 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058484'
 tier: verified
 title: 부산광역시_자전거 도로정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 자전거길 구간
   - 부산 구군별 자전거도로 길이
   - bike lane
+summary_user: 부산광역시 자전거도로를 구간별로 담은 데이터로, 구군명·시작지점·종료지점과 자전거 전용·보행자 겸용 등 유형별 길이(gugunOnlyBike, gugunWithWalk 등), 점검일자를 담는다(범위는 부산시, 행정단위는 구·군). 시민이나 정책 담당자가 "우리 구에는 자전거 전용도로가 어느 구간에 얼마나 설치돼 있나"를 확인하거나 구·군별 자전거도로 설치 현황을 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 구군명 같은 이름 매칭으로만 연결하며, 공공자전거 대여소나 자전거도로 노선 GIS 자료와 구 단위로 맞춰 본다.
 description_portal: 부산광역시의 자전거 도로정보(구군명, 시작지점, 종료지점, 구간길이 등)를 담고 있는 데이터입니다. 자전거 전용 도로란, 자전거 통행만을 위해 설치된 도로를 의미하며, 보행자나 자동차는 진입이 금지된 공간입니다. 「도로교통법」과 「자전거 이용 활성화에 관한 법률」에서 정의하고 있으며, 도로 구조와 교통체계 내에서 자전거의 안전하고 효율적인 이동을 보장하기 위해 마련된 도로입니다. 위 데이터를 통해 자전거 도로의 현재 설치 현황에 대해 알 수 있으며 앞으로의 자전거 전용도로 설치와 관련된 정책 수립 등과 관련해서 활용 될 수 있습니다.
 team:
   dept: 빅데이터과
@@ -134,6 +136,16 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - gugunNm
+    - gugunOnlyBike
+    - gugunWithWalk
+  space_via: name
+  time: day
+  time_fields:
+    - checkDate
 cycle: default
 classification:
   subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
@@ -243,8 +255,6 @@ verification:
   run: probe/runs/15058484.json
   stats: probe/stats/15058484.json
   data: probe/data/15058484/
-status: active
-summary_user: 부산광역시 자전거도로를 구간별로 담은 데이터로, 구군명·시작지점·종료지점과 자전거 전용·보행자 겸용 등 유형별 길이(gugunOnlyBike, gugunWithWalk 등), 점검일자를 담는다(범위는 부산시, 행정단위는 구·군). 시민이나 정책 담당자가 "우리 구에는 자전거 전용도로가 어느 구간에 얼마나 설치돼 있나"를 확인하거나 구·군별 자전거도로 설치 현황을 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 구군명 같은 이름 매칭으로만 연결하며, 공공자전거 대여소나 자전거도로 노선 GIS 자료와 구 단위로 맞춰 본다.
 limits: 표준 행정코드나 좌표 같은 조인 키가 없어 다른 데이터와는 구군명 문자열 매칭에 의존해야 한다. 범위가 부산시 구·군 단위에 한정되며 개발계정은 하루 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -257,3 +267,4 @@ review:
     - c-15058484-04
     - c-15058484-06
   dropped_citations: 0
+status: active

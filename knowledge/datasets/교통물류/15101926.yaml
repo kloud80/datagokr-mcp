@@ -1,4 +1,5 @@
-# Dataset 15101926 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15101926 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15101926'
 tier: verified
 title: 한국도로공사_졸음쉼터 교통량(일별)
@@ -24,6 +25,7 @@ synonyms:
   - 고속도로 휴식공간 이용현황
   - 졸음운전 쉼터
   - 도로공사 졸음쉼터 통계
+summary_user: 고속도로 졸음쉼터별 하루 교통량을 노선·방향·쉼터 명칭 단위로 담고, 총합계와 1종부터 12종까지 차종별 대수로 나눈 집계 파일(csv, 약 8KB)이다. 도로 안전 담당자나 분석가가 어느 노선의 어떤 졸음쉼터에 차량이 많이 몰리고, 화물차 같은 대형 차종 비중이 얼마나 되는지를 따져 쉼터 확충 우선순위를 정하는 데 쓴다. 전역 조인 키가 없어 다른 고속도로 휴게시설·교통량 데이터와는 노선명과 쉼터 명칭을 이름으로 맞춰 잇거나 같은 기관(한국도로공사) 자료끼리 묶어 쓴다.
 description_portal: 본 데이터는 한국도로공사에서 관리하는 고속도로 졸음쉼터의 일별 교통량 정보를 제공한다. 데이터는 노선, 방향, 명칭, 시간, 총합계 및 1종부터 12종까지의 차량 종류별 통계로 구성되어 있으며, 하루 단위로 수집된 차량 통행량을 기반으로 쉼터 이용 현황을 상세히 파악할 수 있다. 이를 통해 졸음쉼터의 이용 밀도, 일별 교통량 변화, 차종별 이용 비율 등을 정량적으로 분석할 수 있으며, 쉼터 확충, 교통안전 대책 수립, 정책 우선순위 선정 등 다양한 행정적 판단의 근거자료로 활용 가능하다. 특히 평일과 주말 간의 이용 특성 비교, 계절별 변화 분석 등에 활용도가 높으며, 향후 쉼터 운영 효율화 및 이용자 편의성 제고를 위한 기초 자료로서 활용될 수 있다.
 accrual_periodicity: 연간
 team:
@@ -55,6 +57,7 @@ schema:
         unique: 36
     - name: 명칭
       type: string
+      semantic_type: ex_drowsy_shelter
       null_rate: 0.0
       sample_values:
         - 봉산졸음쉼터
@@ -216,6 +219,12 @@ schema:
         p50: 0.5
         max: 28
         unique: 13
+  foreign_keys:
+    - fields:
+        - 명칭
+      reference:
+        key: ex_drowsy_shelter
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -258,7 +267,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15101926-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_drowsy_shelter(명칭)'
     evidence:
       - type: measured
         source: probe/stats/15101926.json
@@ -312,8 +321,6 @@ verification:
   run: probe/runs/15101926.json
   stats: probe/stats/15101926.json
   data: probe/data/15101926/
-status: active
-summary_user: 고속도로 졸음쉼터별 하루 교통량을 노선·방향·쉼터 명칭 단위로 담고, 총합계와 1종부터 12종까지 차종별 대수로 나눈 집계 파일(csv, 약 8KB)이다. 도로 안전 담당자나 분석가가 어느 노선의 어떤 졸음쉼터에 차량이 많이 몰리고, 화물차 같은 대형 차종 비중이 얼마나 되는지를 따져 쉼터 확충 우선순위를 정하는 데 쓴다. 전역 조인 키가 없어 다른 고속도로 휴게시설·교통량 데이터와는 노선명과 쉼터 명칭을 이름으로 맞춰 잇거나 같은 기관(한국도로공사) 자료끼리 묶어 쓴다.
 limits: 표준 조인 키나 좌표가 없는 비공간 자료라 쉼터 위치를 지도에 바로 올리거나 다른 데이터와 코드로 정확히 붙일 수 없고, 명칭 매칭에 의존해야 한다. 파일 하나 크기가 작아 수록 기간·쉼터 수가 제한적일 수 있으므로 장기 추세나 계절 분석 전에 포함된 날짜 범위를 먼저 확인한다.
 review:
   summary: draft
@@ -325,3 +332,4 @@ review:
     - c-15101926-03
     - c-15101926-04
   dropped_citations: 0
+status: active

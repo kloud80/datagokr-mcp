@@ -1,4 +1,5 @@
-# Dataset 15107866 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15107866 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15107866'
 tier: verified
 title: 서울올림픽기념국민체육진흥공단_소마미술관 투어 정보_GW
@@ -23,6 +24,7 @@ synonyms:
   - 미술관 소장도서
   - 관람객 수
   - 국민체육진흥공단 미술관
+summary_user: 소마미술관의 조각작품 투어 예약, 소장도서 목록, 소장품 목록, 전시정보, 입장인원을 5개 오퍼레이션으로 나눠 건별 목록 형태로 담는다(도서명·저자, 작품명·작가·크기·이미지 주소, 전시명·기간·장소 등). 미술관 관람객이나 문화시설 분석가가 '지금 소마미술관에서 어떤 전시를 언제까지 하고, 어떤 작품을 소장하고 있나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키(문화시설 코드 등)가 없어 다른 문화시설 데이터와는 미술관명·작가명 같은 이름 매칭이나 같은 기관 코드로만 연결한다.
 description_portal: 소마미술관 투어는 국민체육진흥공단에서 운영하는 소마미술관 투어 관련 정보를 제공합니다. 조각작품투어예약 정보, 미술관 소장도서 목록, 미술관 소장품 목록, 미술관 전시정보, 미술관 입장인원 정보에 대한 데이터를 조회할 수 있습니다. 국민체육진흥공단에서 운영하는 소마미술관 관련 작품이나 투어에 관한 데이터를 투어 날짜 등 조회조건를 이용하여 소마미술관 조각작품에 대한 투어 예약 정보를 조회하는 기능을 제공하는 API서비스입니다. 이 서비스는 소마미술관의 투어 일정 및 작품 정보를 제공하여 관람객의 예약 편의성과 전시 운영의 효율성을 높이는 데 활용될 수 있습니다.
 team:
   dept: 디지털혁신팀
@@ -658,6 +660,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - image_url
+    - dspy_endde_ymd
+    - dspy_image_url
 cycle: default
 classification:
   subsector_name: 문화시설 (문화기반시설총람·박물관·미술관·문예회관·문화원·공연장 등록)
@@ -779,8 +787,6 @@ verification:
   run: probe/runs/15107866.json
   stats: probe/stats/15107866.json
   data: probe/data/15107866/
-status: active
-summary_user: 소마미술관의 조각작품 투어 예약, 소장도서 목록, 소장품 목록, 전시정보, 입장인원을 5개 오퍼레이션으로 나눠 건별 목록 형태로 담는다(도서명·저자, 작품명·작가·크기·이미지 주소, 전시명·기간·장소 등). 미술관 관람객이나 문화시설 분석가가 '지금 소마미술관에서 어떤 전시를 언제까지 하고, 어떤 작품을 소장하고 있나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키(문화시설 코드 등)가 없어 다른 문화시설 데이터와는 미술관명·작가명 같은 이름 매칭이나 같은 기관 코드로만 연결한다.
 limits: 2026-10-04 실호출에서 5개 오퍼레이션 중 3개만 성공했고, 투어 예약(/todz_api_reserve_tour_i)과 입장인원(/todz_api_soma_entr_person_i)은 최소 파라미터로 호출했을 때 응답이 없었다. 따라서 투어 예약 현황과 관람객 수 분석은 추가 파라미터를 확인하기 전까지 보장되지 않는다. 시설코드나 좌표가 없는 비공간 데이터라 지역 문화 분포 분석에 바로 붙이기 어렵다.
 review:
   summary: draft
@@ -794,3 +800,4 @@ review:
     - c-15107866-06
     - c-15107866-10
   dropped_citations: 0
+status: active

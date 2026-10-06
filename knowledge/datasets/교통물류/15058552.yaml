@@ -1,0 +1,232 @@
+# Dataset 15058552 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058552'
+tier: verified
+title: 경기도_도로유지보수 현황
+sector: 교통물류/도로/road-other
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058552/openapi.do
+synonyms:
+  - 도로유지보수
+  - 포장보수
+  - 예산정보
+  - 사업기간
+  - 지방도관리
+  - 터널보수
+  - 교량안전
+  - 유지관리사업
+  - 도로 보수 예산
+  - 도로 정비 사업
+  - 포장도로 유지관리
+  - 교량 터널 보수
+  - 경기도 도로 사업량
+  - 도로 유지관리 현황
+summary_user: 경기도가 시행하는 도로 유지보수 사업을 사업 단위로 정리한 집계 자료로, 집계년도·사업 구분(포장도로·터널·교량 등)·사업명·사업기간·사업량(km)·예산액(백만원)을 담는다. 정책 분석가나 도의회·언론이 '경기도는 연도별로 어떤 유형의 도로 시설 보수에 얼마의 예산을 배정했나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 데이터와는 집계년도나 구분명(DIV_NM) 같은 이름을 맞춰 연결하거나 같은 기관의 자료끼리만 묶어 쓴다.
+description_portal: '이 데이터는 경기도에서 시행 중인 도로 유지보수 사업의 전반적인 현황을 담고 있으며, 사업명, 사업기간, 사업량(단위: km), 예산액(단위: 백만원) 등의 항목으로 구성되어 있습니다. 포장도로, 터널, 교량 등의 시설물 유지·보수를 통해 도로의 안전성과 편의성을 확보하기 위한 행정 및 기술적 노력을 반영한 자료입니다. 연도별로 구분된 집계년도와 각 사업의 구분명(DIV_NM)을 통해 도로 유형별 유지관리 현황을 확인할 수 있으며, 지역별 도로 인프라 상태 파악, 예산집행 분석, 안전점검 계획 수립, 중장기 도로정비 계획 수립 등의 정책 자료로 활용될 수 있습니다. 데이터는 수시로 갱신되며, Open API를 통해 실시간 연계가 가능합니다.'
+team:
+  dept: AI데이터행정과
+services:
+  - op: RoadMaintenanceMending
+    name: RoadMaintenanceMending
+    endpoint: https://openapi.gg.go.kr/RoadMaintenanceMending
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+        - '2024'
+      stats:
+        min: 2024
+        p50: 2025
+        max: 2025
+        unique: 2
+    - name: DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 도로 포장 유지관리
+      stats:
+        unique: 1
+    - name: BIZ_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 포장도 보수(차선도색 포함)
+        - 시설물보수
+        - 상시보수
+      stats:
+        unique: 4
+    - name: BIZ_QTY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가드레일, 안전휀스 등
+        - L=119km
+        - 배수로, 도로법면 복구 등
+      stats:
+        unique: 4
+    - name: BUDGET_AMT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12584'
+        - '3600'
+        - '227'
+      stats:
+        min: 227
+        p50: 6360
+        max: 19070
+        unique: 5
+    - name: BIZ_PERD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 202501~202512
+        - 202401~202412
+      stats:
+        min: '2024-01-20'
+        max: '2025-01-20'
+        unique: 2
+    - name: RM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - BIZ_PERD
+cycle: default
+classification:
+  subsector_name: 도로 기타
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.6655
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058552-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058552.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058552-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058552-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058552.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058552-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058552.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058552-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058552-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058552.json
+  stats: probe/stats/15058552.json
+  data: probe/data/15058552/
+limits: 경기도 단위의 비공간 자료여서 시군별 위치나 개별 도로 구간의 상태는 알 수 없다. 호출에는 포털 활용신청과 별도로 경기데이터드림(data.gg.go.kr) 인증키(KEY)가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058552-01
+    - c-15058552-03
+    - c-15058552-04
+  dropped_citations: 0
+status: active

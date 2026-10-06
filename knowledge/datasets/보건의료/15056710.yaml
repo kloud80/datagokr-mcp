@@ -1,4 +1,5 @@
-# Dataset 15056710 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056710 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056710'
 tier: verified
 title: 식품의약품안전처_국내소송 의약품(특허) 정보
@@ -22,6 +23,7 @@ synonyms:
   - 허가특허연계
   - 의약품 특허 무효심판
   - 권리범위확인심판
+summary_user: 국내에서 특허 심판이나 소송이 제기된 의약품을 사건 단위로 담으며, 성분명·제품명·심판 종류·특허등록번호·사건번호·청구일자·심결일자와 심결문 열람 URL이 포함된다. 제네릭 개발사나 특허 분석가가 "이 성분의 오리지널 특허에 어떤 심판이 걸려 있고 언제 심결이 났는가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 식약처 허가정보 등 다른 의약품 데이터와는 성분명·제품명 같은 이름이나 특허등록번호(KOR_PAT_NO)로 맞춰 이어야 한다.
 description_portal: 식품의약품안전처 「국내소송 의약품(특허) 정보」 OpenAPI는 국내에서 특허 관련 심판이나 소송이 제기된 의약품의 현황을 제공하는 공공데이터입니다. 제공 항목에는 성분명, 제품명, 심판종류, 특허등록번호, 사건번호, 청구일자, 심결일자, 심결문 등이 포함되어 있습니다. 이 데이터를 통해 사용자는 특정 의약품이 어떤 성분과 제품명으로 특허 심판 대상이 되었는지, 사건번호와 청구·심결일자를 통해 진행 과정을 확인할 수 있으며, 심결문과 URL을 통해 실제 판정 내용을 직접 열람할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -150,6 +152,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - JUDGMENT_REQUEST_DATE
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -259,8 +265,6 @@ verification:
   run: probe/runs/15056710.json
   stats: probe/stats/15056710.json
   data: probe/data/15056710/
-status: active
-summary_user: 국내에서 특허 심판이나 소송이 제기된 의약품을 사건 단위로 담으며, 성분명·제품명·심판 종류·특허등록번호·사건번호·청구일자·심결일자와 심결문 열람 URL이 포함된다. 제네릭 개발사나 특허 분석가가 "이 성분의 오리지널 특허에 어떤 심판이 걸려 있고 언제 심결이 났는가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 식약처 허가정보 등 다른 의약품 데이터와는 성분명·제품명 같은 이름이나 특허등록번호(KOR_PAT_NO)로 맞춰 이어야 한다.
 limits: 품목기준코드 같은 공통 코드가 없어 다른 데이터와의 연결은 이름 매핑에 의존하므로 표기 차이에 따른 누락이 생길 수 있다. 호출에는 포털 활용신청 후 받은 serviceKey가 필요하고, 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -272,3 +276,4 @@ review:
     - c-15056710-03
     - c-15056710-04
   dropped_citations: 0
+status: active

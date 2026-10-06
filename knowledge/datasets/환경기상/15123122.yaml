@@ -1,4 +1,5 @@
-# Dataset 15123122 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123122 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123122'
 tier: verified
 title: 기상청 항공기상청_공역기상특보
@@ -19,6 +20,7 @@ synonyms:
   - 인천 FIR 위험기상
   - 항공 위험기상정보
   - 공역 특보 전문
+summary_user: 항공기상청이 인천비행정보구역(인천 FIR)에 대해 발표한 공역기상특보(SIGMET)와 저고도 공역기상특보(AIRMET)를 전문 단위로 담은 파일(xlsx, 약 20KB)로, 전문시각·전문번호·전문상태·전문타입·일기현상과 전문 원문이 함께 들어 있다. 항공사 운항관리자나 항공기상 분석가가 '특정 시기에 인천 FIR에 어떤 위험기상(일기현상) 특보가 몇 번 발표·취소됐는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 공항명이나 시각(전문시각·입력시각)을 이름·시간 기준으로 맞춰 연결해야 한다.
 description_portal: 항공기상청에서 인천비행정보구역(인천 FIR)에 대해 발표한 공역기상특보(SIGMET), 저고도 공역기상특보(AIRMET)을 제공합니다.내용 이해를 위한 상세한 사항은 항공기상청 대표 누리집(amo.kma.go.kr)의 ‘알림자료 > 법령지침’ 게시판에 게시된 ‘공역기상 예특보 지침’에서 확인하실 수 있습니다.항공기상청에서는 인천비행정보구역(인천 FIR)을 대상으로 한 공역기상특보(SIGMET)와 저고도 공역기상특보(AIRMET)를 관측 및 분석을 통해 신속히 발표하고 있습니다.
 accrual_periodicity: 연간
 team:
@@ -105,6 +107,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 전문시각
+    - 입력시각
 cycle: default
 classification:
   subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
@@ -207,8 +214,6 @@ verification:
   run: probe/runs/15123122.json
   stats: probe/stats/15123122.json
   data: probe/data/15123122/
-status: active
-summary_user: 항공기상청이 인천비행정보구역(인천 FIR)에 대해 발표한 공역기상특보(SIGMET)와 저고도 공역기상특보(AIRMET)를 전문 단위로 담은 파일(xlsx, 약 20KB)로, 전문시각·전문번호·전문상태·전문타입·일기현상과 전문 원문이 함께 들어 있다. 항공사 운항관리자나 항공기상 분석가가 '특정 시기에 인천 FIR에 어떤 위험기상(일기현상) 특보가 몇 번 발표·취소됐는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 공항명이나 시각(전문시각·입력시각)을 이름·시간 기준으로 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 예보구역·격자(nx,ny) 기반의 다른 기상 예보·특보 데이터와 바로 붙지 않는다. 범위는 인천 FIR 공역 단위의 비공간 데이터라 행정구역별 분석에는 맞지 않으며, 전문 내용 해석은 항공기상청 '공역기상 예특보 지침'을 따로 참고해야 한다.
 review:
   summary: draft
@@ -221,3 +226,4 @@ review:
     - c-15123122-04
     - c-15123122-06
   dropped_citations: 0
+status: active

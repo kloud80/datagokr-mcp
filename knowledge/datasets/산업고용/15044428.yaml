@@ -1,4 +1,5 @@
-# Dataset 15044428 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044428 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044428'
 tier: verified
 title: 한국서부발전(주)_소비탄 성상 및 미연분 현황 조회서비스
@@ -25,6 +26,7 @@ synonyms:
   - 미연탄소분
   - 석탄 황 함량
   - 서부발전 연료
+summary_user: 한국서부발전이 전력생산에 쓴 유연탄(소비탄)의 사용량과 총수분·수분·휘발분·회분·고정탄소·유황률·인수식발열량·미연탄소분율 같은 성분 분석 결과를 담은 API이며, 필드명으로 보아 발전소(orgnm)·호기·연도 단위로 구분되는 것으로 보인다. 에너지·환경 분석가가 서부발전 발전소별로 연료탄의 발열량과 황·회분 함량이 어떻게 다른지, 미연분이 어느 수준인지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명·호기명 같은 이름 매핑이나 같은 기관 코드로만 연결한다.
 description_portal: 한국서부발전의 전력생산을 위한 유연탄 성분 정보를 제공하는 오픈API 입니다. 전력생산을 위한 소비탄 성상정보 데이터는 발전소에서 사용되는 석탄의 품질 특성과 물리·화학적 속성을 기록한 자료로, 안정적인 전력 생산과 효율적 연료 관리에 중요한 역할을 합니다. 이 데이터에는 석탄 사용량, 총수분율, 수분, 휘발분, 회분, 고정탄소, 건식유황률, 인수식발열량, 미연탄소분율, 인수유황률 등 주요 성분 분석 결과가 포함됩니다. 발열량은 전력 생산 효율에 직접적인 영향을 주며, 회분과 황 함량은 환경오염 물질 배출과 관련된 중요한 지표입니다. 또한 수분과 휘발분은 연소 안정성과 보일러 효율에 영향을 주기 때문에 운영 전략 수립에 활용됩니다.
 team:
   dept: 디지털운영부
@@ -120,6 +122,7 @@ schema:
         unique: 7
     - name: hokinm
       type: number
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - '8'
@@ -196,6 +199,12 @@ schema:
         p50: 34.805
         max: 36.31
         unique: 15
+  foreign_keys:
+    - fields:
+        - hokinm
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -245,7 +254,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15044428-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(hokinm)'
     evidence:
       - type: measured
         source: probe/stats/15044428.json
@@ -310,8 +319,6 @@ verification:
   run: probe/runs/15044428.json
   stats: probe/stats/15044428.json
   data: probe/data/15044428/
-status: active
-summary_user: 한국서부발전이 전력생산에 쓴 유연탄(소비탄)의 사용량과 총수분·수분·휘발분·회분·고정탄소·유황률·인수식발열량·미연탄소분율 같은 성분 분석 결과를 담은 API이며, 필드명으로 보아 발전소(orgnm)·호기·연도 단위로 구분되는 것으로 보인다. 에너지·환경 분석가가 서부발전 발전소별로 연료탄의 발열량과 황·회분 함량이 어떻게 다른지, 미연분이 어느 수준인지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명·호기명 같은 이름 매핑이나 같은 기관 코드로만 연결한다.
 limits: 표준 코드 형태의 조인 키가 없어 발전량·배출 측정 데이터와 붙이려면 발전소·호기 이름을 직접 맞춰야 한다. 개발계정은 하루 10회로 호출이 제한되고, 범위는 전국 단위의 비공간 자료여서 지역 단위 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -323,3 +330,4 @@ review:
     - c-15044428-03
     - c-15044428-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,199 @@
+# Dataset 15151038 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151038'
+tier: verified
+title: 경기도_사이버식물병원 진단의뢰이미지
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151038/fileData.do
+synonyms:
+  - 사이버식물병원
+  - 진단이미지
+  - 병해부위
+  - 이미지식별
+  - 진단정보
+  - 이미지연계
+  - 식물병 진단
+  - 병해충 진단 사진
+  - 병해 증상 이미지
+  - 작물 병해 진단의뢰
+  - 경기도농업기술원
+summary_user: 경기도 사이버식물병원에 접수된 진단의뢰 건마다 첨부된 병해 증상 사진을 의뢰번호·이미지번호·촬영 부위 번호 단위로 담은 건별 원천 테이블이다. 식물병 진단 서비스를 분석하는 분석가가 '한 진단의뢰에 어떤 부위 사진이 몇 장 붙었나'를 확인하는 데 쓴다. 포털 설명상 진단의뢰번호(diagns_rqst_no)로 같은 기관의 진단의뢰 테이블과, 이미지번호로 증상 이미지·이미지 정보 테이블과 잇지만, 실측 컬럼에서 전역 조인 키는 확인되지 않아 같은 기관 데이터끼리만 연결된다.
+description_portal: 진단_의뢰_이미지 테이블은 사이버식물병원에 등록된 진단의뢰 건에 첨부된 병해 증상 사진 정보를 관리합니다. 이 테이블은 각 진단의뢰번호(진단의뢰번호)에 대해 하나 이상의 이미지번호(이미지번호)를 연결하며, 이미지가 촬영된 병해 부위를 식별하기 위한 이미지_부위_번호도 함께 포함됩니다. 이 테이블의 진단의뢰번호는 진단_의뢰 테이블의 진단의뢰번호와 연계되어 해당 진단 건과 연계된 이미지 정보를 함계 확인할 수 있도록 지원합니다.이미지번호(img_num)는 증상_이미지 테이블이나 이미지_정보 테이블과 연계하여 실제 파일명 및 병해 분류 정보를 추가적으로 탐색할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: diagns_rqst_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '150'
+        - '161'
+        - '157'
+      stats:
+        min: 149
+        p50: 163
+        max: 178
+        unique: 29
+    - name: image_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '480'
+        - '481'
+        - '482'
+      stats:
+        min: 480
+        p50: 529.5
+        max: 579
+        unique: 100
+    - name: eb_hno_pat_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '73'
+      stats:
+        min: 73
+        p50: 73
+        max: 73
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3144
+  brm: 농축수산 - 농업·농촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151038-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151038.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151038-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151038-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151038.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151038-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15151038.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151038-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151038-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151038-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151038.json
+  stats: probe/stats/15151038.json
+  data: probe/data/15151038/
+limits: 사진 파일 자체나 병해 분류는 담지 않아 다른 테이블과 이어야 하며, 다른 기관·전국 데이터와 연결할 공통 키가 없다. 호출에는 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키가 필요하다. 농산물 유통 가격 부문으로 분류돼 있으나 가격·품목코드 정보는 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151038-01
+    - c-15151038-03
+    - c-15151038-04
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15141028 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15141028 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15141028'
 tier: verified
 title: 한국철도공사_발권/이동유형 통계정보
@@ -22,6 +23,7 @@ synonyms:
   - 기차역 승하차 통계
   - 철도 노선별 이용객
   - 간선열차 이용 현황
+summary_user: 한국철도공사 간선열차와 광역철도의 이용인원을 객실·거리·노선·발권유형·요일·차량별, 그리고 역별 승하차로 나눠 운행일자나 운행연월 단위로 집계한 전국 범위 통계(포털 기준 10종 오퍼레이션)를 담는다. 분석가나 사업자가 특정 KTX·광역철도 역의 월별 승하차 인원이 어떻게 변했는지, 어느 노선·차종의 이용이 많은지를 확인하는 데 쓴다. 역코드(stn_cd)가 역 단위 조인 키(transit_node_cd)라 역 위치·시설 데이터나 다른 승하차 데이터와 역 기준으로 이어 쓰고, 노선코드·차종코드·거리구분코드는 포털이 함께 제공하는 코드정보 파일로 뜻을 풀어 쓴다.
 description_portal: '한국철도공사 이동/발권유형 통계정보 데이터로, 간선열차 객실별 이용인원 통계, 간선열차 거리별 이용인원 통계, 간선열차 노선별 이용인원 통계, 간선열차 발권유형 통계, 간선열차 역별 승하차 통계 , 간선열차 요일별 이용인원 통계 , 간선열차 차량별 이용인원 통계 , 광역철도 노선별 이용인원 통계, 광역철도 역별 승하차 통계 , 간선열차 노선별 인거리 통계 항목이 있습니다.* "한국철도공사_발권/이동유형 통계정보.xlsx"는 "한국철도공사_발권/이동유형 통계정보 서비스"의 API의 코드정보입니다. 해당 API 이외의 철도공사가 제공하는 API와는 상이할 수 있으며, 실제 사용되는 코드정보가 아닙니다.* API 호출시, 페이지 당 건수를 제한하는 numOfRows는 최대 50건으로 권장합니다.* 참고자료 : 10종의 오퍼레이션을 사용하기 위한 코드정보* 통계데이터 갱신 주기는 각 API의 상세설명 참고'
 team:
   dept: AI전략본부
@@ -610,7 +612,7 @@ schema:
     - name: stn_cd
       title: 역코드
       type: number
-      semantic_type: transit_node_cd
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '0001'
@@ -647,6 +649,7 @@ schema:
     - name: carmdl_cd
       title: 차종코드
       type: number
+      semantic_type: korail_car_type_cd
       null_rate: 0.0
       sample_values:
         - '70'
@@ -661,6 +664,7 @@ schema:
     - name: rte_cd
       title: 노선코드
       type: number
+      semantic_type: korail_route_cd
       null_rate: 0.0
       sample_values:
         - '0002'
@@ -756,7 +760,7 @@ schema:
     - name: stn_cd
       title: 역코드
       type: number
-      semantic_type: transit_node_cd
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '0001'
@@ -871,6 +875,7 @@ schema:
     - name: carmdl_cd
       title: 차종코드
       type: number
+      semantic_type: korail_car_type_cd
       null_rate: 0.0
       sample_values:
         - '00'
@@ -914,7 +919,17 @@ schema:
     - fields:
         - stn_cd
       reference:
-        key: transit_node_cd
+        key: rail_station_cd
+      evidence: measured
+    - fields:
+        - carmdl_cd
+      reference:
+        key: korail_car_type_cd
+      evidence: measured
+    - fields:
+        - rte_cd
+      reference:
+        key: korail_route_cd
       evidence: measured
 facets:
   grade:
@@ -922,6 +937,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - run_ym
+    - run_ym
+    - run_ym
 cycle: default
 classification:
   subsector_name: 승하차·혼잡·통행
@@ -965,7 +986,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15141028-03
     kind: key
-    value: '실측 조인 키: transit_node_cd(stn_cd)'
+    value: '실측 조인 키: rail_station_cd(stn_cd), korail_car_type_cd(carmdl_cd), korail_route_cd(rte_cd)'
     evidence:
       - type: measured
         source: probe/stats/15141028.json
@@ -1030,8 +1051,6 @@ verification:
   run: probe/runs/15141028.json
   stats: probe/stats/15141028.json
   data: probe/data/15141028/
-status: active
-summary_user: 한국철도공사 간선열차와 광역철도의 이용인원을 객실·거리·노선·발권유형·요일·차량별, 그리고 역별 승하차로 나눠 운행일자나 운행연월 단위로 집계한 전국 범위 통계(포털 기준 10종 오퍼레이션)를 담는다. 분석가나 사업자가 특정 KTX·광역철도 역의 월별 승하차 인원이 어떻게 변했는지, 어느 노선·차종의 이용이 많은지를 확인하는 데 쓴다. 역코드(stn_cd)가 역 단위 조인 키(transit_node_cd)라 역 위치·시설 데이터나 다른 승하차 데이터와 역 기준으로 이어 쓰고, 노선코드·차종코드·거리구분코드는 포털이 함께 제공하는 코드정보 파일로 뜻을 풀어 쓴다.
 limits: 역·노선 단위 집계라 개별 승객의 출발-도착(OD)이나 시간대별 승하차는 담지 않으며, 행정구역 단위 공간 정보도 없다. 함께 제공되는 코드정보 파일은 이 API 전용이어서 철도공사의 다른 API 코드와 다를 수 있고, 호출 시 페이지당 건수(numOfRows)는 최대 50건이 권장된다.
 review:
   summary: draft
@@ -1044,3 +1063,4 @@ review:
     - c-15141028-04
     - c-15141028-06
   dropped_citations: 0
+status: active

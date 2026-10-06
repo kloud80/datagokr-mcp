@@ -35,6 +35,7 @@ schema:
   fields:
     - name: STN_ID
       type: number
+      semantic_type: kma_station_cd
       null_rate: 0.0
       sample_values:
         - '108'
@@ -45,6 +46,7 @@ schema:
         unique: 1
     - name: TY_NUM
       type: number
+      semantic_type: kma_typhoon_no
       null_rate: 0.0
       sample_values:
         - '2211'
@@ -88,6 +90,7 @@ schema:
         unique: 26
     - name: REG_ID
       type: code
+      semantic_type: kma_station_cd
       null_rate: 0.0
       sample_values:
         - S1311200
@@ -119,9 +122,30 @@ schema:
         p50: 202209061759
         max: 202408211159
         unique: 27
+  foreign_keys:
+    - fields:
+        - STN_ID
+      reference:
+        key: kma_station_cd
+      evidence: measured
+    - fields:
+        - TY_NUM
+      reference:
+        key: kma_typhoon_no
+      evidence: measured
+    - fields:
+        - REG_ID
+      reference:
+        key: kma_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - TM_FC
+    - TM_IN
 cycle: default
 classification:
   subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
@@ -158,7 +182,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15134422-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kma_station_cd(STN_ID), kma_typhoon_no(TY_NUM), kma_station_cd(REG_ID)'
     evidence:
       - type: measured
         source: probe/stats/15134422.json

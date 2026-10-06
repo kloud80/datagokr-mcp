@@ -134,6 +134,7 @@ schema:
   fields:
     - name: afos_fid
       type: number
+      semantic_type: taas_afos_id
       null_rate: 0.0
       sample_values:
         - '7283809'
@@ -145,6 +146,7 @@ schema:
         unique: 2
     - name: afos_id
       type: number
+      semantic_type: taas_afos_id
       null_rate: 0.0
       sample_values:
         - '2026076'
@@ -167,6 +169,7 @@ schema:
         unique: 1
     - name: spot_cd
       type: number
+      semantic_type: taas_spot_cd
       null_rate: 0.0
       sample_values:
         - '11320001'
@@ -288,9 +291,24 @@ schema:
         unique: 2
   foreign_keys:
     - fields:
+        - afos_fid
+      reference:
+        key: taas_afos_id
+      evidence: measured
+    - fields:
+        - afos_id
+      reference:
+        key: taas_afos_id
+      evidence: measured
+    - fields:
         - bjd_cd
       reference:
         key: bjd_cd
+      evidence: measured
+    - fields:
+        - spot_cd
+      reference:
+        key: taas_spot_cd
       evidence: measured
     - fields:
         - sido_sgg_nm
@@ -310,6 +328,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lo_crd
+    - la_crd
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
@@ -354,7 +378,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15058311-03
     kind: key
-    value: '실측 조인 키: bjd_cd(bjd_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
+    value: '실측 조인 키: taas_afos_id(afos_fid), taas_afos_id(afos_id), bjd_cd(bjd_cd), taas_spot_cd(spot_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
     evidence:
       - type: measured
         source: probe/stats/15058311.json

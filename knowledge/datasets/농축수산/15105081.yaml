@@ -1,0 +1,270 @@
+# Dataset 15105081 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15105081'
+tier: verified
+title: 한국마사회_말진료정보
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15105081/openapi.do
+synonyms:
+  - 마필
+  - 마필진료
+  - 말산업
+  - 진료병원
+  - 질병
+  - 경주마 진료기록
+  - 말 질병 정보
+  - 경마 말 병력
+  - 마사회 동물병원
+  - 경주마 건강
+  - 마번 조회
+description_portal: 한국마사회의 동물병원에서 진료한 말에 대해 진료병원 및 질병에 대한 정보를 제공합니다. (제공정보는 마번(hrno), 마명(hrNm), 접종일(treaDt), 질병명1(illName1), 질병명2(illName2), 진료병원(busnNm), 진료장소(treaPlceNm) 자료입니다.) - 요청메세지에 마명(hrname), 마번(hrno), 진료일자 검색시작일(trea_dt_fr), 진료일자 검색종료일(trea_dt_to), 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /getclinichi
+    name: 말진료정보_1
+    endpoint: https://apis.data.go.kr/B551015/clinichi/getclinichi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: hrname
+        required: false
+        example: 남산꽃
+        desc: 마명
+      - name: hrno
+        required: false
+        example: '0043225'
+        desc: 마번
+      - name: trea_dt_fr
+        required: false
+        example: '20220108'
+        desc: 진료일자 시작일
+      - name: trea_dt_to
+        required: false
+        example: '20220108'
+        desc: 진료일자 종료일
+      - name: _type
+        required: false
+        example: xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: busnNm
+      title: 진료병원
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울부속동물병원
+        - 닥터임동물병원
+        - 삼포동물병원
+      stats:
+        unique: 3
+    - name: hrNm
+      title: 마명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남산꽃
+      stats:
+        unique: 1
+    - name: hrno
+      title: 마번
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0043225'
+      stats:
+        min: 43225
+        p50: 43225
+        max: 43225
+        unique: 1
+    - name: illName1
+      title: 질병명1
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 좌후지파행
+      stats:
+        unique: 1
+    - name: illName2
+      title: 질병명2
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: treaDt
+      title: 접종일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2022-01-08'
+      stats:
+        min: '2022-01-08'
+        max: '2022-01-08'
+        unique: 1
+    - name: treaPlceNm
+      title: 진료장소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 마방 진료
+        - 장내 진료
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - treaDt
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5376
+  brm: 농축수산 - 농업·농촌
+  why: 기관 분석 핵심 원장 — 한국마사회
+claims:
+  - id: c-15105081-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15105081.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15105081.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15105081-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105081-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15105081.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105081-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15105081.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105081-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15105081-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15105081-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15105081.json
+  stats: probe/stats/15105081.json
+  data: probe/data/15105081/
+status: active
+summary_user: 한국마사회 동물병원에서 진료한 말의 진료 건별 기록으로, 마번·마명, 진료일(명세상 '접종일'), 질병명 두 개, 진료병원, 진료장소를 담고 범위는 전국·비공간이다. 마주·조교사나 경마 분석가가 특정 경주마가 언제 어떤 질병으로 어느 병원에서 진료받았는지 확인할 때 쓰며, 마명·마번과 진료일자 기간으로 조회한다. 실측 컬럼에 전역 조인 키는 없어서, 같은 기관의 다른 경주마 데이터와는 마번(hrno)이나 마명으로만 맞춰 잇는다.
+limits: 전역 조인 키가 없어 외부 데이터와는 마번·마명 같은 이름·코드 매칭으로만 연결된다. 세부 부문이 농산물 유통 가격으로 분류돼 있지만 내용은 말 진료 기록이어서 KAMIS 가격·품목코드 데이터와는 직접 관련이 없다. 개발계정은 하루 3,000회까지 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15105081-01
+    - c-15105081-03
+    - c-15105081-04
+    - c-15105081-06
+  dropped_citations: 0

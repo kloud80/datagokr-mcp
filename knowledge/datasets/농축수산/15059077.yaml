@@ -1,4 +1,5 @@
-# Dataset 15059077 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15059077 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059077'
 tier: verified
 title: 해양수산부_수협 산지조합 정보
@@ -21,6 +22,7 @@ synonyms:
   - 위판장 조합
   - 수협 지구별 조합
   - 산지 위판 조합 코드표
+summary_user: 전국 수협 산지조합의 목록을 조합 한 곳당 한 행으로 담으며, 조합명·조합코드·전화번호·팩스번호로 구성되고 범위는 전국이며 공간 정보는 없다. 수산물 유통 분석가나 사업자가 '특정 산지조합의 코드와 연락처가 무엇인가'를 확인하거나, 위판장 경락가 등 산지 거래 데이터에 나오는 조합을 식별하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 수산물 유통 데이터와는 산지조합명이나 산지조합 코드(mxtrCode)를 이름·코드 매핑으로 맞춰 이어 써야 한다.
 description_portal: 이 데이터는 해양수산부에서 전국 수협 산지조합의 정보를 제공하기 위해 수집한 데이터입니다.  전체 데이터 조회 또는 특정 산지조합명 값을 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 산지조합명, 산지조합 코드, 연락처 정보로 구성되어 있습니다.  본 데이터는 산지조합의 전국적 분포를 파악하여 수산업 경영 전략을 세우는 데 사용될 수 있습니다. 또한, 수산물 거래 흐름 분석, 지역별 유통체계 파악, 정책 연구, 수산업 현황 보고서 작성 등 해양수산 행정 및 수산업 경영 지원 자료로 활용될 수 있습니다.
 team:
   dept: 수산직불제팀
@@ -53,6 +55,7 @@ schema:
         unique: 107
     - name: mxtrCode
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '000'
@@ -81,6 +84,12 @@ schema:
         - 032-866-2264
       stats:
         unique: 95
+  foreign_keys:
+    - fields:
+        - mxtrCode
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -130,7 +139,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15059077-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(mxtrCode)'
     evidence:
       - type: measured
         source: probe/stats/15059077.json
@@ -195,8 +204,6 @@ verification:
   run: probe/runs/15059077.json
   stats: probe/stats/15059077.json
   data: probe/data/15059077/
-status: active
-summary_user: 전국 수협 산지조합의 목록을 조합 한 곳당 한 행으로 담으며, 조합명·조합코드·전화번호·팩스번호로 구성되고 범위는 전국이며 공간 정보는 없다. 수산물 유통 분석가나 사업자가 '특정 산지조합의 코드와 연락처가 무엇인가'를 확인하거나, 위판장 경락가 등 산지 거래 데이터에 나오는 조합을 식별하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 수산물 유통 데이터와는 산지조합명이나 산지조합 코드(mxtrCode)를 이름·코드 매핑으로 맞춰 이어 써야 한다.
 limits: 가격·거래량 같은 유통 수치는 담지 않는 조합 기본정보이며, 주소나 좌표가 없어 지도 표시나 지역별 분포 분석에 바로 쓰기 어렵다. 다른 데이터와 연결할 공통 키가 없어 이름·코드 대조가 필요하고, 어종코드도 수협·수산과학원·HS 체계가 서로 달라 연계 시 주의해야 한다.
 review:
   summary: draft
@@ -209,3 +216,4 @@ review:
     - c-15059077-04
     - c-15059077-06
   dropped_citations: 0
+status: active

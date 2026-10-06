@@ -1,5 +1,3 @@
-# Dataset 15088664 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088664'
 tier: verified
 title: 국가유산청_문화재수리업자 현황
@@ -56,6 +54,7 @@ schema:
         unique: 11
     - name: 등록번호
       type: string
+      semantic_type: heritage_repair_biz_rgst_no
       null_rate: 0.0
       sample_values:
         - 제4호
@@ -101,9 +100,23 @@ schema:
         min: '1993-02-15'
         max: '2021-06-17'
         unique: 472
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: heritage_repair_biz_rgst_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 영업장 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 등록일
 cycle: default
 classification:
   subsector_name: 유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)
@@ -140,7 +153,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15088664-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: heritage_repair_biz_rgst_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15088664.json

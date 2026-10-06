@@ -1,4 +1,3 @@
-# Dataset 15073871 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073871'
 tier: verified
 title: 식품의약품안전처_의료기기 사전광고품목
@@ -21,6 +20,7 @@ synonyms:
   - 광고심의 대상 의료기기
   - 의료기기 형명 조회
   - 의료기기 제조원 제조국
+summary_user: 식약처가 관리하는 의료기기 광고 사전심의 대상 품목 정보를 품목 단위로 담으며, 품목명·품목분류번호·형명(모델)·제조(수입)국과 제조원 정보가 들어 있고 범위는 전국이다. 광고 대행사나 의료기기 업체가 특정 의료기기 모델이 광고 사전심의 신청 품목에 올라 있는지, 제조원과 제조국이 어디인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 의료기기 품목허가 정보 등 다른 데이터와는 품목명·품목분류번호 같은 이름·코드 매핑으로만 이어 쓴다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 관리하는 의료기기 사전광고품목 정보입니다.  의료기기 광고의 사전심의 과정에서 승인받은 광고 대상 품목들의 상세 현황을 체계적으로 관리하여 광고 업계와 의료기기 업계에 투명한 정보를 제공합니다.  광고업소명과 광고업소허가번호는 광고 제작 업체의 신원과 허가 상태를 명확히 보여주며 품목명과 품목분류번호로 광고 대상 의료기기를 정확히 특정할 수 있습니다 품목허가번호와 형명 정보는 해당 의료기기의 공식 승인 상태와 구체적인 모델을 확인할 수 있게 하며 품목순번을 통해 체계적인 관리 번호를 제공합니다.
 team:
   dept: 데이터혁신기획팀
@@ -68,6 +68,7 @@ schema:
         unique: 82
     - name: PRDGR_CD
       type: string
+      semantic_type: meddev_prdgr_cd
       null_rate: 0.0
       sample_values:
         - A56
@@ -86,6 +87,7 @@ schema:
         unique: 24
     - name: MDEQ_CLSF_NO
       type: string
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - A83080.01
@@ -95,6 +97,7 @@ schema:
         unique: 302
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.181
       sample_values:
         - '2013005374'
@@ -134,6 +137,7 @@ schema:
         unique: 71
     - name: MANUF_NATN_CD
       type: code
+      semantic_type: country_cd
       null_rate: 0.593
       sample_values:
         - 미국
@@ -168,6 +172,27 @@ schema:
         - 추간체고정재
       stats:
         unique: 355
+  foreign_keys:
+    - fields:
+        - PRDGR_CD
+      reference:
+        key: meddev_prdgr_cd
+      evidence: measured
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MANUF_NATN_CD
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -218,7 +243,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073871-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_prdgr_cd(PRDGR_CD), meddev_clsf_no(MDEQ_CLSF_NO), meddev_item_sn(MDEQ_PRDLST_SN), country_cd(MANUF_NATN_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073871.json
@@ -283,8 +308,6 @@ verification:
   run: probe/runs/15073871.json
   stats: probe/stats/15073871.json
   data: probe/data/15073871/
-status: active
-summary_user: 식약처가 관리하는 의료기기 광고 사전심의 대상 품목 정보를 품목 단위로 담으며, 품목명·품목분류번호·형명(모델)·제조(수입)국과 제조원 정보가 들어 있고 범위는 전국이다. 광고 대행사나 의료기기 업체가 특정 의료기기 모델이 광고 사전심의 신청 품목에 올라 있는지, 제조원과 제조국이 어디인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 의료기기 품목허가 정보 등 다른 데이터와는 품목명·품목분류번호 같은 이름·코드 매핑으로만 이어 쓴다.
 limits: 다른 데이터셋과 바로 붙는 공통 키가 없어 품목명·분류번호 매칭에 기대야 하므로 연결 결과를 따로 검증해야 한다. 지역 단위가 없는 전국·비공간 데이터라 지역별 분석에는 맞지 않는다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -296,3 +319,9 @@ review:
     - c-15073871-03
     - c-15073871-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - MNUFTR_ADDR
+  space_via: address

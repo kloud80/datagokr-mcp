@@ -50,6 +50,7 @@ schema:
         unique: 115
     - name: 계약번호
       type: string
+      semantic_type: koica_contract_no
       null_rate: 0.0
       sample_values:
         - P2025-00198
@@ -238,10 +239,22 @@ schema:
         - 그외(계약자변경)
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 계약번호
+      reference:
+        key: koica_contract_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2020-09-02 ~ 2031-12-31
+grain:
+  time: day
+  time_fields:
+    - 계약일자
+    - 계약기간시작일자
+    - 계약기간종료일자
 cycle: default
 classification:
   subsector_name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
@@ -282,7 +295,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15073135-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koica_contract_no(계약번호)'
     evidence:
       - type: measured
         source: probe/stats/15073135.json

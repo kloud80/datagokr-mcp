@@ -1,4 +1,3 @@
-# Dataset 15080725 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15080725'
 tier: verified
 title: 한국장학재단_고졸자후속관리 지원모델 개발 사업 거점학교현황
@@ -24,6 +23,7 @@ synonyms:
   - 고졸청년 취업지원센터
   - 마이스터고 거점학교
   - 고졸 후속지원 사업
+summary_user: 한국장학재단 고졸자 후속관리 지원모델 개발 사업에 참여하는 거점학교(포털 설명상 24개교)를 학교 한 곳당 한 행으로 담은 목록 파일로, 학교명·시도·대표계열·학교유형·기준연도·주소를 담는다. 미취업·진로미결정 직업계고 졸업생이나 진로 담당 교사가 우리 지역에서 졸업 후 취업상담·취업역량 프로그램을 받을 수 있는 거점학교가 어디인지 찾는 데 쓴다. 전역 조인 키나 학교 코드는 없어서, 다른 학교 데이터와는 학교명·주소·시도 이름 매칭으로만 이어 쓴다.
 description_portal: 고졸자 후속관리 지원모델 개발 사업에 참여하는 거점학교는 총 24개교로 중부권9개교, 충청권6개교, 경상권4개교, 전라권5개교입니다. 미취업, 진로미결정 직업계고 졸업생에게 친근감 있는 거점학교와 연계하여 진로상담 등 취업 컨설팅 및 취업역량강화프로그램 교육 제공을 졸업 후까지도 지속 지원하고 있으며, 인근 직업계고에게 사업 성과 공유 등 전파하는 사업입니다. 거점학교는 직업계고 졸업생을 위한 취업지원센터 공간을 마련하고 있으며 사업 전담 지원관이 고졸청년(졸업생)에게 1:1 맞춤 취업지원서비스 등을 제공하고 있습니다.
 accrual_periodicity: 연간
 team:
@@ -49,6 +49,7 @@ schema:
         unique: 24
     - name: 학교명
       type: code
+      semantic_type: neis_school_cd
       null_rate: 0.0
       sample_values:
         - 경기자동차과학고등학교
@@ -102,12 +103,26 @@ schema:
         - 서울특별시 도봉구 시루봉로53
       stats:
         unique: 24
+  foreign_keys:
+    - fields:
+        - 학교명
+      reference:
+        key: neis_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: year
+  time_fields:
+    - 기준연도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -144,7 +159,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080725-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: neis_school_cd(학교명)'
     evidence:
       - type: measured
         source: probe/stats/15080725.json
@@ -198,8 +213,6 @@ verification:
   run: probe/runs/15080725.json
   stats: probe/stats/15080725.json
   data: probe/data/15080725/
-status: active
-summary_user: 한국장학재단 고졸자 후속관리 지원모델 개발 사업에 참여하는 거점학교(포털 설명상 24개교)를 학교 한 곳당 한 행으로 담은 목록 파일로, 학교명·시도·대표계열·학교유형·기준연도·주소를 담는다. 미취업·진로미결정 직업계고 졸업생이나 진로 담당 교사가 우리 지역에서 졸업 후 취업상담·취업역량 프로그램을 받을 수 있는 거점학교가 어디인지 찾는 데 쓴다. 전역 조인 키나 학교 코드는 없어서, 다른 학교 데이터와는 학교명·주소·시도 이름 매칭으로만 이어 쓴다.
 limits: 학교 코드 같은 공통 키가 없어 다른 데이터셋과 연결하려면 학교명이나 주소를 직접 맞춰야 한다. 파일은 2.4KB 남짓의 작은 목록이어서 지원 실적이나 참여 졸업생 수 같은 성과 정보는 들어 있지 않다.
 review:
   summary: draft
@@ -211,3 +224,4 @@ review:
     - c-15080725-03
     - c-15080725-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15121480 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121480 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121480'
 tier: verified
 title: 제주국제자유도시개발센터_JDC지정면세점 판매일자별 매장별 출도객수
@@ -23,6 +24,7 @@ synonyms:
   - 제주항 면세점
   - 내국인 지정면세점
   - 제주 관광객 수요
+summary_user: 제주국제자유도시개발센터가 운영하는 JDC 지정면세점의 2025년 출도객수를 판매일자와 매장(공항점·항만1점·항만2점)별 하루 단위로 집계한 CSV 파일(약 27KB)이다. 면세점 운영자나 관광 분석가가 '성수기·요일별로 어느 매장에 출도객이 몰리는가'를 보고 인력 배치나 관광 수요 예측에 쓴다. 전역 조인 키는 없어서, 다른 자료와는 판매일자나 매장명을 직접 맞춰 붙여야 한다.
 description_portal: '이 데이터는 제주특별자치도에 위치한 국토교통부 산하 공기업인 제주국제자유도시개발센터(JDC)에서 운영하는 JDC지정면세점의 2025년동안 각 매장별 일별 출도객수를 기록한 자료입니다. 데이터 항목은 판매일자, 매장명, 출도객수로 구성되어 있으며, 판매일자는 2025년 1월 1일부터 12월 31일까지의 날짜 형식(예: 2025-01-01)으로 표시되어 있습니다. 매장명은 JDC 지정면세점이 운영하는 공항점, 항만1점, 항만2점으로 구분되어 있으며, 출도객수는 해당 일자에 해당 매장을 이용한 고객 수를 정수 형태로 보여줍니다. 이 데이터는 계절별, 요일별, 매장별 이용 패턴 분석은 물론, 관광 수요 예측, 매장 운영 효율성 제고, 인력 배치 최적화, 출도객수에 따른 재고 조정 등 면세점 운영의 다양한 전략 수립을 위한 기반 자료로 활용될 수 있습니다. 또한 지역 관광 흐름과 소비 연계 정책 분석에도 기여할 수 있는 유의미한 데이터입니다.'
 accrual_periodicity: 연간
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 365
     - name: 매장명
       type: code
+      semantic_type: jdc_dfs_store
       null_rate: 0.0
       sample_values:
         - 공항점
@@ -66,12 +69,22 @@ schema:
         p50: 1341
         max: 45656
         unique: 977
+  foreign_keys:
+    - fields:
+        - 매장명
+      reference:
+        key: jdc_dfs_store
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 판매일자
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -108,7 +121,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121480-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: jdc_dfs_store(매장명)'
     evidence:
       - type: measured
         source: probe/stats/15121480.json
@@ -173,8 +186,6 @@ verification:
   run: probe/runs/15121480.json
   stats: probe/stats/15121480.json
   data: probe/data/15121480/
-status: active
-summary_user: 제주국제자유도시개발센터가 운영하는 JDC 지정면세점의 2025년 출도객수를 판매일자와 매장(공항점·항만1점·항만2점)별 하루 단위로 집계한 CSV 파일(약 27KB)이다. 면세점 운영자나 관광 분석가가 '성수기·요일별로 어느 매장에 출도객이 몰리는가'를 보고 인력 배치나 관광 수요 예측에 쓴다. 전역 조인 키는 없어서, 다른 자료와는 판매일자나 매장명을 직접 맞춰 붙여야 한다.
 limits: 사업자번호·좌표 같은 연결 키가 없어 인허가·상권 원장과 자동으로 이어지지 않는다. 업종 인허가 부문으로 분류돼 있지만 영업 원장이 아니라 일별 이용객 집계이고, 매출이나 객단가는 담지 않는다. 내부 검토에서는 보조 등급으로 판정이 보류된 상태다.
 review:
   summary: draft
@@ -187,3 +198,4 @@ review:
     - c-15121480-06
     - c-15121480-08
   dropped_citations: 0
+status: active

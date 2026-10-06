@@ -1,4 +1,5 @@
-# Dataset 3071451 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3071451 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3071451'
 tier: verified
 title: 한국동서발전(주)_(발전공기업 표준) 발전소별 석탄 재활용 정보
@@ -23,6 +24,7 @@ synonyms:
   - 발전 부산물
   - 동서발전 석탄재
   - 발전소 폐기물 재활용률
+summary_user: 한국동서발전이 운영하는 발전소별로 연도 단위 석탄재(비회·저회)의 발생량과 재활용량을 만톤 단위로 담은 집계 파일이며, 파일 크기가 845바이트에 불과한 소규모 표입니다. 분석가나 환경·ESG 담당자가 '동서발전 각 발전소에서 해마다 나온 석탄재 중 얼마가 재활용됐는가'를 비교하거나 재활용률 추이를 보는 데 쓴다. 전역 조인 키가 없어 다른 발전공기업의 같은 표준 데이터나 발전소 배출 측정 자료와는 발전소명·연도를 이름으로 맞춰 이어 쓴다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소의 연도별 석탄 재활용 정보는 석탄 화력 발전 과정에서 발생하는 부산물의 재활용 현황을 파악할 수 있는 환경관리 관련 데이터입니다.해당 데이터는 기관명, 연월, 발전소, 석탄회유형, 발생유형, 물량(톤)의 항목으로 구성되어 있으며, 석탄 연소 후 발생하는 비회(플라이애시)와 저회(클링커애시)의 발생 및 재활용 비율을 수치화하여 제공합니다.이 데이터를 통해 발전소별로 부산물의 발생량과 재활용 실적을 비교 분석할 수 있으며, 폐기물 저감 및 자원순환 측면에서의 환경경영 수준을 평가할 수 있습니다.학계 및 연구기관에서는 이 데이터를 기반으로 △석탄 부산물의 활용 가능성 분석 △발전소 운영 특성과 부산물 발생의 상관관계 연구 △자원순환정책에 따른 실적 추이 분석 △비회·저회의 건설자재 활용률 연구 △탄소중립과 연계한 발전소 부산물 관리 정책 제안 등에 활용할 수 있습니다.또한 정부 및 지자체의 폐기물 재활용 정책 수립, 에너지 산업의 환경영향 보고서 작성, ESG 경영 평가 항목 분석 등의 실증 자료로도 유용하게 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -48,6 +50,7 @@ schema:
         unique: 10
     - name: 발전소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진
@@ -103,12 +106,22 @@ schema:
         p50: 10.850000000000001
         max: 61
         unique: 21
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -145,7 +158,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3071451-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소)'
     evidence:
       - type: measured
         source: probe/stats/3071451.json
@@ -210,8 +223,6 @@ verification:
   run: probe/runs/3071451.json
   stats: probe/stats/3071451.json
   data: probe/data/3071451/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소별로 연도 단위 석탄재(비회·저회)의 발생량과 재활용량을 만톤 단위로 담은 집계 파일이며, 파일 크기가 845바이트에 불과한 소규모 표입니다. 분석가나 환경·ESG 담당자가 '동서발전 각 발전소에서 해마다 나온 석탄재 중 얼마가 재활용됐는가'를 비교하거나 재활용률 추이를 보는 데 쓴다. 전역 조인 키가 없어 다른 발전공기업의 같은 표준 데이터나 발전소 배출 측정 자료와는 발전소명·연도를 이름으로 맞춰 이어 쓴다.
 limits: 발전소 코드 같은 공통 키가 없어 다른 데이터와 붙이려면 발전소명을 직접 매핑해야 한다. 연도·발전소 단위 집계라 월별·호기별 변동이나 재활용 용도별 내역은 알 수 없다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-3071451-04
     - c-3071451-06
   dropped_citations: 0
+status: active

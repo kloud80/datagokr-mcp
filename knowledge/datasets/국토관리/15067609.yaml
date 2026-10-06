@@ -1,4 +1,5 @@
-# Dataset 15067609 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067609 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067609'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_항공사진촬영코스별검사표
@@ -21,6 +22,7 @@ synonyms:
   - 항공사진 육안검사
   - 항공사진 필름번호
   - 국토지리정보원 항공사진
+summary_user: 항공사진 촬영 코스에 포함된 낱장 사진마다 육안검사 결과(채택여부·검사일자)와 코스번호·필름번호·사진번호, 렌즈번호, 촬영일자를 건별로 담은 전국 범위 검사표 파일이다(CSV 약 48MB). 공간정보 분석가나 항공사진 이용자가 특정 코스·사진번호의 사진이 검사를 통과해 성과로 채택됐는지, 언제 촬영·검사됐는지 확인하는 데 쓴다. 전역 조인 키는 없으며, 다른 항공사진 데이터와는 코스번호·사진번호 같은 식별 번호를 이름 그대로 맞춰 연결해야 한다.
 description_portal: '항공사진 촬영 코스에 포함된 개별 낱장 사진에 대하여 육안검사 결과정보, 통과된 사진에 대하여 성과 코스번호, 사진번호 부여▷ 식별정보 : 코스일련번호,코스번호, 필름번호, 사진번호 ▷ 속성정보 : 렌즈번호, 촬영일자, 검사일자, 채택여부, 확인표시* 항공사진 : 항공기나 드론 등의 항공 플랫폼에서 지표면을 촬영한 사진으로, 지도 제작, 지형 분석, 도시계획, 환경 모니터링 등 다양한 분야에서 활용- 전국을 촬영하여, 국토 변화상황을 모니터링 하고 정사영상 제작 및 국가기본도 수정 등에 활용- 전국을 도시지역(해상도 12cm) 및 비도시지역(해상도 25cm)으로 구분하여 도시지역, 비도시지역 1년 주기 촬영- 각종 행정업무(세무, 보상, 민원, 판독, 국유재산관리)에 활용되고 있으며, 소송, 단속(불법건축물, 수사자료, 판독) 및 홍보자료, 지형확인, 도시계획 업무 등에도 활용'
 accrual_periodicity: 수시
 team:
@@ -45,6 +47,7 @@ schema:
         unique: 91
     - name: 렌즈번호
       type: number
+      semantic_type: aerial_lens_no
       null_rate: 0.0
       sample_values:
         - '250038'
@@ -81,6 +84,7 @@ schema:
         unique: 11750
     - name: 코스번호
       type: code
+      semantic_type: aerial_photo_no
       null_rate: 0.0
       sample_values:
         - '5'
@@ -90,6 +94,7 @@ schema:
         unique: 516
     - name: 사진번호
       type: number
+      semantic_type: aerial_photo_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -125,12 +130,33 @@ schema:
         - V
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 렌즈번호
+      reference:
+        key: aerial_lens_no
+      evidence: measured
+    - fields:
+        - 코스번호
+      reference:
+        key: aerial_photo_no
+      evidence: measured
+    - fields:
+        - 사진번호
+      reference:
+        key: aerial_photo_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 촬영일자
+    - 검사일자
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -168,7 +194,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067609-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: aerial_lens_no(렌즈번호), aerial_photo_no(코스번호), aerial_photo_no(사진번호)'
     evidence:
       - type: measured
         source: probe/stats/15067609.json
@@ -243,8 +269,6 @@ verification:
   run: probe/runs/15067609.json
   stats: probe/stats/15067609.json
   data: probe/data/15067609/
-status: active
-summary_user: 항공사진 촬영 코스에 포함된 낱장 사진마다 육안검사 결과(채택여부·검사일자)와 코스번호·필름번호·사진번호, 렌즈번호, 촬영일자를 건별로 담은 전국 범위 검사표 파일이다(CSV 약 48MB). 공간정보 분석가나 항공사진 이용자가 특정 코스·사진번호의 사진이 검사를 통과해 성과로 채택됐는지, 언제 촬영·검사됐는지 확인하는 데 쓴다. 전역 조인 키는 없으며, 다른 항공사진 데이터와는 코스번호·사진번호 같은 식별 번호를 이름 그대로 맞춰 연결해야 한다.
 limits: 좌표나 행정구역 코드가 없는 비공간 표라 사진이 찍힌 위치를 이 데이터만으로 알 수 없다. 표준 조인 키가 없어 다른 데이터와 묶을 때는 코스·사진번호 매핑에 의존한다.
 review:
   summary: draft
@@ -256,3 +280,4 @@ review:
     - c-15067609-03
     - c-15067609-04
   dropped_citations: 0
+status: active

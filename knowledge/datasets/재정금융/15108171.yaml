@@ -1,4 +1,5 @@
-# Dataset 15108171 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15108171 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15108171'
 tier: verified
 title: 금융위원회_개인사업자재무정보
@@ -22,6 +23,7 @@ synonyms:
   - 업종별 매출액
   - 자영업 부채비율
   - 개인사업자 재무제표
+summary_user: 개인사업자의 대표자 성별·연령대, 설립연도, 사업지역, 업종, 종업원 규모와 함께 재무기준연도별 매출액·영업이익·당기순이익·자산·부채·자본 금액을 전국 범위로 담는 API이며, 매출액·영업이익·부채 3개 오퍼레이션으로 나뉜다. 분석가나 창업 준비자가 "특정 지역·업종 개인사업자의 매출과 부채 수준은 어느 정도인가" 같은 업종·지역별 사업성과와 재무구조를 비교하는 데 쓴다. 사업자번호 같은 전역 조인 키가 없어 다른 데이터와는 업종코드(bizBzcCd)·업종명이나 지역명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 description_portal: '개인사업자재무정보는 개인사업자의 재무정보, 매출액정보, 부채정보를 조회할 수 있으며, 주요 구성항목으로는 개인사업자의 설립일, 업종 및 지역정보와에 매출액, 영업이익, 부채정보 등이 제공됩니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 개인사업자 매출액정보 조회 : 업종·지역 기준으로 개인사업자의 연도별 매출액 정보를 제공합니다.② 개인사업자 영업이익정보 조회 : 영업이익 및 이익률 등 사업성과 관련 지표를 제공합니다.③ 개인사업자 부채정보 조회 : 총부채, 부채비율 등 개인사업자의 부채 구조를 조회할 수 있습니다.※ 데이터는 매년 1회 갱신됩니다.'
 team:
   dept: 금융공공데이터팀
@@ -260,6 +262,7 @@ schema:
         unique: 8
     - name: bizBzcCd
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '46'
@@ -437,6 +440,7 @@ schema:
         unique: 4
     - name: bizBzcCd
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '56'
@@ -549,6 +553,7 @@ schema:
         unique: 4
     - name: bizBzcCd
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '56'
@@ -606,6 +611,12 @@ schema:
         p50: 76500000
         max: 524000000
         unique: 275
+  foreign_keys:
+    - fields:
+        - bizBzcCd
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -656,7 +667,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15108171-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: classification_code(bizBzcCd)'
     evidence:
       - type: measured
         source: probe/stats/15108171.json
@@ -721,8 +732,6 @@ verification:
   run: probe/runs/15108171.json
   stats: probe/stats/15108171.json
   data: probe/data/15108171/
-status: active
-summary_user: 개인사업자의 대표자 성별·연령대, 설립연도, 사업지역, 업종, 종업원 규모와 함께 재무기준연도별 매출액·영업이익·당기순이익·자산·부채·자본 금액을 전국 범위로 담는 API이며, 매출액·영업이익·부채 3개 오퍼레이션으로 나뉜다. 분석가나 창업 준비자가 "특정 지역·업종 개인사업자의 매출과 부채 수준은 어느 정도인가" 같은 업종·지역별 사업성과와 재무구조를 비교하는 데 쓴다. 사업자번호 같은 전역 조인 키가 없어 다른 데이터와는 업종코드(bizBzcCd)·업종명이나 지역명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 limits: 실측 컬럼에 사업자번호·법인등록번호 같은 식별 키가 없어 개별 사업자를 기업 공시·재무 데이터와 직접 연결할 수 없다. 공간 좌표 없이 지역명만 있어 지도 분석에는 별도 매핑이 필요하다. 갱신 주기는 포털 설명(연 1회)과 실측 분류(이벤트 주기)가 달라 호출 시 기준연월과 재무기준연도를 확인해야 한다.
 review:
   summary: draft
@@ -736,3 +745,4 @@ review:
     - c-15108171-04
     - c-15108171-06
   dropped_citations: 0
+status: active

@@ -57,6 +57,7 @@ schema:
         unique: 1
     - name: schoolId
       type: number
+      semantic_type: foreign_school_id
       null_rate: 0.0
       sample_values:
         - '62'
@@ -136,6 +137,7 @@ schema:
         unique: 0
     - name: infoCd
       type: code
+      semantic_type: foreign_disclosure_info_cd
       null_rate: 1.0
       stats:
         unique: 0
@@ -156,9 +158,24 @@ schema:
         - 임차
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - schoolId
+      reference:
+        key: foreign_school_id
+      evidence: measured
+    - fields:
+        - infoCd
+      reference:
+        key: foreign_disclosure_info_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - regDttm
 cycle: default
 classification:
   subsector_name: international-students
@@ -201,7 +218,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15085254-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: foreign_school_id(schoolId), foreign_disclosure_info_cd(infoCd)'
     evidence:
       - type: measured
         source: probe/stats/15085254.json

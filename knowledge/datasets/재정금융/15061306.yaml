@@ -1,4 +1,5 @@
-# Dataset 15061306 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061306 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061306'
 tier: verified
 title: 금융위원회_금융통계생명보험정보
@@ -25,6 +26,7 @@ synonyms:
   - 보험사 지급여력
   - 생명보험 업권 통계
   - 보험회사 일반현황
+summary_user: 생명보험사별로 기준년월(basYm) 단위의 일반현황, 자산·부채·자본 등 재무현황, ROA·ROE 같은 주요경영지표, 보험금 지급액·계약건수 등 주요영업활동을 4개 오퍼레이션으로 담는 전국 범위의 회사 단위 금융통계다. 분석가나 소비자가 '특정 생명보험사의 자본 규모와 수익성이 업계에서 어느 수준이고 최근 어떻게 변했는가'를 따질 때 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위원회 기업정보·기업 재무 데이터 등 법인 단위 원장과 이어 쓰고, 금융회사코드(fncoCd)와 회사명으로 다른 업권별 금융통계와 맞춰 본다.
 description_portal: '금융위원회_금융통계생명보험정보는 기준년월과 회사명을 기준으로 생명보험사의 일반현황, 재무구조, 경영성과 및 주요 영업활동 정보를 제공하는 데이터입니다. 이 데이터는 4개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 생명보험사 일반현황 조회 : 회사명, 설립일, 본점 소재지, 영업점 분포 등의 정보를 제공합니다.② 생명보험사 재무현황 조회 : 자산, 부채, 자본 등 재무상태 관련 통계를 조회할 수 있습니다.③ 생명보험사 주요경영지표 조회 : ROA, ROE, 보험료 수익률 등 핵심 경영성과 지표를 제공합니다.④ 생명보험사 주요영업활동 조회 : 보험금 지급액, 계약건수, 신계약 보장성 보험료 등 주요 영업실적을 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -73,6 +75,7 @@ schema:
         unique: 16
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010593'
@@ -215,6 +218,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -264,7 +272,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061306-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061306.json
@@ -329,8 +337,6 @@ verification:
   run: probe/runs/15061306.json
   stats: probe/stats/15061306.json
   data: probe/data/15061306/
-status: active
-summary_user: 생명보험사별로 기준년월(basYm) 단위의 일반현황, 자산·부채·자본 등 재무현황, ROA·ROE 같은 주요경영지표, 보험금 지급액·계약건수 등 주요영업활동을 4개 오퍼레이션으로 담는 전국 범위의 회사 단위 금융통계다. 분석가나 소비자가 '특정 생명보험사의 자본 규모와 수익성이 업계에서 어느 수준이고 최근 어떻게 변했는가'를 따질 때 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위원회 기업정보·기업 재무 데이터 등 법인 단위 원장과 이어 쓰고, 금융회사코드(fncoCd)와 회사명으로 다른 업권별 금융통계와 맞춰 본다.
 limits: 회사 단위 통계라서 개별 보험계약이나 상품 수준의 분석에는 쓰지 못하고, 지역 정보가 없는 비공간 데이터다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -343,3 +349,4 @@ review:
     - c-15061306-04
     - c-15061306-06
   dropped_citations: 0
+status: active

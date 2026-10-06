@@ -830,6 +830,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: code
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - BGDH6080
@@ -877,6 +878,7 @@ schema:
     - name: pblancNo
       title: 공고번호
       type: code
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - EHG0012
@@ -902,6 +904,7 @@ schema:
     - name: purchsRequstNo
       title: 구매요청번호
       type: code
+      semantic_type: d2b_prcure_req_no
       null_rate: 0.0
       sample_values:
         - DKCH6046-005
@@ -955,6 +958,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '37681'
@@ -1040,6 +1044,7 @@ schema:
     - name: pblancNo
       title: 공고번호
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - HDQ0053
@@ -1110,6 +1115,7 @@ schema:
     - name: dcsNo
       title: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '37948'
@@ -1218,6 +1224,7 @@ schema:
     - name: pblancNo
       title: 공고번호
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - LCG0099
@@ -1239,10 +1246,31 @@ schema:
         p50: 1
         max: 2
         unique: 2
+  foreign_keys:
+    - fields:
+        - dcsNo
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
+    - fields:
+        - pblancNo
+      reference:
+        key: bid_ntce_no
+      evidence: measured
+    - fields:
+        - purchsRequstNo
+      reference:
+        key: d2b_prcure_req_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-09-02 ~ 2026-10-02
+grain:
+  time: realtime
+  time_fields:
+    - opengDt
+    - othbcNtatDt
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -1287,7 +1315,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15158417-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(dcsNo), bid_ntce_no(pblancNo), d2b_prcure_req_no(purchsRequstNo)'
     evidence:
       - type: measured
         source: probe/stats/15158417.json

@@ -1,4 +1,5 @@
-# Dataset 15099991 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15099991 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099991'
 tier: verified
 title: 법무부_6(출입국심사)월별 체류자격별 외국인 입국자 현황
@@ -21,6 +22,7 @@ synonyms:
   - 출입국 통계월보
   - 외국인 입국자 수
   - E-9 입국
+summary_user: '출입국심사 기준으로 외국인 입국자 수를 년·월과 체류자격별로 집계한 전국 단위 통계 파일이며, 지역 구분은 없습니다. 특정 체류자격(예: 비전문취업 E-9)으로 들어오는 외국인이 월별로 얼마나 늘고 줄었는지 보려는 정책 분석가나 외국인 인력을 쓰는 사업자가 쓴다. 전역 조인 키는 없고, 년·월과 체류자격 이름을 맞춰 같은 법무부의 체류 외국인·등록외국인 월별 통계와 이어 본다.'
 description_portal: 체류자격에 따른 외국인의 입국자 수 통계를 월별로 제공합니다. 한 명이 여러번 입국하는 경우 중복집계 될 수 있습니다. 가령, E9 비자로 입국한  사람이 당월에 출국했다가 다시 입국하는 경우 2명으로 집계 됨해당 통계는 출입국외국인정책본부 홈페이지의 통계월보 통계입니다.출입국외국인정책본부 홈페이지의 통계월보에서 확인하실 수 있으며 경로는 아래와 같습니다.https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY1OTU0MjYlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2당월의 게시물, 엑셀파일 참조
 applicable_legislation:
   - law: 출입국관리법
@@ -62,6 +64,7 @@ schema:
         unique: 12
     - name: 체류자격
       type: code
+      semantic_type: stay_status_cd
       null_rate: 0.0
       sample_values:
         - 사증면제B1
@@ -81,6 +84,12 @@ schema:
         p50: 1740
         max: 1018654
         unique: 1567
+  foreign_keys:
+    - fields:
+        - 체류자격
+      reference:
+        key: stay_status_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -123,7 +132,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15099991-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: stay_status_cd(체류자격)'
     evidence:
       - type: measured
         source: probe/stats/15099991.json
@@ -198,8 +207,6 @@ verification:
   run: probe/runs/15099991.json
   stats: probe/stats/15099991.json
   data: probe/data/15099991/
-status: active
-summary_user: '출입국심사 기준으로 외국인 입국자 수를 년·월과 체류자격별로 집계한 전국 단위 통계 파일이며, 지역 구분은 없습니다. 특정 체류자격(예: 비전문취업 E-9)으로 들어오는 외국인이 월별로 얼마나 늘고 줄었는지 보려는 정책 분석가나 외국인 인력을 쓰는 사업자가 쓴다. 전역 조인 키는 없고, 년·월과 체류자격 이름을 맞춰 같은 법무부의 체류 외국인·등록외국인 월별 통계와 이어 본다.'
 limits: 한 사람이 같은 달에 출국했다가 다시 입국하면 두 번 집계되므로 입국 인원(실인원)이 아니라 입국 건수로 해석해야 합니다. 전국 합계만 있어 시군구 같은 지역별 분석에는 쓸 수 없습니다.
 review:
   summary: draft
@@ -211,3 +218,4 @@ review:
     - c-15099991-03
     - c-15099991-04
   dropped_citations: 0
+status: active

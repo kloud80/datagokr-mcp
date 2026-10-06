@@ -1,0 +1,290 @@
+# Dataset 15076799 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076799'
+tier: verified
+title: 한국도로공사_LCS 운영이력
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076799/openapi.do
+synonyms:
+  - 고속도로
+  - LCS
+  - 운영이력
+  - 도로운영
+  - 장비관리
+  - 표출이력
+  - 방향코드
+  - 노선정보
+  - 차로제어시스템
+  - LCS 표출이력
+  - 고속도로 차로제어
+  - 가변차로 표지
+  - 차로 통제 표출
+  - LCS 장비 운영
+summary_user: 한국도로공사 고속도로 노선별 LCS(차로제어시스템) 장비가 언제 어떤 기호를 표출했는지를 표출 건별로 담은 운영이력이며, 일자·시간, LCS 그룹과 장비 ID, 장비 설명, 구간길이(km), 표출 기호, 방향(기점/종점), 노선번호가 들어 있고 범위는 전국이다. 도로 운영 분석가가 특정 노선·구간에서 어느 시간대에 차로 통제·전환 표출이 잦았는지, 방향별 표출 빈도가 어떻게 다른지 확인하는 데 쓴다. 전역 조인 키는 없어 노선번호(routeNo)나 장비 ID·그룹명 같은 이름·코드 매핑, 또는 같은 한국도로공사 데이터의 코드로만 다른 교통 데이터와 이어 쓰며, 표준노드링크(link_id·node_id)와의 직접 연결 키는 실측 컬럼에서 확인되지 않았다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 LCS 운영이력으로, 노선별 LCS 장비의 표출 이력을 OpenAPI 형태로 제공한다.제공 형식은 XML과 JSON이며, 출력 항목에는 일자, 시간, LCS그룹명과 ID, LCS_ID, 장비설명내용, LCS구간길이(km), 기호ID, 표출일시, 방향코드(S:기점/E:종점), 노선번호가 포함된다.이 데이터는 노선별 LCS 장비의 운영 현황을 파악하고 표출 이력을 분석하는 데 유용하다.이를 통해 특정 시점의 표출 패턴, 방향별 표출 빈도, 구간별 운영 특성을 확인할 수 있다.또한 도로 운영 효율성 분석, 교통 안내 서비스 품질 향상, 장비 유지관리 계획 수립 등 다양한 분야에서 활용 가능하며, 도로 이용자에게는 안내 정보의 신뢰성을 높이는 기반 자료가 된다.
+team:
+  dept: AI데이터처
+services:
+  - op: lcsHistory
+    name: lcsHistory
+    endpoint: https://data.ex.co.kr/openapi/trafficOprgPrcd/lcsHistory
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0150'
+        - '0550'
+      stats:
+        min: 10
+        p50: 10
+        max: 1200
+        unique: 6
+    - name: updownTypeCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+        - S
+      stats:
+        unique: 2
+    - name: dispTmmp
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261005005529'
+        - '20261005005523'
+        - '20261005005524'
+      stats:
+        min: 20261005002356
+        p50: 20261005013009
+        max: 20261005065731
+        unique: 25
+    - name: dispDate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261005'
+      stats:
+        min: 20261005
+        p50: 20261005
+        max: 20261005
+        unique: 1
+    - name: dispHour
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 00:55
+        - 06:57
+        - 06:01
+      stats:
+        unique: 13
+    - name: lcsGrpId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0010LGE0130
+        - 0010LGE0120
+        - 0010LGE0020
+      stats:
+        unique: 17
+    - name: lcsId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0150LCE01400
+        - 0150LCE01500
+        - 0150LCE01900
+      stats:
+        unique: 89
+    - name: eqpmEplnCtnt
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ' LCS1'
+        - ' LCS2'
+        - ' LCS3'
+      stats:
+        unique: 28
+    - name: lcsSctnLngh
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10.6'
+        - '7.1'
+        - '5.9'
+      stats:
+        min: 0
+        p50: 5.9
+        max: 28.69
+        unique: 17
+    - name: markId
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '1'
+        - '5'
+      stats:
+        min: 1
+        p50: 4
+        max: 5
+        unique: 3
+    - name: lcsGrpNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선(북천안IC→안성IC)
+        - 경부선(천안IC→북천안IC)
+        - 경부선(신갈JC→서울TG)
+      stats:
+        unique: 17
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6413
+  rank_in_sector: 771
+  brm: 교통물류 - 도로
+  why: 한국도로공사 공공데이터 포털 (key=test)
+claims:
+  - id: c-15076799-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076799.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076799-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076799-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076799.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076799-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076799.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076799-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076799-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076799-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076799.json
+  stats: probe/stats/15076799.json
+  data: probe/data/15076799/
+limits: 포털 활용신청과 별개로 외부 사이트 data.ex.co.kr 인증키(경로 파라미터 KEY)를 따로 받아야 호출된다. 좌표나 링크 ID가 없는 비공간 데이터라 지도 위 위치나 표준노드링크 구간에 바로 대응시킬 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076799-01
+    - c-15076799-03
+    - c-15076799-04
+    - c-15076799-06
+  dropped_citations: 0
+status: active

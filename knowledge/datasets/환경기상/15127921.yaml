@@ -35,6 +35,7 @@ schema:
   fields:
     - name: WDPAID(보호지역 고유 ID)
       type: number
+      semantic_type: wdpa_id
       null_rate: 0.0
       sample_values:
         - '555558235'
@@ -47,6 +48,7 @@ schema:
         unique: 1516
     - name: WDPA_PID(보호지역 고유 ID)
       type: number
+      semantic_type: wdpa_id
       null_rate: 0.0
       sample_values:
         - '555558235'
@@ -308,9 +310,24 @@ schema:
         - KOR
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - WDPAID(보호지역 고유 ID)
+      reference:
+        key: wdpa_id
+      evidence: measured
+    - fields:
+        - WDPA_PID(보호지역 고유 ID)
+      reference:
+        key: wdpa_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - STATUS_YR(지정연도)
 cycle: default
 classification:
   subsector_name: 자연·환경 보전 공간 레이어 (국토환경성평가 60여 레이어·국립공원 용도지구·습지/생태경관/야생생물 보호구역·무인도서)
@@ -347,7 +364,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15127921-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: wdpa_id(WDPAID(보호지역 고유 ID)), wdpa_id(WDPA_PID(보호지역 고유 ID))'
     evidence:
       - type: measured
         source: probe/stats/15127921.json

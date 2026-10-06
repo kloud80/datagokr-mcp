@@ -1,0 +1,230 @@
+# Dataset 15126303 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126303'
+tier: verified
+title: 경기도_시군별 수입자동차 등록현황
+sector: 교통물류/도로/vehicles
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15126303/fileData.do
+synonyms:
+  - 수입차
+  - 외제차
+  - 자동차등록
+  - 승용차
+  - 화물자
+  - 차량통계
+  - 수입차 등록대수
+  - 외제차 현황
+  - 경기도 수입차 통계
+  - 시군별 자동차 등록
+  - 수입 승용차
+  - 차종별 등록대수
+summary_user: 경기도 시군별로 자동차등록원부에 등록된 수입자동차 대수를 승용·승합·화물·특수 차종으로 나눠 담은 통계시점 기준 집계 자료로, 범위는 경기도 한 시도이고 단위는 시군구다. 수입차 판매·정비 사업자나 교통정책 분석가가 "경기도 어느 시군에 수입 승용차가 많이 등록돼 있는가"처럼 지역별 수입차 보급과 차종 분포를 비교하는 데 쓴다. 전역 조인 키(행정구역 코드 등)는 없어 다른 데이터와는 시군구명(signgu_nm)을 이름으로 맞추거나 같은 기관(경기도) 자료끼리만 연결한다.
+description_portal: 이 데이터는 통계시점 기준으로 경기도 내 각 시군구별로 자동차등록원부에 등록되어 운행이 가능한 수입자동차의 대수를 구분하여 정리한 자료입니다. 주요 항목에는 ‘시군구명’을 통해 지역을 식별할 수 있으며, ‘승용차수’, ‘승합차수’, ‘화물차수’, ‘특수차수’는 각각 해당 지역에 등록된 수입차량의 차종별 대수를 나타냅니다. 이는 수입차의 지역별 보급 현황과 차종 분포를 파악할 수 있는 자료로, 자동차 관련 산업 분석, 교통정책 수립, 수입차 수요 예측, 정비 인프라 구축 등 다양한 행정 및 산업 분야에서 활용될 수 있습니다. 월별 상세 통계는 국토교통부 통계누리 사이트(stat.molit.go.kr)의 자동차등록현황보고 통계를 통해 추가적으로 확인할 수 있습니다.
+accrual_periodicity: 연간
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: signgu_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가평군
+        - 고양시 덕양구
+        - 고양시 일산동구
+      stats:
+        unique: 49
+    - name: psgcar_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3654'
+        - '30408'
+        - '29736'
+      stats:
+        min: 5
+        p50: 15027
+        max: 65228
+        unique: 49
+    - name: van_cnt
+      type: number
+      null_rate: 0.0204
+      sample_values:
+        - '168.0'
+        - '433.0'
+        - '39.0'
+      stats:
+        min: 1
+        p50: 147.5
+        max: 601
+        unique: 43
+    - name: truck_cnt
+      type: number
+      null_rate: 0.0204
+      sample_values:
+        - '182.0'
+        - '235.0'
+        - '468.0'
+      stats:
+        min: 19
+        p50: 381
+        max: 1686
+        unique: 47
+    - name: spcvhcl_cnt
+      type: number
+      null_rate: 0.0204
+      sample_values:
+        - '39.0'
+        - '55.0'
+        - '246.0'
+      stats:
+        min: 3
+        p50: 115.5
+        max: 575
+        unique: 45
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - signgu_nm
+  space_via: name
+cycle: default
+classification:
+  subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4166
+  rank_in_sector: 3628
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15126303-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126303.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15126303-02
+    kind: cadence
+    value: 명세상 연간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15126303-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126303.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15126303-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15126303.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15126303-06
+    kind: admin_note
+    value: "세부 부문 '자동차 등록·검사·정비·렌터카·운전면허'의 가치: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vehicles
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126303-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126303-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126303.json
+  stats: probe/stats/15126303.json
+  data: probe/data/15126303/
+limits: 원천은 외부 사이트(data.gg.go.kr)여서 포털 활용신청과 별개로 그쪽 인증키가 필요하다. 행정구역 코드가 없어 시군구명 표기 차이에 따라 조인이 어긋날 수 있다. 시군구 단위 집계라 개별 차량·제조사·모델별 정보는 담지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126303-01
+    - c-15126303-03
+    - c-15126303-04
+  dropped_citations: 0
+status: active

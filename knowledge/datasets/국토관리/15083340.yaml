@@ -50,6 +50,7 @@ schema:
         unique: 22
     - name: 수위관측소코드
       type: number
+      semantic_type: hydro_obs_cd
       null_rate: 0.0
       sample_values:
         - '1001620'
@@ -86,6 +87,7 @@ schema:
         unique: 13540
     - name: 댐코드
       type: number
+      semantic_type: dam_cd
       null_rate: 0.0097
       sample_values:
         - '9999999'
@@ -105,9 +107,25 @@ schema:
         min: '2025-05-14'
         max: '2025-05-14'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 수위관측소코드
+      reference:
+        key: hydro_obs_cd
+      evidence: measured
+    - fields:
+        - 댐코드
+      reference:
+        key: dam_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 관측일시
+    - 최종수정일시
 cycle: default
 classification:
   subsector_name: 수문 관측 (수위·유량·강수 관측소, 10분·시·일 자료)
@@ -144,7 +162,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15083340-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hydro_obs_cd(수위관측소코드), dam_cd(댐코드)'
     evidence:
       - type: measured
         source: probe/stats/15083340.json

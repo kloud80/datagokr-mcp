@@ -113,3 +113,43 @@ def admin_name_to_code(name: str, parent: str | None = None) -> str | None:
 
 RULES = {"R-02": sgg_from_bjd, "R-07": pnu_from_parts, "R-07-rtms": pnu_from_rtms, "R-11": road_key,
          "R-12": coord_to_pnu, "R-13": address_to_coord, "R-14": admin_name_to_code}
+
+
+# ─────────────────────────── 느슨한 조인 (정렬 조인) — 공통 단위로 내린 뒤 집계해 잇는다 (R-20 ~ R-23)
+LEVEL_LEN = {"bjd": 10, "emd": 8, "sgg": 5, "sido": 2}
+
+
+def admin_rollup(code: str, level: str) -> str | None:
+    """R-20·R-21 — PNU(19)·법정동(10)·읍면동(8)·시군구(5) 코드를 앞자리로 상위 단위로 (PNU 앞 10자리 = 법정동)."""
+    c = re.sub(r"\D", "", str(code or ""))
+    n = LEVEL_LEN.get(level)
+    if not n or len(c) < n:
+        return None
+    return c[:n]
+
+
+def time_floor(value, grain: str) -> str | None:
+    """R-22 — 날짜·시각 값을 공통 시점으로 내림: day YYYYMMDD · month YYYYMM · quarter YYYYQn · year YYYY."""
+    d = re.sub(r"\D", "", str(value or ""))
+    if len(d) < 4:
+        return None
+    if grain == "year":
+        return d[:4]
+    if len(d) == 5 and d[4] in "1234":  # 연도+분기 코드(서울 STDR_YYQU_CD 20243 = 2024년 3분기)
+        return f"{d[:4]}Q{d[4]}" if grain == "quarter" else None
+    if len(d) < 6:
+        return None
+    if grain == "month":
+        return d[:6]
+    if grain == "quarter":
+        return f"{d[:4]}Q{(int(d[4:6]) - 1) // 3 + 1}"
+    return d[:8] if len(d) >= 8 else None
+
+
+def category_prefix(code: str, digits: int) -> str | None:
+    """R-23 — 분류 코드(KSIC·HS 등)를 앞자리로 상위 분류에 맞춘다 (KSIC 대분류는 알파벳 1자, 중분류 2자리 …)."""
+    c = str(code or "").strip()
+    return c[:digits] if len(c) >= digits else None
+
+
+RULES.update({"R-20": admin_rollup, "R-21": admin_rollup, "R-22": time_floor, "R-23": category_prefix})

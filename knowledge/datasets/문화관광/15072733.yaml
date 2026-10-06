@@ -1,4 +1,5 @@
-# Dataset 15072733 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072733 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072733'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_사회적가치
@@ -22,6 +23,7 @@ synonyms:
   - 기사 키워드
   - ESG 뉴스
   - 사회공헌 기사
+summary_user: 빅카인즈(BIGKinds)에서 '사회적 가치' 관련 뉴스를 모은 기사 단위 메타데이터로, 기사별 URL·보도 일자·언론사·기고자·제목·통합 분류(1~3단계)·사건/사고 분류·인물·위치·기관 개체명·키워드·특성추출 값을 담은 약 23MB 분량의 CSV 파일이다. 언론 연구자나 정책 담당자가 '사회적 가치라는 말이 언제부터 어떤 주제(환경·복지·사회공헌 등)와 어떤 기업·기관과 함께 많이 보도됐는가'를 시기별 보도량과 개체명으로 따져보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 언론사명·기관명·인물명 같은 이름 매칭이나 같은 재단의 다른 빅카인즈 주제별 메타데이터와 같은 컬럼 구조로 나란히 비교하는 방식으로만 이어 쓴다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 바탕으로 수집·분석된 사회적 가치 관련 뉴스 메타정보입니다. 기사별로 주소, 보도 일자, 언론사, 기고자, 제목, 통합 분류(1~3단계), 사건/사고 여부, 개체명(인물·지역·기업), 키워드, 특성추출 값, 본문 내용, 원본 주소 등이 포함되어 있습니다. 이 구조 덕분에 사회적 가치라는 키워드가 언론 담론 속에서 어떻게 부상했는지, 어떤 주체(기업·공공기관·시민사회)들이 주로 언급되는지, 어떤 맥락(환경, 복지, 사회공헌, 기업윤리 등)에서 다루어지는지 등을 체계적으로 분석할 수 있습니다.본 자료는 사회적 책임, 공공성, 지속가능성, 사회 혁신 프로젝트, 기업의 사회 역할 등 다양한 하위 개념이 언론 보도에서 어떻게 연결되는지 살피는 데 유용합니다. 또한 시기별 보도 빈도 추이, 주요 사건과의 연계성, 지역별·기업별 차이 등을 분석할 수 있어 정책 입안자, 언론 연구자, 기업 전략가, 시민단체 등에 활용 가치가 높습니다. 이 데이터를 통해 사회적 가치 담론의 변화 흐름을 정량적으로 파악하고, 언론과 사회가 어떤 가치를 강조하며 수용했는지를 연구할 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -41,6 +43,7 @@ schema:
   fields:
     - name: URL
       type: date
+      semantic_type: bigkinds_article_url
       null_rate: 0.0
       sample_values:
         - http://www.bigkinds.or.kr/search/totalSearchNewsView.do?news_id=01100101.2016072
@@ -63,6 +66,7 @@ schema:
         unique: 775
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 매일경제
@@ -187,12 +191,28 @@ schema:
         - 김영란법,개정 촉구,김영란법 법 개정 촉구,소상공인들,서울,24일 서울,24일 서울 여의,골목상권 침투,내수침체,기자회견,손형준,의사당,대기업,
       stats:
         unique: 7513
+  foreign_keys:
+    - fields:
+        - URL
+      reference:
+        key: bigkinds_article_url
+      evidence: measured
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - URL
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -229,7 +249,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072733-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bigkinds_article_url(URL), kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15072733.json
@@ -304,8 +324,6 @@ verification:
   run: probe/runs/15072733.json
   stats: probe/stats/15072733.json
   data: probe/data/15072733/
-status: active
-summary_user: 빅카인즈(BIGKinds)에서 '사회적 가치' 관련 뉴스를 모은 기사 단위 메타데이터로, 기사별 URL·보도 일자·언론사·기고자·제목·통합 분류(1~3단계)·사건/사고 분류·인물·위치·기관 개체명·키워드·특성추출 값을 담은 약 23MB 분량의 CSV 파일이다. 언론 연구자나 정책 담당자가 '사회적 가치라는 말이 언제부터 어떤 주제(환경·복지·사회공헌 등)와 어떤 기업·기관과 함께 많이 보도됐는가'를 시기별 보도량과 개체명으로 따져보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 언론사명·기관명·인물명 같은 이름 매칭이나 같은 재단의 다른 빅카인즈 주제별 메타데이터와 같은 컬럼 구조로 나란히 비교하는 방식으로만 이어 쓴다.
 limits: 기업·기관을 사업자번호 같은 공통 코드로 식별하는 키가 없어 이름 표기 차이를 직접 정리해야 연결된다. 전국 단위 비공간 데이터라 위치 개체명은 기사 속 지명 텍스트일 뿐 행정구역 코드로 집계되지 않는다.
 review:
   summary: draft
@@ -317,3 +335,4 @@ review:
     - c-15072733-03
     - c-15072733-04
   dropped_citations: 0
+status: active

@@ -1,7 +1,7 @@
 # Dataset 15126133 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
 # 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126133'
-tier: candidate
+tier: verified
 title: 국회 국회사무처_국회의원 정보 통합 API
 sector: 공공행정/법제/assembly-activity
 agency:
@@ -14,13 +14,268 @@ synonyms:
   - 국회
   - 입법
   - 의안
+  - 국회의원 명단
+  - 의원 인적사항
+  - 지역구 의원 조회
+  - 국회의원 정당 소속
+  - 의원 연락처
+  - 열린국회정보
+  - 의원 약력
+  - 소속 위원회
+summary_user: 국회의원 한 명당 한 행으로 이름(한글·한자·영문), 생년월일, 직책, 정당, 선거구와 선거구 구분, 소속 위원회, 당선 횟수와 대수, 성별, 연락처·홈페이지, 보좌관·비서, 약력, 의원회관 호실, 사진을 담는 전국 단위 의원 인적 정보다. 시민이나 기자, 분석가가 "우리 지역구 의원은 누구이고 어느 정당·위원회 소속이며 몇 선인가"를 확인하거나, 정당별·위원회별 의원 구성을 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했다. 그래서 표결·회의·의안 데이터와는 의원 코드(NAAS_CD)나 의원 이름으로 같은 국회 계열 데이터끼리 맞춰 이어 쓴다.
 description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
 team:
   dept: 기획조정실 디지털운영담당관실
-schema: {}
+services:
+  - op: ALLNAMEMBER
+    name: ALLNAMEMBER
+    endpoint: https://open.assembly.go.kr/portal/openapi/ALLNAMEMBER
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: NAAS_CD
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - D2V1479C
+        - T2T8225E
+        - 85U15859
+      stats:
+        unique: 100
+    - name: NAAS_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 강경식
+        - 강선영
+        - 강영훈
+      stats:
+        unique: 97
+    - name: NAAS_CH_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 姜慶植
+        - 葛奉根
+        - 姜景淑
+      stats:
+        unique: 99
+    - name: NAAS_EN_NM
+      type: string
+      null_rate: 0.33
+      sample_values:
+        - KANG KYUNGSOOK
+        - Kang, Kyong-shik
+        - Kang, Kyung-sik
+      stats:
+        unique: 67
+    - name: BIRDY_DIV_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 음
+        - 양
+      stats:
+        unique: 2
+    - name: BIRDY_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '1932-04-06'
+        - '1967-05-02'
+        - '1936-05-10'
+      stats:
+        min: '1899-06-21'
+        max: '1979-08-23'
+        unique: 100
+    - name: DTY_NM
+      type: code
+      null_rate: 0.73
+      sample_values:
+        - 국회의원
+        - 위원
+        - 국회의원/국회의원/국회의원/국회의원/국회의원
+      stats:
+        unique: 6
+    - name: PLPT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 민주당
+        - 무소속
+        - 더불어민주당/더불어민주당
+      stats:
+        unique: 63
+    - name: ELECD_NM
+      type: string
+      null_rate: 0.13
+      sample_values:
+        - 비례대표
+        - 전북 군산시,옥구
+        - 경남 하동
+      stats:
+        unique: 72
+    - name: ELECD_DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지역구
+        - 지역구/지역구
+        - 비례대표
+      stats:
+        unique: 20
+    - name: CMIT_NM
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 농림축산식품해양수산위원회
+        - 교육위원회, 예산결산특별위원회
+        - 국토교통위원회, 예산결산특별위원회
+      stats:
+        unique: 10
+    - name: BLNG_CMIT_NM
+      type: string
+      null_rate: 0.07
+      sample_values:
+        - 재정경제위원회
+        - 농림축산식품해양수산위원회
+        - 국방위원회
+      stats:
+        unique: 88
+    - name: RLCT_DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 초선
+        - 재선
+        - 3선
+      stats:
+        unique: 6
+    - name: GTELT_ERACO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제21대, 제22대
+        - 제14대
+        - 제22대
+      stats:
+        unique: 48
+    - name: NTR_DIV
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남
+        - 여
+      stats:
+        unique: 2
+    - name: NAAS_TEL_NO
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 02-784-5601
+        - 02-784-5275
+        - 02-784-2747~9
+      stats:
+        unique: 11
+    - name: NAAS_EMAIL_ADDR
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - gracesook52@rebuildingk.kr
+        - kds21341@naver.com
+        - mainsail440@daum.net
+      stats:
+        unique: 11
+    - name: NAAS_HP_URL
+      type: code
+      null_rate: 0.91
+      sample_values:
+        - https://blog.naver.com/grace6752
+        - ' http://blog.naver.com/dulipapa'
+        - https://blog.naver.com/0909kmg
+      stats:
+        unique: 9
+    - name: AIDE_NM
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 김홍, 서용선
+        - 박홍규, 유진영
+        - 이왕재, 정진태
+      stats:
+        unique: 11
+    - name: CHF_SCRT_NM
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 김동준, 이경열
+        - 이기백, 장충석
+        - 배경민, 홍미하
+      stats:
+        unique: 11
+    - name: SCRT_NM
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 김한올, 김은민, 이현, 김희경, 채윤아, 한고은
+        - 박순권, 김현정, 박동혁, 류고운, 도다예
+        - 김재기, 김동현, 김소연, 조은주
+      stats:
+        unique: 11
+    - name: BRF_HST
+      type: code
+      null_rate: 0.82
+      sample_values:
+        - "2024.5~ 제22대 국회의원 (비례대표/조국혁신당)\r\n2021.2~2023.2 장애인정책조정위원회 위원\r\n2021 대통령직속 국가균형발전위원"
+        - "[학력]\r\n마산공고(26회)\r\n창원대학교 행정학과\r\n중앙대학교 행정대학원 지방의회과 석사\r\n창원대학교 대학원 행정학 박사\r\n\r\n[경력]\r\n현) "
+        - "[학력]\r\n송정초등학교\r\n안심중학교\r\n경북대학교 사범대학 부속고등학교\r\n영남대학교 경영대학원 경영학 석사\r\n영남대학교 대학원 경영학 박사\r\n\r\n"
+      stats:
+        unique: 18
+    - name: OFFM_RNUM_NO
+      type: code
+      null_rate: 0.89
+      sample_values:
+        - 의원회관 515호
+        - 의원회관 341호
+        - 의원회관 814호
+      stats:
+        unique: 11
+    - name: NAAS_PIC
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://www.assembly.go.kr/static/portal/img/openassm/D2V1479C.jpg
+        - https://www.assembly.go.kr/static/portal/img/openassm/new/68f83caf0c9e4546b1694e
+        - https://www.assembly.go.kr/static/portal/img/openassm/85U15859.jpg
+      stats:
+        unique: 100
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - BIRDY_DT
 cycle: default
 classification:
   subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
@@ -35,18 +290,20 @@ classification:
 claims:
   - id: c-15126133-01
     kind: access
-    value: 외부 사이트 외부 사이트 인증키 필요 (? 파라미터 ?) — 포털 활용신청과 별개. None 실호출  성공
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
     evidence:
       - type: measured
         source: probe/runs/15126133.json
-        detail: ops_ok None
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
       - type: admin_review
         source: knowledge/key_issuers.yaml
         by: 구름
-        detail: 발급처 외부 사이트
+        detail: 발급처 open.assembly.go.kr
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
+    valid_until: '2027-04-07'
   - id: c-15126133-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -57,28 +314,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-07'
   - id: c-15126133-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15126133.json
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-06'
+        detail: 컬럼 24개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-07'
   - id: c-15126133-04
     kind: coverage
     value: 범위 전국 · 행정단위 전국·비공간
     evidence:
       - type: measured
         source: probe/runs/15126133.json
+        observed_at: '2026-10-06'
         detail: total None, rows None
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
+    valid_until: '2027-04-07'
   - id: c-15126133-06
     kind: admin_note
     value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
@@ -102,6 +364,23 @@ claims:
       generated_by: pds.dossier.claims
     rank: normal
 verification:
-  verdict: 미실행
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
   channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126133.json
+  stats: probe/stats/15126133.json
+  data: probe/data/15126133/
+limits: 호출에는 open.assembly.go.kr에서 따로 발급받는 인증키(KEY)가 필요하며, 포털 활용신청과는 별개다. 공통 행정코드 같은 전역 조인 키가 없어 지역 통계 등 다른 기관 데이터와는 선거구명 같은 이름 매핑으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126133-01
+    - c-15126133-03
+    - c-15126133-04
+    - c-15126133-06
+  dropped_citations: 0
 status: active

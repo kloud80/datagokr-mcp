@@ -1,4 +1,5 @@
-# Dataset 15108939 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15108939 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15108939'
 tier: verified
 title: 경기도 김포시_주정차단속구역
@@ -22,6 +23,7 @@ synonyms:
   - 김포 주차단속
   - 주정차 단속 위치
   - CCTV 주차단속 구역
+summary_user: 김포시 관내 주정차 단속구역을 구간별로 담은 파일로, 도로명·상세 위치·방향·총연장과 평일·토요일·공휴일별 단속 시작·종료 시각, 시행일·해제일, 관리기관 연락처를 한 행에 담는다(zip 약 166KB, csv·SHP). 운전자나 상가 사업자가 '이 도로 구간은 몇 시부터 몇 시까지 주정차를 단속하나, 주말·공휴일에도 단속하나'를 확인하거나, 분석가가 단속구간 분포를 지도에 올려 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 시도명·시군구명(SGG_NM)이나 도로명 같은 이름 매칭으로만 다른 데이터와 이을 수 있다.
 description_portal: 경기도 김포시의 주정차단속구역에 대한 정보를 제공합니다. 제공 항목으로는 구역구분, 주소, 단속시간 등으로 구성되어있습니다. 본 데이터를 통해 주정차단속 구간과 각 구간별 단속시간 등을 알 수 있습니다. 본 공공데이터는 매년마다 정기적인 갱신을 통하여 최신정보를 반영하고 있으며 csv 및 공간정보데이터파일(SHP) 파일 형태로 제공합니다. 공간정보데이터파일은 QGIS, ArcGIS 등 공간정보 소프트웨어를 이용하셔야 합니다해당 데이터와 관련하여 궁금하신 사항이 있으실 경우 김포시 스마트도시과로 연락주시기 바랍니다.
 accrual_periodicity: 연간
 team:
@@ -255,6 +257,16 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - SGG_NM
+  space_via: name
+  time: day
+  time_fields:
+    - ENFC_YMD
+    - RMV_YMD
+    - CRTR_YMD
 cycle: default
 classification:
   subsector_name: 규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)
@@ -356,8 +368,6 @@ verification:
   run: probe/runs/15108939.json
   stats: probe/stats/15108939.json
   data: probe/data/15108939/
-status: active
-summary_user: 김포시 관내 주정차 단속구역을 구간별로 담은 파일로, 도로명·상세 위치·방향·총연장과 평일·토요일·공휴일별 단속 시작·종료 시각, 시행일·해제일, 관리기관 연락처를 한 행에 담는다(zip 약 166KB, csv·SHP). 운전자나 상가 사업자가 '이 도로 구간은 몇 시부터 몇 시까지 주정차를 단속하나, 주말·공휴일에도 단속하나'를 확인하거나, 분석가가 단속구간 분포를 지도에 올려 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 시도명·시군구명(SGG_NM)이나 도로명 같은 이름 매칭으로만 다른 데이터와 이을 수 있다.
 limits: 법정동·도로명 코드 같은 공통 키가 없어 다른 단속·교통 데이터와 붙일 때는 이름 매칭에 기대야 한다. 범위는 김포시 한 곳뿐이라 다른 시군구 비교에는 해당 지자체 파일을 따로 모아야 한다.
 review:
   summary: draft
@@ -369,3 +379,4 @@ review:
     - c-15108939-03
     - c-15108939-04
   dropped_citations: 0
+status: active

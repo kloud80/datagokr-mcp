@@ -1,4 +1,5 @@
-# Dataset 15125475 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125475 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125475'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 사업자의 부담금정보 제공 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 가맹 보증금
   - 정보공개서 부담금
   - 프랜차이즈 브랜드 비용 비교
+summary_user: 가맹사업 기준년도별로 브랜드 하나당 가맹점 사업자가 내는 가맹금·교육비·보증금·기타 비용과 그 합계를 금액 범위값으로 담은 전국 단위 데이터이며, 브랜드명과 업종 대·중분류가 함께 나온다. 창업 예정자가 '이 브랜드로 가맹점을 열려면 초기 부담금이 얼마쯤 드나'를 확인하거나, 같은 업종 안에서 브랜드별 부담금을 비교하는 데 쓴다. 브랜드관리번호·가맹본부관리번호는 같은 기관(공정위) 가맹정보 서비스끼리 잇는 데 쓰고, 사업자등록번호 같은 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑으로만 연결한다.
 description_portal: 브랜드 가맹점 사업자의 부담금 정보에 대한 기준년도, 브랜드관리번호를 이용하여 브랜드명, 가맹사업자가맹금액, 교육금액 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -81,6 +83,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100006
@@ -89,6 +92,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000001
@@ -168,12 +172,27 @@ schema:
         - (단위 :천원)
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - smtnAmtScopeVal
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -218,7 +237,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125475-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125475.json
@@ -283,8 +302,6 @@ verification:
   run: probe/runs/15125475.json
   stats: probe/stats/15125475.json
   data: probe/data/15125475/
-status: active
-summary_user: 가맹사업 기준년도별로 브랜드 하나당 가맹점 사업자가 내는 가맹금·교육비·보증금·기타 비용과 그 합계를 금액 범위값으로 담은 전국 단위 데이터이며, 브랜드명과 업종 대·중분류가 함께 나온다. 창업 예정자가 '이 브랜드로 가맹점을 열려면 초기 부담금이 얼마쯤 드나'를 확인하거나, 같은 업종 안에서 브랜드별 부담금을 비교하는 데 쓴다. 브랜드관리번호·가맹본부관리번호는 같은 기관(공정위) 가맹정보 서비스끼리 잇는 데 쓰고, 사업자등록번호 같은 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑으로만 연결한다.
 limits: 금액은 정확한 값이 아니라 범위값(명세상 편차 5%)이라 개별 가맹점의 실제 납부액으로 보면 안 된다. 실측 컬럼에서 전역 조인 키가 확인되지 않아 타 기관 데이터와 직접 결합하기 어렵다.
 review:
   summary: draft
@@ -297,3 +314,4 @@ review:
     - c-15125475-04
     - c-15125475-07
   dropped_citations: 0
+status: active

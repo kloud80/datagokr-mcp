@@ -65,6 +65,7 @@ schema:
     - name: orgNo
       title: 사업소코드
       type: code
+      semantic_type: koen_plant_unit
       null_rate: 0.0
       sample_values:
         - SP
@@ -75,6 +76,7 @@ schema:
     - name: hoki
       title: 호기
       type: code
+      semantic_type: koen_plant_unit
       null_rate: 0.0
       sample_values:
         - '8589'
@@ -98,6 +100,7 @@ schema:
     - name: itemCode
       title: 항목코드
       type: code
+      semantic_type: koen_env_item_cd
       null_rate: 0.0
       sample_values:
         - FLW
@@ -131,9 +134,29 @@ schema:
         p50: 20220210
         max: 20220326
         unique: 13
+  foreign_keys:
+    - fields:
+        - orgNo
+      reference:
+        key: koen_plant_unit
+      evidence: measured
+    - fields:
+        - hoki
+      reference:
+        key: koen_plant_unit
+      evidence: measured
+    - fields:
+        - itemCode
+      reference:
+        key: koen_env_item_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - ym
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -177,7 +200,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15119615-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koen_plant_unit(orgNo), koen_plant_unit(hoki), koen_env_item_cd(itemCode)'
     evidence:
       - type: measured
         source: probe/stats/15119615.json

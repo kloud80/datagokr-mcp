@@ -1,4 +1,5 @@
-# Dataset 15118806 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15118806 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15118806'
 tier: verified
 title: 건강보험심사평가원_주부상병(3단) 성별 연령군별 건강보험 진료 통계
@@ -22,6 +23,7 @@ synonyms:
   - KCD 3단 상병
   - 심평원 진료통계
   - 청구건수
+summary_user: KCD 3단 상병(주진단·부진단 전체)별로 진료년도·성별·5세 단위 연령군에 따른 건강보험 환자수와 명세서 청구건수를 담은 전국 단위 집계 파일이다. 보건 분석가나 연구자가 '특정 질병의 환자가 어느 성별·연령대에 많은가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어, 상병코드(3자리)를 심평원 상병마스터 같은 KCD 코드표와 이름·코드로 매핑해 이어 쓴다.
 description_portal: 'KCD 3단 상병별(주진단, 부진단 전체) 성별, 5세 단위 연령군별 환자수 및 청구건수 / 진료일자 기준(심사분은 각 진료년월+4개월) (예) 진료년월: 2024.1월~12월, 심사년월: 2024.1월~2025.4월 / 보험자: 건강보험 / 한방상병 제외※ 상병코드는 통계청이 발표한 제8차 한국표준질병·사인 분류(KCD)를 반영하여 건강보험심사평가원에서 부여, 관리하는 3~5자리의 질병분류기호로 의료기관의 요양급여비용 청구에 활용됨.  본 통계는 의료기관에서 청구명세서에 기입하는 주진단명, 부진단명에서 발췌한 3자리의 상병코드를 기준으로 산출하였음. 상병코드에 대한 정보는 건강보험심사평가원 홈페이지 제도·정책 > 보험인정기준> 자료실 "상병마스터" 로 검색 가능   ※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 연령별 환자는 명세서에 기재된 수진자의 만(滿)나이 기준으로 범주 내 동일인의 중복을 제거한 값이지만, 진료시점에 따라 중복집계될 수 있으며 다른 범주와 단순 합산할 경우 중복이 발생할 수 있음'
 legal_basis_portal: 국민건강보험범
 accrual_periodicity: 연간
@@ -46,6 +48,7 @@ schema:
         unique: 1
     - name: 상병코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - A00
@@ -94,12 +97,22 @@ schema:
         p50: 754.5
         max: 14280284
         unique: 20731
+  foreign_keys:
+    - fields:
+        - 상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15118806-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15118806.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15118806.json
   stats: probe/stats/15118806.json
   data: probe/data/15118806/
-status: active
-summary_user: KCD 3단 상병(주진단·부진단 전체)별로 진료년도·성별·5세 단위 연령군에 따른 건강보험 환자수와 명세서 청구건수를 담은 전국 단위 집계 파일이다. 보건 분석가나 연구자가 '특정 질병의 환자가 어느 성별·연령대에 많은가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어, 상병코드(3자리)를 심평원 상병마스터 같은 KCD 코드표와 이름·코드로 매핑해 이어 쓴다.
 limits: 전국 집계라 시군구 등 지역별 비교에는 쓰지 못하며, 심평원 청구 기준 값이라 공단(자격 기준) 통계와 수치가 다를 수 있다. 다른 데이터와 직접 연결할 공통 키가 없어 상병코드 매핑으로만 연결된다.
 review:
   summary: draft
@@ -225,3 +236,4 @@ review:
     - c-15118806-04
     - c-15118806-06
   dropped_citations: 0
+status: active

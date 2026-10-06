@@ -1,4 +1,5 @@
-# Dataset 15147986 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15147986 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15147986'
 tier: verified
 title: 해양수산부_공동활용체계_정선해양 표준수심 기초코드
@@ -21,6 +22,7 @@ synonyms:
   - 정선코드
   - 해양관측 기초코드
   - 정점별 수심
+summary_user: 해양수산부가 정한 정선(관측 선)과 그 위 정점별로 표준 수심(m)을 짝지은 기초 코드표로, 정선코드·정점코드·수심 세 항목만 담은 전국 단위 비공간 CSV 파일(약 16KB)이다. 해양 관측자료를 다루는 분석가나 행정 담당자가 '이 정선·정점의 표준 수심은 몇 m인가'를 확인하거나 정점 코드를 해석할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 정선해양관측 자료와 정선·정점 코드를 맞춰 붙이는 방식으로만 연결한다.
 description_portal: 이 데이터는 해양수산부에서 정선해양표준수심기초코드에 대한 정보를 제공하기 위해 수집한 데이터입니다.본 데이터의 주요 내용은 정선코드, 정점코드, 수심(m) 데이터로 구성되어 있습니다.본 데이터는 정선해양표준수심기초코드 확인을 통한 다양한 해양 행정 및 정책 업무를 위한 기초 자료로 활용될 수 있습니다.정선해양표준수심이란 해양에서 일정한 간격으로 선정된 지점들을 의미하며, 이 지점에서 측정된 해수의 깊이을 의미합니다.본 데이터는 해양수산발전기본법 제32조 및 해양수산정보 공동이용 종합계획에 따라대국민 데이터 개방 확대 및 이용 촉진, 정책활용 지원 목표를 위해 수집, 관리되고 있는 데이터 입니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 정선
       type: number
+      semantic_type: ksod_line_station
       null_rate: 0.0
       sample_values:
         - '105'
@@ -46,6 +49,7 @@ schema:
         unique: 24
     - name: 정점
       type: number
+      semantic_type: ksod_line_station
       null_rate: 0.0
       sample_values:
         - '5'
@@ -68,6 +72,17 @@ schema:
         p50: 30
         max: 500
         unique: 14
+  foreign_keys:
+    - fields:
+        - 정선
+      reference:
+        key: ksod_line_station
+      evidence: measured
+    - fields:
+        - 정점
+      reference:
+        key: ksod_line_station
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -110,7 +125,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15147986-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ksod_line_station(정선), ksod_line_station(정점)'
     evidence:
       - type: measured
         source: probe/stats/15147986.json
@@ -175,8 +190,6 @@ verification:
   run: probe/runs/15147986.json
   stats: probe/stats/15147986.json
   data: probe/data/15147986/
-status: active
-summary_user: 해양수산부가 정한 정선(관측 선)과 그 위 정점별로 표준 수심(m)을 짝지은 기초 코드표로, 정선코드·정점코드·수심 세 항목만 담은 전국 단위 비공간 CSV 파일(약 16KB)이다. 해양 관측자료를 다루는 분석가나 행정 담당자가 '이 정선·정점의 표준 수심은 몇 m인가'를 확인하거나 정점 코드를 해석할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 정선해양관측 자료와 정선·정점 코드를 맞춰 붙이는 방식으로만 연결한다.
 limits: 정점의 위경도 같은 공간 정보가 없는 비공간 코드표라 이것만으로 지도화나 위치 기반 분석은 하지 못한다. 법정동·행정구역 등 표준 코드와 이어지는 키가 없어 다른 기관 데이터와는 이름·코드 매핑을 직접 해야 한다.
 review:
   summary: draft
@@ -188,3 +201,4 @@ review:
     - c-15147986-03
     - c-15147986-04
   dropped_citations: 0
+status: active

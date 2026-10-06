@@ -1,4 +1,5 @@
-# Dataset 15080955 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15080955 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080955'
 tier: verified
 title: 소방청_울산시 재난별 화학물질 데이터
@@ -19,6 +20,7 @@ synonyms:
   - CAS번호 화학사고
   - 울산소방본부 재난 화학물
   - 위험물 누출 출동
+summary_user: 울산소방본부가 2020년 화학물질 관련 긴급구조 출동을 건별로 기록한 CSV 파일(약 28만 바이트)로, 등록일, 화학물질 한글·영문명과 CAS 등록번호, 발생 주소(시도·구군·동·도로명), 긴급구조 종별·분류·규모, 상황종료일시, 관할 소방서·센터를 담는다. 분석가나 지자체 안전 담당자가 "울산에서 어떤 화학물질 사고가 어느 동네에서 어떤 규모로 났고 어느 센터가 관할했는가"를 따질 때 쓴다. 전역 조인 키는 없어서, CAS 등록번호로 화학물질 정보와, 주소·관할서명으로 다른 소방 데이터와 이름 기준으로 맞춰 잇는다.
 description_portal: 울산소방본부에서 제공하는 2020년 재난별 화학물질 데이터로서 재난화학물 등록일, 화학물질 영문명, 긴급구조 분류명, 긴급구조 규모명 등의 정보를 제공하는 데이터임
 accrual_periodicity: 연간
 team:
@@ -71,6 +73,7 @@ schema:
         unique: 180
     - name: cas등록번호
       type: string
+      semantic_type: cas_no
       null_rate: 0.0867
       sample_values:
         - 68334-30-5
@@ -205,12 +208,26 @@ schema:
         - '지상  '
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - cas등록번호
+      reference:
+        key: cas_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - 읍면동 일련번호
+  space_via: name
+  time: day
+  time_fields:
+    - 상황종료일시
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -247,7 +264,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080955-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cas_no(cas등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15080955.json
@@ -312,8 +329,6 @@ verification:
   run: probe/runs/15080955.json
   stats: probe/stats/15080955.json
   data: probe/data/15080955/
-status: active
-summary_user: 울산소방본부가 2020년 화학물질 관련 긴급구조 출동을 건별로 기록한 CSV 파일(약 28만 바이트)로, 등록일, 화학물질 한글·영문명과 CAS 등록번호, 발생 주소(시도·구군·동·도로명), 긴급구조 종별·분류·규모, 상황종료일시, 관할 소방서·센터를 담는다. 분석가나 지자체 안전 담당자가 "울산에서 어떤 화학물질 사고가 어느 동네에서 어떤 규모로 났고 어느 센터가 관할했는가"를 따질 때 쓴다. 전역 조인 키는 없어서, CAS 등록번호로 화학물질 정보와, 주소·관할서명으로 다른 소방 데이터와 이름 기준으로 맞춰 잇는다.
 limits: 표준 조인 키가 없어 다른 데이터와는 화학물질명·CAS 번호·주소·소방서명을 직접 맞춰야 한다. 범위 메타데이터는 전국·읍면동으로 적혀 있지만, 제목과 설명은 울산 2020년 자료이므로 다른 지역이나 연도의 현황으로 확대 해석하지 않는다.
 review:
   summary: draft
@@ -325,3 +340,4 @@ review:
     - c-15080955-03
     - c-15080955-04
   dropped_citations: 0
+status: active

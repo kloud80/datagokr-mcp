@@ -1,4 +1,5 @@
-# Dataset 15088605 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15088605 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088605'
 tier: verified
 title: 국가철도공단_철도공단사업
@@ -22,6 +23,7 @@ synonyms:
   - 철도 신설 노선 사업
   - 완공 철도사업
   - 기획단계 철도사업
+summary_user: 국가철도공단이 추진하는 철도사업을 사업 한 건당 한 행으로 담은 파일 데이터로, 사업명·사업내용(구간·계획 등 개요)·총사업비·진행단계(기획/진행중/완공)·시작·종료일자·사업코드를 담는다(전국 범위, 비공간 데이터). 특정 철도 노선 건설사업이 지금 어느 단계이고 총사업비와 사업기간이 얼마인지 확인하려는 국민·분석가가 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업명·구간 이름 매칭이나 공단 자체 사업코드(사업코드)로만 연결한다.
 description_portal: '국가철도공단에서 제공하는 철도공단 사업정보 내용을 제공합니다. 정보는 국가철도공단 사업관련 사업명칭/사업내용/사업진행단계/사업기간/총사업비의 내용으로 구성되어있습니다. 사업내용필드에 사업상세내역/사업구간/사업계획/총사업비/사업기간등의 사업개요 정보를 제공합니다. 진행단계 구분은 기획단계사업/진행중사업/완공사업으로 나눠져 있으며 진행단계별로 국가철도공단의 사업정보를 확인 할 수 있습니다.(제공정보: 사업명, 사업내용, 총사업비, 진행단계, 사업시작일자, 사업종료일자, 사업코드)'
 accrual_periodicity: 연간
 team:
@@ -69,6 +71,7 @@ schema:
         unique: 82
     - name: 사업코드
       type: number
+      semantic_type: krnr_project_cd
       null_rate: 0.0
       sample_values:
         - '339'
@@ -115,12 +118,23 @@ schema:
         - 기타사업
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: krnr_project_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 종료일자
+    - 시작일자
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -156,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088605-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: krnr_project_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15088605.json
@@ -210,8 +224,6 @@ verification:
   run: probe/runs/15088605.json
   stats: probe/stats/15088605.json
   data: probe/data/15088605/
-status: active
-summary_user: 국가철도공단이 추진하는 철도사업을 사업 한 건당 한 행으로 담은 파일 데이터로, 사업명·사업내용(구간·계획 등 개요)·총사업비·진행단계(기획/진행중/완공)·시작·종료일자·사업코드를 담는다(전국 범위, 비공간 데이터). 특정 철도 노선 건설사업이 지금 어느 단계이고 총사업비와 사업기간이 얼마인지 확인하려는 국민·분석가가 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업명·구간 이름 매칭이나 공단 자체 사업코드(사업코드)로만 연결한다.
 limits: 표준 조인 키나 행정구역 코드가 없어 지역별 집계나 다른 철도 데이터와의 자동 결합이 어렵고, 사업구간 정보는 사업내용 텍스트 안에 섞여 있다. 비공간 데이터라 사업 위치를 지도에 바로 표시하지 못한다.
 review:
   summary: draft
@@ -223,3 +235,4 @@ review:
     - c-15088605-03
     - c-15088605-04
   dropped_citations: 0
+status: active

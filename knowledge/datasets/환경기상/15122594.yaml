@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 시설코드
       type: code
+      semantic_type: wq_station_cd
       null_rate: 0.0
       sample_values:
         - '2.01E+04'
@@ -53,6 +54,7 @@ schema:
         unique: 5144
     - name: 환경부코드
       type: code
+      semantic_type: wq_station_cd
       null_rate: 0.0092
       sample_values:
         - '2.01E+13'
@@ -62,6 +64,7 @@ schema:
         unique: 5857
     - name: 표준유역코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '202208'
@@ -173,6 +176,7 @@ schema:
         unique: 5606
     - name: 시설코드.1
       type: code
+      semantic_type: wq_station_cd
       null_rate: 0.9242
       sample_values:
         - 5302D006
@@ -2082,9 +2086,36 @@ schema:
         p50: -9999
         max: 0.026
         unique: 5
+  foreign_keys:
+    - fields:
+        - 시설코드
+      reference:
+        key: wq_station_cd
+      evidence: measured
+    - fields:
+        - 환경부코드
+      reference:
+        key: wq_station_cd
+      evidence: measured
+    - fields:
+        - 표준유역코드
+      reference:
+        key: river_cd
+      evidence: measured
+    - fields:
+        - 시설코드.1
+      reference:
+        key: wq_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: month
+  time_fields:
+    - 측정년월
+    - 측정년월.2
+    - 측정년월.3
 cycle: default
 classification:
   subsector_name: 수질 측정 (수질측정망·자동측정 실시간·조류경보·수질검사)
@@ -2121,7 +2152,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15122594-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: wq_station_cd(시설코드), wq_station_cd(환경부코드), river_cd(표준유역코드), wq_station_cd(시설코드.1)'
     evidence:
       - type: measured
         source: probe/stats/15122594.json

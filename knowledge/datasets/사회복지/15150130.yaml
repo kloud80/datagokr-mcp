@@ -1,4 +1,5 @@
-# Dataset 15150130 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15150130 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150130'
 tier: verified
 title: 성평등가족부_청소년활동 나눔연계 정보
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 활동 프로그램 참여 내역
   - 청소년 자원봉사 기록
   - 나눔 프로그램 일정
+summary_user: 청소년이 참여한 나눔연계 프로그램의 연계 실적을 건별로 담으며, 연계일련번호·프로그램번호·실적번호와 활동명·활동장소·활동 시작/종료 일시, 처리구분과 연계상태를 기록한다. 청소년 활동 기관 담당자나 분석가가 '어떤 나눔 프로그램이 언제 어디서 진행됐고 연계가 처리됐는가'를 확인하거나 참여 현황을 집계하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 프로그램관리번호·프로그램번호 같은 같은 기관 내부 코드나 활동명·장소 이름 매핑으로만 잇는다.
 description_portal: 성평등가족부 청소년활동 나눔연계 정보는 청소년이 참여한 나눔연계 프로그램과 관련된 기본 정보 및 활동 내역을 체계적으로 기록하고 관리하기 위해 제공되는 자료입니다. 프로그램명, 참여자 정보, 활동 일자, 참여 내역, 담당자 정보 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 프로그램 운영 관리, 참여 현황 분석, 참여자 안내, 정책 평가, 기록 관리, 교육 지도, 프로그램 개선 등 다양한 목적으로 활용할 수 있습니다. 또한 나눔연계 정보는 프로그램 참여 기록과 운영 신뢰성을 확보하는 중요한 자료입니다.
 team:
   dept: 정보통계담당관실
@@ -76,6 +78,7 @@ schema:
     - name: prgrmMngNo
       title: 프로그램관리번호
       type: number
+      semantic_type: vltr_prgrm_no
       null_rate: 0.0
       sample_values:
         - '20937896'
@@ -89,6 +92,7 @@ schema:
     - name: prgrmNo
       title: 프로그램번호
       type: number
+      semantic_type: vltr_prgrm_no
       null_rate: 0.0
       sample_values:
         - '9735071'
@@ -167,12 +171,28 @@ schema:
         - 집, 봉사활동장소(줌 참여하여 실행하는 모습 확인/봉사활동일지 작성)
       stats:
         unique: 225
+  foreign_keys:
+    - fields:
+        - prgrmMngNo
+      reference:
+        key: vltr_prgrm_no
+      evidence: measured
+    - fields:
+        - prgrmNo
+      reference:
+        key: vltr_prgrm_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - actvBgngDt
+    - actvEndDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -217,7 +237,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15150130-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vltr_prgrm_no(prgrmMngNo), vltr_prgrm_no(prgrmNo)'
     evidence:
       - type: measured
         source: probe/stats/15150130.json
@@ -271,8 +291,6 @@ verification:
   run: probe/runs/15150130.json
   stats: probe/stats/15150130.json
   data: probe/data/15150130/
-status: active
-summary_user: 청소년이 참여한 나눔연계 프로그램의 연계 실적을 건별로 담으며, 연계일련번호·프로그램번호·실적번호와 활동명·활동장소·활동 시작/종료 일시, 처리구분과 연계상태를 기록한다. 청소년 활동 기관 담당자나 분석가가 '어떤 나눔 프로그램이 언제 어디서 진행됐고 연계가 처리됐는가'를 확인하거나 참여 현황을 집계하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 프로그램관리번호·프로그램번호 같은 같은 기관 내부 코드나 활동명·장소 이름 매핑으로만 잇는다.
 limits: 범위는 전국이지만 행정구역 코드가 없는 비공간 데이터라 시군구·시도 단위 지역 통계와 바로 연결되지 않는다. 이벤트 단위로 생성된 뒤 바뀌지 않는 기록이므로 실시간 운영 현황으로 해석하지 않는다.
 review:
   summary: draft
@@ -285,3 +303,4 @@ review:
     - c-15150130-04
     - c-15150130-06
   dropped_citations: 0
+status: active

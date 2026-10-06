@@ -1,0 +1,227 @@
+# Dataset 15076766 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076766'
+tier: verified
+title: 한국도로공사_고속도로 차로제어 시스템 정보
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076766/openapi.do
+synonyms:
+  - 고속도로
+  - 차로
+  - 제어
+  - 통제
+  - 운영
+  - 흐름
+  - 스마트
+  - 시스템
+  - 차로통제
+  - 차선 통제
+  - 고속도로 통제 구간
+  - 콘존
+  - LCS
+  - 도로공사 실시간 교통
+  - 차로 운영
+summary_user: 고속도로 차로제어 장비가 설치된 구간별로 노선, 방향, 구간(콘존) 이름 등 차로 통제 운영 정보를 담는 전국 범위의 실시간 조회 API이다. 운전자나 교통 분석가가 지금 어느 고속도로 구간에서 차로가 통제되고 있는지 확인하거나, 조회 결과를 쌓아 차로 통제가 잦은 구간을 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 노선 코드·노선명이나 구간 이름 매핑, 또는 같은 한국도로공사 데이터의 코드로만 잇는다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 차로제어 시스템의 운영 정보를 조회할 수 있는 OpenAPI 서비스이다.이 API는 차로제어 장비가 설치된 구간의 위치, 제어 방식, 운영 상태, 통제 차로 수, 시작 및 종료 시점 등의 정보를 제공한다.차로제어는 돌발 상황, 공사, 교통 혼잡 등 다양한 원인으로 인해 특정 차로를 통제하거나 해제하여 교통 흐름을 안정적으로 유지하는 데 활용된다.제공 항목에는 노선명, 방향, 시작지점, 종료지점, 제어 유형, 운영 시간, 제어 상태, 적용 일시 등이 포함된다.사용자는 본 데이터를 통해 교통 혼잡 예측, 긴급차량 우선 통행 확보, 스마트 교통 시스템 연계, 차로 운영 정책 수립 등에 활용할 수 있다.API는 XML 및 JSON 형식으로 제공되며, 인증키를 발급받아 표준화된 방식으로 호출 가능하다.정보는 정기적으로 갱신되며, 공공데이터 포털을 통해 누구나 자유롭게 이용할 수 있다.한국도로공사는 본 API를 통해 안전하고 효율적인 도로 운영 환경을 구현하고, 국민에게 정확한 도로 정보를 제공하고자 한다.
+team:
+  dept: AI데이터처
+services:
+  - op: lcsList
+    name: lcsList
+    endpoint: https://data.ex.co.kr/openapi/lcs/lcsList
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: conzoneId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0010CZE440
+        - 0010CZS400
+        - 0010CZE405
+      stats:
+        unique: 53
+    - name: conzoneName
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 기흥IC-수원신갈IC
+        - 남사진위IC-안성JC
+        - 남사진위IC-오산IC
+      stats:
+        unique: 53
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - S
+        - E
+      stats:
+        unique: 2
+    - name: lineCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0500'
+        - '1020'
+      stats:
+        min: 10
+        p50: 150
+        max: 1020
+        unique: 9
+    - name: lineName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 영동선
+        - 남해1지선
+      stats:
+        unique: 9
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6663
+  rank_in_sector: 589
+  brm: 교통물류 - 도로
+  why: 차로제어 시스템 위치·운영 상태
+claims:
+  - id: c-15076766-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076766.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076766-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076766-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076766.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076766-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076766.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076766-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076766-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076766-08
+    kind: admin_note
+    value: wave3 p3 · 이동 제안 → 교통물류 - 도로 / 실시간 소통
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076766.json
+  stats: probe/stats/15076766.json
+  data: probe/data/15076766/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr)에서 인증키를 따로 받아 경로 파라미터로 넣어야 한다. 실시간 조회 성격이라 과거 이력은 직접 적재해야 하고, 좌표가 없는 비공간 데이터라 지도 연계에는 별도 매핑이 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076766-01
+    - c-15076766-03
+    - c-15076766-04
+    - c-15076766-06
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15061924 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061924 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061924'
 tier: verified
 title: 방위사업청_피복및보급품 입찰정보
@@ -25,6 +26,7 @@ synonyms:
   - 군복 입찰
   - 방사청 입찰공고
   - 군납
+summary_user: 방위사업청이 최근 4개년간 추진한 군 피복류와 각종 보급품 입찰을 건별로 담은 파일로, 공고일자·발주처·입찰건명·요구연도·판단번호·금액을 담는다(전국 단위, 약 12KB CSV). 피복·보급품 납품 업체가 과거 어떤 품목이 언제 얼마 규모로 발주됐는지 보고 다음 해 수요를 가늠하거나, 정책 담당자가 품목별 조달비용 추이를 점검하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 국방전자조달 입찰공고·결과·계약 데이터와는 판단번호나 입찰건명 같은 이름 매칭으로만 이어 쓰며, 국방전자조달은 나라장터와 별도 체계이므로 정부조달 데이터와 함께 볼 때는 같은 개념으로 대응시켜 본다.
 description_portal: 최근 4개년간 방위사업청이 추진한 피복 및 보급품 관련 입찰정보를 제공합니다. 주요 제공 항목은 공고일자, 발주처, 입찰건명, 요구연도, 판단번호, 계약금액으로 구성되어 있으며, 군 피복류와 각종 보급품 조달 현황을 한눈에 파악할 수 있습니다. 이를 통해 업체는 과거 발주 추이를 기반으로 향후 조달 시장의 규모와 수요를 예측할 수 있으며, 경쟁사 대비 전략을 수립하는 데 도움을 받을 수 있습니다. 또한 정책 담당자는 조달비용과 발주현황을 분석하여 예산 집행의 효율성을 평가하고 투명한 계약 환경 조성에 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -85,6 +87,7 @@ schema:
         unique: 2
     - name: 판단번호
       type: string
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '9310'
@@ -104,12 +107,22 @@ schema:
         p50: 73190000
         max: 8419200114
         unique: 89
+  foreign_keys:
+    - fields:
+        - 판단번호
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공고일자
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -147,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061924-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(판단번호)'
     evidence:
       - type: measured
         source: probe/stats/15061924.json
@@ -212,8 +225,6 @@ verification:
   run: probe/runs/15061924.json
   stats: probe/stats/15061924.json
   data: probe/data/15061924/
-status: active
-summary_user: 방위사업청이 최근 4개년간 추진한 군 피복류와 각종 보급품 입찰을 건별로 담은 파일로, 공고일자·발주처·입찰건명·요구연도·판단번호·금액을 담는다(전국 단위, 약 12KB CSV). 피복·보급품 납품 업체가 과거 어떤 품목이 언제 얼마 규모로 발주됐는지 보고 다음 해 수요를 가늠하거나, 정책 담당자가 품목별 조달비용 추이를 점검하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 국방전자조달 입찰공고·결과·계약 데이터와는 판단번호나 입찰건명 같은 이름 매칭으로만 이어 쓰며, 국방전자조달은 나라장터와 별도 체계이므로 정부조달 데이터와 함께 볼 때는 같은 개념으로 대응시켜 본다.
 limits: 사업자번호 등 업체 식별 항목이 없어 낙찰 업체별 분석이나 기업 단위 연결이 안 되고, 다른 데이터와는 이름·번호 매칭에 의존해야 한다. 나라장터 정부조달과는 별도 체계라 나라장터 데이터에는 이 입찰이 포함되지 않는다.
 review:
   summary: draft
@@ -227,3 +238,4 @@ review:
     - c-15061924-06
     - c-15061924-07
   dropped_citations: 0
+status: active

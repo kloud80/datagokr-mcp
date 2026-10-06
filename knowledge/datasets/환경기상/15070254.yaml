@@ -1,4 +1,5 @@
-# Dataset 15070254 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070254 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070254'
 tier: verified
 title: 한국수력원자력(주)_(AI 친화 데이터)별도공사 화학물질 정보
@@ -21,6 +22,7 @@ synonyms:
   - 발전소 유지보수 공사 화학물질
   - 정비용 화학물질
   - 원전 협력업체 공사
+summary_user: 한국수력원자력 발전소에서 1년간 진행된 별도공사(계약 외 추가·변경 정비·유지보수 공사)별로 발전소명, 공사명, 공사 시작일, 공사업체명, 사용한 정비용 화학물질명을 건별로 담은 CSV 파일(약 200KB)이다. 원전 주변 주민이나 환경·안전 분석가가 특정 발전소의 정비 공사에서 어떤 업체가 어떤 화학물질을 썼는지 확인하는 데 쓴다. 전역 조인 키는 없어서 발전소명이나 물질명을 이름 기준으로 맞춰 화학물질 정보나 같은 기관의 다른 발전소 데이터와 이어 쓴다.
 description_portal: 한국수력원자력주식회사에서 사용하는 별도공사 화학물질 정보의 1년간의 AI 친화 데이터를 공개합니다. 공개 정보의 제공항목은 발전소명, 공사명, 공사시작일, 공사업체명, 정비용 화학물질명 항목으로 구성되어 있습니다.별도공사는 원자력 발전소 건설 및 운영 과정에서 발생되는, 계약에 포함되지 않은 추가 공사 또는 변경된 공사를 의미합니다. 별도공사는 주로 정비, 유지보수, 안전성 강화 등을 위한 공사가 이에 해당합니다. 별도공사는 원자력 발전의 안전성을 확보하고, 위험에 대비하기 위해 필수적입니다.
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: khnp_site
       null_rate: 0.0
       sample_values:
         - 한울2발
@@ -79,12 +82,22 @@ schema:
         - ULTRAGEL 2, 초음파 측정용 커플란트
       stats:
         unique: 685
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: khnp_site
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공사 시작일
 cycle: default
 classification:
   subsector_name: 오염원·화학물질 사업장 (배출시설·가축분뇨·소음진동·석면·유해화학물질 취급·PRTR)
@@ -121,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070254-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_site(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15070254.json
@@ -186,8 +199,6 @@ verification:
   run: probe/runs/15070254.json
   stats: probe/stats/15070254.json
   data: probe/data/15070254/
-status: active
-summary_user: 한국수력원자력 발전소에서 1년간 진행된 별도공사(계약 외 추가·변경 정비·유지보수 공사)별로 발전소명, 공사명, 공사 시작일, 공사업체명, 사용한 정비용 화학물질명을 건별로 담은 CSV 파일(약 200KB)이다. 원전 주변 주민이나 환경·안전 분석가가 특정 발전소의 정비 공사에서 어떤 업체가 어떤 화학물질을 썼는지 확인하는 데 쓴다. 전역 조인 키는 없어서 발전소명이나 물질명을 이름 기준으로 맞춰 화학물질 정보나 같은 기관의 다른 발전소 데이터와 이어 쓴다.
 limits: 사업자번호·좌표·화학물질 고유번호 같은 공통 키가 없어 다른 데이터와 연결하려면 발전소명·물질명 문자열을 직접 맞춰야 한다. 공간 정보가 없는 전국 단위 비공간 자료이고, 물질 사용량은 항목에 없다.
 review:
   summary: draft
@@ -199,3 +210,4 @@ review:
     - c-15070254-03
     - c-15070254-04
   dropped_citations: 0
+status: active

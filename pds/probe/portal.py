@@ -32,7 +32,7 @@ async def login_interactive(timeout_s: int = 600) -> str:
         while time.time() < deadline:
             await asyncio.sleep(2)
             if "www.data.go.kr" in page.url and "login" not in page.url.lower():
-                await page.goto("https://www.data.go.kr/iim/main/mypageMain.do", wait_until="networkidle")
+                await page.goto("https://www.data.go.kr/iim/main/mypageMain.do", wait_until="domcontentloaded", timeout=90000)
                 if "login" not in page.url.lower():
                     await ctx.storage_state(path=str(STATE))
                     print(f"로그인 세션 저장: {STATE}", flush=True)

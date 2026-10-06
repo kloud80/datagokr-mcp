@@ -1,4 +1,5 @@
-# Dataset 15103828 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103828 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103828'
 tier: verified
 title: 한국동서발전(주)_광양항광양냉장 태양광 발전량
@@ -21,6 +22,7 @@ synonyms:
   - 시간별 태양광 발전 실적
   - 동서발전 신재생 발전량
   - 광양항 태양광
+summary_user: 한국동서발전이 운영하는 광양항 광양냉장 태양광 설비의 발전량을 날짜·발전기·충전/방전 구분별로 01시~24시 1시간 단위로 담은 건별 원천 파일(CSV, 약 208KB)이다. 연구자나 에너지 분석가가 이 설비의 시간대별 발전 패턴과 ESS 충전·방전 운용이 계절에 따라 어떻게 달라지는지 확인하는 데 쓴다. 전역 조인 키가 없어, 기상·일사량 자료 등과는 날짜와 발전기명(발전기명)을 기준으로 직접 맞춰 이어 써야 한다.
 description_portal: '한국동서발전에서 운영 중인 광양항광양냉장 태양광 발전량 정보는 시간대별로 기록된 태양광 설비의 발전 및 충전·방전 데이터를 제공하는 자료입니다.해당 데이터는 날짜, 발전기명, 유형(충전/방전), 시간대별 발전량(예: 01시, 02시, 03시 등)의 항목으로 구성되어 있으며, 1시간 단위로 전력 흐름을 정량적으로 확인할 수 있습니다.특히 ‘유형’ 항목은 태양광 발전된 전력을 저장하거나 방전하는 과정을 구분하여 에너지저장장치(ESS) 운영 현황을 함께 파악할 수 있도록 구성되어 있습니다.이 데이터는 시간대별 발전 패턴 분석, 계절별 태양광 효율성 검토, 저장에너지 활용도 분석 등 다양한 전력 운영 분석에 활용될 수 있으며, 태양광 발전과 에너지저장시스템의 통합 운영 평가에도 유용합니다.학계 및 연구기관에서는 본 데이터를 활용해 광양항 지역의 일사량 및 날씨와 발전량 간 상관관계 분석, 충전·방전 전략 최적화 연구, 분산형 전원 기반의 스마트그리드 모델 구축 등 실증 연구를 수행할 수 있습니다.또한 ESS의 효율적 운영과 에너지 자립도 향상 방안, 지역 맞춤형 재생에너지 운영 정책 수립, 전력 피크 대응 전략 수립 등에도 실무적·학술적으로 폭넓게 활용 가능한 고정밀 시간 단위 자료입니다.'
 accrual_periodicity: 연간
 team:
@@ -45,6 +47,7 @@ schema:
         unique: 1491
     - name: 발전기명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 광양항광양냉장태양광
@@ -327,12 +330,22 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 날짜
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -369,7 +382,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103828-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15103828.json
@@ -434,8 +447,6 @@ verification:
   run: probe/runs/15103828.json
   stats: probe/stats/15103828.json
   data: probe/data/15103828/
-status: active
-summary_user: 한국동서발전이 운영하는 광양항 광양냉장 태양광 설비의 발전량을 날짜·발전기·충전/방전 구분별로 01시~24시 1시간 단위로 담은 건별 원천 파일(CSV, 약 208KB)이다. 연구자나 에너지 분석가가 이 설비의 시간대별 발전 패턴과 ESS 충전·방전 운용이 계절에 따라 어떻게 달라지는지 확인하는 데 쓴다. 전역 조인 키가 없어, 기상·일사량 자료 등과는 날짜와 발전기명(발전기명)을 기준으로 직접 맞춰 이어 써야 한다.
 limits: 단일 설비 자료라서 지역·전국 단위의 전력 수급이나 다른 발전소와의 비교에는 쓸 수 없다. 표준 코드 같은 공통 조인 키가 없어 다른 데이터와는 이름이나 날짜를 직접 매핑해서만 연결된다.
 review:
   summary: draft
@@ -447,3 +458,4 @@ review:
     - c-15103828-03
     - c-15103828-04
   dropped_citations: 0
+status: active

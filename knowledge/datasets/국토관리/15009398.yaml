@@ -1,4 +1,5 @@
-# Dataset 15009398 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15009398 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15009398'
 tier: verified
 title: 서울주택도시개발공사_공급계획(상가 및 공장)
@@ -23,6 +24,7 @@ synonyms:
   - 상가 공급계획
   - SH 상가 임대
   - 서울 공공상가
+summary_user: SH공사가 공급하는 상가·공장 등 비주거시설의 분양·임대 공급계획을 단지 단위로 담은 작은 CSV 파일(654바이트)로, 구분·지역·단지명·공급호수·공급 연월·비고를 담는다. 소상공인이나 중소기업이 언제, 어느 지역에서 SH 상가·공장 물량이 몇 호 나오는지 확인하는 데 쓴다. 전역 조인 키나 코드표가 없어 지역명·단지명을 다른 데이터의 이름과 직접 맞춰 이어 써야 한다.
 description_portal: 이 데이터는 서울특별시 서울주택도시개발공사(SH공사)가 시행하는 상가 및 공장 등 비주거용 부동산의 분양 및 임대 공급정보를 포함하고 있습니다. 제공 항목에는 지구명, 단지명, 공급호수, 공급시기, 비고(임대 조건, 특이사항 등)가 포함되어 있으며, 이를 통해 SH공사가 도시개발 사업과 연계하여 상업·산업 기능을 지원하기 위해 어떤 지역에, 어느 규모의 비주거시설을 공급하고 있는지를 확인할 수 있습니다. 이 데이터는 소상공인 및 중소기업의 입주 기회를 파악하거나 지역 내 상업 활성화 정책과의 연계성을 분석하는 데 활용될 수 있습니다. 공급시기는 예정 단계일 수 있으며, 사업 여건이나 수요 변화에 따라 조정될 수 있으므로, 투자 검토나 입주 계획 수립 시 참고자료로 활용해야 합니다.
 accrual_periodicity: 반기
 team:
@@ -53,6 +55,7 @@ schema:
         unique: 10
     - name: 단지명
       type: code
+      semantic_type: sh_complex_nm
       null_rate: 0.0
       sample_values:
         - 마곡 4단지 및 6단지 및 7단지 및 9단지 및 11단지 및 13단지 및 14단지
@@ -103,12 +106,22 @@ schema:
         - 신규공급
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: sh_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  time: year
+  time_fields:
+    - 공급시기년도
 cycle: event
 classification:
   subsector_name: 도시개발구역·환지·역세권 개발
@@ -150,7 +163,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15009398-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sh_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15009398.json
@@ -234,8 +247,6 @@ verification:
   run: probe/runs/15009398.json
   stats: probe/stats/15009398.json
   data: probe/data/15009398/
-status: active
-summary_user: SH공사가 공급하는 상가·공장 등 비주거시설의 분양·임대 공급계획을 단지 단위로 담은 작은 CSV 파일(654바이트)로, 구분·지역·단지명·공급호수·공급 연월·비고를 담는다. 소상공인이나 중소기업이 언제, 어느 지역에서 SH 상가·공장 물량이 몇 호 나오는지 확인하는 데 쓴다. 전역 조인 키나 코드표가 없어 지역명·단지명을 다른 데이터의 이름과 직접 맞춰 이어 써야 한다.
 limits: 파일이 654바이트에 불과해 담긴 계획은 몇 건 수준이며, 공급시기는 예정 단계여서 사업 여건에 따라 바뀔 수 있다. 명세상 갱신 주기는 반기와 이벤트 주기가 함께 적혀 있어 최신성은 직접 확인해야 하고, 법정동·건물 코드가 없어 정확한 위치 연계는 할 수 없다.
 review:
   summary: draft
@@ -247,3 +258,4 @@ review:
     - c-15009398-02
     - c-15009398-03
   dropped_citations: 0
+status: active

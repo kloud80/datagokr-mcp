@@ -1,4 +1,5 @@
-# Dataset 15070013 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070013 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070013'
 tier: verified
 title: 한국장학재단_대학생청소년교육지원장학금_상호평가관리내역
@@ -21,6 +22,7 @@ synonyms:
   - 설문 평가 배점
   - 한국장학재단 멘토링 설문
   - 대학생 지식멘토링
+summary_user: 대학생 청소년교육지원장학금 멘토링 만족도 조사에 쓰는 상호평가 설문의 항목 구성표로, 상품명·설문양식별 중분류 평가항목명과 배정점수를 담은 소규모 관리 파일(csv 약 1KB)이다. 멘토링 장학사업의 상호평가가 어떤 항목으로 이뤄지고 항목별 배점이 어떻게 나뉘는지 알고 싶은 연구자나 사업 참여자가 평가 기준을 확인하는 데 쓴다. 전역 조인 키는 없고, 같은 재단의 청소년교육지원장학금 관련 자료와는 상품명이나 설문양식아이디로만 맞춰 이을 수 있다.
 description_portal: '대학생 청소년교육지원장학금 멘토링 관련 만족도 조사를 위한 관리 항목: 상품명, 설문평가대분류항목, 설문평가중분류배정점수 등의 정보를 제공함데이터 항목은 상품명, 설문양식아이디, 설문평가중분류항목명, 설문평가중분류배점점수가 있습니다. 대학생 청소년교육지원장학금은 대학생이 초중고등학생 대상으로  멘토링을 지원하고, 대학생에게는 장학금을 지원하는 것을 목적으로 합니다. 대학생 청소년교육지원장학금 관련 정보는 "한국장학재단 누리집(https://www.kosaf.go.kr) > 인재육성 > 대학생지식멘토링 > 대학생 청소년교육지원장학금"에서 확인 가능'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 대학생 청소년교육지원 장학금
@@ -74,12 +77,22 @@ schema:
         p50: 7.5
         max: 54
         unique: 8
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 설문양식아이디
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -116,7 +129,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070013-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_scholarship_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15070013.json
@@ -180,8 +193,6 @@ verification:
   run: probe/runs/15070013.json
   stats: probe/stats/15070013.json
   data: probe/data/15070013/
-status: active
-summary_user: 대학생 청소년교육지원장학금 멘토링 만족도 조사에 쓰는 상호평가 설문의 항목 구성표로, 상품명·설문양식별 중분류 평가항목명과 배정점수를 담은 소규모 관리 파일(csv 약 1KB)이다. 멘토링 장학사업의 상호평가가 어떤 항목으로 이뤄지고 항목별 배점이 어떻게 나뉘는지 알고 싶은 연구자나 사업 참여자가 평가 기준을 확인하는 데 쓴다. 전역 조인 키는 없고, 같은 재단의 청소년교육지원장학금 관련 자료와는 상품명이나 설문양식아이디로만 맞춰 이을 수 있다.
 limits: 평가 항목과 배점만 담고 실제 응답 결과나 만족도 점수는 없다. 지역 구분이 없는 전국 단위 비공간 자료라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -193,3 +204,4 @@ review:
     - c-15070013-03
     - c-15070013-04
   dropped_citations: 0
+status: active

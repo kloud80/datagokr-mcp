@@ -1,4 +1,5 @@
-# Dataset 15090014 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15090014 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15090014'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_어린이
@@ -21,6 +22,7 @@ synonyms:
   - 언론 보도 분석
   - 아동학대 보도
   - 뉴스 메타데이터
+summary_user: 빅카인즈 뉴스 데이터베이스에서 어린이 관련 기사를 골라 기사 한 건마다 일자·언론사·제목·통합 분류·키워드·특성추출어를 담은 기사 단위 메타정보 파일로, 전국 범위 비공간 자료이며 CSV 한 개(약 27MB)로 받는다. 연구자나 아동 정책 담당자가 '아동 학대·보육·통학 안전 같은 어린이 쟁점이 시기별로 언론에서 얼마나, 어떤 말로 보도됐나'를 키워드 빈도와 보도 추이로 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 일자나 키워드·언론사 이름을 맞춰 붙여야 하며, 같은 재단의 다른 주제 뉴스 메타데이터와는 같은 컬럼 구조를 기준으로 나란히 비교한다.
 description_portal: 이 데이터는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 어린이 관련 뉴스 메타정보 자료입니다. 어린이는 사회의 미래 자원으로, 복지·교육·안전·건강 등 다양한 영역에서 정책적 보호와 지원이 필요합니다. 본 자료는 국내 주요 신문과 방송 보도에서 어린이와 관련된 기사들을 분석하여 주요 키워드와 빈도를 도출하고, 시기별 보도 경향과 사회적 쟁점의 변화를 살펴볼 수 있도록 구성되었습니다. 이를 통해 아동 학대 방지, 보육 및 교육 정책, 교통·생활 안전, 건강 관리, 권리 보장과 같은 주제가 언론에서 어떻게 다루어졌는지를 객관적으로 확인할 수 있습니다. 또한 학술 연구, 아동 정책 수립, 교육 및 언론 연구 현장에서 활용 가능한 기초 자료로서, 어린이의 권익 증진과 안전한 성장 환경 조성을 위한 사회적 합의 형성에 기여할 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 365
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 부산일보
@@ -94,12 +97,22 @@ schema:
         - 일동,주민일동,5만,20만,10만,화명동,교직원,회원일동,만덕3동,구포,럭키아파트,덕천,30만,3백,부녀회,사회복지위원,해운대,롯데백화점,4백,
       stats:
         unique: 24600
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15090014-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15090014.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15090014.json
   stats: probe/stats/15090014.json
   data: probe/data/15090014/
-status: active
-summary_user: 빅카인즈 뉴스 데이터베이스에서 어린이 관련 기사를 골라 기사 한 건마다 일자·언론사·제목·통합 분류·키워드·특성추출어를 담은 기사 단위 메타정보 파일로, 전국 범위 비공간 자료이며 CSV 한 개(약 27MB)로 받는다. 연구자나 아동 정책 담당자가 '아동 학대·보육·통학 안전 같은 어린이 쟁점이 시기별로 언론에서 얼마나, 어떤 말로 보도됐나'를 키워드 빈도와 보도 추이로 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 일자나 키워드·언론사 이름을 맞춰 붙여야 하며, 같은 재단의 다른 주제 뉴스 메타데이터와는 같은 컬럼 구조를 기준으로 나란히 비교한다.
 limits: 기사 본문이 아니라 메타정보(제목·분류·키워드)만 담으므로 기사 내용을 직접 분석하는 데는 한계가 있다. 지역 구분이 없는 전국·비공간 자료라 지역별 보도 비교에는 쓰기 어렵고, 공통 코드 키가 없어 다른 데이터와는 이름·날짜 매칭으로만 연결된다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15090014-03
     - c-15090014-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15100047 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100047 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100047'
 tier: verified
 title: 법무부_55(국적) 연도별 국적취득 국적(지역)별 현황
@@ -20,6 +21,7 @@ synonyms:
   - 국적취득자 수
   - 출입국외국인정책본부 통계연보
   - 외국인 귀화 현황
+summary_user: 연도별로 국적을 취득한 사람 수를 취득 유형(귀화·국적회복)과 원래 국적(지역)별로 나눈 전국 단위 집계 파일입니다. 분석가가 "최근 몇 년 사이 어느 나라 출신의 귀화자·국적회복자가 늘었나"를 확인하는 데 씁니다. 전역 조인 키가 없어 다른 출입국·체류 통계와는 국적 이름을 맞추는 방식으로만 연결합니다.
 description_portal: 연도별 국적 취득자를 귀화자와 국적회복자로 구분하여 국적(지역)별로 제공합니다.1. 해당 통계는 해당연도의 통계입니다.2. 해당 통계의 원본 통계는 출입국외국인정책본부의 통계연보입니다.3. 상기 통계의 링크는 아래와 같습니다.Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjglMkY1OTY0NjQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI24. 해당 링크를 통해 엑셀 파일 압축집 - 4장_ I. 2. 국적처리 국적(지역) 및 취득유형별 현황을 참조하십시오.
 applicable_legislation:
   - law: 국적법
@@ -57,6 +59,7 @@ schema:
         unique: 2
     - name: 국적
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 캄보디아
@@ -76,6 +79,12 @@ schema:
         p50: 4
         max: 7730
         unique: 231
+  foreign_keys:
+    - fields:
+        - 국적
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -118,7 +127,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100047-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적)'
     evidence:
       - type: measured
         source: probe/stats/15100047.json
@@ -193,8 +202,6 @@ verification:
   run: probe/runs/15100047.json
   stats: probe/stats/15100047.json
   data: probe/data/15100047/
-status: active
-summary_user: 연도별로 국적을 취득한 사람 수를 취득 유형(귀화·국적회복)과 원래 국적(지역)별로 나눈 전국 단위 집계 파일입니다. 분석가가 "최근 몇 년 사이 어느 나라 출신의 귀화자·국적회복자가 늘었나"를 확인하는 데 씁니다. 전역 조인 키가 없어 다른 출입국·체류 통계와는 국적 이름을 맞추는 방식으로만 연결합니다.
 limits: 지역 구분이 없는 전국 집계라 시군구별 분포나 지역 정보와의 연결에는 쓰지 못합니다. 국적은 코드가 아닌 이름으로 들어 있어 다른 데이터와 붙일 때 이름 매핑이 필요합니다.
 review:
   summary: draft
@@ -206,3 +213,4 @@ review:
     - c-15100047-03
     - c-15100047-04
   dropped_citations: 0
+status: active

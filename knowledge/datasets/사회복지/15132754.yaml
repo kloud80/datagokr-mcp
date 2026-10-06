@@ -1,4 +1,5 @@
-# Dataset 15132754 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132754 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132754'
 tier: verified
 title: 성평등가족부_청소년활동 자유학기제 활동 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 자유학년제
   - 청소년수련시설 프로그램
   - 학교 연계 체험학습
+summary_user: 전국 청소년 기관이 운영하는 자유학기제 활동 프로그램을 프로그램 한 건 단위로 담으며, 운영연도·프로그램명·영역·운영방법·주요내용·운영기간·차수 정원·장소·참여비용·담당자 연락처가 들어 있다. 학교나 지자체 담당자가 "우리 지역에서 참여비용이 낮고 정원이 넉넉한 진로체험 프로그램은 무엇이고 누구에게 문의하나"를 찾을 때 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 같은 기관의 기관일련번호(instSn)나 장소명·기관명 같은 이름 매칭으로만 잇는다.
 description_portal: 청소년활동 자유학기제 활동 정보 서비스 조회를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 운영연도, 프로그램명, 운영방법명, 주요내용, 운영기간, 차수정원 수, 장소명, 참여비용, 담당자명, 전화번호 등의 내용을 확인할 수 있습니다.자유학기제 활동 정보 서비스는 세부 정보를 포함하고 있어 체험 중심 교육 운영에 실질적인 참고 자료가 됩니다. 교육기관이나 지자체는 이를 바탕으로 맞춤형 진로체험 프로그램을 구성할 수 있으며, 참여비용과 장소정보는 예산 편성과 접근성 검토에도 큰 도움이 됩니다. 청소년 맞춤형 활동 모델을 설계하는 데 있어 현장 기반 정보를 제공한다는 점에서 폭넓게 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -67,6 +69,7 @@ schema:
     - name: instSn
       title: 기관일련번호
       type: number
+      semantic_type: free_semester_inst_sn
       null_rate: 0.0
       sample_values:
         - '782'
@@ -210,12 +213,22 @@ schema:
         p50: 20190122
         max: 20190122
         unique: 1
+  foreign_keys:
+    - fields:
+        - instSn
+      reference:
+        key: free_semester_inst_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - regDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -260,7 +273,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132754-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: free_semester_inst_sn(instSn)'
     evidence:
       - type: measured
         source: probe/stats/15132754.json
@@ -314,8 +327,6 @@ verification:
   run: probe/runs/15132754.json
   stats: probe/stats/15132754.json
   data: probe/data/15132754/
-status: active
-summary_user: 전국 청소년 기관이 운영하는 자유학기제 활동 프로그램을 프로그램 한 건 단위로 담으며, 운영연도·프로그램명·영역·운영방법·주요내용·운영기간·차수 정원·장소·참여비용·담당자 연락처가 들어 있다. 학교나 지자체 담당자가 "우리 지역에서 참여비용이 낮고 정원이 넉넉한 진로체험 프로그램은 무엇이고 누구에게 문의하나"를 찾을 때 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 같은 기관의 기관일련번호(instSn)나 장소명·기관명 같은 이름 매칭으로만 잇는다.
 limits: 표준 행정코드나 좌표가 없어 지역별 집계나 지도 연계는 장소명을 직접 매핑해야 한다. 이벤트성으로 생성된 뒤 바뀌지 않는 데이터로 분류되어 있어, 상시 최신 프로그램 목록으로 보기 전에 운영연도·등록일시를 확인해야 한다. 개발계정 호출은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -328,3 +339,4 @@ review:
     - c-15132754-03
     - c-15132754-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15109176 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109176 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109176'
 tier: verified
 title: 행정안전부_관보_인사
@@ -20,6 +21,7 @@ synonyms:
   - 공무원 전보 전출입
   - 명예퇴직 관보
   - 관보 원문
+summary_user: 5급 이상 국가공무원과 이에 상당하는 공무원의 신규채용·승진·전보·전출입·퇴직·추서 등 관보에 실린 인사 게재 건을 건별로 담고, 게재 제목·발행기관·게재 희망일·근거 법령·관보 호수·원문 PDF 경로 등을 준다. 기자·연구자·민원인이 '특정 부처의 고위공무원 승진·전보가 언제 어느 관보에 실렸는가'를 확인하거나 인사 원문을 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발행기관명(pblcnInstNm)·근거 법령명 같은 이름 매칭으로만 잇고, 관보의 다른 구분(법령·고시공고 등) 데이터와는 같은 기관 기준으로 함께 본다.
 description_portal: 관보는 국가가 국민에게 널리 알릴 사항을 수록하여 발행하는 국가의 공식 기관지로 '관보'라는 제호로 발간되는 정기간행물입니다. 관보는 헌법개정, 법률, 조약, 대통령령, 총리령 및 부령의 공포와 헌법개정안, 예산 및 예산 외 국고부담계약의 공고 수단입니다. 또한, 법령 공포, 대통령·국무총리훈령 및 대통령·국무총리 지시사항, 각급 기관의 인사발령 통지 등 정부 기관간의 공문 시행을 대체하는 역할을 합니다.이 데이터는 국가공무원 중 5급 이상 공무원 및 이에 상당하는 공무원의 신규채용, 승진, 전직, 기관 간 전보, 전출, 전입, 정년퇴직, 명예퇴직 및 추서의 목록, 상세정보, 원문에 대한 정보를 제공합니다.
 team:
   dept: 법무담당관실
@@ -123,6 +125,7 @@ schema:
         unique: 1
     - name: cntntSeqNo
       type: code
+      semantic_type: gazette_cntnt_seq
       null_rate: 0.0
       sample_values:
         - I0000000000000001789347511302000
@@ -161,12 +164,22 @@ schema:
         p50: 6
         max: 6
         unique: 1
+  foreign_keys:
+    - fields:
+        - cntntSeqNo
+      reference:
+        key: gazette_cntnt_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - hopePblictDt
 cycle: default
 classification:
   subsector_name: 관보·고시공고
@@ -210,7 +223,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109176-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gazette_cntnt_seq(cntntSeqNo)'
     evidence:
       - type: measured
         source: probe/stats/15109176.json
@@ -264,8 +277,6 @@ verification:
   run: probe/runs/15109176.json
   stats: probe/stats/15109176.json
   data: probe/data/15109176/
-status: active
-summary_user: 5급 이상 국가공무원과 이에 상당하는 공무원의 신규채용·승진·전보·전출입·퇴직·추서 등 관보에 실린 인사 게재 건을 건별로 담고, 게재 제목·발행기관·게재 희망일·근거 법령·관보 호수·원문 PDF 경로 등을 준다. 기자·연구자·민원인이 '특정 부처의 고위공무원 승진·전보가 언제 어느 관보에 실렸는가'를 확인하거나 인사 원문을 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발행기관명(pblcnInstNm)·근거 법령명 같은 이름 매칭으로만 잇고, 관보의 다른 구분(법령·고시공고 등) 데이터와는 같은 기관 기준으로 함께 본다.
 limits: 공식 조인 키가 없어 기관·법령 연계는 이름 매핑에 의존하므로 표기 차이로 누락될 수 있다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -277,3 +288,4 @@ review:
     - c-15109176-03
     - c-15109176-04
   dropped_citations: 0
+status: active

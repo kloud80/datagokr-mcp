@@ -1,4 +1,3 @@
-# Dataset 15111640 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15111640'
 tier: verified
 title: 문화체육관광부_중국 전담여행사 명단
@@ -22,6 +21,7 @@ synonyms:
   - 중국 관광객 유치 여행사
   - 유커 전담 여행사
   - 여행사 등록번호 조회
+summary_user: 중국 단체관광객 유치 전담여행사로 지정된 업체를 한 줄에 한 곳씩 담은 명단으로, 업체명과 대표자(한글·중문), 전화·팩스, 주소, 등록번호, 지정일이 들어 있다. 여행사나 관광객, 관련 기관이 어떤 여행사가 공식 전담여행사로 지정됐는지, 언제 지정됐는지를 확인해 비공식 여행사와 구별할 때 쓴다. 전역 조인 키가 없어 다른 관광사업 등록 데이터와는 업체명이나 등록번호를 직접 맞춰 이어야 하고, 주소로 지역별 분포를 볼 수 있다.
 description_portal: 해당 데이터는 중국 단체 관광객 유치 전담 여행사 정보를 포함하고 있습니다. 해당 데이터는 여행사 정보, 업체명(중문 포함), 대표자, 대표자(중문), 전화전호, 팩스번호, 주소, 등록번호, 지정일을 포함하고 있습니다. 한류 확산으로 인한 중국 단체 관광객 유치를 위한 전담 여행사 정보로 데이터를 이용하시는 분은 해당 업체 정보를 활용하여 비공식 여행사 등 만일 발생할 수 있는 문제를 사전에 예방하고 업체와 대표자, 등록번호 등을 확인하여 보다 정확한 데이터를 활용할 수 있는 목적으로 이용하여 중국 단체 관광객 전문 여행사의 신뢰를 향상할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -110,6 +110,7 @@ schema:
         unique: 216
     - name: 등록번호
       type: number
+      semantic_type: tourism_biz_rgst_no
       null_rate: 0.0
       sample_values:
         - '2000062701'
@@ -131,12 +132,26 @@ schema:
         min: '2000-06-27'
         max: '2023-05-26'
         unique: 26
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: tourism_biz_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 지정일
 cycle: event
 classification:
   subsector_name: 축제·행사 (문화관광축제·지역 축제·공연 일정)
@@ -177,7 +192,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15111640-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tourism_biz_rgst_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15111640.json
@@ -242,8 +257,6 @@ verification:
   run: probe/runs/15111640.json
   stats: probe/stats/15111640.json
   data: probe/data/15111640/
-status: active
-summary_user: 중국 단체관광객 유치 전담여행사로 지정된 업체를 한 줄에 한 곳씩 담은 명단으로, 업체명과 대표자(한글·중문), 전화·팩스, 주소, 등록번호, 지정일이 들어 있다. 여행사나 관광객, 관련 기관이 어떤 여행사가 공식 전담여행사로 지정됐는지, 언제 지정됐는지를 확인해 비공식 여행사와 구별할 때 쓴다. 전역 조인 키가 없어 다른 관광사업 등록 데이터와는 업체명이나 등록번호를 직접 맞춰 이어야 하고, 주소로 지역별 분포를 볼 수 있다.
 limits: 명세상 갱신 주기는 수시이며, 이벤트 때 생성된 뒤 바뀌지 않는 형태로 분류돼 있어 현재 지정 상태와 다를 수 있다. 공통 코드나 키가 없어 다른 데이터와는 이름 매칭에 의존해야 한다.
 review:
   summary: draft
@@ -256,3 +269,4 @@ review:
     - c-15111640-03
     - c-15111640-04
   dropped_citations: 0
+status: active

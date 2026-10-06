@@ -1,4 +1,5 @@
-# Dataset 15058269 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058269 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058269'
 tier: verified
 title: 지식재산처_표준특허 정보제공 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 표준화기구 특허
   - KIPRIS 표준특허
   - 특허 표준 분야
+summary_user: 표준특허 정보와 표준특허 통계정보를 API로 제공하며, 표준기구 코드(stdorgancd)·분류 단계(sginfoclass1~3)·표준 분야 영문·국문명·진행 상태 같은 항목을 담는다. 기업·연구자가 특정 표준 분야에서 표준특허가 어떤 표준기구·분야에 얼마나 분포하는지 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 특허·기업 데이터와는 표준 분야명이나 표준기구 코드 같은 이름·코드 매핑으로만 이어 쓴다.
 description_portal: 표준특허정보 및 표준특허 통계정보
 team:
   dept: 산업재산창출전략팀
@@ -55,6 +57,7 @@ schema:
         unique: 1000
     - name: stdorgancd
       type: code
+      semantic_type: std_org_cd
       null_rate: 0.0
       sample_values:
         - ISO
@@ -121,6 +124,12 @@ schema:
         - 진행
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - stdorgancd
+      reference:
+        key: std_org_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -171,7 +180,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058269-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: std_org_cd(stdorgancd)'
     evidence:
       - type: measured
         source: probe/stats/15058269.json
@@ -236,8 +245,6 @@ verification:
   run: probe/runs/15058269.json
   stats: probe/stats/15058269.json
   data: probe/data/15058269/
-status: active
-summary_user: 표준특허 정보와 표준특허 통계정보를 API로 제공하며, 표준기구 코드(stdorgancd)·분류 단계(sginfoclass1~3)·표준 분야 영문·국문명·진행 상태 같은 항목을 담는다. 기업·연구자가 특정 표준 분야에서 표준특허가 어떤 표준기구·분야에 얼마나 분포하는지 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 특허·기업 데이터와는 표준 분야명이나 표준기구 코드 같은 이름·코드 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 출원인·법인 단위 기업 데이터와 바로 결합하지 못한다. 전국 범위의 비공간 데이터라 지역별 분석에는 맞지 않는다. 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -249,3 +256,4 @@ review:
     - c-15058269-03
     - c-15058269-04
   dropped_citations: 0
+status: active

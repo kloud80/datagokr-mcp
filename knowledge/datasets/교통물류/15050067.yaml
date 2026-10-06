@@ -1,4 +1,3 @@
-# Dataset 15050067 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15050067'
 tier: verified
 title: 한국교통안전공단_사업용차량 초단위 위험운전운행데이터(샘플)
@@ -20,6 +19,7 @@ synonyms:
   - 과속 운행기록
   - 사업용차량 운행기록
   - 버스 택시 화물차 운전행태
+summary_user: 사업용 차량의 운행기록을 초 단위로 담은 건별 원천 데이터의 샘플로, 차량별 운행일자·시분초마다 GPS 좌표·운행속도와 과속(20·40·60km 초과, 장기과속)·급가속·급정지·급회전·급진로변경·공회전 초과 여부를 기록한다. 교통안전 분석가나 운수회사가 '어떤 차량이 어느 위치·시간대에 급정지나 과속 같은 위험운전을 했는가'를 살펴보거나 위험운전 판정 로직을 시험할 때 쓴다. 전역 조인 키는 없고, 운수회사코드·자동차등록번호·운수회사소재지코드를 같은 기관(한국교통안전공단)의 자동차 등록·검사 자료와 맞대거나 GPS 좌표로 위치를 겹쳐 보는 방식으로만 이어 쓴다.
 description_portal: 한국교통안전공단에서 수집관리하고 있는 초단위의 위험운전행동데이터 샘플입니다. (운행일자, 운수회사코드 등) 운행기록과 관련된 데이터는 대용량데이터로 샘플데이터만 업로드
 applicable_legislation:
   - law: 교통안전법
@@ -39,6 +39,7 @@ schema:
   fields:
     - name: 운수회사코드
       type: code
+      semantic_type: transport_company_cd
       null_rate: 0.0
       sample_values:
         - 9c0778932ef7a41ad1ea105c92e5ce7845fcaa327730f55a8ad789812b0e728f
@@ -46,6 +47,7 @@ schema:
         unique: 1
     - name: 자동차등록번호
       type: code
+      semantic_type: vhcl_no
       null_rate: 0.0
       sample_values:
         - 6bad803cf57f1cb9045f23e9090fe98959a3b6f3b37c2c80f05f58cf164a10b0
@@ -314,12 +316,31 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - 운수회사코드
+      reference:
+        key: transport_company_cd
+      evidence: measured
+    - fields:
+        - 자동차등록번호
+      reference:
+        key: vhcl_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 운수회사소재지코드
+  space_via: address
+  time: day
+  time_fields:
+    - 자료제출일시
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -356,7 +377,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050067-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: transport_company_cd(운수회사코드), vhcl_no(자동차등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15050067.json
@@ -431,8 +452,6 @@ verification:
   run: probe/runs/15050067.json
   stats: probe/stats/15050067.json
   data: probe/data/15050067/
-status: active
-summary_user: 사업용 차량의 운행기록을 초 단위로 담은 건별 원천 데이터의 샘플로, 차량별 운행일자·시분초마다 GPS 좌표·운행속도와 과속(20·40·60km 초과, 장기과속)·급가속·급정지·급회전·급진로변경·공회전 초과 여부를 기록한다. 교통안전 분석가나 운수회사가 '어떤 차량이 어느 위치·시간대에 급정지나 과속 같은 위험운전을 했는가'를 살펴보거나 위험운전 판정 로직을 시험할 때 쓴다. 전역 조인 키는 없고, 운수회사코드·자동차등록번호·운수회사소재지코드를 같은 기관(한국교통안전공단)의 자동차 등록·검사 자료와 맞대거나 GPS 좌표로 위치를 겹쳐 보는 방식으로만 이어 쓴다.
 limits: 포털에는 대용량 운행기록 중 샘플(zip 약 25KB)만 올라 있어 전체 사업용 차량의 위험운전 통계나 추세 분석에는 쓸 수 없다. 표준 조인 키가 없어 다른 데이터와는 이름·코드 매핑 또는 같은 기관 코드로만 연결된다.
 review:
   summary: draft
@@ -445,3 +464,4 @@ review:
     - c-15050067-04
     - c-15050067-06
   dropped_citations: 0
+status: active

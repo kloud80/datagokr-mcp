@@ -49,6 +49,7 @@ schema:
         unique: 31
     - name: 호출부호
       type: string
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - JG5720
@@ -68,6 +69,7 @@ schema:
         unique: 1
     - name: 입항횟수
       type: number
+      semantic_type: port_call_no
       null_rate: 0.0
       sample_values:
         - '001'
@@ -98,6 +100,7 @@ schema:
         unique: 27
     - name: 국제해사기구식별번호
       type: number
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - '9304497'
@@ -369,9 +372,31 @@ schema:
         min: '2025-08-01'
         max: '2025-11-12'
         unique: 14065
+  foreign_keys:
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
+    - fields:
+        - 입항횟수
+      reference:
+        key: port_call_no
+      evidence: measured
+    - fields:
+        - 국제해사기구식별번호
+      reference:
+        key: vessel_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 입항일자
+    - 신고일시
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
@@ -408,7 +433,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15133143-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(호출부호), port_call_no(입항횟수), vessel_id(국제해사기구식별번호)'
     evidence:
       - type: measured
         source: probe/stats/15133143.json

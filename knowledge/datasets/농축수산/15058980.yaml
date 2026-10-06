@@ -1,4 +1,5 @@
-# Dataset 15058980 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058980 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058980'
 tier: verified
 title: 해양수산부_수협 산지조합 창고별 매출처 정보
@@ -22,6 +23,7 @@ synonyms:
   - 수산물 물류 창고
   - 수협 거래처
   - 수산물 유통 구조
+summary_user: 수협 산지조합별로 보유한 창고와 그 창고를 이용하는 매출처 수를 조합코드·조합명 단위로 담은 전국 범위의 집계 데이터이며, 조합명을 파라미터로 조회한다. 수산물 유통·물류 기업이나 연구자가 '어느 수협 조합 창고에 거래 매출처가 많이 몰려 있는가'를 비교해 거래처 발굴이나 유통 구조 연구에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 수산물 위판·가격 데이터와는 조합코드(mxtrCode)나 조합명을 같은 기관 코드 기준으로 맞춰 이어 붙여야 한다.
 description_portal: 이 데이터는 해양수산부에서 수협별로 보유중인 창고 및 매출처 정보를 제공하기 위해 수집한 데이터입니다.조합명 값을 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 조합코드, 조합명 및 조합 창고를 이용하는 매출처 수 정보로 구성되어 있습니다.본 데이터는 수산물 유통 및 물류 관련 기업에서 창고별 매출처 수를 분석하여 거래 전략을 수립하는 데 활용될 수 있습니다. 또한, 관련 기관 및 연구기관에서 수산물 유통 구조와 매출처 분포를 연구하기 위한 기초 자료로 활용할 수 있습니다.
 team:
   dept: 수산직불제팀
@@ -45,6 +47,7 @@ schema:
   fields:
     - name: mxtrCode
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '100'
@@ -76,6 +79,12 @@ schema:
         p50: 184
         max: 4626
         unique: 58
+  foreign_keys:
+    - fields:
+        - mxtrCode
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -125,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058980-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(mxtrCode)'
     evidence:
       - type: measured
         source: probe/stats/15058980.json
@@ -190,8 +199,6 @@ verification:
   run: probe/runs/15058980.json
   stats: probe/stats/15058980.json
   data: probe/data/15058980/
-status: active
-summary_user: 수협 산지조합별로 보유한 창고와 그 창고를 이용하는 매출처 수를 조합코드·조합명 단위로 담은 전국 범위의 집계 데이터이며, 조합명을 파라미터로 조회한다. 수산물 유통·물류 기업이나 연구자가 '어느 수협 조합 창고에 거래 매출처가 많이 몰려 있는가'를 비교해 거래처 발굴이나 유통 구조 연구에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 수산물 위판·가격 데이터와는 조합코드(mxtrCode)나 조합명을 같은 기관 코드 기준으로 맞춰 이어 붙여야 한다.
 limits: 매출처의 이름·거래 금액·품목은 없고 조합 창고별 매출처 수만 담으므로 거래 규모나 가격 분석에는 쓸 수 없다. 공간 좌표가 없는 비공간 데이터라 지도 결합이 어렵고, 다른 데이터와는 이름·코드 매핑으로만 연결된다.
 review:
   summary: draft
@@ -203,3 +210,4 @@ review:
     - c-15058980-03
     - c-15058980-04
   dropped_citations: 0
+status: active

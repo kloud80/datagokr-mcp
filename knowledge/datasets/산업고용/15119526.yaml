@@ -1,4 +1,5 @@
-# Dataset 15119526 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119526 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119526'
 tier: verified
 title: 한국서부발전(주)_(발전공기업 표준) 탈황석고 현황
@@ -24,6 +25,7 @@ synonyms:
   - 발전소 부산물 재활용
   - 자원순환 발전소
   - 서부발전 석고 발생량
+summary_user: 한국서부발전 석탄화력발전소의 탈황설비에서 부산물로 나오는 석고의 발생량·재활용량(톤)과 재활용률을 월별·발전소별로 집계한 파일(CSV, 약 9KB)이다. 발전소 환경관리 분석가나 자원순환 정책 담당자가 '서부발전 발전소별 탈황석고 재활용률이 월마다 어떻게 변하는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 발전공기업(남동·남부·동서·중부)의 같은 표준 데이터나 발전소 배출 측정 자료와는 년월·발전소명 이름을 맞춰 이어 붙인다.
 description_portal: 한국서부발전의 (발전공기업 표준) 탈황석고 현황  데이터 입니다. 석탄화력발전소에서 배출되는 황산화물을 저감하기 위해 운영되는 탈황설비에서 부산물로 발생하는 석고의 발생 및 활용 현황을 집계한 자료입니다. 이 데이터에는 월별 및 발전소별 탈황석고 발생량 및 재활용량, 재활용률 등이 포함됩니다. 탈황석고는 주로 시멘트 원료, 석고보드, 건축자재 등으로 재활용되며, 자원순환 차원에서 중요한 가치를 지닙니다. 현황 데이터를 분석하면 발전소의 환경관리 성과, 자원활용 효율, 순환경제 기여도를 정량적으로 평가할 수 있습니다.- 발전공기업(남동, 남부, 서부, 동서, 중부) 표준 데이터 입니다.
 accrual_periodicity: 연간
 team:
@@ -55,6 +57,7 @@ schema:
         unique: 1
     - name: 발전소명
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 태안
@@ -96,12 +99,22 @@ schema:
         p50: 100
         max: 100
         unique: 2
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 년월
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -138,7 +151,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119526-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15119526.json
@@ -203,8 +216,6 @@ verification:
   run: probe/runs/15119526.json
   stats: probe/stats/15119526.json
   data: probe/data/15119526/
-status: active
-summary_user: 한국서부발전 석탄화력발전소의 탈황설비에서 부산물로 나오는 석고의 발생량·재활용량(톤)과 재활용률을 월별·발전소별로 집계한 파일(CSV, 약 9KB)이다. 발전소 환경관리 분석가나 자원순환 정책 담당자가 '서부발전 발전소별 탈황석고 재활용률이 월마다 어떻게 변하는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 발전공기업(남동·남부·동서·중부)의 같은 표준 데이터나 발전소 배출 측정 자료와는 년월·발전소명 이름을 맞춰 이어 붙인다.
 limits: 발전소 코드 같은 공통 키가 없어 다른 데이터와 연결하려면 발전소명을 수작업으로 맞춰야 한다. 집계 자료라 재활용 용도(시멘트·석고보드 등)별 내역이나 처리 업체 정보는 담기지 않는다.
 review:
   summary: draft
@@ -217,3 +228,4 @@ review:
     - c-15119526-04
     - c-15119526-06
   dropped_citations: 0
+status: active

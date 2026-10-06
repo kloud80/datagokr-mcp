@@ -1,4 +1,5 @@
-# Dataset 15083749 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083749 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083749'
 tier: verified
 title: 인천교통공사_도시철도노선정보
@@ -24,6 +25,7 @@ synonyms:
   - 도시철도 노선연장
   - 지하철 개통일자
   - 인천 전철 역코드
+summary_user: 인천교통공사가 운영하는 인천1호선·인천2호선·7호선 인천·부천구간의 노선 단위 정보로, 노선명·기점·종점·노선연장·개통일자와 함께 역코드-역명을 '+'로 이어 붙인 정거장 구성을 한 행에 담은 작은 파일(약 1.5KB)이다. 인천 도시철도 노선이 어디서 어디까지 몇 개 역으로 이어지는지, 언제 개통했는지를 확인하려는 시민이나 역세권·철도망 분석가가 노선별 역 목록 기준표로 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 역·승하차 데이터와는 정거장구성 안의 역코드·역명이나 노선명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 description_portal: 인천교통공사에서 운영 중인 도시철도 인천1호선, 인천 2호선, 7호선 인천·부천구간의 2025년 6월 30일 기준 노선정보입니다.해당 데이터는 노선번호, 노선명, 기점명, 종점명, 정거장구성, 노선연장, 개통일자, 운영기관명, 운영기관전화번호, 데이터기준일자 항목으로 구성되어있습니다.노선별 정거장 구성 정보에는 (역코드-역명)이 하나의 정거장으로 "+"를 구분자로 각 정거장 정보가 연결된 형태입니다.인천1호선은 검단호수공원역에서 송도달빛축제공원까지 33개역, 인천2호선은 검단오류역에서 운연역까지 27개역, 2호선 인천·부천 구간은 까치울역에서 석남역까지 11개역이 수록되어있습니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 노선번호
       type: code
+      semantic_type: urban_rail_line_no
       null_rate: 0.0
       sample_values:
         - S2801
@@ -126,12 +129,23 @@ schema:
         min: '2026-06-30'
         max: '2026-06-30'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 노선번호
+      reference:
+        key: urban_rail_line_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 개통일자
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 철도망·역·출입구·시설
@@ -168,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083749-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: urban_rail_line_no(노선번호)'
     evidence:
       - type: measured
         source: probe/stats/15083749.json
@@ -233,8 +247,6 @@ verification:
   run: probe/runs/15083749.json
   stats: probe/stats/15083749.json
   data: probe/data/15083749/
-status: active
-summary_user: 인천교통공사가 운영하는 인천1호선·인천2호선·7호선 인천·부천구간의 노선 단위 정보로, 노선명·기점·종점·노선연장·개통일자와 함께 역코드-역명을 '+'로 이어 붙인 정거장 구성을 한 행에 담은 작은 파일(약 1.5KB)이다. 인천 도시철도 노선이 어디서 어디까지 몇 개 역으로 이어지는지, 언제 개통했는지를 확인하려는 시민이나 역세권·철도망 분석가가 노선별 역 목록 기준표로 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 역·승하차 데이터와는 정거장구성 안의 역코드·역명이나 노선명을 이름·코드 매핑으로 맞춰 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 기관 역 데이터와 붙이려면 역명·역코드를 직접 매핑해야 한다. 역 정보가 한 칸에 '+' 구분 문자열로 묶여 있어 역 단위로 쓰려면 분리 파싱이 필요하며, 역 좌표나 출입구 정보는 들어 있지 않다.
 review:
   summary: draft
@@ -246,3 +258,4 @@ review:
     - c-15083749-03
     - c-15083749-06
   dropped_citations: 0
+status: active

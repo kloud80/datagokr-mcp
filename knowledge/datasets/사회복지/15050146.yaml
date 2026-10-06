@@ -1,4 +1,5 @@
-# Dataset 15050146 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15050146 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15050146'
 tier: verified
 title: 한국노인인력개발원_노인일자리사업 계획서 재정 정보
@@ -21,6 +22,7 @@ synonyms:
   - 시니어 일자리 재정
   - 노인일자리 수행기관
   - 노인 일자리 시군구별 예산
+summary_user: 노인일자리사업 계획서별로 편성된 재정(예산) 정보를 사업 단위로 담은 전국 시군구 범위의 CSV 파일로, 사업유형(공익활동형·사회서비스형·시장형 등), 사업번호, 사업명, 예산구분, 관할 시군구, 수행기관 ID, 사업기간, 추경 여부 등을 담는다. 지자체 담당자나 정책 연구자가 '우리 시군구에는 어떤 유형의 노인일자리 사업이 몇 건 편성됐고 추경으로 바뀐 사업은 무엇인가'를 확인하고 지역별·유형별로 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 관할 시군구 이름이나 같은 기관의 기관 ID로만 이어 쓰며, 시군구 단위 지역 통계와 붙여 보는 정도가 현실적이다.
 description_portal: 이 데이터는 노인일자리 사업의 계획서에 따라 편성된 재정(예산) 정보를 제공하는 자료입니다. 사업유형, 사업번호, 사업명, 예산구분, 관할 시군구, 기관명, 사업기간 등 세부 항목이 포함되어 있으며, 공익활동형, 사회서비스형, 시장형 등 다양한 사업 유형별 재정 투입 현황을 확인할 수 있습니다. 이를 통해 지역별·사업별 예산 배정 규모를 비교·분석할 수 있으며, 정책 효율성과 재정 집행의 투명성을 확보하는 데 중요한 근거 자료로 활용됩니다. CSV 형식으로 제공되어 데이터 가공 및 분석이 용이하고, 정기적 갱신을 통해 최신 사업계획 정보를 반영하고 있어 정책 연구자와 지자체 담당자가 예산 관리 및 성과 평가에 적극적으로 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 3
     - name: 사업번호
       type: string
+      semantic_type: senior_job_proj_no
       null_rate: 0.0
       sample_values:
         - 2024-13887
@@ -104,6 +107,7 @@ schema:
         unique: 212
     - name: 기관ID
       type: number
+      semantic_type: senior_job_org_id
       null_rate: 0.0
       sample_values:
         - '1917'
@@ -151,12 +155,32 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 사업번호
+      reference:
+        key: senior_job_proj_no
+      evidence: measured
+    - fields:
+        - 기관ID
+      reference:
+        key: senior_job_org_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 관할시군구
+  space_via: name
+  time: day
+  time_fields:
+    - 사업기간시작일
+    - 사업기간종료일
 cycle: default
 classification:
   subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
@@ -193,7 +217,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050146-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: senior_job_proj_no(사업번호), senior_job_org_id(기관ID)'
     evidence:
       - type: measured
         source: probe/stats/15050146.json
@@ -258,8 +282,6 @@ verification:
   run: probe/runs/15050146.json
   stats: probe/stats/15050146.json
   data: probe/data/15050146/
-status: active
-summary_user: 노인일자리사업 계획서별로 편성된 재정(예산) 정보를 사업 단위로 담은 전국 시군구 범위의 CSV 파일로, 사업유형(공익활동형·사회서비스형·시장형 등), 사업번호, 사업명, 예산구분, 관할 시군구, 수행기관 ID, 사업기간, 추경 여부 등을 담는다. 지자체 담당자나 정책 연구자가 '우리 시군구에는 어떤 유형의 노인일자리 사업이 몇 건 편성됐고 추경으로 바뀐 사업은 무엇인가'를 확인하고 지역별·유형별로 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 관할 시군구 이름이나 같은 기관의 기관 ID로만 이어 쓰며, 시군구 단위 지역 통계와 붙여 보는 정도가 현실적이다.
 limits: 표준 행정코드나 사회복지시설 시설코드 같은 전역 조인 키가 없어 다른 기관 데이터와 결합하려면 시군구 이름 매핑이 필요하다. 계획서 단위의 편성 정보이므로 사업계획변경순번·추경여부·삭제여부를 함께 보고 최종 계획만 골라야 중복 집계를 피한다.
 review:
   summary: draft
@@ -272,3 +294,4 @@ review:
     - c-15050146-04
     - c-15050146-07
   dropped_citations: 0
+status: active

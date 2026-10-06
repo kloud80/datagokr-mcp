@@ -1,4 +1,5 @@
-# Dataset 15072351 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072351 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072351'
 tier: verified
 title: 문화체육관광부_국가도서관통계_전국전문도서관통계
@@ -25,6 +26,7 @@ synonyms:
   - 사서 수
   - 도서관 방문자수
   - 자료구입비
+summary_user: 전국 전문도서관을 도서관별 한 행으로, 평가년도 기준 장서(인쇄 도서자료) 수·사서 수·방문자 수·자료구입비(천원)를 시도·시군구와 함께 담은 집계 파일이다. 지역별 전문도서관의 장서·인력·예산 규모를 비교하거나, 특정 시군구에 어떤 전문도서관이 있고 이용자가 얼마나 되는지 확인하려는 도서관 정책 연구자와 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도서관코드·도서관명 매핑이나 시군구 이름으로 연결해야 하며, 도서관정보나루 등 도서관코드를 쓰는 데이터와는 코드 대응을 먼저 확인해야 한다.
 description_portal: 전국 전문도서관의 운영 현황과 자원 분포를 종합적으로 파악할 수 있도록 평가년도, 도서관구분, 도서관코드, 도서관명, 행정구역, 시군구, 장서수, 사서수, 방문자수, 도서예산 등 주요 통계 정보를 체계적으로 제공합니다. 전문도서관별 자료 보유 현황과 인력, 예산, 이용자 수 등 다양한 지표를 통해 도서관 정책 수립, 연구, 지역별 도서관 서비스 개선 등에 활용할 수 있습니다. 도서관 행정 및 문화정책 연구자, 관련 기관, 일반 국민 모두에게 신뢰성 있는 통계 자료를 제공하여 문화체육관광 분야의 데이터 기반 의사결정에 기여합니다.
 legal_basis_portal: 국가승인통계(국가통계 승인번호  제113016호)
 accrual_periodicity: 연간
@@ -56,6 +58,7 @@ schema:
         unique: 1
     - name: 도서관코드
       type: number
+      semantic_type: library_cd
       null_rate: 0.0
       sample_values:
         - '5113322013'
@@ -141,12 +144,26 @@ schema:
         p50: 11294.5
         max: 4384609
         unique: 112
+  foreign_keys:
+    - fields:
+        - 도서관코드
+      reference:
+        key: library_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+  space_via: name
+  time: year
+  time_fields:
+    - 평가년도
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -184,7 +201,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072351-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: library_cd(도서관코드)'
     evidence:
       - type: measured
         source: probe/stats/15072351.json
@@ -259,8 +276,6 @@ verification:
   run: probe/runs/15072351.json
   stats: probe/stats/15072351.json
   data: probe/data/15072351/
-status: active
-summary_user: 전국 전문도서관을 도서관별 한 행으로, 평가년도 기준 장서(인쇄 도서자료) 수·사서 수·방문자 수·자료구입비(천원)를 시도·시군구와 함께 담은 집계 파일이다. 지역별 전문도서관의 장서·인력·예산 규모를 비교하거나, 특정 시군구에 어떤 전문도서관이 있고 이용자가 얼마나 되는지 확인하려는 도서관 정책 연구자와 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도서관코드·도서관명 매핑이나 시군구 이름으로 연결해야 하며, 도서관정보나루 등 도서관코드를 쓰는 데이터와는 코드 대응을 먼저 확인해야 한다.
 limits: 표준 조인 키가 없어 다른 도서관·행정 데이터와 결합하려면 이름·코드 매핑 작업이 필요하다. 행정단위는 시군구까지이며, 도서관별 연간 집계라 대출·이용 건별 내역은 담지 않는다.
 review:
   summary: draft
@@ -273,3 +288,4 @@ review:
     - c-15072351-04
     - c-15072351-06
   dropped_citations: 0
+status: active

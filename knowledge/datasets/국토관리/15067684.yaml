@@ -1,4 +1,5 @@
-# Dataset 15067684 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067684 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067684'
 tier: verified
 title: 국토교통부 국토지리정보원_수치지도_고시정보
@@ -22,6 +23,7 @@ synonyms:
   - 수치지도 촬영연도
   - 국토지리정보원 지도 고시
   - 축척별 도엽
+summary_user: 수치지도(수치지형도)의 축척별 도엽마다 도엽번호·도엽명과 그 도엽의 공식 고시일자·고시번호, 촬영·조사·제작연도를 한 행씩 담은 전국 단위 파일(CSV 약 3.1MB)이다. 측량·공간정보 분석가나 사업자가 '이 지역 1:5,000 도엽은 언제 고시됐고 몇 년도 항공촬영을 바탕으로 만들어졌나'처럼 지형도의 최신성과 법적 고시 근거를 확인할 때 쓴다. 전역 조인 키는 없으며, 도엽번호(도엽코드)나 도엽명을 기준으로 수치지도 도엽 파일·도엽 색인과 이어 쓴다.
 description_portal: '수치지도(수치지형도) 도엽과 공식 고시정보 매칭을 위한 데이터. 각 행은 각각의 축척별 도엽에 대해 도엽명, 도엽번호, 고시일자, 고시번호, 촬영년도, 조사년도, 제작년도 정보 제공 ▷ 속성정보- 축척   : 1:1,000 1:2500, 1:5,000, 1:25,000- 도엽   : 도엽코드(ex 37612097, 37616008, 37612070)/ 도엽명칭(ex 안양097, 남양008, 안양070) - 고시   : 고시일자(YYYY-MM-DD)/고시번호(YYYY-0000)- 제작   : 촬영년도(YYYY)/조사년도(YYYY)/제작년도(YYYY)'
 accrual_periodicity: 수시
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 도엽번호
       type: number
+      semantic_type: map_sheet_no
       null_rate: 0.0
       sample_values:
         - '336071336'
@@ -133,12 +136,22 @@ schema:
         - 2010-777
       stats:
         unique: 59
+  foreign_keys:
+    - fields:
+        - 도엽번호
+      reference:
+        key: map_sheet_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 고시일자
 cycle: event
 classification:
   subsector_name: 도시·군관리계획 결정·고시 (UPIS 결정조서·고시·입안·도시계획위원회)
@@ -180,7 +193,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067684-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: map_sheet_no(도엽번호)'
     evidence:
       - type: measured
         source: probe/stats/15067684.json
@@ -260,8 +273,6 @@ verification:
   run: probe/runs/15067684.json
   stats: probe/stats/15067684.json
   data: probe/data/15067684/
-status: active
-summary_user: 수치지도(수치지형도)의 축척별 도엽마다 도엽번호·도엽명과 그 도엽의 공식 고시일자·고시번호, 촬영·조사·제작연도를 한 행씩 담은 전국 단위 파일(CSV 약 3.1MB)이다. 측량·공간정보 분석가나 사업자가 '이 지역 1:5,000 도엽은 언제 고시됐고 몇 년도 항공촬영을 바탕으로 만들어졌나'처럼 지형도의 최신성과 법적 고시 근거를 확인할 때 쓴다. 전역 조인 키는 없으며, 도엽번호(도엽코드)나 도엽명을 기준으로 수치지도 도엽 파일·도엽 색인과 이어 쓴다.
 limits: 도엽 단위 속성표일 뿐 좌표나 도형이 없는 비공간 자료여서 이 파일만으로는 도엽 위치를 지도에 그릴 수 없다. 명세상 수시 생성되는 이벤트성 자료로 정해진 갱신 주기가 없다. 행정구역 코드 같은 공통 키가 없어 다른 데이터와는 도엽번호나 이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -274,3 +285,4 @@ review:
     - c-15067684-03
     - c-15067684-04
   dropped_citations: 0
+status: active

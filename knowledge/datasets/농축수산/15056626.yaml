@@ -1,0 +1,202 @@
+# Dataset 15056626 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056626'
+tier: verified
+title: 경기도_후계농업인 집계 현황
+sector: 농축수산/농업·농촌/farm-business
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056626/openapi.do
+synonyms:
+  - 영농계승
+  - 농업통계
+  - 지역농업
+  - 농업인력
+  - 농촌인구
+  - 농업정책
+  - 후계농 선정 인원
+  - 청년농업인
+  - 차세대 농업인력
+  - 후계농업경영인
+  - 경기도 농업 인력 통계
+  - 신규 농업인 선정
+summary_user: 경기도 후계농업인의 연도별 선정 인원수를 담은 집계 자료로, 개인별 원천이 아니라 연도(SUM_YY)마다 선정 인원(SELECT_PSN_CNT)을 한 줄로 묶은 시도 단위 비공간 통계다. 농업 인력 분석가나 정책 담당자가 '경기도에서 해마다 후계농업인이 얼마나 선정되어 차세대 농업 인력 공급이 꾸준한가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 연도를 기준으로 맞추거나 같은 기관(경기도) 자료끼리만 이어 쓴다.
+description_portal: 이 데이터는 경기도 내 후계농업인의 연도별 선정 인원수를 집계한 자료로, 지역 농업을 이끌 차세대 인력의 규모를 보여주는 중요한 통계입니다. 후계농업인은 농업 경영을 계승하거나 새롭게 진입하는 인력입니다. 이 데이터는 특정 시기의 선정 인원 변동을 살펴봄으로써 정책적 지원의 효과와 한계를 가늠할 수 있으며, 지역 농업 경쟁력 강화와 인력 구조 개선의 방향성을 검토하는 데 기초자료가 됩니다. 또한 연도별 추이를 분석하면 농업 인력 공급이 안정적인지, 정책적 투입이 일관되게 유지되고 있는지 확인할 수 있어 농업·농촌 분야의 중장기 전략 수립에도 활용할 수 있습니다.
+team:
+  dept: AI미래행정과
+services:
+  - op: SuccessionFarmerInformation
+    name: SuccessionFarmerInformation
+    endpoint: https://openapi.gg.go.kr/SuccessionFarmerInformation
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026'
+        - '2025'
+        - '2024'
+      stats:
+        min: 2022
+        p50: 2024
+        max: 2026
+        unique: 5
+    - name: SELECT_PSN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '111'
+        - '118'
+        - '120'
+      stats:
+        min: 111
+        p50: 120
+        max: 192
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농업경영체 (등록 정보·농업법인·영농조합·후계농)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4733
+  rank_in_sector: 172
+  brm: 농축수산 - 임업·산촌
+  sector_rule: forestry-misfiled-agri
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15056626-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056626.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15056626-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056626-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056626.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056626-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056626.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056626-06
+    kind: admin_note
+    value: "세부 부문 '농업경영체 (등록 정보·농업법인·영농조합·후계농)'의 가치: 경영체 등록 = 농업의 기업 축, 법인은 사업자번호. 개인정보라 API는 집계·비식별로 제한"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#farm-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056626-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056626-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056626.json
+  stats: probe/stats/15056626.json
+  data: probe/data/15056626/
+limits: 개인정보 보호 때문에 집계·비식별 값만 제공하므로 개별 후계농업인이나 농업경영체 단위 분석은 할 수 없다. 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 경로 파라미터(KEY)로 넣어야 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15056626-01
+    - c-15056626-03
+    - c-15056626-04
+    - c-15056626-06
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15002343 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15002343 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15002343'
 tier: verified
 title: 한국전기안전공사_태양광 발전설비 사용전검사 사업소별 현황
@@ -24,6 +25,7 @@ synonyms:
   - 태양광 준공검사
   - 전기안전공사 검사 실적
   - 발전설비 검사 불합격
+summary_user: 2024년 한국전기안전공사가 사업소별로 진행한 태양광 발전설비 사용전검사 결과를 합격·불합격 구분별 건수로 집계한 전국 범위 파일(csv)이다. 분석가나 태양광 사업자가 '어느 사업소 관할에서 태양광 설비 사용전검사 불합격 비중이 높은가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업소 이름 매핑이나 같은 기관(한국전기안전공사) 자료끼리만 연결한다.
 description_portal: '한국전기안전공사에서는 각종 발전설비, 송전·변전·배전설비 등 사업용 전기설비 및 아파트, 공장, 상가 등 자가용 전기설비의 설치공사 또는 변경공사를 완료하고, 그 전기설비가 공사계획의 인가 또는 신고를 한 내용 및 전기설비기술기준에 적합한 지의 여부에 대한 검사를 산업통상자원부장관 또는 시·도지사로부터 위탁받아 검사를 진행합니다.법적근거는 사업용 : 전기사업법 제 63조, 제98조제2항, 같은법 시행규칙 제31조, 자가용 :  전기안전관리법 제9조, 제43조제2항, 같은 법 시행규칙 제6조에 해당됩니다.이 데이터는 2024년 한국전기안전공사에서 사업소별로 진행한 태양광 발전설비의 사용전검사 결과(합격, 불합격)를 제공합니다.'
 accrual_periodicity: 연간
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 1
     - name: 사업소
       type: string
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - 강원본부
@@ -84,12 +87,22 @@ schema:
         p50: 59
         max: 1503
         unique: 167
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: kesco_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -126,7 +139,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15002343-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kesco_office_cd(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15002343.json
@@ -191,8 +204,6 @@ verification:
   run: probe/runs/15002343.json
   stats: probe/stats/15002343.json
   data: probe/data/15002343/
-status: active
-summary_user: 2024년 한국전기안전공사가 사업소별로 진행한 태양광 발전설비 사용전검사 결과를 합격·불합격 구분별 건수로 집계한 전국 범위 파일(csv)이다. 분석가나 태양광 사업자가 '어느 사업소 관할에서 태양광 설비 사용전검사 불합격 비중이 높은가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업소 이름 매핑이나 같은 기관(한국전기안전공사) 자료끼리만 연결한다.
 limits: 사업소·연도 단위 집계라 개별 설비나 발전소 단위 검사 이력은 담지 않는다. 행정구역 코드나 공간 정보가 없어 지역 통계와 바로 조인할 수 없고, 사업소명을 직접 매핑해야 한다.
 review:
   summary: draft
@@ -204,3 +215,4 @@ review:
     - c-15002343-03
     - c-15002343-04
   dropped_citations: 0
+status: active

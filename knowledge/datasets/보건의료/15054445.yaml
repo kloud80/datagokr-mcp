@@ -177,6 +177,7 @@ schema:
     - name: gnlNmCd
       title: 일반명코드
       type: code
+      semantic_type: hira_gnl_nm_cd
       null_rate: 0.0
       sample_values:
         - 250401ATB
@@ -204,6 +205,7 @@ schema:
     - name: mdsCd
       title: 약품코드
       type: date
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - G03900131
@@ -215,6 +217,7 @@ schema:
     - name: meftDivNo
       title: 약효분류번호
       type: number
+      semantic_type: hira_meft_div_no
       null_rate: 0.0
       sample_values:
         - '222'
@@ -302,9 +305,29 @@ schema:
       op: /getDgamtList
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - gnlNmCd
+      reference:
+        key: hira_gnl_nm_cd
+      evidence: measured
+    - fields:
+        - mdsCd
+      reference:
+        key: drug_cd
+      evidence: measured
+    - fields:
+        - meftDivNo
+      reference:
+        key: hira_meft_div_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - mdsCd
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -348,7 +371,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15054445-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hira_gnl_nm_cd(gnlNmCd), drug_cd(mdsCd), hira_meft_div_no(meftDivNo)'
     evidence:
       - type: measured
         source: probe/stats/15054445.json

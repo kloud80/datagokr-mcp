@@ -1,4 +1,5 @@
-# Dataset 15072471 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072471 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072471'
 tier: verified
 title: 한국농수산식품유통공사_국제곡물 수급 현황
@@ -24,6 +25,7 @@ synonyms:
   - 식량 수급
   - 곡물 수출입량
   - 농넷
+summary_user: 주요 곡물의 품목별·연도·월별 기초재고량, 생산량, 수입량, 수출량, 소비량(국내소비), 공급량, 기말재고량을 담은 국제 곡물 수급 집계 파일(csv)입니다. 곡물 수입업체나 식량 정책 담당자가 "올해 밀·옥수수의 세계 기말재고가 작년보다 줄어 수입 비축을 늘려야 하나" 같은 판단에 쓴다. 다른 데이터와 묶을 전역 조인 키는 없고, 품목명·품목코드로만 연결할 수 있다. 이 품목코드는 KAMIS·도매시장·HS·KOSIS 코드와 체계가 달라 별도 매핑이 필요하다.
 description_portal: '농산물유통종합정보시스템(https://www.nongnet.or.kr/)에서 제공하는 주요 곡물의 생산, 수출입 등 국제 곡물 수급 현황 정보를 제공합니다.국가별 곡물품목별 기초재고량, 생산량, 수입량, 수출량, 국내 소비, 기말재고량 정보제공주요 곡물에 대한 해외시장 동향 모니터링 정보를 기준으로 제공* 데이터 활용 방안 예시- 주요국의 곡물 수급 동향을 파악하여 수출입 전략 수립 및 최적화- 국제 곡물 공급망의 현황을 파악하여 수매, 수입 비축, 식량 수급 등 정책 수립 활용데이터 정보- 데이터 컬럼 수: 12개- 데이터 컬럼 목록: 품목명, 년도정보, 월정보, 기초재고량, 생산량, 수입량, 수출량, 소비량, 기말재고량, 국내소비, 공급량, aT 등록일자'
 accrual_periodicity: 연간
 team:
@@ -169,6 +171,7 @@ schema:
         unique: 769
     - name: 품목코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '102'
@@ -188,12 +191,27 @@ schema:
         - 쌀
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 품목코드
+      reference:
+        key: agri_item_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도1
+    - 연도2
+  category:
+    - hs_cd
+  category_fields:
+    - 품목코드
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -230,7 +248,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072471-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(품목코드)'
     evidence:
       - type: measured
         source: probe/stats/15072471.json
@@ -295,8 +313,6 @@ verification:
   run: probe/runs/15072471.json
   stats: probe/stats/15072471.json
   data: probe/data/15072471/
-status: active
-summary_user: 주요 곡물의 품목별·연도·월별 기초재고량, 생산량, 수입량, 수출량, 소비량(국내소비), 공급량, 기말재고량을 담은 국제 곡물 수급 집계 파일(csv)입니다. 곡물 수입업체나 식량 정책 담당자가 "올해 밀·옥수수의 세계 기말재고가 작년보다 줄어 수입 비축을 늘려야 하나" 같은 판단에 쓴다. 다른 데이터와 묶을 전역 조인 키는 없고, 품목명·품목코드로만 연결할 수 있다. 이 품목코드는 KAMIS·도매시장·HS·KOSIS 코드와 체계가 달라 별도 매핑이 필요하다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 가격·무역 데이터와 붙이려면 품목명이나 코드를 직접 매핑해야 한다. 포털 설명은 국가별 정보를 제공한다고 하지만, 필드 목록에서 국가 구분 컬럼은 확인되지 않으므로 국가별 분석이 가능한지 먼저 파일을 열어 확인한다.
 review:
   summary: draft
@@ -308,3 +324,4 @@ review:
     - c-15072471-03
     - c-15072471-06
   dropped_citations: 0
+status: active

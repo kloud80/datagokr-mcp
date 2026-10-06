@@ -1,4 +1,5 @@
-# Dataset 15052050 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15052050 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15052050'
 tier: verified
 title: 울산시설공단_동천국민체육센터_카드거래내역
@@ -23,6 +24,7 @@ synonyms:
   - 울산 체육시설 매출
   - 카드 승인내역
   - 공공체육시설 이용료
+summary_user: 울산시설공단 동천국민체육센터에서 이루어진 카드 결제를 거래 한 건 단위로 담은 원천 기록으로, 거래일자·승인/취소 여부·카드사·승인금액·거래 목적(수강료·입장료·대관료 등) 6개 항목으로 구성되며 CSV 파일 약 16MB 분량이다. 시설 운영 분석가나 공단 관계자가 월별·용도별 결제 금액 추이와 취소 비율을 살펴보거나, 수강료와 대관료 중 어느 수입이 큰지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시설명 같은 이름 매칭이나 같은 울산시설공단의 다른 시설 카드거래내역과 나란히 비교하는 방식으로만 이어 쓴다.
 description_portal: 동천국민체육센터에서는 이용자의 카드 결제 관련 정보를 보다 명확하게 제공하기 위해 카드 거래 내역 데이터를 공개하고 있습니다. 해당 데이터는 시설명, 거래일자, 승인구분, 카드종류, 승인금액, 구분 등 총 6개의 항목으로 구성되어 있으며, 각 항목은 다음과 같은 정보를 포함합니다. 시설명은 결제가 이루어진 체육시설의 이름을 나타내며, 거래일자는 카드 승인 또는 취소가 이루어진 날짜를 의미합니다. 승인구분은 해당 거래가 승인인지 취소인지의 여부를 나타내고, 카드종류는 사용된 카드의 회사를 구분합니다. 승인금액은 실제 결제된 금액이며, 구분 항목은 수강료, 입장료, 대관료 등의 거래 목적을 구분짓는 항목입니다.
 accrual_periodicity: 연간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 동천국민체육센터
@@ -89,12 +92,22 @@ schema:
         - 오프라인
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 거래일자
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -131,7 +144,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15052050-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15052050.json
@@ -196,8 +209,6 @@ verification:
   run: probe/runs/15052050.json
   stats: probe/stats/15052050.json
   data: probe/data/15052050/
-status: active
-summary_user: 울산시설공단 동천국민체육센터에서 이루어진 카드 결제를 거래 한 건 단위로 담은 원천 기록으로, 거래일자·승인/취소 여부·카드사·승인금액·거래 목적(수강료·입장료·대관료 등) 6개 항목으로 구성되며 CSV 파일 약 16MB 분량이다. 시설 운영 분석가나 공단 관계자가 월별·용도별 결제 금액 추이와 취소 비율을 살펴보거나, 수강료와 대관료 중 어느 수입이 큰지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시설명 같은 이름 매칭이나 같은 울산시설공단의 다른 시설 카드거래내역과 나란히 비교하는 방식으로만 이어 쓴다.
 limits: 거래 건별 결제 정보만 있어 이용자 수·이용자 특성이나 프로그램별 세부 내역은 알 수 없다. 공통 코드나 표준 시설 ID가 없어 문체부 전국체육시설 데이터 등과 직접 결합되지 않고 이름 매핑이 필요하다. 승인과 취소가 함께 들어 있으므로 매출 집계 시 승인구분으로 취소 건을 반영해야 한다.
 review:
   summary: draft
@@ -209,3 +220,4 @@ review:
     - c-15052050-03
     - c-15052050-06
   dropped_citations: 0
+status: active

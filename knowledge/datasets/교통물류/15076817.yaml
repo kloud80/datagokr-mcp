@@ -1,0 +1,296 @@
+# Dataset 15076817 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076817'
+tier: verified
+title: 한국도로공사_총 통행속도(TCS기준)
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076817/openapi.do
+synonyms:
+  - 고속도로
+  - TCS
+  - 통행속도
+  - 도로교통
+  - 영업소정보
+  - 차종구분
+  - 평균속도
+  - 교통분석
+  - 고속도로 구간 속도
+  - 영업소 간 평균속도
+  - TCS 통행속도
+  - 차종별 주행속도
+  - 고속도로 정체 분석
+  - 통행료징수시스템 속도
+summary_user: 한국도로공사 통행료징수시스템(TCS) 기록을 바탕으로 출발·도착 영업소 쌍별, 일자별, 차종별 평균 통행속도(avgSpeed)를 담은 전국 단위 집계 데이터다. 운송사업자나 교통 분석가가 특정 고속도로 영업소 구간에서 화물차와 승용차의 평균 속도가 어떻게 다른지, 어느 구간이 상습적으로 느린지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았다. 영업소코드와 차종코드를 같은 기관의 영업소·통행 데이터와 코드나 이름으로 맞춰 이어 쓰고, 이력을 쌓으면 정체 구간 분석에 활용한다.
+description_portal: 본 데이터는 한국도로공사가 제공하는 영업소 간 총 통행속도 정보를 TCS(통행료징수시스템) 기준으로 수집·제공한 것이다.OpenAPI 형태로 제공되며 XML과 JSON 형식을 지원한다.제공 항목에는 일자, TCS 차종유형구분명 및 코드, TCS 차종구분명 및 코드, 평균속도, 출발영업소코드, 도착영업소코드가 포함된다.이를 통해 특정 차종별로 영업소 간 평균 주행속도를 파악할 수 있다.데이터는 도로 통행료 징수시스템에서 자동 수집된 정보를 기반으로 하며, 실제 교통 흐름 및 도로 운영 상태를 분석하는 데 활용된다.이용자는 본 데이터를 활용하여 차종별 속도 비교, 교통 혼잡 구간 분석, 도로 운영 효율성 평가 등에 참고할 수 있다.또한 장기적으로 속도 변화 추이를 분석함으로써 교통 정책 수립 및 도로 인프라 개선 방안 마련에 기여할 수 있다.
+team:
+  dept: AI데이터처
+services:
+  - op: totalSpeed
+    name: totalSpeed
+    endpoint: https://data.ex.co.kr/openapi/trafficOprgPrcd/totalSpeed
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tcsCarTypeCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 3
+        max: 6
+        unique: 6
+    - name: tcsCarTypeNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1종
+        - 2종
+        - 3종
+      stats:
+        unique: 6
+    - name: tcsCarTypeGrpNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대형차
+        - 소형차
+        - 중형차
+      stats:
+        unique: 3
+    - name: tcsCarTypeGrpCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 2
+        max: 3
+        unique: 3
+    - name: avgSpeed
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '118.20000000000000000000000'
+        - '118.21000000000000000000000'
+        - '95.84000000000000000000000'
+      stats:
+        min: 81.08
+        p50: 112.03
+        max: 118.21
+        unique: 11
+    - name: stDate
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: edDate
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: oDate
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026.10.05
+      stats:
+        min: '2026-10-05'
+        max: '2026-10-05'
+        unique: 1
+    - name: iStartUnitCode
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: iEndUnitCode
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: stUnitCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '101 '
+      stats:
+        min: 101
+        p50: 101
+        max: 101
+        unique: 1
+    - name: edUnitCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '102 '
+      stats:
+        min: 102
+        p50: 102
+        max: 102
+        unique: 1
+    - name: message
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: code
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - oDate
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.7129
+  rank_in_sector: 351
+  brm: 교통물류 - 도로
+  why: 영업소 간 TCS 통행속도 일자별
+claims:
+  - id: c-15076817-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076817.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076817-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076817-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076817.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 14개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076817-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076817.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076817-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076817-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076817-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076817.json
+  stats: probe/stats/15076817.json
+  data: probe/data/15076817/
+limits: 포털 활용신청과 별도로 외부 사이트(data.ex.co.kr)에서 발급한 인증키를 경로 파라미터로 넣어야 호출된다. 전국 범위의 비공간 데이터라 좌표가 없다. 공통 조인 키도 없어 지도나 다른 기관 데이터와는 코드·이름 매핑 없이 바로 결합할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076817-01
+    - c-15076817-03
+    - c-15076817-04
+    - c-15076817-06
+  dropped_citations: 0
+status: active

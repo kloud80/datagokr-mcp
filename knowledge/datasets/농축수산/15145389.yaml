@@ -38,6 +38,7 @@ schema:
   fields:
     - name: 지수 코드명
       type: code
+      semantic_type: ocean_index_point_cd
       null_rate: 0.0
       sample_values:
         - 해수욕
@@ -101,6 +102,7 @@ schema:
         unique: 125
     - name: 지수 코드명(세부)
       type: string
+      semantic_type: ocean_index_point_cd
       null_rate: 0.0
       sample_values:
         - SK7
@@ -109,6 +111,11 @@ schema:
       stats:
         unique: 140
   foreign_keys:
+    - fields:
+        - 지수 코드명
+      reference:
+        key: ocean_index_point_cd
+      evidence: measured
     - fields:
         - 경도
       reference:
@@ -124,9 +131,20 @@ schema:
       reference:
         key: address
       evidence: measured
+    - fields:
+        - 지수 코드명(세부)
+      reference:
+        key: ocean_index_point_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 해양 관측·예보 (조석·조류·수온·염분·파고·해류·특보)
@@ -163,7 +181,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15145389-03
     kind: key
-    value: '실측 조인 키: coord(경도), coord(위도), address(주소)'
+    value: '실측 조인 키: ocean_index_point_cd(지수 코드명), coord(경도), coord(위도), address(주소), ocean_index_point_cd(지수 코드명(세부))'
     evidence:
       - type: measured
         source: probe/stats/15145389.json

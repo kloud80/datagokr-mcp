@@ -1,4 +1,5 @@
-# Dataset 15143840 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15143840 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15143840'
 tier: verified
 title: 서울교통공사_빠른하차정보
@@ -22,6 +23,7 @@ synonyms:
   - 출구 가까운 문
   - 교통약자 동선
   - 지하철 칸 번호
+summary_user: 서울교통공사 지하철역별로 하차역 기준 계단·엘리베이터 등 이동 설비와 가장 가까운 열차 칸(문) 번호를 상하행·방면별로 담은 건별 조회 API입니다. 지하철 이용자나 교통약자 안내 서비스 개발자가 '이 역에서 엘리베이터로 가장 빨리 가려면 몇 번째 칸 몇 번 문에서 내려야 하나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 역코드(stnCd)·역명·호선명을 서울교통공사의 다른 역·승하차 데이터와 이름·코드로 맞춰 이어 쓴다.
 description_portal: 서울교통공사 빠른하차정보 API는 지하철의 하차역 기준으로 계단, 엘리베이터 등 이동 설비와 가장 가까운 열차 칸 출입문 위치를 조회하는 API입니다. 하차 시 빠르게 이동할 수 있는 하차칸(문) 번호와 연결된 이동 설비의 위치 정보 등을 제공하며, 호선과 역코드, 지하철 역명 검색어 검색조건을 제공합니다. 빠른하차정보 API는 수시로 갱신되는 데이터를 Rest API 방식으로 제공되며, 교통약자 및 일반 이용자의 하차 동선 최적화 서비스 등에 활용될 수 있습니다. 데이터는 수시로 갱신됩니다.
 team:
   dept: 데이터팀
@@ -100,6 +102,7 @@ schema:
     - name: stnCd
       title: 해당 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '0150'
@@ -119,6 +122,7 @@ schema:
     - name: stnNo
       title: 해당 지하철 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '133'
@@ -192,6 +196,7 @@ schema:
     - name: elvtrNo
       title: 승강기번호
       type: code
+      semantic_type: elevator_no
       null_rate: 0.5714
       sample_values:
         - 1806-600
@@ -217,12 +222,32 @@ schema:
         - 시청 방면5-1, 남영 방면4-4
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - stnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - stnNo
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
+    - fields:
+        - elvtrNo
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - crtrYmd
 cycle: default
 classification:
   subsector_name: 승하차·혼잡·통행
@@ -266,7 +291,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15143840-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_cd(stnCd), seoul_metro_station_fr_cd(stnNo), elevator_no(elvtrNo)'
     evidence:
       - type: measured
         source: probe/stats/15143840.json
@@ -331,8 +356,6 @@ verification:
   run: probe/runs/15143840.json
   stats: probe/stats/15143840.json
   data: probe/data/15143840/
-status: active
-summary_user: 서울교통공사 지하철역별로 하차역 기준 계단·엘리베이터 등 이동 설비와 가장 가까운 열차 칸(문) 번호를 상하행·방면별로 담은 건별 조회 API입니다. 지하철 이용자나 교통약자 안내 서비스 개발자가 '이 역에서 엘리베이터로 가장 빨리 가려면 몇 번째 칸 몇 번 문에서 내려야 하나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 역코드(stnCd)·역명·호선명을 서울교통공사의 다른 역·승하차 데이터와 이름·코드로 맞춰 이어 쓴다.
 limits: 전역 공통 조인 키가 없어 다른 기관 데이터와는 역명·코드 매핑으로만 연결된다. 승하차 인원이나 혼잡도 같은 이용량 수치는 담지 않는다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -343,3 +366,4 @@ review:
     - c-15143840-01
     - c-15143840-03
   dropped_citations: 0
+status: active

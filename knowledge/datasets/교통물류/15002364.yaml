@@ -1,4 +1,5 @@
-# Dataset 15002364 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15002364 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15002364'
 tier: verified
 title: 대전교통공사_열차 혼잡도 분석
@@ -21,6 +22,7 @@ synonyms:
   - 재차인원
   - 출퇴근 혼잡 시간대
   - 열차 혼잡률
+summary_user: 대전도시철도 1호선에서 월별로 가장 혼잡했던 열차를 열차 단위로 정리한 집계 파일로, 상·하행, 요일, 출발·도착역과 시각, 혼잡도, 재차인원, 최고혼잡역을 담으며 파일 크기는 약 1.3KB로 작다. 어느 달 어느 요일의 어느 열차가 어떤 구간에서 가장 붐볐는지를 확인해 출퇴근 혼잡 시간대 분석이나 증편·배차 조정 검토에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 역 이름이나 열차번호를 같은 기관의 승하차·시간표 데이터와 이름 매칭하는 방식으로만 이어 쓴다.
 description_portal: 이 데이터는 대전도시철도 1호선의 열차 혼잡도 현황을 제공하는 서비스입니다.월별로 가장 혼잡했던 열차에 대한 정보를 확인할 수 있으며,열차별로 열차번호, 출발역, 출발시간, 도착역, 도착시간, 최고 혼잡구간 등의 상세한 정보를 제공합니다.또한 상행·하행 구분, 요일, 운행 구간, 해당 시간대의 재차 인원(수송 인원) 등도 포함되어 있어어느 요일의 어느 열차가 어떤 구간을 운행할 때 최고 혼잡도가 발생했는지를 파악할 수 있습니다.**열(column)**에는 월별, 열차별 혼잡 정보가 정리되어 있으며,이 데이터를 통해 혼잡 시간대 분석, 노선 운영 최적화, 혼잡 완화 전략 수립 등에 활용할 수 있습니다.
 accrual_periodicity: 월간
 team:
@@ -60,6 +62,7 @@ schema:
         unique: 2
     - name: 열차번호
       type: number
+      semantic_type: djtc_train_no
       null_rate: 0.0
       sample_values:
         - '1047'
@@ -148,12 +151,22 @@ schema:
         - 정부청사
       stats:
         unique: 4
+  foreign_keys:
+    - fields:
+        - 열차번호
+      reference:
+        key: djtc_train_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 영업일
 cycle: default
 classification:
   subsector_name: 승하차·혼잡·통행
@@ -190,7 +203,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15002364-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: djtc_train_no(열차번호)'
     evidence:
       - type: measured
         source: probe/stats/15002364.json
@@ -255,8 +268,6 @@ verification:
   run: probe/runs/15002364.json
   stats: probe/stats/15002364.json
   data: probe/data/15002364/
-status: active
-summary_user: 대전도시철도 1호선에서 월별로 가장 혼잡했던 열차를 열차 단위로 정리한 집계 파일로, 상·하행, 요일, 출발·도착역과 시각, 혼잡도, 재차인원, 최고혼잡역을 담으며 파일 크기는 약 1.3KB로 작다. 어느 달 어느 요일의 어느 열차가 어떤 구간에서 가장 붐볐는지를 확인해 출퇴근 혼잡 시간대 분석이나 증편·배차 조정 검토에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 역 이름이나 열차번호를 같은 기관의 승하차·시간표 데이터와 이름 매칭하는 방식으로만 이어 쓴다.
 limits: 월별 최고 혼잡 열차만 담은 요약이라 모든 열차·역별 시간대 혼잡도나 승하차 인원은 알 수 없다. 범위가 '전국'으로 표기돼 있으나 실제 내용은 대전 1호선에 한정되고 표준 역 코드가 없어 다른 노선·기관 자료와 결합 시 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -268,3 +279,4 @@ review:
     - c-15002364-03
     - c-15002364-04
   dropped_citations: 0
+status: active

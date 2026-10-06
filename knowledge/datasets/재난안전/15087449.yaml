@@ -1,4 +1,5 @@
-# Dataset 15087449 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15087449 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087449'
 tier: verified
 title: 한국산업안전보건공단_보호구 인증 현황
@@ -25,6 +26,7 @@ synonyms:
   - 인증취소 보호구
   - KCs 인증 보호구
   - 개인보호구
+summary_user: 한국산업안전보건공단 인증원이 안전인증한 보호구를 인증번호 한 건씩 담은 원장 파일로, 신청·제조 사업장명, 인증일자, 인증품명·형식모델, 용량등급·정격, 인증 취소·반납 사유와 일자를 포함한다. 사업장 안전관리자나 구매 담당자가 '납품받는 보호구가 유효한 안전인증을 받았는지, 인증이 취소·반납되지는 않았는지'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 제조사업장명·인증번호 같은 이름·번호 매칭으로만 이어 쓴다.
 description_portal: 한국산업안전보건공단 인증원에서 제공하는 보호구 인증 현황으로 인증품명, 안전인증번호, 제조사업장, 형식 모델, 인증품목명,정격 등을 확인할 수 있도록 보호구에 대한 정보를 제공합니다.*산업안전보건법 제83조(안전인증기준) ① 고용노동부장관은 유해하거나 위험한 기계ㆍ기구ㆍ설비 및 방호장치ㆍ보호구(이하 "유해ㆍ위험기계등"이라 한다)의 안전성을 평가하기 위하여 그 안전에 관한 성능과 제조자의 기술 능력 및 생산 체계 등에 관한 기준(이하 "안전인증기준"이라 한다)을 정하여 고시하여야 한다.② 안전인증기준은 유해ㆍ위험기계등의 종류별, 규격 및 형식별로 정할 수 있다.
 accrual_periodicity: 수시
 team:
@@ -56,6 +58,7 @@ schema:
         unique: 115
     - name: 인증번호
       type: string
+      semantic_type: kosha_safety_cert_no
       null_rate: 0.0
       sample_values:
         - 23-AV4Cb-0003
@@ -133,12 +136,22 @@ schema:
         min: '2023-07-11'
         max: '2023-07-11'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 인증번호
+      reference:
+        key: kosha_safety_cert_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 인증일자
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -175,7 +188,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15087449-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosha_safety_cert_no(인증번호)'
     evidence:
       - type: measured
         source: probe/stats/15087449.json
@@ -240,8 +253,6 @@ verification:
   run: probe/runs/15087449.json
   stats: probe/stats/15087449.json
   data: probe/data/15087449/
-status: active
-summary_user: 한국산업안전보건공단 인증원이 안전인증한 보호구를 인증번호 한 건씩 담은 원장 파일로, 신청·제조 사업장명, 인증일자, 인증품명·형식모델, 용량등급·정격, 인증 취소·반납 사유와 일자를 포함한다. 사업장 안전관리자나 구매 담당자가 '납품받는 보호구가 유효한 안전인증을 받았는지, 인증이 취소·반납되지는 않았는지'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 제조사업장명·인증번호 같은 이름·번호 매칭으로만 이어 쓴다.
 limits: 실측 컬럼에 다른 데이터셋과 공유하는 표준 코드가 없어 사업장명 문자열 매칭에 의존해야 하며, 표기 차이로 누락이 생길 수 있다. 전국 단위 비공간 자료라 지역별 분석에는 쓰기 어렵다.
 review:
   summary: draft
@@ -253,3 +264,4 @@ review:
     - c-15087449-03
     - c-15087449-04
   dropped_citations: 0
+status: active

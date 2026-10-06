@@ -1,4 +1,5 @@
-# Dataset 15118398 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15118398 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15118398'
 tier: verified
 title: 한국서부발전(주)_발전소 기상정보
@@ -25,6 +26,7 @@ synonyms:
   - 발전소 강수량
   - 화력발전소 기상관측
   - 서부발전 기온 습도
+summary_user: 한국서부발전 태안·평택·서인천 발전소 주변에서 측정한 기온·습도·기압·풍향·풍속·강수량을 발전소명·호기별, 측정일자 단위로 담은 API 데이터다. 발전소 인근 주민이나 환경 분석가가 '특정 날 태안발전소 주변 바람이 어느 방향으로 얼마나 불었고 비가 얼마나 왔나'를 확인해 대기오염물질 확산 방향을 가늠하는 데 쓴다. 전역 조인 키는 없어 발전소명(genNm)과 일자로 같은 기관의 발전소 배출·수질 측정 데이터나 기상청 관측 자료에 이름·날짜 매칭으로 이어 쓴다.
 description_portal: 한국서부발전 발전소(태안, 평택, 서인천) 기상정보 입니다. 한국서부발전 발전소 주변 기상정보 데이터는 발전소 운영 및 환경 관리에 직접적인 영향을 미치는 지역 기상 조건을 종합적으로 기록한 자료입니다. 이 데이터에는 일자별 단위로 수집된 기온, 상대습도, 기압, 풍향, 풍속, 강수량 등의 항목이 포함되어 있습니다. 기온과 습도는 발전설비의 효율과 냉각수 사용량에 영향을 주며, 기압변화는 대기 확산 조건을 분석하는데 활용됩니다. 풍향 및 풍속 데이터는 대기오염물질의 이동경로 및 확산 범위를 예측하는데 중요한 기준이 되며, 강수량 정보는 수질관리 및 빗물 유입에 따른 설비 안전성 평가에 기여합니다.제공데이터는 측정일시별 온도(섭씨), 습도(퍼센트), 기압(hPa), 풍향값(MW), 풍항명, 강수량(mm) 정보입니다.
 team:
   dept: 디지털운영부
@@ -164,6 +166,7 @@ schema:
     - name: hoki
       title: 호기정보
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - W0
@@ -173,11 +176,23 @@ schema:
     - name: genNm
       title: 발전소명
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 태안
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - hoki
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
+    - fields:
+        - genNm
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -227,7 +242,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15118398-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(hoki), ewp_plant_unit(genNm)'
     evidence:
       - type: measured
         source: probe/stats/15118398.json
@@ -292,8 +307,6 @@ verification:
   run: probe/runs/15118398.json
   stats: probe/stats/15118398.json
   data: probe/data/15118398/
-status: active
-summary_user: 한국서부발전 태안·평택·서인천 발전소 주변에서 측정한 기온·습도·기압·풍향·풍속·강수량을 발전소명·호기별, 측정일자 단위로 담은 API 데이터다. 발전소 인근 주민이나 환경 분석가가 '특정 날 태안발전소 주변 바람이 어느 방향으로 얼마나 불었고 비가 얼마나 왔나'를 확인해 대기오염물질 확산 방향을 가늠하는 데 쓴다. 전역 조인 키는 없어 발전소명(genNm)과 일자로 같은 기관의 발전소 배출·수질 측정 데이터나 기상청 관측 자료에 이름·날짜 매칭으로 이어 쓴다.
 limits: 표준 지역코드 같은 공통 조인 키가 없어 다른 데이터와는 발전소명·일자 매칭으로만 연결된다. 범위는 전국·비공간으로 분류돼 좌표 기반 공간 분석에는 바로 쓰기 어렵고, 개발계정은 하루 100회 호출로 제한된다.
 review:
   summary: draft
@@ -306,3 +319,4 @@ review:
     - c-15118398-04
     - c-15118398-06
   dropped_citations: 0
+status: active

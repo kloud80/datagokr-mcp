@@ -1,0 +1,229 @@
+# Dataset 15058340 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058340'
+tier: verified
+title: 경기도_석유·전기·가스 비상연락망 현황
+sector: 산업고용/산업·중소기업일반/business-licenses
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058340/openapi.do
+synonyms:
+  - 전기
+  - 가스
+  - 비상연락
+  - 긴급대응
+  - 재난관리
+  - 에너지기관
+  - 에너지 비상연락망
+  - 전기 가스 긴급연락처
+  - 도시가스 상황실 연락처
+  - 한전 비상연락처
+  - 재난대응 연락체계
+  - 에너지 재난 매뉴얼
+  - 종합상황실 전화번호
+summary_user: 경기도 지역 전기·도시가스 관련 기관의 비상연락망을 기관명·담당 부서·전화번호·팩스 단위로 정리한 목록으로, 건별 사업장 원장이 아니라 연락처 현황표다. 지자체 재난담당자나 안전관리 실무자가 "가스 누출이나 정전 사고 때 어느 기관 상황실에 연락해야 하나"를 확인하거나 에너지 분야 비상연락체계를 정비할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기관명(INST_NM)을 이름으로 맞추는 방식으로만 연결한다.
+description_portal: 이 데이터는 전기 및 도시가스 관련 기관의 비상연락망 현황을 정리한 자료로, 재난이나 긴급상황 발생 시 신속한 연락과 대응을 위한 정보를 제공합니다. 항목에는 집계일자, 에너지 구분(전기/가스), 기관명, 담당 부서명, 전화번호 등이 포함되어 있어, 실제 재해 대응 매뉴얼 구축이나 상황 발생 시 즉시 활용할 수 있는 정보로 구성되어 있습니다. 특히 모든 연락처가 종합상황실 등 긴급대응 부서로 연결되어 있어, 전력·가스 사고 발생 시 지역 내 협력 체계를 빠르게 가동할 수 있는 기반이 됩니다. 이 자료는 에너지 분야 재난대응 계획 수립, 지자체 비상연락체계 정비, 공공안전 매뉴얼 작성 등 실무적 용도로 활용됩니다.
+team:
+  dept: AI미래행정과
+services:
+  - op: Oilelecgascontract
+    name: Oilelecgascontract
+    endpoint: https://openapi.gg.go.kr/Oilelecgascontract
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (도시가스) ㈜삼천리
+        - (도시가스) ㈜예스코
+        - (도시가스) 서울도시가스㈜
+      stats:
+        unique: 5
+    - name: DEPT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종합상황실
+        - 종합통제실
+      stats:
+        unique: 2
+    - name: TELNO_GUID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 080-300-2119
+        - 02-2210-7510
+        - 02-3660-8282
+      stats:
+        unique: 5
+    - name: FAXNO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: RM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: TMP01
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가스
+      stats:
+        unique: 1
+    - name: TMP02
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: TMP03
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6194
+  brm: 산업고용 - 산업·중소기업일반
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058340-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058340.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058340-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058340-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058340.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058340-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058340.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058340-06
+    kind: admin_note
+    value: "세부 부문 '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'의 가치: 지방행정 인허가(LOCALDATA) 공통 원천 — 업종별 영업 원장, 사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#business-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058340-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058340-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058340.json
+  stats: probe/stats/15058340.json
+  data: probe/data/15058340/
+limits: 경기도 데이터포털(data.gg.go.kr) 인증키가 따로 필요하고, 이 인증키는 공공데이터포털 활용신청과 별개다. 실측 컬럼에 공통 코드가 없어 기관 코드나 행정구역 코드로 정확히 조인할 수 없다. 좌표가 없는 비공간 데이터라 지도 위치 분석에는 쓸 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058340-01
+    - c-15058340-03
+    - c-15058340-04
+  dropped_citations: 0
+status: active

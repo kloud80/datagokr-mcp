@@ -38,6 +38,7 @@ schema:
   fields:
     - name: 발전기명
       type: code
+      semantic_type: ewp_renew_generator
       null_rate: 0.0
       sample_values:
         - 세종시폐기물매립장태양광
@@ -101,6 +102,11 @@ schema:
         unique: 43800
   foreign_keys:
     - fields:
+        - 발전기명
+      reference:
+        key: ewp_renew_generator
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -109,6 +115,14 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2022-01-01 ~ 2022-12-31
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 연월일
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -149,7 +163,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15155017-03
     kind: key
-    value: '실측 조인 키: address(주소)'
+    value: '실측 조인 키: ewp_renew_generator(발전기명), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15155017.json

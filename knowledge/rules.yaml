@@ -33,3 +33,26 @@
   keys: [admin_area_code, sgg_cd, bjd_cd]
   note: '중구·동구처럼 여러 시도에 있는 이름은 시도 이름(parent)이 있어야 한다. 모호하면 None'
 
+
+# ── 느슨한 조인 (정렬 조인, 2026-10-06) — 키가 정확히 같지 않아도 공통 단위로 내린 뒤 집계해서 잇는다.
+#    데이터마다 grain(공간·시간·분류 단위)을 실측으로 기록하고, 전략 플래너가 고른 데이터 사이에서 공통 단위를 계산한다.
+#    정확한 키 조인(joinable)보다 신뢰도가 낮다 — 결과는 "시군구 × 월" 같은 집계 단위의 비교·상관이지 행 단위 결합이 아니다.
+- id: R-20
+  name: PNU → 법정동 — 필지고유번호 앞 10자리
+  function: pds.rules.admin_rollup
+  keys: [pnu, bjd_cd]
+- id: R-21
+  name: 행정구역 상위 단위 — 법정동(10) → 읍면동(8) → 시군구(5) → 시도(2) 앞자리
+  function: pds.rules.admin_rollup
+  keys: [bjd_cd, sgg_cd, admin_area_code]
+  note: 행정동 코드는 법정동과 체계가 달라 시군구(5) 이상에서만 맞춘다
+- id: R-22
+  name: 시점 정렬 — 날짜·시각을 일·월·분기·연으로 내림
+  function: pds.rules.time_floor
+  keys: []
+  note: 두 데이터의 시간 단위 중 거친 쪽으로. 기간 범위가 겹치는지는 셀 통계(min~max)로 확인
+- id: R-23
+  name: 분류 계층 — 업종(KSIC)·품목(HS) 코드 앞자리로 상위 분류
+  function: pds.rules.category_prefix
+  keys: []
+  note: 같은 분류 체계일 때만. 산업 비교(업종별 집계)용

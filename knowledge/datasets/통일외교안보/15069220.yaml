@@ -1,4 +1,5 @@
-# Dataset 15069220 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069220 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069220'
 tier: verified
 title: 한국국제협력단_국별협력사업 사업개요서
@@ -21,6 +22,7 @@ synonyms:
   - 공적개발원조 프로젝트
   - 수원국 사업
   - 무상원조 사업
+summary_user: KOICA가 협력국에서 추진하는 국별 협력사업을 사업 한 건당 한 행으로 정리한 사업개요서 파일(CSV, 약 103KB)로, 사업명·대상국과 대상지·예산(만불)·시작·종료연도·목적과 내용·지원분야·구성요소·산출물과 성과·수행기관과 수원기관·추진단계를 담는다. 연구자나 개발협력 실무자가 "특정 국가에서 KOICA가 어떤 분야에 얼마의 예산으로 어떤 사업을 하고 있는가"를 확인하거나 국가·분야별 사업 구조를 비교하는 데 쓴다. 전역 조인 키는 없어 사업대상국 이름을 국가 표준코드에 매핑하거나 사업번호·사업명으로 같은 기관의 KOICA 사업정보·발주계획·조달 데이터와 맞춰 이어 쓴다.
 description_portal: 한국국제협력단(KOICA)이 세계 각국에서 진행하는 국별 협력사업의 사업개요서를 정리한 자료입니다. 사업명, 지원 대상 국가 및 도시, 예산 규모, 사업 기간, 추진 목적과 주요 내용, 유형, 원조 구분, 구성 요소, 예상 산출물과 성과, 수행 기관 및 수원 기관 정보, 추진 단계 등 핵심 정보를 체계적으로 담고 있습니다. 이를 통해 각 국별 개발협력 사업의 주요 분야, 목표, 투입예산 및 전반적인 구조를 비교 분석할 수 있습니다. 이에 동 자료는 국별협력사업에 대해 확인하고 연구하고자 하는 사람들에게 적합한 기초 자료입니다. 또한 협력국별 맞춤형 지원계획 수립 등 실무적인 접근에도 유용하게 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 55
     - name: 사업번호
       type: string
+      semantic_type: koica_project_no
       null_rate: 0.0
       sample_values:
         - 2022-00034
@@ -323,12 +326,23 @@ schema:
         - 종료단계
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 사업번호
+      reference:
+        key: koica_project_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 시작연도
+    - 종료연도
 cycle: default
 classification:
   subsector_name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
@@ -365,7 +379,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069220-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koica_project_no(사업번호)'
     evidence:
       - type: measured
         source: probe/stats/15069220.json
@@ -430,8 +444,6 @@ verification:
   run: probe/runs/15069220.json
   stats: probe/stats/15069220.json
   data: probe/data/15069220/
-status: active
-summary_user: KOICA가 협력국에서 추진하는 국별 협력사업을 사업 한 건당 한 행으로 정리한 사업개요서 파일(CSV, 약 103KB)로, 사업명·대상국과 대상지·예산(만불)·시작·종료연도·목적과 내용·지원분야·구성요소·산출물과 성과·수행기관과 수원기관·추진단계를 담는다. 연구자나 개발협력 실무자가 "특정 국가에서 KOICA가 어떤 분야에 얼마의 예산으로 어떤 사업을 하고 있는가"를 확인하거나 국가·분야별 사업 구조를 비교하는 데 쓴다. 전역 조인 키는 없어 사업대상국 이름을 국가 표준코드에 매핑하거나 사업번호·사업명으로 같은 기관의 KOICA 사업정보·발주계획·조달 데이터와 맞춰 이어 쓴다.
 limits: 다른 데이터와 바로 연결되는 공통 코드가 없어 국가명·사업명 매핑을 직접 해야 한다. 국가별 정치·경제 개황 같은 배경 정보는 담지 않으며, 이 데이터셋은 보조 등급으로 분류돼 있다.
 review:
   summary: draft
@@ -445,3 +457,4 @@ review:
     - c-15069220-07
     - c-15069220-08
   dropped_citations: 0
+status: active

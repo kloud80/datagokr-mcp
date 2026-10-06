@@ -1,4 +1,5 @@
-# Dataset 15038480 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15038480 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15038480'
 tier: verified
 title: 한국석유공사_지역별 주유소 수
@@ -24,6 +25,7 @@ synonyms:
   - 지역별 주유소 통계
   - 유류공급 인프라
   - 주유소 밀도
+summary_user: 전국 주유소 수를 시도 단위로 집계한 소규모 파일(csv, 388바이트)로, 시도·주유소 수·데이터 기준일만 담는다. 정책담당자나 업계 분석가가 "어느 시도에 주유소가 많고 적은가", "지역 간 유류공급 인프라 편차는 어느 정도인가"를 확인할 때 쓴다. 전역 조인 키가 없어 시도 이름을 행정구역 코드나 다른 시도별 통계(인구·차량 등)에 이름으로 맞춰 연결하고, 개별 주유소 위치·유가는 오피넷 계열 데이터의 주유소 ID·좌표로 따로 봐야 한다.
 description_portal: 이 데이터는 한국석유공사가 제공하는 전국 주유소의 지역별 분포 현황을 정리한 자료입니다. 행정구역 기준으로 시도 단위로 구분되어 있으며, 각 지역에 설치된 주유소의 총 개수를 확인할 수 있습니다. 이를 통해 전국 유류공급 인프라의 분포 상황과 지역 간 편차를 파악할 수 있으며, 정책담당자는 에너지 접근성 평가, 주유소 신설 또는 통합 정책 수립 시 참고 자료로 활용할 수 있습니다. 일반 이용자는 거주지 또는 특정 지역의 주유소 밀도를 확인할 수 있으며, 민간 업계는 경쟁 환경 및 진출 전략 수립에 활용 가능합니다. 본 데이터는 정기적으로 갱신되어 최신 지역 정보를 반영하며, 유류 유통망의 균형적 구축과 에너지 정책의 기초 자료로서 의미가 있습니다.
 accrual_periodicity: 연간
 team:
@@ -71,6 +73,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도
+  space_via: name
+  time: day
+  time_fields:
+    - 데이터 기준일
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -172,8 +182,6 @@ verification:
   run: probe/runs/15038480.json
   stats: probe/stats/15038480.json
   data: probe/data/15038480/
-status: active
-summary_user: 전국 주유소 수를 시도 단위로 집계한 소규모 파일(csv, 388바이트)로, 시도·주유소 수·데이터 기준일만 담는다. 정책담당자나 업계 분석가가 "어느 시도에 주유소가 많고 적은가", "지역 간 유류공급 인프라 편차는 어느 정도인가"를 확인할 때 쓴다. 전역 조인 키가 없어 시도 이름을 행정구역 코드나 다른 시도별 통계(인구·차량 등)에 이름으로 맞춰 연결하고, 개별 주유소 위치·유가는 오피넷 계열 데이터의 주유소 ID·좌표로 따로 봐야 한다.
 limits: 시도 단위 합계만 있어 시군구·개별 주유소 수준의 분포나 유가·영업 상태는 알 수 없다. 공통 코드 컬럼이 없어 다른 데이터와 붙일 때 시도 명칭 표기를 직접 맞춰야 한다.
 review:
   summary: draft
@@ -186,3 +194,4 @@ review:
     - c-15038480-04
     - c-15038480-06
   dropped_citations: 0
+status: active

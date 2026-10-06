@@ -1,0 +1,349 @@
+# Dataset 15060626 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15060626'
+tier: verified
+title: 금융감독원_정기보고서 재무정보_단일회사전체재무제표
+sector: 재정금융/금융/corporate-disclosure
+agency:
+  id: B550021
+  name: 금융감독원
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15060626/openapi.do
+synonyms:
+  - 전자공시
+  - 공시보고서
+  - 기업공시
+  - DART 재무제표
+  - 전자공시 재무정보
+  - XBRL 재무제표
+  - 사업보고서 재무
+  - 상장사 계정과목
+  - 오픈다트 전체재무제표
+  - 기업 재무상태표 손익계산서
+summary_user: 상장법인(유가증권·코스닥)과 사업보고서 제출대상 주요 비상장법인이 낸 정기보고서의 XBRL 재무제표 전체 계정과목을 회사·사업연도·보고서 단위로 담으며, 계정별로 당기·전기·전전기 금액이 함께 들어 있다. 투자자나 분석가가 특정 회사의 재무상태표·손익계산서 세부 계정이 몇 년 사이 어떻게 바뀌었는지 비교할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, DART 고유번호(corp_code)나 접수번호(rcept_no)를 쓰는 같은 기관의 공시 데이터와 잇거나 회사명 매핑으로 다른 기업 데이터와 연결한다.
+description_portal: 상장법인(유가증권, 코스닥) 및 주요 비상장법인(사업보고서 제출대상 & IFRS 적용)이 제출한 정기보고서 내에 XBRL재무제표의 모든계정과목을 제공합니다.
+team:
+  dept: 기업공시국 전자공시팀
+services:
+  - op: fnlttSinglAcntAll
+    name: fnlttSinglAcntAll
+    endpoint: https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendart.fss.or.kr
+    params:
+      - name: corp_code
+        required: true
+        example: '00126380'
+      - name: bsns_year
+        required: true
+        example: '2025'
+      - name: reprt_code
+        required: true
+        example: '11011'
+      - name: fs_div
+        required: true
+        example: CFS
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rcept_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260310002820'
+      stats:
+        min: 20260310002820
+        p50: 20260310002820
+        max: 20260310002820
+        unique: 1
+    - name: reprt_code
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11011'
+      stats:
+        min: 11011
+        p50: 11011
+        max: 11011
+        unique: 1
+    - name: bsns_year
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2025
+        unique: 1
+    - name: corp_code
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00126380'
+      stats:
+        min: 126380
+        p50: 126380
+        max: 126380
+        unique: 1
+    - name: sj_div
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SCE
+        - BS
+        - CF
+      stats:
+        unique: 5
+    - name: sj_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자본변동표
+        - 재무상태표
+        - 현금흐름표
+      stats:
+        unique: 5
+    - name: account_id
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ifrs-full_ProfitLoss
+        - ifrs-full_Equity
+        - ifrs-full_GainsLossesOnCashFlowHedgesNetOfTax
+      stats:
+        unique: 127
+    - name: account_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 당기순이익
+        - 관계기업 및 공동기업의 기타포괄손익에 대한 지분
+        - 자본총계
+      stats:
+        unique: 124
+    - name: account_detail
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+        - 자본 [구성요소]|지배기업의 소유주에게 귀속되는 지분 [구성요소]|자본금 [구성요소]
+        - 자본 [구성요소]|지배기업의 소유주에게 귀속되는 지분 [구성요소]|이익잉여금 [구성요소]
+      stats:
+        unique: 8
+    - name: thstrm_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제 57 기
+      stats:
+        unique: 1
+    - name: thstrm_amount
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '45206805000000'
+        - '1706000000'
+      stats:
+        min: -68512206000000
+        p50: 897514000000
+        max: 566942110000000
+        unique: 140
+    - name: frmtrm_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제 56 기
+      stats:
+        unique: 1
+    - name: frmtrm_amount
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '34451351000000'
+        - '-38946000000'
+      stats:
+        min: -85381702000000
+        p50: 778047000000
+        max: 514531948000000
+        unique: 136
+    - name: bfefrmtrm_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제 55 기
+      stats:
+        unique: 1
+    - name: bfefrmtrm_amount
+      type: number
+      null_rate: 0.0044
+      sample_values:
+        - '0'
+        - '15487100000000'
+        - '927000000'
+      stats:
+        min: -16922817000000
+        p50: 643246000000
+        max: 455905980000000
+        unique: 138
+    - name: ord
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '9'
+        - '10'
+      stats:
+        min: 2
+        p50: 14
+        max: 60
+        unique: 59
+    - name: currency
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - KRW
+      stats:
+        unique: 1
+    - name: thstrm_add_amount
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - bsns_year
+cycle: event
+classification:
+  subsector_name: 기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.7912
+  rank_in_sector: 57
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: 상장·주요 비상장 전체 재무제표, 기업 단위 재무 원장
+claims:
+  - id: c-15060626-01
+    kind: access
+    value: 외부 사이트 opendart.fss.or.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15060626.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendart.fss.or.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15060626-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060626-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15060626.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 18개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060626-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15060626.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060626-06
+    kind: admin_note
+    value: "세부 부문 '기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)'의 가치: 법인등록번호·사업자번호로 기업 축 전체와 연결. 주요사항보고서는 사건 단위 시의성(유상증자·합병·소송)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#corporate-disclosure
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15060626-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15060626-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15060626.json
+  stats: probe/stats/15060626.json
+  data: probe/data/15060626/
+limits: opendart.fss.or.kr에서 별도로 발급받은 인증키(KEY)가 필요하며, 포털 활용신청과는 따로 받아야 한다. 법인등록번호·사업자번호 같은 전역 키가 응답에 없어 다른 기관의 기업 데이터와 바로 조인할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15060626-01
+    - c-15060626-03
+    - c-15060626-06
+  dropped_citations: 0
+status: active

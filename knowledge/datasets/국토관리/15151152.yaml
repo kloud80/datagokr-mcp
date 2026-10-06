@@ -1,4 +1,5 @@
-# Dataset 15151152 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15151152 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15151152'
 tier: verified
 title: 한국승강기안전공단_승강기자체점검결과정보 조회 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 승강기 유지관리 점검
   - 엘리베이터 안전점검 이력
   - 승강기고유번호 조회
+summary_user: 전국 승강기의 자체점검 결과를 승강기 1대·점검 1회의 항목 단위로 담은 건별 원천 데이터로, 점검일자·점검 시작·종료시간, 점검업체, 점검자, 점검항목별 결과와 종합 점검결과를 담는다. 건물 관리주체나 입주민이 특정 승강기(승강기고유번호)의 해당 월 자체점검에서 어떤 항목이 부적합으로 나왔는지, 어느 업체가 언제 점검했는지 확인하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으며, 같은 기관의 다른 승강기 정보와는 승강기고유번호(elevatorNo)로 맞춰 보는 방식으로만 이어 쓴다.
 description_portal: 승강기자체점검결과 서비스로 점검자명, 점거보조자명, 점검일자, 점검시작시간, 점검종료시간, 관리주체 확인일자, 점검업체명, 전산등록일자, 점검항목, 점검항목결과, 점검결과를 점검년월 및 승강기고유번호로 조회할 수 있습니다.
 team:
   dept: 디지털총괄실
@@ -74,6 +76,7 @@ schema:
     - name: elevatorNo
       title: 승강기고유번호
       type: number
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - '8088381'
@@ -190,6 +193,12 @@ schema:
         - 1.3.1
       stats:
         unique: 66
+  foreign_keys:
+    - fields:
+        - elevatorNo
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -238,7 +247,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151152-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(elevatorNo)'
     evidence:
       - type: measured
         source: probe/stats/15151152.json
@@ -304,8 +313,6 @@ verification:
   run: probe/runs/15151152.json
   stats: probe/stats/15151152.json
   data: probe/data/15151152/
-status: active
-summary_user: 전국 승강기의 자체점검 결과를 승강기 1대·점검 1회의 항목 단위로 담은 건별 원천 데이터로, 점검일자·점검 시작·종료시간, 점검업체, 점검자, 점검항목별 결과와 종합 점검결과를 담는다. 건물 관리주체나 입주민이 특정 승강기(승강기고유번호)의 해당 월 자체점검에서 어떤 항목이 부적합으로 나왔는지, 어느 업체가 언제 점검했는지 확인하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으며, 같은 기관의 다른 승강기 정보와는 승강기고유번호(elevatorNo)로 맞춰 보는 방식으로만 이어 쓴다.
 limits: 점검년월과 승강기고유번호를 넣어 조회하는 구조라 고유번호를 미리 알아야 하며, 지역별·업체별 전체 목록이나 집계를 한 번에 받는 용도로는 맞지 않는다. 위치 좌표 등 공간 정보가 없는 비공간 데이터이고, 실측 컬럼에서 다른 기관 데이터와 공통으로 쓰는 조인 키는 찾지 못했다.
 review:
   summary: draft
@@ -317,3 +324,4 @@ review:
     - c-15151152-03
     - c-15151152-04
   dropped_citations: 0
+status: active

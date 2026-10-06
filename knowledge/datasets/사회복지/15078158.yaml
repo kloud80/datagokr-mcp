@@ -1,4 +1,5 @@
-# Dataset 15078158 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078158 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078158'
 tier: verified
 title: 한국건강가정진흥원_아이돌보미 현황 연령대별 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 돌봄 인력 고령화
   - 아이돌봄기관
   - 육아 도우미 통계
+summary_user: 아이돌봄기관별·기준연월(crtrYm)별로 아이돌보미 수를 40세 미만부터 65세 이상까지 5세 단위 연령대로 나눠 당월 인원과 누적 인원으로 담은 전국 단위 집계 데이터다. 정책 분석가나 지자체 담당자가 '우리 지역 돌봄기관의 돌보미가 고령층에 얼마나 몰려 있고 청년층 유입은 늘고 있는가' 같은 세대별 인력 구성 질문에 쓴다. 전역 조인 키는 없으며, 같은 기관이 내는 다른 아이돌보미 현황 데이터와 아이돌봄기관번호(childCareInstNo)·상위기관번호 또는 기관명을 맞춰 연결한다.
 description_portal: 아이돌보미 연령대별 현황 정보를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 아이돌봄기관명, 상위아이돌봄기관명, 당월 연령 0~100세까지의 돌보미 수, 누적 돌보미 수 누적연령 돌보미 수의 정보를 확인할 수 있습니다.고령자 또는 청년층 돌보미의 비율을 파악할 수 있어 세대 간 일자리 분포를 분석하는 데 유용합니다. 연령대별 인력 유지율과 신규 유입 추이를 모니터링하면 맞춤형 지원 정책 수립이 가능합니다. 예를 들어 청년층 유입을 촉진하거나 고령 돌보미의 역량 강화를 위한 교육이 필요한지를 판단하는 근거가 됩니다. 세대별 근로 특성과 선호 서비스 유형을 비교 분석하는 데에도 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -56,6 +58,7 @@ schema:
         unique: 5
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0421
@@ -74,6 +77,7 @@ schema:
         unique: 223
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -292,6 +296,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -341,7 +356,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078158-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078158.json
@@ -395,8 +410,6 @@ verification:
   run: probe/runs/15078158.json
   stats: probe/stats/15078158.json
   data: probe/data/15078158/
-status: active
-summary_user: 아이돌봄기관별·기준연월(crtrYm)별로 아이돌보미 수를 40세 미만부터 65세 이상까지 5세 단위 연령대로 나눠 당월 인원과 누적 인원으로 담은 전국 단위 집계 데이터다. 정책 분석가나 지자체 담당자가 '우리 지역 돌봄기관의 돌보미가 고령층에 얼마나 몰려 있고 청년층 유입은 늘고 있는가' 같은 세대별 인력 구성 질문에 쓴다. 전역 조인 키는 없으며, 같은 기관이 내는 다른 아이돌보미 현황 데이터와 아이돌봄기관번호(childCareInstNo)·상위기관번호 또는 기관명을 맞춰 연결한다.
 limits: 돌보미 개인 단위가 아니라 기관별 연령대 집계이며, 다른 기관 데이터와 붙일 공통 코드가 없어 기관명·기관번호 매칭에 의존한다. 위치 좌표가 없는 비공간 데이터라 지도 분석에는 바로 쓸 수 없다.
 review:
   summary: draft
@@ -408,3 +421,4 @@ review:
     - c-15078158-03
     - c-15078158-04
   dropped_citations: 0
+status: active

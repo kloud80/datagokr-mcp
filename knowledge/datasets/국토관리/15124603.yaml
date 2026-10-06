@@ -1,4 +1,5 @@
-# Dataset 15124603 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15124603 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124603'
 tier: verified
 title: 한국토지주택공사_분양임대공고별 상세정보 조회 서비스(사전청약)
@@ -22,6 +23,7 @@ synonyms:
   - 임대 공고
   - 청약 일정
   - LH 청약센터
+summary_user: LH 사전청약 공고 한 건(공고아이디)마다 접수처 정보, 공급 일정, 첨부파일, 기타 안내 같은 공급 상세정보를 담는 공고별 원천 조회 API이며, 범위는 전국이다. 사전청약을 준비하는 국민이나 청약 정보 서비스를 만드는 사업자가 '이 사전청약 공고의 접수 장소와 공급 일정은 언제인가'를 확인하는 데 쓴다. 조회에는 같은 기관의 분양임대공고문 조회 서비스(사전청약)에서 받은 공고아이디(PAN_ID)가 필요하고, 실측 컬럼에서는 다른 데이터와 잇는 전역 조인 키를 찾지 못해 공고명·이름 매핑이나 같은 기관 코드로만 연결한다.
 description_portal: 분양임대공고문 조회 서비스(사전청약)에서 제공하는 공고아이디(PAN_ID)를 이용하여, 특정 공고의 사전청약 공급 상세정보(접수처정보, 공급일정 등)를 조회할 수 있는 서비스입니다.
 team:
   dept: IT운영처 데이터운영팀
@@ -131,6 +133,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - dsSplScdl
+    - dsEtcInfo
+    - resHeader
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -271,8 +279,6 @@ verification:
   run: probe/runs/15124603.json
   stats: probe/stats/15124603.json
   data: probe/data/15124603/
-status: active
-summary_user: LH 사전청약 공고 한 건(공고아이디)마다 접수처 정보, 공급 일정, 첨부파일, 기타 안내 같은 공급 상세정보를 담는 공고별 원천 조회 API이며, 범위는 전국이다. 사전청약을 준비하는 국민이나 청약 정보 서비스를 만드는 사업자가 '이 사전청약 공고의 접수 장소와 공급 일정은 언제인가'를 확인하는 데 쓴다. 조회에는 같은 기관의 분양임대공고문 조회 서비스(사전청약)에서 받은 공고아이디(PAN_ID)가 필요하고, 실측 컬럼에서는 다른 데이터와 잇는 전역 조인 키를 찾지 못해 공고명·이름 매핑이나 같은 기관 코드로만 연결한다.
 limits: 공고 목록 API에서 공고아이디를 먼저 받아야 조회할 수 있고, 다른 기관 데이터와 직접 잇는 공통 키는 없다. 공고가 나올 때 만들어진 뒤 바뀌지 않는 이벤트성 데이터라, 경쟁률·당첨 결과 같은 이후 경과는 담지 않는다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -285,3 +291,4 @@ review:
     - c-15124603-03
     - c-15124603-04
   dropped_citations: 0
+status: active

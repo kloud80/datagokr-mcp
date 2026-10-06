@@ -1,0 +1,271 @@
+# Dataset 15057627 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057627'
+tier: verified
+title: 경기도_버스전용차로 현황
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057627/openapi.do
+synonyms:
+  - 버스전용차로
+  - 교통정책
+  - 노선정보
+  - 운영시간
+  - 전용차로종류
+  - 차로연장
+  - 시군별현황
+  - 교통관리
+  - 버스중앙차로
+  - 중앙버스전용차로
+  - 가로변 버스전용차로
+  - 전용차로 운영시간
+  - 버스차로 구간
+  - 경기 버스전용차로 연장
+summary_user: 경기도 내 버스전용차로를 구간 단위로 정리한 현황 자료로, 시군별 구간명·노선명·전용차로 종류·연장거리·운영시간 구분과 운영시간·시행일자·집계년월을 담는다. 교통 분석가나 정책 담당자가 "우리 시군의 버스전용차로는 어느 구간에 몇 km가 있고, 어떤 시간대에 통행이 제한되는가"를 확인할 때 쓴다. 실측 컬럼에는 전역 조인 키가 없으므로, 다른 데이터와는 시군명·시군코드(SIGUN_CD)나 노선명 같은 이름·코드 매핑으로만 잇는다.
+description_portal: 이 데이터는 경기도 내 버스전용차로의 설치 및 운영 현황을 정리한 자료로, 구간별 전용차로 노선명, 연장거리(km), 운영시간, 시행일자, 차로종류 등의 항목을 포함합니다. 시군명 및 코드, 집계년월 등의 정보도 제공되며, 전용차로 운영체계 분석, 대중교통 효율성 평가, 교통혼잡 개선 및 전용차로 정책 수립 등의 목적에 활용될 수 있습니다. 특히 운영시간정보(OPERT_TM_INFO)와 전용차로종류명(DVR_CARTRK_KIND_NM)은 시간대 및 차로 유형별 통행 제한 조건 분석에 유용합니다. 데이터는 수시로 갱신되며 Open API를 통해 실시간 접근 및 연동이 가능합니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: BusDiversionCar
+    name: BusDiversionCar
+    endpoint: https://openapi.gg.go.kr/BusDiversionCar
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안양시
+        - 성남시
+        - 고양시
+      stats:
+        unique: 3
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41170'
+        - '41130'
+        - '41280'
+      stats:
+        min: 41130
+        p50: 41170
+        max: 41280
+        unique: 3
+    - name: SECTION_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 백현고가표~머내고가교
+        - 대화역-서울시계 수색
+        - 석수역-안양육교 삼거리
+      stats:
+        unique: 5
+    - name: ROUTE_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경수대로
+        - 대왕판교로
+        - 중앙로
+      stats:
+        unique: 4
+    - name: DVR_CARTRK_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가로변
+        - 중앙
+      stats:
+        unique: 2
+    - name: PRVTUSE_CARTRK_EXTS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.4'
+        - '15.6'
+        - '1.0'
+      stats:
+        min: 1
+        p50: 4.4
+        max: 15.6
+        unique: 5
+    - name: OPERT_TM_DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 시간제
+        - 전일제
+      stats:
+        unique: 2
+    - name: IMPLMTN_LPERD_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20091201'
+        - '20061027'
+        - '20090601'
+      stats:
+        min: 19941001
+        p50: 20061027
+        max: 20091201
+        unique: 5
+    - name: OPERT_TM_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 24시간 전일제
+        - 평일 06:00-22:00
+        - 평일 07:00-10:00 17:00-21:00
+      stats:
+        unique: 4
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7049
+  rank_in_sector: 391
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15057627-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057627.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15057627-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057627-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057627.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057627-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15057627.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057627-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057627-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057627-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057627.json
+  stats: probe/stats/15057627.json
+  data: probe/data/15057627/
+limits: 범위는 경기도 시군구 단위이고, 다른 시도와 공통으로 쓸 조인 키가 없어 연계는 이름·코드 매핑에 기대야 한다. 호출은 포털 활용신청과 별개로 외부 사이트(data.gg.go.kr)의 인증키를 받아 경로 파라미터로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15057627-01
+    - c-15057627-03
+    - c-15057627-04
+  dropped_citations: 0
+status: active

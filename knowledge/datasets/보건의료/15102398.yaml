@@ -1,4 +1,5 @@
-# Dataset 15102398 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15102398 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15102398'
 tier: verified
 title: 건강보험심사평가원_계절성질환(한랭 및 온열질환) 진료비 통계
@@ -22,6 +23,7 @@ synonyms:
   - 폭염 질환 통계
   - 한파 질환 진료
   - 심평원 계절질환
+summary_user: 한랭질환과 온열질환의 월별 진료비를 진료년월과 주상병코드(상병명)별로 집계한 전국 단위 파일로, 환자수·명세서 청구건수·입내원일수·보험자부담금·요양급여비용총액을 담는다(건강보험, 약국 제외, 양방만). 보건 분석가나 지자체 담당자가 "폭염이 심했던 달에 열사병 등 온열질환 진료 환자와 진료비가 얼마나 늘었나" 같은 계절별 질환 부담을 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 진료년월로 기상 통계와 시점을 맞추거나 주상병코드를 KCD 질병분류 코드로 매핑해 다른 진료 통계와 잇는 방식으로만 연결한다.
 description_portal: '계절성질환(한랭 및 온열질환) 월별 진료비 통계 / 진료년월 기준(심사분은 각 진료분+4개월) (예) 온열질환 진료년월: 2024년 6월~9월, 심사년월: 2024년 6월~2025년 1월, 한랭질환 진료년월: 2024년 11월~2025년 2월, 심사년월: 2024년 11월~2025년 6월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 양방만 포함※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 질병은 주상병 기준이며 의료기관에서 의사가 진료 시 환자의 호소, 증세에 따라 일차적으로 진단명을 부여하여 진료비 청구가 이루어짐에 따라 실제 최종 확정된 질병과는 차이가 발생할 수 있음※ 요양급여비용총액은 요양기관에서 건강보험 환자의 진료에 소요된 비용(비급여 제외)으로 보험자부담금과 본인부담금을 합한 금액임※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있음※ 세부 산출기준은 첨부된 "계절성 질환 통계 산출기준" 참고'
 applicable_legislation:
   - law: 국민건강보험법
@@ -49,6 +51,7 @@ schema:
         unique: 8
     - name: 주상병코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - T678
@@ -125,12 +128,22 @@ schema:
         p50: 53812755
         max: 2879673470
         unique: 62
+  foreign_keys:
+    - fields:
+        - 주상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 진료년월
 cycle: default
 classification:
   subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
@@ -167,7 +180,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15102398-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(주상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15102398.json
@@ -245,8 +258,6 @@ verification:
   run: probe/runs/15102398.json
   stats: probe/stats/15102398.json
   data: probe/data/15102398/
-status: active
-summary_user: 한랭질환과 온열질환의 월별 진료비를 진료년월과 주상병코드(상병명)별로 집계한 전국 단위 파일로, 환자수·명세서 청구건수·입내원일수·보험자부담금·요양급여비용총액을 담는다(건강보험, 약국 제외, 양방만). 보건 분석가나 지자체 담당자가 "폭염이 심했던 달에 열사병 등 온열질환 진료 환자와 진료비가 얼마나 늘었나" 같은 계절별 질환 부담을 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 진료년월로 기상 통계와 시점을 맞추거나 주상병코드를 KCD 질병분류 코드로 매핑해 다른 진료 통계와 잇는 방식으로만 연결한다.
 limits: 전국 합계만 있어 시군구·연령·성별로 나눠 볼 수 없고, 전역 조인 키가 없어 이름·코드 매핑으로만 다른 데이터와 연결된다. 심평원 청구·심사 기준 값이므로 공단(자격 기준) 통계와 수치가 다를 수 있다.
 review:
   summary: draft
@@ -258,3 +269,4 @@ review:
     - c-15102398-04
     - c-15102398-06
   dropped_citations: 0
+status: active

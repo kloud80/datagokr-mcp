@@ -1,4 +1,5 @@
-# Dataset 15149736 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15149736 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15149736'
 tier: verified
 title: 성평등가족부_청소년활동 신고 정보
@@ -22,6 +23,7 @@ synonyms:
   - 요주의활동
   - 청소년활동 인증
   - 캠프 신고
+summary_user: 청소년활동 신고 건별로 신고번호·활동명·프로그램 내용·참가비·인증 여부·요주의활동 여부·위탁 여부·주관기관·참여자 규모와 대상 학교급·진행 상태를 담는 전국 단위 원천 자료다. 학부모나 청소년 지도자가 특정 기관이 신고한 활동이 인증을 받았는지, 요주의 활동인지, 어느 학교급을 대상으로 하는지 확인할 때 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 다른 데이터와는 주관기관명이나 활동 시설 번호(trngFcltNo)를 이름·코드로 맞춰 이어 써야 한다.
 description_portal: 성평등가족부 청소년활동 신고 정보는 청소년 활동과 관련하여 신고된 내용을 체계적으로 기록하고 관리하기 위해 제공되는 자료입니다. 각 신고 항목, 신고 일자, 신고자 정보, 진행 상태 코드, 처리 결과 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 신고 처리 현황 관리, 진행 상태 모니터링, 정책 분석, 행정 효율화, 참여자 안내, 프로그램 개선 등 다양한 목적으로 활용할 수 있습니다. 또한 이 자료는 청소년 활동의 적법성 확인과 참여 안전 확보, 신고 처리 과정 투명성 확보에도 중요한 근거 자료가 됩니다.
 team:
   dept: 정보통계담당관실
@@ -64,6 +66,7 @@ schema:
     - name: dclrMngNo
       title: 신고관리번호
       type: number
+      semantic_type: youth_dclr_no
       null_rate: 0.0
       sample_values:
         - '9836'
@@ -77,6 +80,7 @@ schema:
     - name: dclrNo
       title: 신고번호
       type: number
+      semantic_type: youth_dclr_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -255,6 +259,17 @@ schema:
         p50: 1241.5
         max: 4183
         unique: 89
+  foreign_keys:
+    - fields:
+        - dclrMngNo
+      reference:
+        key: youth_dclr_no
+      evidence: measured
+    - fields:
+        - dclrNo
+      reference:
+        key: youth_dclr_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -305,7 +320,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15149736-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_dclr_no(dclrMngNo), youth_dclr_no(dclrNo)'
     evidence:
       - type: measured
         source: probe/stats/15149736.json
@@ -359,8 +374,6 @@ verification:
   run: probe/runs/15149736.json
   stats: probe/stats/15149736.json
   data: probe/data/15149736/
-status: active
-summary_user: 청소년활동 신고 건별로 신고번호·활동명·프로그램 내용·참가비·인증 여부·요주의활동 여부·위탁 여부·주관기관·참여자 규모와 대상 학교급·진행 상태를 담는 전국 단위 원천 자료다. 학부모나 청소년 지도자가 특정 기관이 신고한 활동이 인증을 받았는지, 요주의 활동인지, 어느 학교급을 대상으로 하는지 확인할 때 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 다른 데이터와는 주관기관명이나 활동 시설 번호(trngFcltNo)를 이름·코드로 맞춰 이어 써야 한다.
 limits: 범위는 전국이지만 공간 정보가 없어 시군구·시도 같은 지역별 집계나 지도화에 바로 쓰기 어렵다. 공통 조인 키가 없어 수련시설 등 다른 청소년 데이터와는 이름·코드 매핑으로만 연결된다. 갱신 주기는 이벤트 주기로 분류되어 있어 정기 갱신을 전제하지 않는다.
 review:
   summary: draft
@@ -373,3 +386,4 @@ review:
     - c-15149736-03
     - c-15149736-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15125841 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15125841'
 tier: verified
 title: 울산시설공단_자동심장충격기위치정보
@@ -21,6 +20,7 @@ synonyms:
   - 울산 AED
   - 심정지 응급장비
   - 제세동기 지도
+summary_user: 울산시설공단이 운영하는 공공시설에 설치된 자동심장충격기(AED)를 한 대씩 기록한 건별 원천 파일로, 시설명·주소·상세위치·운영 시작/종료 시간·연락처·위도·경도·기준일자를 담는다(CSV 약 4.8KB 규모). 울산 시민이나 응급 안내 서비스 개발자가 '지금 이 근처 공단 시설에서 쓸 수 있는 AED가 어디에 있고 몇 시까지 접근 가능한가'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 AED·응급의료 데이터와는 위도·경도 좌표 근접이나 주소·시설명 매칭으로 이어 쓴다.
 description_portal: 울산시설공단에서는 시민의 생명을 보호하고 응급상황에 신속히 대응할 수 있도록, 공공시설 내에 설치된 자동심장충격기(AED)의 위치 및 운영 정보를 공공데이터로 제공합니다. 이 데이터는 시설명, 주소, 상세위치, 운영 시작 시간, 운영 종료 시간, 연락처, 위도, 경도, 기준일자 등의 항목으로 구성되어 있으며, 시민들이 위급 상황 발생 시 가까운 AED 위치를 빠르게 확인하고 사용할 수 있도록 돕습니다. 특히 위도와 경도 정보는 지도 기반의 위치 안내에 유용하게 활용될 수 있으며, 운영시간 정보는 실제 접근 가능 시간대를 확인하는 데 중요한 역할을 합니다.
 accrual_periodicity: 연간
 team:
@@ -34,6 +34,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 문수체육관
@@ -119,12 +120,27 @@ schema:
         min: '2026-04-10'
         max: '2026-04-10'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
+  time: day
+  time_fields:
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)
@@ -161,7 +177,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125841-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15125841.json
@@ -226,8 +242,6 @@ verification:
   run: probe/runs/15125841.json
   stats: probe/stats/15125841.json
   data: probe/data/15125841/
-status: active
-summary_user: 울산시설공단이 운영하는 공공시설에 설치된 자동심장충격기(AED)를 한 대씩 기록한 건별 원천 파일로, 시설명·주소·상세위치·운영 시작/종료 시간·연락처·위도·경도·기준일자를 담는다(CSV 약 4.8KB 규모). 울산 시민이나 응급 안내 서비스 개발자가 '지금 이 근처 공단 시설에서 쓸 수 있는 AED가 어디에 있고 몇 시까지 접근 가능한가'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 AED·응급의료 데이터와는 위도·경도 좌표 근접이나 주소·시설명 매칭으로 이어 쓴다.
 limits: 실측 컬럼에 기관코드(hpid) 같은 공통 조인 키가 없어 전국 AED 목록 등과 붙이려면 이름·주소·좌표로 직접 매칭해야 한다. 파일 다운로드 방식이라 실시간 사용 가능 여부나 고장 상태는 알 수 없고, 운영시간은 기준일자 시점의 정보로 해석해야 한다.
 review:
   summary: draft
@@ -240,3 +254,4 @@ review:
     - c-15125841-04
     - c-15125841-06
   dropped_citations: 0
+status: active

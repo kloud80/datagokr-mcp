@@ -46,6 +46,7 @@ schema:
         unique: 462
     - name: 승강기관리번호1
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '690'
@@ -58,6 +59,7 @@ schema:
         unique: 182
     - name: 승강기관리번호2
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '1052'
@@ -79,9 +81,25 @@ schema:
         min: '2022-11-16'
         max: '2024-09-19'
         unique: 336
+  foreign_keys:
+    - fields:
+        - 승강기관리번호1
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
+    - fields:
+        - 승강기관리번호2
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 접수일자
+    - 등록일자
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -119,7 +137,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15138259-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_mgmt_no(승강기관리번호1), elevator_mgmt_no(승강기관리번호2)'
     evidence:
       - type: measured
         source: probe/stats/15138259.json

@@ -1,4 +1,3 @@
-# Dataset 15067680 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15067680'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_구 위성영상 구축현황
@@ -22,6 +21,7 @@ synonyms:
   - 위성 촬영 씬
   - 원격탐사 영상 현황
   - 국토지리정보원 위성영상
+summary_user: 과거 위성영상(포털 설명상 1973-10-08~2004-09-30 촬영분)을 촬영 씬 한 장면당 한 행으로 담은 구축현황 목록으로, 위성일련번호·촬영일·PATH/ROW와 함께 촬영시각, 해상도·처리 수준, 태양 각도, 중앙·네 모서리 위경도, 투영·타원체 정보를 담는다. 지형·토지 변화를 연구하는 분석가가 '특정 지역을 1990년대에 찍은 위성영상 씬이 있는가, 어떤 해상도와 투영으로 남아 있는가'를 확인하는 데 쓴다. 실측 컬럼에 다른 데이터와 맞출 전역 조인 키는 없으므로, 모서리·중앙 위경도로 다른 공간데이터와 위치를 겹쳐 보거나 같은 기관의 항공사진·정사영상 현황과 촬영일·위치를 기준으로 맞춰 쓴다.
 description_portal: '위성을 통해 촬영된 과거 위성영상의 개별 촬영 씬별 성과에 대한 정보▷ 식별정보 : 위성일련번호, 촬영년월일, 위성영상PATH, 위성영상ROW▷ 속성정보 : 촬영시각, 포맷, 해상도레벨, 태양방위각, 태양고도, 위성진행방향, 위도, 경도,  위성영상너비, 위성영상길이, 타원체, 지구모형, 지구투영, 투영방향, 픽셀당바이트수, 멀티밴드저장법, 리셈플링방법 등* 위성영상 : 지구 궤도를 도는 인공위성이 지표면을 촬영한 이미지로 지도제작 및 지형분석 등에 활용됨. - 1973-10-08 ~ 2004-09-30 범위의 과거 위성영상 성과 관리'
 accrual_periodicity: 수시
 team:
@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 위성일련번호
       type: number
+      semantic_type: old_satellite_seq
       null_rate: 0.0
       sample_values:
         - '6'
@@ -404,12 +405,28 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 위성일련번호
+      reference:
+        key: old_satellite_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도_중앙
+    - 위도_북서
+    - 위도_북동
+  space_via: coord
+  time: day
+  time_fields:
+    - 촬영년월일
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -447,7 +464,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067680-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: old_satellite_seq(위성일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15067680.json
@@ -522,8 +539,6 @@ verification:
   run: probe/runs/15067680.json
   stats: probe/stats/15067680.json
   data: probe/data/15067680/
-status: active
-summary_user: 과거 위성영상(포털 설명상 1973-10-08~2004-09-30 촬영분)을 촬영 씬 한 장면당 한 행으로 담은 구축현황 목록으로, 위성일련번호·촬영일·PATH/ROW와 함께 촬영시각, 해상도·처리 수준, 태양 각도, 중앙·네 모서리 위경도, 투영·타원체 정보를 담는다. 지형·토지 변화를 연구하는 분석가가 '특정 지역을 1990년대에 찍은 위성영상 씬이 있는가, 어떤 해상도와 투영으로 남아 있는가'를 확인하는 데 쓴다. 실측 컬럼에 다른 데이터와 맞출 전역 조인 키는 없으므로, 모서리·중앙 위경도로 다른 공간데이터와 위치를 겹쳐 보거나 같은 기관의 항공사진·정사영상 현황과 촬영일·위치를 기준으로 맞춰 쓴다.
 limits: 영상 자체가 아니라 씬별 메타데이터 목록이며(영상·썸네일 존재 여부만 표시), 행정구역 코드가 없어 시군구 단위 집계는 좌표로 직접 매핑해야 한다. 파일은 활용신청 없이 CSV로 받는다.
 review:
   summary: draft
@@ -535,3 +550,4 @@ review:
     - c-15067680-03
     - c-15067680-04
   dropped_citations: 0
+status: active

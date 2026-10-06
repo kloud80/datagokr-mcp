@@ -40,6 +40,7 @@ schema:
   fields:
     - name: 사유림산림사업번호
       type: number
+      semantic_type: private_forest_project_no
       null_rate: 0.0
       sample_values:
         - '4.9101E+17'
@@ -196,6 +197,7 @@ schema:
         unique: 106
     - name: 시군구읍면동코드(PNU)
       type: number
+      semantic_type: pnu
       null_rate: 0.0
       sample_values:
         - '4.68003E+18'
@@ -374,9 +376,33 @@ schema:
         p50: 0
         max: 3309860
         unique: 8062
+  foreign_keys:
+    - fields:
+        - 사유림산림사업번호
+      reference:
+        key: private_forest_project_no
+      evidence: measured
+    - fields:
+        - 시군구읍면동코드(PNU)
+      reference:
+        key: pnu
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: parcel
+  space_fields:
+    - 시군구읍면동코드(PNU)
+  space_via: code
+  time: day
+  time_fields:
+    - 시작일
+    - 종료일
+  category:
+    - ksic
+  category_fields:
+    - 사업종코드
 cycle: default
 classification:
   subsector_name: 산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)
@@ -413,7 +439,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15110958-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: private_forest_project_no(사유림산림사업번호), pnu(시군구읍면동코드(PNU))'
     evidence:
       - type: measured
         source: probe/stats/15110958.json

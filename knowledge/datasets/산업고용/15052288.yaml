@@ -1,4 +1,5 @@
-# Dataset 15052288 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15052288 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15052288'
 tier: verified
 title: 제주국제자유도시개발센터_JDC지정면세점_물류 및 에이전트 정보
@@ -24,6 +25,7 @@ synonyms:
   - 면세점 선적지 운송수단
   - 면세점 입점 퇴점 이력
   - 지정면세점 납품업체
+summary_user: JDC지정면세점에 상품을 공급하는 협력업체별로 브랜드·상품군(수입·환급대상·국산)·품종, 입점·퇴점 이력, 거래·결제 조건, 공급통화, 선적지·운송수단을 한 행씩 담은 2018년 8월 기준 원천 목록 파일(CSV 약 75KB)이다. 유통·물류 분석가가 "제주 지정면세점에 들어온 수입 브랜드는 어느 선적지에서 어떤 운송수단으로 들어오고, 어떤 통화로 거래하는가" 같은 공급망 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 협력업체명·브랜드명 같은 이름을 맞춰서만 이어 쓴다.
 description_portal: 이 데이터는 제주특별자치도에 위치한 국토교통부 산하 공기업인 제주국제자유도시개발센터(JDC)에서 운영하는 JDC지정면세점의 물류 및 에이전트 관련 정보를 2018년 8월 기준으로 정리한 자료입니다. 각 데이터 항목은 협력업체명, 상품군, 품종, 브랜드명, 최초 입점일자, 입점일자, 퇴점일자, 조건변경일, 조건기준, 거래조건, 결제조건, 공급통화, 결제통화, 세무코드, 선적지, 운송수단 등으로 구성되어 있으며, 협력업체명은 상품을 공급하는 기업의 명칭을, 브랜드명은 취급 브랜드를 나타냅니다. 상품군은 수입, 환급대상상품, 국산으로 나뉘며, 품종 항목은 브랜드 내 제품의 세부 분류를 의미합니다. 최초 입점일자와 입점일자, 퇴점일자는 브랜드의 입점 및 퇴점 이력을 나타내며, 조건변경일과 조건기준은 계약 조건이 변경된 시점과 관련 기준을 포함합니다. 거래조건 및 결제조건은 제품 공급 및 대금 정산 방식, 공급통화와 결제통화는 각각 거래 시 사용되는 통화 종류를 나타냅니다. 세무코드는 세금 처리와 관련된 항목이며, 선적지와 운송수단은 물류 출발지와 운송 방식을 뜻합니다. 이 데이터는 면세점의 공급망 구조, 물류 흐름, 거래 조건의 변동 사항 등을 종합적으로 파악하는 데 유용하며, 계약 관리, 품목별 운영 효율성 분석, 물류 전략 수립 등 실무 및 정책 목적에 폭넓게 활용될 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 협력업체명
       type: string
+      semantic_type: jdc_dfs_partner
       null_rate: 0.0
       sample_values:
         - KT＆G
@@ -64,6 +67,7 @@ schema:
         unique: 40
     - name: 브랜드명
       type: string
+      semantic_type: jdc_dfs_brand
       null_rate: 0.0
       sample_values:
         - Anna Sui
@@ -149,12 +153,29 @@ schema:
         - 항공기
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 협력업체명
+      reference:
+        key: jdc_dfs_partner
+      evidence: measured
+    - fields:
+        - 브랜드명
+      reference:
+        key: jdc_dfs_brand
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최초 입점일자
+    - 입점일자
+    - 퇴점일자
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -191,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15052288-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: jdc_dfs_partner(협력업체명), jdc_dfs_brand(브랜드명)'
     evidence:
       - type: measured
         source: probe/stats/15052288.json
@@ -256,8 +277,6 @@ verification:
   run: probe/runs/15052288.json
   stats: probe/stats/15052288.json
   data: probe/data/15052288/
-status: active
-summary_user: JDC지정면세점에 상품을 공급하는 협력업체별로 브랜드·상품군(수입·환급대상·국산)·품종, 입점·퇴점 이력, 거래·결제 조건, 공급통화, 선적지·운송수단을 한 행씩 담은 2018년 8월 기준 원천 목록 파일(CSV 약 75KB)이다. 유통·물류 분석가가 "제주 지정면세점에 들어온 수입 브랜드는 어느 선적지에서 어떤 운송수단으로 들어오고, 어떤 통화로 거래하는가" 같은 공급망 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 협력업체명·브랜드명 같은 이름을 맞춰서만 이어 쓴다.
 limits: 실측 컬럼에서 사업자번호 같은 공통 키를 찾지 못해 인허가·기업 데이터와 정확히 연결하기 어렵고, 이름 매칭에 기대야 한다. 공간 정보가 없는 비공간 자료라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -269,3 +288,4 @@ review:
     - c-15052288-03
     - c-15052288-04
   dropped_citations: 0
+status: active

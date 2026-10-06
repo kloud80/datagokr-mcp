@@ -1,4 +1,5 @@
-# Dataset 15119505 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119505 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119505'
 tier: verified
 title: 한국남동발전㈜_시간대별 태양광 발전실적 현황
@@ -21,6 +22,7 @@ synonyms:
   - 신재생 발전실적
   - 태양광 출력 패턴
   - 발전소별 일별 발전량
+summary_user: 한국남동발전 태양광 발전소의 발전기(호기)별 일별 발전실적을 담으며, 하루 1시~24시 시간대별 발전량과 총량·평균·최대·최소를 한 행에 넣는다. 에너지 분석가나 신재생 사업자가 특정 발전소의 시간대별 출력 패턴을 보고 "맑은 날 정오 무렵 출력이 하루 총량에서 얼마를 차지하나" 같은 질문에 답하거나 태양광 발전량 예측의 참고 자료로 쓴다. 전역 조인 키는 없고, 발전소코드(ippt)·호기코드·발전소명과 날짜로 같은 기관의 다른 발전 데이터나 기상 자료에 이름·날짜 매칭으로 이어 쓴다.
 description_portal: 이 데이터는 한국남동발전에서 제공하는 시간대별 태양광 발전 실적 현황입니다. 한국남동발전의 발전소별 시간대별로 태양광 발전 실적에 관한 데이터를 제공하고 있습니다. 발전소의 각 발전기(호기)별로 총량(KW), 평균(KWh), 최대(KWh), 최소(KWh) 등의 핵심 데이터를 포함하고 있습니다. 해당 데이터는 기상에 따라 변동성이 큰 태양광 발전량을 정확히 예측하기 위한 참고 자료로 활용될 수 있으며, 안정적인 전력 계통 운영 계획 및 신재생에너지 정책을 수립하는 데 중요한 핵심 자료로 활용될 수 있습니다.
 team:
   dept: AX전략부
@@ -75,6 +77,7 @@ schema:
     - name: ippt
       title: 발전소코드
       type: code
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - 84S1
@@ -85,6 +88,7 @@ schema:
     - name: hogi
       title: 호기코드
       type: number
+      semantic_type: koen_ippt_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -509,12 +513,27 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - ippt
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
+    - fields:
+        - hogi
+      reference:
+        key: koen_ippt_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - dgenYmd
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -558,7 +577,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119505-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koen_ippt_unit(ippt), koen_ippt_unit(hogi)'
     evidence:
       - type: measured
         source: probe/stats/15119505.json
@@ -623,8 +642,6 @@ verification:
   run: probe/runs/15119505.json
   stats: probe/stats/15119505.json
   data: probe/data/15119505/
-status: active
-summary_user: 한국남동발전 태양광 발전소의 발전기(호기)별 일별 발전실적을 담으며, 하루 1시~24시 시간대별 발전량과 총량·평균·최대·최소를 한 행에 넣는다. 에너지 분석가나 신재생 사업자가 특정 발전소의 시간대별 출력 패턴을 보고 "맑은 날 정오 무렵 출력이 하루 총량에서 얼마를 차지하나" 같은 질문에 답하거나 태양광 발전량 예측의 참고 자료로 쓴다. 전역 조인 키는 없고, 발전소코드(ippt)·호기코드·발전소명과 날짜로 같은 기관의 다른 발전 데이터나 기상 자료에 이름·날짜 매칭으로 이어 쓴다.
 limits: 표준 행정코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 발전소명·날짜 매핑으로만 연결되고, 위치 정보가 없는 비공간 데이터라 지도 분석에는 바로 쓰지 못한다. 한국남동발전 소속 설비만 담으므로 전국 태양광 발전량 전체를 대표하지 않는다.
 review:
   summary: draft
@@ -636,3 +653,4 @@ review:
     - c-15119505-03
     - c-15119505-04
   dropped_citations: 0
+status: active

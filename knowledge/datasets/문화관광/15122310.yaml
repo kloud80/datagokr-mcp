@@ -1,4 +1,5 @@
-# Dataset 15122310 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15122310 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15122310'
 tier: verified
 title: 독립기념관_마이크로필름 이미지 정보
@@ -24,6 +25,7 @@ synonyms:
   - 상해 독립신문
   - 독립기념관 소장자료
   - 항일 기록 이미지
+summary_user: '독립기념관이 마이크로필름으로 보관하는 일제강점기 전후 소장자료(미국 국무부 소장 한국관계정보, 일제 경찰 심문조서, 일본 외무성 소장 한국관계문서 등)를 이미지 단위로 정리한 목록 파일로, 관리번호·문서명·자료명·이미지명을 담는다. 독립운동사 연구자나 학생이 특정 문서(예: 상해 독립신문, 간도 영토분쟁 문서)의 마이크로필름 이미지가 독립기념관에 있는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 문서명·자료명 같은 이름 매핑이나 독립기념관 자체 관리번호로만 이어 쓴다.'
 description_portal: 독립기념관에서 마이크로필름 형태로 보관하고 있는 소장자료 목록으로 미국 국무부 소장 한국관계정보, 일제경찰 심문조서, 일본외무성소장 한국관계문서 등 일제강점기 자료에 대한 이미지 정보이다.주요 항목으로는 관리번호, 문서명, 수집방법, 자료명, 원문명, 시기, 페이지 수 자료유형, 키워드, 검색어 등으로 구성되어 있다.주요 문서로는 상해독립신문, 일제 경찰심문조서, 일본 외무성소장 한국관계문서, 간도 영토분쟁문서, 일본군의 만주 출병 관계 문서 등이다.시기로는 개항기, 대한제국기, 일제강점기, 대한민국기 등으로 구분
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 관리번호
       type: string
+      semantic_type: ikm_microfilm_mgmt_no
       null_rate: 0.0
       sample_values:
         - 1-006466-019-0002
@@ -83,6 +86,12 @@ schema:
         - 1-002261-001-0003-0001.tif
       stats:
         unique: 99894
+  foreign_keys:
+    - fields:
+        - 관리번호
+      reference:
+        key: ikm_microfilm_mgmt_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -125,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15122310-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ikm_microfilm_mgmt_no(관리번호)'
     evidence:
       - type: measured
         source: probe/stats/15122310.json
@@ -179,8 +188,6 @@ verification:
   run: probe/runs/15122310.json
   stats: probe/stats/15122310.json
   data: probe/data/15122310/
-status: active
-summary_user: '독립기념관이 마이크로필름으로 보관하는 일제강점기 전후 소장자료(미국 국무부 소장 한국관계정보, 일제 경찰 심문조서, 일본 외무성 소장 한국관계문서 등)를 이미지 단위로 정리한 목록 파일로, 관리번호·문서명·자료명·이미지명을 담는다. 독립운동사 연구자나 학생이 특정 문서(예: 상해 독립신문, 간도 영토분쟁 문서)의 마이크로필름 이미지가 독립기념관에 있는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 문서명·자료명 같은 이름 매핑이나 독립기념관 자체 관리번호로만 이어 쓴다.'
 limits: 전역 조인 키가 없어 다른 기관 아카이브 데이터와 코드로 바로 연결할 수 없다. 공간 정보가 없는 비공간 목록이므로 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -192,3 +199,4 @@ review:
     - c-15122310-03
     - c-15122310-04
   dropped_citations: 0
+status: active

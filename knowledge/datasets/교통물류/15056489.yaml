@@ -1,4 +1,5 @@
-# Dataset 15056489 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056489 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056489'
 tier: verified
 title: 대전교통공사_엘리베이터 정기검사결과
@@ -21,6 +22,7 @@ synonyms:
   - 역사 승강기 검사 만료일
   - 도시철도 엘리베이터 현황
   - 교통약자 편의시설
+summary_user: 대전교통공사가 운영하는 도시철도 역사 엘리베이터의 법정 정기검사 결과를 승강기 한 대(역사명·호기)별로 담은 CSV 파일(약 84KB)로, 측정연도·고유번호·용도·위치·형식·운행속도·검사 만료일·검사분기·제조사·검사결과를 포함한다. 교통약자나 시설 분석가가 '대전 도시철도 어느 역 엘리베이터의 검사 유효기간이 언제 끝나고 합격했는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 역 단위 시설·출입구 데이터와는 역사명을 이름으로 맞춰 잇고 승강기 고유번호는 같은 기관 자료 안에서만 연결한다.
 description_portal: 엘리베이터 법정검사(정기검사) / 유효기간이 만료되는 엘리베이터의 법정검사를 적기에 시행하여 승강기 안전관리법을 준수하고 승강기 정상운영에 만전을 기함.* 관련근거- 승강기 안전관리법 제32조(승강기의 안전검사)관리주체는 승강기에 대하여 행정안전부장관이 실기하는 안전검사를 받아야함.- 승강기 안전관리업무 수수료에 관한 고시[별표4] "승강기 안전검사 수수료"승강기 안전관리업무 수수료에 관한 고시(행정안전부고시 제 2022-64호)- 법정검사 미 수검 및 불합격 시 승강기 운행 불가
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 12
     - name: 고유번호
       type: string
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - ' 5003_501 '
@@ -181,12 +184,22 @@ schema:
         - 합격
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 고유번호
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 검사(만료일)
 cycle: default
 classification:
   subsector_name: 철도망·역·출입구·시설
@@ -223,7 +236,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056489-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(고유번호)'
     evidence:
       - type: measured
         source: probe/stats/15056489.json
@@ -288,8 +301,6 @@ verification:
   run: probe/runs/15056489.json
   stats: probe/stats/15056489.json
   data: probe/data/15056489/
-status: active
-summary_user: 대전교통공사가 운영하는 도시철도 역사 엘리베이터의 법정 정기검사 결과를 승강기 한 대(역사명·호기)별로 담은 CSV 파일(약 84KB)로, 측정연도·고유번호·용도·위치·형식·운행속도·검사 만료일·검사분기·제조사·검사결과를 포함한다. 교통약자나 시설 분석가가 '대전 도시철도 어느 역 엘리베이터의 검사 유효기간이 언제 끝나고 합격했는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 역 단위 시설·출입구 데이터와는 역사명을 이름으로 맞춰 잇고 승강기 고유번호는 같은 기관 자료 안에서만 연결한다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어 다른 기관 역 데이터와 붙일 때 역사명 표기 차이를 직접 맞춰야 한다. 좌표가 없는 비공간 자료라 위치 분석에는 역 좌표 데이터를 따로 이어야 한다.
 review:
   summary: draft
@@ -302,3 +313,4 @@ review:
     - c-15056489-04
     - c-15056489-06
   dropped_citations: 0
+status: active

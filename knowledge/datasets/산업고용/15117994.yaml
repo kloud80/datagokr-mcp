@@ -1,4 +1,5 @@
-# Dataset 15117994 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15117994 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15117994'
 tier: verified
 title: 한국동서발전(주)_VPP 발전량 및 이용률
@@ -21,6 +22,7 @@ synonyms:
   - 설비 이용률
   - 월별 발전실적
   - 동서발전 발전량
+summary_user: 한국동서발전이 운영하는 울산시민가상발전소(VPP)의 발전 실적을 발전소별·연월 단위로 정리한 집계 파일로, 설비 용량(MW)·발전량(kW)·이용률(%)·비고를 담는다. 분산에너지 연구자나 지역 에너지 정책 분석가가 "시민 참여형 가상발전소의 월별 이용률이 계절에 따라 얼마나 달라지는가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·신재생 데이터와는 발전소명이나 연월을 직접 맞춰 이어 쓰거나, 같은 기관(한국동서발전) 자료끼리만 묶어 쓴다.
 description_portal: '한국동서발전에서 운영 중인 울산시민가상발전소의 연도 및 월별 발전량 및 이용률 정보는 시민 참여형 가상발전소(VPP: Virtual Power Plant)의 운영 실적을 정량적으로 기록한 데이터입니다.해당 데이터는 설비 용량(MW), 구분(연도 및 월), 발전량(KW), 이용률(%), 비고 등의 항목으로 구성되어 있으며, 울산 지역에서 운영되는 가상발전소의 실제 발전 실적과 에너지 활용 수준을 파악할 수 있도록 설계되어 있습니다.이 데이터는 가상발전소의 월별 발전 효율, 설비 이용률 추이, 계절별 발전 성능 차이 등을 분석하는 데 유용하며, 분산에너지 자원의 실질적 운영 현황을 확인할 수 있는 기초 자료로 활용됩니다.학계 및 연구기관에서는 이 데이터를 기반으로 시민 참여형 에너지 생산 모델의 효과 분석, 지역별 분산전원 운영 성과 비교, 이용률 기반 에너지 효율성 평가, 가상발전소 확대 적용 가능성 검토 등을 수행할 수 있습니다.또한, 지역에너지 자립도 향상 방안, 에너지 소비-생산 균형 정책 분석, 탄소중립 사회 실현을 위한 분산형 전원 전략 설계 등 다양한 에너지 전환 연구와 정책 수립에도 실증적 자료로 활용될 수 있습니다.'
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 울산시민가상발전소
@@ -91,12 +94,22 @@ schema:
         - 순차적준공
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 년월
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -133,7 +146,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15117994-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15117994.json
@@ -198,8 +211,6 @@ verification:
   run: probe/runs/15117994.json
   stats: probe/stats/15117994.json
   data: probe/data/15117994/
-status: active
-summary_user: 한국동서발전이 운영하는 울산시민가상발전소(VPP)의 발전 실적을 발전소별·연월 단위로 정리한 집계 파일로, 설비 용량(MW)·발전량(kW)·이용률(%)·비고를 담는다. 분산에너지 연구자나 지역 에너지 정책 분석가가 "시민 참여형 가상발전소의 월별 이용률이 계절에 따라 얼마나 달라지는가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·신재생 데이터와는 발전소명이나 연월을 직접 맞춰 이어 쓰거나, 같은 기관(한국동서발전) 자료끼리만 묶어 쓴다.
 limits: 파일 크기가 3KB 남짓한 소규모 집계표라 시간별·실시간 수급 분석에는 쓰지 못하고, 표준 코드 키가 없어 다른 데이터와 자동으로 결합되지 않는다. 범위는 전국·비공간으로 분류돼 있어 좌표나 행정구역 코드 기반의 지도 연계는 할 수 없다.
 review:
   summary: draft
@@ -211,3 +222,4 @@ review:
     - c-15117994-03
     - c-15117994-04
   dropped_citations: 0
+status: active

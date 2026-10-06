@@ -1,4 +1,5 @@
-# Dataset 15068787 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15068787 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15068787'
 tier: verified
 title: 한국건강증진개발원_보건소 모바일 헬스케어 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 건강상담 내용
   - 만성질환 예방 상담
   - 건강위험군 관리
+summary_user: 보건소 모바일 헬스케어 사업 참여자가 보건소를 처음 방문해 받은 영양상담·운동상담·건강상담 내용을 비식별 사용자 단위로 담은 전국 범위의 건별 원천 파일(csv, 약 426KB)이다. 분석가가 "건강위험군이 첫 상담에서 어떤 영양·운동·생활습관 조언을 주로 받는가"를 텍스트로 살펴보거나 상담 내용 유형을 분류할 때 쓴다. 전역 조인 키가 없고 비식별 사용자 번호만 있어 보건소코드·시군구코드로 지역 건강지표와 잇지 못하며, 같은 기관이 낸 다른 모바일 헬스케어 파일과 사용자 번호로만 연결을 시도해 볼 수 있다.
 description_portal: 보건소 모바일 헬스케어 사업은 ICT기술을 활용한 보건소 기반의 공공형 건강관리서비스로 국민의 일상 속 건강생활 실천 및 만성질환 예방을 목적으로 합니다.지역보건의료기관인 보건소는 국민건강증진법, 지역보건법 등에 따라 지역주민의 건강생활실천 및 만성질환 예방, 취약계층 건강관리 업무 등을 추진하고 있으며, 이러한 보건소를 기반한 ‘모바일 헬스케어 사업’은 국가건강검진 결과, 건강위험군을 대상으로 일상 속 건강생활실천 유도 및 만성질환으로 이행예방을 목적으로 시작 되었습니다. ICT기술을 활용한 비대면 건강관리서비스로서 경제적, 시간적, 공간적 제약으로 건강관리서비스에 접근성이 떨어지는 건강취약계층에 집중하고 있습니다.보건소 모바일 헬스케어 사업 중 서비스 참여 대상자가 보건소에 최소 방문하여 상담받은 데이터로서 영양상담, 운동상담, 건강상담, 상담 메모 내용입니다.
 applicable_legislation:
   - law: 국민건강증진법
@@ -52,6 +54,7 @@ schema:
   fields:
     - name: 사용자비식별번호
       type: number
+      semantic_type: mhc_user_id
       null_rate: 0.0
       sample_values:
         - '1527'
@@ -89,6 +92,12 @@ schema:
         - '금일 초기검사 결과 혈압관리군으로 혈압, 중성지방 수치가 높게 측정되었습니다.식생활 및 생활습관을 개선, 유지하여 3개월 이후에 있을 중간검사 '
       stats:
         unique: 369
+  foreign_keys:
+    - fields:
+        - 사용자비식별번호
+      reference:
+        key: mhc_user_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -131,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15068787-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: mhc_user_id(사용자비식별번호)'
     evidence:
       - type: measured
         source: probe/stats/15068787.json
@@ -206,8 +215,6 @@ verification:
   run: probe/runs/15068787.json
   stats: probe/stats/15068787.json
   data: probe/data/15068787/
-status: active
-summary_user: 보건소 모바일 헬스케어 사업 참여자가 보건소를 처음 방문해 받은 영양상담·운동상담·건강상담 내용을 비식별 사용자 단위로 담은 전국 범위의 건별 원천 파일(csv, 약 426KB)이다. 분석가가 "건강위험군이 첫 상담에서 어떤 영양·운동·생활습관 조언을 주로 받는가"를 텍스트로 살펴보거나 상담 내용 유형을 분류할 때 쓴다. 전역 조인 키가 없고 비식별 사용자 번호만 있어 보건소코드·시군구코드로 지역 건강지표와 잇지 못하며, 같은 기관이 낸 다른 모바일 헬스케어 파일과 사용자 번호로만 연결을 시도해 볼 수 있다.
 limits: 지역(보건소·시군구) 구분 컬럼이 없어 지역별 비교나 지역사회 건강조사와의 결합에는 쓰지 못한다. 최초 방문 상담 내용만 담아 이후 변화나 효과는 이 파일만으로 알 수 없다.
 review:
   summary: draft
@@ -220,3 +227,4 @@ review:
     - c-15068787-04
     - c-15068787-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15056544 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056544 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056544'
 tier: verified
 title: 식품의약품안전처_의료기기 광고사전심의 정보
@@ -21,6 +22,7 @@ synonyms:
   - 의료기기 광고 심의번호
   - 의료기기 광고 매체
   - 식약처 광고심의
+summary_user: 의료기기 광고사전심의 건마다 심의결과일자·심의번호, 신청 업체명, 광고 매체 종류, 대상 제품명과 허가번호, 심의결과를 담은 건별 원천 데이터이며 범위는 전국입니다. 소비자나 업계 담당자가 '이 의료기기 광고가 사전심의를 거쳐 승인된 것인가, 어떤 매체에 실리는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 제품 허가번호(BOSS_MEDDEV_ITEM_NO)나 업체명·제품명을 매핑해 식약처 의료기기 품목허가 정보와 이어 쓰는 방식으로만 연결된다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 관리하는 의료기기 광고사전심의 정보입니다.  이 공공데이터는 심의결과일자와 심의번호를 통해 각 심의 건을 고유하게 식별하며 업체명으로 광고 신청 업체를 파악할 수 있습니다.  또한 매체유형 정보는 광고가 게재될 매체의 종류를 보여줍니다. 제품명과 허가번호로 광고 대상 의료기기를 정확히 특정할 수 있으며 심의결과를 통해 해당 광고의 승인 여부를 확인할 수 있습니다 이러한 정보 공개를 통해 의료기기 광고의 투명성을 제고하고 소비자가 신뢰할 수 있는 의료기기 정보 환경을 조성하는데 기여합니다
 team:
   dept: 데이터혁신기획팀
@@ -92,6 +94,7 @@ schema:
         unique: 91
     - name: BOSS_MEDDEV_ITEM_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허01-764호
@@ -108,6 +111,12 @@ schema:
         - 미승인
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - BOSS_MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -158,7 +167,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056544-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_permit_no(BOSS_MEDDEV_ITEM_NO)'
     evidence:
       - type: measured
         source: probe/stats/15056544.json
@@ -223,8 +232,6 @@ verification:
   run: probe/runs/15056544.json
   stats: probe/stats/15056544.json
   data: probe/data/15056544/
-status: active
-summary_user: 의료기기 광고사전심의 건마다 심의결과일자·심의번호, 신청 업체명, 광고 매체 종류, 대상 제품명과 허가번호, 심의결과를 담은 건별 원천 데이터이며 범위는 전국입니다. 소비자나 업계 담당자가 '이 의료기기 광고가 사전심의를 거쳐 승인된 것인가, 어떤 매체에 실리는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 제품 허가번호(BOSS_MEDDEV_ITEM_NO)나 업체명·제품명을 매핑해 식약처 의료기기 품목허가 정보와 이어 쓰는 방식으로만 연결된다.
 limits: 공통 조인 키가 없어 다른 데이터와는 허가번호·이름 매핑으로만 연결되므로 표기 차이에 따른 매칭 누락에 주의한다. 개발계정은 하루 10,000회 호출 한도가 있다.
 review:
   summary: draft
@@ -236,3 +243,4 @@ review:
     - c-15056544-03
     - c-15056544-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15092386 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092386 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092386'
 tier: verified
 title: 한국건강증진개발원_국가금연지원서비스 등록정보(흡연자평가)
@@ -21,6 +22,7 @@ synonyms:
   - 금연동기 금연자신감
   - 보건소 금연상담 등록자
   - 지역금연지원센터
+summary_user: 국가금연지원서비스에 등록한 대상자 한 명씩의 흡연자평가 표준문항 답변을 담은 파일 데이터로, 지난 1년 금연시도 여부, 시도 방법, 실패 이유, 금연하려는 이유, 흡연을 참기 힘든 시기, 금연동기·자신감·준비 정도와 함께 기관유형·지역·제공기관·출생년도·성별·등록유형이 들어 있다(범위 전국, zip 약 3.8MB). 금연상담 담당자나 보건 분석가가 '보건소 금연클리닉 등록자들이 주로 어떤 이유로 금연에 실패하고 언제 흡연 욕구가 가장 큰가'를 연령·성별·지역별로 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 지역·제공기관 이름을 매핑하거나 같은 기관의 다른 국가금연지원서비스 등록정보 파일과 이어 써야 한다.
 description_portal: 국가금연지원서비스 대상자의 흡연자평가 결과로 표준문항에 대한 답변을 제공합니다.문항으로는 지난 1년동안 금연시도를 했는지, 담배를 끊기 위해 시도했던 방법은 무엇인지, 금연에 실패한 이유가 무엇인지, 이번에 담배를 끊고 싶은 가장 큰 이유 3가지가 무엇인지, 평소 하루 중 가장 흡연을 참기 힘든 시기가 언제인지, 금연동기/금연자신감/금연준비 정도가 어느정도인지가 있습니다.해당 문항을 통해 내담자의 상태가 어떤지 파악하여 상담을 시 맞춤형 상담을 하는데 도움이 됩니다.- 전국 보건소, 지역금연지원센터
 accrual_periodicity: 연간
 team:
@@ -60,6 +62,7 @@ schema:
         unique: 3
     - name: 제공기관
       type: code
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 인천 미추홀구보건소
@@ -484,12 +487,22 @@ schema:
         p50: 7
         max: 10
         unique: 11
+  foreign_keys:
+    - fields:
+        - 제공기관
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 출생년도
 cycle: default
 classification:
   subsector_name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
@@ -526,7 +539,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092386-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(제공기관)'
     evidence:
       - type: measured
         source: probe/stats/15092386.json
@@ -591,8 +604,6 @@ verification:
   run: probe/runs/15092386.json
   stats: probe/stats/15092386.json
   data: probe/data/15092386/
-status: active
-summary_user: 국가금연지원서비스에 등록한 대상자 한 명씩의 흡연자평가 표준문항 답변을 담은 파일 데이터로, 지난 1년 금연시도 여부, 시도 방법, 실패 이유, 금연하려는 이유, 흡연을 참기 힘든 시기, 금연동기·자신감·준비 정도와 함께 기관유형·지역·제공기관·출생년도·성별·등록유형이 들어 있다(범위 전국, zip 약 3.8MB). 금연상담 담당자나 보건 분석가가 '보건소 금연클리닉 등록자들이 주로 어떤 이유로 금연에 실패하고 언제 흡연 욕구가 가장 큰가'를 연령·성별·지역별로 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 지역·제공기관 이름을 매핑하거나 같은 기관의 다른 국가금연지원서비스 등록정보 파일과 이어 써야 한다.
 limits: 보건소코드·시군구코드 같은 표준 조인 키가 없어 지역사회 건강조사 등 시군구 지표와 바로 붙일 수 없고 이름 매핑이 필요하다. 문항 컬럼(문항1-1 등)은 번호로만 되어 있고 명세에 답변 코드 의미가 없어 포털 설명의 문항 순서와 맞춰 해석해야 한다.
 review:
   summary: draft
@@ -605,3 +616,4 @@ review:
     - c-15092386-04
     - c-15092386-06
   dropped_citations: 0
+status: active

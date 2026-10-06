@@ -1,4 +1,5 @@
-# Dataset 15072350 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072350 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072350'
 tier: verified
 title: 문화체육관광부_국가도서관통계_전국장애인도서관통계
@@ -25,6 +26,7 @@ synonyms:
   - 도서관 대출권수
   - 도서관 자료구입비
   - 국가도서관통계시스템
+summary_user: 전국 장애인도서관별로 평가년도마다 장서(인쇄 도서자료) 수, 대출권수, 자료구입비를 담은 집계 파일로, 행정구역·시군구 단위까지 위치를 적는다. 정책 담당자나 연구자가 '어느 시군구의 장애인도서관이 장서와 자료구입 예산에 비해 대출이 적은가'처럼 지역별 장애인 정보 접근 격차를 비교할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 도서관 데이터와는 도서관코드나 도서관명·시군구 이름 매칭으로만 이어 쓴다.
 description_portal: 전국 장애인도서관의 운영 현황과 주요 통계 정보를 종합적으로 파악할 수 있는 데이터로, 평가년도, 도서관구분, 도서관코드, 도서관명, 행정구역, 시군구, 장서수, 대출권수, 도서예산 등 다양한 항목을 포함하고 있습니다. 장애인도서관의 지역별 분포와 자원 현황, 도서 대출 및 예산 규모 등 세부적인 정보를 제공하여, 장애인 정보 접근성 향상 정책 수립이나 지역별 도서관 서비스 개선, 연구 및 행정 자료로 활용하기에 적합합니다. 도서관 서비스의 형평성과 접근성 분석, 장애인 문화복지 증진 방안 마련 등 다양한 분야에서 참고 자료로 활용하실 수 있습니다.
 legal_basis_portal: 국가승인통계(국가통계 승인번호  제113016호)
 accrual_periodicity: 수시
@@ -56,6 +58,7 @@ schema:
         unique: 1
     - name: 도서관코드
       type: number
+      semantic_type: library_cd
       null_rate: 0.0
       sample_values:
         - '2030411002'
@@ -129,12 +132,26 @@ schema:
         p50: 6000000
         max: 44765000
         unique: 27
+  foreign_keys:
+    - fields:
+        - 도서관코드
+      reference:
+        key: library_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+  space_via: name
+  time: year
+  time_fields:
+    - 평가년도
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -172,7 +189,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072350-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: library_cd(도서관코드)'
     evidence:
       - type: measured
         source: probe/stats/15072350.json
@@ -247,8 +264,6 @@ verification:
   run: probe/runs/15072350.json
   stats: probe/stats/15072350.json
   data: probe/data/15072350/
-status: active
-summary_user: 전국 장애인도서관별로 평가년도마다 장서(인쇄 도서자료) 수, 대출권수, 자료구입비를 담은 집계 파일로, 행정구역·시군구 단위까지 위치를 적는다. 정책 담당자나 연구자가 '어느 시군구의 장애인도서관이 장서와 자료구입 예산에 비해 대출이 적은가'처럼 지역별 장애인 정보 접근 격차를 비교할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 도서관 데이터와는 도서관코드나 도서관명·시군구 이름 매칭으로만 이어 쓴다.
 limits: 파일이 약 2.6KB로 작아 도서관 수가 적은 요약 통계이며, 이용자 특성이나 대출 도서 목록 같은 세부 정보는 없다. 공통 조인 키가 없어 도서관정보나루 등 다른 데이터와 연결할 때는 코드·이름 매핑을 직접 검증해야 한다.
 review:
   summary: draft
@@ -261,3 +276,4 @@ review:
     - c-15072350-04
     - c-15072350-06
   dropped_citations: 0
+status: active

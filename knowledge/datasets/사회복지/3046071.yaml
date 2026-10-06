@@ -146,6 +146,7 @@ schema:
     - name: bzowrRgstNo
       title: 사업자등록번호(앞에서 6자리)
       type: string
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - 843860****
@@ -211,6 +212,7 @@ schema:
     - name: seq
       title: 식별번호
       type: number
+      semantic_type: nps_workplace_no
       null_rate: 0.0
       sample_values:
         - '7098292'
@@ -270,6 +272,11 @@ schema:
         unique: 2
   foreign_keys:
     - fields:
+        - bzowrRgstNo
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
         - ldongAddrMgplDgCd
       reference:
         key: address
@@ -285,6 +292,11 @@ schema:
         key: address
       evidence: measured
     - fields:
+        - seq
+      reference:
+        key: nps_workplace_no
+      evidence: measured
+    - fields:
         - wkplRoadNmDtlAddr
       reference:
         key: address
@@ -292,6 +304,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - ldongAddrMgplDgCd
+    - ldongAddrMgplSgguCd
+    - ldongAddrMgplSgguEmdCd
+  space_via: address
+  time: month
+  time_fields:
+    - dataCrtYm
 cycle: default
 classification:
   subsector_name: 국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)
@@ -335,7 +357,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-3046071-03
     kind: key
-    value: '실측 조인 키: address(ldongAddrMgplDgCd), address(ldongAddrMgplSgguCd), address(ldongAddrMgplSgguEmdCd), address(wkplRoadNmDtlAddr)'
+    value: '실측 조인 키: bizno(bzowrRgstNo), address(ldongAddrMgplDgCd), address(ldongAddrMgplSgguCd), address(ldongAddrMgplSgguEmdCd), nps_workplace_no(seq), address(wkplRoadNmDtlAddr)'
     evidence:
       - type: measured
         source: probe/stats/3046071.json

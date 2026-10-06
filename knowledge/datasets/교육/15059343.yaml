@@ -1,0 +1,226 @@
+# Dataset 15059343 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15059343'
+tier: verified
+title: 경기도 내 공공일자리 정보
+sector: 교육/평생·직업교육/national-qualifications
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15059343/openapi.do
+synonyms:
+  - 공공일자리
+  - 모집공고
+  - 채용정보
+  - 모집기간
+  - 잡아바
+  - 구인구직
+  - 잡아바 채용공고
+  - 경기도 공공기관 채용
+  - 공공일자리 모집
+  - 경기도일자리재단
+  - 공기업 채용정보
+  - 경기 구인공고
+summary_user: 경기도일자리재단 일자리플랫폼 잡아바에 올라온 공공일자리 채용공고를 공고 한 건 단위로 담고, 공고명·기관명·모집 시작일과 종료일·잡아바 상세페이지 주소로 구성된다. 구직자가 "지금 경기도 공공기관 중 모집 중인 채용공고가 어디 있고 언제 마감되나"를 확인하거나, 분석가가 기관별 공공일자리 공고 현황을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기관명(INST_NM) 같은 이름 매칭으로만 연결한다. 채용 요건 쪽으로는 국가자격 데이터와 이어 볼 수 있지만 이 데이터에는 자격 요건 항목이 없다.
+description_portal: '경기도 일자리플랫폼 잡아바에서 제공하는 경기도 내 공공일자리 정보 입니다. 공고명, 기관명, 모집 시작일자 및 종료일자, 잡아바 채용 상세페이지 URL 등으로 구성되어 있습니다.※ 데이터의 한계 : 일부 경기도 외 지역 정보가 포함되어 있습니다.※ 본 정보는 경기도일자리재단에서 운영하는 일자리플랫폼 잡아바!(www.jobaba.net)에서 제공하는 정보입니다.※ 자세한 내용은 상세페이지URL을 통해 확인하시기 바라며, 상세페이지에 있는 내용에 대한 무단복제 및 배포는 금하여 주시기 바랍니다.'
+team:
+  dept: AI미래행정과
+services:
+  - op: JobFndtnPublJob
+    name: JobFndtnPublJob
+    endpoint: https://openapi.gg.go.kr/JobFndtnPublJob
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: PBLANC_TITLE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '[직원채용] 별정직 의사직(호흡기내과) 초빙'
+        - 공공어린이재활병원 건립사업 보조금계약직 모집공고(상시모집)
+        - '[직원채용] 별정직 의사직(감염내과) 채용 '
+      stats:
+        unique: 5
+    - name: INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 동남권원자력의학원
+        - 충남대학교병원
+        - 여주우체국
+      stats:
+        unique: 3
+    - name: RECRUT_BEGIN_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20181004'
+        - '20200721'
+        - '20210223'
+      stats:
+        min: 20181004
+        p50: 20210223
+        max: 20220610
+        unique: 5
+    - name: RECRUT_END_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261012'
+        - '20501231'
+        - '20261013'
+      stats:
+        min: 20261012
+        p50: 20261012
+        max: 20501231
+        unique: 3
+    - name: DETAIL_PAGE_URL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - https://diramsjob.recruiter.co.kr/career/jobs/74350
+        - http://www.cnuh.co.kr/recruit
+        - https://diramsjob.recruiter.co.kr/career/jobs/74349
+      stats:
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 국가자격 (국가기술자격·국가전문자격)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7061
+  brm: 교육 - 평생·직업교육
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15059343-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15059343.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15059343-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059343-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059343.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059343-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059343.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059343-06
+    kind: admin_note
+    value: "세부 부문 '국가자격 (국가기술자격·국가전문자격)'의 가치: 종목·시험 일정·합격률·자격 보유 — 채용·창업 요건, 업종 인허가(면허제한)와 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#national-qualifications
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059343-07
+    kind: admin_note
+    value: '[교육 · 평생·직업교육] 국가자격만 (`lifelong-non-qualification`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L457
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059343-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15059343.json
+  stats: probe/stats/15059343.json
+  data: probe/data/15059343/
+limits: 호출에는 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키가 필요하다. 포털 설명상 일부 경기도 외 지역 공고가 섞여 있다. 담긴 항목은 공고 개요뿐이어서 채용 인원·자격 요건 같은 세부 내용은 상세페이지 주소로 따로 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15059343-01
+    - c-15059343-03
+    - c-15059343-06
+  dropped_citations: 0
+status: active

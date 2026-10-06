@@ -1,4 +1,5 @@
-# Dataset 3071633 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3071633 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3071633'
 tier: verified
 title: 지식재산처_표준특허 동향분석 보고서 정보
@@ -23,6 +24,7 @@ synonyms:
   - 국제표준 특허
   - 특허권자별 표준특허
   - ETSI 특허 선언
+summary_user: 표준번호별로 선언된 표준특허를 건별로 담은 파일(csv, 약 319KB)로, 특허권자·국가·선언일·출원·공개·등록 번호와 일자, 국제특허분류(IPC)가 들어 있습니다. 기술 분석가나 기업 IP 담당자가 "특정 국제표준에 어느 기업이 언제, 어느 나라 특허를 표준특허로 선언했나"를 확인하는 데 씁니다. 전역 조인 키는 실측에서 확인되지 않았으며, 출원번호·등록번호나 IPC를 기준으로 특허 공보 데이터와, 특허권자 이름 매핑으로 기업 데이터와 이어 씁니다.
 description_portal: 1. 개요특허가 포함된 국제표준이 증가함에 따라 중요성이 날로 부각되고 있는 표준특허와 관련하여 주제별/이슈별 동향분석 보고서를 제공합니다. 2. 세부 정보 내용LTE, 국제표준화기구, RFID, 유럽전기통신표준기구, NPEs, 퀄컴 등 동향분석 보고서본 보고서는 표준특허와 관련하여 주제,이슈별로 국내외 동향을 분석한 자료이며, 2019년판의 사례로는 아래와 같은 항목을 포함합니다.특허를 포함하여, 국제표준이 증가하는 추세인 배경을 설명보고서별로 표준화 기구의 역할 변화, 기업 및 기관의 SEP 확보 전략, 관련 정책환경의 변화, 동향 변홛 등의 정보를 제공합니다.
 accrual_periodicity: 수시
 team:
@@ -83,6 +85,7 @@ schema:
         unique: 672
     - name: ' 출원번호 '
       type: string
+      semantic_type: kipo_appl_no
       null_rate: 0.3519
       sample_values:
         - ' EP1997117217A '
@@ -101,6 +104,7 @@ schema:
         unique: 457
     - name: ' 등록번호 '
       type: string
+      semantic_type: kipo_rgst_no
       null_rate: 0.6164
       sample_values:
         - ' EP820172B1 '
@@ -143,6 +147,7 @@ schema:
         unique: 387
     - name: 국제특허분류(IPC)
       type: string
+      semantic_type: classification_code
       null_rate: 0.3533
       sample_values:
         - H04B14/00
@@ -150,12 +155,34 @@ schema:
         - H04L12/28
       stats:
         unique: 269
+  foreign_keys:
+    - fields:
+        - ' 출원번호 '
+      reference:
+        key: kipo_appl_no
+      evidence: measured
+    - fields:
+        - ' 등록번호 '
+      reference:
+        key: kipo_rgst_no
+      evidence: measured
+    - fields:
+        - 국제특허분류(IPC)
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 선언일
+    - 출원일
+    - 공개일
 cycle: default
 classification:
   subsector_name: 지식재산 (특허·상표·디자인, KIPRIS)
@@ -193,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3071633-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kipo_appl_no( 출원번호 ), kipo_rgst_no( 등록번호 ), classification_code(국제특허분류(IPC))'
     evidence:
       - type: measured
         source: probe/stats/3071633.json
@@ -258,8 +285,6 @@ verification:
   run: probe/runs/3071633.json
   stats: probe/stats/3071633.json
   data: probe/data/3071633/
-status: active
-summary_user: 표준번호별로 선언된 표준특허를 건별로 담은 파일(csv, 약 319KB)로, 특허권자·국가·선언일·출원·공개·등록 번호와 일자, 국제특허분류(IPC)가 들어 있습니다. 기술 분석가나 기업 IP 담당자가 "특정 국제표준에 어느 기업이 언제, 어느 나라 특허를 표준특허로 선언했나"를 확인하는 데 씁니다. 전역 조인 키는 실측에서 확인되지 않았으며, 출원번호·등록번호나 IPC를 기준으로 특허 공보 데이터와, 특허권자 이름 매핑으로 기업 데이터와 이어 씁니다.
 limits: 포털 설명은 주제별 동향분석 보고서라고 하지만 실제 파일은 표준특허 선언 목록 형태의 표입니다. 보고서 본문 같은 분석 내용은 들어 있지 않습니다. 공통 식별 키가 없어 다른 데이터와 연결하려면 번호·이름 매칭이 필요합니다.
 review:
   summary: draft
@@ -271,3 +296,4 @@ review:
     - c-3071633-03
     - c-3071633-06
   dropped_citations: 0
+status: active

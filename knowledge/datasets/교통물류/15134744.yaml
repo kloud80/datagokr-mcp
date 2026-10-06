@@ -46,6 +46,7 @@ schema:
   fields:
     - name: 사업아이디
       type: number
+      semantic_type: tia_biz_id
       null_rate: 0.0
       sample_values:
         - '3320010848'
@@ -58,6 +59,7 @@ schema:
         unique: 5556
     - name: 유사시설아이디
       type: number
+      semantic_type: tia_similar_fclt_id
       null_rate: 0.0
       sample_values:
         - '232000074328 '
@@ -431,9 +433,25 @@ schema:
         - 구리시 체육관길~별내선(경춘선)
       stats:
         unique: 9
+  foreign_keys:
+    - fields:
+        - 사업아이디
+      reference:
+        key: tia_biz_id
+      evidence: measured
+    - fields:
+        - 유사시설아이디
+      reference:
+        key: tia_similar_fclt_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 조사일
+    - 기준년도
 cycle: default
 classification:
   subsector_name: road-construction
@@ -470,7 +488,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15134744-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tia_biz_id(사업아이디), tia_similar_fclt_id(유사시설아이디)'
     evidence:
       - type: measured
         source: probe/stats/15134744.json

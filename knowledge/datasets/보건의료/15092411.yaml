@@ -1,4 +1,5 @@
-# Dataset 15092411 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092411 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092411'
 tier: verified
 title: 한국건강증진개발원_국가금연지원서비스 실적(서비스)
@@ -21,6 +22,7 @@ synonyms:
   - 금연결심률
   - 지역금연지원센터
   - 흡연율 통계
+summary_user: 전국 보건소·지역금연지원센터 등 기관별·서비스유형별 금연지원서비스 실적을 담은 집계 파일로, 성인·흡연인구와 흡연율, 등록자 수, 금연결심률, 4주·6주·12주·6개월 금연성공률을 한 행에 담는다(CSV 약 47KB). 보건 정책 담당자나 분석가가 "우리 지역 보건소 금연클리닉의 6개월 금연성공률이 다른 지역보다 낮은가"처럼 기관·지역별 금연사업 성과를 비교하는 데 쓴다. 표준 조인 키(보건소코드·시군구코드)가 없어 다른 데이터와는 지역명·기관명 문자열을 매핑해서만 이어 쓴다.
 description_portal: 국가금연지원서비스 실적 정보로 주차별 금연유지평가 수행 결과에 대한 데이터를 제공합니다.본 데이터에는 서비스 유형별 이용 현황, 금연상담 참여자 수, 흡연율 변화, 금연결심율, 금연성공률 등 주요 지표가 포함되며, 전국 보건소와 지역금연지원센터에서 수집·관리한 결과가 반영됩니다.본 데이터는 금연지원사업의 효과성을 검증하고, 지역별 맞춤형 금연정책 수립 및 상담서비스 개선을 위한 근거 자료로 활용될 수 있으며, 장기적으로는 흡연율 감소를 통한 국민 건강증진에 기여할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -51,6 +53,7 @@ schema:
         unique: 17
     - name: 기관명
       type: string
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 서울금연지원센터
@@ -343,6 +346,12 @@ schema:
         p50: 34.8
         max: 80.8
         unique: 200
+  foreign_keys:
+    - fields:
+        - 기관명
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -385,7 +394,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092411-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(기관명)'
     evidence:
       - type: measured
         source: probe/stats/15092411.json
@@ -450,8 +459,6 @@ verification:
   run: probe/runs/15092411.json
   stats: probe/stats/15092411.json
   data: probe/data/15092411/
-status: active
-summary_user: 전국 보건소·지역금연지원센터 등 기관별·서비스유형별 금연지원서비스 실적을 담은 집계 파일로, 성인·흡연인구와 흡연율, 등록자 수, 금연결심률, 4주·6주·12주·6개월 금연성공률을 한 행에 담는다(CSV 약 47KB). 보건 정책 담당자나 분석가가 "우리 지역 보건소 금연클리닉의 6개월 금연성공률이 다른 지역보다 낮은가"처럼 기관·지역별 금연사업 성과를 비교하는 데 쓴다. 표준 조인 키(보건소코드·시군구코드)가 없어 다른 데이터와는 지역명·기관명 문자열을 매핑해서만 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 지역사회 건강조사 등 시군구 지표와 붙이려면 이름 매핑이 필요하다. 개인 단위 원천 기록이 아닌 기관 단위 집계라 참여자 특성별 분석은 못 한다.
 review:
   summary: draft
@@ -464,3 +471,4 @@ review:
     - c-15092411-04
     - c-15092411-06
   dropped_citations: 0
+status: active

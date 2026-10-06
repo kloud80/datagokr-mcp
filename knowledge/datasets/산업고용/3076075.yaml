@@ -1,4 +1,5 @@
-# Dataset 3076075 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3076075 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3076075'
 tier: verified
 title: 서부발전 발전실적 정보
@@ -23,6 +24,7 @@ synonyms:
   - 연도별 발전량
   - 화력발전 실적
   - 발전원별 발전량
+summary_user: 한국서부발전 발전소의 호기(발전기)별·연도별 설비용량, 발전량, 이용률을 담은 연 단위 실적 데이터로, 포털 설명상 2014년부터 2020년까지를 다룹니다. 에너지 분석가가 서부발전의 특정 발전소·호기가 연도별로 얼마나 가동됐고 이용률이 어떻게 변했는지 비교할 때 쓴다. 실측 컬럼에 다른 데이터와 맞물리는 공통 조인 키가 없어, 발전소명(gennm)·호기명·연도를 이름으로 맞춰 다른 발전사 실적이나 발전소 원장과 이어 쓴다.
 description_portal: 한국서부발전 발전기,발전원별 설비용량 및 발전량 데이터 정보입니다. 발전기별 및 발전원료별 설비용량, 발전량, 열효율, 이용률 데이터를 종합하면 각 발전기의 성능과 운영효율성을 다각도로 파악할 수 있습니다. 설비용량은 해당 발전기가 최대 출력으로 생산할 수 있는 이론적 전력규모를 의미하며, 실제 발전량은 일정 기간 동안 생산된 전력량을 보여줍니다. 열효율은 투입된 연료 에너지가 전력으로 얼마나 전환되었는지를 나타내는 지표로, 설비의 기술수준과 운영 조건을 반영합니다. 이용률은 설비용량 대비 실제 운전 비율을 보여주어 발전기가 얼마나 안정적이고 지속적으로 가동되는지를 알 수 있습니다.데이터 기준은 2014년 부터 2020년까지의 데이터 입니다.제공데이터는 발전량, 운용율운전, 발전원, 발전소명, 년, 호기, 용량 입니다.
 team:
   dept: 디지털운영부
@@ -58,6 +60,7 @@ schema:
         unique: 7
     - name: gennm
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - LNG
@@ -67,6 +70,7 @@ schema:
         unique: 3
     - name: hokinm
       type: number
+      semantic_type: ewp_plant_unit
       null_rate: 0.1047
       sample_values:
         - '4.0'
@@ -122,6 +126,17 @@ schema:
         p50: 2018
         max: 2021
         unique: 8
+  foreign_keys:
+    - fields:
+        - gennm
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
+    - fields:
+        - hokinm
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -171,7 +186,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3076075-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(gennm), ewp_plant_unit(hokinm)'
     evidence:
       - type: measured
         source: probe/stats/3076075.json
@@ -236,8 +251,6 @@ verification:
   run: probe/runs/3076075.json
   stats: probe/stats/3076075.json
   data: probe/data/3076075/
-status: active
-summary_user: 한국서부발전 발전소의 호기(발전기)별·연도별 설비용량, 발전량, 이용률을 담은 연 단위 실적 데이터로, 포털 설명상 2014년부터 2020년까지를 다룹니다. 에너지 분석가가 서부발전의 특정 발전소·호기가 연도별로 얼마나 가동됐고 이용률이 어떻게 변했는지 비교할 때 쓴다. 실측 컬럼에 다른 데이터와 맞물리는 공통 조인 키가 없어, 발전소명(gennm)·호기명·연도를 이름으로 맞춰 다른 발전사 실적이나 발전소 원장과 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터와는 발전소명·호기명 같은 이름 매핑으로만 연결된다. 전력거래소의 실시간·일별 수급 정보가 아닌 연간 실적이므로 오늘의 수급이나 시간별 발전량 확인에는 맞지 않는다. 개발계정은 하루 10회 호출로 제한된다.
 review:
   summary: draft
@@ -250,3 +263,4 @@ review:
     - c-3076075-04
     - c-3076075-06
   dropped_citations: 0
+status: active

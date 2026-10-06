@@ -1,4 +1,5 @@
-# Dataset 15024824 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15024824 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15024824'
 tier: verified
 title: 서울교통공사_산업재산권현황
@@ -25,6 +26,7 @@ synonyms:
   - 공공기관 지식재산권
   - 철도 기술 R&D 성과
   - 기술이전 특허
+summary_user: 서울교통공사가 보유한 산업재산권의 등록 정보를 한 건당 한 행으로 담은 파일로, 구분(특허·실용신안 등), 발명의 명칭, 등록일자, 등록번호로 구성된다. 공사가 어떤 지하철 관련 기술을 언제 권리로 등록했는지 알고 싶은 기술 실시 희망 사업자나, 공공기관 R&D 성과를 비교하는 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 등록번호나 발명 명칭을 기준으로 특허 정보와 직접 맞춰 보는 방식으로만 이어 쓴다.
 description_portal: 서울교통공사는 국내 최고의 지하철 관련 기술 노하우를 보유하고 있으며, R&D에 심혈을 기울여 국내·외 지하철 관련 기관의 모범이 되고 있습니다. 각종 연구과제 또는 직무와 관련한 아이디어를 적극적으로 발굴하여 산업재산권 출원 및 등록을 체계적으로 진행하고 있으며, 효율적인 유지관리 업무에 만전을 기하고 있습니다. 더불어 산업재산권 실시권 허락 등을 통한 기술료 수입으로 공사의 수익 증대에 기여하고 있습니다. 위 자료는 서울교통공사 산업재산권 등록 정보, 연번, 구분, 발명의 명칭, 등록일자, 등록번호로 구성되어 있습니다. 이 자료는 반기별로 업데이트 될 예정입니다.
 accrual_periodicity: 반기
 team:
@@ -79,6 +81,7 @@ schema:
         unique: 129
     - name: 등록번호
       type: string
+      semantic_type: kipo_rgst_no
       null_rate: 0.0
       sample_values:
         - 10-0826234-00-00
@@ -86,12 +89,22 @@ schema:
         - 10-0912491-00-00
       stats:
         unique: 211
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: kipo_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일자
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -127,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15024824-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kipo_rgst_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15024824.json
@@ -181,8 +194,6 @@ verification:
   run: probe/runs/15024824.json
   stats: probe/stats/15024824.json
   data: probe/data/15024824/
-status: active
-summary_user: 서울교통공사가 보유한 산업재산권의 등록 정보를 한 건당 한 행으로 담은 파일로, 구분(특허·실용신안 등), 발명의 명칭, 등록일자, 등록번호로 구성된다. 공사가 어떤 지하철 관련 기술을 언제 권리로 등록했는지 알고 싶은 기술 실시 희망 사업자나, 공공기관 R&D 성과를 비교하는 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 등록번호나 발명 명칭을 기준으로 특허 정보와 직접 맞춰 보는 방식으로만 이어 쓴다.
 limits: 다른 데이터와 바로 연결할 공통 키가 없어 등록번호·명칭 매핑이 필요하다. 지역 단위가 없는 비공간 목록이라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -194,3 +205,4 @@ review:
     - c-15024824-03
     - c-15024824-04
   dropped_citations: 0
+status: active

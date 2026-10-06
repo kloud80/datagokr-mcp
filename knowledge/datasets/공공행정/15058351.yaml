@@ -1,4 +1,5 @@
-# Dataset 15058351 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058351 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058351'
 tier: verified
 title: 한국지역정보개발원_일반정규직 평균임금 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 1인당 평균임금
   - 정규직 보수 현황
   - 지방공기업 성과급
+summary_user: 지방공기업 통합경영공시에 올라온 일반정규직 평균임금을 연도·기관별로 담은 집계 자료로, 기본급·수당·시간외근무수당·성과급 항목별 금액과 합계, 직원수, 평균근속연수, 1인당 평균임금을 담으며 범위는 전국이다. 구직자나 분석가가 '특정 지방공사·공단 정규직의 1인당 평균임금과 성과급 비중이 다른 지방공기업보다 높은가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 이름 매핑해서만 이어 쓴다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 일반정규직 평균임금 자료에는 연도, 기관명, 기본급, 급여성복리후생비, 수당, 초과근무수당, 인센티브성과급, 자체평가급, 예산성과급, 직원수, 평균근속연수, 1인당 평균임금 등 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -91,6 +93,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -238,12 +241,22 @@ schema:
         p50: 59080
         max: 87804
         unique: 166
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - P_WYEAR_WMONTH
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -287,7 +300,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058351-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15058351.json
@@ -341,8 +354,6 @@ verification:
   run: probe/runs/15058351.json
   stats: probe/stats/15058351.json
   data: probe/data/15058351/
-status: active
-summary_user: 지방공기업 통합경영공시에 올라온 일반정규직 평균임금을 연도·기관별로 담은 집계 자료로, 기본급·수당·시간외근무수당·성과급 항목별 금액과 합계, 직원수, 평균근속연수, 1인당 평균임금을 담으며 범위는 전국이다. 구직자나 분석가가 '특정 지방공사·공단 정규직의 1인당 평균임금과 성과급 비중이 다른 지방공기업보다 높은가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 이름 매핑해서만 이어 쓴다.
 limits: 기관 코드 같은 전역 조인 키가 없어 기관명 표기가 다르면 다른 데이터와 연결이 어긋날 수 있다. 개인별 임금이나 직급별 분포는 없고 기관 단위 평균만 담는다. 개발계정 호출은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -354,3 +365,4 @@ review:
     - c-15058351-03
     - c-15058351-04
   dropped_citations: 0
+status: active

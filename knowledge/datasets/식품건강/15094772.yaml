@@ -1,4 +1,3 @@
-# Dataset 15094772 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15094772'
 tier: verified
 title: 식품의약품안전처_코로나19 진단시약 국내 허가 제품현황
@@ -21,6 +20,7 @@ synonyms:
   - 신속항원검사 키트
   - PCR 진단시약
   - 의료기기 품목허가
+summary_user: 식품의약품안전처가 국내에서 허가한 코로나19 진단시약을 품목(허가번호) 단위로 한 건씩 담은 목록으로, 품목명·품목분류번호와 등급·허가일자·수출용 한정 여부·취소취하 구분과 일자·제품명과 모델명·업체명과 주소·사용목적을 포함하며 범위는 전국이다. 의료기관 구매 담당자나 수출업체가 '이 진단키트가 국내 허가를 받았고 지금도 유효한가, 수출용으로만 허가됐는가'를 확인하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없어서 다른 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·업체명·사업자등록번호 같은 값을 이름이나 코드로 직접 맞춰 이어야 한다.
 description_portal: 이 공공데이터는 식품의약품안전처에서 관리하는 코로나19 진단시약 국내 허가 제품현황 정보입니다.   이 공공데이터는 품목명과 품목허가번호를 통해 각 진단시약을 정확히 식별하며 품목분류번호와 등급으로 제품의 분류 체계를 제공합니다. 품목허가일자와 수출용에한함 여부는 제품의 허가 상태와 사용 범위를 명확히 보여주며 취소취하 구분과 일자로 현재 유효한 제품을 구분할 수 있습니다. 제품명, 모델명으로 구체적인 제품을 특정할 수 있습니다 업종구분 업체명 업허가번호 업허가일자 업체주소 사용목적 등의 상세 정보를 제공합니다.
 team:
   dept: 데이터혁신기획팀
@@ -53,6 +53,7 @@ schema:
         unique: 12
     - name: MEDDEV_ITEM_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 체외 제허 21-377 호
@@ -62,6 +63,7 @@ schema:
         unique: 612
     - name: MDEQ_CLSF_NO
       type: code
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - K05030.01
@@ -178,6 +180,7 @@ schema:
         unique: 108
     - name: MEDDEV_ENTP_NO
       type: string
+      semantic_type: meddev_entp_no
       null_rate: 0.0
       sample_values:
         - 체외 제 4413 호
@@ -226,12 +229,38 @@ schema:
         p50: 1428700493
         max: 8998101617
         unique: 108
+  foreign_keys:
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
+    - fields:
+        - MEDDEV_ENTP_NO
+      reference:
+        key: meddev_entp_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - BSSH_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - PRMSN_DT
+    - RTRCN_DSCTN_DT
+    - VLD_PRD_BGNG_DT
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -275,7 +304,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15094772-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_permit_no(MEDDEV_ITEM_NO), meddev_clsf_no(MDEQ_CLSF_NO), meddev_entp_no(MEDDEV_ENTP_NO)'
     evidence:
       - type: measured
         source: probe/stats/15094772.json
@@ -340,8 +369,6 @@ verification:
   run: probe/runs/15094772.json
   stats: probe/stats/15094772.json
   data: probe/data/15094772/
-status: active
-summary_user: 식품의약품안전처가 국내에서 허가한 코로나19 진단시약을 품목(허가번호) 단위로 한 건씩 담은 목록으로, 품목명·품목분류번호와 등급·허가일자·수출용 한정 여부·취소취하 구분과 일자·제품명과 모델명·업체명과 주소·사용목적을 포함하며 범위는 전국이다. 의료기관 구매 담당자나 수출업체가 '이 진단키트가 국내 허가를 받았고 지금도 유효한가, 수출용으로만 허가됐는가'를 확인하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없어서 다른 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·업체명·사업자등록번호 같은 값을 이름이나 코드로 직접 맞춰 이어야 한다.
 limits: 다른 데이터셋과 공통으로 쓰는 조인 키가 없어 연계하려면 이름이나 코드를 직접 매핑해야 한다. 포털 활용신청은 자동승인되며 serviceKey가 필요하고, 개발계정은 하루 10,000회까지 호출된다.
 review:
   summary: draft
@@ -353,3 +380,4 @@ review:
     - c-15094772-03
     - c-15094772-04
   dropped_citations: 0
+status: active

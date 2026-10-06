@@ -74,6 +74,7 @@ schema:
     - name: mxtrCode
       title: 조합코드
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '335'
@@ -98,6 +99,7 @@ schema:
     - name: csmtmktCode
       title: 위판장코드
       type: number
+      semantic_type: fish_auction_mkt_cd
       null_rate: 0.0
       sample_values:
         - '300001'
@@ -187,6 +189,16 @@ schema:
         unique: 17
   foreign_keys:
     - fields:
+        - mxtrCode
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
+    - fields:
+        - csmtmktCode
+      reference:
+        key: fish_auction_mkt_cd
+      evidence: measured
+    - fields:
         - addr
       reference:
         key: address
@@ -194,6 +206,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
@@ -237,7 +254,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15056511-03
     kind: key
-    value: '실측 조인 키: address(addr)'
+    value: '실측 조인 키: suhyup_union_cd(mxtrCode), fish_auction_mkt_cd(csmtmktCode), address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15056511.json

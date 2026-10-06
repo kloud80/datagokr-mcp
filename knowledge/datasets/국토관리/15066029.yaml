@@ -1,4 +1,3 @@
-# Dataset 15066029 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15066029'
 tier: verified
 title: 서울주택도시개발공사_행복주택(리츠포함) 공급계획
@@ -25,6 +24,7 @@ synonyms:
   - 리츠 행복주택
   - 서울 공공임대 물량
   - 전용면적별 공급
+summary_user: 서울주택도시개발공사(SH공사)가 추진하는 행복주택(리츠 포함)의 공급계획을 단지별로 담은 CSV 파일(약 1.6KB)로, 유형·단지명·소재지·공급(예정)년도·공급예정물량 총계와 전용면적별 공급형을 담는다. 청년·신혼부부·사회초년생이 언제 어느 지역에 어떤 크기의 행복주택이 나올지 확인하거나, 분석가가 자치구별 공급 편중과 공급 시기를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 단지명이나 소재지 주소를 매핑해 붙여야 한다.
 description_portal: 이 데이터는 서울주택도시개발공사(SH공사)에서 추진하는 행복주택(리츠 포함) 공급계획에 대한 정보를 담고 있으며, 소형 주택 위주의 공급 물량을 전용면적 구간별로 확인할 수 있는 자료입니다. 포함된 주요 항목으로는 단지명, 소재지, 공급 예정 물량 총계, 공급(예정)년도, 전용면적 등이 있으며, 청년, 신혼부부, 사회초년생 등 주거 취약계층을 대상으로 한 공공임대주택의 세부 공급 계획을 확인할 수 있습니다. 행복주택 공급 정보는 다양한 가구 형태와 주거 수요에 맞는 정책 설계에 활용될 수 있으며, 입주 수요 예측, 지역별 공급 편중 현황 분석, 공급 시기 조정 등의 행정적 판단 근거로도 사용됩니다. 다만, 공급계획은 사업 추진 상황에 따라 변경될 수 있어 참고자료로 활용하는 것이 적절합니다.
 accrual_periodicity: 연간
 team:
@@ -45,6 +45,7 @@ schema:
         unique: 1
     - name: 단지명
       type: code
+      semantic_type: sh_complex_nm
       null_rate: 0.0
       sample_values:
         - 고덕온빛채
@@ -102,12 +103,26 @@ schema:
         - 29-49㎡
       stats:
         unique: 16
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: sh_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: year
+  time_fields:
+    - 공급(예정) 년도
 cycle: event
 classification:
   subsector_name: 도시개발구역·환지·역세권 개발
@@ -149,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15066029-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sh_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15066029.json
@@ -233,8 +248,6 @@ verification:
   run: probe/runs/15066029.json
   stats: probe/stats/15066029.json
   data: probe/data/15066029/
-status: active
-summary_user: 서울주택도시개발공사(SH공사)가 추진하는 행복주택(리츠 포함)의 공급계획을 단지별로 담은 CSV 파일(약 1.6KB)로, 유형·단지명·소재지·공급(예정)년도·공급예정물량 총계와 전용면적별 공급형을 담는다. 청년·신혼부부·사회초년생이 언제 어느 지역에 어떤 크기의 행복주택이 나올지 확인하거나, 분석가가 자치구별 공급 편중과 공급 시기를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 단지명이나 소재지 주소를 매핑해 붙여야 한다.
 limits: 공급계획은 사업 추진 상황에 따라 바뀔 수 있으므로 확정 물량이나 실제 공급 실적으로 해석하면 안 된다. 명세상 갱신 주기는 연간이다. 표준 코드나 조인 키가 없어 주소·단지명 매핑 과정에서 누락이나 오매칭이 생길 수 있다.
 review:
   summary: draft
@@ -246,3 +259,4 @@ review:
     - c-15066029-02
     - c-15066029-03
   dropped_citations: 0
+status: active

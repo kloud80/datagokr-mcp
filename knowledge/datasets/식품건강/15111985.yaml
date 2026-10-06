@@ -1,5 +1,3 @@
-# Dataset 15111985 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15111985'
 tier: verified
 title: 식품의약품안전처_축산물 가공업 폐업정보 조회
@@ -71,6 +69,7 @@ schema:
     - name: LCNS_NO
       title: 인허가번호
       type: number
+      semantic_type: food_lcns_no
       null_rate: 0.0
       sample_values:
         - '19660086006'
@@ -157,6 +156,12 @@ schema:
         - 부산광역시
       stats:
         unique: 79
+  foreign_keys:
+    - fields:
+        - LCNS_NO
+      reference:
+        key: food_lcns_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -203,7 +208,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15111985-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: food_lcns_no(LCNS_NO)'
     evidence:
       - type: measured
         source: probe/stats/15111985.json
@@ -281,3 +286,8 @@ review:
     - c-15111985-06
   dropped_citations: 0
 status: active
+grain:
+  space: sgg
+  space_fields:
+    - LOCP_ADDR
+  space_via: address

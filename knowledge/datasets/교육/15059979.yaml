@@ -1,4 +1,5 @@
-# Dataset 15059979 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15059979 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059979'
 tier: verified
 title: 한국산업인력공단_국가자격 CBT 시행정보
@@ -22,6 +23,7 @@ synonyms:
   - 시험시간
   - Q-net 시험
   - 산업인력공단 시험 시행
+summary_user: 한국산업인력공단이 국가자격 CBT(컴퓨터 기반 시험) 시행 정보를 전국 단위로 담은 CSV 파일(약 1MB)로, 포털 설명은 종목별 과목명·문항 수·시험시간을 담는다고 하지만 필드 목록에는 이력 일련번호·시행계획번호·지사명·액션구분·QIS 사용자 식별자가 있어 시행 처리 이력에 가까운 건별 기록으로 보인다. 수험생이나 분석가가 "이 자격 종목의 CBT 시험은 어느 지사에서 어떤 시행계획으로 진행되었나"를 확인하거나, 자격시험 준비와 운영 분석에 쓴다. 전역 조인 키가 없어 다른 데이터와는 시행계획번호나 지사명 같은 공단 내부 코드와 이름 매핑으로만 이어 쓰며, 같은 부문의 종목·시험 일정·합격률 데이터와 연결할 때도 이 방식을 쓴다.
 description_portal: 한국산업인력공단의 국가자격 CBT 시행정보 파일데이터는 각 자격시험 종목별로 과목명, 과목순서, 문항 수, 시험시간 등의 정보를 담고 있습니다. 이 데이터는 공공데이터포털에서 CSV 형식으로 제공되며, 로그인 없이 무료로 다운로드할 수 있습니다. 또한, 오픈 API(JSON/XML) 형태로도 활용 가능하여 다양한 응용 프로그램에서 사용할 수 있습니다. 데이터는 연 1회 갱신되며, 최신 버전은 2026년 3월 9일에 등록되었습니다. 이 자료는 국가기술자격법에 근거하여 수집되었으며, 자격시험 준비나 분석에 유용하게 활용될 수 있습니다
 accrual_periodicity: 연간
 team:
@@ -47,6 +49,7 @@ schema:
         unique: 23424
     - name: 시행계획번호
       type: code
+      semantic_type: qnet_exam_plan_id
       null_rate: 0.0
       sample_values:
         - PL2023546016
@@ -80,6 +83,12 @@ schema:
         - EMP9001907083
       stats:
         unique: 979
+  foreign_keys:
+    - fields:
+        - 시행계획번호
+      reference:
+        key: qnet_exam_plan_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -123,7 +132,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15059979-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: qnet_exam_plan_id(시행계획번호)'
     evidence:
       - type: measured
         source: probe/stats/15059979.json
@@ -188,8 +197,6 @@ verification:
   run: probe/runs/15059979.json
   stats: probe/stats/15059979.json
   data: probe/data/15059979/
-status: active
-summary_user: 한국산업인력공단이 국가자격 CBT(컴퓨터 기반 시험) 시행 정보를 전국 단위로 담은 CSV 파일(약 1MB)로, 포털 설명은 종목별 과목명·문항 수·시험시간을 담는다고 하지만 필드 목록에는 이력 일련번호·시행계획번호·지사명·액션구분·QIS 사용자 식별자가 있어 시행 처리 이력에 가까운 건별 기록으로 보인다. 수험생이나 분석가가 "이 자격 종목의 CBT 시험은 어느 지사에서 어떤 시행계획으로 진행되었나"를 확인하거나, 자격시험 준비와 운영 분석에 쓴다. 전역 조인 키가 없어 다른 데이터와는 시행계획번호나 지사명 같은 공단 내부 코드와 이름 매핑으로만 이어 쓰며, 같은 부문의 종목·시험 일정·합격률 데이터와 연결할 때도 이 방식을 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 사업자번호나 행정코드로 다른 기관 데이터와 바로 결합할 수 없다. 공간 정보가 없는 전국 단위 데이터라 지역별 분석은 지사명에만 기댈 수 있다. 포털 설명과 실제 필드 구성이 다르므로 과목·문항 수 정보가 들어 있는지 내려받아 확인한 뒤 써야 한다.
 review:
   summary: draft
@@ -202,3 +209,4 @@ review:
     - c-15059979-04
     - c-15059979-06
   dropped_citations: 0
+status: active

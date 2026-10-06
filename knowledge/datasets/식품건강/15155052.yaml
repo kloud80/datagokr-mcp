@@ -208,6 +208,7 @@ schema:
     - name: LCPMT_NO
       title: 인허가번호
       type: number
+      semantic_type: localdata_license_no
       null_rate: 0.0
       sample_values:
         - '19930098481'
@@ -319,6 +320,11 @@ schema:
         unique: 880
   foreign_keys:
     - fields:
+        - LCPMT_NO
+      reference:
+        key: localdata_license_no
+      evidence: measured
+    - fields:
         - LCTN_ADDR
       reference:
         key: address
@@ -337,6 +343,17 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1950-01-01 ~ 2029-12-22
+grain:
+  space: sgg
+  space_fields:
+    - LCTN_ADDR
+    - ROAD_NM_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - APLY_YMD
+    - DAT_UPDT_PNT
+    - DSGN_YMD
 cycle: default
 classification:
   subsector_name: 위생 지정 (음식점 위생등급·모범음식점·안심식당·HACCP 적용업소)
@@ -382,7 +399,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15155052-03
     kind: key
-    value: '실측 조인 키: address(LCTN_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
+    value: '실측 조인 키: localdata_license_no(LCPMT_NO), address(LCTN_ADDR), pnu(MNG_NO), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15155052.json

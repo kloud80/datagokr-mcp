@@ -119,9 +119,61 @@ def measure(e: dict, keys: dict) -> dict | None:
                 "n": int(len(v))}
     v = vals.map(_norm)
     rate = round(v.isin(rset).mean(), 4) if len(v) and rset else None
+    if not rate:  # 거래 번호처럼 표본 기간이 달라 겹치지 않는 키 — 오른쪽 API를 그 값으로 직접 조회
+        lk = _lookup_probe(e["dst"], right, vals)
+        if lk:
+            return {**rec, **lk, "sample_overlap": rate}
     return {**rec, "method": "표본 겹침 (전수 원장 없음 — 0이면 판정 보류)",
             "match_rate": rate if rate else None, "sample_overlap": rate, "n": int(len(v)), "right_n": len(rset),
             "pattern_ok": round(v.str.fullmatch(keys.get(key, {}).get("pattern") or r".+").mean(), 4) if key and len(v) else None}
+
+
+LOOKUP_N = 5
+
+
+def _lookup_probe(dst: str, right: list[str], vals: pd.Series) -> dict | None:
+    """오른쪽 데이터의 API에 같은 이름의 조회 파라미터가 있으면 왼쪽 값 LOOKUP_N개로 직접 불러 찾아지는 비율을 잰다."""
+    sp = config.ROOT / "probe" / "specs" / f"{dst}.json"
+    if not sp.exists():
+        return None
+    spec = json.loads(sp.read_text(encoding="utf-8"))
+    if not spec.get("swagger"):
+        return None
+    want = {c.lower() for c in right}
+    op = next((o for o in spec.get("operations") or [] if o.get("method", "GET") == "GET"
+               and any((p.get("name") or "").lower() in want for p in o.get("params") or [])), None)
+    if not op:
+        return None
+    pname = next(p["name"] for p in op["params"] if (p.get("name") or "").lower() in want)
+    from pds.probe import deep
+    scheme = "https" if "https" in (spec.get("schemes") or ["https"]) else "http"
+    base = f"{scheme}://{spec['host']}{spec.get('base_path') or ''}"
+    picks = [x for x in vals.dropna().astype(str).unique() if x.strip()][:LOOKUP_N]
+    if not picks:
+        return None
+    key = deep.service_key()
+    found = 0
+    base_extra = deep.overrides(dst, op["path"])
+    names = [p.get("name") or "" for p in op.get("params") or []]
+    no_dates = {n: None for n in names if re.search(r"(Dt|Ymd|Bgn|End|Date|date|YM|Ym)$", n) or re.search(r"(Bgn|End)", n)}
+    variants = [base_extra, {**no_dates}]  # ① 저장된 호출 조건 + 값 ② 날짜 조건을 빼고 값만
+    if "inqryDiv" in names:  # 나라장터: 조회구분 1=기간, 2·3=번호
+        variants += [{**no_dates, "inqryDiv": d} for d in ("2", "3")]
+    used = None
+    with httpx.Client(headers={"User-Agent": "pds-probe/0.1"}) as c:
+        for x in picks:
+            hit = False
+            for v in ([used] if used is not None else variants):
+                r = deep.call_op(c, base, op, key, 10, rows=10, extra={**v, pname: x})
+                df = r.pop("_df", None)
+                # 조건을 무시하고 아무 행이나 주는 API가 있다 — 그 값이 실제로 들어 있어야 찾은 것
+                if df is not None and len(df) and df.astype(str).apply(lambda col: col.map(_norm).eq(_norm(x))).any().any():
+                    hit, used = True, v
+                    break
+                time.sleep(0.15)
+            found += hit
+    return {"method": f"조회 실측 ({dst} {op['path']}?{pname}=왼쪽 값 {len(picks)}건, 값 포함 확인)", "match_rate": round(found / len(picks), 4),
+            "n": len(picks), "found": found, "params_used": {k: v for k, v in (used or {}).items()}}
 
 
 def _all_columns(dsid: str) -> pd.DataFrame:

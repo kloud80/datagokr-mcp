@@ -1,5 +1,3 @@
-# Dataset 15020284 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15020284'
 tier: verified
 title: 국민연금공단_탈퇴사업장 정보
@@ -122,6 +120,7 @@ schema:
     - name: bzowrRgstNo
       title: 사업자등록번호(앞에서 6자리)
       type: date
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - 313811****
@@ -193,6 +192,7 @@ schema:
     - name: seq
       title: 식별번호
       type: number
+      semantic_type: nps_workplace_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -214,6 +214,7 @@ schema:
     - name: wkplIntpCd
       title: '사업장업종코드(국세청 업종코드 검색 참조 - www.nts.go.kr/cal/cal_04_01.asp) ※ ‘999999’: 업종코드 없는 경우'
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '452111'
@@ -256,6 +257,7 @@ schema:
     - name: bzowrRgstNo
       title: 사업자등록번호(앞에서 6자리)
       type: string
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - 124815****
@@ -323,6 +325,7 @@ schema:
     - name: seq
       title: 식별번호
       type: number
+      semantic_type: nps_workplace_no
       null_rate: 0.0
       sample_values:
         - '1456564'
@@ -356,9 +359,39 @@ schema:
       op: /getBassInfoSearchV2
       stats:
         unique: 730
+  foreign_keys:
+    - fields:
+        - bzowrRgstNo
+      reference:
+        key: bizno
+      evidence: measured
+    - fields:
+        - seq
+      reference:
+        key: nps_workplace_no
+      evidence: measured
+    - fields:
+        - wkplIntpCd
+      reference:
+        key: classification_code
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - ldongAddrMgplDgCd
+    - ldongAddrMgplSgguCd
+    - ldongAddrMgplSgguEmdCd
+  space_via: name
+  time: day
+  time_fields:
+    - bzowrRgstNo
+  category:
+    - ksic
+  category_fields:
+    - vldtVlKrnNm
 cycle: default
 classification:
   subsector_name: 국민연금 사업장 (가입 사업장 내역·탈퇴 사업장)
@@ -402,7 +435,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15020284-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(bzowrRgstNo), nps_workplace_no(seq), classification_code(wkplIntpCd)'
     evidence:
       - type: measured
         source: probe/stats/15020284.json

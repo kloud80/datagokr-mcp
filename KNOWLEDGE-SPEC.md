@@ -212,6 +212,33 @@ file: mappings/school_cd__neis_school_cd.parquet   # 컬럼: left_value, right_v
 - `lookup`은 "src를 호출하려면 dst의 값이 필수 파라미터"(§9-1 호출 체인). Phase 2 `파라미터부족` 8건이 여기서 해소된다.
 - `verified.by=measured`가 없는 Edge는 프로토콜 `joins[]`에 나오되 `confidence` 낮음 표시. Phase 3에서 **Edge 실측 프로브**(`pds/probe/join.py`: 양쪽 샘플 받아 키 매칭률 계산)를 추가한다.
 
+#### 3.4.1 느슨한 조인 (정렬 조인, aligned) — Edge가 아니라 단위(grain)로 계산한다
+
+키가 정확히 같지 않아도 **공통 단위로 집계한 뒤** 이을 수 있는 쌍. 행끼리 잇는 것이 아니라 "시군구×분기별 건수·평균"끼리 잇는다 —
+비교·상관용이고, 행 단위 결론(이 가게의 이 거래)을 내면 안 된다. 그래서 `joins[]`와 섞지 않고 프로토콜 `aligned[]`로 따로 낸다.
+
+```yaml
+# Dataset yaml — gen_dataset이 실측 필드로 채운다 (pds/dossier/gen_dataset.py _grain)
+grain:
+  space: emd            # point 좌표 · parcel 필지(PNU) · bjd 법정동 · emd 읍면동·행정동 · sgg 시군구 · sido 시도 · national
+  space_fields: [ADSTRD_CD]
+  space_via: code       # code(코드 열) · name(행정구역 이름) · address(주소 문자열) · coord(위경도)
+  time: quarter         # realtime · day · month · quarter · year
+  time_fields: [STDR_YYQU_CD]
+  category: [seoul_svc] # 분류 축: ksic(표준산업분류) · hs_cd(품목) · seoul_svc(서울 서비스업종) …
+```
+
+| 축 | 맞추는 법 | 규칙 |
+|---|---|---|
+| 공간 | 두 단위 중 **거친 쪽**으로 올린다. 코드는 앞자리(PNU 앞 10 = 법정동, 앞 5 = 시군구, 앞 2 = 시도) · 주소·이름은 앞 낱말 · 좌표는 필지(R-12)로 | R-20 PNU→법정동 · R-21 행정구역 올리기 (+ R-12·R-13·R-14 표현 바꾸기) |
+| 시간 | 거친 쪽 시점으로 내림 (일→월→분기→연). 서울 연도+분기 코드 `20243` = 2024Q3 | R-22 |
+| 분류 | 같은 코드 체계일 때만, 앞자리로 상위 분류 (KSIC 대분류 1자 · 중분류 2자리) | R-23 |
+
+- **성립 조건**: 공간 축이 맞거나, 공간이 없으면 **시간+분류가 함께** 맞을 때만. 시간만 맞는 쌍(같은 달의 아무 두 통계)은 너무 느슨해서 버린다. 전국 1행(national)은 공간 축으로 치지 않는다.
+- **계산 위치**: `pds/strategy/plan.py` `align_pair`·`_aligned_joins` — 선언된 조인에 안 들어간 데이터를 핵심·조인 데이터(단위가 없으면 단위가 있는 맨 앞 데이터)와 짝짓고, 가장 세밀한 공간 단위가 나오는 짝을 고른다. 그 데이터의 역할은 `aligned`.
+- **코드 생성**: `to_unit(df, 공간열, 단위, 시간열, 단위, via)` → `_space`·`_time` 열, `unit_summary`로 단위별 건수·평균을 만든 뒤 단위끼리 merge. 한쪽이 코드·한쪽이 이름이면 R-14로 같은 표현으로 바꾸라는 안내를 붙인다.
+- **원칙 ③과의 관계**: AI가 조인 조건을 만드는 것이 아니다. 단위는 실측 필드에서 규칙으로 판정하고, 맞추는 방법도 규칙(R-20~R-23)이다.
+
 ### 3.5 Claim — Dataset yaml 안 `claims:` (별도 파일 아님)
 
 ```yaml

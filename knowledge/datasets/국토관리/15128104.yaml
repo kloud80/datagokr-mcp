@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 주택관리번호
       type: number
+      semantic_type: applyhome_house_manage_no
       null_rate: 0.0
       sample_values:
         - '2026950070'
@@ -49,6 +50,7 @@ schema:
         unique: 609
     - name: 공고번호
       type: number
+      semantic_type: applyhome_pblanc_no
       null_rate: 0.0
       sample_values:
         - '2026950070'
@@ -266,6 +268,16 @@ schema:
         unique: 609
   foreign_keys:
     - fields:
+        - 주택관리번호
+      reference:
+        key: applyhome_house_manage_no
+      evidence: measured
+    - fields:
+        - 공고번호
+      reference:
+        key: applyhome_pblanc_no
+      evidence: measured
+    - fields:
         - 홈페이지주소
       reference:
         key: address
@@ -279,6 +291,17 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2020-02-07 ~ 2026-09-02
+grain:
+  space: sgg
+  space_fields:
+    - 홈페이지주소
+    - 모집공고홈페이지주소
+  space_via: address
+  time: day
+  time_fields:
+    - 모집공고일
+    - 청약접수시작일
+    - 청약접수종료일
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -320,7 +343,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15128104-03
     kind: key
-    value: '실측 조인 키: address(홈페이지주소), address(모집공고홈페이지주소)'
+    value: '실측 조인 키: applyhome_house_manage_no(주택관리번호), applyhome_pblanc_no(공고번호), address(홈페이지주소), address(모집공고홈페이지주소)'
     evidence:
       - type: measured
         source: probe/stats/15128104.json

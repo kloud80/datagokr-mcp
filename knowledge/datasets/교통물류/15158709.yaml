@@ -1,5 +1,3 @@
-# Dataset 15158709 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15158709'
 tier: verified
 title: 여수광양항만공사_광양항 시설 운영 정보서비스_GW
@@ -147,6 +145,7 @@ schema:
     - name: gisAssetsCd
       title: 자산코드
       type: string
+      semantic_type: ygpa_gis_asset_cd
       null_rate: 0.0
       sample_values:
         - SHE
@@ -230,6 +229,7 @@ schema:
     - name: gisAssetsSubCd
       title: 자산sub코드
       type: number
+      semantic_type: ygpa_gis_asset_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -244,6 +244,7 @@ schema:
     - name: prtAtCode
       title: 항코드
       type: number
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - '622'
@@ -324,6 +325,7 @@ schema:
     - name: gisAssetsCd
       title: 자산코드
       type: string
+      semantic_type: ygpa_gis_asset_cd
       null_rate: 0.0
       sample_values:
         - SHE
@@ -407,6 +409,7 @@ schema:
     - name: gisAssetsSubCd
       title: 자산sub코드
       type: number
+      semantic_type: ygpa_gis_asset_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -421,6 +424,7 @@ schema:
     - name: prtAtCode
       title: 항코드
       type: number
+      semantic_type: port_cd
       null_rate: 0.0
       sample_values:
         - '622'
@@ -695,9 +699,37 @@ schema:
       op: /getAssetQuayRentList
       stats:
         unique: 52
+  foreign_keys:
+    - fields:
+        - gisAssetsCd
+      reference:
+        key: ygpa_gis_asset_cd
+      evidence: measured
+    - fields:
+        - gisAssetsSubCd
+      reference:
+        key: ygpa_gis_asset_cd
+      evidence: measured
+    - fields:
+        - prtAtCode
+      reference:
+        key: port_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: sgg
+  space_fields:
+    - gisAssetsLnm
+    - gisAssetsLnmSub
+    - gisAssetsLocplc
+  space_via: address
+  time: day
+  time_fields:
+    - frstReqstDt
+    - grUsagePdFrom
+    - grUsagePdTo
 cycle: default
 classification:
   subsector_name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
@@ -741,7 +773,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15158709-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ygpa_gis_asset_cd(gisAssetsCd), ygpa_gis_asset_cd(gisAssetsSubCd), port_cd(prtAtCode)'
     evidence:
       - type: measured
         source: probe/stats/15158709.json

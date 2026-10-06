@@ -1,4 +1,3 @@
-# Dataset 15064900 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15064900'
 tier: verified
 title: 신용보증기금_문화산업완성보증 지원기업 명세
@@ -24,6 +23,7 @@ synonyms:
   - 신보 문화콘텐츠 보증
   - 게임 애니메이션 제작 금융지원
   - 보증 이용 기업 명세
+summary_user: 신용보증기금이 문화산업완성보증으로 지원한 기업의 보증 건을 한 행씩 담은 원천 명세로, 보증취급일·취급금액·업종·장르(영화·드라마·게임 등)·소재지를 기록한 전국 범위 CSV 파일(약 89KB)이다. 문화콘텐츠 정책 분석가나 제작사가 '어떤 장르와 지역의 제작사가 언제 얼마의 완성보증을 받았는가'를 확인하는 데 쓴다. 실측 컬럼에 사업자번호 같은 전역 조인 키가 없어, 업종코드·업종명이나 소재지 주소를 매핑해 업종·지역 통계와 맞춰 보는 정도로만 이어 쓴다.
 description_portal: 이 데이터는 신용보증기금의 문화산업완성보증 지원현황을 나타낸 것으로, 문화콘텐츠 제작자에게 제공되는 특화된 보증제도의 운영 실적을 확인할 수 있다. 문화산업완성보증은 영화, 드라마, 애니메이션, 게임 등 문화상품을 제작하는 사업자가 유통사와 체결한 계약에 따라 상품을 완성하고 인도할 수 있도록, 금융회사 등으로부터 자금을 대출받을 때 발생하는 채무를 신용보증기금이 보증하는 제도다. 해당 보증은 문화산업의 특수성을 반영하여 기획·제작 단계에서 발생하는 자금 부담을 완화하고, 유통계약 기반의 안정적인 제작환경을 조성하는 데 목적이 있다. 본 데이터를 통해 연도별 보증금액, 건수, 수혜 업체 수 등 문화산업에 대한 금융지원 규모와 추이를 파악할 수 있으며, 창의 산업에 대한 정책적 지원 성과 및 보증제도의 실효성을 평가하는 데 활용된다.
 applicable_legislation:
   - law: 문화산업진흥 기본법
@@ -73,6 +73,7 @@ schema:
         unique: 5
     - name: 업종코드
       type: code
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - J59114
@@ -107,12 +108,30 @@ schema:
         - 서울특별시 강서구
       stats:
         unique: 84
+  foreign_keys:
+    - fields:
+        - 업종코드
+      reference:
+        key: classification_code
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 보증취급일
+  category:
+    - ksic
+  category_fields:
+    - 업종코드
 cycle: default
 classification:
   subsector_name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
@@ -149,7 +168,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15064900-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: classification_code(업종코드)'
     evidence:
       - type: measured
         source: probe/stats/15064900.json
@@ -224,8 +243,6 @@ verification:
   run: probe/runs/15064900.json
   stats: probe/stats/15064900.json
   data: probe/data/15064900/
-status: active
-summary_user: 신용보증기금이 문화산업완성보증으로 지원한 기업의 보증 건을 한 행씩 담은 원천 명세로, 보증취급일·취급금액·업종·장르(영화·드라마·게임 등)·소재지를 기록한 전국 범위 CSV 파일(약 89KB)이다. 문화콘텐츠 정책 분석가나 제작사가 '어떤 장르와 지역의 제작사가 언제 얼마의 완성보증을 받았는가'를 확인하는 데 쓴다. 실측 컬럼에 사업자번호 같은 전역 조인 키가 없어, 업종코드·업종명이나 소재지 주소를 매핑해 업종·지역 통계와 맞춰 보는 정도로만 이어 쓴다.
 limits: 기업 식별 키가 없어 개별 기업을 다른 기업 원장과 직접 연결할 수 없고, 이름·코드 매핑에 의존해야 한다. 포털 설명의 연도별 건수·수혜 업체 수는 이 파일의 건별 행을 직접 집계해야 얻는다.
 review:
   summary: draft
@@ -238,3 +255,4 @@ review:
     - c-15064900-04
     - c-15064900-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15124932 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15124932 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124932'
 tier: verified
 title: 식품의약품안전처_장애인 의약품 안전사용 정보(음성·수어영상)
@@ -22,6 +23,7 @@ synonyms:
   - 복약지도 영상
   - 의약품 음성 안내
   - 장애인 복약 접근성
+summary_user: 의약품 품목별로 장애인용 안전사용 안내 영상(음성·수어)의 파일 경로를 품목일련번호·품목명·표준코드·업소명과 함께 담은 전국 범위의 건별 OpenAPI입니다. 약국·복지기관·서비스 개발자가 '이 약의 복용법을 수어나 음성 영상으로 안내할 수 있는가'를 확인하고 해당 영상을 서비스에 연결하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 품목일련번호(ITEM_SEQ)나 의약품 표준코드(STD_CD), 품목명을 기준으로 식약처 허가정보·e약은요나 심평원 약가 목록과 이름·코드 매핑으로 이어 쓴다.
 description_portal: 식품의약품안전처 「장애인 의약품 안전사용 정보(음성·수어영상)」 OpenAPI는 장애인이 의약품을 안전하게 사용할 수 있도록 돕는 영상정보를 제공하는 공공데이터입니다. 주요 제공 항목에는 품목일련번호, 품목명, 표준코드, 업소명, 동영상 파일경로 등이 포함되어 있습니다. 이 데이터를 통해 장애인 대상 의약품 사용 안내의 접근성을 높이는 데 활용될 수 있으며, 의료기관과 약국은 의약품 복용법 안내 자료로, 복지기관과 서비스 개발자는 안전사용을 위한 영상 기반 정보 제공 서비스에 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -76,6 +78,7 @@ schema:
     - name: ITEM_SEQ
       title: 품목일련번호
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '196800036'
@@ -119,6 +122,12 @@ schema:
         - https://www.youtube.com/embed/MVnzWFZpsm8?si=2-8u7QiTxmndQ884
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -169,7 +178,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15124932-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(ITEM_SEQ)'
     evidence:
       - type: measured
         source: probe/stats/15124932.json
@@ -234,8 +243,6 @@ verification:
   run: probe/runs/15124932.json
   stats: probe/stats/15124932.json
   data: probe/data/15124932/
-status: active
-summary_user: 의약품 품목별로 장애인용 안전사용 안내 영상(음성·수어)의 파일 경로를 품목일련번호·품목명·표준코드·업소명과 함께 담은 전국 범위의 건별 OpenAPI입니다. 약국·복지기관·서비스 개발자가 '이 약의 복용법을 수어나 음성 영상으로 안내할 수 있는가'를 확인하고 해당 영상을 서비스에 연결하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 품목일련번호(ITEM_SEQ)나 의약품 표준코드(STD_CD), 품목명을 기준으로 식약처 허가정보·e약은요나 심평원 약가 목록과 이름·코드 매핑으로 이어 쓴다.
 limits: 전역 조인 키가 확인되지 않아 다른 데이터와는 품목명·코드 매핑으로만 연결되며, 매핑 결과는 별도로 검증해야 한다. 지역 구분이 없는 전국·비공간 데이터라 지역별 분석에는 쓰지 못하고, 개발계정 호출은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -248,3 +255,4 @@ review:
     - c-15124932-04
     - c-15124932-06
   dropped_citations: 0
+status: active

@@ -147,9 +147,26 @@ def _code_keys() -> dict:
     return {c["id"]: c["key"] for c, _ in store.iter_raw("code") if c.get("key")}
 
 
-def _semantic(col: str, synth_keys: dict) -> str | None:
+@lru_cache
+def _key_fields() -> dict:
+    """Key.fields — (데이터 id 또는 '*', 컬럼명) → Key id. 기관 고유 키(agency_review가 제안·실측 컬럼 확인)."""
+    out = {}
+    for k, _ in store.iter_raw("key"):
+        for f in k.get("fields") or []:
+            for n in f["names"]:
+                for ds in f.get("datasets") or ["*"]:
+                    out[(ds, n)] = k["id"]
+    return out
+
+
+def _semantic(col: str, synth_keys: dict, dsid: str | None = None) -> str | None:
+    kf = _key_fields()
+    if (dsid, col) in kf:
+        return kf[(dsid, col)]
     if col in NAME_KEY:
         return NAME_KEY[col]
+    if ("*", col) in kf:
+        return kf[("*", col)]
     for k in synth_keys.get(col, []):
         if k in NAME_OK and not NAME_OK[k].search(col):
             continue
@@ -194,9 +211,9 @@ def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
         for name, s in cols.items():
             s = s or {}
             f = {"name": str(name), "title": desc.get(str(name).lower()), "type": _field_type(s.get("type")),
-                 "semantic_type": _semantic(str(name), kc),
+                 "semantic_type": _semantic(str(name), kc, dsid),
                  "null_rate": round(float(s["null_rate"]), 4) if isinstance(s.get("null_rate"), (int, float)) else None,
-                 "sample_values": [str(k)[:80] for k in list((s.get("top") or {}).keys())[:3]],
+                 "sample_values": [re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", str(k))[:80] for k in list((s.get("top") or {}).keys())[:3]],
                  "op": op if multi else None, "code_list": _code_index().get((dsid, str(name)))}
             if s.get("min") is not None or s.get("unique") is not None:
                 f["stats"] = {k: _num(s.get(k)) for k in ("min", "p50", "max") if s.get(k) is not None} | (
@@ -205,6 +222,79 @@ def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
                 f["semantic_type"] = _code_keys()[f["code_list"]]
             out.append({k: v for k, v in f.items() if v not in (None, [], {})})
     return out
+
+
+# ─────────────────────────── 단위(grain) — 느슨한 조인의 근거 (R-20~R-23)
+SPACE_BY_KEY = {"coord": ("point", "coord"), "pnu": ("parcel", "code"), "bjd_cd": ("bjd", "code"), "sgg_cd": ("sgg", "code"),
+                "admin_area_code": ("sgg", "code"), "address": ("sgg", "address")}
+CODE_SPACE = [(re.compile(r"(법정동_?코드|bjdong_?cd|ldong_?cd|legaldong_?cd|lawd_?cd)", re.I), "bjd"),
+              (re.compile(r"(adstrd_?cd|행정동_?코드|hdong_?cd|adm_?dr_?cd)", re.I), "emd"),  # 행정동 코드 — 앞 5자리가 시군구
+              (re.compile(r"(signgu_?cd|시군구_?코드|sgg_?cd|sigungu_?cd)", re.I), "sgg"),
+              (re.compile(r"(ctprvn_?cd|시도_?코드|sido_?cd|brtc_?cd)", re.I), "sido")]
+COORD_NAME = re.compile(r"(위도|경도|^lat$|^lon$|^lng$|latitude|longitude|xcrd|ycrd|x좌표|y좌표|좌표_?[xy]$|^la$|^lo$|_lat$|_lon$|_lot$)", re.I)
+ADDR_NAME = re.compile(r"(주소|addr|소재지|지번|도로명)", re.I)
+ADDR_NOT = re.compile(r"(전화|우편|mail|url|홈페이지|telno|zip|상세|dtl)", re.I)
+NAME_SPACE = [(re.compile(r"(읍면동|법정동|행정동|emd_?nm|dong_?nm)", re.I), "emd"),
+              (re.compile(r"(시군구|sgg_?nm|signgu_?nm|sigungu|gugun)", re.I), "sgg"),
+              (re.compile(r"(시도|ctprvn|sido_?nm|brtc_?nm|^sido$)", re.I), "sido")]
+TIME_NAME = [(re.compile(r"(시각|일시|datetime|_?tm$|time$|hhmm)", re.I), "realtime"),
+             (re.compile(r"(년월|연월|yyyymm|_ym$|^ym$|stdr_?ym|기준월|월별|month|dealmonth)", re.I), "month"),
+             (re.compile(r"(분기|quarter|_qu$|yyqu)", re.I), "quarter"),
+             (re.compile(r"(연도|년도|^year$|_year$|_yr$|^yr$|bsns_?year|기준년|dealyear)", re.I), "year")]
+CAT_NAME = [(re.compile(r"svc_?induty", re.I), "seoul_svc"),  # 서울 서비스업종 코드(CS100001…) — KSIC가 아니다
+            (re.compile(r"(ksic|업종코드|산업분류|induty_?cd|indutycd|ind_?cd)", re.I), "ksic"),
+            (re.compile(r"(hs_?cd|hsSgn|품목코드|hscode)", re.I), "hs_cd")]
+SPACE_ORDER = ("point", "parcel", "bjd", "emd", "sgg", "sido", "national")
+TIME_ORDER = ("realtime", "day", "month", "quarter", "year")
+
+
+def _grain(fields: list[dict]) -> dict | None:
+    """실측 필드로 공간·시간·분류 단위를 판정한다. 공간·시간은 가장 세밀한 것을 고른다(거친 쪽으로는 언제든 집계 가능)."""
+    space, s_fields, via = None, [], None
+    for f in fields:
+        if (f.get("null_rate") or 0) >= 0.95:
+            continue
+        hint = f"{f.get('name', '')} {f.get('title', '')}"
+        lv = SPACE_BY_KEY.get(f.get("semantic_type") or "")
+        if lv and lv[0] == "parcel" and not re.search(r"(pnu|필지|고유번호|platplc|lndpcl)", hint, re.I):
+            lv = None  # 관리번호 같은 19자리 숫자가 PNU로 잡히는 오탐
+        if not lv:
+            lv = next(((l, "code") for rx, l in CODE_SPACE if rx.search(hint)), None)
+        if not lv:
+            lv = next(((l, "name") for rx, l in NAME_SPACE if rx.search(hint)), None)
+        if not lv and COORD_NAME.search(str(f.get("name", ""))) or not lv and COORD_NAME.search(str(f.get("title") or "")):
+            lv = ("point", "coord")  # 위경도 열 — 필지(R-12)·행정구역으로 모은다
+        if not lv and ADDR_NAME.search(hint) and not ADDR_NOT.search(hint):
+            lv = ("sgg", "address")  # 주소 문자열 — 시군구 이름을 읽어(R-14) 또는 지오코딩(R-13)
+        if lv and (space is None or SPACE_ORDER.index(lv[0]) < SPACE_ORDER.index(space)):
+            space, s_fields, via = lv[0], [f["name"]], lv[1]
+        elif lv and lv[0] == space:
+            s_fields.append(f["name"])
+    time, t_fields = None, []
+    for f in fields:
+        if (f.get("null_rate") or 0) >= 0.95:
+            continue
+        hint = f"{f.get('name', '')} {f.get('title', '')}"
+        lv = "day" if f.get("type") == "date" else next((l for rx, l in TIME_NAME if rx.search(hint)), None)
+        if lv == "realtime":
+            sv = "".join(re.sub(r"\D", "", str(x)) for x in (f.get("sample_values") or [])[:1])
+            if len(sv) < 10:  # 시각처럼 보여도 값이 날짜까지만이면 일 단위
+                lv = "day" if len(sv) >= 8 else None
+        if lv and (time is None or TIME_ORDER.index(lv) < TIME_ORDER.index(time)):
+            time, t_fields = lv, [f["name"]]
+        elif lv and lv == time:
+            t_fields.append(f["name"])
+    cats, c_fields = [], []
+    for f in fields:
+        hint = f"{f.get('name', '')} {f.get('title', '')} {f.get('code_list') or ''}"
+        c = next((k for rx, k in CAT_NAME if rx.search(hint)), None)
+        if c and c not in cats:
+            cats.append(c)
+            c_fields.append(f["name"])
+    if not (space or time or cats):
+        return None
+    return {k: v for k, v in {"space": space, "space_fields": s_fields[:3], "space_via": via, "time": time, "time_fields": t_fields[:3],
+                             "category": cats, "category_fields": c_fields}.items() if v}
 
 
 def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) -> list[dict]:
@@ -308,7 +398,8 @@ def build(dsid: str) -> dict:
     syn = _synth().get(dsid, {})
     pr = t.get("probe") or {}
     field_, area = m.sector.split(" - ", 1)
-    sector = f"{field_}/{area}/{m.subsector}"
+    sub = m.subsector if isinstance(m.subsector, str) and m.subsector not in ("", "nan") else (t.get("subsector") or "misc")
+    sector = f"{field_}/{area}/{sub}"
     external = run.get("channel") == "external" or t["kind"] in ("API_LINK", "FILE_LINK")
     tier = "verified" if t["status"] == "verified" else "candidate"
     fields = _fields(dsid, spec, syn)
@@ -343,6 +434,7 @@ def build(dsid: str) -> dict:
         "distributions": _distributions(run, m),
         "schema": {"fields": fields, "foreign_keys": fks},
         "coverage": {"spatial": _v(m.coverage), "admin_unit": _v(m.admin_unit), "temporal": temporal},
+        "grain": _grain(fields),
         "cycle": "event" if _v(m.cycle_override) == "event" else "default",
         "classification": {"subsector_name": t["subsector_name"], "depth": _v(m.subsector_depth), "novelty": _v(m.novelty),
                            "cross_cutting": bool(_v(m.cross_cutting)), "prelim_score": round(float(m.prelim_score), 4),

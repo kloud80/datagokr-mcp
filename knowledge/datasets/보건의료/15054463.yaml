@@ -1,4 +1,5 @@
-# Dataset 15054463 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15054463 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15054463'
 tier: verified
 title: 건강보험심사평가원_의약품유통_생산수입공급중단 보고대상 의약품 정보
@@ -23,6 +24,7 @@ synonyms:
   - ATC코드
   - 의약품 품절 사전보고
   - 의약품관리종합정보포털
+summary_user: 건강보험심사평가원이 공고한 생산·수입·공급중단 보고대상 의약품 가운데 3~8호에 해당하는 품목을 품목 단위로 담은 전국 범위 목록 파일로, 공고년도·품목기준코드·업체명·제품명·대표코드·ATC코드·전문/일반 구분을 담는다. 제약사나 도매업체가 "우리 품목이 공급중단 시 사전 보고해야 하는 대상인가"를 확인하거나, 분석가가 보고대상 의약품을 ATC 분류별로 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키는 확인되지 않았으며, 품목기준코드·대표코드·ATC코드를 매개로 의약품 허가정보나 약가·급여 목록과 이름·코드 매핑으로 연결해 쓴다.
 description_portal: '공급중단보고 대상인 의약품 정보로, 보고대상 의약품 각 호 중 3~8호에 대한 정보만 제공합니다.- 공고년도, 품목기준코드, 업체명, 제품명, 대표코드, ATC코드, 전문/일반 구분※ 의약품관리종합정보포털(biz.kpis.or.kr) > 의약품정보검색 > 공급중단보고대상의약품 참조※ 보고대상 의약품 중 1, 2호에 대한 정보 조회방법 · 1호: 「약제의 결정 및 조정 기준」에 따른 퇴장방지의약품은 건강보험심사평가원 홈페이지에서 조회 가능합니다. · 2호: 「희귀의약품 지정에 관한 기준」에 따른 희귀의약품은 식약처 의약품안전나라에서 조회 가능합니다.※ 현재 공급중단 보고된 의약품 목록은 식약처 의약품안전나라에서 조회 가능합니다.'
 applicable_legislation:
   - law: 국민건강보험법
@@ -52,6 +54,7 @@ schema:
         unique: 2
     - name: 품목기준코드
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '200800378'
@@ -82,6 +85,7 @@ schema:
         unique: 2796
     - name: 대표코드
       type: number
+      semantic_type: drug_barcode_std_cd
       null_rate: 0.0
       sample_values:
         - '8806210000000'
@@ -94,6 +98,7 @@ schema:
         unique: 3031
     - name: ATC코드
       type: string
+      semantic_type: atc_cd
       null_rate: 0.0
       sample_values:
         - M03AX01
@@ -109,12 +114,32 @@ schema:
         - 일반
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 품목기준코드
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
+        - 대표코드
+      reference:
+        key: drug_barcode_std_cd
+      evidence: measured
+    - fields:
+        - ATC코드
+      reference:
+        key: atc_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 공고년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -151,7 +176,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15054463-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(품목기준코드), drug_barcode_std_cd(대표코드), atc_cd(ATC코드)'
     evidence:
       - type: measured
         source: probe/stats/15054463.json
@@ -229,8 +254,6 @@ verification:
   run: probe/runs/15054463.json
   stats: probe/stats/15054463.json
   data: probe/data/15054463/
-status: active
-summary_user: 건강보험심사평가원이 공고한 생산·수입·공급중단 보고대상 의약품 가운데 3~8호에 해당하는 품목을 품목 단위로 담은 전국 범위 목록 파일로, 공고년도·품목기준코드·업체명·제품명·대표코드·ATC코드·전문/일반 구분을 담는다. 제약사나 도매업체가 "우리 품목이 공급중단 시 사전 보고해야 하는 대상인가"를 확인하거나, 분석가가 보고대상 의약품을 ATC 분류별로 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키는 확인되지 않았으며, 품목기준코드·대표코드·ATC코드를 매개로 의약품 허가정보나 약가·급여 목록과 이름·코드 매핑으로 연결해 쓴다.
 limits: 보고대상 중 1호(퇴장방지의약품)와 2호(희귀의약품)는 이 파일에 없으므로 각각 심평원 홈페이지와 식약처 의약품안전나라에서 따로 확인해야 한다. 실제로 공급중단이 보고된 의약품 현황은 담지 않으며, 이는 식약처 의약품안전나라에서 조회한다. 전역 조인 키가 없어 다른 데이터와 붙일 때는 코드·이름 매핑 검증이 필요하다.
 review:
   summary: draft
@@ -243,3 +266,4 @@ review:
     - c-15054463-04
     - c-15054463-06
   dropped_citations: 0
+status: active

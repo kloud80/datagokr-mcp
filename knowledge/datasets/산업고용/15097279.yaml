@@ -1,4 +1,5 @@
-# Dataset 15097279 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15097279 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15097279'
 tier: verified
 title: 한국전력거래소_전력시장 정산일정
@@ -21,6 +22,7 @@ synonyms:
   - 전력거래 청구일
   - KPX 정산
   - 전력대금 입금일
+summary_user: 전력시장 회원사의 전력거래대금 결제일정을 년월·결제차수 단위로 담은 일정표 파일(csv, 약 3.5KB)로, 차수별 거래 시작일·마지막일과 청구요청일·청구일·입금일·결제일을 담는다. 발전·판매 사업자나 분석가가 특정 거래일의 거래대금이 어느 결제차수에 묶여 언제 청구·입금·결제되는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력시장 데이터(SMP·정산 내역 등)와는 거래일을 차수시작일~차수마지막일 구간에 맞추는 날짜 매핑으로만 잇는다.
 description_portal: ㅇ 한국전력거래소는 전력을 생산하는 발전사업자, 전력을 수요지까지 전달하는 송배전사업자, 전력을 구매하여 판매하는 판매사업자, 전력을 사용하는 소비자 등으로 구성되는 전력시장에서 전력의 판매 및 구매 활동을 실시간으로 운영, 감시하는 "전력시장 운영 업무"와 전력 수요에 맞춰 전력 생산량을 결정하고 이를 안정적으로 수요지에 공급되도록 하는 "전력계통 운영 업무"등을 전담하고 있습니다.ㅇ 결제차수, 차수에해당하는 거래일 등 전력시장 참여 회원사의 전력거래대금 결제일정을 제공합니다.ㅇ 결제차수에 해당하는 거래일에 대한 정산내역은 결제일 이후에 확정되며, 그 이후에도 수정정산 등으로 인하여 변동될 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -125,6 +127,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 차수시작일
+    - 차수마지막일
+    - 청구요청일
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -226,8 +234,6 @@ verification:
   run: probe/runs/15097279.json
   stats: probe/stats/15097279.json
   data: probe/data/15097279/
-status: active
-summary_user: 전력시장 회원사의 전력거래대금 결제일정을 년월·결제차수 단위로 담은 일정표 파일(csv, 약 3.5KB)로, 차수별 거래 시작일·마지막일과 청구요청일·청구일·입금일·결제일을 담는다. 발전·판매 사업자나 분석가가 특정 거래일의 거래대금이 어느 결제차수에 묶여 언제 청구·입금·결제되는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력시장 데이터(SMP·정산 내역 등)와는 거래일을 차수시작일~차수마지막일 구간에 맞추는 날짜 매핑으로만 잇는다.
 limits: 결제 금액이나 정산 내역은 없고 일정만 담는다. 포털 설명에 따르면 해당 거래일의 정산내역은 결제일 이후 확정되며 이후에도 수정정산으로 바뀔 수 있다. 공간 단위 없이 전국 단일 일정이다.
 review:
   summary: draft
@@ -239,3 +245,4 @@ review:
     - c-15097279-03
     - c-15097279-04
   dropped_citations: 0
+status: active

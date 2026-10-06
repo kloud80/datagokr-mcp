@@ -1,0 +1,201 @@
+# Dataset 15151614 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151614'
+tier: verified
+title: 경기도_데이터분석 관광지코스 목록
+sector: 문화관광/관광/tour-contents
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151614/fileData.do
+synonyms:
+  - 데이터분석포털
+  - 관광지
+  - 관광코스
+  - 추천코스
+  - 문화관광
+  - 분석시스템
+  - 경기도 추천 여행코스
+  - 경기 관광코스
+  - 여행 경로
+  - 관광권역
+  - 경기데이터드림 관광
+  - 추천 코스
+summary_user: 경기도 데이터분석시스템이 만든 경기도 내 추천 관광 코스 목록으로, 코스마다 관광권역 코드, 추천코스 ID와 이름, 경로 모양(위치 정보)을 한 행씩 담는다. 여행 상품 기획자나 지역 관광 분석가가 '경기도 어느 권역에 어떤 관광지를 잇는 추천 코스가 있는가'를 확인하거나 연계 여행 프로그램을 구성할 때 쓴다. 실측 컬럼에 전국 단위 조인 키가 없어 TourAPI 관광지 정보 등과는 코스명 속 관광지 이름을 맞추거나 경기도 관광권역 코드로만 연결한다.
+description_portal: 이 데이터는 경기도 내 주요 관광지를 중심으로 구성된 추천 코스 정보를 제공하며, 관광객의 여행 경로 정보를 분석하기 위해 경기도 데이터분석시스템에서 생성한 데이터입니다. 주요 항목으로는 관광권역코드, 추천코스 ID, 추천코스명, 모양이 포함되어 있으며, 모양컬럼의 값은 길이 문제로 시트탭에서는 제공하지 않습니다. 모양 컬럼의 값은 파일 탭의 데이터를 확인해주시기 바랍니다. 해당 데이터는 문화관광 콘텐츠 기획, 관광지 간 연계상품 개발, 지역 맞춤형 여행 프로그램 구성 등에 활용될 수 있습니다. 특히, 추천코스명은 실제 관광지 명칭을 기반으로 하며, 지역 내 관광 거점 식별에 유용한 정보를 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tursm_distrct_cd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - TD02
+        - TD01
+      stats:
+        unique: 2
+    - name: recomend_course_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '71'
+        - '117'
+        - '422'
+      stats:
+        min: 38
+        p50: 485
+        max: 923
+        unique: 69
+    - name: recomend_course_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 광명동굴
+        - 3·1운동기념관
+        - 강천섬
+      stats:
+        unique: 71
+    - name: loc_info
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2784
+  rank_in_sector: 1840
+  brm: 문화관광 - 관광
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151614-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151614.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151614-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151614-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151614.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151614-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15151614.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151614-06
+    kind: admin_note
+    value: "세부 부문 '관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)'의 가치: 국내 여행 앱 대부분이 쓰는 원장, contentId·TourAPI 지역코드. 지자체 관광지 파일은 instance로 접고 TourAPI 대표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#tour-contents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151614-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151614-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151614.json
+  stats: probe/stats/15151614.json
+  data: probe/data/15151614/
+limits: 데이터는 외부 사이트(data.gg.go.kr)에서 제공하며, 포털 활용신청과 별도로 해당 사이트 인증키(KEY)가 필요하다. 전역 조인 키가 없어 다른 관광 데이터와 정확히 매칭하기 어렵고, 이름 대조에 기대야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151614-01
+    - c-15151614-03
+    - c-15151614-04
+  dropped_citations: 0
+status: active

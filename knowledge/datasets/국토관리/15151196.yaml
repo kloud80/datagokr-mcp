@@ -1,4 +1,3 @@
-# Dataset 15151196 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15151196'
 tier: verified
 title: 한국승강기안전공단_사고및고장승강기이력 조회 서비스
@@ -20,6 +19,7 @@ synonyms:
   - 엘리베이터 고장 기록
   - 승강기 안전사고
   - 승강기고유번호 조회
+summary_user: 전국 승강기의 사고·고장 이력을 건별로 담으며, 사고날짜·사고번호·고장/사고 구분·사고유형·원인·결과와 소재지·건물명을 함께 제공한다. 승강기고유번호를 넣어 특정 승강기가 과거에 어떤 고장이나 사고를 겪었는지 확인하려는 건물 관리자·입주민·안전 분석가가 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 승강기관리번호(elvtrMgtNo1·2)나 주소·건물명을 매핑해 같은 기관의 다른 승강기 데이터와 연결한다.
 description_portal: 사고고장승강기이력 서비스로 사고날짜, 승강기관리번호1, 승강기관리번호2, 고장/사고 구분, 사고번호, 결과, 사고유형, 소재지1, 소재지2, 건물명, 원인을 승강기고유번호를 필수로   고장사고 구분, 주소, 건물명을 포함하여 조회할 수 있습니다.
 team:
   dept: 디지털총괄실
@@ -121,6 +121,7 @@ schema:
     - name: elvtrMgtNo1
       title: 승강기관리번호1
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '361'
@@ -132,6 +133,7 @@ schema:
     - name: elvtrMgtNo2
       title: 승강기관리번호2
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '1196'
@@ -180,6 +182,17 @@ schema:
         - 이용자과실
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - elvtrMgtNo1
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
+    - fields:
+        - elvtrMgtNo2
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -228,7 +241,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151196-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_mgmt_no(elvtrMgtNo1), elevator_mgmt_no(elvtrMgtNo2)'
     evidence:
       - type: measured
         source: probe/stats/15151196.json
@@ -294,8 +307,6 @@ verification:
   run: probe/runs/15151196.json
   stats: probe/stats/15151196.json
   data: probe/data/15151196/
-status: active
-summary_user: 전국 승강기의 사고·고장 이력을 건별로 담으며, 사고날짜·사고번호·고장/사고 구분·사고유형·원인·결과와 소재지·건물명을 함께 제공한다. 승강기고유번호를 넣어 특정 승강기가 과거에 어떤 고장이나 사고를 겪었는지 확인하려는 건물 관리자·입주민·안전 분석가가 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 승강기관리번호(elvtrMgtNo1·2)나 주소·건물명을 매핑해 같은 기관의 다른 승강기 데이터와 연결한다.
 limits: 승강기고유번호를 필수로 넣어 조회하는 구조라 전국 사고 현황을 한 번에 내려받는 용도에는 맞지 않는다. 다른 데이터와 공통 코드로 바로 붙지 않아 주소·건물명 같은 이름 매칭이나 같은 기관 번호 체계로만 연결된다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -307,3 +318,10 @@ review:
     - c-15151196-03
     - c-15151196-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - address1
+    - address2
+  space_via: address

@@ -1,4 +1,5 @@
-# Dataset 15057623 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057623 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057623'
 tier: verified
 title: 식품의약품안전처_의약품 특허정보
@@ -22,6 +23,7 @@ synonyms:
   - 허가특허연계
   - PMS 재심사 만료
   - 오리지널 의약품 특허
+summary_user: 식약처가 의약품 품목별로 연결된 국내 특허를 성분명·제품명·허가업체·제형·함량과 함께 담고, 특허등록번호·발명의 명칭·특허권자·특허 상태·존속기간 만료일·재심사(PMS) 만료일·국내소송 여부를 건별로 제공하는 전국 단위 OpenAPI입니다. 제네릭 개발을 검토하는 제약사나 연구자가 '이 성분 제품을 보호하는 특허는 무엇이고 언제 만료되며 소송이 걸려 있는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 품목번호(ITEM_SEQ)나 제품명·성분명·업체명으로 식약처 의약품 허가정보와 맞춰 보고, 이를 거쳐 심평원 약가·급여 목록과 잇는 방식으로 이어 쓴다.
 description_portal: 식품의약품안전처 「의약품 특허정보」 OpenAPI는 의약품과 관련된 특허 현황을 조회할 수 있는 공공데이터입니다. 제공 항목에는  성분명, 제품명, 허가업체, 특허등록번호, 존속기간 만료일 등이 포함되어 있어 특정 의약품이 어떤 특허로 보호되고 있는지, 해당 특허의 만료 시점은 언제인지 등을 객관적으로 확인할 수 있습니다.이를 통해 제약사와 연구자는 기존 특허의 보호 범위와 만료 시점을 확인해 개발 일정을 조정하거나, 특허에 저촉되지 않는 새로운 연구 방향을 검토하는 데 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -161,6 +163,7 @@ schema:
     - name: ITEM_SEQ
       title: 품목번호
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '201308524'
@@ -240,12 +243,22 @@ schema:
         min: '2015-06-13'
         max: '2036-11-14'
         unique: 5
+  foreign_keys:
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - DOMESTIC_END_DATE
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -290,7 +303,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057623-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(ITEM_SEQ)'
     evidence:
       - type: measured
         source: probe/stats/15057623.json
@@ -355,8 +368,6 @@ verification:
   run: probe/runs/15057623.json
   stats: probe/stats/15057623.json
   data: probe/data/15057623/
-status: active
-summary_user: 식약처가 의약품 품목별로 연결된 국내 특허를 성분명·제품명·허가업체·제형·함량과 함께 담고, 특허등록번호·발명의 명칭·특허권자·특허 상태·존속기간 만료일·재심사(PMS) 만료일·국내소송 여부를 건별로 제공하는 전국 단위 OpenAPI입니다. 제네릭 개발을 검토하는 제약사나 연구자가 '이 성분 제품을 보호하는 특허는 무엇이고 언제 만료되며 소송이 걸려 있는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 품목번호(ITEM_SEQ)나 제품명·성분명·업체명으로 식약처 의약품 허가정보와 맞춰 보고, 이를 거쳐 심평원 약가·급여 목록과 잇는 방식으로 이어 쓴다.
 limits: 검증된 공통 조인 키가 없어 다른 데이터와는 이름 매칭이나 같은 기관 품목번호로만 연결해야 하며, 매칭 오류를 따로 점검해야 한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -369,3 +380,4 @@ review:
     - c-15057623-04
     - c-15057623-06
   dropped_citations: 0
+status: active

@@ -284,6 +284,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
                          "portal_url": d.get("portal_url"), "rows": bdg.rows(d), "badges": bdg.badges(d, acc),
                          "claims": bdg.claims_view(d)})
     joins = [_join_entry(edges[j], ix) for j in join_ids]
+    aligned = _aligned_joins(datasets, joins)
     hubs_used = sorted({j["hub"] for j in joins if j.get("hub")})
     say("joins", "done", f"선언된 조인 {len(joins)}개" + (f" · 허브 {', '.join(hubs_used)}" if hubs_used else "") + f" ({time.time() - t0:.1f}s)")
     pipeline = [{"step": k + 1, "do": "fetch", "dataset": x["id"], "produces": f"{x['id']}.parquet"} for k, x in enumerate(datasets)]
@@ -302,6 +303,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     conf = round(min(0.95, 0.35 + 0.1 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0)
                      + (0.1 if sel["ctx"] else 0)), 2)
     out = {"goal": goal, "context": sel["ctx"]["id"] if sel["ctx"] else None, "summary": None, "datasets": datasets, "joins": joins,
+           "aligned": aligned,
            "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand, "unverified_leads": _leads(q, known | {c["id"] for c in cand}, sel["region"]),
            "not_recommended": sel["excluded"] + _not_recommended(chosen),
            "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)},
@@ -327,11 +329,89 @@ def _cand_hits(q: str) -> list[tuple[dict, float]]:
     return [(d, s) for d, s in hits if s > 5 and s >= 0.4 * top]
 
 
+SPACE_ORDER = ("point", "parcel", "bjd", "emd", "sgg", "sido", "national")
+TIME_ORDER = ("realtime", "day", "month", "quarter", "year")
+SPACE_NAME = {"point": "좌표", "parcel": "필지", "bjd": "법정동", "emd": "읍면동", "sgg": "시군구", "sido": "시도", "national": "전국"}
+TIME_NAME = {"realtime": "실시간", "day": "일", "month": "월", "quarter": "분기", "year": "연"}
+SPACE_RULE = {"point": "R-12", "parcel": "R-20", "bjd": "R-21", "emd": "R-21", "sgg": "R-21", "sido": "R-21"}
+
+
+def align_pair(ga: dict | None, gb: dict | None) -> dict | None:
+    """두 데이터의 단위(grain)로 느슨한 조인을 계산한다 — 공간·시간은 거친 쪽, 분류는 공통 체계. 맞출 축이 없으면 None."""
+    if not ga or not gb:
+        return None
+    out, rules = {}, []
+    sa, sb = ga.get("space"), gb.get("space")
+    if sa and sb and "national" not in (sa, sb):
+        lv = max(sa, sb, key=SPACE_ORDER.index)
+        if lv == "point":
+            lv = "parcel"  # 좌표끼리는 필지(R-12)로 모아 잇는다
+        out["space"] = lv
+        for g in (ga, gb):
+            if g.get("space_via") == "address":
+                rules.append("R-13")
+            elif g.get("space_via") == "coord":
+                rules.append("R-12")
+            elif g.get("space_via") == "name":
+                rules.append("R-14")
+        rules.append(SPACE_RULE.get(lv, "R-21"))
+    ta, tb = ga.get("time"), gb.get("time")
+    if ta and tb:
+        out["time"] = max(ta, tb, key=TIME_ORDER.index)
+        if out["time"] != "realtime":
+            rules.append("R-22")
+    cat = sorted(set(ga.get("category") or []) & set(gb.get("category") or []))
+    if cat:
+        out["category"] = cat[0]
+        rules.append("R-23")
+    if not out.get("space") and not (out.get("time") and out.get("category")):
+        return None  # 공간 축 없이 시간만 맞는 쌍은 너무 느슨하다 — 시간+분류가 함께 맞을 때만
+    out["rules"] = list(dict.fromkeys(rules))
+    out["label"] = " × ".join(x for x in (SPACE_NAME.get(out.get("space")), TIME_NAME.get(out.get("time")),
+                                            ({"ksic": "업종", "seoul_svc": "서울 서비스업종", "hs_cd": "품목(HS)"}.get(out.get("category"), out.get("category")))) if x)
+    return out
+
+
+def _aligned_joins(datasets: list[dict], joins: list[dict]) -> list[dict]:
+    """선언된 조인이 없는 데이터(참고)를 핵심(primary)·조인 데이터와 공통 단위로 잇는다 — 느슨한 조인(집계 후 결합).
+    정확한 키 조인이 아니므로 joins와 분리하고, 해당 데이터의 역할을 'aligned'로 바꾼다."""
+    ix = sindex.get()
+    if not datasets:
+        return []
+    linked = {n for j in joins for n in (j["left"], j["right"])} | {datasets[0]["id"]}
+    anchors = [d for d in datasets if d["id"] in linked and (ix.datasets.get(d["id"]) or {}).get("grain")]
+    if not anchors:  # 핵심·조인 데이터에 단위가 없으면 단위가 있는 가장 앞 데이터를 기준으로
+        first = next((d for d in datasets if ((ix.datasets.get(d["id"]) or {}).get("grain") or {}).get("space")), None)
+        if first:
+            anchors, linked = [first], linked | {first["id"]}
+    out = []
+    for d in datasets:
+        if d["id"] in linked:
+            continue
+        g = (ix.datasets.get(d["id"]) or {}).get("grain")
+        best = None
+        for a in anchors:
+            al = align_pair((ix.datasets.get(a["id"]) or {}).get("grain"), g)
+            if al and (best is None or SPACE_ORDER.index(al.get("space", "national")) < SPACE_ORDER.index(best[1].get("space", "national"))):
+                best = (a["id"], al)
+        if best:
+            gl, gr = (ix.datasets[best[0]].get("grain") or {}), (g or {})
+            out.append({"kind": "aligned", "left": best[0], "right": d["id"], "align": best[1], "grain_left": gl, "grain_right": gr,
+                        "on": {"left": (gl.get("space_fields") or []) + (gl.get("time_fields") or [])[:1],
+                               "right": (gr.get("space_fields") or []) + (gr.get("time_fields") or [])[:1]},
+                        "note": f"느슨한 조인 — {best[1]['label']} 단위로 집계한 뒤 결합 ({', '.join(best[1]['rules'])})"
+                                + (" · 읍면동은 행정동·법정동 경계가 다를 수 있다 — 체계가 다르면 시군구로 올려 잇는다" if best[1].get("space") == "emd" else "")})
+            d["role"] = "aligned"
+    return out
+
+
 def _summary_rule(p: dict) -> str:
     n = len(p["datasets"])
     j = len(p["joins"])
     ctx = f"맥락 '{p['context']}' 기준으로 " if p.get("context") else ""
-    return f"{ctx}검증된 데이터 {n}개를 선언된 조인 {j}개로 잇는다." + (" 일부는 조인 경로가 없어 참고용이다." if p["gaps"] else "")
+    al = len(p.get("aligned") or [])
+    return (f"{ctx}검증된 데이터 {n}개를 선언된 조인 {j}개로 잇는다." + (f" {al}개는 공통 단위(지역·시점)로 집계해 느슨하게 잇는다." if al else "")
+            + (" 일부는 조인 경로가 없어 참고용이다." if p["gaps"] else ""))
 
 
 def _schedule(datasets: list[dict]) -> dict | None:
@@ -382,6 +462,11 @@ def exclude(p: dict, dsid: str, reason: str) -> dict:
         return p
     p["datasets"] = [x for x in p["datasets"] if x["id"] != dsid]
     p["joins"] = [j for j in p["joins"] if dsid not in (j["left"], j["right"])]
+    gone = {a["right"] for a in p.get("aligned") or [] if a["left"] == dsid}
+    p["aligned"] = [a for a in p.get("aligned") or [] if dsid not in (a["left"], a["right"])]
+    for x in p["datasets"]:
+        if x["id"] in gone:
+            x["role"] = "context"
     p["not_recommended"] = [*p["not_recommended"], {"id": dsid, "title": d["title"], "reason": reason, "kind": "review", "evidence": []}]
     linked = {n for j in p["joins"] for n in (j["left"], j["right"])}
     for k, x in enumerate(p["datasets"]):

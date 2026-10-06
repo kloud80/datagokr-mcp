@@ -1,4 +1,5 @@
-# Dataset 15072346 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072346 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072346'
 tier: verified
 title: 문화체육관광부_국가도서관통계_전국교도소도서관통계
@@ -24,6 +25,7 @@ synonyms:
   - 구치소 도서관 대출
   - 교정기관 도서 예산
   - 국가도서관통계 교도소
+summary_user: 전국 교도소 내 도서관을 한 행으로 두고 평가년도별 장서수(인쇄), 대출자수, 대출권수, 자료구입비(천원)를 시군구 단위 소재지와 함께 담은 국가도서관통계 파일(csv, 약 4KB)이다. 교정정책 연구자나 분석가가 "교정시설 간 장서와 자료구입 예산 격차가 얼마나 되고, 수형자 대출 이용이 어느 시설에서 활발한가"를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 도서관코드나 도서관명·시군구로 다른 국가도서관통계(공공·작은도서관 등)나 도서관정보나루 자료와 이름·코드 매핑해 잇는다.
 description_portal: 전국 교도소 내 도서관의 운영 현황과 자원 분포를 종합적으로 파악할 수 있는 통계 자료입니다. 이 데이터에는 평가년도, 도서관구분, 도서관코드, 도서관명, 행정구역, 시군구, 장서수(인쇄), 대출자수, 대출권수, 도서예산(자료구입비) 등 다양한 항목이 포함되어 있어, 교정시설 내 도서관의 규모, 이용 현황, 자료 확보 수준, 예산 운용 실태 등을 체계적으로 분석할 수 있습니다. 이를 바탕으로 교정기관 내 문화 복지 증진, 도서관 서비스 개선, 예산 배분의 합리화, 운영 효율성 제고 등의 정책 수립과 연구 자료로 활용할 수 있습니다. 또한 수형자의 독서 기회 확대, 재사회화를 위한 문화 프로그램 기획, 교정시설 간 도서관 자원 불균형 해소 등에도 기초 자료로 유용하게 쓰입니다.
 legal_basis_portal: 국가승인통계(국가통계 승인번호  제113016호)
 accrual_periodicity: 연간
@@ -57,6 +59,7 @@ schema:
         unique: 1
     - name: 도서관코드
       type: number
+      semantic_type: library_cd
       null_rate: 0.0
       sample_values:
         - '2010744007'
@@ -142,12 +145,26 @@ schema:
         p50: 2000
         max: 6613
         unique: 10
+  foreign_keys:
+    - fields:
+        - 도서관코드
+      reference:
+        key: library_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+  space_via: name
+  time: day
+  time_fields:
+    - 도서관구분
 cycle: default
 classification:
   subsector_name: 도서관·독서 (도서관 목록·대출·인기 도서·국가서지 ISBN)
@@ -185,7 +202,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072346-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: library_cd(도서관코드)'
     evidence:
       - type: measured
         source: probe/stats/15072346.json
@@ -260,8 +277,6 @@ verification:
   run: probe/runs/15072346.json
   stats: probe/stats/15072346.json
   data: probe/data/15072346/
-status: active
-summary_user: 전국 교도소 내 도서관을 한 행으로 두고 평가년도별 장서수(인쇄), 대출자수, 대출권수, 자료구입비(천원)를 시군구 단위 소재지와 함께 담은 국가도서관통계 파일(csv, 약 4KB)이다. 교정정책 연구자나 분석가가 "교정시설 간 장서와 자료구입 예산 격차가 얼마나 되고, 수형자 대출 이용이 어느 시설에서 활발한가"를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 도서관코드나 도서관명·시군구로 다른 국가도서관통계(공공·작은도서관 등)나 도서관정보나루 자료와 이름·코드 매핑해 잇는다.
 limits: 전역 조인 키가 없어 다른 데이터와는 도서관코드·이름 매핑으로만 연결되고, 매핑 정확도는 직접 확인해야 한다. 시설별 집계값이라 개별 대출 기록이나 도서 목록은 담지 않는다.
 review:
   summary: draft
@@ -274,3 +289,4 @@ review:
     - c-15072346-04
     - c-15072346-06
   dropped_citations: 0
+status: active

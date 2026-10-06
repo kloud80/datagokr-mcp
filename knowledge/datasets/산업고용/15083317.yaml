@@ -1,4 +1,5 @@
-# Dataset 15083317 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083317 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083317'
 tier: verified
 title: 한국동서발전(주)_대기오염 물질 배출량
@@ -21,6 +22,7 @@ synonyms:
   - 석탄화력 대기오염
   - 호기별 배출량
   - 발전소 굴뚝 배출 허용기준
+summary_user: 한국동서발전이 운영하는 발전소의 호기별·월별 대기오염물질 배출량(먼지, 황산화물, 질소산화물)과 항목별 허용기준을 담은 CSV 파일(약 110KB)이다. 연구자나 지역 주민이 '특정 발전소 호기의 황산화물·질소산화물 배출이 허용기준 대비 어느 수준이며 계절별로 어떻게 달라지는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 발전소명·호기 이름 매핑이나 배출년월 기준으로 다른 발전사 배출 자료, 발전량 자료, 주변 기상·대기질 측정 자료와 맞춰 이어 쓴다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소의 연도 및 월별 대기오염물질 배출량 정보는 발전소별 환경관리 수준을 정량적으로 파악할 수 있는 기초 데이터입니다.해당 데이터는 먼지(TSP), 황산화물(SOx), 질소산화물(NOx)의 항목으로 구성되어 있으며, 연도 및 월 단위로 오염물질 배출량을 기록하여 시기별 추이와 배출 패턴을 확인할 수 있습니다.이 자료는 발전소별 배출 특성과 오염물질 저감 설비의 효과, 계절별·지역별 대기환경 영향을 평가하는 데 유용합니다.학계 및 연구기관에서는 본 데이터를 활용해 △발전소 유형별 대기오염물질 배출 특성 분석 △환경정책 효과 검증 △기후 및 대기 모델링을 위한 배출 계수 산정 △국가 온실가스 및 대기오염 저감 목표 달성을 위한 기초 통계 △전력 생산과 환경영향 간 상관관계 연구 등에 활용할 수 있습니다.또한 환경부, 지자체, 국제기구의 환경보고서 작성 및 규제 수립을 위한 참고자료로도 활용될 수 있으며, 국내외 에너지산업의 친환경 전환 흐름 속에서 환경 영향을 객관적으로 비교하는 데도 의미 있는 지표가 됩니다.
 accrual_periodicity: 연간
 team:
@@ -41,6 +43,7 @@ schema:
         unique: 1
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진발전본부
@@ -50,6 +53,7 @@ schema:
         unique: 5
     - name: 호기
       type: number
+      semantic_type: kps_unit_nm
       null_rate: 0.0
       sample_values:
         - '1'
@@ -141,12 +145,27 @@ schema:
         p50: 3.764844
         max: 111.156576
         unique: 1176
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: kps_unit_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 배출년월
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -183,7 +202,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083317-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명), kps_unit_nm(호기)'
     evidence:
       - type: measured
         source: probe/stats/15083317.json
@@ -248,8 +267,6 @@ verification:
   run: probe/runs/15083317.json
   stats: probe/stats/15083317.json
   data: probe/data/15083317/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소의 호기별·월별 대기오염물질 배출량(먼지, 황산화물, 질소산화물)과 항목별 허용기준을 담은 CSV 파일(약 110KB)이다. 연구자나 지역 주민이 '특정 발전소 호기의 황산화물·질소산화물 배출이 허용기준 대비 어느 수준이며 계절별로 어떻게 달라지는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 발전소명·호기 이름 매핑이나 배출년월 기준으로 다른 발전사 배출 자료, 발전량 자료, 주변 기상·대기질 측정 자료와 맞춰 이어 쓴다.
 limits: 표준 코드형 조인 키가 없어 다른 데이터와 연결하려면 발전소명을 직접 대조해야 한다. 한국동서발전 소속 발전소만 담고 공간 좌표가 없어 위치 기반 분석에는 별도 발전소 위치 정보가 필요하다.
 review:
   summary: draft
@@ -262,3 +279,4 @@ review:
     - c-15083317-04
     - c-15083317-06
   dropped_citations: 0
+status: active

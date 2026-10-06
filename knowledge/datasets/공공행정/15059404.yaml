@@ -74,6 +74,7 @@ schema:
         unique: 100
     - name: 사건번호
       type: string
+      semantic_type: court_case_no
       null_rate: 0.0
       sample_values:
         - 대법원-2025-두-34754
@@ -125,6 +126,7 @@ schema:
         unique: 16
     - name: 판례일련번호
       type: number
+      semantic_type: prec_seq
       null_rate: 0.0
       sample_values:
         - '613735'
@@ -168,9 +170,24 @@ schema:
         - 보유주식을 배우자게 증여하고 다시 회사가 증여가액으로 매수하여 소각한 이 거래를 의제배당에 대한 회피로 본 당초 처분은 적법함
       stats:
         unique: 97
+  foreign_keys:
+    - fields:
+        - 사건번호
+      reference:
+        key: court_case_no
+      evidence: measured
+    - fields:
+        - 판례일련번호
+      reference:
+        key: prec_seq
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 선고일자
 cycle: default
 classification:
   subsector_name: 사법 판단 (판례·헌재·법령해석·행정심판·결정문)
@@ -212,7 +229,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15059404-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: court_case_no(사건번호), prec_seq(판례일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15059404.json

@@ -1,4 +1,5 @@
-# Dataset 15125461 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125461 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125461'
 tier: verified
 title: 공정거래위원회_가맹정보_가맹본부 특수관계인 가맹사업 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 프랜차이즈 본부 정보
   - 가맹사업 경영이력
   - 특수관계인 가맹사업 상호
+summary_user: 가맹본부의 특수관계인이 운영하는 가맹사업을 기준년도·가맹본부관리번호별로 한 건씩 담아, 특수관계인과의 관계, 상호, 경영방법, 경영기간, 가맹사업 내용을 전국 범위로 제공한다. 가맹 창업을 준비하는 사람이 '이 가맹본부의 특수관계인이 어떤 다른 가맹사업을 얼마나 운영해 왔나'를 확인해 본부를 믿어도 되는지 판단하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 공정위 가맹정보 서비스들과는 가맹본부관리번호와 기준년도로, 그 밖의 데이터와는 상호명 매핑으로만 잇는다.
 description_portal: 가맹본부 특수관계인 가맹사업에 대한 기준년도, 가맹본부관리번호를 이용하여 특수관계인가맹사업 상호, 경영방법 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -138,12 +141,22 @@ schema:
         - 오피스큐(등록번호:20200449)라는 사무용품업
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - spclPrtctJngBizMngmtPdCn
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -188,7 +201,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125461-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125461.json
@@ -253,8 +266,6 @@ verification:
   run: probe/runs/15125461.json
   stats: probe/stats/15125461.json
   data: probe/data/15125461/
-status: active
-summary_user: 가맹본부의 특수관계인이 운영하는 가맹사업을 기준년도·가맹본부관리번호별로 한 건씩 담아, 특수관계인과의 관계, 상호, 경영방법, 경영기간, 가맹사업 내용을 전국 범위로 제공한다. 가맹 창업을 준비하는 사람이 '이 가맹본부의 특수관계인이 어떤 다른 가맹사업을 얼마나 운영해 왔나'를 확인해 본부를 믿어도 되는지 판단하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 공정위 가맹정보 서비스들과는 가맹본부관리번호와 기준년도로, 그 밖의 데이터와는 상호명 매핑으로만 잇는다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 없어 기업집단·특수판매·상조 등 다른 공정위 등록 데이터와 바로 묶이지 않고, 이름 매핑에 기대야 한다. 조회에는 기준년도와 가맹본부관리번호가 필요하며, 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -267,3 +278,4 @@ review:
     - c-15125461-04
     - c-15125461-07
   dropped_citations: 0
+status: active

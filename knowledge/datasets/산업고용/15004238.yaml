@@ -1,4 +1,5 @@
-# Dataset 15004238 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15004238 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15004238'
 tier: verified
 title: 한국중부발전(주)_(발전공기업 표준)발전실적 정보
@@ -22,6 +23,7 @@ synonyms:
   - 발전설비 가동률
   - 발전공기업 표준 데이터
   - 발전기 용량
+summary_user: 한국중부발전의 발전소별 개별 호기 단위로 설비용량(킬로와트)과 연간발전량을 정리한 집계 파일로, 데이터 기준일·발전소·호기·설비용량·연간발전량 다섯 항목을 담은 작은 CSV(약 3KB)다. 분석가나 에너지 정책 담당자가 "중부발전의 어느 호기가 설비용량 대비 실제 발전량이 낮은가" 같은 설비 활용률·가동률 비교 질문에 쓴다. 전역 조인 키가 없어 다른 발전공기업의 같은 표준 발전실적 파일이나 발전소 원장과는 발전소명·호기 이름을 맞춰서만 이어 쓴다.
 description_portal: 본 데이터는 (발전공기업 표준)발전실적 정보 한국중부발전의 발전소별 개별 호기 단위로 설비용량과 연간 발전량을 정리한 자료입니다. 항목은 발전소, 호기, 설비용량, 연간발전량으로 구성되어 있으며, 설비용량의 단위는 킬로와트, 연간발전량의 단위는 메가와트입니다. 설비용량은 발전기가 낼 수 있는 최대 전력량을 의미하며, 연간발전량은 실제 운전 결과에 따른 연간 총 발전 전력을 나타냅니다. 이 (발전공기업 표준)발전실적 정보 데이터는 발전설비의 활용 효율 분석, 가동률 비교, 설비운영 계획 수립, 에너지 생산 능력 진단 등에 활용 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 1
     - name: 발전소
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - 보령복합
@@ -53,6 +56,7 @@ schema:
         unique: 33
     - name: 호기
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -84,12 +88,27 @@ schema:
         p50: 68086
         max: 5343457
         unique: 74
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 데이터 기준일
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -126,7 +145,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15004238-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komipo_plant_unit(발전소), komipo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15004238.json
@@ -191,8 +210,6 @@ verification:
   run: probe/runs/15004238.json
   stats: probe/stats/15004238.json
   data: probe/data/15004238/
-status: active
-summary_user: 한국중부발전의 발전소별 개별 호기 단위로 설비용량(킬로와트)과 연간발전량을 정리한 집계 파일로, 데이터 기준일·발전소·호기·설비용량·연간발전량 다섯 항목을 담은 작은 CSV(약 3KB)다. 분석가나 에너지 정책 담당자가 "중부발전의 어느 호기가 설비용량 대비 실제 발전량이 낮은가" 같은 설비 활용률·가동률 비교 질문에 쓴다. 전역 조인 키가 없어 다른 발전공기업의 같은 표준 발전실적 파일이나 발전소 원장과는 발전소명·호기 이름을 맞춰서만 이어 쓴다.
 limits: 연간 단위 호기별 실적이라 전력거래소의 실시간·일별 수급이나 시간별 발전량을 대신하지 못한다. 공통 코드 키가 없어 다른 데이터와 연결하려면 발전소 이름을 직접 매핑해야 하며, 포털 설명상 연간발전량 단위가 '메가와트'로 적혀 있어 해석 때 단위를 확인해야 한다.
 review:
   summary: draft
@@ -205,3 +222,4 @@ review:
     - c-15004238-04
     - c-15004238-06
   dropped_citations: 0
+status: active

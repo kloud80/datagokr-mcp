@@ -1,4 +1,5 @@
-# Dataset 15100171 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100171 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100171'
 tier: verified
 title: 서울교통공사_지하철 시각장애인 음성유도기 설치 위치 정보
@@ -21,6 +22,7 @@ synonyms:
   - 역사 음성안내 장치
   - 배리어프리 지하철
   - 서울지하철 장애인 시설
+summary_user: 서울교통공사가 관할하는 1~8호선 275개역(하남선 5개역 포함)에 설치된 시각장애인 음성유도기 5,802개의 위치를 기기 한 대당 한 행으로 담은 파일로, 호선·역번호·역명·설치 위치로 구성된다. 시각장애인 보행 안내 앱 개발자나 교통약자 편의시설 분석가가 '이 역의 어느 출입구·통로에 음성유도기가 있는가'를 확인하는 데 쓴다. 전역 공통 조인 키가 없어 역사 평면도나 다른 역 단위 데이터와는 역명이나 외부역번호를 이름·코드 매핑해 이어 써야 한다.
 description_portal: 서울교통공사 1-8호선 275개역 5,802개(하남선 5개역, 203개 포함) 지하철 시각장애인 음성유도기(시각 장애인의 도보 경로를 안내해 주는 음성 장치) 설치 위치 정보입니다. 해당 데이터는 서울교통공사에서 관할하고 있는 역사별로 시각장애인 음성유도기가 어떻게 설치되어 있는지 확인할 수 있으며, 연번,호선,역번호,역명,음성유도기 설치 위치로 구성되어 있습니다. 이러한 데이터를 역사 평면도 데이터, 기타 애플리케이션의 API 등과 함께 활용하여 음성유도기를 통한 시각 장애인의 편의 증진을 도모할 수 있습니다. 데이터의 기준 일자는 2026년 2월 13이며, 반기별로 업데이트를 지속하고 있으므로, 업데이트 주기를 확인하여 활용하시기 바랍니다.
 accrual_periodicity: 반기
 team:
@@ -58,6 +60,7 @@ schema:
         unique: 8
     - name: 외부역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '804'
@@ -86,6 +89,12 @@ schema:
         - 1번출구 내부
       stats:
         unique: 3992
+  foreign_keys:
+    - fields:
+        - 외부역번호
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -127,7 +136,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100171-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_fr_cd(외부역번호)'
     evidence:
       - type: measured
         source: probe/stats/15100171.json
@@ -181,8 +190,6 @@ verification:
   run: probe/runs/15100171.json
   stats: probe/stats/15100171.json
   data: probe/data/15100171/
-status: active
-summary_user: 서울교통공사가 관할하는 1~8호선 275개역(하남선 5개역 포함)에 설치된 시각장애인 음성유도기 5,802개의 위치를 기기 한 대당 한 행으로 담은 파일로, 호선·역번호·역명·설치 위치로 구성된다. 시각장애인 보행 안내 앱 개발자나 교통약자 편의시설 분석가가 '이 역의 어느 출입구·통로에 음성유도기가 있는가'를 확인하는 데 쓴다. 전역 공통 조인 키가 없어 역사 평면도나 다른 역 단위 데이터와는 역명이나 외부역번호를 이름·코드 매핑해 이어 써야 한다.
 limits: 설치 위치는 좌표가 아닌 텍스트 설명이어서 지도에 바로 올리거나 공간 분석에 쓸 수 없다. 표준 역 코드 같은 전역 키가 없어 다른 기관·노선 데이터와 연결하려면 역명 매칭이 필요하다.
 review:
   summary: draft
@@ -194,3 +201,4 @@ review:
     - c-15100171-03
     - c-15100171-04
   dropped_citations: 0
+status: active

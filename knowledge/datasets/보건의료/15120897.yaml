@@ -1,0 +1,223 @@
+# Dataset 15120897 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15120897'
+tier: verified
+title: 국민건강보험공단_약가DB기본
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15120897/fileData.do
+synonyms:
+  - 건강보험
+  - 만성질환
+  - 적정투약
+  - 약품명
+  - 질병코드
+  - 적정투약 약품 목록
+  - 고혈압 당뇨 약품
+  - 만성질환 처방약
+  - 혈압강하제
+  - 당뇨병용제
+  - 효능분류코드
+  - 약품 주성분
+summary_user: 고혈압·당뇨병 환자 중 적정투약이 이루어지지 않는 대상자를 발췌하려고 2021년에 새로 등록한 약품 목록을 약품 1건당 1행으로 담은 파일(csv, 약 3KB)이다. 약품명·주성분명·투여경로(내복·주사·외용)·보건복지부 효능분류·대상 질병군(고혈압·당뇨·고지혈증과 그 조합)·등록일을 함께 싣고 있다. 분석가가 '고혈압·당뇨 적정투약 판정에 어떤 성분과 효능군 약품이 들어가는가'를 확인하는 데 쓰며, 실측 조인 키는 질병코드(drug_cd) 하나뿐이고 약품코드나 EDI 코드는 없어 다른 약가·처방 자료와는 약품명이나 주성분명으로 맞춰 이어야 한다.
+description_portal: 'o 고혈압, 당뇨병 환자 중 적정투약이 이루어지지 않는 대상자 발췌 위한 약품 관리      - 내용: 2021년 적정투약 대상자 발췌 위해 신규 등록된 약품      - 내용: 약품명, 투여구분코드, 주성분명, 보건복지부효능코드, 질병코드1 약품명 (국내 등록된 약품명) 2 투여구분코드 (1: 내복/ 2: 주사/ 3: 외용)3 주성분명 (의약품에 함유된 유효성분)4 보건복지부효능코드 (212: 부정맥용제/ 213: 이뇨제/ 214: 혈압강하제/ 217: 혈관확장제/ 218: 동맥경화용약/ 219: 기타의 순환계용약/ 396: 당뇨병용제)5 질병코드 (A: 고혈압/ B : 당뇨/ C : 고지혈증/ AC : 고혈압+고지혈증/ BC : 당뇨+고지혈증)6 시스템등록일시(화면에 등록한 날짜 (yyyy-mm-dd))'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_약가DB기본_20230828.csv
+    url: https://www.data.go.kr/data/15120897/fileData.do
+    format: csv
+    size: 3013
+schema:
+  fields:
+    - name: 약품명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 딜라트렌이스알정16밀리그램(카르베딜롤)_(16mg/1정)
+        - 발트리오정10/160/20밀리그램_(1정)
+        - 네비로스타정2.5/5밀리그램_(1정)
+      stats:
+        unique: 31
+    - name: 투여구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: 주성분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - amlodipine besylate (as amlodipine 5mg)
+        - amlodipine besylate (as amlodipine 10mg)
+        - ibudilast 10mg
+      stats:
+        unique: 14
+    - name: 보건복지부효능코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '219'
+        - '214'
+        - '396'
+      stats:
+        min: 214
+        p50: 219
+        max: 396
+        unique: 3
+    - name: 질병코드
+      type: code
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - AC
+        - A
+        - B
+      stats:
+        unique: 3
+    - name: 등록일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2021-05-27'
+        - '2021-05-24'
+      stats:
+        min: '2021-05-24'
+        max: '2021-05-27'
+        unique: 2
+  foreign_keys:
+    - fields:
+        - 질병코드
+      reference:
+        key: drug_cd
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4477
+  rank_in_sector: 205
+  brm: 보건의료 - 건강보험
+  why: 기관 분석 핵심 원장 — 국민건강보험공단
+claims:
+  - id: c-15120897-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 3013 bytes) — 활용신청 없이 받음. 2026-10-06 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15120897.json
+        observed_at: '2026-10-06'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15120897-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15120897-03
+    kind: key
+    value: '실측 조인 키: drug_cd(질병코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15120897.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15120897-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120897.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15120897-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15120897-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120897-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-06'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15120897.json
+  stats: probe/stats/15120897.json
+  data: probe/data/15120897/
+limits: 전국 단위의 비공간 목록이고 지역별 구분은 없다. 2021년 적정투약 대상자 발췌용으로 신규 등록된 약품만 담겨 있어 전체 약가 마스터나 급여 목록을 대신하지 못한다. 조인 키가 질병군 코드뿐이라 약품코드 기반의 정확한 연계는 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15120897-01
+    - c-15120897-03
+    - c-15120897-04
+  dropped_citations: 0
+status: active

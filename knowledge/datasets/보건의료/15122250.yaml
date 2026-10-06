@@ -1,4 +1,5 @@
-# Dataset 15122250 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15122250 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15122250'
 tier: verified
 title: 국민건강보험공단_건강보험 보험료등급조견표
@@ -21,6 +22,7 @@ synonyms:
   - 부과체계 개편 전 보험료
   - 건강보험료 산정 기준
   - 재산 소득 등급별 보험료
+summary_user: 부과체계 개편 이전 건강보험 보험료를 등급별로 정리한 조견표로, 적용 시작·종료 연월, 과세자료 세목 대분류·중분류 코드, 등급별 시작·종료 구간값과 해당 등급의 건강보험료를 전국 단위로 담은 CSV 파일(약 1MB)이다. 분석가가 소득·재산 등 과세자료 금액이 어느 등급 구간에 들어 개편 전 기준으로 건강보험료가 얼마였는지 산정하거나 개편 전후 보험료를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어, 과세자료의 세목 코드와 적용 연월·구간값을 맞춰 매핑하는 방식으로만 다른 데이터와 잇는다.
 description_portal: '□ 국민건강보험공단_건강보험 보험료등급조견표내용: 부과체계 개편 이전, 등급별 보험료 조견표□ 변수 레이아웃1) 적용시작년월: 등급 조견표 적용 시작 년월2) 세목대분류: 과세자료 연계 시 세목 대분류 코드3) 세목중분류: 과세자료 연계 시 세목 중분류 코드4) 등급: 보험료 등급5) 적용종료월: 등급 조견표 적용 종료 년월6) 시작구간: 해당 등급 시작 구간 값7) 종료구간: 해당 등급 종료 구간 값8) 등급건강보험료: 해당 등급에 부과되는 건강보험료* 본 자료는 다양한 과세자료 연계 시 등급별 건강보험료 산정에 활용 가능합니다.'
 accrual_periodicity: 수시
 team:
@@ -127,6 +129,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 적용시작년월
+    - 적용종료년월
 cycle: default
 classification:
   subsector_name: 장기요양기관 (시설·재가 기관 검색·상세·등급 인정)
@@ -228,8 +235,6 @@ verification:
   run: probe/runs/15122250.json
   stats: probe/stats/15122250.json
   data: probe/data/15122250/
-status: active
-summary_user: 부과체계 개편 이전 건강보험 보험료를 등급별로 정리한 조견표로, 적용 시작·종료 연월, 과세자료 세목 대분류·중분류 코드, 등급별 시작·종료 구간값과 해당 등급의 건강보험료를 전국 단위로 담은 CSV 파일(약 1MB)이다. 분석가가 소득·재산 등 과세자료 금액이 어느 등급 구간에 들어 개편 전 기준으로 건강보험료가 얼마였는지 산정하거나 개편 전후 보험료를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어, 과세자료의 세목 코드와 적용 연월·구간값을 맞춰 매핑하는 방식으로만 다른 데이터와 잇는다.
 limits: 전역 조인 키가 없어 다른 데이터와 직접 결합되지 않고 세목 코드·구간값 매핑에 의존한다. 부과체계 개편 이전 기준이므로 현행 보험료 산정에는 그대로 쓰지 않는다. 지역 구분 없는 전국·비공간 자료다.
 review:
   summary: draft
@@ -241,3 +246,4 @@ review:
     - c-15122250-03
     - c-15122250-04
   dropped_citations: 0
+status: active

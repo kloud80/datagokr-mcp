@@ -1,0 +1,278 @@
+# Dataset 15090532 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15090532'
+tier: verified
+title: 한국사회보장정보원_중앙부처복지서비스
+sector: 사회복지/사회복지일반/social-economy
+agency:
+  id: B554287
+  name: 한국사회보장정보원
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15090532/openapi.do
+synonyms:
+  - 중앙부처
+  - 복지서비스
+  - 사회보장
+  - 급여
+  - 복지로
+  - 복지로 API
+  - 복지서비스 목록
+  - 사회보장 급여
+  - 정부 지원금 조회
+  - 복지 혜택 찾기
+  - 중앙부처 복지사업
+  - 복지서비스 신청방법
+description_portal: 안내되는 복지서비스 API는 대국민 복지포털 복지로에서 제공합니다. 전국민을 대상으로 하는 중앙부처의 사회보장 급여 및 복지서비스 중 보건복지부 사회보장조정과에서 대상으로 선정된 사업을 대상으로 합니다. 중앙부처 복지서비스는 2가지 오퍼레이션 형태로 이용하실 수 있습니다. 복지서비스 목록조회는 다양한 복지서비스 목록을 한눈에 볼 수 있습니다. 복지서비스 상세조회에서는 지원대상, 선정기준, 신청방법 등을 안내하고 있으므로 내가 받을 수 있는 복지서비스인지 서비스 별 자세한 내용을 확인할 수 있습니다. 사회복지 다양한 분야에서 활용하실 수 있으므로, 자세한 사항은 '활용가이드_중앙부처복지서비스'와 공공데이터포털에서 제공하고 있는 SWAGGER 문서를 참고하여 주시기 바랍니다.
+team:
+  dept: 포털운영부
+services:
+  - op: /NationalWelfarelistV001
+    name: 복지서비스 목록조회
+    endpoint: https://apis.data.go.kr/B554287/NationalWelfareInformationsV001/NationalWelfarelistV001
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: callTp
+        required: true
+        desc: '호출할 페이지 타입을 반드시 설정합니다.(L: 목록, D:상세)'
+      - name: pageNo
+        required: true
+        desc: 기본값 1, 최대 1000 검색 시작위치를 지정할 수 있습니다
+      - name: numOfRows
+        required: true
+        desc: 출력건수, 기본값 10, 최대 500 까지 가능합니다.
+      - name: srchKeyCode
+        required: true
+        desc: 001 제목 002 내용 003 제목+내용
+      - name: searchWrd
+        required: false
+        desc: 검색어
+      - name: lifeArray
+        required: false
+        desc: 생애주기(코드표참조)
+      - name: trgterIndvdlArray
+        required: false
+        desc: 가구유형(코드표참조)
+      - name: intrsThemaArray
+        required: false
+        desc: 관심주제(코드표참조)
+      - name: age
+        required: false
+        desc: 나이
+      - name: onapPsbltYn
+        required: false
+        desc: '온라인신청 가능여부(Y: 가능 N: 불가능)'
+      - name: orderBy
+        required: false
+        desc: '정렬순서(date: 조회순, popular: 인기순)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /NationalWelfaredetailedV001
+    name: 복지서비스 상세조회
+    endpoint: https://apis.data.go.kr/B554287/NationalWelfareInformationsV001/NationalWelfaredetailedV001
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: callTp
+        required: true
+        example: D
+        desc: '호출할 페이지 타입을 반드시 설정합니다.(L: 목록, D:상세)'
+      - name: servId
+        required: true
+        example: WLF00001138
+        desc: 서비스ID
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: servSeCode
+      title: 서비스 구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '070'
+      stats:
+        min: 70
+        p50: 70
+        max: 70
+        unique: 1
+    - name: servSeDetailLink
+      title: 서비스 이용기관 내용
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 거주지 읍/면/동 주민센터, 읍면동에서 ‘서비스 신청’
+        - 담당 시/군/구청 또는 시군구에서 조사 및 심사
+        - 담당 시/군/구청 또는 시군구에서 보장 결정
+      stats:
+        unique: 5
+    - name: servSeDetailNm
+      title: 서비스 이용 및 신청방법
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신청기관연락처목록
+        - 조사기관연락처목록
+        - 결정기관연락처목록
+      stats:
+        unique: 5
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.7521
+  brm: 사회복지 - 사회복지일반
+  why: 기관 분석 핵심 원장 — 한국사회보장정보원
+claims:
+  - id: c-15090532-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-07 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15090532.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15090532.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15090532-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15090532-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15090532.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15090532-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15090532.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15090532-06
+    kind: admin_note
+    value: "세부 부문 '사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)'의 가치: 인증번호·사업자번호 — 기업 축과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#social-economy
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15090532-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15090532-10
+    kind: pitfall
+    value: 필수 파라미터 callTp, srchKeyCode는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15090532.json
+        observed_at: '2026-10-07'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15090532-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /NationalWelfarelistV001'
+    evidence:
+      - type: measured
+        source: probe/runs/15090532.json
+        observed_at: '2026-10-07'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15090532.json
+  stats: probe/stats/15090532.json
+  data: probe/data/15090532/
+status: active
+summary_user: 복지로에서 안내하는 중앙부처 사회보장 급여·복지서비스를 서비스 단위로 담은 전국 범위 API로, 목록조회와 지원대상·선정기준·신청방법을 보여주는 상세조회 두 오퍼레이션으로 나뉜다. 국민이나 복지 상담 앱 개발자가 '내가 받을 수 있는 중앙부처 복지서비스는 무엇이고 어디서 어떻게 신청하나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못해 다른 데이터와는 서비스명 매핑이나 같은 기관 코드로만 연결하며, 서비스 구분코드(servSeCode)는 이 데이터 안에서 서비스 유형을 나누는 용도다.
+limits: 필수 파라미터 callTp와 srchKeyCode는 다른 데이터의 코드값이라 먼저 받아서 넘겨야 한다. 목록조회(/NationalWelfarelistV001)는 최소 파라미터로 호출했을 때 응답이 없었고, 개발계정은 하루 100회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15090532-01
+    - c-15090532-03
+    - c-15090532-04
+    - c-15090532-10
+    - c-15090532-11
+  dropped_citations: 0

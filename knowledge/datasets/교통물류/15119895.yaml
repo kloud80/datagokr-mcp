@@ -1,4 +1,5 @@
-# Dataset 15119895 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119895 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119895'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_전기차 1회충전주행거리 인증정보
@@ -25,6 +26,7 @@ synonyms:
   - 배출가스 인증번호
   - 무공해차 인증
   - 전기차 복합 주행거리
+summary_user: 전기차 차종·형식별로 배출가스 인증 1건마다 상온·저온 조건의 도심·고속·복합 1회충전주행거리와 업체명, 차명, 인증번호·인증일자, 인증구분(신규/변경)을 담은 전국 단위 인증 원천 정보다. 전기차 구매를 고민하는 소비자나 분석가가 "이 모델은 겨울철 저온에서 주행거리가 상온 대비 얼마나 줄어드나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 업체명·차명 같은 이름 매핑이나 같은 기관 코드로만 연결한다.
 description_portal: 환경부 국립환경과학원에서 전기차 1회충전주행거리 인증정보를 제공하며, 항목으로는 1회충전주행거리 상온 조건의 도심/고속/복합, 저온 조건의 도심/고속/복합, 업체명, 배출가스 인증번호, 배출가스 인증일자, 차종, 자동차명, 전기차형식, 사용연료, 인증구분(신규인증/변경인증)의 데이터를 제공합니다.1. 무공해차(전기차/수소차) 배출가스 인증번호 OMY-OO-21-OO 입니다.2. 인증완료 상태의 인증서만 조회가 가능합니다.(인증반납 및 인증취소 차량은 제외됨)3. 전산시스템으로 발급되지 않은 제작차 및 수입차 과거 인증서는 조회되지 않습니다.
 team:
   dept: 모빌리티환경연구센터
@@ -127,6 +129,7 @@ schema:
     - name: EMISCERTINO
       title: 배출인증번호
       type: string
+      semantic_type: veh_emis_cert_no
       null_rate: 0.0
       sample_values:
         - PMY-KM-21-13
@@ -206,12 +209,22 @@ schema:
         - '290'
       stats:
         unique: 29
+  foreign_keys:
+    - fields:
+        - EMISCERTINO
+      reference:
+        key: veh_emis_cert_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - EMISCERTIDATE
 cycle: default
 classification:
   subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
@@ -256,7 +269,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119895-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: veh_emis_cert_no(EMISCERTINO)'
     evidence:
       - type: measured
         source: probe/stats/15119895.json
@@ -310,8 +323,6 @@ verification:
   run: probe/runs/15119895.json
   stats: probe/stats/15119895.json
   data: probe/data/15119895/
-status: active
-summary_user: 전기차 차종·형식별로 배출가스 인증 1건마다 상온·저온 조건의 도심·고속·복합 1회충전주행거리와 업체명, 차명, 인증번호·인증일자, 인증구분(신규/변경)을 담은 전국 단위 인증 원천 정보다. 전기차 구매를 고민하는 소비자나 분석가가 "이 모델은 겨울철 저온에서 주행거리가 상온 대비 얼마나 줄어드나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 업체명·차명 같은 이름 매핑이나 같은 기관 코드로만 연결한다.
 limits: 인증완료 상태의 인증서만 조회되며 인증반납·취소 차량과 전산으로 발급되지 않은 과거 제작·수입차 인증서는 빠진다. 인증 시험값이므로 실제 주행거리와 다를 수 있고, 다른 데이터와 붙일 공통 키가 없어 이름 매칭 시 표기 차이에 주의해야 한다.
 review:
   summary: draft
@@ -322,3 +333,4 @@ review:
     - c-15119895-03
     - c-15119895-04
   dropped_citations: 0
+status: active

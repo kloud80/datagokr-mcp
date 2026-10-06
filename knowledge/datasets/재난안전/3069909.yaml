@@ -1,4 +1,5 @@
-# Dataset 3069909 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3069909 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3069909'
 tier: verified
 title: 한국가스안전공사_산업재산권 현황 목록
@@ -25,6 +26,7 @@ synonyms:
   - 공공기관 특허 출원 등록
   - 기술이전 특허 목록
   - 실용신안 디자인 상표
+summary_user: 한국가스안전공사가 보유한 특허 등 산업재산권을 건별로 정리한 목록으로, 재산권 구분·명칭·기술분야·출원번호와 출원일·등록번호와 등록일·권리 상태·출원자·연계 연구과제 번호를 담은 전국 단위 CSV 파일(약 21KB)이다. 가스안전 분야 기술이전이나 공동연구를 찾는 기업·연구자가 '가스안전공사가 어떤 기술분야에서 어떤 특허를 등록·출원했는가'를 확인하는 데 쓴다. 전역 조인 키는 없으며, 출원번호·등록번호로 특허청 특허정보와 대조하거나 연구과제연계번호로 같은 기관의 연구과제 자료와 맞춰 보는 정도로만 연결한다.
 description_portal: '한국가스안전공사에서 보유하고 있는 산업재산권 현황 정보를 제공합니다.해당 목록은 기술 홍보 및 공공-민간 업계의 상생에 참고자료로 활용될 수 있도록 개방되었습니다.목록은 재산권구분, 재산권명, 기술분야, 출원번호, 출원일자, 재산권등록번호, 재산권등록일자, 특허출원상태 등 컬럼으로 구성되어 있습니다.가스안전관리 기술 발전 및 연구 현황을 조회하여 정책 수립 및 통계 수집, 협업 과제 발굴 등에 활용할 수 있습니다.※ 연간 주기로 현황 정보가 업데이트되며 외부(민간) 및 타 유관기관에서 제공하는 데이터와 일부 상이할 수 있으니 참고 바랍니다.※ 재산권상태가 출원 단계의 경우 "재산권등록번호" 및 "재산권등록일자"는 데이터 미수집(등록번호 없음)에 따른 공란 임을 참고 바랍니다.※ 해당 목록은 2025년 부터 메타정보를 기반으로 현행화하여 제공합니다.※ 데이터기준일 : 2025년 9월 19일 현재기준'
 applicable_legislation:
   - law: 고압가스안전관리법
@@ -92,6 +94,7 @@ schema:
         unique: 5
     - name: 출원번호
       type: string
+      semantic_type: kipo_appl_no
       null_rate: 0.0
       sample_values:
         - 10-2012-0157457
@@ -118,6 +121,7 @@ schema:
         unique: 2
     - name: 재산권등록번호
       type: string
+      semantic_type: kipo_rgst_no
       null_rate: 0.2078
       sample_values:
         - 10-2722540
@@ -159,12 +163,27 @@ schema:
         - 미해당
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 출원번호
+      reference:
+        key: kipo_appl_no
+      evidence: measured
+    - fields:
+        - 재산권등록번호
+      reference:
+        key: kipo_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 재산권등록일자
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -201,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3069909-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kipo_appl_no(출원번호), kipo_rgst_no(재산권등록번호)'
     evidence:
       - type: measured
         source: probe/stats/3069909.json
@@ -276,8 +295,6 @@ verification:
   run: probe/runs/3069909.json
   stats: probe/stats/3069909.json
   data: probe/data/3069909/
-status: active
-summary_user: 한국가스안전공사가 보유한 특허 등 산업재산권을 건별로 정리한 목록으로, 재산권 구분·명칭·기술분야·출원번호와 출원일·등록번호와 등록일·권리 상태·출원자·연계 연구과제 번호를 담은 전국 단위 CSV 파일(약 21KB)이다. 가스안전 분야 기술이전이나 공동연구를 찾는 기업·연구자가 '가스안전공사가 어떤 기술분야에서 어떤 특허를 등록·출원했는가'를 확인하는 데 쓴다. 전역 조인 키는 없으며, 출원번호·등록번호로 특허청 특허정보와 대조하거나 연구과제연계번호로 같은 기관의 연구과제 자료와 맞춰 보는 정도로만 연결한다.
 limits: 실측 컬럼에 다른 데이터셋과 바로 이을 공통 키가 없어 이름이나 번호를 직접 맞춰야 한다. 시설 안전 원장으로 분류돼 있지만 승강기·시설물 번호 단위의 점검·안전 정보가 아니라 기관 보유 지식재산 목록이며, 출원 단계인 건은 등록번호·등록일자가 비어 있다.
 review:
   summary: draft
@@ -290,3 +307,4 @@ review:
     - c-3069909-04
     - c-3069909-06
   dropped_citations: 0
+status: active

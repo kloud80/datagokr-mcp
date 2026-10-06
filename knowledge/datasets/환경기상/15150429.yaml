@@ -39,6 +39,7 @@ schema:
   fields:
     - name: 기상대지점코드
       type: string
+      semantic_type: kma_station_cd
       null_rate: 0.0
       sample_values:
         - S090
@@ -118,6 +119,11 @@ schema:
         unique: 666
   foreign_keys:
     - fields:
+        - 기상대지점코드
+      reference:
+        key: kma_station_cd
+      evidence: measured
+    - fields:
         - 경도
       reference:
         key: coord
@@ -130,6 +136,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: weather-observation
@@ -166,7 +178,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15150429-03
     kind: key
-    value: '실측 조인 키: coord(경도), coord(위도)'
+    value: '실측 조인 키: kma_station_cd(기상대지점코드), coord(경도), coord(위도)'
     evidence:
       - type: measured
         source: probe/stats/15150429.json

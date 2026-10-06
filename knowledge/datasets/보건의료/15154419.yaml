@@ -1,0 +1,901 @@
+id: '15154419'
+tier: verified
+title: 국민건강보험공단_검진기관 찾기 조회
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15154419/openapi.do
+synonyms:
+  - 국가건강검진
+  - 검진기관정보
+  - 지역기반검색
+  - 비교서비스
+  - 운영현황
+  - 진료역량
+  - 접근성
+  - 예약절차
+  - 건강검진 병원 찾기
+  - 국가건강검진기관
+  - 암검진 기관
+  - 영유아검진 병원
+  - 구강검진 기관
+  - 검진기관 위치
+  - 건강검진센터 목록
+description_portal: 검진기간 찾기 조회 API는 총 4개의 오퍼레이션을 제공하는 서비스입니다. 국가건강검진기관별 상세정보를 체계적으로 제공하는 서비스로, 지역 기반 검색은 물론 검진 항목 구성, 운영 환경, 시설 규모, 접근성 등 다양한 조건을 비교할 수 있습니다. 기관별 진료 역량과 최신 운영 현황을 확인해 사용자가 보다 적합한 검진기관을 선택하도록 돕습니다. 또한 이용자 중심의 정보 구성으로 각 기관의 예약 절차, 부대 서비스, 교통 편의성을 한눈에 파악할 수 있어 검진 준비 과정을 효율적으로 관리할 수 있으며, 정확히 도와주고 지원합니다.
+team:
+  dept: 빅데이터운영실
+services:
+  - op: /getHchkTypesHmcList
+    name: 검진종류별 검진기관 안내
+    endpoint: https://apis.data.go.kr/B550928/HmcSearchService/getHchkTypesHmcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: hchType
+        required: false
+        desc: 검진종류타입
+      - name: pageNo
+        required: false
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        desc: 한페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getRegnHmcList
+    name: 지역별 검진기관 안내
+    endpoint: https://apis.data.go.kr/B550928/HmcSearchService/getRegnHmcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: hmcNm
+        required: false
+        desc: 검진기관명
+      - name: siDoCd
+        required: false
+        desc: 시도코드
+      - name: siGunGuCd
+        required: true
+        desc: 시군구코드
+      - name: pageNo
+        required: false
+        desc: 페이지 번호
+      - name: umOfRows
+        required: false
+        desc: 한페이지 결과 수
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getHolidaysHmcList
+    name: 공휴일 검진기관 안내
+    endpoint: https://apis.data.go.kr/B550928/HmcSearchService/getHolidaysHmcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: false
+        desc: 페이지번호
+      - name: numOfRows
+        required: false
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getHmcList
+    name: 검진기관통합조건검색
+    endpoint: https://apis.data.go.kr/B550928/HmcSearchService/getHmcList
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: hmcNm
+        required: true
+        example: 중앙대학교병원
+        desc: 검진기관명
+      - name: siDoCd
+        required: false
+        desc: 시도코드
+      - name: siGunGuCd
+        required: false
+        desc: 시군구코드
+      - name: locAddr
+        required: false
+        desc: 소재지주소
+      - name: hmcRdatCd
+        required: false
+        desc: 검진기관설립코드
+      - name: hmcRdatCd
+        required: false
+        desc: 검진종류타입
+      - name: pageNo
+        required: false
+        example: '1'
+        desc: 페이지 번호
+      - name: numOfRows
+        required: false
+        example: '10'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: bcExmdChrgTypeCd
+      title: 유방암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: ccExmdChrgTypeCd
+      title: 대장암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: cvxcaExmdChrgTypeCd
+      title: 자궁경부암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: cxVl
+      title: X좌표값
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.955860405605'
+        - '127.033354132164'
+        - '127.065295029716'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 37.51994994758228
+        p50: 127.0575436139055
+        max: 898374.8894369995
+        unique: 622
+    - name: cyVl
+      title: Y좌표값
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.558621696785'
+        - '37.5285677154605'
+        - '37.603158367782'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 34.5692947466209
+        p50: 37.42232945683945
+        max: 4655576.2723639365
+        unique: 622
+    - name: exmdrFaxNo
+      title: 검진실팩스번호
+      type: string
+      null_rate: 0.0031
+      sample_values:
+        - 02-514-1010
+        - 02-927-7670
+        - 0503-8379-5529
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 633
+    - name: exmdrTelNo
+      title: 검진실전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 043-297-1100
+        - 02-829-7685
+        - 02-546-3493
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 637
+    - name: grenChrgTypeCd
+      title: 일반검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: hmcNm
+      title: 검진기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 애플산부인과의원
+        - 로앤산부인과의원
+        - 참좋은치과의원
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 612
+    - name: hmcNo
+      title: 검진기관번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11100893'
+        - '11203234'
+        - '11204265'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 11100893
+        p50: 31334088
+        max: 36319481
+        unique: 638
+    - name: hmcTelNo
+      title: 검진기관전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-546-3493
+        - 043-297-1100
+        - 02-1899-1475
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 636
+    - name: ichkChrgTypeCd
+      title: 영유아검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: locAddr
+      title: 소재지주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 전남광주통합특별시 광산구 하남대로 278 (운남동)
+        - 서울특별시 영등포구 도림로 156 명지성모병원 (대림동)
+        - 서울특별시 강남구 언주로 871 호산병원 (신사동)
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 637
+    - name: locPostNo
+      title: 소재지우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03772'
+        - '07599'
+        - '02830'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 1063
+        p50: 16836.5
+        max: 62402
+        unique: 584
+    - name: lvcaExmdChrgTypeCd
+      title: 간암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: mchkChrgTypeCd
+      title: 구강검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: siDoCd
+      title: 시도코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+        - '41'
+        - '26'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 11
+        p50: 28
+        max: 52
+        unique: 11
+    - name: siGunGuCd
+      title: 시군구코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200'
+        - '130'
+        - '500'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 110
+        p50: 287
+        max: 830
+        unique: 80
+    - name: stmcaExmdChrgTypeCd
+      title: 위암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHchkTypesHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: ykindnm
+      title: 검진기관종별명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의원
+        - 치과의원
+        - 병원
+      op: /getHchkTypesHmcList
+      stats:
+        unique: 6
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getRegnHmcList
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+      op: /getRegnHmcList
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getRegnHmcList
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getRegnHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: bcExmdChrgTypeCd
+      title: 유방암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: ccExmdChrgTypeCd
+      title: 대장암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: cvxcaExmdChrgTypeCd
+      title: 자궁경부암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: cxVl
+      title: X좌표값
+      type: number
+      null_rate: 0.001
+      sample_values:
+        - '127.06355328121'
+        - '127.050741696591'
+        - '126.941917689273'
+      op: /getHolidaysHmcList
+      stats:
+        min: 37.4552896255324
+        p50: 127.012024373585
+        max: 5481.044478812822
+        unique: 954
+    - name: cyVl
+      title: Y좌표값
+      type: number
+      null_rate: 0.001
+      sample_values:
+        - '37.5862119387672'
+        - '37.5937762050989'
+        - '37.563674036531'
+      op: /getHolidaysHmcList
+      stats:
+        min: 37.4346627586488
+        p50: 37.5416772129928
+        max: 4655395.278003984
+        unique: 954
+    - name: exmdrFaxNo
+      title: 검진실팩스번호
+      type: string
+      null_rate: 0.015
+      sample_values:
+        - --
+        - 02-958-8708
+        - 02-490-4190
+      op: /getHolidaysHmcList
+      stats:
+        unique: 978
+    - name: exmdrTelNo
+      title: 검진실전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-3779-1422
+        - 02-6299-2492
+        - -1599-8116
+      op: /getHolidaysHmcList
+      stats:
+        unique: 1000
+    - name: grenChrgTypeCd
+      title: 일반검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: hmcNm
+      title: 검진기관명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 연세내과의원
+        - 한빛내과의원
+        - 박산부인과의원
+      op: /getHolidaysHmcList
+      stats:
+        unique: 960
+    - name: hmcNo
+      title: 검진기관번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11100028'
+        - '11100052'
+        - '11100095'
+      op: /getHolidaysHmcList
+      stats:
+        min: 11100028
+        p50: 11373351.5
+        max: 11520566
+        unique: 1000
+    - name: hmcTelNo
+      title: 검진기관전화번호
+      type: string
+      null_rate: 0.002
+      sample_values:
+        - 02-958-8114
+        - 1661-7575
+        - 1800-1114
+      op: /getHolidaysHmcList
+      stats:
+        unique: 997
+    - name: ichkChrgTypeCd
+      title: 영유아검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: locAddr
+      title: 소재지주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 동대문구 망우로 82 (휘경동)
+        - 서울특별시 서대문구 연세로 50-1 (신촌동)
+        - 서울특별시 송파구 마천로41길 22 (마천동)
+      op: /getHolidaysHmcList
+      stats:
+        unique: 993
+    - name: locPostNo
+      title: 소재지우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '04168'
+        - '07591'
+        - '06035'
+      op: /getHolidaysHmcList
+      stats:
+        min: 1005
+        p50: 5350.5
+        max: 8864
+        unique: 800
+    - name: lvcaExmdChrgTypeCd
+      title: 간암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: mchkChrgTypeCd
+      title: 구강검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: siDoCd
+      title: 시도코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      op: /getHolidaysHmcList
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: siGunGuCd
+      title: 시군구코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '680'
+        - '710'
+        - '740'
+      op: /getHolidaysHmcList
+      stats:
+        min: 110
+        p50: 500
+        max: 740
+        unique: 25
+    - name: stmcaExmdChrgTypeCd
+      title: 위암검진담당구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '9'
+      op: /getHolidaysHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 9
+        unique: 3
+    - name: ykindnm
+      title: 검진기관종별명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의원
+        - 치과의원
+        - 병원
+      op: /getHolidaysHmcList
+      stats:
+        unique: 5
+    - name: items
+      type: code
+      null_rate: 1.0
+      op: /getHmcList
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      op: /getHmcList
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지 번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      op: /getHmcList
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 총건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      op: /getHmcList
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - cxVl
+    - cyVl
+    - cxVl
+  space_via: coord
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7636
+  brm: 보건의료 - 보건의료
+  why: 기관 분석 핵심 원장 — 국민건강보험공단
+claims:
+  - id: c-15154419-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 4/4
+    evidence:
+      - type: measured
+        source: probe/runs/15154419.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 4/4
+      - type: measured
+        source: probe/apply/15154419.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15154419-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15154419-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15154419.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 48개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15154419-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15154419.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15154419-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15154419-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15154419-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 4/4
+  run: probe/runs/15154419.json
+  stats: probe/stats/15154419.json
+  data: probe/data/15154419/
+status: active
+summary_user: 국가건강검진기관을 기관 한 곳씩 담는 건별 목록으로, 전국 범위에서 기관명·종별·주소·좌표·전화번호와 일반·영유아·구강검진, 위·대장·간·유방·자궁경부암 검진을 맡는지 여부를 담는다. 국민이 '우리 동네에서 위암·대장암 검진을 함께 받을 수 있는 가까운 병원이 어디인가'를 찾거나, 분석가가 지역별 검진기관 분포를 볼 때 쓴다. 전역 조인 키는 없어 검진기관번호(hmcNo)·기관명·주소로 같은 기관을 맞추거나, 시도·시군구 코드와 좌표로 지역·공간 데이터에 붙여 쓴다.
+limits: 다른 의료기관 데이터와 바로 묶을 공통 키가 없어 기관명·주소 매핑이 필요하다. 개발계정은 하루 10,000회 호출로 제한되며 serviceKey를 쿼리로 넘겨야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15154419-01
+    - c-15154419-03
+    - c-15154419-04
+  dropped_citations: 0

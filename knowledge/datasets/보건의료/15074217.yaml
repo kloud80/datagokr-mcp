@@ -1,4 +1,5 @@
-# Dataset 15074217 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15074217 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15074217'
 tier: verified
 title: 식품의약품안전처_마약류 취급완료보고 정보
@@ -21,6 +22,7 @@ synonyms:
   - 마약류 업소
   - 취급종료일자
   - 마약류 관리
+summary_user: 마약류 취급 승인을 받은 기관이 취급을 끝냈다고 보고한 내역을 담는다. 기관 한 곳당 한 건이며, 각 건에는 취급승인번호, 자료구분, 업소명, 취급종료일자(TRMT_END_YMD)가 들어 있고 범위는 전국이다. 규제 담당자나 분석가가 특정 업소의 마약류 취급 권한이 언제 끝났는지 확인할 때 쓴다. 전역 조인 키는 없어서 다른 데이터와는 업소명을 맞춰 보거나 같은 식약처 데이터의 취급승인번호로만 잇는다.
 description_portal: 식품의약품안전처에서 제공하는 마약류 취급완료보고 정보 데이터는 마약류 취급 승인이 완료된 기관들의 관련 정보를 조회할 수 있도록 구성된 공공데이터입니다. 제공되는 주요 항목으로는 취급승인번호, 자료구분, 업소명, 대표자명, 취급종료일자 등이 포함되어 있으며, 이를 통해 어떤 기관이 언제까지 마약류 취급 권한을 가지고 있었는지를 명확히 확인할 수 있습니다. 이 데이터는 마약류 취급 이력 관리, 규제 준수 여부 모니터링, 행정 행태 분석, 보고 이력 기준 현황 파악 등의 목적으로 활용될 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: TRMT_APRV_SN
       type: number
+      semantic_type: narc_trmt_aprv_sn
       null_rate: 0.0
       sample_values:
         - '2006000001'
@@ -92,6 +95,12 @@ schema:
         p50: 20080272
         max: 99991231
         unique: 205
+  foreign_keys:
+    - fields:
+        - TRMT_APRV_SN
+      reference:
+        key: narc_trmt_aprv_sn
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -142,7 +151,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15074217-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: narc_trmt_aprv_sn(TRMT_APRV_SN)'
     evidence:
       - type: measured
         source: probe/stats/15074217.json
@@ -207,8 +216,6 @@ verification:
   run: probe/runs/15074217.json
   stats: probe/stats/15074217.json
   data: probe/data/15074217/
-status: active
-summary_user: 마약류 취급 승인을 받은 기관이 취급을 끝냈다고 보고한 내역을 담는다. 기관 한 곳당 한 건이며, 각 건에는 취급승인번호, 자료구분, 업소명, 취급종료일자(TRMT_END_YMD)가 들어 있고 범위는 전국이다. 규제 담당자나 분석가가 특정 업소의 마약류 취급 권한이 언제 끝났는지 확인할 때 쓴다. 전역 조인 키는 없어서 다른 데이터와는 업소명을 맞춰 보거나 같은 식약처 데이터의 취급승인번호로만 잇는다.
 limits: 다른 기관 데이터와 공통으로 쓰는 코드가 없어 의료기관 인허가 등과 연결하려면 업소명으로 맞춰 봐야 하며, 이때 잘못 연결될 수 있다. 위치 정보가 없어 지역별 분석에는 쓸 수 없다. 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -220,3 +227,4 @@ review:
     - c-15074217-03
     - c-15074217-04
   dropped_citations: 0
+status: active

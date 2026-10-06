@@ -1,0 +1,360 @@
+# Dataset 15157366 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15157366'
+tier: verified
+title: 한국가스공사_입찰정보
+sector: 공공행정/정부조달/misc
+agency:
+  id: B551210
+  name: 한국가스공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15157366/openapi.do
+synonyms:
+  - 입찰명
+  - 입찰번호
+  - 입찰구분
+  - 업무구분
+  - 계약방법
+  - 마감일시
+  - 개찰일시
+  - 입찰정보
+  - 가스공사 입찰공고
+  - KOGAS 입찰
+  - 가스공사 낙찰정보
+  - 가스공사 계약정보
+  - 공기업 입찰 조회
+  - 개찰일시 조회
+description_portal: '입찰번호 또는 입찰명을 이용하여 입찰번호(13자리 숫자), 입찰명, 입찰구분(가격조사, 전자입찰 등), 업무구분(물품-내자 및 외자, 용역, 공사), 계약방법(일반경쟁, 지명경쟁, 제한경쟁 등), 마감일시(YYYY-MM-DD HH:mm), 개찰일시(YYYY-MM-DD HH:mm), 취소여부(Y/N)을 조회하는 한국가스공사 계약정보 조회 서비스입니다. 추가 문의사항 및 요청사항이 있다면 담당자에게 연락주세요. 데이터 표준 : XML최대 메시지 사이즈 : 8,000byte평균 응답 시간 : 800ms데이터 갱신 주기 : 일 1회'
+team:
+  dept: 디지털혁신처 디지털개발부
+services:
+  - op: /getBidInfoList2
+    name: 입찰정보 조회
+    endpoint: https://apis.data.go.kr/B551210/bidInfoList2/getBidInfoList2
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '10'
+        desc: 페이지번호
+      - name: DOCDATE_START
+        required: true
+        example: '20260101'
+        desc: 공고일자(시작)
+      - name: DOCDATE_END
+        required: false
+        desc: 공고일자(끝)
+      - name: NOTICE_NAME
+        required: false
+        desc: 입찰건명
+      - name: NOTICE_CODE
+        required: false
+        desc: 입찰번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: NOTICE_CODE
+      title: 입찰번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026100618'
+        - '2026100616'
+        - '2026100612'
+      stats:
+        min: 2025123005
+        p50: 2026051315
+        max: 2026100618
+        unique: 800
+    - name: NOTICE_NAME
+      title: 입찰건명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 2026년 대기배출시설 자가측정 대행 용역
+        - 한국가스공사 항공권
+        - 가스분석기용 고순도 헬륨가스 구매
+      stats:
+        unique: 784
+    - name: BID_TYPE_NAME
+      title: 입찰구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전자입찰
+        - 대면입찰
+      stats:
+        unique: 2
+    - name: WORK_TYPE_NAME
+      title: 업무구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 물품
+        - 용역
+        - 공사
+      stats:
+        unique: 3
+    - name: CONT_METHOD_NAME
+      title: 계약방법
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제한경쟁
+        - 일반경쟁
+        - 지명경쟁
+      stats:
+        unique: 4
+    - name: NOTICE_DT
+      title: 공고일
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-06'
+        - '2026-10-02'
+        - '2026-09-30'
+      stats:
+        min: '2026-01-06'
+        max: '2026-10-06'
+        unique: 182
+    - name: END_DT
+      title: 마감일시
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-04-15 10:00
+        - 2026-04-07 10:00
+        - 2026-10-08 10:00
+      stats:
+        min: '2026-01-14'
+        max: '2026-11-13'
+        unique: 454
+    - name: OPEN_DT
+      title: 개찰일시
+      type: date
+      null_rate: 0.0038
+      sample_values:
+        - 2026-10-08 10:10
+        - 2026-10-08 09:02
+        - 2026-10-13 09:01
+      stats:
+        min: '2026-01-14'
+        max: '2026-11-20'
+        unique: 766
+    - name: CANCEL_YN
+      title: 취소여부
+      type: code
+      null_rate: 0.9888
+      sample_values:
+        - 취소
+      stats:
+        unique: 1
+    - name: SUCCESS_CORP_NAME
+      title: 낙찰자 상호명
+      type: string
+      null_rate: 0.2388
+      sample_values:
+        - 화성밸브(주)
+        - 한국에머슨 주식회사
+        - 주식회사 한국씰시스템
+      stats:
+        unique: 540
+    - name: SUCCESS_CORP_CODE
+      title: 낙찰자 사업자등록
+      type: number
+      null_rate: 0.2388
+      sample_values:
+        - '5038108664'
+        - '2118160529'
+        - '1138155552'
+      stats:
+        min: 1018645342
+        p50: 3118127723
+        max: 8988701222
+        unique: 540
+    - name: SUCCESS_AMT
+      title: 낙찰금액
+      type: number
+      null_rate: 0.2388
+      sample_values:
+        - '722'
+        - '153302'
+        - '40707194'
+      stats:
+        min: 722
+        p50: 70723368
+        max: 40444856339
+        unique: 609
+    - name: SUCCESS_RATE
+      title: 낙찰률
+      type: number
+      null_rate: 0.2388
+      sample_values:
+        - '0.88'
+        - '0.842'
+        - '0.843'
+      stats:
+        min: 0.406
+        p50: 0.878
+        max: 1
+        unique: 169
+    - name: SUCCESS_DT
+      title: 낙찰일
+      type: date
+      null_rate: 0.2388
+      sample_values:
+        - '2026-02-11'
+        - '2026-04-22'
+        - '2026-03-26'
+      stats:
+        min: '2026-01-19'
+        max: '2026-10-06'
+        unique: 163
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - NOTICE_DT
+    - END_DT
+    - OPEN_DT
+cycle: default
+classification:
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5128
+  brm: 공공행정 - 정부조달
+  why: 기관 분석 핵심 원장 — 한국가스공사
+claims:
+  - id: c-15157366-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15157366.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15157366.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15157366-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157366-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15157366.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 14개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157366-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15157366.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15157366-06
+    kind: admin_note
+    value: '[공공행정 - 정부조달 · 결정] 조달청 데이터만 남긴다. 조달청 외 기관 41건은 제외.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L7
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157366-07
+    kind: admin_note
+    value: '[공공행정 - 정부조달 · 이유] 나라장터(조달청)가 공공조달의 원천이다. 다른 기관 데이터는 자기 기관의 계약현황·입찰결과 파일이라 나라장터 API로 대체되거나 범위가 좁다.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L8
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15157366-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15157366.json
+  stats: probe/stats/15157366.json
+  data: probe/data/15157366/
+status: active
+summary_user: 한국가스공사가 낸 입찰 공고를 건별로 담으며, 입찰번호·입찰건명·입찰구분·업무구분(물품·용역·공사)·계약방법·공고일·마감/개찰일시·취소여부와 낙찰자 상호·낙찰금액·낙찰률·낙찰일을 입찰번호나 입찰명으로 조회한다. 가스공사 물품·용역·공사 입찰에 참여하려는 사업자가 특정 공고의 마감·개찰 일정과 취소 여부를 확인하거나, 분석가가 과거 입찰의 낙찰업체와 낙찰률을 살펴볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 다른 데이터와는 입찰건명·업체명 매핑이나 낙찰자 사업자등록번호(SUCCESS_CORP_CODE) 같은 값으로 맞춰 이어야 한다.
+limits: 한국가스공사 한 기관의 입찰만 담아 공공조달 전체를 보려면 원천인 조달청 나라장터 데이터를 써야 하며, 정부조달 부문 검토에서는 조달청 외 기관 데이터로 제외 대상에 올랐다. 지역 단위 정보가 없는 전국·비공간 데이터라 지역별 분석에는 맞지 않다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15157366-01
+    - c-15157366-03
+    - c-15157366-04
+    - c-15157366-06
+    - c-15157366-07
+  dropped_citations: 0

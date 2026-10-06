@@ -1,4 +1,3 @@
-# Dataset 15153427 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15153427'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_의대 증원
@@ -21,6 +20,7 @@ synonyms:
   - 뉴스 메타데이터
   - 보도 프레임 분석
   - 언론 기사 텍스트
+summary_user: BIGKinds에서 모은 의대 증원 관련 뉴스 기사를 기사 1건당 1행으로 담은 CSV 파일(약 165MB)로, 기사 주소·보도 일자·언론사·제목·통합분류 1~3단계·인물·지역·기업기관 개체명·키워드·특성추출 값·본문이 들어 있다. 언론 연구자나 보건의료 정책 분석가가 '의대 정원 확대 논의가 어느 시기에 집중 보도됐고 어떤 키워드와 프레임으로 다뤄졌는가'를 살필 때 쓴다. 다른 데이터와 바로 맞물리는 전역 조인 키는 없으므로, 보도 일자로 정책 발표 일정과 시기를 맞추거나 지역 개체명·언론사 이름을 문자열로 대조해 이어 쓴다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 의대 증원 관련 뉴스 메타정보 자료입니다. 포함 항목으로는 기사 주소, 보도 일자, 언론사, 기고자, 제목, 통합분류(1~3단계), 개체명(인물·지역·기업), 키워드, 특성추출 값, 본문 내용 등이 있으며, 이를 통해 개별 기사에 대한 구조적 분석이 가능합니다.본 자료는 국내 주요 언론사의 의대 증원 관련 보도를 대상으로, 어떤 이슈가 어느 시기에 집중 보도되었는지, 주요 키워드와 보도 프레임이 어떠했는지 등의 패턴을 밝히는 데 중점을 두고 있습니다. 이러한 분석은 언론이 의대 정원 확대 논의를 어떻게 다루는지, 의료 인력 수급 문제, 의료계·정부·시민사회 간의 갈등, 지역 의료 격차 등과 같은 핵심 쟁점이 어떤 방식으로 보도되는지를 파악하는 데 유용합니다.또한 학계, 언론 연구자, 보건의료 정책 전문가, 공공정책 분석가 등에게 의대 증원 관련 보도의 경향, 이슈별 프레임 변화, 언론의 보건의료 이슈 재현 방식을 이해하는 데 기초 자료로 활용될 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -40,6 +40,7 @@ schema:
   fields:
     - name: 주소
       type: string
+      semantic_type: bigkinds_article_url
       null_rate: 0.0
       sample_values:
         - http://www.bigkinds.or.kr/news/newsDetailView.do?newsId=01620001.202401012006440
@@ -60,6 +61,7 @@ schema:
         unique: 365
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - YTN
@@ -157,12 +159,31 @@ schema:
         - '[서울=뉴스핌] 양윤모 기자 = 정부의 의대 정원 증원에 반발해 전공의들이 집단사직후 병원을 떠난지 100일이 지난 30일 밤 의사들이 서울 중'
       stats:
         unique: 54972
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: bigkinds_article_url
+      evidence: measured
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -199,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15153427-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bigkinds_article_url(주소), kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15153427.json
@@ -274,8 +295,6 @@ verification:
   run: probe/runs/15153427.json
   stats: probe/stats/15153427.json
   data: probe/data/15153427/
-status: active
-summary_user: BIGKinds에서 모은 의대 증원 관련 뉴스 기사를 기사 1건당 1행으로 담은 CSV 파일(약 165MB)로, 기사 주소·보도 일자·언론사·제목·통합분류 1~3단계·인물·지역·기업기관 개체명·키워드·특성추출 값·본문이 들어 있다. 언론 연구자나 보건의료 정책 분석가가 '의대 정원 확대 논의가 어느 시기에 집중 보도됐고 어떤 키워드와 프레임으로 다뤄졌는가'를 살필 때 쓴다. 다른 데이터와 바로 맞물리는 전역 조인 키는 없으므로, 보도 일자로 정책 발표 일정과 시기를 맞추거나 지역 개체명·언론사 이름을 문자열로 대조해 이어 쓴다.
 limits: 공통 코드나 식별자가 없어 다른 데이터와는 이름·날짜 대조로만 연결되고, 개체명 필드는 기사 텍스트에서 추출한 값이라 행정구역 코드와 바로 맞지 않는다. 파일 용량이 약 165MB로 커서 한 번에 열기보다 나눠 읽는 편이 낫다.
 review:
   summary: draft
@@ -287,3 +306,4 @@ review:
     - c-15153427-03
     - c-15153427-04
   dropped_citations: 0
+status: active

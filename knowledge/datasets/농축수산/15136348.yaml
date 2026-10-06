@@ -1,4 +1,5 @@
-# Dataset 15136348 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15136348 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15136348'
 tier: verified
 title: 해양수산부_MR 시도 선종 기준 어선 세력 집계
@@ -24,6 +25,7 @@ synonyms:
   - 어선 마력
   - 어선세력 통계
   - 어선 보유 현황
+summary_user: 전국 시도별로 통계 연도마다 어선 세력을 집계한 파일로, 전체·동력·무동력 어선의 척수와 톤수, 마력, 평균 톤수를 담는다(건별 어선 원장이 아닌 시도 단위 집계). 수산 정책 분석가나 지자체 담당자가 '우리 시도의 동력 어선 척수와 평균 톤수가 연도별로 어떻게 변했나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키나 시도 코드가 없어, 다른 시도 단위 통계와는 시도명(국문·영문)과 통계 연도를 이름 매핑해서 붙여야 한다.
 description_portal: 이 데이터는 해양수산부에서 MR 시도 및 선종을 기준으로 어선 세력 집계 정보를 제공하기 위해 수집한 데이터입니다.  본 데이터의 주요 내용은 통계 연도별로 시도 명칭(국문, 영문), 전체 어선 척수, 전체 어선 톤수, 전체 마력, 동력 및 무동력 어선의 척수와 톤수, 평균 톤수, 최종 변경 시점 등 정보로 구성되어 있습니다.  본 데이터는 시도 관계기관에서 어선 세력의 구조 및 변동 추이 분석, 어선 관련 정책 수립, 수산업 지원 사업 기획, 어선 등록 및 관리 체계 마련 등 행정 및 연구 등 활동을 위한 기초 자료로 활용될 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -237,6 +239,16 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도 명
+    - 시도 영문명
+  space_via: name
+  time: day
+  time_fields:
+    - 최초 생성 시점
+    - 최종 변경 시점
 cycle: default
 classification:
   subsector_name: 어업 허가·면허·어장·어선 등록
@@ -338,8 +350,6 @@ verification:
   run: probe/runs/15136348.json
   stats: probe/stats/15136348.json
   data: probe/data/15136348/
-status: active
-summary_user: 전국 시도별로 통계 연도마다 어선 세력을 집계한 파일로, 전체·동력·무동력 어선의 척수와 톤수, 마력, 평균 톤수를 담는다(건별 어선 원장이 아닌 시도 단위 집계). 수산 정책 분석가나 지자체 담당자가 '우리 시도의 동력 어선 척수와 평균 톤수가 연도별로 어떻게 변했나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키나 시도 코드가 없어, 다른 시도 단위 통계와는 시도명(국문·영문)과 통계 연도를 이름 매핑해서 붙여야 한다.
 limits: 시도 단위 집계라 개별 어선 번호나 어업 허가·면허 단위로 내려가 분석할 수 없다. 표준 행정코드가 없어 시도명 표기 차이를 맞추는 매핑이 필요하다. 제목의 '선종 기준'과 달리 실측 필드에는 선종 구분 없이 동력·무동력 구분만 있다.
 review:
   summary: draft
@@ -351,3 +361,4 @@ review:
     - c-15136348-03
     - c-15136348-04
   dropped_citations: 0
+status: active

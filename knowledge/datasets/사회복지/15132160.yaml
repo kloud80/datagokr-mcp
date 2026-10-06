@@ -1,4 +1,5 @@
-# Dataset 15132160 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132160 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132160'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄통합지원 시스템설문조사 정보
@@ -21,6 +22,7 @@ synonyms:
   - 아이돌보미 설문
   - 한국건강가정진흥원 설문조사
   - 아이돌봄 센터 직책
+summary_user: 아이돌봄통합지원 시스템에서 진행한 설문조사의 응답자 정보를 응답자 한 명씩 담는 전국 범위의 원천 데이터로, 조사연월·센터코드·성별·센터등급·센터직책과 등록·수정일자가 들어 있다. 아이돌봄 사업을 분석하는 담당자나 연구자가 "특정 조사연월에 어떤 직책·등급의 센터 인력이 설문에 응답했는가"처럼 응답자 구성을 파악할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았고, 다른 데이터와는 센터코드(cntrCd)처럼 같은 기관 내부 코드나 이름 매핑으로만 이어 쓴다.
 description_portal: 아이돌봄통합지원 시스템의 설문조사 정보를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 수정일자, 조사연월, 답변자관리번호, 전화번호, 성별구분코드, 센터등급코드, 센터직책코드, 등록일자 등의 내용을 확인할 수 있습니다.해당 데이터는 조사 행정의 효율성을 높일 수 있으며 센터별 인적 구성 파악과 함께 조사 진행 과정의 추적이 가능하며, 조사 조직 체계의 정비에도 도움을 줍니다. 또한 설문 응답자와의 인터뷰나 피드백 수집 시 유용하게 활용될 수 있습니다. 설문조사 대상자와 조사 관리 체계를 정비하는 데 활용 될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -78,6 +80,7 @@ schema:
     - name: answrMngNo
       title: 답변자관리번호
       type: number
+      semantic_type: idolbom_answr_mng_no
       null_rate: 0.0
       sample_values:
         - '550819200493132'
@@ -91,6 +94,7 @@ schema:
     - name: cntrCd
       title: 센터코드
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0285
@@ -172,12 +176,27 @@ schema:
         p50: 20200710
         max: 20200724
         unique: 16
+  foreign_keys:
+    - fields:
+        - answrMngNo
+      reference:
+        key: idolbom_answr_mng_no
+      evidence: measured
+    - fields:
+        - cntrCd
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - exmnYm
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -221,7 +240,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132160-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: idolbom_answr_mng_no(answrMngNo), child_care_inst_no(cntrCd)'
     evidence:
       - type: measured
         source: probe/stats/15132160.json
@@ -275,8 +294,6 @@ verification:
   run: probe/runs/15132160.json
   stats: probe/stats/15132160.json
   data: probe/data/15132160/
-status: active
-summary_user: 아이돌봄통합지원 시스템에서 진행한 설문조사의 응답자 정보를 응답자 한 명씩 담는 전국 범위의 원천 데이터로, 조사연월·센터코드·성별·센터등급·센터직책과 등록·수정일자가 들어 있다. 아이돌봄 사업을 분석하는 담당자나 연구자가 "특정 조사연월에 어떤 직책·등급의 센터 인력이 설문에 응답했는가"처럼 응답자 구성을 파악할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았고, 다른 데이터와는 센터코드(cntrCd)처럼 같은 기관 내부 코드나 이름 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 기관 데이터와 직접 결합하기 어렵다. 위치 정보가 없는 비공간 데이터라 지역별 분석에는 쓰기 어렵다. 활용신청은 자동승인되며, 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -288,3 +305,4 @@ review:
     - c-15132160-03
     - c-15132160-04
   dropped_citations: 0
+status: active

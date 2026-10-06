@@ -1,5 +1,3 @@
-# Dataset 15134672 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15134672'
 tier: verified
 title: 국토교통부_골재자원조사_골재조사지역
@@ -36,6 +34,7 @@ schema:
   fields:
     - name: 조사지역일련번호
       type: number
+      semantic_type: aggregate_survey_area_sn
       null_rate: 0.0
       sample_values:
         - '111'
@@ -160,6 +159,12 @@ schema:
         p50: 294883
         max: 500799.9997
         unique: 52
+  foreign_keys:
+    - fields:
+        - 조사지역일련번호
+      reference:
+        key: aggregate_survey_area_sn
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -202,7 +207,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15134672-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: aggregate_survey_area_sn(조사지역일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15134672.json
@@ -280,3 +285,10 @@ review:
     - c-15134672-06
   dropped_citations: 0
 status: active
+grain:
+  space: point
+  space_fields:
+    - 지역범위최소(위도)
+    - 지역범위최소(경도)
+    - 지역범위최대(위도)
+  space_via: coord

@@ -1,4 +1,5 @@
-# Dataset 15070275 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070275 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070275'
 tier: verified
 title: 한국수력원자력(주)_방사선동위원소 저장시설 출입자관리
@@ -24,6 +25,7 @@ synonyms:
   - 방사선 관리구역 출입
   - 한수원 출입 이력
   - 방사성폐기물 저장시설 출입
+summary_user: 한국수력원자력 사업소별 방사성동위원소 저장시설에 누가(출입자구분) 언제, 어느 장소에, 무슨 목적으로 출입했는지를 건별로 기록한 출입 원천 데이터로, 약 451KB 분량의 CSV 파일이며 범위는 전국 단위의 비공간 자료다. 원전 사업소별 저장시설 출입 빈도와 목적(점검·반입 등)이 어떻게 분포하는지 살펴보려는 분석가나 시민이 시설 출입 통제 현황을 확인하는 데 쓴다. 전역 조인 키가 없어 다른 방사성폐기물·원전 데이터와는 사업소 이름을 맞추는 방식으로만 이어 쓴다.
 description_portal: 해당 시설에 출입하는 사람들의 정보를 체계적으로 기록한 공공데이터입니다. 이 데이터에는 출입하는 사람의 소속 기관, 출입 일시, 출입 목적 등 다양한 정보가 포함되어 있습니다. 이를 통해 방사성 물질의 안전한 관리와 보안을 강화하고, 출입 기록을 투명하게 관리하여 비인가 출입이나 사고 발생 시 신속하게 대응할 수 있습니다. 또한, 이 데이터는 시설의 출입 통제 현황을 파악하고, 방사성 물질의 안전한 저장과 관리를 위한 정책 수립에 중요한 자료로 활용됩니다. 국민 안전과 방사선 안전을 위해 매우 중요한 역할을 수행합니다.
 legal_basis_portal: 한국수력원자력 표준절차서
 accrual_periodicity: 연간
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 사업소
       type: code
+      semantic_type: khnp_site
       null_rate: 0.0
       sample_values:
         - 신한울1발전소
@@ -82,12 +85,22 @@ schema:
         - 출입자
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: khnp_site
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 출입일시
 cycle: default
 classification:
   subsector_name: 방사성폐기물 (반입·인수·처분·저장 현황)
@@ -125,7 +138,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070275-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_site(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15070275.json
@@ -189,8 +202,6 @@ verification:
   run: probe/runs/15070275.json
   stats: probe/stats/15070275.json
   data: probe/data/15070275/
-status: active
-summary_user: 한국수력원자력 사업소별 방사성동위원소 저장시설에 누가(출입자구분) 언제, 어느 장소에, 무슨 목적으로 출입했는지를 건별로 기록한 출입 원천 데이터로, 약 451KB 분량의 CSV 파일이며 범위는 전국 단위의 비공간 자료다. 원전 사업소별 저장시설 출입 빈도와 목적(점검·반입 등)이 어떻게 분포하는지 살펴보려는 분석가나 시민이 시설 출입 통제 현황을 확인하는 데 쓴다. 전역 조인 키가 없어 다른 방사성폐기물·원전 데이터와는 사업소 이름을 맞추는 방식으로만 이어 쓴다.
 limits: 실측 컬럼에 공통 조인 키가 없어 다른 데이터와는 사업소명 등 이름 매핑으로만 연결된다. 범위는 전국이지만 좌표 등 공간 정보가 없어 지도 분석에는 바로 쓰기 어렵다.
 review:
   summary: draft
@@ -202,3 +213,4 @@ review:
     - c-15070275-03
     - c-15070275-04
   dropped_citations: 0
+status: active

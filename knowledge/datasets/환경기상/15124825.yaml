@@ -1,4 +1,5 @@
-# Dataset 15124825 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15124825 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124825'
 tier: verified
 title: 한국동서발전(주)_대기오염 물질 배출량 정보
@@ -22,6 +23,7 @@ synonyms:
   - 황산화물 질소산화물
   - 동서발전 배출 실적
   - 호기별 배출량
+summary_user: 한국동서발전 발전소의 사업소·호기별로 날짜마다 먼지(TSP)·황산화물(SOx)·질소산화물(NOx) 배출량을 담은 발전 설비 단위 배출 실적 데이터다. 연구자나 환경 분석가가 특정 사업소 호기의 대기오염 물질 배출이 기간에 따라 어떻게 바뀌었는지 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 발전사 배출량이나 굴뚝 배출 자료와는 사업소명·호기 이름을 맞추거나 같은 기관 기준으로만 이어 쓴다.
 description_portal: 한국동서발전에서 오픈API 형태로 제공하는 대기오염 물질 배출량 정보 데이터는 발전 설비별 대기오염 물질 발생 실적과 변화 추이를 객관적으로 파악하고 분석할 수 있도록 구성된 자료입니다. 이 데이터는 기관명, 사업소명, 호기, 날짜, 먼지(TSP), 황산화물(SOx), 질소산화물(NOx) 등 핵심 지표를 통해 발전소별 대기오염 실태를 정량화하고, 설비별 성능 변화, 자원 활용 효율, 환경 영향을 종합적으로 판단하는 데 매우 유용하게 활용될 수 있습니다. 특히 학계·연구 기관에서는 이러한 데이터를 통해 대기오염 저감을 위한 기술 개발, 발전 설비 효율화, 경제·환경·사회적 성과 도출 등 다양한 연구·분석 활동에 접목할 수 있으며, 이를 통해 지속 가능한 발전 산업과 대기환경 보호 정책 마련에도 기여하는 실용적인 기초 자료로 폭넓게 활용될 수 있습니다.
 team:
   dept: ICT기획부
@@ -84,6 +86,7 @@ schema:
     - name: bplcNm
       title: 사업소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진발전본부
@@ -143,12 +146,22 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - bplcNm
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - date
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -192,7 +205,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15124825-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(bplcNm)'
     evidence:
       - type: measured
         source: probe/stats/15124825.json
@@ -257,8 +270,6 @@ verification:
   run: probe/runs/15124825.json
   stats: probe/stats/15124825.json
   data: probe/data/15124825/
-status: active
-summary_user: 한국동서발전 발전소의 사업소·호기별로 날짜마다 먼지(TSP)·황산화물(SOx)·질소산화물(NOx) 배출량을 담은 발전 설비 단위 배출 실적 데이터다. 연구자나 환경 분석가가 특정 사업소 호기의 대기오염 물질 배출이 기간에 따라 어떻게 바뀌었는지 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 발전사 배출량이나 굴뚝 배출 자료와는 사업소명·호기 이름을 맞추거나 같은 기관 기준으로만 이어 쓴다.
 limits: 측정소코드 기반의 시간별 대기질이나 경보 정보가 아니고 발전 설비 배출 실적이므로 에어코리아 측정값과 바로 결합되지 않는다. 행정구역 코드나 좌표가 없는 비공간 자료여서 지역별 집계·지도화에는 사업소 위치를 따로 매핑해야 한다.
 review:
   summary: draft
@@ -271,3 +282,4 @@ review:
     - c-15124825-04
     - c-15124825-06
   dropped_citations: 0
+status: active

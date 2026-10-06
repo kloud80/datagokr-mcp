@@ -1,4 +1,5 @@
-# Dataset 15062804 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15062804 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062804'
 tier: verified
 title: 공공데이터활용지원센터_공공데이터포털 목록개방현황
@@ -23,6 +24,7 @@ synonyms:
   - 파일데이터 목록
   - 공공데이터포털 카탈로그
   - 기관별 개방 데이터
+summary_user: 공공기관이 공공데이터포털에 등록해 개방 중인 목록을 한 행씩 담은 메타데이터 파일로, 목록유형(파일·API·표준), 목록명, 제공기관, 관리부서, 업데이트 주기, 이용허락범위, 조회수·활용신청건수 등을 담으며 CSV 한 파일이 약 135MB(135,225,877바이트)다. 분석가나 서비스 개발자가 '어느 기관이 어떤 데이터를 파일·API 중 어떤 방식으로, 어떤 주기로 개방하고 있는가'를 확인하거나 개방 현황을 기관별로 집계하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 제공기관코드나 목록명·기관명 같은 이름 매핑으로만 이어 쓴다.
 description_portal: 공공기관이 등록하여 공공데이터포털에서 개방중인 목록 정보(목록유형(파일, API,표준), 목록명,파일데이터명,분류체계,제공기관,관리 부서명,관리부서 전화번호,보유근거,수집방법,업데이트 주기,차기 등록 예정일,매체유형,데이터 한계,제공형태,설명,기타 유의사항,API 유형,신청가능 트래픽,심의 유형,조회수,목록 URL,국가중점여부 등)를 제공합니다.이 데이터는 공공기관들이 개방한 공공데이터의 전반적인 개방 현황을 한눈에 파악할 수 있도록 정리한 자료입니다. 각 기관이 어떤 데이터를 어떠한 방식으로 제공하고 있는지를 종합적으로 보여주며, 공공데이터 기반 서비스 개발이나 정책 수립에 필요한 기초 자료로 사용할 수 있습니다.※ "25년 7월 데이터부터 제공 칼럼을 개선, 파일데이터와 오픈API 상세페이지에서 제공하는 모든 항목을 추가하였습니다.      이에 따라 칼럼 순서가 상세페이지 순서에 맞춰 변경되었으니 데이터 이용에 참고하시기 바랍니다.
 accrual_periodicity: 월간
 team:
@@ -84,6 +86,7 @@ schema:
         unique: 74
     - name: 제공기관코드
       type: code
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - '6110000'
@@ -373,12 +376,24 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 제공기관코드
+      reference:
+        key: instt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 미상
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 차기 등록 예정일
+    - 등록일
+    - 수정일
 cycle: default
 classification:
   subsector_name: 공공데이터포털 메타 (시스템 자체 문서)
@@ -416,7 +431,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15062804-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: instt_cd(제공기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15062804.json
@@ -470,8 +485,6 @@ verification:
   run: probe/runs/15062804.json
   stats: probe/stats/15062804.json
   data: probe/data/15062804/
-status: active
-summary_user: 공공기관이 공공데이터포털에 등록해 개방 중인 목록을 한 행씩 담은 메타데이터 파일로, 목록유형(파일·API·표준), 목록명, 제공기관, 관리부서, 업데이트 주기, 이용허락범위, 조회수·활용신청건수 등을 담으며 CSV 한 파일이 약 135MB(135,225,877바이트)다. 분석가나 서비스 개발자가 '어느 기관이 어떤 데이터를 파일·API 중 어떤 방식으로, 어떤 주기로 개방하고 있는가'를 확인하거나 개방 현황을 기관별로 집계하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 제공기관코드나 목록명·기관명 같은 이름 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터셋과의 연결은 기관 코드나 이름 매칭에 의존하며, 수록 범위(기간)는 확인되지 않았다. 포털 설명상 2025년 7월 데이터부터 칼럼이 추가되고 순서가 바뀌었으므로 이전 파일과 합칠 때 칼럼 위치를 맞춰야 한다.
 review:
   summary: draft
@@ -483,3 +496,4 @@ review:
     - c-15062804-03
     - c-15062804-04
   dropped_citations: 0
+status: active

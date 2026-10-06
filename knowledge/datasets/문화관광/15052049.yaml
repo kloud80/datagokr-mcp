@@ -1,4 +1,5 @@
-# Dataset 15052049 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15052049 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15052049'
 tier: verified
 title: 울산시설공단_동천국민체육센터_이용요금_정보
@@ -23,6 +24,7 @@ synonyms:
   - 울산 공공체육시설 요금
   - 체육센터 연령별 요금
   - 울산 중구 체육시설
+summary_user: 울산시설공단 동천국민체육센터의 이용 요금을 종목·연령대(이용구분)별로 한 행씩 담은 작은 CSV 파일(약 2.7KB)로, 이용 가능 시간·요금·연락처·데이터 기준일자를 함께 싣는다. 동천국민체육센터에서 수영 같은 종목을 이용하려는 시민이 "우리 아이 연령대는 월 이용료가 얼마이고 몇 시에 이용할 수 있나"를 미리 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시설명이나 같은 기관(울산시설공단)의 다른 시설 요금·현황 파일과 이름으로 맞춰 이어 쓴다.
 description_portal: 울산시설공단 동천국민체육센터의 이용 요금 정보를 제공하는 데이터로서, 이 데이터에는 시설명, 구분, 종목, 이용 구분(연령대), 이용 가능 시간, 요금, 연락처, 데이터 기준일자 등의 항목이 포함되어 있습니다. 이용자들은 이 정보를 통해 종목별로 연령대에 따른 요금과 운영 시간 등을 사전에 확인할 수 있으며, 동천국민체육센터를 효율적으로 이용하는 데 도움이 됩니다. 또한, 제공된 연락처를 통해 센터에 대한 문의를 진행할 수 있고, 데이터 기준일자를 확인함으로써 최신 정보를 확인하는 데도 유용합니다.
 accrual_periodicity: 연간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 동천국민체육센터
@@ -105,12 +108,22 @@ schema:
         min: '2026-05-11'
         max: '2026-05-11'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -147,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15052049-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15052049.json
@@ -212,8 +225,6 @@ verification:
   run: probe/runs/15052049.json
   stats: probe/stats/15052049.json
   data: probe/data/15052049/
-status: active
-summary_user: 울산시설공단 동천국민체육센터의 이용 요금을 종목·연령대(이용구분)별로 한 행씩 담은 작은 CSV 파일(약 2.7KB)로, 이용 가능 시간·요금·연락처·데이터 기준일자를 함께 싣는다. 동천국민체육센터에서 수영 같은 종목을 이용하려는 시민이 "우리 아이 연령대는 월 이용료가 얼마이고 몇 시에 이용할 수 있나"를 미리 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 시설명이나 같은 기관(울산시설공단)의 다른 시설 요금·현황 파일과 이름으로 맞춰 이어 쓴다.
 limits: 표준 시설 코드나 행정구역 코드 같은 조인 키가 없어 전국 체육시설 DB 등과 자동으로 연결되지 않고, 시설명 문자열로 수작업 매칭해야 한다. 이 파일은 요금표일 뿐 예약·대관 가능 여부나 실시간 운영 상태는 담지 않는다.
 review:
   summary: draft
@@ -225,3 +236,4 @@ review:
     - c-15052049-03
     - c-15052049-06
   dropped_citations: 0
+status: active

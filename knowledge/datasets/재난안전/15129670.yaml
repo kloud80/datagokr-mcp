@@ -1,5 +1,3 @@
-# Dataset 15129670 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15129670'
 tier: verified
 title: 울산시설공단_시설별 최근접 민방위 대피소 현황
@@ -36,6 +34,7 @@ schema:
   fields:
     - name: 기준시설
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 종합운동장
@@ -106,12 +105,27 @@ schema:
         min: '2026-04-10'
         max: '2026-04-10'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 기준시설
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
+  time: day
+  time_fields:
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 대피·구호시설 (민방위 대피시설·지진/해일 대피장소·무더위/한파쉼터·비상급수시설·임시주거)
@@ -148,7 +162,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15129670-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(기준시설)'
     evidence:
       - type: measured
         source: probe/stats/15129670.json

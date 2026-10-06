@@ -1,4 +1,5 @@
-# Dataset 15097199 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15097199 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15097199'
 tier: verified
 title: 식품의약품안전처_통지의약품 정보
@@ -20,6 +21,7 @@ synonyms:
   - 주성분 함량 제형
   - 신규 의약품 후보
   - 식약처 의약품 허가신청일자
+summary_user: 식약처에 통지된 의약품을 품목별 목록으로 담으며, 주성분(MCPN_CONT)·함량·제형·허가신청일자를 전국 단위로 제공한다. 제약사·연구자가 "특정 주성분으로 허가 절차가 진행 중인 의약품이 어떤 제형·함량으로 언제 신청됐나"를 확인해 시장 진입 후보 제품을 파악하는 데 쓴다. 실측 컬럼에 품목기준코드 같은 전역 조인 키가 없어, 식약처 허가정보 등 다른 의약품 데이터와는 주성분명·제형명 같은 이름 매칭으로만 연결한다.
 description_portal: 식품의약품안전처 「통지의약품 정보」 OpenAPI는 통지된 의약품의 기본 정보를 목록 형태로 제공하는 공공데이터입니다. 주요 제공 항목에는 주성분, 함량, 제형, 허가신청일자 등이 포함되어 이 데이터를 통해 사용자는 특정 의약품의 주성분과 제형, 허가신청일자를 확인할 수 있고, 허가 절차가 진행 중인 의약품 현황을 파악하는 데 도움이 됩니다.제약사와 연구자는 이 데이터 정보를 기반으로 향후 시장에 진입할 수 있는 후보 제품을 파악하거나 허가 진행 현황을 검토하는 참고자료로 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -85,6 +87,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PRDLST_PRMSN_APLY_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -194,8 +200,6 @@ verification:
   run: probe/runs/15097199.json
   stats: probe/stats/15097199.json
   data: probe/data/15097199/
-status: active
-summary_user: 식약처에 통지된 의약품을 품목별 목록으로 담으며, 주성분(MCPN_CONT)·함량·제형·허가신청일자를 전국 단위로 제공한다. 제약사·연구자가 "특정 주성분으로 허가 절차가 진행 중인 의약품이 어떤 제형·함량으로 언제 신청됐나"를 확인해 시장 진입 후보 제품을 파악하는 데 쓴다. 실측 컬럼에 품목기준코드 같은 전역 조인 키가 없어, 식약처 허가정보 등 다른 의약품 데이터와는 주성분명·제형명 같은 이름 매칭으로만 연결한다.
 limits: 품목기준코드·표준코드가 없어 심평원 약가·급여 목록이나 DUR 정보와 코드로 바로 잇지 못하며, 이름 매핑에 의존해야 한다. 지역 구분이 없는 전국·비공간 데이터다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -208,3 +212,4 @@ review:
     - c-15097199-04
     - c-15097199-06
   dropped_citations: 0
+status: active

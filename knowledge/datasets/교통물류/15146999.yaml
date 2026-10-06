@@ -1,4 +1,5 @@
-# Dataset 15146999 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15146999 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15146999'
 tier: verified
 title: 국토교통부_교통영향평가_교통수단분담율
@@ -22,6 +23,7 @@ synonyms:
   - 이용 교통수단 조사
   - 대중교통 분담률
   - 통행수단 비율
+summary_user: 교통영향평가에서 사업지 주변 유사시설을 일별로 조사한 이용 교통수단 교통량을 담은 전국 단위 원천 파일(CSV)로, 유사시설별로 이용·상근 인구와 평일·휴일을 나눠 화물·승용·택시·버스·도시철도·자전거·도보 등 수단별 값을 기록한다. 교통영향평가를 준비하는 사업자나 분석가가 "비슷한 시설 이용자는 승용차와 대중교통을 각각 얼마나 쓰는가"를 확인해 수단분담률 원단위를 잡는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 유사시설 식별자(유사시설아이디)나 시설명으로 같은 교통영향평가 계열 데이터와 맞춰 잇는 방식으로만 연결한다.
 description_portal: 교통영향평가의 내용 중 사업지 주변의 유사시설 원단위 정보를 제공합니다. 유사시설에 대한 이용 교통수단을 일별 조사하여 이용/상근 인구구분, 평일/휴일에 따른 이용 교통수단 교통량 정보를 제공합니다.
 applicable_legislation:
   - law: 도시교통정비촉진법
@@ -157,6 +159,7 @@ schema:
         unique: 2508
     - name: 유사시설아이디
       type: number
+      semantic_type: tia_similar_fclt_id
       null_rate: 0.0
       sample_values:
         - '232000075922 '
@@ -176,12 +179,22 @@ schema:
         - 남구 야음동 주상복합 신축공사
       stats:
         unique: 9195
+  foreign_keys:
+    - fields:
+        - 유사시설아이디
+      reference:
+        key: tia_similar_fclt_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 조사일
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -218,7 +231,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15146999-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tia_similar_fclt_id(유사시설아이디)'
     evidence:
       - type: measured
         source: probe/stats/15146999.json
@@ -293,8 +306,6 @@ verification:
   run: probe/runs/15146999.json
   stats: probe/stats/15146999.json
   data: probe/data/15146999/
-status: active
-summary_user: 교통영향평가에서 사업지 주변 유사시설을 일별로 조사한 이용 교통수단 교통량을 담은 전국 단위 원천 파일(CSV)로, 유사시설별로 이용·상근 인구와 평일·휴일을 나눠 화물·승용·택시·버스·도시철도·자전거·도보 등 수단별 값을 기록한다. 교통영향평가를 준비하는 사업자나 분석가가 "비슷한 시설 이용자는 승용차와 대중교통을 각각 얼마나 쓰는가"를 확인해 수단분담률 원단위를 잡는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 유사시설 식별자(유사시설아이디)나 시설명으로 같은 교통영향평가 계열 데이터와 맞춰 잇는 방식으로만 연결한다.
 limits: 표준 행정코드나 좌표 같은 전역 조인 키가 없어 지역·시설 원장과 바로 결합하기 어렵다. 비공간 데이터라 시설 위치 기반 분석에는 별도 매핑이 필요하다.
 review:
   summary: draft
@@ -306,3 +317,4 @@ review:
     - c-15146999-03
     - c-15146999-04
   dropped_citations: 0
+status: active

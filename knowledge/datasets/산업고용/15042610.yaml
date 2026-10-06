@@ -1,4 +1,5 @@
-# Dataset 15042610 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15042610 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15042610'
 tier: verified
 title: 한국남부발전(주)_발전소 보일러 정보
@@ -24,6 +25,7 @@ synonyms:
   - 회분처리방식
   - 버너 분사형식
   - 화력발전소 설비
+summary_user: 한국남부발전이 운영하는 발전소의 보일러를 호기 단위로 정리한 설비 원장으로, 발전소명·호기별 연소방식(미분탄 연소, 슬래그 탭 연소로 등)·회분제거방식·버너 분사형식을 담은 933바이트 분량의 소규모 CSV 파일이다. 발전설비를 연구하는 분석가가 '남부발전 발전소들의 보일러는 호기마다 연소·회분 처리 방식이 어떻게 다른가'를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명을 이름으로 맞추거나 같은 기관의 다른 설비 자료와 수동으로 이어 써야 한다.
 description_portal: 이 데이터는 한국남부발전이 운영하는 발전소의 보일러 관련 기술 정보를 정리한 자료입니다. 각 발전소별 보일러 호기, 연소방식, 회분제거방식, 보일러버너 분사형식 등의 세부 정보를 확인할 수 있으며, 미분탄 연소 및 슬래그 탭 연소로 등 다양한 연소 기법과 설비 운영 방식을 포함하고 있습니다. 이를 통해 발전소 보일러의 설계 특징과 운전 방식의 차이를 이해할 수 있고, 에너지 효율성 및 환경적 영향을 고려한 설비 관리 방향을 파악하는 데 도움이 됩니다. 본 자료는 발전설비 운영 현황을 연구하거나 보일러 기술의 특성을 비교·분석하는 데 활용할 수 있는 유용한 정보입니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - 하동발전본부
@@ -45,6 +48,7 @@ schema:
         unique: 2
     - name: 호기
       type: number
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -80,6 +84,17 @@ schema:
         - 수평 내벽 분사형
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -122,7 +137,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15042610-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_plant_unit(발전소명), kospo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15042610.json
@@ -187,8 +202,6 @@ verification:
   run: probe/runs/15042610.json
   stats: probe/stats/15042610.json
   data: probe/data/15042610/
-status: active
-summary_user: 한국남부발전이 운영하는 발전소의 보일러를 호기 단위로 정리한 설비 원장으로, 발전소명·호기별 연소방식(미분탄 연소, 슬래그 탭 연소로 등)·회분제거방식·버너 분사형식을 담은 933바이트 분량의 소규모 CSV 파일이다. 발전설비를 연구하는 분석가가 '남부발전 발전소들의 보일러는 호기마다 연소·회분 처리 방식이 어떻게 다른가'를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명을 이름으로 맞추거나 같은 기관의 다른 설비 자료와 수동으로 이어 써야 한다.
 limits: 발전소 코드나 주소 같은 공통 키가 없어 태양광 허가 표준데이터나 배출 측정 자료와 자동으로 결합할 수 없고, 발전소명 문자열로만 맞춰야 한다. 범위는 전국이지만 위치 정보가 없는 비공간 자료여서 지도나 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -200,3 +213,4 @@ review:
     - c-15042610-03
     - c-15042610-04
   dropped_citations: 0
+status: active

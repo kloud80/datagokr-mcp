@@ -1,4 +1,5 @@
-# Dataset 15125156 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125156 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125156'
 tier: verified
 title: 성평등가족부_국제 청소년 성취포상제 활동기록 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 듀크 오브 에딘버러 어워드
   - 청소년 활동 기록
   - 포상제 탐험활동
+summary_user: 국제 청소년 성취포상제 참가자의 활동기록을 입회번호와 활동기록순서 단위로 담은 건별 원천 데이터로, 영역·활동명·활동일자·장소·시간과 계획·완료·변경의 요청·확인 일자, 탐험 활동의 날씨·팀 인원·이동거리·식단 등을 전국 범위로 제공한다. 포상제 운영 담당자나 청소년활동 분석가가 "영역별로 참가자들이 활동을 완료 확인받기까지 얼마나 걸리고 활동시간은 얼마나 되는가" 같은 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 같은 기관의 포상제 관련 데이터와 입회번호·활동프로그램번호로 맞추거나 이름 매핑으로만 이어 쓴다.
 description_portal: 국제 청소년 성취포상제 활동기록에 대한 정보를 제공하는 오픈 API형 데이터입니다. 해당 개방데이터는 입회번호, 영역명, 구분명, 상태명, 활동명, 시작/종료일자, 완료 요청/확인일자, 확인여부, 계획 요청/확인 일자, 활동 프로그램번호, 변경일자, 변경구분명, 변경 요청/승인 일자, 활동장소명, 활동시간 등의 활동기록 내용을 확인할 수 있습니다. 국제 청소년이 수행한 다양한 활동 내역을 구체적으로 기록하여 포상제 과정의 신뢰성과 성과 분석에 도움을 주며, 활동 평가 및 검토에 있어서 정량적 자료롤 활용할 수 있습니다. 운영의 효율성과 공정성을 높이는 데 효과적입니다.
 team:
   dept: 정보통계담당관실
@@ -68,6 +70,7 @@ schema:
     - name: wtnessNo
       title: 입회번호
       type: number
+      semantic_type: award_wtness_no
       null_rate: 0.0
       sample_values:
         - '31971'
@@ -401,6 +404,12 @@ schema:
         p50: 20221019
         max: 20240904
         unique: 4
+  foreign_keys:
+    - fields:
+        - wtnessNo
+      reference:
+        key: award_wtness_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -451,7 +460,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125156-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_wtness_no(wtnessNo)'
     evidence:
       - type: measured
         source: probe/stats/15125156.json
@@ -505,8 +514,6 @@ verification:
   run: probe/runs/15125156.json
   stats: probe/stats/15125156.json
   data: probe/data/15125156/
-status: active
-summary_user: 국제 청소년 성취포상제 참가자의 활동기록을 입회번호와 활동기록순서 단위로 담은 건별 원천 데이터로, 영역·활동명·활동일자·장소·시간과 계획·완료·변경의 요청·확인 일자, 탐험 활동의 날씨·팀 인원·이동거리·식단 등을 전국 범위로 제공한다. 포상제 운영 담당자나 청소년활동 분석가가 "영역별로 참가자들이 활동을 완료 확인받기까지 얼마나 걸리고 활동시간은 얼마나 되는가" 같은 질문에 쓴다. 전역 조인 키가 없어 다른 데이터와는 같은 기관의 포상제 관련 데이터와 입회번호·활동프로그램번호로 맞추거나 이름 매핑으로만 이어 쓴다.
 limits: 행정구역 코드나 좌표가 없는 전국·비공간 데이터라 지역별 분석이나 시설 데이터와의 직접 결합이 어렵다. 이벤트성으로 생성된 뒤 바뀌지 않는 성격의 데이터이며, 개발계정은 하루 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -519,3 +526,4 @@ review:
     - c-15125156-03
     - c-15125156-04
   dropped_citations: 0
+status: active

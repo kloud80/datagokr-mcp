@@ -1,4 +1,3 @@
-# Dataset 15043845 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15043845'
 tier: verified
 title: 한국가스안전공사_해외제조공장 등록현황_고압가스분야
@@ -24,6 +23,7 @@ synonyms:
   - 고압가스 용기 해외공장
   - 가스용품 해외 등록
   - 저장탱크 실린더 제조공장
+summary_user: 한국가스안전공사가 관리하는 고압가스 분야(저장탱크·용기·실린더 등 가스용품) 해외 제조공장의 등록 현황을 공장 1곳당 1행으로 담으며, 등록번호·업소명·최초등록일·만료일·등록종류·제조기준·대표자·소재지·국가를 제공한다. 수입업자나 가스용품 사용 사업자가 특정 해외 공장이 국내에 등록돼 있는지, 등록이 언제 만료되는지 확인할 때 쓴다. 다른 데이터와 공통으로 쓸 조인 키는 없어 업소명이나 국가명 같은 이름 매칭으로만 연결한다.
 description_portal: '한국가스안전공사에서 관리하는 해외제조공장 현황 정보(고압가스분야)입니다.고압가스 분야의 저장탱크, 용기, 실린더 등 가스용품에 대한 국외 제조공장 현황에 대한 정보가 수록되어 있습니다.해당 데이터는 등록번호, 업소명, 등록일자, 만료일자, 등록종류(유형), 제조기준, 대표자, 주소 및 소재국가 정보를 제공합니다.- 해당 자료는 산업통상자원부와 공동 검증을 통해 제공됩니다.(2025년 4월까지 수집 확인된 정보임을 참고바랍니다)- 해당데이터는 타 유관기관 또는 민간에서 수집 및 관리하는 정보와는 상이할 수 있습니다. - 해당데이터는 수시성 주기 데이터로 비정기적으로 제공됩니다.- 데이터기준일 : 2025년 4월 30일'
 applicable_legislation:
   - law: 고압가스안전관리법
@@ -41,6 +41,7 @@ schema:
   fields:
     - name: 등록번호
       type: string
+      semantic_type: kgs_overseas_factory_no
       null_rate: 0.0
       sample_values:
         - 제 ES-19 호
@@ -124,12 +125,27 @@ schema:
         - Germany
       stats:
         unique: 42
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: kgs_overseas_factory_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 최초등록일
+    - 만료일
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -166,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043845-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kgs_overseas_factory_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15043845.json
@@ -241,8 +257,6 @@ verification:
   run: probe/runs/15043845.json
   stats: probe/stats/15043845.json
   data: probe/data/15043845/
-status: active
-summary_user: 한국가스안전공사가 관리하는 고압가스 분야(저장탱크·용기·실린더 등 가스용품) 해외 제조공장의 등록 현황을 공장 1곳당 1행으로 담으며, 등록번호·업소명·최초등록일·만료일·등록종류·제조기준·대표자·소재지·국가를 제공한다. 수입업자나 가스용품 사용 사업자가 특정 해외 공장이 국내에 등록돼 있는지, 등록이 언제 만료되는지 확인할 때 쓴다. 다른 데이터와 공통으로 쓸 조인 키는 없어 업소명이나 국가명 같은 이름 매칭으로만 연결한다.
 limits: 전역 조인 키가 없어 다른 데이터셋과 정확히 연결하기 어렵다. 포털 설명상 2025년 4월 30일 기준으로 비정기 제공되는 자료이고, 다른 유관기관이나 민간 자료와 내용이 다를 수 있다.
 review:
   summary: draft
@@ -254,3 +268,4 @@ review:
     - c-15043845-03
     - c-15043845-04
   dropped_citations: 0
+status: active

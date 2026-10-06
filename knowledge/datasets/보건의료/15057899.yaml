@@ -1,4 +1,3 @@
-# Dataset 15057899 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15057899'
 tier: verified
 title: 식품의약품안전처_의약품 생산수입공급중단정보
@@ -22,6 +21,7 @@ synonyms:
   - 수입중단 의약품
   - 약 재고
   - 공급중단 보고
+summary_user: 의약품의 생산·수입·공급 중단 보고를 건별로 담으며, 업체명·품목명·표준코드, 최종공급일자와 공급중단일자, 자사 재고량과 재고 기준일자, 중단 사유, 공개 여부 등을 제공한다(범위 전국). 의료기관·약국이나 제약 유통업체가 '처방하던 이 약이 언제부터 공급이 끊기고 남은 재고는 얼마인지, 대체품을 찾아야 하는지'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으나, 품목일련번호(ITEM_SEQ)·보험코드(EDI_CODE)·사업자등록번호(BIZRNO)를 이름·코드 매핑으로 식약처 허가정보나 심평원 약가·급여 목록과 맞춰 볼 수 있다.
 description_portal: 식품의약품안전처 「의약품 생산·수입공급중단정보」 OpenAPI는 의약품의 생산, 수입 또는 공급이 중단된 내역을 제공하는 공공데이터입니다. 주요 항목으로는 업체명, 품목명, 표준코드, 최종공급일자, 공급중단일자, 자사 재고량, 재고 기준일자, 중단 사유, 전자민원창구 공개 여부 등이 포함되어 있습니다. 이 데이터는 공급 중단 시점과 원인, 재고 현황 등을 객관적으로 기록해 제공하기 때문에, 제약사와 유통업체는 공급망 관리와 대체 품목 검토에 활용할 수 있고, 의료기관은 환자 치료 과정에서 의약품 수급 문제를 미리 인지하는 데 참고할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -82,6 +82,7 @@ schema:
         unique: 2
     - name: ENTP_SEQ
       type: number
+      semantic_type: drug_entp_seq
       null_rate: 0.0
       sample_values:
         - '20162574'
@@ -136,6 +137,7 @@ schema:
         unique: 1000
     - name: ITEM_SEQ
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '201306447'
@@ -157,6 +159,7 @@ schema:
         unique: 963
     - name: EDI_CODE
       type: number
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - '8806442063618'
@@ -315,6 +318,22 @@ schema:
         p50: 1338124859
         max: 8638700270
         unique: 203
+  foreign_keys:
+    - fields:
+        - ENTP_SEQ
+      reference:
+        key: drug_entp_seq
+      evidence: measured
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
+        - EDI_CODE
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -365,7 +384,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057899-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_entp_seq(ENTP_SEQ), drug_item_seq(ITEM_SEQ), drug_cd(EDI_CODE)'
     evidence:
       - type: measured
         source: probe/stats/15057899.json
@@ -430,8 +449,6 @@ verification:
   run: probe/runs/15057899.json
   stats: probe/stats/15057899.json
   data: probe/data/15057899/
-status: active
-summary_user: 의약품의 생산·수입·공급 중단 보고를 건별로 담으며, 업체명·품목명·표준코드, 최종공급일자와 공급중단일자, 자사 재고량과 재고 기준일자, 중단 사유, 공개 여부 등을 제공한다(범위 전국). 의료기관·약국이나 제약 유통업체가 '처방하던 이 약이 언제부터 공급이 끊기고 남은 재고는 얼마인지, 대체품을 찾아야 하는지'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으나, 품목일련번호(ITEM_SEQ)·보험코드(EDI_CODE)·사업자등록번호(BIZRNO)를 이름·코드 매핑으로 식약처 허가정보나 심평원 약가·급여 목록과 맞춰 볼 수 있다.
 limits: 전역 조인 키가 실측으로 확인되지 않아 다른 데이터와는 품목명·코드 매핑으로만 연결되며, 매핑 정확도는 직접 점검해야 한다. 개발계정은 하루 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -444,3 +461,9 @@ review:
     - c-15057899-04
     - c-15057899-06
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - REPORT_ADDR
+  space_via: address

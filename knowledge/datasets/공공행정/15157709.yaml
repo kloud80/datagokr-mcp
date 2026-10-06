@@ -1,4 +1,5 @@
-# Dataset 15157709 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157709 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157709'
 tier: verified
 title: 한국자산관리공사_차세대 온비드 순위물건목록 저감률순위 조회서비스
@@ -22,6 +23,7 @@ synonyms:
   - 유찰 물건
   - 감정가 대비 할인 물건
   - 국유재산 매각
+summary_user: 온비드에 등록된 입찰마감 전 물건 중 감정평가금액 또는 최초 최저입찰가격 대비 최저입찰가격이 가장 많이 내려간 상위 20개를 부동산·동산·자동차 유형별로 순위를 매겨 담은 목록이며, 물건별 감정가·최저입찰가·저감 비율·입찰기간·재산유형(압류·국유·공유재산 등)이 들어 있고 범위는 전국이다. 공매 투자자나 일반 국민이 '지금 입찰 가능한 물건 중 감정가 대비 가장 싸게 나온 부동산이나 차량은 무엇인가'를 빠르게 훑어볼 때 쓴다. 전역 조인 키는 없지만, 물건관리번호(cltrMngNo)와 공매조건번호를 함께 써서 같은 기관의 온비드 물건·입찰정보 서비스와 이어 상세 조회하고, 용도 분류 코드와 재산유형 코드는 온비드 코드표로 맞춘다.
 description_portal: '한국자산관리공사에서 운영하는 온비드(Onbid) 홈페이지에 등록된 물건 중 최저입찰금액이 감정평가금액 또는 최초입찰가격 대비 가장 많이 저감된 상위 20개 물건 정보입니다. 물건 유형(부동산, 동산, 자동차)에 따라 저감률이 가장 높은 물건의 순위와 입찰종료일자, 최저입찰가격, 감정평가금액 등 주요 물건 정보를 조회할 수 있습니다. 순위물건은 입찰마감 전인 (입찰 준비중이거나 입찰 진행 중) 물건만 조회됩니다. 순위물건의 순위는 참고용으로만 활용하시기 바랍니다. 필수 입력 조건 : 물건유형구분(cltrDivNm) (부동산|동산|자동차 중 입력)'
 team:
   dept: 디지털시스템실
@@ -96,6 +98,7 @@ schema:
     - name: cltrMngNo
       title: 물건관리번호
       type: code
+      semantic_type: onbid_cltr_no
       null_rate: 0.0
       sample_values:
         - 2025-08414-003
@@ -106,6 +109,7 @@ schema:
     - name: pbctCdtnNo
       title: 공매조건번호(물건 입찰정보 조회시 물건관리번호와 함께 입력 필요)
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '6129739'
@@ -119,6 +123,7 @@ schema:
     - name: onbidPbancNo
       title: 온비드공고번호
       type: number
+      semantic_type: onbid_pbanc_no
       null_rate: 0.0
       sample_values:
         - '903752'
@@ -132,6 +137,7 @@ schema:
     - name: pbctNo
       title: 공매번호
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '10064828'
@@ -211,6 +217,7 @@ schema:
     - name: cltrUsgLclsCtgrId
       title: 용도대분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10000'
@@ -222,6 +229,7 @@ schema:
     - name: cltrUsgMclsCtgrId
       title: 용도중분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10200'
@@ -368,12 +376,48 @@ schema:
         - 입찰진행중
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - cltrMngNo
+      reference:
+        key: onbid_cltr_no
+      evidence: measured
+    - fields:
+        - pbctCdtnNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
+    - fields:
+        - onbidPbancNo
+      reference:
+        key: onbid_pbanc_no
+      evidence: measured
+    - fields:
+        - pbctNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
+    - fields:
+        - cltrUsgLclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
+    - fields:
+        - cltrUsgMclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: realtime
+  time_fields:
+    - cltrBidBgngDt
+    - cltrBidEndDt
 cycle: default
 classification:
   subsector_name: 국유·공유재산
@@ -418,7 +462,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157709-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: onbid_cltr_no(cltrMngNo), onbid_pbct_no(pbctCdtnNo), onbid_pbanc_no(onbidPbancNo), onbid_pbct_no(pbctNo), onbid_usg_ctgr_id(cltrUsgLclsCtgrId), onbid_usg_ctgr_id(cltrUsgMclsCtgrId)'
     evidence:
       - type: measured
         source: probe/stats/15157709.json
@@ -472,8 +516,6 @@ verification:
   run: probe/runs/15157709.json
   stats: probe/stats/15157709.json
   data: probe/data/15157709/
-status: active
-summary_user: 온비드에 등록된 입찰마감 전 물건 중 감정평가금액 또는 최초 최저입찰가격 대비 최저입찰가격이 가장 많이 내려간 상위 20개를 부동산·동산·자동차 유형별로 순위를 매겨 담은 목록이며, 물건별 감정가·최저입찰가·저감 비율·입찰기간·재산유형(압류·국유·공유재산 등)이 들어 있고 범위는 전국이다. 공매 투자자나 일반 국민이 '지금 입찰 가능한 물건 중 감정가 대비 가장 싸게 나온 부동산이나 차량은 무엇인가'를 빠르게 훑어볼 때 쓴다. 전역 조인 키는 없지만, 물건관리번호(cltrMngNo)와 공매조건번호를 함께 써서 같은 기관의 온비드 물건·입찰정보 서비스와 이어 상세 조회하고, 용도 분류 코드와 재산유형 코드는 온비드 코드표로 맞춘다.
 limits: 매 호출 시점의 상위 20개만 주므로 전체 물건 목록이나 낙찰 결과 분석에는 쓸 수 없고, 순위는 참고용이다. 물건유형(cltrDivNm)을 반드시 입력해야 하며, 개발계정은 하루 1,000회로 제한된다. 주소·필지 단위 코드(PNU 등)와 바로 이어지는 키는 없어 다른 기관 데이터와는 이름·코드 매핑으로만 연결된다.
 review:
   summary: draft
@@ -485,3 +527,4 @@ review:
     - c-15157709-03
     - c-15157709-04
   dropped_citations: 0
+status: active

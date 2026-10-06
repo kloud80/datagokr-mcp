@@ -1,4 +1,5 @@
-# Dataset 15063819 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15063819 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15063819'
 tier: verified
 title: 국토교통부_국토관리사무소별_소모품및부속품재고정보
@@ -22,6 +23,7 @@ synonyms:
   - 도로장비 부품
   - 물품 출납 이력
   - 장비 소모품 사용량
+summary_user: 국토관리사무소별 소모품·부속품의 재고, 출급, 수입 보고, 청구·집행 요구, 출납 이력을 7개 파일로 나눠 담은 전국 범위 자료이며, 실측 필드는 사무소명·승인일자·품목명·수량·장비번호·등록일 같은 건별 출급 기록입니다. 도로 관리 장비 운영을 분석하는 사람이 어느 사무소가 어떤 장비에 어떤 소모품을 얼마나 출급했는지 파악하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 사무소명이나 장비번호 같은 이름·코드를 직접 맞추거나 같은 기관 자료끼리만 연결한다.
 description_portal: 국토 관리 사무소 별로 소모품 및 부속품 재고 정보에 대한 자료를 부속품 재고 정보, 소모품 재고 정보, 소모품 출급 정보, 수입 보고 이력, 청구 및 집행 요구 이력, 출납 물품 정보, 출납 이력 정보의 7개 자료로 구분하여 제공합니다.부속품 재고 정보와 소모품 재고 정보는 사무소 명, 연도, 월 별로 품목코드A, 품목코드B, 수입 수량, 수입 금액, 출급 수량, 품목 명의 재고 정보를 제공합니다.소모품 출급 정보는 소모품에 대한 사무소 명, 승인 일자, 품목 명, 수량, 장비번호A, 장비번호B, 등록일의 출급 정보를 제공합니다.수입 보고 이력은 수입 보고에 대한 사무소명, 보고일자, 회계구분, 예산구분, 수량, 단가, 금액의 이력 정보를 제공합니다.청구 및 집행 요구 이력은 청구 및 집행요구에 대한 사무소명, 품목명, 수량, 단가, 등록일의 이력 정보를 제공합니다.출납 물품 정보는 출납 물품에 대한 사무소명, 증빙서번호, 승인일자, 회계구분, 수량, 단가, 금액, 고유번호A, 고유번호B, 반납상태구분, 반납수량, 반납사유, 반납조치 정보를 제공하고, 출납 이력 정보는 출납 물품 정보에 장비명을 추가하여 정보를 제공합니다.
 applicable_legislation:
   - law: 도로법
@@ -84,6 +86,7 @@ schema:
         unique: 710
     - name: 장비번호A
       type: number
+      semantic_type: moct_equip_no
       null_rate: 0.0
       sample_values:
         - '900'
@@ -114,12 +117,23 @@ schema:
         min: '2011-02-14'
         max: '2016-04-25'
         unique: 1222
+  foreign_keys:
+    - fields:
+        - 장비번호A
+      reference:
+        key: moct_equip_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 승인일자
+    - 등록일
 cycle: default
 classification:
   subsector_name: 도로 기타
@@ -155,7 +169,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15063819-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: moct_equip_no(장비번호A)'
     evidence:
       - type: measured
         source: probe/stats/15063819.json
@@ -219,8 +233,6 @@ verification:
   run: probe/runs/15063819.json
   stats: probe/stats/15063819.json
   data: probe/data/15063819/
-status: active
-summary_user: 국토관리사무소별 소모품·부속품의 재고, 출급, 수입 보고, 청구·집행 요구, 출납 이력을 7개 파일로 나눠 담은 전국 범위 자료이며, 실측 필드는 사무소명·승인일자·품목명·수량·장비번호·등록일 같은 건별 출급 기록입니다. 도로 관리 장비 운영을 분석하는 사람이 어느 사무소가 어떤 장비에 어떤 소모품을 얼마나 출급했는지 파악하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 사무소명이나 장비번호 같은 이름·코드를 직접 맞추거나 같은 기관 자료끼리만 연결한다.
 limits: 표준 행정코드나 공통 키가 없어 다른 데이터셋과 자동으로 결합하기 어렵다. 공간 정보가 없어 위치 기반 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -232,3 +244,4 @@ review:
     - c-15063819-03
     - c-15063819-04
   dropped_citations: 0
+status: active

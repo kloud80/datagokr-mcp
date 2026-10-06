@@ -1,4 +1,3 @@
-# Dataset 15103533 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15103533'
 tier: verified
 title: 한국도로공사_고속도로 차종분류(AVC)기반 고속도로 지정차로제 위반 데이터(15분 단위)
@@ -25,6 +24,7 @@ synonyms:
   - 버스전용차로
   - 콘존 교통량
   - 고속도로 법규 위반
+summary_user: 한국도로공사 차종분류장치(AVC)가 감지한 고속도로 지정차로제 위반을 15분 단위로 집계한 데이터로, 노선·콘존(구간)·방향·차로·차종별 전체교통량과 위반교통량을 전국 범위로 담는다. 교통 분석가나 정책 담당자가 '어느 고속도로 구간·시간대·차로에서 어떤 차종의 지정차로 위반이 많은가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 노선번호·콘존ID 같은 한국도로공사 자체 코드나 출발·도착 노드 이름과 위경도를 통해 같은 기관의 고속도로 데이터나 도로망 자료와 이름·좌표로 맞춰 이어 써야 한다.
 description_portal: '본 데이터는 한국도로공사가 고속도로 지정차로제 위반 현황을 파악하기 위해 수집한 자료로, 차종분류장치(AVC: Automatic Vehicle Classification)를 기반으로 한다.  고속도로 지정차로제는 도로의 효율적 운영과 교통 안전을 위해 특정 차로를 특정 차종에 한정하여 운행하도록 정한 제도이다.  데이터는 15분 단위로 수집되며, 위반 차량의 통행 시간, 위치, 차종, 위반 유형 등의 정보가 포함되어 있다.  이를 통해 사용자는 고속도로 내에서 지정차로제 위반 현황을 시간대 및 구간별로 분석할 수 있으며,  교통 정책 수립, 안전성 평가, 법규 준수 현황 파악 등 다양한 분야에서 활용 가능하다.  데이터는 CSV 형식으로 제공되며, 정기적으로 갱신되어 최신 위반 정보를 반영한다.* 기상 여건 등으로 차종 분류 장치(AVC)의 감지 데이터에 대한 오류 발생이 일부 있을 수 있습니다.* 제공되는 데이터는 샘플데이터로, 전체 데이터를 다운로드 받으시려면 아래 링크로 접속 부탁드립니다.  (로그인 후 전체 데이터 다운로드 가능)  - https://www.bigdata-transportation.kr/frn/prdt/detail?prdtId=PRDTNUM_000000000043'
 accrual_periodicity: 수시
 team:
@@ -47,6 +47,7 @@ schema:
         unique: 1
     - name: 노선번호
       type: number
+      semantic_type: ex_route_no
       null_rate: 0.0
       sample_values:
         - '120'
@@ -57,6 +58,7 @@ schema:
         unique: 1
     - name: 콘존ID
       type: code
+      semantic_type: ex_conzone_id
       null_rate: 0.0
       sample_values:
         - 0120CZE170
@@ -175,12 +177,33 @@ schema:
         p50: 127.934455
         max: 127.934455
         unique: 1
+  foreign_keys:
+    - fields:
+        - 노선번호
+      reference:
+        key: ex_route_no
+      evidence: measured
+    - fields:
+        - 콘존ID
+      reference:
+        key: ex_conzone_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 출발노드위도
+    - 출발노드경도
+    - 도착노드위도
+  space_via: coord
+  time: day
+  time_fields:
+    - 집계일자
 cycle: default
 classification:
   subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
@@ -217,7 +240,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103533-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_route_no(노선번호), ex_conzone_id(콘존ID)'
     evidence:
       - type: measured
         source: probe/stats/15103533.json
@@ -282,8 +305,6 @@ verification:
   run: probe/runs/15103533.json
   stats: probe/stats/15103533.json
   data: probe/data/15103533/
-status: active
-summary_user: 한국도로공사 차종분류장치(AVC)가 감지한 고속도로 지정차로제 위반을 15분 단위로 집계한 데이터로, 노선·콘존(구간)·방향·차로·차종별 전체교통량과 위반교통량을 전국 범위로 담는다. 교통 분석가나 정책 담당자가 '어느 고속도로 구간·시간대·차로에서 어떤 차종의 지정차로 위반이 많은가'를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 노선번호·콘존ID 같은 한국도로공사 자체 코드나 출발·도착 노드 이름과 위경도를 통해 같은 기관의 고속도로 데이터나 도로망 자료와 이름·좌표로 맞춰 이어 써야 한다.
 limits: 포털 파일은 1,169바이트 크기의 샘플이라 전체 위반 현황 분석에는 쓸 수 없고, 전체 데이터는 별도 교통 빅데이터 플랫폼에서 로그인 후 받아야 한다. 차량 건별 기록이 아닌 집계값이며, 표준노드링크(link_id·node_id)와 바로 맞는 키가 없어 공간 결합은 이름·좌표 매핑이 필요하다.
 review:
   summary: draft
@@ -296,3 +317,4 @@ review:
     - c-15103533-04
     - c-15103533-06
   dropped_citations: 0
+status: active

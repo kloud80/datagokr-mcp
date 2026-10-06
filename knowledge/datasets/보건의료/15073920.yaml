@@ -1,4 +1,3 @@
-# Dataset 15073920 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073920'
 tier: verified
 title: 식품의약품안전처_의료기기 재평가 품목신청정보
@@ -22,6 +21,7 @@ synonyms:
   - 의료기기 품목 재평가 현황
   - 재평가 취하 품목
   - 식약처 의료기기 재평가
+summary_user: 의료기기 재평가 공고에 따라 제조·수입업체가 제출한 품목별 신청 건을 한 행씩 담으며, 재평가 일련번호·공고번호·품목명·허가일자·제조원과 판매원 국가·제조수입업소 주소·취소/취하 여부가 들어 있다. 의료기기 업계 실무자나 정책 분석가가 "특정 재평가 공고에 어느 업체가 어떤 품목으로 신청했고 그중 취하된 것은 무엇인가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 다른 의료기기 품목허가 데이터와는 품목명·업체명 같은 이름 매핑이나 같은 식약처 데이터의 품목번호(MEDDEV_ITEM_NO)·사업자등록번호 같은 기관 내부 값으로만 맞춰 이어 쓴다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 재평가 품목신청정보 관한 정보입니다 . 재평가 공고에 따라 제조·수입업체가 제출한 품목에 대한 신청정보로, 재평가 일련번호, 공고번호, 품목명, 허가일자, 제조·판매업소명 및 국가, 취소/취하 여부 등 세부 항목이 포함된다. 데이터는 신청 시점부터 평가 완료 전까지의 흐름을 이해하는 데 유용하며, 업체의 대응 현황 분석, 품목별 관리 필요성 판단, 재평가 제도 운영 실효성 점검 등 다양한 정책적·실무적 분석에 활용하는데 큰 도움이 됩니다.
 team:
   dept: 데이터혁신기획팀
@@ -85,6 +85,7 @@ schema:
         unique: 2
     - name: MDEQ_CLSF_NO
       type: string
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - A77030.01
@@ -106,6 +107,7 @@ schema:
         unique: 4
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '199600303'
@@ -168,6 +170,7 @@ schema:
         unique: 3
     - name: MEDDEV_ITEM_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허 74-4 호
@@ -276,12 +279,37 @@ schema:
         p50: 1168100997
         max: 2248517690
         unique: 23
+  foreign_keys:
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MNFT_IPRT_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - REVL_PBANC_NO
+    - RTRCN_DSCTN_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -326,7 +354,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073920-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_clsf_no(MDEQ_CLSF_NO), meddev_item_sn(MDEQ_PRDLST_SN), meddev_permit_no(MEDDEV_ITEM_NO)'
     evidence:
       - type: measured
         source: probe/stats/15073920.json
@@ -391,8 +419,6 @@ verification:
   run: probe/runs/15073920.json
   stats: probe/stats/15073920.json
   data: probe/data/15073920/
-status: active
-summary_user: 의료기기 재평가 공고에 따라 제조·수입업체가 제출한 품목별 신청 건을 한 행씩 담으며, 재평가 일련번호·공고번호·품목명·허가일자·제조원과 판매원 국가·제조수입업소 주소·취소/취하 여부가 들어 있다. 의료기기 업계 실무자나 정책 분석가가 "특정 재평가 공고에 어느 업체가 어떤 품목으로 신청했고 그중 취하된 것은 무엇인가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 다른 의료기기 품목허가 데이터와는 품목명·업체명 같은 이름 매핑이나 같은 식약처 데이터의 품목번호(MEDDEV_ITEM_NO)·사업자등록번호 같은 기관 내부 값으로만 맞춰 이어 쓴다.
 limits: 전역 조인 키가 없어 건강보험·다른 기관 데이터와 바로 결합되지 않고, 이름이나 같은 기관 코드 대조가 필요하다. 신청 정보이므로 재평가 결과 자체를 판단하는 근거로 보기는 어렵고, 포털 활용신청 후 serviceKey로 호출하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -404,3 +430,4 @@ review:
     - c-15073920-03
     - c-15073920-04
   dropped_citations: 0
+status: active

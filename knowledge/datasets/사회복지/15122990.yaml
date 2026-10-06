@@ -1,0 +1,200 @@
+# Dataset 15122990 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15122990'
+tier: verified
+title: 경기도_복지시설 시설유형별 종사자수
+sector: 사회복지/사회복지일반/social-economy
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15122990/fileData.do
+synonyms:
+  - 장애인복지
+  - 경기도장애인복지종합지원센터
+  - 누림센터
+  - 통계자료
+  - 사회복지
+  - 인력현황
+  - 장애인복지시설 종사자
+  - 복지시설 인력 현황
+  - 사회복지시설 직원 수
+  - 경기도 시군별 복지인력
+  - 장애인시설 근무자 수
+  - 복지 종사자 통계
+summary_user: 경기도 시군별로 장애인 관련 복지시설에 일하는 종사자 수를 복지시설 유형별로 집계한 통계로, 매년 12월 말 기준 시점(통계년월)마다 시군명·시설유형코드·종사자수를 담는다. 도 복지 담당자나 분석가가 '어느 시군의 어떤 유형 장애인복지시설에 인력이 부족한가'를 비교해 인력 배분이나 확충 필요성을 판단할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 시군명(signgu_nm)을 이름으로 매핑해 시군별 장애인 등록 인구나 시설 수 통계와 붙이는 방식으로만 이어 쓴다.
+description_portal: 이 데이터는 시군구별로 장애인복지 관련 시설에 종사하는 인력 수를 복지시설 유형별로 기록한 자료로  매년 12월 말 기준의 시군명, 장애인 관련 복지시설 유형별 종사자수를 제공합니다. 주요 항목으로는 ‘통계년월’을 통해 자료 수집 시점을 확인할 수 있으며, ‘시군구명’은 지역별 분류, ‘복지시설유형코드’는 각 시설의 종류를 나타냅니다. 이 데이터는 장애인 복지 정책 수립, 지역별 복지 인력 배분, 사회서비스 수요 예측, 특정 유형 복지시설의 인력 확충 필요성 판단 등에 활용될 수 있으며, 복지 자원의 효율적 배치 및 인력운영 전략 수립에 있어 핵심적인 기초자료로 쓰입니다.
+accrual_periodicity: 연간
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ym
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202212'
+      stats:
+        min: 202212
+        p50: 202212
+        max: 202212
+        unique: 1
+    - name: signgu_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 성남시
+        - 수원시
+        - 시흥시
+      stats:
+        unique: 21
+    - name: welfaclt_type_cd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 장애인생산품판매시설
+        - 장애인거주시설
+        - 장애인지역사회재활시설
+      stats:
+        unique: 5
+    - name: faclt_enflpsn_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '59'
+        - '24'
+      stats:
+        min: 0
+        p50: 26
+        max: 384
+        unique: 53
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - signgu_nm
+  space_via: name
+cycle: default
+classification:
+  subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.3482
+  brm: 사회복지 - 사회복지일반
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15122990-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15122990.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15122990-02
+    kind: cadence
+    value: 명세상 연간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122990-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15122990.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122990-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15122990.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122990-06
+    kind: admin_note
+    value: "세부 부문 '사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)'의 가치: 인증번호·사업자번호 — 기업 축과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#social-economy
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15122990-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15122990.json
+  stats: probe/stats/15122990.json
+  data: probe/data/15122990/
+limits: 데이터는 포털이 아닌 외부 사이트(data.gg.go.kr)에서 받으며, 포털 활용신청과 별도로 인증키(KEY)를 받아야 한다. 행정코드 같은 공통 키가 없어 다른 데이터와는 시군명 문자열 매칭에 의존한다. 필드 명세와 시설유형 코드표가 입력에 없어 유형코드의 뜻은 따로 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15122990-01
+    - c-15122990-03
+    - c-15122990-04
+  dropped_citations: 0
+status: active

@@ -43,6 +43,7 @@ schema:
   fields:
     - name: 암호화된 요양기호
       type: string
+      semantic_type: ykiho
       null_rate: 0.0
       sample_values:
         - 2026.1.1. 이후 폐업된 요양기관 등
@@ -133,6 +134,7 @@ schema:
         unique: 28238
     - name: 장비허가번호
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허97-91호
@@ -152,9 +154,25 @@ schema:
         p50: 1
         max: 500
         unique: 143
+  foreign_keys:
+    - fields:
+        - 암호화된 요양기호
+      reference:
+        key: ykiho
+      evidence: measured
+    - fields:
+        - 장비허가번호
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구명
+  space_via: name
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -191,7 +209,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15051055-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ykiho(암호화된 요양기호), meddev_permit_no(장비허가번호)'
     evidence:
       - type: measured
         source: probe/stats/15051055.json

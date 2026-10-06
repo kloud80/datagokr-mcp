@@ -1,0 +1,257 @@
+# Dataset 15058816 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058816'
+tier: verified
+title: 경기도_택시이용 안내 현황
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058816/openapi.do
+synonyms:
+  - 택시요금
+  - 이용안내
+  - 조정요금유형
+  - 거리요금
+  - 시간요금
+  - 기본요금
+  - 요금체계
+  - 교통행정
+  - 택시 기본요금
+  - 거리요금 시간요금
+  - 경기도 택시 요금표
+  - 시군별 택시요금
+  - 택시요금 인상
+summary_user: 경기도 시군별 택시요금 안내 자료로, 시군명(SIGUN_NM)과 요금 유형(표준형·가형·나형)별 기본요금, 기준 거리·거리당 요금, 기준 시간·시간당 요금, 요금 적용일자를 행 단위로 담는다. 우리 시군 택시 기본요금과 거리·시간 요금이 얼마이고 언제부터 적용됐는지, 시군 간 요금 수준이 어떻게 다른지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시군 이름을 맞춰 연결해야 한다.
+description_portal: 이 데이터는 경기도 내 택시 이용 요금에 대한 안내 자료로, 시군별 택시요금 조정 유형, 기본요금, 거리요금, 시간요금, 요금 적용일자 등 주요 항목으로 구성되어 있습니다. 요금 유형은 도시 규모 및 특성에 따라 표준형(일반 도시), 가형(도농 복합 도시 중 도시형), 나형(도농 복합 도시 중 농촌형)으로 구분되며, 이에 따라 요금 체계도 달라집니다. 각 유형에 따라 기준 거리(m), 기준 거리당 요금(원), 기준 시간(초), 기준 시간당 요금(원) 등의 상세 요금 항목이 제공됩니다. 이 데이터는 지역별 택시요금 수준 비교, 요금 인상률 분석, 교통복지 정책 수립, 택시 서비스 이용자 정보제공 등의 목적으로 활용될 수 있으며, Open API 방식으로 접근 가능합니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: TaxiUseGuidance
+    name: TaxiUseGuidance
+    endpoint: https://openapi.gg.go.kr/TaxiUseGuidance
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: IMPLMTN_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20230701'
+      stats:
+        min: 20230701
+        p50: 20230701
+        max: 20230701
+        unique: 1
+    - name: TAXI_DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 표준형
+        - 가형
+      stats:
+        unique: 2
+    - name: TEMP_CONT01
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4800'
+      stats:
+        min: 4800
+        p50: 4800
+        max: 4800
+        unique: 1
+    - name: TEMP_CONT02
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '131'
+        - '104'
+      stats:
+        min: 104
+        p50: 131
+        max: 131
+        unique: 2
+    - name: TEMP_CONT03
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: TEMP_VL04
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '30.0'
+        - '25.0'
+      stats:
+        min: 25
+        p50: 30
+        max: 30
+        unique: 2
+    - name: TEMP_VL05
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100.0'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원시
+        - 고양시
+        - 용인시
+      stats:
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7535
+  rank_in_sector: 183
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058816-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058816.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058816-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058816-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058816.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058816-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058816.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058816-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058816-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058816-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058816.json
+  stats: probe/stats/15058816.json
+  data: probe/data/15058816/
+limits: 경기도 외부 포털(data.gg.go.kr) 인증키가 따로 필요하며, 공공데이터포털 활용신청과는 별개다. 공간 좌표가 없는 시도 단위 자료이고, 필드 상당수가 일반 이름(TEMP_CONT·TEMP_VL 계열)이라 실제 값을 보고 의미를 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058816-01
+    - c-15058816-03
+    - c-15058816-04
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15065377 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15065377 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15065377'
 tier: verified
 title: 한국동서발전(주)_(발전공기업 표준)연료전지 설비사양
@@ -22,6 +23,7 @@ synonyms:
   - 연료전지 설비용량
   - 신재생 발전설비 현황
   - 분산전원 설비
+summary_user: 한국동서발전이 운영하는 발전소별 연료전지 설비의 사양을 발전소 단위 한 행으로 담은 파일로, 발전소명·설비용량(MW)·준공년도·설비타입·사용연료를 기록하며 파일 크기는 298바이트에 불과한 소량 원장이다. 연구자나 에너지 분석가가 '한국동서발전은 어느 발전소에 어떤 유형과 연료의 연료전지를 언제 얼마 용량으로 들였나'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 발전공기업의 같은 표준 연료전지 설비사양이나 태양광 발전사업 허가 표준데이터 같은 발전소 원장과는 발전소명을 이름으로 맞춰 이어 쓴다.
 description_portal: 한국동서발전의 연료전지 설비사양 정보는 각 발전소에 설치된 연료전지 설비의 주요 사양을 정리한 자료입니다. 이 데이터는 발전소명, 설비용량(MW), 준공년도, 설비타입, 사용연료 등의 항목으로 구성되어 있습니다. 이러한 정보는 한국동서발전이 신재생에너지 확대 및 친환경 에너지 생산을 위해 어떤 형태의 연료전지를 도입하고 있는지를 기술적·운영적 관점에서 확인할 수 있는 기초 자료입니다. 학계 및 연구기관에서는 이 데이터를 활용하여 연료전지 설비 보급 현황 분석, 설비 유형별 효율성 비교, 준공 시점에 따른 기술 트렌드 변화 파악 등을 수행할 수 있습니다. 또한 연료 유형에 따른 탄소배출량 차이, 에너지 전환 과정에서의 분산형 발전 설비 도입 전략, 연료전지 경제성 및 정책 지원 필요성 등 다양한 연구 주제에 실증 데이터로 활용될 수 있습니다. 이 데이터는 특히 연료전지 관련 기술개발, 수소경제 기반 정책 설계, 발전 포트폴리오 다각화 전략 수립에도 중요한 참고자료가 됩니다.
 applicable_legislation:
   - law: 전기사업법
@@ -41,6 +43,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 울산연료전지
@@ -88,12 +91,22 @@ schema:
         - LNG
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 준공년도
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -130,7 +143,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15065377-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15065377.json
@@ -205,8 +218,6 @@ verification:
   run: probe/runs/15065377.json
   stats: probe/stats/15065377.json
   data: probe/data/15065377/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소별 연료전지 설비의 사양을 발전소 단위 한 행으로 담은 파일로, 발전소명·설비용량(MW)·준공년도·설비타입·사용연료를 기록하며 파일 크기는 298바이트에 불과한 소량 원장이다. 연구자나 에너지 분석가가 '한국동서발전은 어느 발전소에 어떤 유형과 연료의 연료전지를 언제 얼마 용량으로 들였나'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 발전공기업의 같은 표준 연료전지 설비사양이나 태양광 발전사업 허가 표준데이터 같은 발전소 원장과는 발전소명을 이름으로 맞춰 이어 쓴다.
 limits: 표준 코드나 주소 같은 공통 키가 없어 다른 데이터와는 발전소명 문자열 매칭에 의존해야 한다. 공간 좌표가 없는 비공간 자료라 지도 위치 분석에는 바로 쓰지 못한다.
 review:
   summary: draft
@@ -219,3 +230,4 @@ review:
     - c-15065377-04
     - c-15065377-06
   dropped_citations: 0
+status: active

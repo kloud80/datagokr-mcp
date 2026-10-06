@@ -1,4 +1,5 @@
-# Dataset 15067667 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067667 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067667'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_정사영상성과내역
@@ -22,6 +23,7 @@ synonyms:
   - 국토지리정보원 영상 성과
   - 지상표본거리
   - 정사영상 메타데이터
+summary_user: 국토지리정보원이 항공사진을 정사처리해 만든 전국 정사영상을 1:5000 도엽 단위로 한 행씩 정리한 성과 목록으로, 도엽번호·도엽명과 함께 제작년월일, 지상표본거리, 제작·작업기관, 카메라·위성 종류, 좌표계, 사용 수치표고, 컬러 여부, 해상도 완화 지역 여부를 담는다(CSV 약 16MB). 분석가나 공간정보 사업자가 특정 지역 도엽의 정사영상이 언제, 어떤 해상도와 장비로 제작됐는지 확인해 영상 구입이나 활용 여부를 판단할 때 쓴다. 전역 조인 키는 없고, 1:5000 도엽번호(도엽번호5000)를 기준으로 같은 도엽 체계를 쓰는 수치지도·항공사진 성과와 맞춰 쓴다.
 description_portal: '촬영된 항공사진으로 정사처리, 색상보정 후 전국에 대한 정사영상 제작, 해당 정사영상( 1:5000 도엽)성과에 대한 정보▷ 식별정보 : 5000도엽번호, 5000도엽명, 축척, 제작년월일 ▷ 속성정보 : 원점구분, 지리좌표계, 제작기관, 작업기관,  지상표본거리, 카메라정보, 위성종류, 원시지리좌표계, 사용수치표고, 칼라구분, 해상도완화여부 등 * 정사영상 : 항공사진이나 위성영상을 지형의 고도 차이, 기울어짐, 렌즈 왜곡 등으로부터 생기는 기하학적 왜곡을 제거, 마치 수직으로 내려다본 것처럼 보이도록 만든 영상'
 accrual_periodicity: 수시
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 도엽번호5000
       type: number
+      semantic_type: map_sheet_no
       null_rate: 0.0
       sample_values:
         - '37612094'
@@ -211,12 +214,22 @@ schema:
         - PDT004
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 도엽번호5000
+      reference:
+        key: map_sheet_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - 제작년월일
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -254,7 +267,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067667-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: map_sheet_no(도엽번호5000)'
     evidence:
       - type: measured
         source: probe/stats/15067667.json
@@ -329,8 +342,6 @@ verification:
   run: probe/runs/15067667.json
   stats: probe/stats/15067667.json
   data: probe/data/15067667/
-status: active
-summary_user: 국토지리정보원이 항공사진을 정사처리해 만든 전국 정사영상을 1:5000 도엽 단위로 한 행씩 정리한 성과 목록으로, 도엽번호·도엽명과 함께 제작년월일, 지상표본거리, 제작·작업기관, 카메라·위성 종류, 좌표계, 사용 수치표고, 컬러 여부, 해상도 완화 지역 여부를 담는다(CSV 약 16MB). 분석가나 공간정보 사업자가 특정 지역 도엽의 정사영상이 언제, 어떤 해상도와 장비로 제작됐는지 확인해 영상 구입이나 활용 여부를 판단할 때 쓴다. 전역 조인 키는 없고, 1:5000 도엽번호(도엽번호5000)를 기준으로 같은 도엽 체계를 쓰는 수치지도·항공사진 성과와 맞춰 쓴다.
 limits: 영상 자체가 아니라 도엽별 제작 내역만 담고, 행정구역 코드 같은 공통 키가 없어 다른 데이터와는 도엽번호나 이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -342,3 +353,4 @@ review:
     - c-15067667-03
     - c-15067667-04
   dropped_citations: 0
+status: active

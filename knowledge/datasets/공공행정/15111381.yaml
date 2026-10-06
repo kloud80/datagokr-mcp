@@ -1,4 +1,5 @@
-# Dataset 15111381 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15111381 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15111381'
 tier: verified
 title: 중앙선거관리위원회_재보궐선거 실시사유 확정상황
@@ -21,6 +22,7 @@ synonyms:
   - 당선무효
   - 의원 사직
   - 선거구 공석
+summary_user: 향후 실시될 재·보궐선거의 실시 사유를 선거구 건별로 담으며, 선거실시일·선거유형·재/보궐 구분·시도·위원회·선거구와 함께 사유를 남긴 당사자의 정당·성명, 사유 내용, 사유발생일·사유확정일을 기록한다(전국, 시도 단위). 유권자나 언론·정당 관계자가 다가오는 재보궐선거에서 어느 지역 선거구가 왜(당선무효·사직 등) 선거를 치르게 됐는지, 사유가 언제 확정됐는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 선거 데이터와는 선거실시일·선거유형코드(sgTypecode)·시도명·선거구명 같은 이름·코드 매핑이나 같은 기관(중앙선거관리위원회) 코드로만 이어 쓴다.
 description_portal: 재‧보궐선거 실시일(현재일 이후)을 입력하여 향후 실시될 재‧보궐선거에 대한 예정 상황을 조회하는 서비스※ 재‧보궐선거 실시일을 입력하지 않은 경우 향후 실시될 재‧보궐선거에 대한 모든 예정 상황 조회
 team:
   dept: 선거정보과
@@ -87,6 +89,7 @@ schema:
     - name: sgTypecode
       title: 선거유형코드
       type: number
+      semantic_type: nec_sg_typecode
       null_rate: 0.0
       sample_values:
         - '6'
@@ -200,12 +203,23 @@ schema:
         p50: 20260773.5
         max: 20260901
         unique: 4
+  foreign_keys:
+    - fields:
+        - sgTypecode
+      reference:
+        key: nec_sg_typecode
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - sdName
+  space_via: name
 cycle: event
 classification:
   subsector_name: 선거
@@ -251,7 +265,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15111381-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: nec_sg_typecode(sgTypecode)'
     evidence:
       - type: measured
         source: probe/stats/15111381.json
@@ -305,8 +319,6 @@ verification:
   run: probe/runs/15111381.json
   stats: probe/stats/15111381.json
   data: probe/data/15111381/
-status: active
-summary_user: 향후 실시될 재·보궐선거의 실시 사유를 선거구 건별로 담으며, 선거실시일·선거유형·재/보궐 구분·시도·위원회·선거구와 함께 사유를 남긴 당사자의 정당·성명, 사유 내용, 사유발생일·사유확정일을 기록한다(전국, 시도 단위). 유권자나 언론·정당 관계자가 다가오는 재보궐선거에서 어느 지역 선거구가 왜(당선무효·사직 등) 선거를 치르게 됐는지, 사유가 언제 확정됐는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 선거 데이터와는 선거실시일·선거유형코드(sgTypecode)·시도명·선거구명 같은 이름·코드 매핑이나 같은 기관(중앙선거관리위원회) 코드로만 이어 쓴다.
 limits: 선거 등 이벤트 때 생성된 뒤 바뀌지 않는 이벤트 주기 데이터로, 실시일 이후의 예정 상황을 조회하는 구조라 지나간 선거의 이력 조회에는 맞지 않을 수 있다. 공통 조인 키가 없어 후보자·개표 등 다른 데이터와 연결할 때 이름 매칭 오류에 주의해야 하며, 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -319,3 +331,4 @@ review:
     - c-15111381-03
     - c-15111381-04
   dropped_citations: 0
+status: active

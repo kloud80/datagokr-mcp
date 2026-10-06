@@ -1,4 +1,5 @@
-# Dataset 15067835 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067835 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067835'
 tier: verified
 title: 독립기념관_국외사적지_보고서발간현황관리
@@ -22,6 +23,7 @@ synonyms:
   - 독립기념관 보고서 목록
   - 해외 독립운동 사적
   - 임시정부 사적지
+summary_user: 독립기념관이 발간한 국외 독립운동 사적지 실태조사 보고서를 한 권당 한 행으로 담은 목록 파일로, 발간연도·보고서명칭·조사 지역·보고서 파일명·등록일자 등을 담는다(CSV 약 4KB). 연구자나 답사 기획자가 '중국 동북 지역이나 멕시코·쿠바 지역의 독립운동 사적지는 어느 보고서 몇 권에서 다루는가'를 찾을 때 쓴다. 전역 조인 키가 없어서 다른 데이터와 이으려면 지역명이나 보고서 명칭으로 직접 맞춰야 한다.
 description_portal: 독립기념관에서 발간한 국외독립운동사적지 보고서에 대한 정보이다.주요 항목으로는 발간연도, 관리번호, 보고서 명칭, 지역, 보고서 파일, 보고서파일명, 등록일자 등이다.각 권별 지역은 다음과 같다.국외 항일운동 유적지 실태조사 보고서 1권중국국외 항일운동 유적지 실태조사 보고서 2권러시아/일본/미국/유럽국외 독립운동 유적지 실태조사 보고서 3권멕시코/쿠바국외 독립운동 유적지 실태조사 보고서 4권동남아 지역국외 독립운동 유적지 실태조사 보고서 5권멕시코/쿠바 속편국외 독립운동 유적지 실태조사 보고서 6권중국 중남부 지역국외 독립운동 유적지 실태조사 보고서 7권중국국외 독립운동 유적지 실태조사 보고서 8권러시아/우즈베키스탄/흑룡강성국외 독립운동 유적지 실태조사 보고서 9권미국 동부/서부, 일본국외 독립운동 사적지 실태조사 보고서 10권유럽, 동남아시아국외 독립운동 사적지 실태조사 보고서 11권중국 동북 지역국외 독립운동 사적지 실태조사 보고서 12권중국 화북, 러시아 연해주 지역국외 독립운동 사적지 실태조사 보고서 13권유럽 및 러시아 지역/중국 남부 지역국외 독립운동 사적지 실태조사 보고서 14권중국 중남부 지역, 미국 중부/동부 지역국외 독립운동 사적지 실태조사 보고서 15권멕시코/쿠바지역, 일본지역국외 독립운동 사적지 실태조사보고서 16권중국 동북/상해지역국외 독립운동 사적지 실태조사보고서 17권중앙아시아지역, 중국 한단/석가장지역국외 독립운동 사적지 실태조사보고서 18권러시아 연해주·하바로프스크, 중국 흑룡강성 하얼빈/오운진 지역국외 독립운동 사적지 실태조사 보고서 19권중국 북경/길림성 지역국외 독립운동 사적지 실태조사 보고서 특별판대한민국 임시정부 편
 applicable_legislation:
   - law: 독립기념관법
@@ -51,6 +53,7 @@ schema:
         unique: 16
     - name: 관리번호
       type: number
+      semantic_type: ikm_overseas_site_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -142,12 +145,24 @@ schema:
         min: '2017-03-14'
         max: '2020-07-03'
         unique: 13
+  foreign_keys:
+    - fields:
+        - 관리번호
+      reference:
+        key: ikm_overseas_site_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 보고서파일
+    - 등록일자
+    - 수정일자
 cycle: default
 classification:
   subsector_name: 박물관 소장·아카이브 (e뮤지엄·3D·이미지·유물·동북아역사재단·독립기념관)
@@ -184,7 +199,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067835-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ikm_overseas_site_no(관리번호)'
     evidence:
       - type: measured
         source: probe/stats/15067835.json
@@ -248,8 +263,6 @@ verification:
   run: probe/runs/15067835.json
   stats: probe/stats/15067835.json
   data: probe/data/15067835/
-status: active
-summary_user: 독립기념관이 발간한 국외 독립운동 사적지 실태조사 보고서를 한 권당 한 행으로 담은 목록 파일로, 발간연도·보고서명칭·조사 지역·보고서 파일명·등록일자 등을 담는다(CSV 약 4KB). 연구자나 답사 기획자가 '중국 동북 지역이나 멕시코·쿠바 지역의 독립운동 사적지는 어느 보고서 몇 권에서 다루는가'를 찾을 때 쓴다. 전역 조인 키가 없어서 다른 데이터와 이으려면 지역명이나 보고서 명칭으로 직접 맞춰야 한다.
 limits: 사적지 개별 위치나 좌표가 없는 비공간 보고서 목록이어서 지도 분석에는 바로 쓸 수 없다. 공통 조인 키가 없으므로 다른 사적지·유물 데이터와는 이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -261,3 +274,4 @@ review:
     - c-15067835-03
     - c-15067835-04
   dropped_citations: 0
+status: active

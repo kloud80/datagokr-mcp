@@ -1,4 +1,5 @@
-# Dataset 15044676 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044676 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044676'
 tier: verified
 title: 대전교통공사_역사 종합안내도 현황
@@ -24,6 +25,7 @@ synonyms:
   - 대전시 지도 게시 현황
   - 역 구내 안내시설
   - 대전 지하철역 시설물
+summary_user: 대전 도시철도 1호선 22개 역별로 역명(부역명 포함)과 역사에 설치된 종합안내도 수량, 대전광역시 지도 수량을 담은 역 단위 시설 현황 파일입니다(CSV 471바이트 규모의 소형 파일). 역사 안내시설 개선을 검토하는 담당자나 분석가가 '어느 역에 종합안내도·시 지도가 몇 개씩 붙어 있는가'를 확인할 때 씁니다. 전역 조인 키가 없어 역번호나 역명을 기준으로 같은 기관의 역 위치·출입구·승하차 데이터와 이름 매핑으로 이어 씁니다.
 description_portal: '대전 도시철도 역사의 종합안내도 현황에 대한 데이터로 역명 및 부역명, 종합안내도 수량, 대전광역시 지도 수량의 항목을 제공합니다.(대전 도시철도 1호선: 판암역(부역명: 대전대), 신흥역, 대동역(부역명: 우송대), 대전역, 중앙로역, 중구청역, 서대전네거리역, 오룡역, 용문역, 탄방역, 시청역, 정부청사역, 갈마역, 월평역(부역명: 한국과학기술원), 갑천역, 유성온천역(부역명: 충남대·목원대), 구암역, 현충원역(부역명: 한밭대), 월드컵경기장역, 노은역(부역명: 노은도매시장), 지족역(부역명: 침신대), 반석역(부역명: 칠성대))'
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 역번호
       type: number
+      semantic_type: djtc_station_no
       null_rate: 0.0
       sample_values:
         - '101'
@@ -80,6 +83,12 @@ schema:
         p50: 2
         max: 4
         unique: 3
+  foreign_keys:
+    - fields:
+        - 역번호
+      reference:
+        key: djtc_station_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -122,7 +131,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15044676-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: djtc_station_no(역번호)'
     evidence:
       - type: measured
         source: probe/stats/15044676.json
@@ -187,8 +196,6 @@ verification:
   run: probe/runs/15044676.json
   stats: probe/stats/15044676.json
   data: probe/data/15044676/
-status: active
-summary_user: 대전 도시철도 1호선 22개 역별로 역명(부역명 포함)과 역사에 설치된 종합안내도 수량, 대전광역시 지도 수량을 담은 역 단위 시설 현황 파일입니다(CSV 471바이트 규모의 소형 파일). 역사 안내시설 개선을 검토하는 담당자나 분석가가 '어느 역에 종합안내도·시 지도가 몇 개씩 붙어 있는가'를 확인할 때 씁니다. 전역 조인 키가 없어 역번호나 역명을 기준으로 같은 기관의 역 위치·출입구·승하차 데이터와 이름 매핑으로 이어 씁니다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어 다른 기관 데이터와 연결하려면 역명 매핑이 필요합니다. 안내도의 위치·내용·설치 시점 정보는 없고 역별 수량만 있습니다.
 review:
   summary: draft
@@ -200,3 +207,4 @@ review:
     - c-15044676-03
     - c-15044676-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15069135 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069135 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069135'
 tier: verified
 title: 한국장학재단_학자금대출 잔액 현황
@@ -21,6 +22,7 @@ synonyms:
   - 학자금 대출금리
   - 한국장학재단 대출 통계
   - 학자금 연체잔액
+summary_user: 한국장학재단 학자금대출을 기준년월 시점에서 상품(일반 상환·취업 후 상환)과 대출 실행년도·학기별로 묶어 대출금액, 대출금리, 대출잔액을 담은 전국 단위 집계 파일입니다. 교육 정책 분석가나 연구자가 '취업 후 상환 학자금대출 중 몇 년도 실행분의 잔액이 아직 많이 남아 있는가', '학기별 대출금리와 잔액은 어떻게 변해 왔는가'를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 대출년도·학기나 상품명을 이름으로 맞추거나 같은 기관(한국장학재단)의 다른 장학·학자금 자료와 나란히 놓고 쓴다.
 description_portal: 기준 시점 학자금대출 실행년도(학기)별, 상품(일반 상환 학자금대출, 취업 후 상환 학자금대출 등)별 학자금대출 내역(대출금액, 대출금리, 대출잔액 등)을 제공합니다.일반 상환 학자금대출은 2009년 이후, 취업 후 상환 학자금대출은 2010년 이후 실행된 대출에 관한 정보를 확인하실 수 있습니다.※ 대출잔액의 경우 연체 1개월 미만인 정상계좌의 대출잔액과 연체 1개월~연체 6개월 미만인 계좌의 대출잔액(연체잔액)입니다.※ 상세 정보는 한국장학재단 홈페이지(https://www.kosaf.go.kr/ko/tuition.do?pf=tuition_main)를 참고바랍니다.
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -49,6 +51,7 @@ schema:
         unique: 1
     - name: 상품명
       type: code
+      semantic_type: kosaf_loan_product
       null_rate: 0.0
       sample_values:
         - 일반상환학자금_등록금
@@ -116,12 +119,22 @@ schema:
         p50: 2.7
         max: 7.8
         unique: 22
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_loan_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준년월
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -158,7 +171,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069135-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_loan_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15069135.json
@@ -222,8 +235,6 @@ verification:
   run: probe/runs/15069135.json
   stats: probe/stats/15069135.json
   data: probe/data/15069135/
-status: active
-summary_user: 한국장학재단 학자금대출을 기준년월 시점에서 상품(일반 상환·취업 후 상환)과 대출 실행년도·학기별로 묶어 대출금액, 대출금리, 대출잔액을 담은 전국 단위 집계 파일입니다. 교육 정책 분석가나 연구자가 '취업 후 상환 학자금대출 중 몇 년도 실행분의 잔액이 아직 많이 남아 있는가', '학기별 대출금리와 잔액은 어떻게 변해 왔는가'를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 대출년도·학기나 상품명을 이름으로 맞추거나 같은 기관(한국장학재단)의 다른 장학·학자금 자료와 나란히 놓고 쓴다.
 limits: 개인·대학·지역별 내역은 없고 전국 집계만 담는다(지역 구분 없는 비공간 자료). 포털 설명에 따르면 대출잔액에는 연체 1개월 미만 정상계좌와 연체 1~6개월 미만 계좌의 잔액만 들어가고, 일반 상환은 2009년 이후, 취업 후 상환은 2010년 이후 실행분만 다룬다.
 review:
   summary: draft
@@ -235,3 +246,4 @@ review:
     - c-15069135-03
     - c-15069135-04
   dropped_citations: 0
+status: active

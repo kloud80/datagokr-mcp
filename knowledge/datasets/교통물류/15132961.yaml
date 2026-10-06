@@ -1,4 +1,5 @@
-# Dataset 15132961 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132961 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132961'
 tier: verified
 title: 해양수산부_해운항만물류정보_강제도선면제신청정보
@@ -25,6 +26,7 @@ synonyms:
   - 선박 도선 신청
   - 항만 도선 의무
   - pilotage exemption
+summary_user: PORT-MIS로 접수된 강제도선 면제 신청을 신청 1건 단위로 담은 전국 범위 원천 파일(csv, 약 56만 바이트)로, 선박명·총톤수·국적·선종·위험물 적재 여부, 관할기관, 면제 여부와 허가 유효기간, 신청 근거가 된 최근 입출항 사실(최대 4회)을 포함한다. 항만 운영기관이나 분석가가 '어느 관할기관에서 어떤 크기·선종의 선박이 도선 면제를 많이 신청하고 실제 허가받는가'를 확인하는 데 쓴다. 실측상 전역 조인 키가 없어, 선박 호출부호(호출부호)나 선박명·관할기관명을 이름 매핑해 Port-MIS 입출항 신고·선박 정보 데이터와 이어 쓴다.
 description_portal: 이 데이터는 해양수산부의 해운항만물류정보시스템(PORT-MIS)을 통해 항만별로 도선사 탑승이 의무인 선박이 항만 시설에 이·접안할 때, 정해진 규칙에 따라 도선사 탑승 면제를 신청한 내역을 관리하기 위해 수집된 데이터입니다.  본 데이터의 주요 내용은 항만별 강제 도선 면제 신청에 관한 구체적 정보를 포함하며, 선박 정보, 신청 일자, 면제 여부, 면제허가 유효기간 등으로 구성되어 있습니다.   본 데이터는 항만별 도선사 배치 및 운용 정책 검토, 항만 운영기관 업무 처리 현황 모니터링, 항만별 도선 면제 신청 실태 분석 등 항만 운영의 합리적 개선과 관련 정책 수립의 근거로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -68,6 +70,7 @@ schema:
         unique: 1
     - name: 호출부호
       type: string
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - 3FQJ3
@@ -333,12 +336,24 @@ schema:
         min: '2023-07-27'
         max: '2026-07-31'
         unique: 561
+  foreign_keys:
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 접수일
+    - 신청일
+    - 면제허가일자
 cycle: default
 classification:
   subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
@@ -375,7 +390,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132961-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(호출부호)'
     evidence:
       - type: measured
         source: probe/stats/15132961.json
@@ -440,8 +455,6 @@ verification:
   run: probe/runs/15132961.json
   stats: probe/stats/15132961.json
   data: probe/data/15132961/
-status: active
-summary_user: PORT-MIS로 접수된 강제도선 면제 신청을 신청 1건 단위로 담은 전국 범위 원천 파일(csv, 약 56만 바이트)로, 선박명·총톤수·국적·선종·위험물 적재 여부, 관할기관, 면제 여부와 허가 유효기간, 신청 근거가 된 최근 입출항 사실(최대 4회)을 포함한다. 항만 운영기관이나 분석가가 '어느 관할기관에서 어떤 크기·선종의 선박이 도선 면제를 많이 신청하고 실제 허가받는가'를 확인하는 데 쓴다. 실측상 전역 조인 키가 없어, 선박 호출부호(호출부호)나 선박명·관할기관명을 이름 매핑해 Port-MIS 입출항 신고·선박 정보 데이터와 이어 쓴다.
 limits: 표준 조인 키가 없어 다른 데이터와는 호출부호·선박명·기관명 같은 이름 매칭으로만 연결되므로 매칭 누락·오류를 점검해야 한다. 파일 형태라 실시간 조회용이 아니며, 도선 실적이나 도선사 배치 자체는 담지 않는다.
 review:
   summary: draft
@@ -454,3 +467,4 @@ review:
     - c-15132961-04
     - c-15132961-06
   dropped_citations: 0
+status: active

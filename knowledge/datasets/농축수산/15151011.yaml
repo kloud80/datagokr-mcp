@@ -1,0 +1,192 @@
+# Dataset 15151011 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151011'
+tier: verified
+title: 경기도_사이버식물병원 읍면동 주소
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151011/fileData.do
+synonyms:
+  - 사이버식물병원
+  - 주소
+  - 읍면동
+  - 행정구역
+  - 주소코드
+  - 주소체계
+  - 읍면동 코드
+  - 동코드 매핑
+  - 행정구역 코드표
+  - 식물병원 주소
+  - 병해 발생지 주소
+  - 경기도 동 목록
+summary_user: 경기도 사이버식물병원 진단 데이터에서 쓰는 읍면동 단위 주소 코드표로, 동 코드(dong_cd)와 동 이름을 한 행씩 담는 참조 테이블이다. 식물 병해 진단 의뢰 기록을 읍면동 단위로 묶어 "우리 동네에서 병해 의뢰가 얼마나 몰리는가" 같은 지역별 병해 분포를 보려는 분석가가 쓴다. 같은 사이버식물병원의 주소_시군구·주소_시도·진단_의뢰_주소 테이블과 동 코드로 잇는다. 실측 컬럼에서 행정표준코드 같은 전역 조인 키는 확인되지 않아, 다른 기관 데이터와는 동 이름 매핑으로만 연결된다.
+description_portal: 주소_읍면동 테이블은 우리나라의 가장 세분화된 행정구역인 읍면동 단위의 정보를 제공합니다. 각 행정 단위는 고유한 동 코드와 함께 동 이름을 포함하고 있으며, 병해 발생 위치의 정확한 공간 정보를 분석할 때 활용됩니다. 이 테이블은 주소_시군구, 주소_시도와 함께 주소 계층 구조를 완성하며, 진단_의뢰_주소 테이블에서 병해 발생지를 읍면동 단위로 확인하고자 할 때 사용됩니다. 지역별 병해 감염률, 방제 대응 정책 수립, 공간 클러스터 분석 등 정밀한 지역 분석이 필요한 경우 유용하게 활용됩니다.정형화된 주소체계를 통해 병해 발생 위치 데이터를 정확하게 연결하고, 데이터 일관성을 유지할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dong_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11440106'
+        - '11440107'
+        - '11440108'
+      stats:
+        min: 11440106
+        p50: 11552602
+        max: 11650104
+        unique: 100
+    - name: dong_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 신정동
+        - 토정동
+        - 마포동
+      stats:
+        unique: 99
+coverage:
+  spatial: 시도
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - dong_nm
+  space_via: name
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3085
+  brm: 농축수산 - 농업·농촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151011-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151011.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151011-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151011-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151011.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151011-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15151011.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151011-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151011-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151011-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151011.json
+  stats: probe/stats/15151011.json
+  data: probe/data/15151011/
+limits: 동 코드는 같은 기관 데이터 안에서만 쓰는 코드로 보이며, 법정동·행정동 표준코드와 같은지는 확인되지 않았다. 다른 데이터와는 이름 매칭으로 이어야 한다. 경기도 데이터드림(data.gg.go.kr)의 별도 인증키(KEY)가 필요하고, 포털 활용신청과는 따로 받는다. 세부 부문이 농산물 유통 가격으로 분류돼 있지만 가격 정보는 들어 있지 않다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151011-01
+    - c-15151011-03
+    - c-15151011-04
+  dropped_citations: 0
+status: active

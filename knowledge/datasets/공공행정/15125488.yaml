@@ -1,4 +1,5 @@
-# Dataset 15125488 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125488 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125488'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 사업자 입지선정기준 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹본부 상권 기준
   - 창업 점포 선정
   - 프랜차이즈 출점 조건
+summary_user: 가맹 브랜드별로 가맹점 입지를 누가 정하고(입지선정주체명) 어떤 기준으로 정하는지(입지선정기준내용)를 기준년도·브랜드관리번호 단위로 조회하는 전국 범위 API로, 한 브랜드에 기준이 여러 건이면 일련번호로 나뉜다. 창업 예정자가 "이 프랜차이즈는 점포 자리를 본부가 정하나, 내가 고르나, 어떤 조건을 요구하나"를 정보공개서 차원에서 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 공정위의 다른 가맹정보 API(브랜드·가맹본부 일반정보 등)와 이어 쓰지만, 실측상 전역 조인 키는 없어 기관 밖 데이터와는 이름 매핑으로만 연결된다.
 description_portal: 브랜드 가맹점 사업자 입지선정기준에 대한 기준년도, 브랜드관리번호를 이용하여 입지선정주체명, 기준내용 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -120,12 +124,27 @@ schema:
         - 당사 가맹사업팀 - 당사 정책에 의해 결정된 영업지역 - 가맹희망자가  매장위치 선정 – 당사 가맹사업부에서 매장 위치 및 규모 확인 –  가맹
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -170,7 +189,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125488-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125488.json
@@ -235,8 +254,6 @@ verification:
   run: probe/runs/15125488.json
   stats: probe/stats/15125488.json
   data: probe/data/15125488/
-status: active
-summary_user: 가맹 브랜드별로 가맹점 입지를 누가 정하고(입지선정주체명) 어떤 기준으로 정하는지(입지선정기준내용)를 기준년도·브랜드관리번호 단위로 조회하는 전국 범위 API로, 한 브랜드에 기준이 여러 건이면 일련번호로 나뉜다. 창업 예정자가 "이 프랜차이즈는 점포 자리를 본부가 정하나, 내가 고르나, 어떤 조건을 요구하나"를 정보공개서 차원에서 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 공정위의 다른 가맹정보 API(브랜드·가맹본부 일반정보 등)와 이어 쓰지만, 실측상 전역 조인 키는 없어 기관 밖 데이터와는 이름 매핑으로만 연결된다.
 limits: 사업자등록번호 같은 전역 키가 실측 컬럼에 없어 타 기관 데이터와 바로 결합하지 못하고, 공정위 내부 관리번호나 이름으로만 연결된다. 전국·비공간 데이터라 실제 점포 위치나 지역별 분석에는 쓸 수 없고, 기준년도와 브랜드관리번호를 알아야 조회된다.
 review:
   summary: draft
@@ -249,3 +266,4 @@ review:
     - c-15125488-04
     - c-15125488-07
   dropped_citations: 0
+status: active

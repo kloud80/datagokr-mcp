@@ -1,4 +1,5 @@
-# Dataset 15049550 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049550 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049550'
 tier: verified
 title: 경상남도_대기오염경보 발령내역
@@ -24,6 +25,7 @@ synonyms:
   - 고농도 미세먼지 발령
   - 대기오염 특보 이력
   - PM2.5 주의보
+summary_user: 경상남도에서 발령된 미세먼지·초미세먼지·오존 주의보와 경보를 한 건씩 담은 발령 내역 파일로, 물질명·지점(권역)·경보단계·발령 농도와 시간·해제 농도와 시간을 기록하며 포털 설명상 2023년부터 2025년 11월 18일까지를 담는다. 경남 지역에서 어느 권역에 어떤 오염물질 주의보가 얼마나 자주, 얼마 동안 발령됐는지를 확인하려는 주민이나 고농도 오염 사례를 분석하려는 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 대기질 데이터와는 지점(권역) 이름이나 물질명을 직접 맞추는 방식으로만 연결한다.
 description_portal: 경상남도의 대기오염경보 발령 내역으로, 미세먼지(PM-10)·초미세먼지(PM-2.5)·오존(O₃)에 대한 주의보 및 경보 발령 정보를 제공합니다. 대기오염물질의 종류와 권역(지역)별 발령 농도 및 시간, 경보 단계, 해제 농도 및 시간 등 주요 내용을 확인할 수 있습니다. 연도별 데이터 제공을 통해 지역 대기질 변화와 고농도 오염 발생 상황을 파악할 수 있습니다.○ 데이터 제공 항목  -  미세먼지 주의보  -  미세먼지 경보  -  초미세먼지 주의보  -  오존 주의보○ 데이터 제공 년도  -  2023년  -  2024년  -  2025년(11.18. 기준)    * 이후 데이터는 2026.11.30. 업데이트 예정
 accrual_periodicity: 연간
 team:
@@ -122,6 +124,12 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 발령시간
+    - 해제시간
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -223,8 +231,6 @@ verification:
   run: probe/runs/15049550.json
   stats: probe/stats/15049550.json
   data: probe/data/15049550/
-status: active
-summary_user: 경상남도에서 발령된 미세먼지·초미세먼지·오존 주의보와 경보를 한 건씩 담은 발령 내역 파일로, 물질명·지점(권역)·경보단계·발령 농도와 시간·해제 농도와 시간을 기록하며 포털 설명상 2023년부터 2025년 11월 18일까지를 담는다. 경남 지역에서 어느 권역에 어떤 오염물질 주의보가 얼마나 자주, 얼마 동안 발령됐는지를 확인하려는 주민이나 고농도 오염 사례를 분석하려는 분석가가 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 대기질 데이터와는 지점(권역) 이름이나 물질명을 직접 맞추는 방식으로만 연결한다.
 limits: 측정소 코드 같은 공통 조인 키가 없어 에어코리아 측정소별 시간 자료와 바로 결합하기 어렵다. 실시간 API가 아닌 연도별 파일(CSV, 약 28KB)이라 현재 발령 상황 확인에는 쓰지 못한다.
 review:
   summary: draft
@@ -236,3 +242,4 @@ review:
     - c-15049550-03
     - c-15049550-04
   dropped_citations: 0
+status: active

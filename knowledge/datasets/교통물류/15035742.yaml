@@ -1,4 +1,5 @@
-# Dataset 15035742 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15035742 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15035742'
 tier: verified
 title: 인천교통공사 지식재산권 관리정보
@@ -23,6 +24,7 @@ synonyms:
   - 월미바다열차 상표
   - 공공기관 지식재산권
   - 기술이전
+summary_user: 인천교통공사가 보유한 특허·상표·프로그램저작권 등 지식재산권을 한 건씩 등록번호, 등록명, 등록일, 관련부서로 정리한 목록 파일이다(포털 설명상 2025년 6월 30일 기준, 약 3KB 규모의 소량 CSV). 철도 기술 협력이나 기술이전을 검토하는 사업자나 연구자가 '인천교통공사가 신호 제어·전동기 효율 같은 분야에서 어떤 특허와 운영 소프트웨어를 갖고 있고 어느 부서 소관인가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 등록번호로 특허청 등 외부 등록 정보를 이름·번호 대조하거나 같은 기관 자료와 기관명으로만 이어 쓴다.
 description_portal: 인천교통공사에서 보유중인 2025년 6월 30일 기준 지식재산권 자료입니다.해당 데이터는 등록번호, 등록명, 등록일, 관련부서로 구분되어 있으며 특허, 상표, 프로그램저작권 등이 포함되어 있습니다. 특허는 궤도차량, 전동기 효율, 궤간 장치, 신호 제어 등 철도 운영과 안전 관련 기술이 다수 등록되어 있습니다. 상표권은 “월미바다열차(WolmiSea Train)”, “해누비”, “해미리”, “웨이로(WAYRO)” 등 교통공사 브랜드와 캐릭터명을 포함합니다. 또한 프로그램저작권은 역사 환기, 열차고장정보 추출, 피크전력 관리, 신호제어, 발매장비 로그분석, 시각화 시스템 등 다양한 운영 소프트웨어를 아우릅니다.
 accrual_periodicity: 연간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 등록번호
       type: code
+      semantic_type: kipo_rgst_no
       null_rate: 0.0
       sample_values:
         - 10-1943267
@@ -72,12 +75,22 @@ schema:
         - 환경설비팀
       stats:
         unique: 15
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: kipo_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  time: day
+  time_fields:
+    - 등록일
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -113,7 +126,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15035742-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kipo_rgst_no(등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15035742.json
@@ -167,8 +180,6 @@ verification:
   run: probe/runs/15035742.json
   stats: probe/stats/15035742.json
   data: probe/data/15035742/
-status: active
-summary_user: 인천교통공사가 보유한 특허·상표·프로그램저작권 등 지식재산권을 한 건씩 등록번호, 등록명, 등록일, 관련부서로 정리한 목록 파일이다(포털 설명상 2025년 6월 30일 기준, 약 3KB 규모의 소량 CSV). 철도 기술 협력이나 기술이전을 검토하는 사업자나 연구자가 '인천교통공사가 신호 제어·전동기 효율 같은 분야에서 어떤 특허와 운영 소프트웨어를 갖고 있고 어느 부서 소관인가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 등록번호로 특허청 등 외부 등록 정보를 이름·번호 대조하거나 같은 기관 자료와 기관명으로만 이어 쓴다.
 limits: 표준 조인 키가 없어 다른 데이터셋과 자동 결합이 어렵고 등록번호·등록명 대조로만 연결된다. 필드에 권리 종류를 구분하는 별도 코드가 확인되지 않아 특허·상표·저작권 구분은 등록번호나 등록명으로 판단해야 한다.
 review:
   summary: draft
@@ -179,3 +190,4 @@ review:
     - c-15035742-01
     - c-15035742-03
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15126911 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15126911 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126911'
 tier: verified
 title: 한국도로공사_휴게소 태양광 발전소 현황
@@ -24,6 +25,7 @@ synonyms:
   - 휴게소 ESS
   - 태양광 발전량
   - 친환경 에너지 설비
+summary_user: 한국도로공사가 관리하는 고속도로 휴게소별 태양광 발전소의 설비용량(kW), 연평균 발전량, 에너지저장장치(ESS) 설비, 운영 개시일을 휴게소·방향 단위로 정리한 전국 현황 파일(CSV, 약 1.5KB)이다. 에너지 분석가나 정책 담당자가 '어느 휴게소에 몇 kW 규모 태양광이 깔려 있고 운영 연차와 발전량은 어떤가'를 비교하는 데 쓴다. 공통 조인 키가 없어 다른 휴게소 데이터(위치·편의시설 등)와는 휴게소명과 방향을 이름으로 맞춰 연결해야 한다.
 description_portal: 본 데이터는 한국도로공사가 관리하는 고속도로 휴게소 내 태양광 발전소의 설치 및 운영 현황을 정리한 자료이다.  태양광 발전소는 신재생에너지 활용을 통해 탄소중립 실현과 에너지 비용 절감을 도모하며, 고속도로 부속시설의 친환경 운영에 기여한다.  데이터는 휴게소명, 방향, 설비용량(kW), 연평균 발전량(kWh), 에너지저장장치(ESS) 유무, 발전소 운영일 항목으로 구성된다.  해당 정보는 발전 효율 분석, 설비 용량 산정, 에너지 정책 수립, 환경 성과 평가 등에 활용된다.  또한, 지역별 발전 분포 및 운영 연차 분석을 통해 설비 투자와 운영 전략 수립의 기초자료로 사용된다.  CSV 형식으로 제공되며, 휴게소별 친환경 에너지 설비 운영 실태를 확인할 수 있다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 휴게소명
       type: code
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 함안
@@ -97,6 +100,12 @@ schema:
         - 2016-04
       stats:
         unique: 14
+  foreign_keys:
+    - fields:
+        - 휴게소명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -139,7 +148,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15126911-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(휴게소명)'
     evidence:
       - type: measured
         source: probe/stats/15126911.json
@@ -193,8 +202,6 @@ verification:
   run: probe/runs/15126911.json
   stats: probe/stats/15126911.json
   data: probe/data/15126911/
-status: active
-summary_user: 한국도로공사가 관리하는 고속도로 휴게소별 태양광 발전소의 설비용량(kW), 연평균 발전량, 에너지저장장치(ESS) 설비, 운영 개시일을 휴게소·방향 단위로 정리한 전국 현황 파일(CSV, 약 1.5KB)이다. 에너지 분석가나 정책 담당자가 '어느 휴게소에 몇 kW 규모 태양광이 깔려 있고 운영 연차와 발전량은 어떤가'를 비교하는 데 쓴다. 공통 조인 키가 없어 다른 휴게소 데이터(위치·편의시설 등)와는 휴게소명과 방향을 이름으로 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 휴게소명 표기 차이에 따라 다른 데이터와의 매칭이 어긋날 수 있다. 좌표가 없는 비공간 자료라 지도 분석에는 별도 위치 데이터가 필요하다. 연평균 발전량의 단위가 포털 설명(kWh)과 필드명(MW)에서 다르게 표기되어 있어 해석 전에 단위를 확인해야 한다.
 review:
   summary: draft
@@ -206,3 +213,4 @@ review:
     - c-15126911-03
     - c-15126911-04
   dropped_citations: 0
+status: active

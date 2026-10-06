@@ -1,0 +1,239 @@
+# Dataset 15076788 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076788'
+tier: verified
+title: 한국도로공사_VMS 메시지 유형별 일괄조회
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076788/openapi.do
+synonyms:
+  - 고속도로
+  - 메시지
+  - 유형
+  - 도로전광판
+  - 교통정보안내
+  - 공공표출정보
+  - 안내문구분류
+  - VMS
+  - 가변정보표지판
+  - 고속도로 전광판 메시지
+  - 교통안내 전광판
+  - 돌발상황 안내
+  - 고속도로 교통정보
+summary_user: 전국 고속도로 VMS(도로 전광판)에 표출된 메시지를 유형별로 묶어 전광판 ID·노선명·노선번호·방향과 함께 건별로 담은 외부 OpenAPI 데이터다. 교통정보 서비스 사업자나 분석가가 "지금 어느 고속도로 구간 전광판에 사고·공사·기상 안내가 떠 있는가"를 확인하거나 유형별 표출 이력을 모을 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 노선번호·노선명(routeNo) 같은 이름·코드 매핑이나 한국도로공사의 다른 데이터의 기관 코드로만 연결한다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 VMS(Variable Message Sign)의 메시지를 유형별로 일괄 조회할 수 있는 OpenAPI이다.VMS는 교통 상황, 기상 정보, 돌발 상황, 공사 안내 등 다양한 정보를 실시간으로 운전자에게 전달하는 전광판 장치이다.해당 API는 표출된 메시지를 유형별로 분류하여 제공하며, 표출 시간, 메시지 ID, 표출 위치, 관리 기관 등의 정보를 포함한다.데이터는 XML 및 JSON 형식으로 제공되며, 도로 운영 시스템, 교통정보 플랫폼, 정책 수립 도구 등과 연계해 활용 가능하다.API는 일괄 조회 방식으로 구성되어 있어 대량 데이터 수집과 표출 이력 관리에 용이하다.또한 메시지 유형별 통계 분석, 예측 모델 개발 등 민간과 공공의 다양한 활용 수요를 충족할 수 있다.API 이용을 위해 인증키가 필요하며, 상세 요청 형식과 응답 구조는 명세서를 통해 확인할 수 있다.
+team:
+  dept: AI데이터처
+services:
+  - op: vmsMessageSrchByType
+    name: vmsMessageSrchByType
+    endpoint: https://data.ex.co.kr/openapi/vms/vmsMessageSrchByType
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: messageType
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 영동선
+        - 서해안선
+      stats:
+        unique: 48
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0500'
+        - '0150'
+      stats:
+        min: 10
+        p50: 300
+        max: 6000
+        unique: 48
+    - name: vmsId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0120VMS00330
+        - 0120VMS00400
+        - 0101VMS00800
+      stats:
+        unique: 1538
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+        - S
+      stats:
+        unique: 2
+    - name: vmsMessage
+      type: string
+      null_rate: 0.2581
+      sample_values:
+        - ' 안전띠 미착용 시 범칙금 3만원 이상'
+        - ' 졸음사고 치사율 급증 졸릴땐 휴식 후 운전'
+        - ' 안전거리 확보'
+      stats:
+        unique: 338
+    - name: vmsMessage2
+      type: string
+      null_rate: 0.3758
+      sample_values:
+        - ' 졸음사고 치사율 급증 졸릴땐 휴식 후 운전'
+        - ' 지정차로 위반 벌점 10점 안전거리 위반 벌점 10점'
+        - ' 안전띠 미착용 시 범칙금 3만원 이상'
+      stats:
+        unique: 246
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.5229
+  rank_in_sector: 2024
+  brm: 교통물류 - 도로
+  why: 한국도로공사 공공데이터 포털 (key=test)
+claims:
+  - id: c-15076788-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076788.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076788-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076788-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076788.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076788-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076788.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076788-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076788-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076788-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076788.json
+  stats: probe/stats/15076788.json
+  data: probe/data/15076788/
+limits: 표준노드링크(link_id·node_id) 같은 공간 기준 키나 좌표가 없어 전광판 위치를 지도·링크에 바로 붙일 수 없다. 포털 활용신청과 별개로 data.ex.co.kr에서 인증키를 따로 받아 경로 파라미터(KEY)로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076788-01
+    - c-15076788-03
+    - c-15076788-04
+    - c-15076788-06
+  dropped_citations: 0
+status: active

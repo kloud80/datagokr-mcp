@@ -1,0 +1,203 @@
+# Dataset 15123945 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123945'
+tier: verified
+title: 경기도_버스 업체명 노선 인가 이력 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123945/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 버스인가이력
+  - 버스업체ID
+  - 업체식별
+  - 노선정보
+  - 대중교통
+  - 버스 노선 인가 이력
+  - 운수업체별 노선
+  - 경기도 BMS
+  - 버스 운송사업자 노선 변경
+  - 노선 면허 이력
+  - 시내버스 업체 노선
+summary_user: 경기도 버스운송관리시스템(BMS)에서 나온 업체별 노선 인가 이력을 이력ID·노선ID·업체ID 단위의 건별 기록으로 담는다. 행정 담당자나 분석가가 특정 노선을 어느 운수업체가 운영해 왔는지, 업체별로 어떤 노선을 인가받았는지 추적하는 데 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 경기도 버스 노선·업체 정보와는 같은 기관의 노선ID(route_id)·업체ID(entrps_id) 코드로만 이어 쓸 수 있다.
+description_portal: 이 데이터는 경기도 버스운송관리시스템(BMS)을 기반으로 업체ID별 노선ID 이력 정보를 제공하는 자료입니다. 각 항목은 '이력ID', '노선ID', '업체ID'로 구성되어 있으며, 특정 업체가 운영하는 버스 노선의 인가 이력 변동 사항을 기록한 데이터입니다. 이를 통해 특정 노선이 어떤 업체에 의해 언제부터 운영되었는지를 추적할 수 있으며, 대중교통 정책 수립, 버스 노선의 민원 분석, 업체별 노선 운영현황 모니터링 등에 활용될 수 있습니다. 특히 이 데이터는 경기도 내 노선 관리 및 업체별 인가 이력 분석에 유용하며, 지역 교통 서비스 품질 개선과 버스 행정 운영의 투명성 확보에 기여할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: hist_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000000000'
+        - '1000018138'
+        - '1000008285'
+      stats:
+        min: 1000000000
+        p50: 1000008834.5
+        max: 2000015201
+        unique: 72
+    - name: route_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '241006790'
+        - '241006786'
+        - '200000025'
+      stats:
+        min: 200000021
+        p50: 230000085.5
+        max: 241006987
+        unique: 95
+    - name: entrps_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4100200'
+        - '4100300'
+        - '4101400'
+      stats:
+        min: 4100100
+        p50: 4101400
+        max: 4155200
+        unique: 35
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3725
+  rank_in_sector: 4024
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15123945-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123945.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15123945-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123945-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123945.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123945-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123945.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123945-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123945-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123945-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123945.json
+  stats: probe/stats/15123945.json
+  data: probe/data/15123945/
+limits: 업체명·노선명이 따로 없고 ID만 있어, 의미를 읽으려면 경기도의 노선·업체 원장과 코드로 매핑해야 하며 국토부 등 다른 기관 데이터와 바로 붙는 공통 키가 없다. 경기도 외부 사이트(data.gg.go.kr)에서 별도 인증키를 받아 호출해야 하며, 포털 활용신청과는 별개다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15123945-01
+    - c-15123945-03
+    - c-15123945-04
+  dropped_citations: 0
+status: active

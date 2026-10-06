@@ -52,6 +52,7 @@ schema:
         unique: 1
     - name: 상병코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - A010
@@ -92,12 +93,26 @@ schema:
         p50: 140
         max: 40671456
         unique: 24622
+  foreign_keys:
+    - fields:
+        - 상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도구분
+  space_via: name
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
@@ -134,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151596-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15151596.json

@@ -1,4 +1,5 @@
-# Dataset 15051515 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15051515 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15051515'
 tier: verified
 title: 근로복지공단_퇴직연금사업장 운영현황(자산관리기관 코드)
@@ -21,6 +22,7 @@ synonyms:
   - 퇴직연금 금융기관 코드
   - 근로복지공단 퇴직연금 코드
   - 퇴직연금 메타데이터
+summary_user: 근로복지공단 퇴직연금 사업장 운영현황 데이터에서 쓰는 자산관리기관(사업장 퇴직연금 자산을 운용하는 금융기관) 코드표로, 코드별 적재일시·사용여부·정렬순번을 담은 전국 단위 소형 CSV 파일(약 5KB)이다. 분석가가 근로복지공단 퇴직연금 운영현황 자료에 나오는 자산관리기관 코드가 어느 금융기관을 뜻하는지 풀어 금융기관별 가입 사업장 수·운용 규모·수익률을 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어, 같은 기관(근로복지공단)의 퇴직연금 운영현황 파일과 자산관리기관 코드로 맞추거나 기관명 매핑으로만 연결한다.
 description_portal: 이 데이터는 근로복지공단의 퇴직연금 사업장 운영 현황 관련 코드성 메타데이터입니다. 핵심 항목은 자산관리기관 코드의 고유 식별자이며, 이 코드는 근로복지공단의 퇴직연금 사업장 자산을 실제로 운용하는 금융기관을 정의하고 분류하는 데 사용됩니다.그 외에도 해당 코드 정보가 시스템에 적재된 일시(Timestamp), 현재 코드의 사용 여부(Y/N), 그리고 시스템 내 데이터 출력 및 관리를 위한 정렬 순번 등의 관리 정보로 구성되어 있습니다. 이 코드는 퇴직연금 운영 현황 데이터와 연계하여 특정 금융기관별로 가입된 사업장 수, 운용 규모, 수익률 등의 성과를 분석하는 데 연결 키 역할을 수행합니다.이 자료는 공단의 퇴직연금 시스템 내 데이터의 무결성을 유지하고, 자산 관리 주체별 실적을 투명하게 파악하여 기관별 성과 비교 및 관리 감독을 위한 기초 자료로서의 가치를 지닙니다. 이 코드를 통해 공단과 협력하는 다양한 금융기관의 목록과 시스템 상의 현황을 파악할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 자산관리기관코드_자산관리기관코드
       type: string
+      semantic_type: rp_asset_mgr_cd
       null_rate: 0.0
       sample_values:
         - '*'
@@ -69,12 +72,22 @@ schema:
         p50: 70.5
         max: 999999999
         unique: 140
+  foreign_keys:
+    - fields:
+        - 자산관리기관코드_자산관리기관코드
+      reference:
+        key: rp_asset_mgr_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 자산관리기관코드_적재일시
 cycle: default
 classification:
   subsector_name: 퇴직연금 (퇴직연금 기본정보·상품 금리·가입/도입 현황·사업장 운용·수익률·IRP·연금저축)
@@ -112,7 +125,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15051515-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: rp_asset_mgr_cd(자산관리기관코드_자산관리기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15051515.json
@@ -166,8 +179,6 @@ verification:
   run: probe/runs/15051515.json
   stats: probe/stats/15051515.json
   data: probe/data/15051515/
-status: active
-summary_user: 근로복지공단 퇴직연금 사업장 운영현황 데이터에서 쓰는 자산관리기관(사업장 퇴직연금 자산을 운용하는 금융기관) 코드표로, 코드별 적재일시·사용여부·정렬순번을 담은 전국 단위 소형 CSV 파일(약 5KB)이다. 분석가가 근로복지공단 퇴직연금 운영현황 자료에 나오는 자산관리기관 코드가 어느 금융기관을 뜻하는지 풀어 금융기관별 가입 사업장 수·운용 규모·수익률을 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어, 같은 기관(근로복지공단)의 퇴직연금 운영현황 파일과 자산관리기관 코드로 맞추거나 기관명 매핑으로만 연결한다.
 limits: 코드·관리 정보만 있고 실적 수치는 없으므로 단독으로는 기관별 성과를 볼 수 없다. 다른 기관(금융위·산업은행 등) 퇴직연금 데이터와 공통 키가 없어 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -180,3 +191,4 @@ review:
     - c-15051515-04
     - c-15051515-06
   dropped_citations: 0
+status: active

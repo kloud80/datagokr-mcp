@@ -65,6 +65,8 @@ async def apply_many(pks: list[str], headless: bool = True) -> list[dict]:
         browser = await p.chromium.launch(channel="chrome", headless=headless)
         ctx = await browser.new_context(storage_state=str(STATE))
         page = await ctx.new_page()
+        # 저장 세션은 SSO 토큰 교환(sso/profile.do)을 한 번 끝까지 거쳐야 신청 폼이 열린다 — 안 거치면 폼이 index.do로 튕긴다
+        await page.goto("https://www.data.go.kr/iim/main/mypageMain.do", wait_until="networkidle", timeout=90000)
         for pk in pks:
             try:
                 rec = await apply_one(page, pk)

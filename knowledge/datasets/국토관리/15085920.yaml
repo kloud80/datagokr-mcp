@@ -1,4 +1,5 @@
-# Dataset 15085920 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085920 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085920'
 tier: verified
 title: 기후에너지환경부 한강홍수통제소_홍수예보_수위유량곡선환산표
@@ -24,6 +25,7 @@ synonyms:
   - 하천 유량 추정
   - 수위관측소 유량
   - Stage-Discharge
+summary_user: 한강홍수통제소 수위 관측소별로 적용기간(적용시작일자~적용종료일자)마다 수위값과 그에 대응하는 유량값을 짝지어 담은 수위-유량 곡선 환산표로, 약 61MB 규모의 CSV 파일 한 건이다. 하천 분석가나 수자원 실무자가 '이 관측소에서 수위가 몇 m일 때 유량은 몇 m³/s였나'처럼 관측 수위를 유량으로 바꾸거나 기간별 곡선 변화를 비교하는 데 쓴다. 전역 조인 키는 없으며, 수위관측소코드·관측소명을 같은 기관의 실시간 수위 관측 자료와 맞춰 이어 쓴다.
 description_portal: '한강홍수통제소에서 관측하는 수위 관측소 별 수위자료, 유량자료를 적용기간 별로 제공하는 수위유량곡선환산표 데이터입니다.수위-유량 곡선식(Stage-Discharge Curve) 이란 하천의 특정 지점에서 측정한 수위(H)와그 지점을 흐르는 유량(Q) 사이의 상관관계를 나타낸 공식 또는 그래프를 말합니다.보통 하천의 유량을 직접 매번 측정하는 것은 시간과 비용이 많이 들기 때문에, 상대적으로 측정이 쉬운 수위를 통해 실시간 유량을 추정하기 위해 사용합니다.1. 기본 공식 (Rating Curve)가장 일반적으로 사용되는 공식은 다음과 같은 지수함수 형태입니다.   Q = C(H - a)^n :      - Q : 유량(m^3/s)      - H : 관측된 수위(m)     - a: 유량이 0이 되는 시점의 수위 (영수위, Zero-flow stage)     - C,n : 하천 단면의 형상과 거칠기에 따라 결정되는 상수'
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 수위관측소코드
       type: number
+      semantic_type: hydro_obs_cd
       null_rate: 0.0
       sample_values:
         - '1001670'
@@ -102,12 +105,23 @@ schema:
         p50: 1203.54
         max: 1101195.45
         unique: 38740
+  foreign_keys:
+    - fields:
+        - 수위관측소코드
+      reference:
+        key: hydro_obs_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 적용시작일자
+    - 적용종료일자
 cycle: event
 classification:
   subsector_name: 홍수 예보·경보 (특보·예보 지점·댐 방류 예고·도시 침수 예보)
@@ -149,7 +163,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085920-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hydro_obs_cd(수위관측소코드)'
     evidence:
       - type: measured
         source: probe/stats/15085920.json
@@ -241,8 +255,6 @@ verification:
   run: probe/runs/15085920.json
   stats: probe/stats/15085920.json
   data: probe/data/15085920/
-status: active
-summary_user: 한강홍수통제소 수위 관측소별로 적용기간(적용시작일자~적용종료일자)마다 수위값과 그에 대응하는 유량값을 짝지어 담은 수위-유량 곡선 환산표로, 약 61MB 규모의 CSV 파일 한 건이다. 하천 분석가나 수자원 실무자가 '이 관측소에서 수위가 몇 m일 때 유량은 몇 m³/s였나'처럼 관측 수위를 유량으로 바꾸거나 기간별 곡선 변화를 비교하는 데 쓴다. 전역 조인 키는 없으며, 수위관측소코드·관측소명을 같은 기관의 실시간 수위 관측 자료와 맞춰 이어 쓴다.
 limits: 다른 기관 데이터와 바로 붙일 공통 키가 없어 관측소 코드나 이름을 직접 매핑해야 한다. 명세상 수시 생성 후 고정되는 파일이라 실시간 수위·유량 값 자체는 담지 않는다.
 review:
   summary: draft
@@ -254,3 +266,4 @@ review:
     - c-15085920-02
     - c-15085920-03
   dropped_citations: 0
+status: active

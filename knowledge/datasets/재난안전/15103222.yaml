@@ -1,4 +1,5 @@
-# Dataset 15103222 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103222 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103222'
 tier: verified
 title: 한국전기안전공사_전기안전관리대행 유지현황
@@ -24,6 +25,7 @@ synonyms:
   - 전기안전관리자 선임 대행
   - 사업소별 대행 해지
   - 전기안전공사 대행 통계
+summary_user: 한국전기안전공사가 위탁받아 수행하는 전기안전관리대행(자가용전기설비 75kW 이상 4,500kW 미만)의 계약·해지·유지 건수를 연도(2019~2025년)와 사업소 단위로 집계한 파일로, 건별 설비 원장이 아니라 사업소별 합계를 담는다. 전기안전 분야 분석가나 사업자가 '어느 사업소 관할에서 대행 계약이 늘거나 해지가 많았는가'처럼 지역별·연도별 대행 수요 추이를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 사업소명·사업소코드를 이름으로 맞추거나 같은 기관(한국전기안전공사)의 사업소코드 체계로만 연결한다.
 description_portal: 전기안전관리법 제22조제3항 및 같은 조 제6항, 제7항, 같은 법 시행령 제11조제3항부터 제6항까지, 같은법 시행규칙 제26조, 제27조, 제31조, 제32조에 따라 자가용전기설비의 소유자 또는 점유자는 전기안전관리자를 선임하여야 하나 일정규모 이하(75kW이상, 4500kW미만)은 전기안전관리업무를 위탁관리(대행) 훌 수 있도록 허용하고 있습니다.한국전기안전공사에서는 전기안전관리대행 업무를 진행하고 있으며, 연도별(2019년 ~ 2025년) 및 사업소별 전기안전관리대행의 계약건수, 해지건수, 유지건수를 제공하는 데이터입니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 사업소 명
       type: code
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - 서울본부
@@ -46,6 +49,7 @@ schema:
         unique: 13
     - name: 사업소코드
       type: number
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - '2100'
@@ -104,12 +108,27 @@ schema:
         p50: 604
         max: 1776
         unique: 89
+  foreign_keys:
+    - fields:
+        - 사업소 명
+      reference:
+        key: kesco_office_cd
+      evidence: measured
+    - fields:
+        - 사업소코드
+      reference:
+        key: kesco_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -146,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103222-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kesco_office_cd(사업소 명), kesco_office_cd(사업소코드)'
     evidence:
       - type: measured
         source: probe/stats/15103222.json
@@ -211,8 +230,6 @@ verification:
   run: probe/runs/15103222.json
   stats: probe/stats/15103222.json
   data: probe/data/15103222/
-status: active
-summary_user: 한국전기안전공사가 위탁받아 수행하는 전기안전관리대행(자가용전기설비 75kW 이상 4,500kW 미만)의 계약·해지·유지 건수를 연도(2019~2025년)와 사업소 단위로 집계한 파일로, 건별 설비 원장이 아니라 사업소별 합계를 담는다. 전기안전 분야 분석가나 사업자가 '어느 사업소 관할에서 대행 계약이 늘거나 해지가 많았는가'처럼 지역별·연도별 대행 수요 추이를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 사업소명·사업소코드를 이름으로 맞추거나 같은 기관(한국전기안전공사)의 사업소코드 체계로만 연결한다.
 limits: 사업소별 집계라 개별 설비·건물이나 시군구 단위로 내려가 볼 수 없고, 사업소코드는 행정구역 코드와 바로 맞물리지 않는다. 파일은 3KB 남짓의 작은 csv로 활용신청 없이 내려받는다.
 review:
   summary: draft
@@ -224,3 +241,4 @@ review:
     - c-15103222-03
     - c-15103222-04
   dropped_citations: 0
+status: active

@@ -65,6 +65,7 @@ schema:
         unique: 2160
     - name: 승강기고유번호
       type: number
+      semantic_type: elevator_no
       null_rate: 0.0575
       sample_values:
         - '1807478'
@@ -94,6 +95,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - 승강기고유번호
+      reference:
+        key: elevator_no
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -102,6 +108,14 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1993-03-28 ~ 2026-07-31
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 발생일자
 cycle: default
 classification:
   subsector_name: 교통사고 (사고 다발지역·지역별 사고)
@@ -143,7 +157,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15048078-03
     kind: key
-    value: '실측 조인 키: address(주소)'
+    value: '실측 조인 키: elevator_no(승강기고유번호), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15048078.json

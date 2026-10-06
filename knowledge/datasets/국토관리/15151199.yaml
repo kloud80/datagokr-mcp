@@ -1,4 +1,5 @@
-# Dataset 15151199 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15151199 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15151199'
 tier: verified
 title: 한국승강기안전공단_승강기안전관리자정보 조회 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 안전관리자 교육 유효기간
   - 승강기고유번호 조회
   - 엘리베이터 안전관리
+summary_user: 승강기 한 대(승강기고유번호)마다 선임된 안전관리자의 이름, 선임일, 교육 이수일, 교육 유효기간 시작일과 종료일을 담은 전국 범위의 건별 조회 API입니다. 건물 관리자나 점검 담당자가 특정 승강기의 안전관리자가 선임돼 있는지, 그 관리자의 법정 교육 유효기간이 끝나지 않았는지 확인할 때 씁니다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 같은 기관의 다른 승강기 데이터와 승강기고유번호(elevatorNo)로 맞춰 보는 방식으로만 이어 쓸 수 있습니다.
 description_portal: 승강기안전관리자정보 서비스로 안전관리자선임일, 승강기고유번호, 안전관리자명, 교육 이수일, 교육유효기간종료일, 교육유효기간시작일을 승강기고유번호로 조회할 수 있습니다.
 team:
   dept: 디지털총괄실
@@ -74,6 +76,7 @@ schema:
     - name: elevatorNo
       title: "승강기고유번호\t"
       type: number
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - '8088381'
@@ -124,12 +127,24 @@ schema:
         min: '2025-05-14'
         max: '2026-01-07'
         unique: 2
+  foreign_keys:
+    - fields:
+        - elevatorNo
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - appointDt
+    - valdEndDt
+    - valdStrDt
 cycle: default
 classification:
   subsector_name: 미분류 (재구성 후 잔여)
@@ -172,7 +187,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151199-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(elevatorNo)'
     evidence:
       - type: measured
         source: probe/stats/15151199.json
@@ -238,8 +253,6 @@ verification:
   run: probe/runs/15151199.json
   stats: probe/stats/15151199.json
   data: probe/data/15151199/
-status: active
-summary_user: 승강기 한 대(승강기고유번호)마다 선임된 안전관리자의 이름, 선임일, 교육 이수일, 교육 유효기간 시작일과 종료일을 담은 전국 범위의 건별 조회 API입니다. 건물 관리자나 점검 담당자가 특정 승강기의 안전관리자가 선임돼 있는지, 그 관리자의 법정 교육 유효기간이 끝나지 않았는지 확인할 때 씁니다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 같은 기관의 다른 승강기 데이터와 승강기고유번호(elevatorNo)로 맞춰 보는 방식으로만 이어 쓸 수 있습니다.
 limits: 승강기고유번호를 넣어 한 대씩 조회하는 구조라 전국 안전관리자 목록을 한꺼번에 받거나 지역별로 집계하기는 어렵고, 좌표나 행정구역 정보가 없는 비공간 데이터입니다. 개발계정은 하루 10,000회까지만 호출할 수 있습니다.
 review:
   summary: draft
@@ -251,3 +264,4 @@ review:
     - c-15151199-03
     - c-15151199-04
   dropped_citations: 0
+status: active

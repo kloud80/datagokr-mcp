@@ -1,4 +1,5 @@
-# Dataset 15156444 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156444 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156444'
 tier: verified
 title: 행정안전부_공공데이터 제공 표준
@@ -22,6 +23,7 @@ synonyms:
   - 데이터 항목 명세
   - 공공데이터 표준 항목
   - 표준데이터 정의서
+summary_user: 공공데이터포털 개방데이터를 같은 항목과 형식으로 내도록 행정안전부장관이 정한 제공표준을 데이터셋별·항목별 행으로 담은 전국 단위 비공간 파일(약 4MB CSV)이며, 20차 제·개정(2025년 10월) 기준이다. 표준데이터셋을 보유한 기관 담당자나 분석가가 '이 표준데이터셋에는 어떤 항목이 필수이고 허용값·단위는 무엇인가'를 확인할 때 쓴다. 전역 조인 키는 없으므로 데이터셋명이나 기관명으로 포털의 표준데이터셋 목록과 이름 매핑해 이어 쓴다.
 description_portal: '"공공데이터 제공 표준"이란 민간의 활용수요 등을 고려하여 공공데이터포털의 개방데이터를 동일한 항목과 형식으로 제공할 수 있도록 행정안정부장관이 정한 개방데이터 표준을 의미합니다.제공표준 데이터셋을 보유하고 있는 공공기관은 행정안전부장관이 정의한 "공공데이터 제공 표준"을 준수하여 파일데이터 또는 오픈 API방식으로 데이터셋을 생성 및 제공해야합니다.개별기관이 등록한 제공표준 데이터셋은 "공공데이터포털 > 데이터 찾기 > 데이터 목록 > 표준데이터셋"에서 확인하실수 있습니다.※ 공공데이터 제공 표준 20차 제·개정(2025.10월) 기준'
 applicable_legislation:
   - law: 공공데이터법
@@ -41,6 +43,7 @@ schema:
   fields:
     - name: 데이터셋일련번호
       type: number
+      semantic_type: data_std_dataset_sn
       null_rate: 0.0
       sample_values:
         - '94'
@@ -179,6 +182,12 @@ schema:
         - '0'
       stats:
         unique: 2580
+  foreign_keys:
+    - fields:
+        - 데이터셋일련번호
+      reference:
+        key: data_std_dataset_sn
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -222,7 +231,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156444-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: data_std_dataset_sn(데이터셋일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15156444.json
@@ -286,8 +295,6 @@ verification:
   run: probe/runs/15156444.json
   stats: probe/stats/15156444.json
   data: probe/data/15156444/
-status: active
-summary_user: 공공데이터포털 개방데이터를 같은 항목과 형식으로 내도록 행정안전부장관이 정한 제공표준을 데이터셋별·항목별 행으로 담은 전국 단위 비공간 파일(약 4MB CSV)이며, 20차 제·개정(2025년 10월) 기준이다. 표준데이터셋을 보유한 기관 담당자나 분석가가 '이 표준데이터셋에는 어떤 항목이 필수이고 허용값·단위는 무엇인가'를 확인할 때 쓴다. 전역 조인 키는 없으므로 데이터셋명이나 기관명으로 포털의 표준데이터셋 목록과 이름 매핑해 이어 쓴다.
 limits: 실제 데이터 값이 아니라 항목 정의(명세)만 담으므로 기관별 데이터 내용은 각 표준데이터셋을 따로 받아야 한다. 코드형 조인 키가 없어 다른 데이터와는 데이터셋명·기관명 같은 이름 매칭으로만 연결된다.
 review:
   summary: draft
@@ -299,3 +306,4 @@ review:
     - c-15156444-03
     - c-15156444-04
   dropped_citations: 0
+status: active

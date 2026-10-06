@@ -1,0 +1,222 @@
+# Dataset 15126033 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126033'
+tier: verified
+title: 국회 국회사무처_우수연구단체 현황
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126033/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 의원 연구단체
+  - 우수 연구단체 선정
+  - 국회의원 연구모임
+  - 연구단체 시상금
+  - 국회 연구단체 평가
+  - 의원연구단체 현황
+summary_user: 국회의원 연구단체 가운데 우수연구단체로 선정된 단체를 연도별로 담은 현황 데이터로, 연도(YEAR)·구분·분야·연구단체명·참여 의원·시상금·공개 파일명 등을 단체 단위로 담는다. 시민·연구자가 "올해 어떤 분야의 의원 연구단체가 우수단체로 뽑혔고 어느 의원이 참여했으며 시상금은 얼마였나"를 확인하는 데 쓴다. 전역 조인 키가 없어 의원 이름이나 연구단체명을 문자열로 맞춰 국회의원 인적사항·의안 데이터 같은 같은 기관 자료와 이어 쓴다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://open.assembly.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: YEAR
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 2025년
+        - 2024년
+        - 2023년
+      stats:
+        unique: 7
+    - name: DIV
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 우수1
+        - 「대한민국 국회 의정대상」 수상
+        - 우수
+      stats:
+        unique: 4
+    - name: FLD
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 경제산업
+        - 사회문화
+        - 정치행정
+      stats:
+        unique: 6
+    - name: GRP
+      type: string
+      null_rate: 0.01
+      sample_values:
+        - 국회 글로벌외교안보포럼
+        - 국회기후변화포럼
+        - 동물복지국회포럼
+      stats:
+        unique: 58
+    - name: LAWMAKER
+      type: string
+      null_rate: 0.01
+      sample_values:
+        - 김민석 의원
+        - 박홍근 의원, 이헌승 의원, 한정애 의원
+        - 권인숙 의원
+      stats:
+        unique: 62
+    - name: PRZ_MONEY
+      type: code
+      null_rate: 0.01
+      sample_values:
+        - 단체당 350만원
+        - 단체당 1,000만원
+        - 단체당 400만원
+      stats:
+        unique: 7
+    - name: OPB_FL_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5825
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 열린국회정보 (인증키)
+claims:
+  - id: c-15126033-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126033.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126033-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126033-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126033.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126033-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126033.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126033-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126033-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126033-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126033.json
+  stats: probe/stats/15126033.json
+  data: probe/data/15126033/
+limits: open.assembly.go.kr 인증키(KEY)가 필요하며, 이 인증키는 공공데이터포털 활용신청과 별개로 받는다. 코드나 ID 형태의 공통 키가 없어 다른 데이터와 연결할 때 의원명·단체명 표기 차이에 주의해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126033-01
+    - c-15126033-03
+    - c-15126033-04
+  dropped_citations: 0
+status: active

@@ -153,6 +153,7 @@ schema:
         unique: 149
     - name: 관할서명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 서울주소방서
@@ -162,6 +163,7 @@ schema:
         unique: 6
     - name: 서센터명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 언양119안전센터
@@ -169,9 +171,29 @@ schema:
         - 매곡119안전센터
       stats:
         unique: 26
+  foreign_keys:
+    - fields:
+        - 관할서명
+      reference:
+        key: fire_center
+      evidence: measured
+    - fields:
+        - 서센터명
+      reference:
+        key: fire_center
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - 긴급구조 시도명
+  space_via: name
+  time: day
+  time_fields:
+    - 접수일시
+    - 상황종료일시
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -208,7 +230,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15080956-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fire_center(관할서명), fire_center(서센터명)'
     evidence:
       - type: measured
         source: probe/stats/15080956.json

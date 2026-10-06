@@ -1,4 +1,5 @@
-# Dataset 15062908 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15062908 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062908'
 tier: verified
 title: 경상남도_주택현황 및 보급률
@@ -19,6 +20,7 @@ synonyms:
   - 경남 주택 통계
   - 주택 공급 현황
   - 시군 가구수
+summary_user: 경상남도 시군별로 2010~2017년 각 연도의 가구수·주택수·주택보급률을 한 행에 연도별 컬럼으로 담은 집계 데이터다. 분석가나 지자체 담당자가 "경남 각 시군의 주택보급률이 2010년대에 어떻게 변했고 100%를 넘은 곳은 어디인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 시군명(signguNm)을 이름으로 매핑해야만 다른 시군 단위 통계와 이어 쓸 수 있다.
 description_portal: 경상남도의 시군, 연도별 가구수, 주택수, 보급률 정보를 조회하는 경상남도 주택현황 및 보급률 조회 서비스
 team:
   dept: 정보통신담당관
@@ -343,6 +345,11 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - signguNm
+  space_via: name
 cycle: default
 classification:
   subsector_name: 공급·인허가·착공·준공·미분양·주택 현황
@@ -471,8 +478,6 @@ verification:
   run: probe/runs/15062908.json
   stats: probe/stats/15062908.json
   data: probe/data/15062908/
-status: active
-summary_user: 경상남도 시군별로 2010~2017년 각 연도의 가구수·주택수·주택보급률을 한 행에 연도별 컬럼으로 담은 집계 데이터다. 분석가나 지자체 담당자가 "경남 각 시군의 주택보급률이 2010년대에 어떻게 변했고 100%를 넘은 곳은 어디인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 시군명(signguNm)을 이름으로 매핑해야만 다른 시군 단위 통계와 이어 쓸 수 있다.
 limits: 표준 행정코드 같은 조인 키가 없어 다른 데이터와는 시군 이름 매칭으로만 연결된다. 필드가 2010~2017년 연도별 컬럼으로 고정돼 있어 그 밖의 연도는 이 API로 확인되지 않는다. 경상남도 내 시군 단위 비공간 집계라 읍면동이나 개별 주택 단위 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -484,3 +489,4 @@ review:
     - c-15062908-03
     - c-15062908-04
   dropped_citations: 0
+status: active

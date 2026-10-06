@@ -1,4 +1,5 @@
-# Dataset 15043711 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15043711 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043711'
 tier: verified
 title: 한국도로공사_휴게소 고속버스 환승시설 현황
@@ -24,6 +25,7 @@ synonyms:
   - 환승시설 운영시간
   - 휴게소 버스 갈아타기
   - 고속버스 환승센터
+summary_user: 고속도로 휴게소 가운데 고속버스 환승시설이 설치된 곳을 휴게소 한 건씩 노선·휴게소명·운영시간으로 담은 전국 현황 파일이며, 파일 크기가 362바이트에 불과한 소규모 목록이다. 고속버스 승객이나 여행 계획을 세우는 사람이 '이 고속도로 노선에서 환승이 가능한 휴게소는 어디이고 몇 시까지 운영하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 휴게소·노선 데이터와는 휴게소명이나 노선명을 이름으로 맞춰 연결해야 한다.
 description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 휴게소 내 고속버스 환승시설 현황에 관한 정보이다. 데이터는 노선, 휴게소명, 운영시간 등으로 구성되어 있으며, 환승시설이 설치된 휴게소의 운영 정보를 포함한다. 본 데이터는 고속버스를 이용하는 승객의 환승 편의 향상과 교통수단 간 연계 강화를 위한 정책 수립 및 운영 계획 수립에 활용될 수 있다. 또한 고속도로 이용자의 여행 계획 수립, 대중교통 활성화 및 이동 효율성 향상에도 기여할 수 있다. 해당 정보를 통해 이용자는 환승 가능한 휴게소를 미리 확인하고 효율적인 경로를 설정할 수 있으며, 공공기관은 환승시설 운영 실태를 분석하고 인프라 개선 자료로 활용할 수 있다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 4
     - name: 휴게소명
       type: code
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 횡성휴게소(인천)
@@ -60,6 +63,12 @@ schema:
         - 08:00～22:00
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 휴게소명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -102,7 +111,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043711-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(휴게소명)'
     evidence:
       - type: measured
         source: probe/stats/15043711.json
@@ -167,8 +176,6 @@ verification:
   run: probe/runs/15043711.json
   stats: probe/stats/15043711.json
   data: probe/data/15043711/
-status: active
-summary_user: 고속도로 휴게소 가운데 고속버스 환승시설이 설치된 곳을 휴게소 한 건씩 노선·휴게소명·운영시간으로 담은 전국 현황 파일이며, 파일 크기가 362바이트에 불과한 소규모 목록이다. 고속버스 승객이나 여행 계획을 세우는 사람이 '이 고속도로 노선에서 환승이 가능한 휴게소는 어디이고 몇 시까지 운영하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 휴게소·노선 데이터와는 휴게소명이나 노선명을 이름으로 맞춰 연결해야 한다.
 limits: 공통 코드나 좌표 없이 이름 위주 필드만 있어 다른 데이터와 붙일 때 이름 매칭 오류에 주의해야 한다. 버스 노선·배차·실시간 도착 정보는 담지 않아 환승 가능한 버스편을 알려면 별도 대중교통 데이터가 필요하다.
 review:
   summary: draft
@@ -180,3 +187,4 @@ review:
     - c-15043711-03
     - c-15043711-04
   dropped_citations: 0
+status: active

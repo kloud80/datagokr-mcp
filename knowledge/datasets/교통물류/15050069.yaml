@@ -1,4 +1,3 @@
-# Dataset 15050069 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15050069'
 tier: verified
 title: 한국교통안전공단_사업용차량 Trip단위 위험운전운행데이터(샘플)
@@ -20,6 +19,7 @@ synonyms:
   - 운행기록장치
   - 버스 택시 화물차 운행기록
   - 급제동 공회전
+summary_user: 사업용 차량의 운행기록장치 자료를 시동 ON부터 OFF까지의 트립 1건 단위로 담은 샘플 파일로, 운행거리·평균/최고속도·제동·공회전·RPM 초과시간·구간별 과속 건수와 시간, 시작·종료 GPS 좌표를 포함하며 범위는 전국입니다. 운수업 안전 분석가가 '어떤 운수회사 차량에서 과속·급제동 같은 위험운전 행동이 잦은가'를 살펴볼 때 원본 대용량 데이터의 구조를 미리 확인하는 용도로 쓴다. 사업자등록번호(bizno)로 사업자 정보와 이어 쓰고, 자동차등록번호·차대번호는 자동차 등록·검사 원장과 맞춰 보는 데 쓴다.
 description_portal: 한국교통안전공단에서 수집관리하고 있는 트립단위의 위험운전행동데이터 샘플입니다. (운행일자, 운수회사코드 등) 운행기록과 관련된 데이터는 대용량데이터로 샘플데이터만 업로드
 applicable_legislation:
   - law: 교통안전법
@@ -49,6 +49,7 @@ schema:
         unique: 1
     - name: 운수회사코드
       type: code
+      semantic_type: transport_company_cd
       null_rate: 0.0
       sample_values:
         - ecb4eba1d74925c37184e65dd786a93fbcf155142ddc4eac3003c1e60ff3d559
@@ -58,6 +59,7 @@ schema:
         unique: 3
     - name: 자동차등록번호
       type: string
+      semantic_type: vhcl_no
       null_rate: 0.0
       sample_values:
         - e02115543e6bae8ee94be4d7375046259757ef4dff0d5b91b88f03a47c82afe5
@@ -75,6 +77,7 @@ schema:
         unique: 1
     - name: 차대번호
       type: code
+      semantic_type: vin
       null_rate: 0.0
       sample_values:
         - KMJTA18G
@@ -766,9 +769,24 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - 운수회사코드
+      reference:
+        key: transport_company_cd
+      evidence: measured
+    - fields:
+        - 자동차등록번호
+      reference:
+        key: vhcl_no
+      evidence: measured
+    - fields:
         - 사업자등록번호
       reference:
         key: bizno
+      evidence: measured
+    - fields:
+        - 차대번호
+      reference:
+        key: vin
       evidence: measured
 facets:
   grade:
@@ -776,6 +794,18 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - 시작GPS X좌표
+    - 시작GPS Y좌표
+    - 종료GPS X좌표
+  space_via: coord
+  time: day
+  time_fields:
+    - 자료제출일시
+    - 시동ON일시
+    - 시동OFF일시
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -812,7 +842,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050069-03
     kind: key
-    value: '실측 조인 키: bizno(사업자등록번호)'
+    value: '실측 조인 키: transport_company_cd(운수회사코드), vhcl_no(자동차등록번호), bizno(사업자등록번호), vin(차대번호)'
     evidence:
       - type: measured
         source: probe/stats/15050069.json
@@ -887,8 +917,6 @@ verification:
   run: probe/runs/15050069.json
   stats: probe/stats/15050069.json
   data: probe/data/15050069/
-status: active
-summary_user: 사업용 차량의 운행기록장치 자료를 시동 ON부터 OFF까지의 트립 1건 단위로 담은 샘플 파일로, 운행거리·평균/최고속도·제동·공회전·RPM 초과시간·구간별 과속 건수와 시간, 시작·종료 GPS 좌표를 포함하며 범위는 전국입니다. 운수업 안전 분석가가 '어떤 운수회사 차량에서 과속·급제동 같은 위험운전 행동이 잦은가'를 살펴볼 때 원본 대용량 데이터의 구조를 미리 확인하는 용도로 쓴다. 사업자등록번호(bizno)로 사업자 정보와 이어 쓰고, 자동차등록번호·차대번호는 자동차 등록·검사 원장과 맞춰 보는 데 쓴다.
 limits: 포털 설명대로 운행기록 데이터가 대용량이라 샘플(zip 약 32KB)만 올라와 있어 전체 차량·기간의 통계나 회사별 비교에는 쓸 수 없다. 운수회사코드·자동차유형코드 등은 입력에 코드표가 제공되지 않아 뜻을 따로 확인해야 한다.
 review:
   summary: draft
@@ -901,3 +929,4 @@ review:
     - c-15050069-04
     - c-15050069-06
   dropped_citations: 0
+status: active

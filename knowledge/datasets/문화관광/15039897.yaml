@@ -1,4 +1,5 @@
-# Dataset 15039897 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15039897 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15039897'
 tier: verified
 title: 경상남도_도립미술관티켓판매상세
@@ -19,6 +20,7 @@ synonyms:
   - 미술관 입장료 매출
   - 전시 관람 통계
   - 할인권 이용 현황
+summary_user: 경상남도 도립미술관의 관람권 판매 내역을 건별로 담은 파일(CSV)로, 권종(유료·무료·할인·제로페이 등)과 인원, 결제방식, 결제금액, 결제일시를 기록한다. 미술관 운영 담당자나 문화정책 분석가가 "어떤 권종으로 언제 얼마나 관람권이 팔렸는가"를 살펴 관람 수요와 할인·무료 관람 비중을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없고 KOPIS 공연ID 같은 공통 코드도 없어서, 다른 데이터와는 기관명이나 날짜를 기준으로 수작업으로 맞춰야 한다.
 description_portal: '경상남도 도립미술관 티켓판매상세내역유료(어른, 청소년·군인), 무료(어른, 청소년·군인, 어린이, 경로, 장애인, 국가 유공자 등)할인(그린카드, 다누리카드, 예술인카드 등), 제로페이(어른, 청소년·군인)* 기타유의사항: 무료로 도립미술관 관람할 수 있는 대상은 인원, 결제방식, 결제금액, 결제일시 항목은 공란입니다.'
 accrual_periodicity: 연간
 team:
@@ -123,6 +125,11 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 결제일시
+    - 데이터기준일자
 cycle: event
 classification:
   subsector_name: 공연 (KOPIS 공연 목록·공연장·예매/매출)
@@ -228,8 +235,6 @@ verification:
   run: probe/runs/15039897.json
   stats: probe/stats/15039897.json
   data: probe/data/15039897/
-status: active
-summary_user: 경상남도 도립미술관의 관람권 판매 내역을 건별로 담은 파일(CSV)로, 권종(유료·무료·할인·제로페이 등)과 인원, 결제방식, 결제금액, 결제일시를 기록한다. 미술관 운영 담당자나 문화정책 분석가가 "어떤 권종으로 언제 얼마나 관람권이 팔렸는가"를 살펴 관람 수요와 할인·무료 관람 비중을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없고 KOPIS 공연ID 같은 공통 코드도 없어서, 다른 데이터와는 기관명이나 날짜를 기준으로 수작업으로 맞춰야 한다.
 limits: 무료 관람 대상은 인원·결제방식·결제금액·결제일시가 공란이어서 무료 관람객 수와 시점은 집계할 수 없다. 공연·문화시설 데이터와 이어 줄 공통 키가 없다. 명세상 주기는 연간이지만 이벤트형(생성 후 불변)으로도 표시돼 있어 갱신 여부를 따로 확인해야 한다.
 review:
   summary: draft
@@ -241,3 +246,4 @@ review:
     - c-15039897-02
     - c-15039897-03
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15109194 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109194 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109194'
 tier: verified
 title: 제주특별자치도 제주시_재활용도움센터 조회 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 분리배출 장소
   - 재활용품 배출 시간
   - 제주 재활용도움센터 운영시간
+summary_user: 제주시 재활용도움센터의 위치와 운영 정보를 센터 한 곳당 한 건으로 담는 API로, 읍면동명·도로명주소·위도·경도 좌표·운영시간·설치일자를 제공한다. 제주시 주민이 집 근처 재활용도움센터가 어디 있고 몇 시에 여는지 찾거나, 분석가가 읍면동별 센터 배치를 지도에 올려 보는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 읍면동명(emdNm)·주소 문자열이나 좌표로 맞춰 이어야 하며, 다른 지자체의 재활용 정거장·수거함 파일과 함께 쓸 때도 이름·위치 매핑이 필요하다.
 description_portal: 제주시 재활용도움센터 현황 데이터로 데이터코드, 읍면동명, 도로명주소, 운영시간정보, 설치일자, 위도좌표, 경도좌표, 기타내용, 등록일시 데이터 제공
 team:
   dept: 디지털혁신과
@@ -152,6 +154,15 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - emdNm
+  space_via: name
+  time: day
+  time_fields:
+    - regDt
+    - instlYmd
 cycle: default
 classification:
   subsector_name: 생활폐기물 배출·수거 지점 (대형폐기물 품목·수거함·종량제 판매소·음식물·재활용 정거장)
@@ -260,8 +271,6 @@ verification:
   run: probe/runs/15109194.json
   stats: probe/stats/15109194.json
   data: probe/data/15109194/
-status: active
-summary_user: 제주시 재활용도움센터의 위치와 운영 정보를 센터 한 곳당 한 건으로 담는 API로, 읍면동명·도로명주소·위도·경도 좌표·운영시간·설치일자를 제공한다. 제주시 주민이 집 근처 재활용도움센터가 어디 있고 몇 시에 여는지 찾거나, 분석가가 읍면동별 센터 배치를 지도에 올려 보는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 읍면동명(emdNm)·주소 문자열이나 좌표로 맞춰 이어야 하며, 다른 지자체의 재활용 정거장·수거함 파일과 함께 쓸 때도 이름·위치 매핑이 필요하다.
 limits: 범위는 제주시 한 곳이며, 배출량·처리현황 같은 폐기물 통계는 담지 않는다. 공통 행정코드 등 조인 키가 없어 다른 데이터와의 연결은 이름·주소·좌표 매핑에 의존한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -275,3 +284,4 @@ review:
     - c-15109194-06
     - c-15109194-07
   dropped_citations: 0
+status: active

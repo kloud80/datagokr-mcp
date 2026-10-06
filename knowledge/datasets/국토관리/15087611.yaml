@@ -161,6 +161,7 @@ schema:
     - name: fctryManageNo
       title: 공장관리번호
       type: number
+      semantic_type: factory_rgst_no
       null_rate: 0.0
       sample_values:
         - '412732025228768'
@@ -260,6 +261,7 @@ schema:
     - name: rprsntvIndutyCode
       title: 대표업종코드
       type: number
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - '26221'
@@ -273,6 +275,7 @@ schema:
     - name: indutyCodes
       title: 전체업종코드
       type: string
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - 26221, 26222, 26223
@@ -320,14 +323,38 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - fctryManageNo
+      reference:
+        key: factory_rgst_no
+      evidence: measured
+    - fields:
         - rnAdres
       reference:
         key: address
+      evidence: measured
+    - fields:
+        - rprsntvIndutyCode
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
+        - indutyCodes
+      reference:
+        key: classification_code
       evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1979-09-15 ~ 2026-09-21
+grain:
+  space: sgg
+  space_fields:
+    - rnAdres
+  space_via: address
+  category:
+    - ksic
+  category_fields:
+    - rprsntvIndutyCode
 cycle: default
 classification:
   subsector_name: 공장 등록 (팩토리온 공장등록·필지·생산정보, 시군구 공장등록 현황)
@@ -372,7 +399,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15087611-03
     kind: key
-    value: '실측 조인 키: address(rnAdres)'
+    value: '실측 조인 키: factory_rgst_no(fctryManageNo), address(rnAdres), classification_code(rprsntvIndutyCode), classification_code(indutyCodes)'
     evidence:
       - type: measured
         source: probe/stats/15087611.json

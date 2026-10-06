@@ -1,4 +1,5 @@
-# Dataset 15045547 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15045547 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15045547'
 tier: verified
 title: 한국도로공사_고속도로 노선관리 기관정보
@@ -24,6 +25,7 @@ synonyms:
   - 노선별 관할기관
   - 고속도로 노선 목록
   - 민자고속도로 운영사
+summary_user: 한국도로공사가 관리하는 고속도로 노선별로 노선번호·노선명·운영기관명을 한 행씩 담은 소규모 목록 파일(CSV 약 2KB)로, 전국 범위의 비공간 참조표다. 행정기관이나 서비스 개발자가 '이 고속도로 노선은 어느 기관이 운영하나'를 확인하거나 노선번호와 노선명을 맞춰 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 고속도로 데이터와는 노선번호나 노선명 문자열을 맞춰 연결해야 하며, 표준노드링크(link_id·node_id)와 바로 이어지는 키는 없다.
 description_portal: 본 데이터는 한국도로공사에서 관리하는 고속도로 노선의 식별번호, 노선명 및 운영기관에 대한 정보를 포함하고 있다. 각 노선의 고유 번호와 명칭, 이를 관리·운영하는 주체 기관명을 제공함으로써, 고속도로 관련 정책 수립, 행정업무 처리, 민간 정보 서비스 개발 등에 활용 가능하다. 이 자료는 노선별 관할 기관을 명확히 파악할 수 있어 유지관리 계획 수립, 긴급 대응 체계 구축, 노선별 책임 소재 명확화 등에 기초자료로 활용된다. 또한 행정기관 및 민간 기업의 시스템 간 연계 및 표준화된 도로 식별 체계 수립에도 기여할 수 있다. 공공데이터 이용자에게 구조화된 정보를 제공함으로써 데이터 접근성과 이해도를 높이며, 교통 인프라 운영 효율성과 서비스 품질 향상을 위한 기반 정보로 제공된다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 노선번호
       type: number
+      semantic_type: ex_route_no
       null_rate: 0.0
       sample_values:
         - '400'
@@ -58,6 +61,7 @@ schema:
         unique: 62
     - name: 운영기관명
       type: code
+      semantic_type: ex_operator_cd
       null_rate: 0.0
       sample_values:
         - 한국도로공사
@@ -65,6 +69,17 @@ schema:
         - 서부내륙고속도로
       stats:
         unique: 21
+  foreign_keys:
+    - fields:
+        - 노선번호
+      reference:
+        key: ex_route_no
+      evidence: measured
+    - fields:
+        - 운영기관명
+      reference:
+        key: ex_operator_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -107,7 +122,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15045547-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_route_no(노선번호), ex_operator_cd(운영기관명)'
     evidence:
       - type: measured
         source: probe/stats/15045547.json
@@ -172,8 +187,6 @@ verification:
   run: probe/runs/15045547.json
   stats: probe/stats/15045547.json
   data: probe/data/15045547/
-status: active
-summary_user: 한국도로공사가 관리하는 고속도로 노선별로 노선번호·노선명·운영기관명을 한 행씩 담은 소규모 목록 파일(CSV 약 2KB)로, 전국 범위의 비공간 참조표다. 행정기관이나 서비스 개발자가 '이 고속도로 노선은 어느 기관이 운영하나'를 확인하거나 노선번호와 노선명을 맞춰 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 고속도로 데이터와는 노선번호나 노선명 문자열을 맞춰 연결해야 하며, 표준노드링크(link_id·node_id)와 바로 이어지는 키는 없다.
 limits: 노선의 위치·구간·연장 같은 공간 정보는 없어 지도나 링크 단위 분석에는 따로 표준노드링크 등과 이름·번호 매핑이 필요하다. 갱신 주기는 확인되지 않았다.
 review:
   summary: draft
@@ -186,3 +199,4 @@ review:
     - c-15045547-04
     - c-15045547-06
   dropped_citations: 0
+status: active

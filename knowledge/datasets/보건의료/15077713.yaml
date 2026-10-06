@@ -1,4 +1,5 @@
-# Dataset 15077713 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15077713 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15077713'
 tier: verified
 title: 건강보험심사평가원_행위별 상대가치 통계
@@ -21,6 +22,7 @@ synonyms:
   - EDI 행위 코드
   - 진료행위 청구 통계
   - 심평원 행위 통계
+summary_user: 건강보험 요양급여비용 명세서의 심사결정 내용을 바탕으로, 현재 등재된 의료행위(수가코드)별 2025년 총 실시횟수와 가산 적용 금액을 관리진료과·장절분류와 함께 담은 전국 단위 집계 통계 파일입니다. 분석가나 의료기관 관계자가 '특정 진료과가 관리하는 행위 중 실시횟수가 많은 항목은 무엇이고 진료비 규모는 얼마인가'를 살필 때 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 조인 키는 확인되지 않아, 수가코드나 행위 한글명을 기준으로 심평원의 다른 수가·행위 코드 자료와 매핑해 이어 쓴다.
 description_portal: '행위별 상대가치 통계- 대상: 건강보험 / 작성기준: 심사년도- 의료행위통계는 요양기관에서 청구한 요양급여비용 명세서에 대한 심사결정한 내용을 기준으로 작성되었습니다.- 행위별 항목은 현재 등재된 행위 항목에 관한 건강보험 진료내역입니다.(제외코드: 금액제 고시 항목, 포괄수가영역의 진료내역, 시범사업 및 기타 정액수가 행위 등)- 관리진료과는 상대가치점수 개정연구시, 행위단위의 상대가치 관리하는 대표진료과를 의미하며, 요양급여비용 청구명세서 상 병원은 진료과목(의원은 표시과목)과는 다른 개념입니다.- 장/절분류는 건강보험요양급여비용 책자에 분류된 행위그룹을 의미합니다.'
 applicable_legislation:
   - law: 국민건강보험법
@@ -39,6 +41,7 @@ schema:
   fields:
     - name: 수가코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - '15100'
@@ -133,6 +136,12 @@ schema:
         p50: 221424530
         max: 4841593856069
         unique: 7438
+  foreign_keys:
+    - fields:
+        - 수가코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -175,7 +184,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15077713-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(수가코드)'
     evidence:
       - type: measured
         source: probe/stats/15077713.json
@@ -253,8 +262,6 @@ verification:
   run: probe/runs/15077713.json
   stats: probe/stats/15077713.json
   data: probe/data/15077713/
-status: active
-summary_user: 건강보험 요양급여비용 명세서의 심사결정 내용을 바탕으로, 현재 등재된 의료행위(수가코드)별 2025년 총 실시횟수와 가산 적용 금액을 관리진료과·장절분류와 함께 담은 전국 단위 집계 통계 파일입니다. 분석가나 의료기관 관계자가 '특정 진료과가 관리하는 행위 중 실시횟수가 많은 항목은 무엇이고 진료비 규모는 얼마인가'를 살필 때 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 조인 키는 확인되지 않아, 수가코드나 행위 한글명을 기준으로 심평원의 다른 수가·행위 코드 자료와 매핑해 이어 쓴다.
 limits: 금액제 고시 항목, 포괄수가 영역 진료내역, 시범사업·정액수가 행위는 빠져 있어 전체 진료비를 대표하지 않는다. 관리진료과는 상대가치 관리용 대표진료과로, 명세서의 진료과목(의원은 표시과목)과 다른 개념이다. 지역 구분이 없는 전국 집계라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -267,3 +274,4 @@ review:
     - c-15077713-04
     - c-15077713-05
   dropped_citations: 0
+status: active

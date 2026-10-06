@@ -1,4 +1,3 @@
-# Dataset 15102510 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15102510'
 tier: verified
 title: 한국전력공사_전기차 충전소 충전량
@@ -22,6 +21,7 @@ synonyms:
   - 한전 충전소 이용 데이터
   - 전기차 충전 시간대 분석
   - 충전 세션 데이터
+summary_user: 한국전력공사 전기차충전서비스시스템이 관리하는 충전소의 충전 이력을 충전기 단위 건별로 담으며, 충전량·충전시간·충전 시작·종료 시각과 충전기 용량·방식, 주소 기준 전국 범위의 위치 정보를 포함한다. 분석가나 연구자가 '어느 지역·어느 시간대에 급속 충전기 이용이 몰리는가' 같은 시간대별·지역별·충전기별 이용 패턴을 따질 때 쓴다. 전역 조인 키는 없어 다른 충전소 데이터와는 충전소ID·충전기ID 같은 한전 자체 코드나 충전소명·주소, 시도·시군구 이름 매칭으로만 잇는다.
 description_portal: 한국전력공사 전기차충전서비스시스템에서 관리하고 있는 충전소의 충전량 데이터 입니다.데이터는 시도, 구군, 본부, 사업소, 충전소ID, 충전소명, 주소, 충전기ID, 충전기명, 용도, 충전기용량, 충전기방식, 충전구분, 충전량, 충전시간(시), 충전시간(분), 충전종료일, 충전시작시각, 충전종료시각 항목으로 구성되어 있습니다.해당 데이터를 통하여 충전량을 비롯한 세부적인 시간 정보까지 확인 가능하기때문에 시간대별, 지역별, 충전기별로 다양한 분석과 연구의 기초자료로 활용할 수 있습니다.본 데이터는 대용량 데이터 입니다. 샘플을 먼저 확인하시고 활용신청을 통해 원본데이터를 요청하셔야 합니다.
 accrual_periodicity: 연간
 team:
@@ -71,6 +71,7 @@ schema:
         unique: 10
     - name: 충전소ID
       type: number
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - '196'
@@ -101,6 +102,7 @@ schema:
         unique: 10
     - name: 충전기ID
       type: number
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - '621'
@@ -225,12 +227,34 @@ schema:
         min: '2026-03-01'
         max: '2026-03-01'
         unique: 7
+  foreign_keys:
+    - fields:
+        - 충전소ID
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
+        - 충전기ID
+      reference:
+        key: ev_charger_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+    - 주소
+  space_via: name
+  time: day
+  time_fields:
+    - 충전종료일
+    - 충전시작시각
+    - 충전종료시각
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -267,7 +291,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15102510-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fuel_station_id(충전소ID), ev_charger_id(충전기ID)'
     evidence:
       - type: measured
         source: probe/stats/15102510.json
@@ -332,8 +356,6 @@ verification:
   run: probe/runs/15102510.json
   stats: probe/stats/15102510.json
   data: probe/data/15102510/
-status: active
-summary_user: 한국전력공사 전기차충전서비스시스템이 관리하는 충전소의 충전 이력을 충전기 단위 건별로 담으며, 충전량·충전시간·충전 시작·종료 시각과 충전기 용량·방식, 주소 기준 전국 범위의 위치 정보를 포함한다. 분석가나 연구자가 '어느 지역·어느 시간대에 급속 충전기 이용이 몰리는가' 같은 시간대별·지역별·충전기별 이용 패턴을 따질 때 쓴다. 전역 조인 키는 없어 다른 충전소 데이터와는 충전소ID·충전기ID 같은 한전 자체 코드나 충전소명·주소, 시도·시군구 이름 매칭으로만 잇는다.
 limits: 포털에서 바로 받는 파일은 수 KB 규모의 샘플이고, 원본 대용량 데이터는 활용신청을 거쳐 별도로 요청해야 한다. 표준 행정코드 등 공통 조인 키가 없어 다른 기관 데이터와 붙일 때는 이름·주소 매칭에 기대야 한다.
 review:
   summary: draft
@@ -345,3 +367,4 @@ review:
     - c-15102510-03
     - c-15102510-04
   dropped_citations: 0
+status: active

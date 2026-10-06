@@ -1,4 +1,5 @@
-# Dataset 3048280 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3048280 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3048280'
 tier: verified
 title: 한국교통안전공단_부품제원관리번호 부여현황
@@ -21,6 +22,7 @@ synonyms:
   - 튜닝부품 제원관리번호
   - 부품제작자 등록
   - 애프터마켓 부품 인증
+summary_user: 자동차부품자기인증시스템에 등록된 자동차부품별 제원관리번호 부여 내역을 건별로 담은 전국 단위 파일(CSV 약 1MB)로, 신청·승인일자, 부품명, 부품제작자, 형식, 안전기준적용연도, 원산지, 장착 차종·대표차명 등을 담는다. 정비업체나 소비자가 특정 애프터마켓 부품에 제원관리번호가 부여됐는지, 어떤 제작자가 언제 승인받았는지를 확인하거나, 분석가가 부품 종류·원산지별 자기인증 동향을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어 제작자등록번호나 부품제작자명, 장착차명 같은 이름·코드 매핑으로만 다른 데이터와 연결한다.
 description_portal: 한국교통안전공단 자동차부품자기인증시스템에 등록된 부품제원관리번호 부여현황 데이터입니다.부품제작자는 자동차관리법 제30조의2에 따라 부품제작자 등록을 하고, 자동차부품을 판매하기 10일전까지 성능시험대행자에게 제원통보를 해야합니다.성능시험대행자는 제원표, 외관도 등 제원통보 내용을 검토하여 이상이 없을 시 해당 자동차부품에 제원관리번호를 부여해야합니다.제원관리번호는 제작자등록번호, 일련번호, 안전기준연도코드 등 7자리로 구성되어 있습니다.
 accrual_periodicity: 연간
 team:
@@ -105,6 +107,7 @@ schema:
         unique: 90
     - name: 제원관리번호
       type: string
+      semantic_type: part_spec_mgmt_no
       null_rate: 0.0
       sample_values:
         - AL00TMS
@@ -123,6 +126,7 @@ schema:
         unique: 3
     - name: 제작자등록번호
       type: code
+      semantic_type: part_maker_rgst_no
       null_rate: 0.0
       sample_values:
         - AF
@@ -150,6 +154,7 @@ schema:
         unique: 320
     - name: 변경전부품제원관리번호
       type: string
+      semantic_type: part_spec_mgmt_no
       null_rate: 0.8884
       sample_values:
         - 1F013LK
@@ -222,12 +227,34 @@ schema:
         min: '2025-01-02'
         max: '2026-01-09'
         unique: 223
+  foreign_keys:
+    - fields:
+        - 제원관리번호
+      reference:
+        key: part_spec_mgmt_no
+      evidence: measured
+    - fields:
+        - 제작자등록번호
+      reference:
+        key: part_maker_rgst_no
+      evidence: measured
+    - fields:
+        - 변경전부품제원관리번호
+      reference:
+        key: part_spec_mgmt_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 승인일자
+    - 신청일자
+    - 등록월
 cycle: default
 classification:
   subsector_name: 교통안전 (안전지수·교통문화·안전시설·교육)
@@ -265,7 +292,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3048280-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: part_spec_mgmt_no(제원관리번호), part_maker_rgst_no(제작자등록번호), part_spec_mgmt_no(변경전부품제원관리번호)'
     evidence:
       - type: measured
         source: probe/stats/3048280.json
@@ -319,8 +346,6 @@ verification:
   run: probe/runs/3048280.json
   stats: probe/stats/3048280.json
   data: probe/data/3048280/
-status: active
-summary_user: 자동차부품자기인증시스템에 등록된 자동차부품별 제원관리번호 부여 내역을 건별로 담은 전국 단위 파일(CSV 약 1MB)로, 신청·승인일자, 부품명, 부품제작자, 형식, 안전기준적용연도, 원산지, 장착 차종·대표차명 등을 담는다. 정비업체나 소비자가 특정 애프터마켓 부품에 제원관리번호가 부여됐는지, 어떤 제작자가 언제 승인받았는지를 확인하거나, 분석가가 부품 종류·원산지별 자기인증 동향을 살피는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어 제작자등록번호나 부품제작자명, 장착차명 같은 이름·코드 매핑으로만 다른 데이터와 연결한다.
 limits: 다른 데이터셋과 바로 붙는 공통 키가 없어 제작자명·차명 문자열 매칭에 의존해야 한다. 공간 정보가 없는 전국 단위 자료라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -332,3 +357,4 @@ review:
     - c-3048280-03
     - c-3048280-04
   dropped_citations: 0
+status: active

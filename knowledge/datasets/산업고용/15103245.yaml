@@ -1,4 +1,5 @@
-# Dataset 15103245 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103245 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103245'
 tier: verified
 title: 한국전력거래소_회원사별 전력입찰량 정보
@@ -21,6 +22,7 @@ synonyms:
   - 월별 전력 입찰
   - 전력거래소 입찰정보
   - 발전사 공급입찰
+summary_user: 전력시장 회원사가 입찰한 전력량을 회원사(회원사명)별·거래년월별로 월 합산한 집계 데이터로, 단위는 GWh이며 범위는 전국·비공간이다. 전력시장 분석가나 에너지 사업자가 특정 발전회사가 월별로 얼마나 입찰했는지, 회원사 간 입찰 규모가 어떻게 달라지는지를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 데이터와는 회원사명 이름 매핑이나 거래년월(YYYYMM) 기준으로만 이어 쓴다.
 description_portal: 'ㅇ 전력시장은 발전소에서 생산한 전기를 판매하기 위해 한 곳으로 모은다는 의미에서 풀(POOL)이라고도 부릅니다.ㅇ 전력거래소는 전력시장 운영규칙에 따라 입찰, 정산, 계량, 시장감시, 정보공개, 분쟁조정 등 공정하고 투명한 시장 운영업무를 맡고 있으며, 전력시장을 통해 전력을 판매하는 발전회사와 전력을 구매하는 판매회사, 구역전기사업자, 또는 대규모 소비자(직접구매자)가 참여하여 전력의 거래가격과 거래량을 결정합니다.ㅇ 해당목록은 전력시장 회원사에서 입찰한 전력량 자료를 월별로 합산하여 제공되는 서비스입니다. 소속 회원사별로 구분합니다.  * 단위 : GWh'
 team:
   dept: 전사AX총괄팀
@@ -80,6 +82,7 @@ schema:
     - name: companyNm
       title: 회원사명
       type: code
+      semantic_type: kpx_member
       null_rate: 0.0
       sample_values:
         - 한국중부발전(주)
@@ -111,12 +114,22 @@ schema:
         p50: 4
         max: 7
         unique: 7
+  foreign_keys:
+    - fields:
+        - companyNm
+      reference:
+        key: kpx_member
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - tradeYm
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -160,7 +173,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103245-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_member(companyNm)'
     evidence:
       - type: measured
         source: probe/stats/15103245.json
@@ -225,8 +238,6 @@ verification:
   run: probe/runs/15103245.json
   stats: probe/stats/15103245.json
   data: probe/data/15103245/
-status: active
-summary_user: 전력시장 회원사가 입찰한 전력량을 회원사(회원사명)별·거래년월별로 월 합산한 집계 데이터로, 단위는 GWh이며 범위는 전국·비공간이다. 전력시장 분석가나 에너지 사업자가 특정 발전회사가 월별로 얼마나 입찰했는지, 회원사 간 입찰 규모가 어떻게 달라지는지를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 데이터와는 회원사명 이름 매핑이나 거래년월(YYYYMM) 기준으로만 이어 쓴다.
 limits: 회원사 코드 같은 공통 식별자가 없으므로 다른 전력거래소·발전소 데이터와 연결할 때 회원사명 표기를 직접 맞춰야 한다. 월 합산 집계라서 시간별·발전기별 입찰 내역은 담지 않는다. 개발계정은 하루 100회로 호출이 제한된다.
 review:
   summary: draft
@@ -238,3 +249,4 @@ review:
     - c-15103245-03
     - c-15103245-04
   dropped_citations: 0
+status: active

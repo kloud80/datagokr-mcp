@@ -1,4 +1,5 @@
-# Dataset 15125154 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125154 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125154'
 tier: verified
 title: 성평등가족부_국제청소년성취포상제 활동세부계획 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 청소년 자기도전 포상
   - 포상활동 세부계획
   - 청소년 활동 이력
+summary_user: 국제청소년성취포상제 참가자의 활동 세부계획을 입회번호·세부계획순서 단위의 건별 기록으로 담으며, 영역·활동종류, 시작·종료일, 계획 요청·확인일, 완료 요청·확인일, 변경 요청·승인일 같은 진행 이력을 포함한다(범위는 전국). 청소년 활동 담당자나 분석가가 "어떤 활동 영역·종류에서 계획 확인부터 완료 확인까지 오래 걸리거나 계획 변경이 잦은가"를 살피는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 같은 포상제 계열 API와는 입회번호(wtnessNo)나 활동프로그램번호처럼 기관 내부 번호로만 맞춰 볼 수 있고, 다른 데이터와는 이름 매핑에 기대야 한다.
 description_portal: 국제 청소년 성취포상제 활동 세부계획에 대한 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 입회번호, 구분명, 시작/종료 일자, 완료 요청/확인 일자, 확인 여부, 계획 요청/확인일자, 변경 요청/승인일자 세부 계획순서, 활동 종류명 등의 내용을 확인할 수 있습니다.참가자의 활동을 보다 구체적으로 설계한 세부계획 정보를 통해 전체 활동의 체계성과 실행 가능성을 진단할 수 있으며, 계획 요청 및 확인 일자, 활동 종류별 일정 등 다양한 정보가 포함되어 있어 활동 유형에 따른 효과 측정, 계획 수립의 표준화, 그리고 맞춤형 프로그램 설계 시 참고자료로 폭넓게 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -68,6 +70,7 @@ schema:
     - name: wtnessNo
       title: 입회번호
       type: number
+      semantic_type: award_wtness_no
       null_rate: 0.0
       sample_values:
         - '30514'
@@ -266,6 +269,12 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - wtnessNo
+      reference:
+        key: award_wtness_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -316,7 +325,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125154-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_wtness_no(wtnessNo)'
     evidence:
       - type: measured
         source: probe/stats/15125154.json
@@ -370,8 +379,6 @@ verification:
   run: probe/runs/15125154.json
   stats: probe/stats/15125154.json
   data: probe/data/15125154/
-status: active
-summary_user: 국제청소년성취포상제 참가자의 활동 세부계획을 입회번호·세부계획순서 단위의 건별 기록으로 담으며, 영역·활동종류, 시작·종료일, 계획 요청·확인일, 완료 요청·확인일, 변경 요청·승인일 같은 진행 이력을 포함한다(범위는 전국). 청소년 활동 담당자나 분석가가 "어떤 활동 영역·종류에서 계획 확인부터 완료 확인까지 오래 걸리거나 계획 변경이 잦은가"를 살피는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아 같은 포상제 계열 API와는 입회번호(wtnessNo)나 활동프로그램번호처럼 기관 내부 번호로만 맞춰 볼 수 있고, 다른 데이터와는 이름 매핑에 기대야 한다.
 limits: 지역(시군구·시도) 정보가 없는 전국·비공간 데이터라 지역별 비교나 지역 통계와의 연계에는 쓰지 못한다. 갱신은 이벤트 때 생성된 뒤 바뀌지 않는 방식으로 분류돼 있어 실시간 진행 현황으로 해석하지 않는다.
 review:
   summary: draft
@@ -384,3 +391,4 @@ review:
     - c-15125154-03
     - c-15125154-04
   dropped_citations: 0
+status: active

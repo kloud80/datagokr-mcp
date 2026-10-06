@@ -1,4 +1,5 @@
-# Dataset 15119785 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119785 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119785'
 tier: verified
 title: 한국동서발전(주)_발전소별 폐기물 인계현황 조회 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 동서발전 폐기물
   - 폐기물 계량
   - 올바로 인계
+summary_user: 한국동서발전 사업소(발전소)별 폐기물 인계 기록을 건별로 담으며, 사업소명, 폐기물명, 운송업체명, 처리업체명, 카드번호, 진행단계, 계량일자로 구성된 전국 범위의 비공간 데이터입니다. 발전소에서 나온 폐기물을 어느 운송·처리업체가 언제 인계받았는지 확인하려는 분석가나 폐기물 처리 사업자가 쓴다. 전역 조인 키가 없으므로, 운송·처리업체명을 폐기물 처리업 허가 원장과 이름으로 맞춰 이어 쓴다.
 description_portal: 한국동서발전에서 오픈API 형태로 제공하는 연도별 발전소별 발전량 현황 정보 데이터입니다. 이 데이터는 발전소별 연도별 발전량, 발전원 종류, 설비용량 등을 포함하고 있으며, 표준화된 형식을 통해 다양한 시스템과 연계하여 자동화된 데이터 수집·분석 작업이 가능하고, 필요에 따라 다양한 연구나 개발 목적에 맞춰 유연하게 활용될 수 있습니다. 이러한 속성을 통해 학계 및 연구기관에서는 발전소별 발전 효율 비교, 연도별 발전 추이 분석, 에너지원별 성과 연구 등 다양한 형태로 데이터를 가공·분석해 에너지 정책 개발, 경제성 평가, 기후 변화 대응 방안 도출 등에 실질적으로 활용할 수 있습니다.
 team:
   dept: ICT기획부
@@ -84,6 +86,7 @@ schema:
     - name: plantNm
       title: 사업소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진 9,10호기
@@ -146,12 +149,22 @@ schema:
         min: '2021-03-18'
         max: '2024-07-09'
         unique: 592
+  foreign_keys:
+    - fields:
+        - plantNm
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - wgtDt
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -195,7 +208,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119785-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(plantNm)'
     evidence:
       - type: measured
         source: probe/stats/15119785.json
@@ -260,8 +273,6 @@ verification:
   run: probe/runs/15119785.json
   stats: probe/stats/15119785.json
   data: probe/data/15119785/
-status: active
-summary_user: 한국동서발전 사업소(발전소)별 폐기물 인계 기록을 건별로 담으며, 사업소명, 폐기물명, 운송업체명, 처리업체명, 카드번호, 진행단계, 계량일자로 구성된 전국 범위의 비공간 데이터입니다. 발전소에서 나온 폐기물을 어느 운송·처리업체가 언제 인계받았는지 확인하려는 분석가나 폐기물 처리 사업자가 쓴다. 전역 조인 키가 없으므로, 운송·처리업체명을 폐기물 처리업 허가 원장과 이름으로 맞춰 이어 쓴다.
 limits: 실측 컬럼에 사업자번호 같은 공통 키가 없어, 다른 데이터와는 업체명·사업소명 매핑으로만 연결된다. 포털 설명은 발전량 데이터로 적혀 있으나 실제 필드는 폐기물 인계 내역이므로 필드 기준으로 해석해야 한다. 개발계정 호출 한도는 하루 10,000회다.
 review:
   summary: draft
@@ -274,3 +285,4 @@ review:
     - c-15119785-04
     - c-15119785-06
   dropped_citations: 0
+status: active

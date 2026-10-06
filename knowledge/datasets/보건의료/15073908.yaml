@@ -1,4 +1,3 @@
-# Dataset 15073908 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073908'
 tier: verified
 title: 식품의약품안전처_의료기기 GMP 신청목별 재보완정보
@@ -21,6 +20,7 @@ synonyms:
   - GMP 적합성 심사 진행상태
   - 의료기기 품질심사 보완요청
   - 의료기기 제조원 GMP
+summary_user: 의료기기 GMP(제조·품질관리기준) 심사 신청의 품목별 재보완 내역을 신청·품목 일련번호 단위로 담으며, 보완 내용·보완 구분, 재보완 필요 항목 수, 재보완 제출일·심사일·심사 결과, 진행 상태와 함께 의료기기 분류번호·등급, 제조원 국가·이름·주소를 건별로 싣는다. 의료기기 제조·수입 사업자나 분석가가 특정 품목의 GMP 심사가 재보완 단계에서 어떻게 진행되고 결과가 어땠는지, 어떤 제조원·등급에서 재보완이 잦은지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 식약처 의료기기 품목허가 데이터와는 의료기기 분류번호(MDEQ_CLSF_NO)나 제조원 이름 같은 이름·코드 매칭으로만 이어 쓴다.
 description_portal: ME?
 team:
   dept: 데이터혁신기획팀
@@ -143,6 +143,7 @@ schema:
         unique: 66
     - name: MDEQ_CLSF_NO
       type: string
+      semantic_type: meddev_clsf_no
       null_rate: 0.0
       sample_values:
         - A78010.02
@@ -237,12 +238,27 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - MDEQ_CLSF_NO
+      reference:
+        key: meddev_clsf_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MNUFTR_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - RESPP_SRNG_DT
+    - RESPP_SBMSN_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -287,7 +303,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073908-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_clsf_no(MDEQ_CLSF_NO)'
     evidence:
       - type: measured
         source: probe/stats/15073908.json
@@ -352,8 +368,6 @@ verification:
   run: probe/runs/15073908.json
   stats: probe/stats/15073908.json
   data: probe/data/15073908/
-status: active
-summary_user: 의료기기 GMP(제조·품질관리기준) 심사 신청의 품목별 재보완 내역을 신청·품목 일련번호 단위로 담으며, 보완 내용·보완 구분, 재보완 필요 항목 수, 재보완 제출일·심사일·심사 결과, 진행 상태와 함께 의료기기 분류번호·등급, 제조원 국가·이름·주소를 건별로 싣는다. 의료기기 제조·수입 사업자나 분석가가 특정 품목의 GMP 심사가 재보완 단계에서 어떻게 진행되고 결과가 어땠는지, 어떤 제조원·등급에서 재보완이 잦은지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 식약처 의료기기 품목허가 데이터와는 의료기기 분류번호(MDEQ_CLSF_NO)나 제조원 이름 같은 이름·코드 매칭으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터와 정확한 1:1 연결은 어렵고 이름·코드 매핑에 의존해야 한다. 공개 API(serviceKey, 개발계정 일 10,000회)로 제공되며, 포털 설명이 사실상 비어 있고 필드 명세에 뜻이 없어 컬럼 의미는 필드명으로 추정해야 한다.
 review:
   summary: draft
@@ -365,3 +379,4 @@ review:
     - c-15073908-03
     - c-15073908-04
   dropped_citations: 0
+status: active

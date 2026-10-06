@@ -1,4 +1,5 @@
-# Dataset 15039130 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15039130 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15039130'
 tier: verified
 title: 한국승강기안전공단_승강기안전부품 인증 현황
@@ -22,6 +23,7 @@ synonyms:
   - 럽처밸브
   - 디딤판체인
   - 인증 모델 목록
+summary_user: 한국승강기안전공단이 안전인증을 마친 승강기 안전부품을 인증번호 단위로 정리한 전국 범위 목록으로, 구분(엘리베이터·에스컬레이터)과 세부 부품 유형, 기본·파생 모델명, 제조·수입업자명, 변경 내역을 담는다(CSV 약 259KB). 승강기 제조·유지보수 업체나 관리주체가 특정 구동기·럽처밸브·디딤판 모델이 안전인증을 받았는지, 어떤 파생모델이 같은 인증에 묶여 있는지 확인하는 데 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키는 없어, 승강기 원장 등과는 모델명·업체명 같은 이름 매칭으로만 이어 쓴다.
 description_portal: 본 자료는 한국승강기안전공단에서 집계한 승강기 안전부품 인증 현황을 정리한 데이터입니다. 승강기 안전부품 인증은 엘리베이터와 에스컬레이터의 안전성을 제도적으로 확보하기 위해 마련된 절차로, 안전인증기관이 해당 부품을 시험하고 제조·검사설비 등 생산체제를 종합적으로 평가하여 적합 여부를 판정하는 제도입니다. 데이터에는 인증번호, 변경 내역, 구분(에스컬레이터·엘리베이터), 세부 구분 항목, 기본 및 파생 모델명, 제조·수입업체 정보, 비고 사항 등이 포함되어 있습니다. 주요 항목으로는 디딤판체인, 디딤판, 구동기, 럽처밸브 등 승강기 운행의 핵심적 안전부품들이 있으며, 일반형·팔레트형·스텝형·기어드·기어리스 등 다양한 유형이 구분되어 기록됩니다. 또한 동일부품 여부나 변경 유형 등의 보조 정보가 함께 제공되어 데이터 활용 시 부품별 인증 특성과 구조적 차이를 세밀하게 파악할 수 있습니다. 본 자료는 특정 기업명을 언급하지 않고, 안전인증이 완료된 승강기 부품의 전반적 현황을 총체적으로 보여주는 기초 데이터입니다.
 applicable_legislation:
   - law: 승강기 안전관리법
@@ -51,6 +53,7 @@ schema:
         unique: 2098
     - name: 인증번호
       type: string
+      semantic_type: elevator_safety_cert_no
       null_rate: 0.0
       sample_values:
         - AAA56-J001-23001
@@ -130,6 +133,12 @@ schema:
         - 유효만료일 조정
       stats:
         unique: 56
+  foreign_keys:
+    - fields:
+        - 인증번호
+      reference:
+        key: elevator_safety_cert_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -173,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15039130-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_safety_cert_no(인증번호)'
     evidence:
       - type: measured
         source: probe/stats/15039130.json
@@ -248,8 +257,6 @@ verification:
   run: probe/runs/15039130.json
   stats: probe/stats/15039130.json
   data: probe/data/15039130/
-status: active
-summary_user: 한국승강기안전공단이 안전인증을 마친 승강기 안전부품을 인증번호 단위로 정리한 전국 범위 목록으로, 구분(엘리베이터·에스컬레이터)과 세부 부품 유형, 기본·파생 모델명, 제조·수입업자명, 변경 내역을 담는다(CSV 약 259KB). 승강기 제조·유지보수 업체나 관리주체가 특정 구동기·럽처밸브·디딤판 모델이 안전인증을 받았는지, 어떤 파생모델이 같은 인증에 묶여 있는지 확인하는 데 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키는 없어, 승강기 원장 등과는 모델명·업체명 같은 이름 매칭으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 개별 승강기(고유번호)나 설치 현장과 직접 연결되지 않으며, 이름 매칭 시 표기 차이에 주의해야 한다. 지역 단위 구분이 없는 전국·비공간 자료라 지역별 분석에는 맞지 않는다.
 review:
   summary: draft
@@ -261,3 +268,4 @@ review:
     - c-15039130-03
     - c-15039130-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15139381 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15139381 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15139381'
 tier: verified
 title: 건강보험심사평가원_시도별 의료기관종별 진료비 통계
@@ -22,6 +23,7 @@ synonyms:
   - 건강보험 환자수 통계
   - 심평원 진료비 통계
   - 입내원일수
+summary_user: 전국 시도별·의료기관 종별로 건강보험 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 진료년도 단위로 묶은 집계 통계로, 약국과 한방은 빠지고 양방만 담는다. 분석가나 지역 보건정책 담당자가 '우리 시도에서 상급종합병원과 의원 중 어느 쪽에 건강보험 진료비가 더 많이 쓰이는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시도명·종별명·진료년도를 이름으로 맞춰 이어 써야 한다.
 description_portal: '전국 지역(시도)별 의료기관종별 건강보험 진료 통계 / 진료년도 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2022년 1월~12월, 심사년월: 2022년 1월~2023년 4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 양방만 포함※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 요양급여비용총액은 요양기관에서 건강보험 환자의 진료에 소요된 비용(비급여 제외)으로 보험자부담금과 본인부담금을 합한 금액임※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있음'
 applicable_legislation:
   - law: 국민건강보험법
@@ -132,6 +134,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도
+  space_via: name
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -246,8 +256,6 @@ verification:
   run: probe/runs/15139381.json
   stats: probe/stats/15139381.json
   data: probe/data/15139381/
-status: active
-summary_user: 전국 시도별·의료기관 종별로 건강보험 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 진료년도 단위로 묶은 집계 통계로, 약국과 한방은 빠지고 양방만 담는다. 분석가나 지역 보건정책 담당자가 '우리 시도에서 상급종합병원과 의원 중 어느 쪽에 건강보험 진료비가 더 많이 쓰이는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시도명·종별명·진료년도를 이름으로 맞춰 이어 써야 한다.
 limits: 시도·종별 단위 집계라 개별 요양기관(ykiho)과 연결하거나 시군구 단위로 내려가 볼 수 없다. 환자수는 범주 안에서만 중복을 뺀 값이라 시도나 종별을 단순 합산하면 중복이 생기고, 금액에는 비급여가 빠져 있다.
 review:
   summary: draft
@@ -258,3 +266,4 @@ review:
     - c-15139381-03
     - c-15139381-04
   dropped_citations: 0
+status: active

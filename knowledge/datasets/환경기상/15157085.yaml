@@ -1,4 +1,3 @@
-# Dataset 15157085 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15157085'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_환경영향평가_소음진동정보
@@ -21,6 +20,7 @@ synonyms:
   - 개발사업 소음진동
   - 소음 dB 조사지점
   - EIA 소음
+summary_user: 환경영향평가 사업구역의 조사지점별 소음(dB(A))·진동(dB(V)) 측정값을 조사차수·조사기간·주소·좌표와 함께 담은 건별 원천 파일로, 조사지점 위치를 담은 SHP 공간파일을 포함한 약 10MB zip으로 전국 범위를 제공한다. 개발사업 예정지 인근 주민이나 분석가가 '이 사업 부지 주변의 공사 전 소음·진동 수준이 어느 정도였나'를 확인하는 데 쓴다. 전역 조인 키는 없고 환경영향평가 사업코드(사업코드)로 같은 기관의 사업구역·협의 현황 등 다른 항목별 평가정보와 잇거나, X·Y좌표로 토지이용규제·개발사업 공간정보와 겹쳐 쓴다.
 description_portal: 환경부 국립환경과학원 환경영향평가 사업구역, 조사지점을 기준으로 조사된 소음진동에 대한 정보를 소음진동속성조회, 공간정보를 가진 데이터 제공하며 속성(조사지점, 조사차수, 주소, 진동(dB(V)), 조사차수, 조사시작일, 조사종료일, 소음(dB(A)), Y좌표, X좌표, 조사지점명) 와 공간좌표를 기준으로 소음진동 조사지점의 피쳐 정보(피쳐의 공간 좌표 데이터, 공간데이트를 구성하는 인덱스값, 환경영향평가 사업코드, 사업지구분, 사업지점명, 해당 공간데이타 구축 방법, 해당 공간데이터 값의 유효여부, 해당 공간에 대한 길이, 해당 공간에 대한 면적)를 공간좌표를 기준으로 소음진동 조사지점의 위치 정보를 가진 shp 파일을 제공하는 서비스입니다.공간데이터(SHP)파일은 QGIS, ArcGIS 등 공간정보 소프트웨어를 이용하셔야 합니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +34,7 @@ schema:
   fields:
     - name: 사업코드
       type: code
+      semantic_type: eia_biz_cd
       null_rate: 0.0
       sample_values:
         - ME2007A164
@@ -168,12 +169,29 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: eia_biz_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - X좌표
+    - Y좌표
+  space_via: coord
+  time: day
+  time_fields:
+    - 조사시작일
+    - 조사종료일
+    - 생성일
 cycle: event
 classification:
   subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
@@ -215,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157085-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eia_biz_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15157085.json
@@ -280,8 +298,6 @@ verification:
   run: probe/runs/15157085.json
   stats: probe/stats/15157085.json
   data: probe/data/15157085/
-status: active
-summary_user: 환경영향평가 사업구역의 조사지점별 소음(dB(A))·진동(dB(V)) 측정값을 조사차수·조사기간·주소·좌표와 함께 담은 건별 원천 파일로, 조사지점 위치를 담은 SHP 공간파일을 포함한 약 10MB zip으로 전국 범위를 제공한다. 개발사업 예정지 인근 주민이나 분석가가 '이 사업 부지 주변의 공사 전 소음·진동 수준이 어느 정도였나'를 확인하는 데 쓴다. 전역 조인 키는 없고 환경영향평가 사업코드(사업코드)로 같은 기관의 사업구역·협의 현황 등 다른 항목별 평가정보와 잇거나, X·Y좌표로 토지이용규제·개발사업 공간정보와 겹쳐 쓴다.
 limits: 이벤트 주기 데이터로 평가 시점에 생성된 뒤 바뀌지 않으므로 실시간 소음 측정값이 아니다. 전역 조인 키가 없어 다른 기관 데이터와는 이름·좌표 매핑으로만 연결되며, SHP 파일은 QGIS·ArcGIS 같은 공간정보 소프트웨어가 필요하다.
 review:
   summary: draft
@@ -295,3 +311,4 @@ review:
     - c-15157085-04
     - c-15157085-06
   dropped_citations: 0
+status: active

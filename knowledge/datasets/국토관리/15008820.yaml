@@ -1,4 +1,5 @@
-# Dataset 15008820 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15008820 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15008820'
 tier: verified
 title: 서울주택도시공사_주택분양 정보
@@ -24,6 +25,7 @@ synonyms:
   - 서울 공공주택 공급계획
   - 분양예정 세대수
   - 청약 예정 단지
+summary_user: SH공사(서울주택도시공사)가 시행하는 분양주택의 공급계획을 단지별로 담은 파일로, 사업유형(공공분양·신혼희망타운 등), 주택형별 분양예정 세대수와 합계, 사전청약·본청약 세대수, 공급 예정 연도·월을 담는다. 서울에서 공공분양을 기다리는 청약 대기자가 '언제, 어느 단지에서, 어떤 면적이 몇 세대 나오나'를 확인하거나, 분석가가 면적별·유형별 공급 구성을 볼 때 쓴다. 전역 조인 키가 없어 다른 청약·분양 공고 데이터와는 단지명을 맞춰 연결하거나 같은 기관(SH공사) 자료끼리만 이어 쓴다.
 description_portal: '이 데이터는 서울특별시 서울주택도시공사(SH공사)가 시행하는 분양주택의 공급계획을 담고 있는 공공데이터로, 세대 수와 공급 시기 등을 면적별로 세분화하여 제공하는 자료입니다. 항목에는 단지명, 사업유형(예: 공공분양, 신혼희망타운 등), 총 분양예정 세대 수(합계), 주택형별 분양예정 세대 수(49㎡, 59㎡, 64㎡, 66㎡, 70㎡, 74㎡, 75㎡, 80㎡, 84㎡), 사전청약 및 본청약 세대수, 공급시기 예정 월과 예정 연도 등 상세한 공급 계획 정보가 포함되어 있습니다. 이 데이터는서울주택도시개발공사가 중장기적으로 계획 중인 주택공급 일정을 파악하는 데 유용하며, 면적별 수요 대응 전략, 지역별 주택공급 균형, 중산층 및 청년층 대상 공급 비중 분석 등에 활용될 수 있습니다. 특히 전용 84㎡ 이하 중소형 평형이 중심이 되는 분양 공급 구조를 이해하고, 실수요자 중심의 맞춤형 정책 수립 및 시장 예측에 기초자료로 활용 가능합니다. 공급 시기 및 물량은 행정 절차나 사업 여건에 따라 변동될 수 있습니다.'
 accrual_periodicity: 수시
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 단지명
       type: code
+      semantic_type: sh_complex_nm
       null_rate: 0.0
       sample_values:
         - 마곡지구 17단지
@@ -119,12 +122,22 @@ schema:
         p50: 2026
         max: 2026
         unique: 1
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: sh_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  time: year
+  time_fields:
+    - 공급시기 예정 년도
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -166,7 +179,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15008820-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sh_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15008820.json
@@ -261,8 +274,6 @@ verification:
   run: probe/runs/15008820.json
   stats: probe/stats/15008820.json
   data: probe/data/15008820/
-status: active
-summary_user: SH공사(서울주택도시공사)가 시행하는 분양주택의 공급계획을 단지별로 담은 파일로, 사업유형(공공분양·신혼희망타운 등), 주택형별 분양예정 세대수와 합계, 사전청약·본청약 세대수, 공급 예정 연도·월을 담는다. 서울에서 공공분양을 기다리는 청약 대기자가 '언제, 어느 단지에서, 어떤 면적이 몇 세대 나오나'를 확인하거나, 분석가가 면적별·유형별 공급 구성을 볼 때 쓴다. 전역 조인 키가 없어 다른 청약·분양 공고 데이터와는 단지명을 맞춰 연결하거나 같은 기관(SH공사) 자료끼리만 이어 쓴다.
 limits: 파일이 298바이트에 불과한 소규모 계획표로, 실제 입주자모집 공고나 경쟁률·당첨 결과는 담지 않는다. 명세상 수시로 생성되는 자료이고, 포털 설명대로 공급 시기와 물량은 행정 절차나 사업 여건에 따라 바뀔 수 있다. 행정구역 코드나 단지 코드가 없어 다른 데이터와는 단지명 매칭으로만 연결된다.
 review:
   summary: draft
@@ -275,3 +286,4 @@ review:
     - c-15008820-03
     - c-15008820-06
   dropped_citations: 0
+status: active

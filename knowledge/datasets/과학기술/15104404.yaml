@@ -39,6 +39,7 @@ schema:
   fields:
     - name: 우편번호
       type: number
+      semantic_type: zip
       null_rate: 0.0
       sample_values:
         - '16439'
@@ -83,6 +84,7 @@ schema:
         unique: 4
     - name: 도로명코드
       type: number
+      semantic_type: bldg_key
       null_rate: 0.0
       sample_values:
         - '411133012006 '
@@ -137,6 +139,7 @@ schema:
         unique: 152
     - name: 건물관리번호
       type: number
+      semantic_type: bldg_key
       null_rate: 0.0
       sample_values:
         - '4111313100100170000000000 '
@@ -180,6 +183,21 @@ schema:
         unique: 56
   foreign_keys:
     - fields:
+        - 우편번호
+      reference:
+        key: zip
+      evidence: measured
+    - fields:
+        - 도로명코드
+      reference:
+        key: bldg_key
+      evidence: measured
+    - fields:
+        - 건물관리번호
+      reference:
+        key: bldg_key
+      evidence: measured
+    - fields:
         - 법정동코드
       reference:
         key: bjd_cd
@@ -187,6 +205,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: bjd
+  space_fields:
+    - 법정동코드
+  space_via: code
 cycle: default
 classification:
   subsector_name: 우편번호·배달
@@ -223,7 +246,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15104404-03
     kind: key
-    value: '실측 조인 키: bjd_cd(법정동코드)'
+    value: '실측 조인 키: zip(우편번호), bldg_key(도로명코드), bldg_key(건물관리번호), bjd_cd(법정동코드)'
     evidence:
       - type: measured
         source: probe/stats/15104404.json

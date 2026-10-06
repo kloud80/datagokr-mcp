@@ -1,4 +1,5 @@
-# Dataset 15094987 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15094987 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15094987'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_문화
@@ -21,6 +22,7 @@ synonyms:
   - 뉴스 메타데이터
   - 문화 기사 트렌드
   - 한류 보도
+summary_user: 빅카인즈(BIGKinds)에 수집된 국내 신문·방송의 문화 관련 기사를 기사 한 건 단위로 담은 메타데이터 파일(CSV, 약 84MB)로, 일자·언론사·제목·통합 분류·키워드·특성추출 어휘를 포함한다. 연구자나 정책 담당자가 '특정 시기에 한류·전통문화·예술 지원 같은 주제가 언론에서 얼마나, 어떤 키워드로 보도됐나'를 살피는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 일자, 언론사 이름, 키워드 같은 텍스트 값을 맞춰 이어 쓴다.
 description_portal: 이 데이터는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 문화 관련 뉴스 메타정보 자료입니다. 문화는 예술, 전통, 대중문화, 콘텐츠 산업 등 사회 전반에 걸쳐 중요한 영향력을 미치며, 국가 정체성과 경쟁력의 핵심 요소로 작용합니다. 본 자료는 국내 주요 신문과 방송에서 보도된 문화 관련 기사들을 분석하여, 특정 시기별 주요 키워드와 빈도의 변화를 확인할 수 있도록 구성되었습니다. 이를 통해 대중문화의 확산, 전통문화 보존, 예술 지원 정책, 콘텐츠 산업 성장, 국제 문화 교류와 같은 다양한 주제가 언론 보도에서 어떻게 다뤄졌는지 객관적으로 파악할 수 있습니다. 또한 학술 연구, 정책 수립, 문화 산업 전략 개발, 교육 현장에서 활용 가능한 기초 자료로, 한국 사회에서 문화가 지니는 의미와 역할을 다각도로 이해하는 데 중요한 참고 자료가 됩니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 360
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 중앙일보
@@ -94,12 +97,22 @@ schema:
         - 홍보관,인천,군부대,송도,전시실,7억,대다수,무역선,근린공원,문화자료관,관문역할,화도진도서관,연수구,미래상,동북아,인천시,전시물,10여분,36억
       stats:
         unique: 63192
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15094987-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15094987.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15094987.json
   stats: probe/stats/15094987.json
   data: probe/data/15094987/
-status: active
-summary_user: 빅카인즈(BIGKinds)에 수집된 국내 신문·방송의 문화 관련 기사를 기사 한 건 단위로 담은 메타데이터 파일(CSV, 약 84MB)로, 일자·언론사·제목·통합 분류·키워드·특성추출 어휘를 포함한다. 연구자나 정책 담당자가 '특정 시기에 한류·전통문화·예술 지원 같은 주제가 언론에서 얼마나, 어떤 키워드로 보도됐나'를 살피는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 일자, 언론사 이름, 키워드 같은 텍스트 값을 맞춰 이어 쓴다.
 limits: 기사 본문이 없고 메타정보(제목·키워드·분류)만 담으므로 내용 분석은 키워드 수준에 그친다. 행정구역 코드나 공통 식별자가 없어 지역별 분석이나 다른 공공데이터와의 정확한 결합이 어렵다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15094987-03
     - c-15094987-04
   dropped_citations: 0
+status: active

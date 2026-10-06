@@ -1,0 +1,185 @@
+# Dataset 15139438 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139438'
+tier: verified
+title: 기상청_자외선관측 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139438/openapi.do
+synonyms:
+  - 기후변화감시
+  - 자외선
+  - 오존
+  - 홍반
+  - 광화학
+  - 자외선지수
+  - UV 관측
+  - 홍반자외선
+  - 자외선A
+  - 자외선B
+  - UVA UVB
+  - 기상청 API허브 자외선
+description_portal: '자외선 복사는 일반적으로 자외선A(315~400nm), 자외선B(280~315nm), 자외선C(100~280nm)로 나뉘며, 이 중 자외선A와 자외선B는 오존층에 일부가 흡수되고 그 나머지가 지표에 도달합니다. 지표에 도달하는 자외선은 적은 양이지만 인간과 동 · 식물에게 큰 피해를 줄 뿐만 아니라 광화학 반응에도 영향을 미치면서 대기 환경을 변화시킵니다.기상청은 자외선 복사 중 자외선A(320~400nm)와 자외선B 영역 중 인체에 홍반을 발생시키는 홍반자외선B(280~320nm)를 관측합니다.생산주기: 일, 월, 연보유기간: 1994년 1월 ~ 현재'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: kma_sfctm_uv.php
+    name: kma_sfctm_uv.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/kma_sfctm_uv.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '202203211500'
+      - name: stn
+        required: true
+        example: '0'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '  #-----------------------------------------------------------------------------'
+        - '  #  기상청 자외선 관측자료 [입력인수형태][예] ?tm=202106081410&stn=0&help=1'
+        - '  #                      stn=0 이거나 없으면, 전체 지점 표출'
+      stats:
+        unique: 30
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6543
+  rank_in_sector: 177
+  brm: 환경기상 - 대기
+  why: 지점 자외선 관측 API
+claims:
+  - id: c-15139438-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139438.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139438-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139438-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139438.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139438-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139438.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139438-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139438-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139438-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139438.json
+  stats: probe/stats/15139438.json
+  data: probe/data/15139438/
+status: active
+summary_user: 기상청이 관측한 자외선A(320~400nm)와 인체에 홍반을 일으키는 홍반자외선B(280~320nm) 값을 일·월·연 단위로 담으며, 포털 설명상 1994년 1월부터 현재까지 전국 범위를 다룬다. 피부과·보건 연구자나 야외활동 정보 서비스 사업자가 '특정 지역의 여름철 홍반자외선B가 해마다 어떻게 달라졌나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 기상 관측 자료와는 관측지점 이름이나 같은 기상청 지점 코드를 맞춰서만 이을 수 있다.
+limits: 포털 활용신청과 별개로 기상청 API허브(apihub.kma.go.kr) 인증키를 경로 파라미터로 넣어야 호출된다. 공통 조인 키가 없어 행정구역·대기질 자료와 바로 결합되지 않으며, 지점명이나 기관 코드를 직접 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139438-01
+    - c-15139438-03
+    - c-15139438-04
+    - c-15139438-06
+  dropped_citations: 0

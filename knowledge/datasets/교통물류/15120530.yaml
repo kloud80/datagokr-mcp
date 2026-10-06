@@ -1,0 +1,236 @@
+# Dataset 15120530 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15120530'
+tier: verified
+title: 경기도_호선별 차로당 교통량
+sector: 교통물류/도로/traffic-volume
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15120530/fileData.do
+synonyms:
+  - 수시교통량
+  - 도로등급별교통량
+  - 도로교통량
+  - 교통분석
+  - 호선
+  - 도로
+  - 노선별 교통량
+  - 도로등급별 교통량
+  - 차로당 통행량
+  - 수시 교통량 조사
+  - 국도 지방도 교통량
+  - 경기도 도로 혼잡도
+summary_user: 경기도 도로의 호선별 차로당 교통량을 연도(yr)·도로등급(고속국도·일반국도·국지도·지방도)·노선 단위로 담은 집계 자료로, 수시 조사 교통량을 해당 노선의 차로수로 나눈 값이다. 교통 분석가나 도로 정책 담당자가 "경기도에서 차로당 교통량이 가장 많은 일반국도·지방도 노선은 어디인가" 같은 질문으로 혼잡 노선과 개선 우선순위를 가리는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도로등급 코드(road_kind_cd)·노선 코드(route_cd)나 노선명으로 맞춰 이어 쓴다.
+description_portal: '도로 호선별 교통량 자료로 도로등급별(고속국도, 일반국도, 국지도, 지방도) 호선별로 구분하여 제공합니다.각 도로 호선별로 차량 통행의 밀도를 파악할 수 있어 도로 효율성 분석 및 교통 인프라 개선을 위한 기초자료로 활용됩니다. 교통량 변화 추이 분석을 통해 도로 이용의 수요 예측이 가능하며, 도로 유형 간 비교를 통해 도로정책의 우선순위 설정 및 혼잡구간 개선 전략 수립에도 유용합니다. - 산출방법* 시군별 : 수시 평균교통량을 차로수단위 및 행정구역 단위로 집계* 차로별 : 수시 교통량의 도로등급별 호선별 교통량을 도로등급별 호선별 차로수로 나눈 값'
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2024'
+      stats:
+        min: 2024
+        p50: 2024
+        max: 2024
+        unique: 1
+    - name: road_kind
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지방도
+        - 고속국도
+        - 일반국도
+      stats:
+        unique: 4
+    - name: road_kind_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4'
+        - '1'
+        - '2'
+      stats:
+        min: 1
+        p50: 3
+        max: 4
+        unique: 4
+    - name: route_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 39호선
+        - 82호선
+        - 서울외곽순환선(북부)
+      stats:
+        unique: 89
+    - name: route_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '39'
+        - '82'
+        - '1002'
+      stats:
+        min: 1
+        p50: 313.5
+        max: 4004
+        unique: 89
+    - name: trnsport_amnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11928.0'
+        - '7237.0'
+        - '8177.0'
+      stats:
+        min: 743
+        p50: 5756
+        max: 25203
+        unique: 95
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  category:
+    - ksic
+  category_fields:
+    - road_kind_cd
+cycle: default
+classification:
+  subsector_name: 교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3186
+  rank_in_sector: 4516
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15120530-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15120530.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15120530-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120530-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120530.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120530-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120530.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120530-06
+    kind: admin_note
+    value: "세부 부문 '교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)'의 가치: 조사지점·영업소 단위 교통량 = 상권·입지 분석의 표준 입력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-volume
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15120530-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120530-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15120530.json
+  stats: probe/stats/15120530.json
+  data: probe/data/15120530/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 포털 활용신청과는 따로 발급받는다. 공용 조인 키가 없어 다른 교통량·도로 데이터와는 노선명·코드 매핑으로만 연결할 수 있고, 좌표가 없는 비공간 자료라 지점 단위 위치 분석에는 바로 쓰기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15120530-01
+    - c-15120530-03
+    - c-15120530-04
+  dropped_citations: 0
+status: active

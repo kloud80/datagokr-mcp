@@ -1,4 +1,5 @@
-# Dataset 15092371 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092371 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092371'
 tier: verified
 title: 한국건강증진개발원_국가금연지원서비스 제공기관 및 인력
@@ -20,6 +21,7 @@ synonyms:
   - 보건소 금연사업
   - 금연 인력 현황
   - 흡연자 금연지원
+summary_user: 국가금연지원서비스를 제공하는 기관별로 시도·시군구·기관명과 해당 기관의 금연 상담사 수를 담은 현황 파일로, 전국을 시군구 단위로 다룬다(csv 약 13KB). 지역 보건 담당자나 분석가가 '우리 시군구 보건소 금연클리닉에는 상담사가 몇 명인가', '시도별 금연 상담 인력이 어떻게 분포하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 지역사회 건강조사 흡연율 같은 시군구 지표와는 시도·시군구 이름을 매핑해서 붙여야 한다.
 description_portal: 국가금연지원서비스를 제공하는 기관 및 인력 현황 데이터로 각 기관에서 월별로 입력한 상담사의 수를 나타냅니다. 입력 시 해당인력에 대한 기본 정보로 이름, 성별, 생년월일, 고용형태(공무원, 임기제공무원, 시간선택제임기제공무원,기간제근로자 등), 경력기간(개월), 학력, 전공(최종학위), 직무교육 이수여부, 교육명(시행기관)등의 데이터를 입력하게 됩니다. 해당 자료를 기반으로 시도 및 시군구의 금연서비스 제공인력 현황을 참고하고 있으며, 이는 사업을 관리하는데 중요한 데이터 중 하나로 활용됩니다.
 accrual_periodicity: 연간
 team:
@@ -59,6 +61,7 @@ schema:
         unique: 225
     - name: 기관명
       type: string
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 서울 종로구보건소
@@ -78,12 +81,23 @@ schema:
         p50: 3
         max: 44
         unique: 19
+  foreign_keys:
+    - fields:
+        - 기관명
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구
+  space_via: name
 cycle: default
 classification:
   subsector_name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
@@ -120,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092371-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(기관명)'
     evidence:
       - type: measured
         source: probe/stats/15092371.json
@@ -185,8 +199,6 @@ verification:
   run: probe/runs/15092371.json
   stats: probe/stats/15092371.json
   data: probe/data/15092371/
-status: active
-summary_user: 국가금연지원서비스를 제공하는 기관별로 시도·시군구·기관명과 해당 기관의 금연 상담사 수를 담은 현황 파일로, 전국을 시군구 단위로 다룬다(csv 약 13KB). 지역 보건 담당자나 분석가가 '우리 시군구 보건소 금연클리닉에는 상담사가 몇 명인가', '시도별 금연 상담 인력이 어떻게 분포하는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 지역사회 건강조사 흡연율 같은 시군구 지표와는 시도·시군구 이름을 매핑해서 붙여야 한다.
 limits: 표준 행정코드나 기관코드가 없어 다른 데이터와는 이름 매칭으로만 연결되므로 표기 차이에 주의해야 한다. 포털 설명에 나오는 상담사 개인 정보(성별·고용형태·경력·학력 등)는 파일에 없고 기관별 상담사 수만 있다.
 review:
   summary: draft
@@ -199,3 +211,4 @@ review:
     - c-15092371-04
     - c-15092371-06
   dropped_citations: 0
+status: active

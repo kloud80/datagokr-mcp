@@ -1,4 +1,5 @@
-# Dataset 15138168 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15138168 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15138168'
 tier: verified
 title: 한국승강기안전공단_승강기 휴지 신청이력
@@ -21,6 +22,7 @@ synonyms:
   - 운행정지 이력
   - 엘리베이터 사용중지
   - 승강기 재가동
+summary_user: 한국승강기안전공단에 접수·처리된 승강기 휴지(운행중지) 신청을 건별로 담은 전국 파일 데이터로, 각 행은 승강기관리번호(1·2)와 휴지시작일·휴지종료일로 이루어진다. 건물 관리자나 분석가가 특정 승강기가 언제부터 언제까지 운행을 멈췄는지, 지금도 휴지 상태인지 확인하고 검사·점검 일정을 잡는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 승강기 원장과는 승강기관리번호를 매핑하거나 같은 기관 자료끼리만 연결한다.
 description_portal: 한국승강기안전공단이 관리하는 승강기 ‘휴지(운행중지) 신청’ 이력을 정리한 자료입니다. 각 행은 공단 내부 식별을 위한 승강기관리번호(1·2)와 휴지시작일, 휴지종료일(해제일)을 포함합니다. 본 데이터의 목적은 법정 안전관리와 검사 주기 산정, 사용개시·재가동 승인 등 행정 판단을 지원하고, 휴지 장비의 유지관리·점검 계획 수립에 근거를 제공하는 데 있습니다. 범위는 공단에 접수·처리된 휴지 신청 건에 한정되며, 신청 취소·연장·해제 등 상태 변화에 따라 동일 승강기에 복수 이력이 존재할 수 있습니다. 일부 건은 휴지종료일이 공란일 수 있으며 이는 당시 기준으로 휴지 상태가 지속되었음을 의미합니다. 주소·소유자·연락처 등 개인정보는 포함하지 않습니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 승강기관리번호1
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '100'
@@ -46,6 +49,7 @@ schema:
         unique: 247
     - name: 승강기관리번호2
       type: number
+      semantic_type: elevator_mgmt_no
       null_rate: 0.0
       sample_values:
         - '24'
@@ -78,12 +82,28 @@ schema:
         min: '1997-07-11'
         max: '2024-09-03'
         unique: 869
+  foreign_keys:
+    - fields:
+        - 승강기관리번호1
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
+    - fields:
+        - 승강기관리번호2
+      reference:
+        key: elevator_mgmt_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 휴지시작일
+    - 휴지종료일
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -121,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15138168-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_mgmt_no(승강기관리번호1), elevator_mgmt_no(승강기관리번호2)'
     evidence:
       - type: measured
         source: probe/stats/15138168.json
@@ -186,8 +206,6 @@ verification:
   run: probe/runs/15138168.json
   stats: probe/stats/15138168.json
   data: probe/data/15138168/
-status: active
-summary_user: 한국승강기안전공단에 접수·처리된 승강기 휴지(운행중지) 신청을 건별로 담은 전국 파일 데이터로, 각 행은 승강기관리번호(1·2)와 휴지시작일·휴지종료일로 이루어진다. 건물 관리자나 분석가가 특정 승강기가 언제부터 언제까지 운행을 멈췄는지, 지금도 휴지 상태인지 확인하고 검사·점검 일정을 잡는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 승강기 원장과는 승강기관리번호를 매핑하거나 같은 기관 자료끼리만 연결한다.
 limits: 전역 조인 키가 없어 주소·건물·승강기 종류 정보와 바로 결합되지 않는다. 같은 승강기에 취소·연장·해제에 따른 복수 이력이 있을 수 있고, 휴지종료일이 비어 있는 건은 당시 기준 휴지가 계속되던 상태로 읽어야 한다. 소유자·주소 등 개인정보는 담지 않는다.
 review:
   summary: draft
@@ -200,3 +218,4 @@ review:
     - c-15138168-04
     - c-15138168-06
   dropped_citations: 0
+status: active

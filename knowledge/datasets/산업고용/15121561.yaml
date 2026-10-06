@@ -1,4 +1,5 @@
-# Dataset 15121561 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121561 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121561'
 tier: verified
 title: 제주국제자유도시개발센터_JDC지정면세점 판매일자별상품순위
@@ -21,6 +22,7 @@ synonyms:
   - 면세점 판매순위
   - 제주국제자유도시개발센터 면세점
   - 지정면세점 브랜드 순위
+summary_user: JDC지정면세점에서 판매일자별로 많이 팔린 상품의 순위를 브랜드코드·브랜드명·상품명과 함께 담은 집계 파일이며, 포털 설명상 2023년 8월 29일 하루 기준 1~30위로 구성된다. 면세점 입점·유통 사업자나 분석가가 '이 날 제주 지정면세점에서 어떤 브랜드·상품이 가장 많이 팔렸나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 브랜드명·상품명 같은 이름 매핑이나 같은 기관(JDC) 자체 브랜드코드로만 이어 쓴다.
 description_portal: 이 데이터는 제주특별자치도에 위치한 국토교통부 산하 공기업인 제주국제자유도시개발센터(JDC)에서 운영하는 JDC지정면세점의 판매일자별 상품 판매 순위를 2023년 8월 29일 기준으로 정리한 자료입니다. 각 데이터 항목은 브랜드코드, 브랜드명, 상품명, 순위, 판매일자로 구성되어 있으며, 판매일자는 모두 ‘2023-08-29’로 동일하게 설정되어 특정일 기준으로 가장 많이 판매된 인기 상품을 분석할 수 있도록 구성되어 있습니다. 브랜드코드는 숫자로 이루어진 고유 식별번호이며, 브랜드명은 해당 브랜드의 상호를 의미하고, 상품명은 고객에게 판매된 구체적인 제품명을 나타냅니다. 순위는 1위부터 30위까지로 구성되어 해당 일자 기준으로 가장 높은 판매량을 기록한 상품부터 순차적으로 배열되어 있어 판매 실적이 높은 인기 상품을 쉽게 파악할 수 있습니다. 이 데이터는 일일 판매 트렌드 분석, 베스트셀러 상품 파악, 브랜드별 판매 실적 비교, 재고 운영 최적화, 고객 선호도 기반 마케팅 전략 수립 등에 유용한 기초 자료로 활용될 수 있으며, 시즌별 상품 수요 예측 및 프로모션 전략 수립에도 실질적인 도움이 됩니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 브랜드코드
       type: number
+      semantic_type: jdc_dfs_brand
       null_rate: 0.0
       sample_values:
         - '406'
@@ -46,6 +49,7 @@ schema:
         unique: 149
     - name: 브랜드명
       type: code
+      semantic_type: jdc_dfs_brand
       null_rate: 0.0
       sample_values:
         - JILL STUART
@@ -84,12 +88,27 @@ schema:
         min: '2023-08-29'
         max: '2023-08-30'
         unique: 2
+  foreign_keys:
+    - fields:
+        - 브랜드코드
+      reference:
+        key: jdc_dfs_brand
+      evidence: measured
+    - fields:
+        - 브랜드명
+      reference:
+        key: jdc_dfs_brand
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 판매일자
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -126,7 +145,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121561-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: jdc_dfs_brand(브랜드코드), jdc_dfs_brand(브랜드명)'
     evidence:
       - type: measured
         source: probe/stats/15121561.json
@@ -191,8 +210,6 @@ verification:
   run: probe/runs/15121561.json
   stats: probe/stats/15121561.json
   data: probe/data/15121561/
-status: active
-summary_user: JDC지정면세점에서 판매일자별로 많이 팔린 상품의 순위를 브랜드코드·브랜드명·상품명과 함께 담은 집계 파일이며, 포털 설명상 2023년 8월 29일 하루 기준 1~30위로 구성된다. 면세점 입점·유통 사업자나 분석가가 '이 날 제주 지정면세점에서 어떤 브랜드·상품이 가장 많이 팔렸나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 브랜드명·상품명 같은 이름 매핑이나 같은 기관(JDC) 자체 브랜드코드로만 이어 쓴다.
 limits: 전역 조인 키가 없어 사업자번호나 행정코드로 다른 인허가·상권 데이터와 직접 연결하지 못한다. 위치 정보가 없는 비공간 자료이므로 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -204,3 +221,4 @@ review:
     - c-15121561-03
     - c-15121561-04
   dropped_citations: 0
+status: active

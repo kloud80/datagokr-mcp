@@ -1,4 +1,5 @@
-# Dataset 15038342 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15038342 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15038342'
 tier: verified
 title: 한전KDN(주)_나주시 버스 시간표 정보
@@ -25,6 +26,7 @@ synonyms:
   - 평일 주말 버스 시간
   - 나주 시내버스
   - 대중교통 시간표
+summary_user: 나주시 버스의 정류장별·노선별 운행 시각을 평일과 주말로 나눠 시간 순서대로 담은 시간표 파일(csv, 약 120KB)이다. 나주 시민이나 지역 교통 분석가가 "이 정류장에서 이 노선 버스가 평일·주말 각각 몇 시에 몇 번째로 오는가"를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 정류장 ID와 노선 ID는 같은 기관(한전KDN)이 낸 나주시 정류장·노선 데이터와 맞추거나 이름 매핑을 거쳐야 다른 데이터와 이어진다.
 description_portal: '나주시 대중교통 이용자의 편의를 높이기 위한 버스 시간표 정보로, 평일·주말 구분(0: 평일, 1: 주말), 정류장 ID, 시간 순서, 노선 ID, 운행 시간 등의 정보를 포함하고 있습니다. 이를 통해 시민들은 각 정류장에서 버스를 몇 번째로 탑승할 수 있는지, 해당 노선의 운행 시간이 어떻게 구성되어 있는지를 정확히 파악할 수 있습니다. 특히 주말과 평일의 차이를 반영해 제공되므로 통학·출근 등 정기적 이동뿐 아니라 주말 나들이 및 일정 조율 시에도 유용합니다. 버스 운행 효율성 제고는 물론, 시민들의 정시성 높은 이동 계획 수립에 기여하며, 스마트교통 시스템 운영의 기초자료로도 활용됩니다.'
 accrual_periodicity: 수시
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 2
     - name: 정류장아이디
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '1870'
@@ -73,6 +76,7 @@ schema:
         unique: 42
     - name: 노선아이디
       type: number
+      semantic_type: bis_route_id
       null_rate: 0.0
       sample_values:
         - '7'
@@ -92,6 +96,17 @@ schema:
         - 19:55
       stats:
         unique: 1014
+  foreign_keys:
+    - fields:
+        - 정류장아이디
+      reference:
+        key: transit_node_cd
+      evidence: measured
+    - fields:
+        - 노선아이디
+      reference:
+        key: bis_route_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -134,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15038342-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: transit_node_cd(정류장아이디), bis_route_id(노선아이디)'
     evidence:
       - type: measured
         source: probe/stats/15038342.json
@@ -199,8 +214,6 @@ verification:
   run: probe/runs/15038342.json
   stats: probe/stats/15038342.json
   data: probe/data/15038342/
-status: active
-summary_user: 나주시 버스의 정류장별·노선별 운행 시각을 평일과 주말로 나눠 시간 순서대로 담은 시간표 파일(csv, 약 120KB)이다. 나주 시민이나 지역 교통 분석가가 "이 정류장에서 이 노선 버스가 평일·주말 각각 몇 시에 몇 번째로 오는가"를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 정류장 ID와 노선 ID는 같은 기관(한전KDN)이 낸 나주시 정류장·노선 데이터와 맞추거나 이름 매핑을 거쳐야 다른 데이터와 이어진다.
 limits: 정류장 ID·노선 ID가 국가 표준 코드인지 확인되지 않아 TAGO 등 전국 정류장·노선 원장과 바로 조인되지 않는다. 정류장 이름·노선 번호 같은 설명 컬럼이 없어 ID만으로는 실제 위치나 노선명을 알 수 없다. 메타상 범위가 '전국'으로 잡혀 있지만 내용은 나주시 버스에 한정된다.
 review:
   summary: draft
@@ -212,3 +225,4 @@ review:
     - c-15038342-03
     - c-15038342-04
   dropped_citations: 0
+status: active

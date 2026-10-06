@@ -1,4 +1,5 @@
-# Dataset 15061333 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061333 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061333'
 tier: verified
 title: 금융위원회_금융통계금융지주회사정보
@@ -22,6 +23,7 @@ synonyms:
   - 지주회사 ROA ROE
   - 은행지주 통계
   - 금융통계정보시스템
+summary_user: 금융지주회사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요경영지표를 담는 금융회사 단위 통계이며, 전국 범위의 비공간 데이터다. 금융지주 그룹의 자회사 구성·출자 비율이나 자산·부채·자본, ROA·ROE 같은 경영성과가 시점별로 어떻게 변했는지 비교하려는 분석가가 쓴다. 법인등록번호(crno)로 금융위 기업정보·재무 데이터나 다른 업권별 금융회사 원장과 이어 쓴다.
 description_portal: '금융통계금융지주회사정보는 기준년월 및 회사명을 기준으로 금융지주회사의 주요 현황과 재무지표, 경영성과 등을 제공하는 데이터입니다. 그룹별 일반현황, 재무구조, 경영지표 등을 시계열로 분석할 수 있도록 제공합니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 금융지주회사 일반현황 조회 : 설립연도, 본점소재지, 자회사 현황 등 일반정보를 제공합니다.② 금융지주회사 재무현황 조회 : 자산, 부채, 자본 등 재무구조 관련 통계를 조회할 수 있습니다.③ 금융지주회사 주요경영지표 조회 : ROA, ROE, 순이익률 등 지주사의 주요 경영성과 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -147,6 +149,7 @@ schema:
         unique: 45
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010926'
@@ -232,6 +235,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -281,7 +289,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061333-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061333.json
@@ -346,8 +354,6 @@ verification:
   run: probe/runs/15061333.json
   stats: probe/stats/15061333.json
   data: probe/data/15061333/
-status: active
-summary_user: 금융지주회사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요경영지표를 담는 금융회사 단위 통계이며, 전국 범위의 비공간 데이터다. 금융지주 그룹의 자회사 구성·출자 비율이나 자산·부채·자본, ROA·ROE 같은 경영성과가 시점별로 어떻게 변했는지 비교하려는 분석가가 쓴다. 법인등록번호(crno)로 금융위 기업정보·재무 데이터나 다른 업권별 금융회사 원장과 이어 쓴다.
 limits: 실호출은 1개 오퍼레이션만 확인됐으므로 나머지 오퍼레이션의 응답 형태는 따로 확인해야 한다. 개발계정은 하루 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -360,3 +366,4 @@ review:
     - c-15061333-04
     - c-15061333-06
   dropped_citations: 0
+status: active

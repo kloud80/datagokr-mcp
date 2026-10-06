@@ -1,0 +1,357 @@
+# Dataset 15076662 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076662'
+tier: verified
+title: 한국도로공사_주유소 가격 과 고속도로 통행량의 상관성
+sector: 교통물류/도로/ev-fuel
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076662/openapi.do
+synonyms:
+  - 고속도로
+  - 주유소
+  - 가격
+  - 통행량
+  - 유가정보
+  - 교통분석
+  - 데이터연계
+  - 이용행태
+  - 고속도로 휴게소 유가
+  - 휴게소 주유소 가격
+  - 고속도로 기름값
+  - 고속도로 교통량
+  - 유가 통행량 분석
+  - 휘발유 경유 LPG 가격
+  - 한국도로공사 OpenAPI
+summary_user: 고속도로 휴게소 주유소별 휘발유·경유·LPG 판매가격과 정유사 정보, 그리고 해당 노선·영업소 구간의 통행량·평균속도 등 교통 지표를 함께 담은 전국 단위 OpenAPI입니다. 분석가나 정책 담당자가 "유가가 오를 때 특정 고속도로 구간의 통행량이 줄었는가" 같은 유가와 도로 이용 행태의 관계를 확인할 때 쓴다. 실측 컬럼에는 다른 데이터와 공통으로 쓰는 전역 조인 키가 없어서, 노선번호(routeNo)·영업소코드(unitCode) 같은 한국도로공사 내부 코드나 휴게소·노선 이름으로 같은 기관의 휴게소·통행량 데이터에 맞춰 붙여야 한다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 주유소의 유가 정보와 해당 구간의 통행량 데이터를 기반으로 상관성을 분석할 수 있도록 구성된 OpenAPI 서비스이다.주유소별 유종, 판매가격, 조사일자 등의 정보와 해당 도로 구간의 일별 통행량 데이터를 함께 제공함으로써 유가 변화에 따른 교통량의 변동을 비교 분석할 수 있다.이용자는 해당 데이터를 통해 유가와 통행량 간의 관계를 정량적으로 분석하여 도로 이용 행태의 변화를 파악할 수 있다.데이터는 XML 및 JSON 형식으로 제공되며, 연도, 노선, 영업소, 유종 등의 조건으로 조회가 가능하다.공공 및 민간 분야에서는 유가 정책 수립, 교통 예측 모델 개발, 서비스시설 운영 전략 수립 등의 분석에 활용 가능하다.본 데이터는 고속도로 주유 인프라 운영의 효율성 향상과 통행 수요 예측의 정밀도를 높이는 데 기여할 수 있다.또한 경제적 요인에 따른 도로 이용 행태 변화를 종합적으로 이해하는 데 활용될 수 있다.
+team:
+  dept: AI데이터처
+services:
+  - op: restOilpriceList
+    name: restOilpriceList
+    endpoint: https://data.ex.co.kr/openapi/restinfo/restOilpriceList
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: destination
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - S
+        - E
+        - M
+      stats:
+        unique: 3
+    - name: unitName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안성
+        - 죽암
+        - 옥천
+      stats:
+        unique: 96
+    - name: unitCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B00179
+        - B00001
+        - B00012
+      stats:
+        unique: 154
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 서해안선
+        - 중부내륙선
+      stats:
+        unique: 17
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0150'
+        - '0450'
+      stats:
+        min: 10
+        p50: 200
+        max: 4510
+        unique: 17
+    - name: trafficAmout
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '114'
+        - '96'
+      stats:
+        min: 0
+        p50: 291
+        max: 5730
+        unique: 1292
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산
+        - 서울
+        - 목포
+      stats:
+        unique: 30
+    - name: stdHour
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '07'
+        - '08'
+        - '09'
+      stats:
+        min: 0
+        p50: 12
+        max: 23
+        unique: 24
+    - name: vdsId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1000VDE00800
+        - 0010VDE19500
+        - 0010VDE17500
+      stats:
+        unique: 109
+    - name: shareRatio
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '-1.00'
+        - '0.00'
+        - '1.05'
+      stats:
+        min: -1
+        p50: 1.5
+        max: 60.62
+        unique: 717
+    - name: avgSpeed
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.00'
+        - '95.81'
+        - '94.38'
+      stats:
+        min: 0
+        p50: 94.32
+        max: 128.51
+        unique: 1326
+    - name: locName
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '230'
+        - '76'
+        - '75'
+      stats:
+        min: 0
+        p50: 112
+        max: 415
+        unique: 98
+    - name: sdate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261005'
+      stats:
+        min: 20261005
+        p50: 20261005
+        max: 20261005
+        unique: 1
+    - name: telNo
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 055-372-6163
+        - 02-573-7430
+        - 031-262-4602
+      stats:
+        unique: 154
+    - name: oilCompany
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - AD
+        - SK
+        - S
+      stats:
+        unique: 4
+    - name: gasolinePrice
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1,839원
+        - 1,864원
+        - 1,845원
+      stats:
+        unique: 30
+    - name: lpgPrice
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - X
+        - 1,199원
+        - 1,281원
+      stats:
+        unique: 67
+    - name: lpg
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+    - name: dieselPrice
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1,853원
+        - 1,828원
+        - X
+      stats:
+        unique: 30
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7166
+  rank_in_sector: 327
+  brm: 교통물류 - 도로
+  why: 한국도로공사 공공데이터 포털 (key=test)
+claims:
+  - id: c-15076662-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076662.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076662-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076662-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076662.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 19개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076662-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076662.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076662-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076662-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076662.json
+  stats: probe/stats/15076662.json
+  data: probe/data/15076662/
+limits: 포털 활용신청과 별도로 외부 사이트(data.ex.co.kr)에서 인증키를 받아 경로 파라미터로 넣어야 호출된다. 공간 좌표가 없는 비공간 데이터라서 지도 위 위치 분석에는 바로 쓰기 어렵다. 다른 기관 데이터와는 이름 매핑으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076662-01
+    - c-15076662-03
+    - c-15076662-04
+  dropped_citations: 0
+status: active

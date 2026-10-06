@@ -1,4 +1,5 @@
-# Dataset 15000831 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15000831 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15000831'
 tier: verified
 title: 외교부_대륙 구분코드
@@ -23,6 +24,7 @@ synonyms:
   - 국가 대륙 매핑
   - 지역 구분코드
   - 외교부 표준코드
+summary_user: 외교부가 국가 소속 대륙을 구분하는 대륙 구분코드와 대륙명을 담은 코드표로, 포털 설명상 4건 규모의 작은 마스터 목록이다. 외교·출입국·관광 데이터를 다루는 분석가가 '이 국가 데이터의 대륙 코드는 어느 대륙을 뜻하는가'를 풀어 대륙별로 묶어 볼 때 쓴다. 실측 컬럼에는 전역 조인 키가 없어, 같은 외교부 국가 표준코드 데이터의 대륙 코드(code)나 대륙명 문자열 매핑으로만 다른 데이터와 잇는다.
 description_portal: '[요약 정보]국가별 소속 대륙 구분코드 전체를 조회가능한 오픈 API입니다.[상세 정보]제공 데이터 건수 : 4건, 범위 : 대륙구분 코드, 대륙명 등대륙코드목록조회 : 공공데이터 포털에서 제공하는 인증키로 대륙구분코드를 조회 가능합니다.(인증키와 조회할 대륙명을 파라메터로 하여 대륙구분 코드 조회) 최대 메세지 정보는 4000bytes, 평균 응답시간은 500ms, 초당 최대 트랜잭션은 30tps 입니다. [응답정보]결과코드, 결과메시지, 한 페이지 결과 수, 페이지 번호, 전체 결과 수, 코드, 대륙명을 확인 가능합니다.'
 team:
   dept: 정보화담당관실
@@ -46,6 +48,7 @@ schema:
   fields:
     - name: code
       type: code
+      semantic_type: mofa_continent_cd
       null_rate: 0.0
       sample_values:
         - AF
@@ -62,6 +65,12 @@ schema:
         - 아시아/태평양
       stats:
         unique: 4
+  foreign_keys:
+    - fields:
+        - code
+      reference:
+        key: mofa_continent_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -111,7 +120,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15000831-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: mofa_continent_cd(code)'
     evidence:
       - type: measured
         source: probe/stats/15000831.json
@@ -176,8 +185,6 @@ verification:
   run: probe/runs/15000831.json
   stats: probe/stats/15000831.json
   data: probe/data/15000831/
-status: active
-summary_user: 외교부가 국가 소속 대륙을 구분하는 대륙 구분코드와 대륙명을 담은 코드표로, 포털 설명상 4건 규모의 작은 마스터 목록이다. 외교·출입국·관광 데이터를 다루는 분석가가 '이 국가 데이터의 대륙 코드는 어느 대륙을 뜻하는가'를 풀어 대륙별로 묶어 볼 때 쓴다. 실측 컬럼에는 전역 조인 키가 없어, 같은 외교부 국가 표준코드 데이터의 대륙 코드(code)나 대륙명 문자열 매핑으로만 다른 데이터와 잇는다.
 limits: 대륙 코드와 대륙명만 담겨 개별 국가 목록이나 국가 기본정보는 이 데이터만으로 얻지 못한다. 공통 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑을 직접 만들어야 하며, 지리 좌표가 없는 비공간 데이터다.
 review:
   summary: draft
@@ -190,3 +197,4 @@ review:
     - c-15000831-04
     - c-15000831-06
   dropped_citations: 0
+status: active

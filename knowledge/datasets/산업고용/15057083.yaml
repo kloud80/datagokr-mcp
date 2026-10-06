@@ -1,4 +1,3 @@
-# Dataset 15057083 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15057083'
 tier: verified
 title: 한국노인인력개발원_노인사회활동(노인일자리) 시스템 코드 정보
@@ -19,6 +18,7 @@ synonyms:
   - 시군구 코드 조회
   - 노인사회활동 코드표
   - 시니어 일자리 코드
+summary_user: 노인일자리 업무시스템에서 쓰는 코드 마스터로, 시도·시군구 코드와 명칭을 담은 지역코드 목록과 수행기관 코드·기관명을 담은 기관코드 목록을 전국 시군구 단위로 제공한다. 노인일자리 관련 다른 OpenAPI를 호출하려는 개발자·분석가가 '우리 시군구의 지역코드나 노인일자리 수행기관 코드가 무엇인가'를 확인해 요청변수로 넣는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 노인일자리 API와는 기관코드(orgCd)·시도/시군구 코드로, 다른 데이터와는 시도·시군구 명칭 매핑으로 연결한다.
 description_portal: 한국노인인력개발원에서 운영하는 노인일자리 업무시스템의 코드 정보 중 지역코드와 기관코드를 조회하는 OpenAPI 서비스입니다. 지역코드 목록 조회 서비스는 광역자치단체인 시도 코드, 시도 명칭, 기초자치단체인 시군구 코드, 시군구 명칭 등 전반적인 지역 현황 정보를 제공하며, 기관코드 목록 조회 서비스는 기관 코드, 기관 명칭 등 전반적인 기관 현황 정보를 제공합니다. 조회된 데이터는 노인일자리와 관련된 한국노인인력개발원의 타 OpenAPI 및 오퍼레이션에서 요청변수로써 원하는 데이터의 조회에 사용될 수 있습니다.
 team:
   dept: 정보화전략부
@@ -102,6 +102,7 @@ schema:
     - name: orgCd
       title: 기관코드
       type: number
+      semantic_type: senior_job_org_id
       null_rate: 0.0
       sample_values:
         - '0000794'
@@ -166,12 +167,24 @@ schema:
       op: /getOdsnAreaCodeInquiryList2
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - orgCd
+      reference:
+        key: senior_job_org_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - contRegnStr2Code
+    - contRegnStr2Name
+  space_via: code
 cycle: event
 classification:
   subsector_name: 정부지원 일자리사업·청년정책 (사업정보·참여자 모집·노인일자리·해외인턴)
@@ -216,7 +229,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057083-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: senior_job_org_id(orgCd)'
     evidence:
       - type: measured
         source: probe/stats/15057083.json
@@ -270,8 +283,6 @@ verification:
   run: probe/runs/15057083.json
   stats: probe/stats/15057083.json
   data: probe/data/15057083/
-status: active
-summary_user: 노인일자리 업무시스템에서 쓰는 코드 마스터로, 시도·시군구 코드와 명칭을 담은 지역코드 목록과 수행기관 코드·기관명을 담은 기관코드 목록을 전국 시군구 단위로 제공한다. 노인일자리 관련 다른 OpenAPI를 호출하려는 개발자·분석가가 '우리 시군구의 지역코드나 노인일자리 수행기관 코드가 무엇인가'를 확인해 요청변수로 넣는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 노인일자리 API와는 기관코드(orgCd)·시도/시군구 코드로, 다른 데이터와는 시도·시군구 명칭 매핑으로 연결한다.
 limits: 이 데이터는 코드와 명칭만 담고 일자리 모집·참여 현황은 담지 않는다. 시도·시군구 코드는 시스템 자체 코드로, 행정표준코드 등 전역 키와의 일치는 확인되지 않아 다른 데이터와 붙일 때는 이름 매핑이 필요하다. 갱신은 이벤트 발생 시 생성되는 방식으로 분류돼 있어 정기 갱신을 전제하지 않는다.
 review:
   summary: draft
@@ -284,3 +295,4 @@ review:
     - c-15057083-03
     - c-15057083-04
   dropped_citations: 0
+status: active

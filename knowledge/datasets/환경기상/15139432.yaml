@@ -1,0 +1,185 @@
+# Dataset 15139432 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139432'
+tier: verified
+title: 기상청_종관기상관측 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139432/openapi.do
+synonyms:
+  - 지상관측
+  - 기온
+  - 목측관측
+  - 기후
+  - 강수량
+  - ASOS
+  - 지상기상관측
+  - 기상관측 자료
+  - 과거 날씨
+  - 일별 기온 강수량
+  - 관측지점 기상자료
+  - 기후 통계
+description_portal: '지상기상관측(ASOS)이란 지면 부근 및 지상에서의 기상요소와 기상현상에 대한 관측으로 기온, 강수량, 기압, 습도, 일사, 일조 등을  관측합니다.생산주기: 시간, 일보유기간: 1904년 4월(지점별 상이함) ~(참고)ASOS와 AWS 차이구분         ASOS (종관기상관측)               AWS (자동기상관측)설치 위치           주로 주요 도시                         산간·도서 등 촘촘한 지역망운영 주체                 기상청                              기상청·지자체 등 혼합측정 요소 종관기상 전요소(정규 관측)      일부 기상요소(강수, 온도 등)주 목적         예보·기후 통계, 국제공유              국지성 재해 감시, 보조 관측'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: kma_sfctm2.php
+    name: kma_sfctm2.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '202211300900'
+      - name: stn
+        required: true
+        example: '0'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '  #-----------------------------------------------------------------------------'
+        - '  #  기상청 지상관측 시간자료 [입력인수형태][예] ?tm=201007151200&stn=0&help=1'
+        - '  #  1. TM     : 관측시각 (KST)'
+      stats:
+        unique: 99
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7841
+  rank_in_sector: 35
+  brm: 환경기상 - 대기
+  why: 종관관측 허브판, 핵심 관측이나 일부 중복
+claims:
+  - id: c-15139432-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139432.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139432-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139432-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139432.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139432-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139432.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139432-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139432-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139432-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139432.json
+  stats: probe/stats/15139432.json
+  data: probe/data/15139432/
+status: active
+summary_user: 기상청 종관기상관측(ASOS) 지점에서 관측한 기온·강수량·기압·습도·일사·일조 같은 기상요소를 관측지점번호 기준의 시간·일 단위 자료로 담으며, 범위는 전국이다. 기후·농업·보험 분석가가 특정 지점의 과거 일별 기온·강수 추이를 확인해 피해 시기나 기후 변화를 따지는 질문에 원천 자료로 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 관측지점 이름·번호를 매핑하거나 같은 기상청 관측 자료와 지점 코드로만 이어 쓴다.
+limits: 포털 활용신청과 별개로 외부 사이트(apihub.kma.go.kr)의 인증키를 경로 파라미터로 넣어 호출해야 한다. 행정구역 코드나 좌표 같은 전역 키가 확인되지 않아 다른 기관 데이터와 바로 결합하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139432-01
+    - c-15139432-03
+    - c-15139432-04
+    - c-15139432-06
+  dropped_citations: 0

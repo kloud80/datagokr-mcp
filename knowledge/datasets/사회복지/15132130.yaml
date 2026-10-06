@@ -1,4 +1,5 @@
-# Dataset 15132130 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132130 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132130'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄통합지원 설문조사 상세 정보
@@ -21,6 +22,7 @@ synonyms:
   - 아이돌보미 서비스 평가
   - 육아 돌봄 만족도
   - 설문 문항별 응답
+summary_user: 아이돌봄 통합지원 설문조사의 응답을 문항번호·설문연월·답변자관리번호 단위로 담은 건별 응답 데이터로, 선택한 보기와 기타 기재 내용, 서술형 답변, 등록·수정일자를 포함한다(전국 범위·비공간). 아이돌봄 서비스 운영자나 정책 분석가가 "이용자는 서비스에 얼마나 만족하고, 어떤 불편을 적어 냈는가"를 문항별로 살펴보는 데 쓴다. 다른 데이터와 공통으로 쓰는 조인 키는 없으며, 같은 데이터 안에서 답변자관리번호(answrMngNo)로 한 응답자의 문항별 답변을 묶고 설문연월로 회차를 구분하는 정도로만 연결한다.
 description_portal: 아이돌봄 통합지원 설문조사의 상세정보를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 수정일자, 문항번호, 설문연월, 답변자관리번호, 선택내용, 기타내용, 답변내용, 등록일자의 내용을 확인할 수 있습니다.설문 문항별 응답 내용을 통해 이용자 만족도, 서비스 인식도 등의 정성적 데이터를 확보할 수 있어, 정책 품질 평가에 정량적 지표 외 보완자료로서 중요한 역할을 할 수 있습니다. 응답 내용과 기타 기재 사항을 통해 서비스 운영상의 문제점이나 개선점을 도출할 수 있으며 서비스 만족도 조사 및 품질 개선 전략 수립에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -87,6 +89,7 @@ schema:
     - name: answrMngNo
       title: 답변자관리번호
       type: number
+      semantic_type: idolbom_answr_mng_no
       null_rate: 0.0
       sample_values:
         - '550819200493132'
@@ -148,12 +151,22 @@ schema:
         p50: 20200710
         max: 20200724
         unique: 16
+  foreign_keys:
+    - fields:
+        - answrMngNo
+      reference:
+        key: idolbom_answr_mng_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - srvyYm
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -197,7 +210,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132130-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: idolbom_answr_mng_no(answrMngNo)'
     evidence:
       - type: measured
         source: probe/stats/15132130.json
@@ -251,8 +264,6 @@ verification:
   run: probe/runs/15132130.json
   stats: probe/stats/15132130.json
   data: probe/data/15132130/
-status: active
-summary_user: 아이돌봄 통합지원 설문조사의 응답을 문항번호·설문연월·답변자관리번호 단위로 담은 건별 응답 데이터로, 선택한 보기와 기타 기재 내용, 서술형 답변, 등록·수정일자를 포함한다(전국 범위·비공간). 아이돌봄 서비스 운영자나 정책 분석가가 "이용자는 서비스에 얼마나 만족하고, 어떤 불편을 적어 냈는가"를 문항별로 살펴보는 데 쓴다. 다른 데이터와 공통으로 쓰는 조인 키는 없으며, 같은 데이터 안에서 답변자관리번호(answrMngNo)로 한 응답자의 문항별 답변을 묶고 설문연월로 회차를 구분하는 정도로만 연결한다.
 limits: 실측 컬럼에서 다른 데이터와 잇는 전역 조인 키가 확인되지 않아 지역·기관·이용자 속성과 바로 결합할 수 없고, 연결하려면 이름·코드 매핑이나 같은 기관 코드를 따로 써야 한다. 범위는 전국·비공간이라 지역별 만족도 비교에는 쓸 수 없다. 개발계정 호출은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -264,3 +275,4 @@ review:
     - c-15132130-03
     - c-15132130-04
   dropped_citations: 0
+status: active

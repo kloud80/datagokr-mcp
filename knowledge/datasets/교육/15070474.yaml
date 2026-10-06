@@ -1,4 +1,5 @@
-# Dataset 15070474 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070474 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070474'
 tier: verified
 title: 한국장학재단_대학생 청소년교육지원장학금_집행액세부내역
@@ -21,6 +22,7 @@ synonyms:
   - 멘토링 장학금 대학별 집행액
   - 근로장학 멘토링 출근부
   - 한국장학재단 장학금 집행내역
+summary_user: 대학생 청소년교육지원장학금(대학생이 초중고생을 멘토링하고 장학금을 받는 사업)의 집행액을 연도·학기·대학·근로내역 대·소분류별로 나눠 출근부 건수, 대상 인원 수, 집행금액을 담은 집계 파일로, 범위는 전국이다. 교육 분석가나 대학 담당자가 '어느 대학에서 어떤 멘토링 활동에 장학금이 얼마나 집행됐는가'를 학기별로 비교하는 데 쓴다. 전역 조인 키나 표준 대학 코드는 없어서 다른 대학 데이터(대학 공시 등)와는 대학명 문자열을 맞춰야 이어 쓸 수 있다.
 description_portal: '대학생 청소년교육지원장학금 멘토링 관련 집행액 세부 정보: 상품명, 연도, 학기, 대학명, 근로내역대분류, 근로내역소분류, 출근부건수, 대상인원수, 집행금액 등의 정보를 제공함데이터 제공항목은 사업 상품명, 사업연도, 사업학기, 대학명, 집행내역 항목구분, 집행내역 항목, 출근부 발생 건수, 출근부 발생 인원 수, 예산 집행금액이 있습니다. 대학생 청소년교육지원장학금은 대학생이 초중고등학생 대상으로  멘토링을 지원하고, 대학생에게는 장학금을 지원하는 것을 목적으로 합니다. 대학생 청소년교육지원 장학금 관련 정보는 "한국장학재단 누리집(http://www.koaf.go.kr) > 인재육성 > 대학생지식멘토링 > 대학생 청소년교육지원장학금"에서 확인 가능'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 대학생 청소년교육지원 장학금
@@ -65,6 +68,7 @@ schema:
         unique: 1
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 서울시립대학교(본교) 학부
@@ -126,12 +130,27 @@ schema:
         p50: 37448482.5
         max: 2301134825
         unique: 1338
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -168,7 +187,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070474-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_scholarship_product(상품명), univ_school_cd(대학명)'
     evidence:
       - type: measured
         source: probe/stats/15070474.json
@@ -232,8 +251,6 @@ verification:
   run: probe/runs/15070474.json
   stats: probe/stats/15070474.json
   data: probe/data/15070474/
-status: active
-summary_user: 대학생 청소년교육지원장학금(대학생이 초중고생을 멘토링하고 장학금을 받는 사업)의 집행액을 연도·학기·대학·근로내역 대·소분류별로 나눠 출근부 건수, 대상 인원 수, 집행금액을 담은 집계 파일로, 범위는 전국이다. 교육 분석가나 대학 담당자가 '어느 대학에서 어떤 멘토링 활동에 장학금이 얼마나 집행됐는가'를 학기별로 비교하는 데 쓴다. 전역 조인 키나 표준 대학 코드는 없어서 다른 대학 데이터(대학 공시 등)와는 대학명 문자열을 맞춰야 이어 쓸 수 있다.
 limits: 대학 코드 같은 조인 키가 없어 대학명 표기 차이에 따라 연결이 어긋날 수 있다. 개인별·건별 지급 내역이 아니라 대학·항목 단위 집계이므로 학생 개인 수준 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -245,3 +262,4 @@ review:
     - c-15070474-03
     - c-15070474-04
   dropped_citations: 0
+status: active

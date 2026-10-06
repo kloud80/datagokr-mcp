@@ -1,4 +1,5 @@
-# Dataset 15072347 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072347 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072347'
 tier: verified
 title: 문화체육관광부_국가도서관통계_전국국립도서관통계
@@ -25,6 +26,7 @@ synonyms:
   - 도서관 방문자수
   - 도서관 예산
   - 국가도서관통계시스템
+summary_user: 전국 국립도서관을 도서관 단위로 평가년도별 장서수·사서수·방문자수·도서예산 등 운영 현황을 담은 통계 파일이다. 도서관 정책 담당자나 연구자가 '국립도서관별 장서와 사서 인력, 방문자 규모가 어떻게 다른가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도서관명·도서관코드 매핑으로만 연결하며, 도서관코드는 도서관정보나루 체계의 키로 쓰일 여지가 있다.
 description_portal: 전국 국립도서관의 운영 현황과 자원 분포를 종합적으로 파악할 수 있는 통계 자료입니다. 평가년도, 도서관구분, 도서관코드, 도서관명, 행정구역, 시군구, 장서수, 사서수, 방문자수, 도서예산 등 다양한 항목을 포함하고 있어 도서관 정책 수립, 연구, 지역별 도서관 서비스 개선 등에 활용할 수 있습니다. 이용자들은 도서관별 자원 현황과 이용 실태를 비교 분석하거나, 도서관 운영의 효율성 제고 및 예산 배분의 근거 자료로 활용할 수 있습니다. 또한, 도서관 관련 산업 및 학계에서도 기초 자료로 활용하기에 적합합니다.
 legal_basis_portal: 국가승인통계(국가통계 승인번호  제113016호)
 accrual_periodicity: 연간
@@ -48,6 +50,7 @@ schema:
         unique: 5
     - name: 도서관코드
       type: number
+      semantic_type: library_cd
       null_rate: 0.0
       sample_values:
         - '1014132001'
@@ -67,6 +70,12 @@ schema:
         - 느티나무도서관
       stats:
         unique: 1853
+  foreign_keys:
+    - fields:
+        - 도서관코드
+      reference:
+        key: library_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -110,7 +119,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072347-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: library_cd(도서관코드)'
     evidence:
       - type: measured
         source: probe/stats/15072347.json
@@ -185,8 +194,6 @@ verification:
   run: probe/runs/15072347.json
   stats: probe/stats/15072347.json
   data: probe/data/15072347/
-status: active
-summary_user: 전국 국립도서관을 도서관 단위로 평가년도별 장서수·사서수·방문자수·도서예산 등 운영 현황을 담은 통계 파일이다. 도서관 정책 담당자나 연구자가 '국립도서관별 장서와 사서 인력, 방문자 규모가 어떻게 다른가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 도서관명·도서관코드 매핑으로만 연결하며, 도서관코드는 도서관정보나루 체계의 키로 쓰일 여지가 있다.
 limits: 전역 조인 키가 확인되지 않아 다른 도서관 데이터와 붙이려면 이름이나 코드를 직접 맞춰야 한다. 범위는 전국 단위의 비공간 자료로 좌표 등 위치 정보로 지도에 바로 올릴 수 없다.
 review:
   summary: draft
@@ -199,3 +206,4 @@ review:
     - c-15072347-04
     - c-15072347-06
   dropped_citations: 0
+status: active

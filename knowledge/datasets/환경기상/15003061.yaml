@@ -1,4 +1,5 @@
-# Dataset 15003061 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15003061 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15003061'
 tier: verified
 title: 한국동서발전(주)_발전소별 폐기물처리 현황
@@ -21,6 +22,7 @@ synonyms:
   - 동서발전 폐기물
   - 발전량 대비 폐기물 원단위
   - 사업장폐기물 재활용 실적
+summary_user: 한국동서발전 소속 발전소별로 연도마다 발전량(GWh), 일반·지정 폐기물 발생량(톤), 발전량 대비 원단위 발생량, 일반·지정 폐기물 재활용량과 재활용률을 정리한 집계 파일입니다(CSV 약 1.4KB의 작은 표). 연구자나 분석가가 "어느 발전소가 발전량 대비 폐기물을 적게 내고 재활용을 많이 하는가"를 비교할 때 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 연도와 발전소 이름을 직접 맞추거나 같은 기관 자료끼리만 이어 쓴다.
 description_portal: 한국동서발전의 발전소별 폐기물 처리 현황 정보는 각 발전소에서 발생한 폐기물의 발생량과 재활용 실적 등을 종합적으로 정리한 데이터입니다.해당 데이터는 연도, 발전소, 발전량(GWh), 일반 폐기물 발생량(톤), 지정 폐기물 발생량(톤), 원단위 발생량(톤/GWh), 일반 폐기물 재활용량(톤), 지정 폐기물 재활용량(톤), 재활용률(%)의 항목으로 구성되어 있습니다.본 자료를 통해 발전소 운영 시 발생하는 폐기물의 규모와 유형별 특성, 발전량 대비 폐기물 배출 효율성, 재활용 실적 등을 정량적으로 파악할 수 있습니다.학계 및 연구기관에서는 이 데이터를 활용하여 △발전소별 폐기물 관리 효율 비교 △에너지 생산과 환경부하 간 상관관계 분석 △지속가능한 발전소 운영 전략 수립 △재활용률 향상 방안 도출 △환경영향평가 모델 개발 등 다양한 환경 및 에너지 융합 연구에 활용할 수 있습니다.또한 환경규제 기준과의 비교분석을 통해 정책 대응 능력을 평가하거나, 국제 기준에 부합하는 폐기물 감축 및 자원순환 방안 연구에도 유용한 기초자료로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 7
     - name: 발전소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진
@@ -137,12 +140,22 @@ schema:
         p50: 80
         max: 193
         unique: 25
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 년도
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -179,7 +192,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15003061-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소)'
     evidence:
       - type: measured
         source: probe/stats/15003061.json
@@ -244,8 +257,6 @@ verification:
   run: probe/runs/15003061.json
   stats: probe/stats/15003061.json
   data: probe/data/15003061/
-status: active
-summary_user: 한국동서발전 소속 발전소별로 연도마다 발전량(GWh), 일반·지정 폐기물 발생량(톤), 발전량 대비 원단위 발생량, 일반·지정 폐기물 재활용량과 재활용률을 정리한 집계 파일입니다(CSV 약 1.4KB의 작은 표). 연구자나 분석가가 "어느 발전소가 발전량 대비 폐기물을 적게 내고 재활용을 많이 하는가"를 비교할 때 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 연도와 발전소 이름을 직접 맞추거나 같은 기관 자료끼리만 이어 쓴다.
 limits: 발전소 단위 연간 집계여서 개별 배출 사업장이나 처리업체, 사업자번호 단위의 원장으로는 쓸 수 없고 위치 정보도 없다. 이 데이터는 발생량·처리현황 통계여서 폐기물 처리업·배출자 영역에서는 보조 자료로 분류되며, 다른 데이터와 연결하려면 발전소 이름을 수작업으로 맞춰야 한다.
 review:
   summary: draft
@@ -260,3 +271,4 @@ review:
     - c-15003061-07
     - c-15003061-08
   dropped_citations: 0
+status: active

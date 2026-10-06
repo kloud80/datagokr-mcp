@@ -1,5 +1,3 @@
-# Dataset 15157601 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157601'
 tier: verified
 title: 행정안전부 한국지역정보개발원_(전국 통합데이터) 초정밀버스 위치 실시간 정보
@@ -160,6 +158,7 @@ schema:
     - name: rteId
       title: 노선아이디(101)
       type: number
+      semantic_type: klid_bus_route_id
       null_rate: 0.0
       sample_values:
         - '192000001'
@@ -282,6 +281,7 @@ schema:
     - name: rteId
       title: 노선아이디(101)
       type: number
+      semantic_type: klid_bus_route_id
       null_rate: 0.0
       sample_values:
         - '193000033'
@@ -296,6 +296,7 @@ schema:
     - name: bstaId
       title: 정류소아이디(7)
       type: number
+      semantic_type: busstop_sttn_id
       null_rate: 0.0
       sample_values:
         - '192066803'
@@ -421,6 +422,7 @@ schema:
     - name: rteId
       title: 노선아이디(101)
       type: number
+      semantic_type: klid_bus_route_id
       null_rate: 0.0
       sample_values:
         - '194000081'
@@ -565,6 +567,16 @@ schema:
         key: bjd_cd
       evidence: measured
     - fields:
+        - rteId
+      reference:
+        key: klid_bus_route_id
+      evidence: measured
+    - fields:
+        - bstaId
+      reference:
+        key: busstop_sttn_id
+      evidence: measured
+    - fields:
         - bstaLat
       reference:
         key: coord
@@ -578,6 +590,18 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2026-04-01 ~ 2026-10-02
+grain:
+  space: point
+  space_fields:
+    - bstaLat
+    - bstaLot
+    - lat
+  space_via: coord
+  time: realtime
+  time_fields:
+    - totDt
+    - totDt
+    - totDt
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -622,7 +646,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15157601-03
     kind: key
-    value: '실측 조인 키: bjd_cd(stdgCd), coord(bstaLat), coord(lat)'
+    value: '실측 조인 키: bjd_cd(stdgCd), klid_bus_route_id(rteId), busstop_sttn_id(bstaId), coord(bstaLat), coord(lat)'
     evidence:
       - type: measured
         source: probe/stats/15157601.json

@@ -59,6 +59,7 @@ schema:
         unique: 294
     - name: 보건소기호
       type: number
+      semantic_type: health_center_sym
       null_rate: 0.0
       sample_values:
         - '35700203'
@@ -154,6 +155,11 @@ schema:
         unique: 256
   foreign_keys:
     - fields:
+        - 보건소기호
+      reference:
+        key: health_center_sym
+      evidence: measured
+    - fields:
         - 시도코드
       reference:
         key: admin_area_code
@@ -166,6 +172,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 시도코드
+    - 시군구코드
+    - 주소
+  space_via: code
+  time: year
+  time_fields:
+    - 사업년도
 cycle: default
 classification:
   subsector_name: public-health-centers
@@ -202,7 +218,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15132479-03
     kind: key
-    value: '실측 조인 키: admin_area_code(시도코드), address(주소)'
+    value: '실측 조인 키: health_center_sym(보건소기호), admin_area_code(시도코드), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15132479.json

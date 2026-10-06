@@ -1,4 +1,5 @@
-# Dataset 15058447 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058447 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058447'
 tier: verified
 title: 식품의약품안전처_생동성인정품목조회
@@ -22,6 +23,7 @@ synonyms:
   - 생동인정 의약품
   - 의약품 동등성
   - 품목기준코드
+summary_user: 생물학적 동등성 시험 결과로 인정받은 의약품을 품목 단위로 담으며, 품목기준코드·품목명·업체명·성분명·함량·제형·생동성 인정 공고일자가 들어 있고 범위는 전국입니다. 약사·환자가 특정 성분의 복제약 가운데 생동성을 인정받은 제품과 그 공고 시점을 확인하거나, 분석가가 업체별·성분별 인정 현황을 집계하는 데 씁니다. 전역 조인 키는 없으므로 같은 식약처 의약품 데이터와는 품목기준코드(ITEM_SEQ)로, 업체 정보와는 사업자등록번호나 업체명 매핑으로 연결합니다.
 description_portal: 식품의약품안전처에서 제공하는 ‘생동성인정품목 조회’ 데이터는 의약품의 동등성을 입증하기 위해 수행된 생물학적 동등성 시험 결과를 근거로 인정된 품목 현황을 제공합니다.이 데이터에는 품목기준코드, 품목명, 성분명, 제형, 함량, 업체명, 생동성 인정 공고일자 등이 포함되어 있습니다.이를 통해 의료기관과 환자는 안전하고 신뢰할 수 있는 의약품 선택이 가능하며, 제약사는 의약품 개발 및 품질관리 전략 수립에 활용할 수 있습니다. 또한 보건당국은 의약품 허가·심사, 정책 수립, 연구·분석 등 다양한 분야에서 본 데이터를 활용하여 국민의 안전한 의약품 사용을 지원합니다.
 team:
   dept: 데이터혁신기획팀
@@ -45,6 +47,7 @@ schema:
   fields:
     - name: ITEM_SEQ
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '200100115'
@@ -113,6 +116,7 @@ schema:
         unique: 30
     - name: BIZRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '3018508241'
@@ -123,12 +127,27 @@ schema:
         p50: 2018644250
         max: 8638700270
         unique: 173
+  foreign_keys:
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - BIOEQ_PRODT_NOTICE_DATE
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -172,7 +191,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058447-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(ITEM_SEQ), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15058447.json
@@ -237,8 +256,6 @@ verification:
   run: probe/runs/15058447.json
   stats: probe/stats/15058447.json
   data: probe/data/15058447/
-status: active
-summary_user: 생물학적 동등성 시험 결과로 인정받은 의약품을 품목 단위로 담으며, 품목기준코드·품목명·업체명·성분명·함량·제형·생동성 인정 공고일자가 들어 있고 범위는 전국입니다. 약사·환자가 특정 성분의 복제약 가운데 생동성을 인정받은 제품과 그 공고 시점을 확인하거나, 분석가가 업체별·성분별 인정 현황을 집계하는 데 씁니다. 전역 조인 키는 없으므로 같은 식약처 의약품 데이터와는 품목기준코드(ITEM_SEQ)로, 업체 정보와는 사업자등록번호나 업체명 매핑으로 연결합니다.
 limits: 실측 컬럼에서 다른 기관 데이터와 바로 붙는 공통 키가 확인되지 않아 외부 연계는 이름·코드 매핑에 기대야 합니다. 포털 분류는 식품 제품 DB지만 내용은 의약품이라 식품의 품목제조보고번호·바코드로는 조인되지 않습니다. 개발계정은 하루 10,000회로 호출이 제한됩니다.
 review:
   summary: draft
@@ -252,3 +269,4 @@ review:
     - c-15058447-06
     - c-15058447-08
   dropped_citations: 0
+status: active

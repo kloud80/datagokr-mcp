@@ -1,4 +1,5 @@
-# Dataset 15130113 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15130113 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15130113'
 tier: verified
 title: 한국저작권위원회_무료폰트 목록
@@ -21,6 +22,7 @@ synonyms:
   - 무료 서체
   - 저작권 free 폰트
   - 폰트 라이선스
+summary_user: 한국저작권위원회 공유마당에서 공유 중인 무료 폰트를 저작물 한 건씩 담은 목록으로, 저작물일련번호·저작물명·저작자·분류·원문제공·라이선스유형·등록일자를 담은 CSV 파일(약 104KB)이다. 디자이너나 소상공인이 "상업용 인쇄물에 써도 되는 무료 글꼴이 무엇이고 라이선스 조건은 어떤가"를 확인하거나, 공공·민간 안심글꼴 현황을 분류별로 세어 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 저작물명·저작자 이름 매칭으로만 이을 수 있고, 저작물일련번호는 공유마당 내부 식별용으로 보는 것이 맞다.
 description_portal: '한국저작권위원회 공유마당 홈페이지(https://gongu.copyright.or.kr/gongu/bbs/B0000018/list.do?menuNo=200195)는는) 저작권 걱정 없이 자유롭게 활용할 수 있는 다양한 무료 폰트를 제공하고 있습니다. 이 목록은 공유중인 무료폰트의 저작물일련번호, 저작물명, 저작자, 분류, 원문제공, 라이선스유형, 등록일시, 기준일자를 분류한 목록입니다. 홈페이지에서는 공공안심글꼴, 민간안심글꼴, 안심글꼴파일서비스, 민간무료글꼴정보 분류하여 정보제공 하고있습니다.※ 기준일자 : 2025-08-05'
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 저작물일련번호
       type: number
+      semantic_type: gongu_writing_seq
       null_rate: 0.0
       sample_values:
         - '419035'
@@ -108,12 +111,23 @@ schema:
         min: '2025-08-05'
         max: '2025-08-05'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 저작물일련번호
+      reference:
+        key: gongu_writing_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일자
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 저작권·콘텐츠 (저작권 등록·공유마당·게임 등급·영화·음악·웹툰)
@@ -150,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15130113-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gongu_writing_seq(저작물일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15130113.json
@@ -204,8 +218,6 @@ verification:
   run: probe/runs/15130113.json
   stats: probe/stats/15130113.json
   data: probe/data/15130113/
-status: active
-summary_user: 한국저작권위원회 공유마당에서 공유 중인 무료 폰트를 저작물 한 건씩 담은 목록으로, 저작물일련번호·저작물명·저작자·분류·원문제공·라이선스유형·등록일자를 담은 CSV 파일(약 104KB)이다. 디자이너나 소상공인이 "상업용 인쇄물에 써도 되는 무료 글꼴이 무엇이고 라이선스 조건은 어떤가"를 확인하거나, 공공·민간 안심글꼴 현황을 분류별로 세어 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 저작물명·저작자 이름 매칭으로만 이을 수 있고, 저작물일련번호는 공유마당 내부 식별용으로 보는 것이 맞다.
 limits: 다른 기관 데이터와 바로 붙일 공통 코드가 없어 이름 기반 매칭에 의존해야 한다. 지역 구분이 없는 전국·비공간 목록이라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -217,3 +229,4 @@ review:
     - c-15130113-03
     - c-15130113-04
   dropped_citations: 0
+status: active

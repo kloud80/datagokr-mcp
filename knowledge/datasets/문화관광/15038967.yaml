@@ -1,4 +1,5 @@
-# Dataset 15038967 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15038967 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15038967'
 tier: verified
 title: 제주관광공사_제주관광정보센터_상담SW_조직정보
@@ -21,6 +22,7 @@ synonyms:
   - 부서 계층 구조
   - 조직 변경 이력
   - 제주관광공사 부서코드
+summary_user: 제주관광공사가 운영하는 제주관광정보센터 상담SW에 등록된 공사 조직(부서) 정보를 부서 한 건씩 담은 CSV 파일로, 부서명·상위부서·단계·순서·사용여부와 작성·수정 이력을 포함한다. 상담SW 운영자나 분석가가 제주관광공사의 부서 계층 구조가 어떻게 짜여 있고 언제 바뀌었는지 확인할 때 쓴다. 다른 데이터와 잇는 전역 조인 키는 없고, 파일 안에서 부서아이디와 상위부서아이디를 이어 조직 계층을 재구성하는 정도로만 연결된다.
 description_portal: '- 제주관광공사에서 운영하는 제주관광정보센터 상담SW의 조직정보입니다.- 해당 데이터는 제주관광정보센터 관리자가 제주관광공사의 조직정보가 수정하면 데이터베이스에 기록하여 생성합니다.- 개방데이터 항목은 조직아이디, 부서명, 단계, 작성일, 작성자, 수정일, 수정자 등이며 전체 데이터 수는 76건(데이터 기준일 기준)입니다.- 해당 데이터를 통해 제주관광정보센터 상담SW 내 공사 조직 구조 및 변경 이력의 체계적 관리, 조직 정보 신뢰성 및 투명성 확보, 업무 효율성 증진, 데이터 기반 조직 운영 및 의사결정 지원, 서비스 품질 및 관리 체계 고도화, 마케팅 및 홍보 전략 수립 등 다양한 분야에 활용할 수 있을 것으로 기대됩니다.'
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 76
     - name: 부서아이디
       type: number
+      semantic_type: jto_dept_id
       null_rate: 0.0
       sample_values:
         - '070100'
@@ -152,12 +155,23 @@ schema:
         p50: 825000
         max: 825001
         unique: 3
+  foreign_keys:
+    - fields:
+        - 부서아이디
+      reference:
+        key: jto_dept_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 작성일
+    - 수정일
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -194,7 +208,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15038967-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: jto_dept_id(부서아이디)'
     evidence:
       - type: measured
         source: probe/stats/15038967.json
@@ -259,8 +273,6 @@ verification:
   run: probe/runs/15038967.json
   stats: probe/stats/15038967.json
   data: probe/data/15038967/
-status: active
-summary_user: 제주관광공사가 운영하는 제주관광정보센터 상담SW에 등록된 공사 조직(부서) 정보를 부서 한 건씩 담은 CSV 파일로, 부서명·상위부서·단계·순서·사용여부와 작성·수정 이력을 포함한다. 상담SW 운영자나 분석가가 제주관광공사의 부서 계층 구조가 어떻게 짜여 있고 언제 바뀌었는지 확인할 때 쓴다. 다른 데이터와 잇는 전역 조인 키는 없고, 파일 안에서 부서아이디와 상위부서아이디를 이어 조직 계층을 재구성하는 정도로만 연결된다.
 limits: 관광지·축제 같은 관광 콘텐츠가 아니라 상담SW 내부 조직정보이므로 관광 정보 조회에는 쓰지 못한다. TourAPI 콘텐츠ID·지역코드 등 외부와 공유하는 키가 없어 다른 데이터와는 이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -271,3 +283,4 @@ review:
     - c-15038967-01
     - c-15038967-03
   dropped_citations: 0
+status: active

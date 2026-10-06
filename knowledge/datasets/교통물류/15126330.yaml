@@ -48,6 +48,7 @@ schema:
   fields:
     - name: BIKE_ID
       type: string
+      semantic_type: seoul_bike_id
       null_rate: 0.0
       sample_values:
         - SPB-44836
@@ -68,6 +69,7 @@ schema:
         unique: 88
     - name: RENT_ID
       type: number
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - '00791'
@@ -111,6 +113,7 @@ schema:
         unique: 85
     - name: RTN_ID
       type: number
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - '05310'
@@ -196,6 +199,7 @@ schema:
         unique: 36
     - name: RENT_STATION_ID
       type: string
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - ST-2016
@@ -205,6 +209,7 @@ schema:
         unique: 87
     - name: RETURN_STATION_ID
       type: string
+      semantic_type: public_bike_station_id
       null_rate: 0.0
       sample_values:
         - ST-3110
@@ -252,9 +257,40 @@ schema:
         p50: 50.5
         max: 100
         unique: 100
+  foreign_keys:
+    - fields:
+        - BIKE_ID
+      reference:
+        key: seoul_bike_id
+      evidence: measured
+    - fields:
+        - RENT_ID
+      reference:
+        key: public_bike_station_id
+      evidence: measured
+    - fields:
+        - RTN_ID
+      reference:
+        key: public_bike_station_id
+      evidence: measured
+    - fields:
+        - RENT_STATION_ID
+      reference:
+        key: public_bike_station_id
+      evidence: measured
+    - fields:
+        - RETURN_STATION_ID
+      reference:
+        key: public_bike_station_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - RENT_DT
+    - RTN_DT
 cycle: default
 classification:
   subsector_name: 자전거·개인형 이동장치 (공공자전거 대여소·자전거도로·킥보드 주차구역)
@@ -296,7 +332,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15126330-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_bike_id(BIKE_ID), public_bike_station_id(RENT_ID), public_bike_station_id(RTN_ID), public_bike_station_id(RENT_STATION_ID), public_bike_station_id(RETURN_STATION_ID)'
     evidence:
       - type: measured
         source: probe/stats/15126330.json

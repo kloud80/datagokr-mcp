@@ -1,4 +1,5 @@
-# Dataset 15002252 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15002252 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15002252'
 tier: verified
 title: 해양환경공단_해양부유쓰레기 수거처리 정보
@@ -25,6 +26,7 @@ synonyms:
   - 바다 쓰레기 처리
   - 월별 수거실적
   - 해양정화
+summary_user: 해양환경공단 지사별·선박(청항선 등)별로 해양부유쓰레기 수거 실적을 1월부터 12월까지 월별 열로 정리한 집계 파일로, 전국 범위이며 1.5KB 남짓의 작은 CSV입니다. 정책 담당자나 연구자가 어느 지사·선박이 어느 달에 부유쓰레기를 많이 수거했는지 비교해 정화 우선지역이나 운항 계획을 검토할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양쓰레기·해양오염 데이터와는 지사 이름이나 선박명을 직접 맞춰 연결해야 한다.
 description_portal: 해양환경공단이 수행한 해양부유쓰레기 수거 및 처리 실적 정보를 제공합니다. 본 데이터는 해양에 떠다니는 폐플라스틱, 스티로폼, 목재, 로프류 등 다양한 형태의 부유성 쓰레기에 대해 수거량, 수거 위치, 처리 방법 등을 정리한 자료입니다. 데이터는 연안, 항만, 도서지역 등 권역별로 구성되어 있으며, 연도별 수거 실적 및 처리 결과도 포함됩니다. 수거 방식은 청항선, 어업인 참여, 민간 위탁 등으로 구분되며, 각 방식에 따른 처리성과 분석이 가능합니다. 본 자료는 해양부유쓰레기 저감 정책 수립, 정화 우선지역 선정, 실무 적용 계획 수립 등에 활용되며, 공공기관 및 연구기관의 정책 기초자료로 제공됩니다. 데이터는 표 및 보고서 형태로 제공합니다.
 accrual_periodicity: 연간
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 지사
       type: code
+      semantic_type: koem_branch
       null_rate: 0.0
       sample_values:
         - 부산지사
@@ -198,6 +201,12 @@ schema:
         p50: 2.875
         max: 55.7
         unique: 21
+  foreign_keys:
+    - fields:
+        - 지사
+      reference:
+        key: koem_branch
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -244,7 +253,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15002252-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koem_branch(지사)'
     evidence:
       - type: measured
         source: probe/stats/15002252.json
@@ -298,8 +307,6 @@ verification:
   run: probe/runs/15002252.json
   stats: probe/stats/15002252.json
   data: probe/data/15002252/
-status: active
-summary_user: 해양환경공단 지사별·선박(청항선 등)별로 해양부유쓰레기 수거 실적을 1월부터 12월까지 월별 열로 정리한 집계 파일로, 전국 범위이며 1.5KB 남짓의 작은 CSV입니다. 정책 담당자나 연구자가 어느 지사·선박이 어느 달에 부유쓰레기를 많이 수거했는지 비교해 정화 우선지역이나 운항 계획을 검토할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 해양쓰레기·해양오염 데이터와는 지사 이름이나 선박명을 직접 맞춰 연결해야 한다.
 limits: 실측 파일에는 지사·선박명과 월별 값만 있어 포털 설명에 나온 수거 위치, 쓰레기 종류, 처리 방법은 확인되지 않는다. 명세상 연 단위로 생성된 뒤 바뀌지 않는 자료이고, 공통 코드 없이 이름 매핑으로만 다른 데이터와 이어진다.
 review:
   summary: draft
@@ -312,3 +319,4 @@ review:
     - c-15002252-03
     - c-15002252-04
   dropped_citations: 0
+status: active

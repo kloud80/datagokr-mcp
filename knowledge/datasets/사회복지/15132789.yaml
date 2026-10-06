@@ -1,4 +1,5 @@
-# Dataset 15132789 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132789 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132789'
 tier: verified
 title: 성평등가족부_청소년 자기도전포상제 활동 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 활동 인증
   - 포상감독관
   - 청소년 활동 이력
+summary_user: 청소년 자기도전포상제 참가자의 활동 한 건마다 운영기관·광역시도 중앙시설, 활동 상태, 심사비용 결제, 포상심사 신청·결과, 포상감독관 확인 일시를 담은 전국 단위 건별 원천 데이터다. 운영기관이나 분석가가 기관별로 포상심사 신청에서 결과까지 얼마나 걸리는지, 감독관 확인과 재심이 어떻게 이뤄지는지를 점검하는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 운영기관명·시설명 매핑으로만 잇고, 데이터 안에서는 이전활동일련번호(bfrActvSn)로 같은 참가자의 앞선 활동을 이어 활동 연속성을 본다.
 description_portal: 청소년 자기도전 포상제 활동 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 운영기관명, 광역시도중앙시설기관명, 심사비용결제여부,결제일시, 심사일시, 포상심사신청일시, 포상심사결과일시, 포상감독관확인일시, 심사재심내용, 이전활동일련번호 등의 내용을 확인할 수 있습니다.기존 활동 이력과 연계하여 청소년의 활동 연속성과 성취도를 측정할 수 있으며, 포상감독관 확인 및 심사 결과 항목을 통해 질 관리 체계를 점검할 수 있습니다. 기관별 활동 주기나 심사 일정 등을 분석해 운영의 일관성을 확보하는 데 유리합니다. 활동 유형별 차이를 비교 분석하여 프로그램 개선 방향 도출에도 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -67,6 +69,7 @@ schema:
     - name: actvSn
       title: 활동일련번호
       type: number
+      semantic_type: self_challenge_actv_sn
       null_rate: 0.0
       sample_values:
         - '7'
@@ -80,6 +83,7 @@ schema:
     - name: admSn
       title: 입회일련번호
       type: number
+      semantic_type: award_adm_sn
       null_rate: 0.0
       sample_values:
         - '7'
@@ -104,6 +108,7 @@ schema:
     - name: mctpvCntrlFcltSn
       title: 광역시도중앙시설일련번호
       type: number
+      semantic_type: award_mctpv_fclt_sn
       null_rate: 0.001
       sample_values:
         - '5757'
@@ -127,6 +132,7 @@ schema:
     - name: fcltySn
       title: 시설물일련번호
       type: number
+      semantic_type: youth_fclty_sn
       null_rate: 0.0
       sample_values:
         - '1020'
@@ -287,12 +293,44 @@ schema:
         p50: 20230215
         max: 20250402
         unique: 75
+  foreign_keys:
+    - fields:
+        - actvSn
+      reference:
+        key: self_challenge_actv_sn
+      evidence: measured
+    - fields:
+        - admSn
+      reference:
+        key: award_adm_sn
+      evidence: measured
+    - fields:
+        - mctpvCntrlFcltSn
+      reference:
+        key: award_mctpv_fclt_sn
+      evidence: measured
+    - fields:
+        - fcltySn
+      reference:
+        key: youth_fclty_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - mctpvCntrlFcltSn
+    - mctpvCntrlFcltInstNm
+  space_via: name
+  time: day
+  time_fields:
+    - rwrdSrngRsltDt
+    - regDt
+    - mdfcnDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -337,7 +375,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132789-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: self_challenge_actv_sn(actvSn), award_adm_sn(admSn), award_mctpv_fclt_sn(mctpvCntrlFcltSn), youth_fclty_sn(fcltySn)'
     evidence:
       - type: measured
         source: probe/stats/15132789.json
@@ -391,8 +429,6 @@ verification:
   run: probe/runs/15132789.json
   stats: probe/stats/15132789.json
   data: probe/data/15132789/
-status: active
-summary_user: 청소년 자기도전포상제 참가자의 활동 한 건마다 운영기관·광역시도 중앙시설, 활동 상태, 심사비용 결제, 포상심사 신청·결과, 포상감독관 확인 일시를 담은 전국 단위 건별 원천 데이터다. 운영기관이나 분석가가 기관별로 포상심사 신청에서 결과까지 얼마나 걸리는지, 감독관 확인과 재심이 어떻게 이뤄지는지를 점검하는 데 쓴다. 전역 조인 키는 없어 다른 데이터와는 운영기관명·시설명 매핑으로만 잇고, 데이터 안에서는 이전활동일련번호(bfrActvSn)로 같은 참가자의 앞선 활동을 이어 활동 연속성을 본다.
 limits: 다른 데이터셋과 공통 코드로 바로 조인할 수 없어 기관명 문자열 매핑에 기대야 한다. 위치 정보가 없는 비공간 데이터라 시군구 단위 지도 분석에는 그대로 쓰지 못한다. 갱신 주기는 이벤트 단위로 분류돼 있어 정기 갱신을 전제로 시계열을 구성하면 안 된다.
 review:
   summary: draft
@@ -405,3 +441,4 @@ review:
     - c-15132789-03
     - c-15132789-04
   dropped_citations: 0
+status: active

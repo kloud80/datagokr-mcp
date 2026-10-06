@@ -1,4 +1,5 @@
-# Dataset 15057401 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057401 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057401'
 tier: verified
 title: 한국지역정보개발원_유연근무현황 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 클린아이 경영공시
   - 지방공기업 통합경영공시
   - 근무형태 현황
+summary_user: 지방공기업별·연도별로 시차출퇴근형·근무시간선택형·집약근무형·재량근무형 유연근무자 수와 그 합계, 현원, 유연근무율을 담은 경영공시 집계 데이터로, 범위는 전국이다. 분석가나 기관 담당자가 "어느 지방공기업의 유연근무율이 높고, 어떤 유형의 유연근무를 주로 쓰는가"를 연도별로 비교할 때 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 연도와 기관명(ENT_NAME)을 맞춰 이어 쓴다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 유연근무 현황 자료에는 연도, 기관명, 시차출퇴근형, 근무시간선택형, 집약근무형, 재량근무형, 유연근무자합계, 현원, 유연근무율 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -91,6 +93,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -189,12 +192,22 @@ schema:
         p50: 21.83
         max: 100
         unique: 159
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -238,7 +251,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057401-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15057401.json
@@ -292,8 +305,6 @@ verification:
   run: probe/runs/15057401.json
   stats: probe/stats/15057401.json
   data: probe/data/15057401/
-status: active
-summary_user: 지방공기업별·연도별로 시차출퇴근형·근무시간선택형·집약근무형·재량근무형 유연근무자 수와 그 합계, 현원, 유연근무율을 담은 경영공시 집계 데이터로, 범위는 전국이다. 분석가나 기관 담당자가 "어느 지방공기업의 유연근무율이 높고, 어떤 유형의 유연근무를 주로 쓰는가"를 연도별로 비교할 때 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 연도와 기관명(ENT_NAME)을 맞춰 이어 쓴다.
 limits: 기관 코드 같은 공통 키가 없어 다른 데이터와는 기관명 문자열 매핑으로만 연결되므로 표기 차이에 주의한다. 명세상 집약근무형 필드(INTENSIVE_WORK)의 의미가 '재량근무형'으로 잘못 적혀 있어, 두 필드를 구분해 해석해야 한다. 공간 정보가 없는 기관 단위 집계라 개인별 근무 내역은 알 수 없다.
 review:
   summary: draft
@@ -304,3 +315,4 @@ review:
     - c-15057401-03
     - c-15057401-04
   dropped_citations: 0
+status: active

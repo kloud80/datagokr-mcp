@@ -1,4 +1,3 @@
-# Dataset 15007097 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15007097'
 tier: verified
 title: 기상청_관광코스별 관광지 상세날씨 조회 지점 정보
@@ -21,6 +20,7 @@ synonyms:
   - 관광지 좌표
   - 캠핑 코스 날씨
   - 관광날씨 API 지점
+summary_user: 관광코스별 관광지 상세날씨 조회서비스(API)가 대상으로 삼는 관광지 지점 목록을 코스·관광지 단위로 담은 파일(csv, 약 247KB)로, 테마·코스 아이디, 관광지명, 위경도, 코스 내 순서와 이동시간, 실내 여부를 담는다. 여행 계획자나 서비스 개발자가 '봉화·태안 같은 캠핑 코스의 각 관광지는 어디이고 날씨 조회 때 어떤 코스·관광지 아이디를 넣어야 하나'를 확인하는 데 쓴다. 전역 조인 키는 없어 관광코스별 관광지 상세날씨 API와 코스 아이디·관광지 아이디로 맞추거나, 위경도·관광지명 매핑으로 다른 데이터와 연결한다.
 description_portal: 관광코스별 관광지 상세 날씨 조회서비스(API) 대상 지점 정보입니다.(참고-예시) 관광코스 -관광지 남호고택에서의 하룻밤 - 봉화 천년의 비밀을 지닌 고찰에서 캠핑을하다 - 영동 밝고 청정한 영양의 산천을 찾아서 - 영양 켜켜이 쌓인 세월의 아름다움을 찾아서 - 보은 속리산이 그려낸 즐거운 나날 -- 괴산, 보은 청주의 자연에서 배우면서 뒹굴자 - 청주 캠핑을 즐기며 여유롭게 돌아보는 태안 - 태안 캠핑에 문화와 예술을 더하다 - 계룡, 논산 백제 땅에 캠핑하다 - 논산 서해다바에 안기고 체험마을에 머물다 - 보령, 서천 충청남도의 보물 같은 마을 풍경 - 예산 충청남도의 자연에 풍덩 빠져 즐기다 - 서산
 accrual_periodicity: 수시
 team:
@@ -43,6 +43,7 @@ schema:
         unique: 6
     - name: 코스 아이디
       type: number
+      semantic_type: kma_tour_course_id
       null_rate: 0.0
       sample_values:
         - '310'
@@ -55,6 +56,7 @@ schema:
         unique: 434
     - name: 관광지 아이디
       type: number
+      semantic_type: kma_tour_course_id
       null_rate: 0.0
       sample_values:
         - '17703'
@@ -152,6 +154,17 @@ schema:
         - 체험/학습/산업
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - 코스 아이디
+      reference:
+        key: kma_tour_course_id
+      evidence: measured
+    - fields:
+        - 관광지 아이디
+      reference:
+        key: kma_tour_course_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -195,7 +208,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15007097-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kma_tour_course_id(코스 아이디), kma_tour_course_id(관광지 아이디)'
     evidence:
       - type: measured
         source: probe/stats/15007097.json
@@ -260,8 +273,6 @@ verification:
   run: probe/runs/15007097.json
   stats: probe/stats/15007097.json
   data: probe/data/15007097/
-status: active
-summary_user: 관광코스별 관광지 상세날씨 조회서비스(API)가 대상으로 삼는 관광지 지점 목록을 코스·관광지 단위로 담은 파일(csv, 약 247KB)로, 테마·코스 아이디, 관광지명, 위경도, 코스 내 순서와 이동시간, 실내 여부를 담는다. 여행 계획자나 서비스 개발자가 '봉화·태안 같은 캠핑 코스의 각 관광지는 어디이고 날씨 조회 때 어떤 코스·관광지 아이디를 넣어야 하나'를 확인하는 데 쓴다. 전역 조인 키는 없어 관광코스별 관광지 상세날씨 API와 코스 아이디·관광지 아이디로 맞추거나, 위경도·관광지명 매핑으로 다른 데이터와 연결한다.
 limits: 이 파일에는 날씨 값이 없고 지점 정보만 있어 실제 날씨는 별도 API를 호출해야 한다. 실측 컬럼에서 전역 조인 키가 확인되지 않아 예보 격자(nx, ny)나 행정코드와 바로 붙지 않으며, 이름·좌표 매핑이 필요하다.
 review:
   summary: draft
@@ -274,3 +285,10 @@ review:
     - c-15007097-04
     - c-15007097-06
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - 경도(도)
+    - 위도(도)
+  space_via: coord

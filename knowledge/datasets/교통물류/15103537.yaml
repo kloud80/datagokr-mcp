@@ -1,4 +1,3 @@
-# Dataset 15103537 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15103537'
 tier: verified
 title: 한국도로공사_고속도로 갓길 차로(LCS) 메시지 이력 데이터
@@ -22,6 +21,7 @@ synonyms:
   - 가변차로
   - 고속도로 정체 해소
   - 차로 개방 메시지
+summary_user: 고속도로 갓길차로(LCS) 시설이 표출한 메시지 이력을 표출 일시·차로번호·현시순번·표출시간·기호 단위의 건별 기록과 LCS 위경도로 담으며, 포털 파일은 681바이트 CSV 샘플이고 범위는 전국이다. 교통 분석가가 특정 구간에서 갓길차로가 언제 얼마 동안 열리거나 닫혔는지 확인하고 정체 시간대와 비교하는 데 쓴다. 실측 컬럼에 표준노드링크 링크ID 같은 전역 조인 키는 없고, LCS 위경도로 표준노드링크 등 도로망 데이터에 공간 매칭하거나 같은 기관 코드(고유아이디)로만 이어 쓴다.
 description_portal: '본 데이터는 한국도로공사가 수집한 고속도로 갓길차로 운영(LCS: Lane Control System) 관련 메시지 이력 정보이다.  LCS는 정체 구간 해소 및 사고 예방을 위해 특정 시간대에 갓길을 임시로 차로로 운영하는 시스템이다.  데이터에는 메시지 표출 일시, 운영 구간, 메시지 종류, 표출된 메시지 내용, 표출 시간 등의 정보가 포함되어 있다.  해당 데이터는 실제 갓길차로 운영에 활용된 메시지의 시기별 변동과 내용을 반영하고 있어,  정책 수립, 교통 흐름 분석, 긴급상황 대응 전략 마련, 안전성 향상 등의 목적으로 유용하게 사용될 수 있다.  데이터는 CSV 형식으로 제공되며, 기간별 조회를 통해 특정 구간 및 시간대의 운영 이력을 파악할 수 있다.* 제공되는 데이터는 샘플데이터로, 전체 데이터를 다운로드 받으시려면 아래 링크로 접속 부탁드립니다.  (로그인 후 전체 데이터 다운로드 가능)  - https://www.bigdata-transportation.kr/frn/prdt/detail?prdtId=PRDTNUM_000000000047'
 accrual_periodicity: 수시
 team:
@@ -44,6 +44,7 @@ schema:
         unique: 1
     - name: 고유아이디
       type: code
+      semantic_type: ex_lcs_id
       null_rate: 0.0
       sample_values:
         - 0010LCE00050
@@ -137,12 +138,27 @@ schema:
         p50: 127.41833
         max: 127.41946
         unique: 4
+  foreign_keys:
+    - fields:
+        - 고유아이디
+      reference:
+        key: ex_lcs_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - LCS위도
+    - LCS경도
+  space_via: coord
+  time: day
+  time_fields:
+    - 표출일시
 cycle: default
 classification:
   subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
@@ -179,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103537-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_lcs_id(고유아이디)'
     evidence:
       - type: measured
         source: probe/stats/15103537.json
@@ -244,8 +260,6 @@ verification:
   run: probe/runs/15103537.json
   stats: probe/stats/15103537.json
   data: probe/data/15103537/
-status: active
-summary_user: 고속도로 갓길차로(LCS) 시설이 표출한 메시지 이력을 표출 일시·차로번호·현시순번·표출시간·기호 단위의 건별 기록과 LCS 위경도로 담으며, 포털 파일은 681바이트 CSV 샘플이고 범위는 전국이다. 교통 분석가가 특정 구간에서 갓길차로가 언제 얼마 동안 열리거나 닫혔는지 확인하고 정체 시간대와 비교하는 데 쓴다. 실측 컬럼에 표준노드링크 링크ID 같은 전역 조인 키는 없고, LCS 위경도로 표준노드링크 등 도로망 데이터에 공간 매칭하거나 같은 기관 코드(고유아이디)로만 이어 쓴다.
 limits: 포털 제공 파일은 681바이트 샘플이어서 전체 이력 분석에는 쓰기 어렵고, 전체 데이터는 별도 교통 빅데이터 플랫폼에 로그인해 받아야 한다. 전역 조인 키가 없어 다른 교통 데이터와는 좌표나 이름·코드 매핑으로만 연결된다.
 review:
   summary: draft
@@ -258,3 +272,4 @@ review:
     - c-15103537-04
     - c-15103537-06
   dropped_citations: 0
+status: active

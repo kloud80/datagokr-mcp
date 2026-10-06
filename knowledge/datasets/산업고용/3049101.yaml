@@ -1,5 +1,3 @@
-# Dataset 3049101 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3049101'
 tier: verified
 title: 산업통상부_광업권 행정처분 현황
@@ -61,6 +59,7 @@ schema:
         unique: 3
     - name: 등록번호
       type: number
+      semantic_type: mining_right_rgst_no
       null_rate: 0.0
       sample_values:
         - '076391'
@@ -82,6 +81,7 @@ schema:
         unique: 185
     - name: 지적
       type: code
+      semantic_type: mining_cadastre_no
       null_rate: 0.0167
       sample_values:
         - 호명
@@ -91,6 +91,7 @@ schema:
         unique: 283
     - name: 호수
       type: number
+      semantic_type: mining_cadastre_no
       null_rate: 0.0166
       sample_values:
         - '116'
@@ -139,9 +140,33 @@ schema:
         - 탐광실적미인정
       stats:
         unique: 11
+  foreign_keys:
+    - fields:
+        - 등록번호
+      reference:
+        key: mining_right_rgst_no
+      evidence: measured
+    - fields:
+        - 지적
+      reference:
+        key: mining_cadastre_no
+      evidence: measured
+    - fields:
+        - 호수
+      reference:
+        key: mining_cadastre_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: day
+  time_fields:
+    - 행정처분일자
 cycle: default
 classification:
   subsector_name: 광업·토석채취 (광업권·토석채취허가·채석단지·골재·폐광산)
@@ -178,7 +203,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-3049101-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: mining_right_rgst_no(등록번호), mining_cadastre_no(지적), mining_cadastre_no(호수)'
     evidence:
       - type: measured
         source: probe/stats/3049101.json

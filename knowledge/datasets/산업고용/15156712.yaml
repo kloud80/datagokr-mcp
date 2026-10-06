@@ -1,4 +1,5 @@
-# Dataset 15156712 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156712 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156712'
 tier: verified
 title: 한국서부발전(주)_플랜트 성능 예측 및 AI 검증용 신재생 정보 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 설비 알람 이력
   - 발전량 누적 전력량
   - 서부발전 신재생 운전정보
+summary_user: 한국서부발전 신재생 발전설비의 장치(장치아이디)별·측정 시점(절대시간·로컬시간)별 운전 계측값을 담은 건별 시계열 데이터로, 3상(R·S·T) 전압·전류·역률, 주파수, 유효·무효전력, 누적 유효·지상·진상 전력량, 설비상태와 알람 상세가 들어 있다. 분석가가 특정 설비의 출력·전력 품질이 시간에 따라 어떻게 변했는지, 이상 알람 전후로 전압·전류가 어떻게 움직였는지를 보고 성능 예측이나 AI 모델 검증용 학습 데이터로 쓴다. 실측 컬럼에서 다른 데이터와 맞출 전역 조인 키는 확인되지 않았으므로, 태양광 발전사업 허가 표준데이터 같은 발전소 원장과는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓴다.
 description_portal: 한국서부발전에서 제공하는 플랜트 성능 예측 및 AI 검증용 신재생 정보 조회 서비스는 장치아이디, 절대시간, 로컬시간, 설비상태, 전압(R, S, T), 전류(R, S, T), 역률(R, S, T), 주파수, 유효전력, 무효전력(지상, 진상), 누적유효, 누적지상, 누적진상, 알람상세로 구성됩니다. 각 항목은 발전설비의 전기적 상태와 운전 정보를 나타내며, 절대시간과 로컬시간을 통해 측정 시점을 확인할 수 있습니다. 전압, 전류, 역률, 주파수, 유효전력 및 무효전력 값은 설비 운전 상태와 성능 평가에 활용되며, 누적유효, 누적지상, 누적진상 값은 생산된 전력량을 나타냅니다. 설비상태와 알람상세 정보는 장치 운전 및 안전 관리를 위해 사용됩니다.
 team:
   dept: 디지털운영부
@@ -218,6 +220,7 @@ schema:
     - name: did
       title: 장치아이디
       type: code
+      semantic_type: ewp_renew_eqpm_id
       null_rate: 0.0
       sample_values:
         - 0b8185c7-35c2-40b1-9b3a-fa8b177a5113
@@ -235,12 +238,22 @@ schema:
         min: '2025-10-29'
         max: '2025-10-30'
         unique: 443
+  foreign_keys:
+    - fields:
+        - did
+      reference:
+        key: ewp_renew_eqpm_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - timestamp
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -284,7 +297,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156712-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_eqpm_id(did)'
     evidence:
       - type: measured
         source: probe/stats/15156712.json
@@ -349,8 +362,6 @@ verification:
   run: probe/runs/15156712.json
   stats: probe/stats/15156712.json
   data: probe/data/15156712/
-status: active
-summary_user: 한국서부발전 신재생 발전설비의 장치(장치아이디)별·측정 시점(절대시간·로컬시간)별 운전 계측값을 담은 건별 시계열 데이터로, 3상(R·S·T) 전압·전류·역률, 주파수, 유효·무효전력, 누적 유효·지상·진상 전력량, 설비상태와 알람 상세가 들어 있다. 분석가가 특정 설비의 출력·전력 품질이 시간에 따라 어떻게 변했는지, 이상 알람 전후로 전압·전류가 어떻게 움직였는지를 보고 성능 예측이나 AI 모델 검증용 학습 데이터로 쓴다. 실측 컬럼에서 다른 데이터와 맞출 전역 조인 키는 확인되지 않았으므로, 태양광 발전사업 허가 표준데이터 같은 발전소 원장과는 이름·코드 매핑이나 같은 기관 코드로만 이어 쓴다.
 limits: 장치아이디가 어느 발전소·주소·설비용량에 해당하는지는 이 데이터만으로 알 수 없고, 외부 원장과 직접 붙일 공통 키가 없다. 범위는 전국으로 표시돼 있으나 위치 정보가 없는 비공간 데이터이며, 개발계정은 하루 1,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -363,3 +374,4 @@ review:
     - c-15156712-04
     - c-15156712-06
   dropped_citations: 0
+status: active

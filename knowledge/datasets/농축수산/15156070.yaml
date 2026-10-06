@@ -1,4 +1,5 @@
-# Dataset 15156070 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156070 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156070'
 tier: verified
 title: 한국농수산식품유통공사_가격 등락 정보 조회
@@ -25,6 +26,7 @@ synonyms:
   - 농산물 물가
   - aT 가격정보
   - 식자재 가격 변동
+summary_user: 한국농수산식품유통공사가 조사한 농산물의 품목·품종·등급별 조사일 평균가격과 kg 환산가격, 그리고 1일·1주일·1개월·1년 전 대비 등락률을 전국 단위로 담은 API다. 식자재 구매 담당자나 유통업자가 "배추 가격이 지난주·작년 같은 때보다 얼마나 올랐나"를 확인하거나, 정책 담당자가 가격 급등 품목을 골라낼 때 쓴다. 전역 조인 키는 없으며, 품목코드(item_cd)와 품종코드(vrty_cd)를 KAMIS 코드 기준으로 맞춰 같은 기관의 다른 KAMIS 가격 데이터와 이어 쓰고, 도매시장·HS·KOSIS 품목코드와는 별도 매핑이 필요하다.
 description_portal: 한국농수산식품유통공사의 조회일 기준 전일, 전주, 전월, 전년 대비 등락률 정보 데이터로,조사일자, 구분코드, 구분명, 부류코드, 부류명, 품목코드, 품목명, 품종코드, 품종명, 등급코드, 등급명, 단위, 단위크기, 조사일평균가격, 조사일kg환산평균가격, 1일전비교등락율, 1주일전비교등락율, 1개월전비교등락율, 1년전비교등락율을 제공합니다.★ API명세서 및 관련 코드정보가 첨부되어 있습니다.기대활용분야 - (국민) 농산물유통정보를 활용하여 농산물 판매·구매 계획 수립, 농산물 유통 분야 사업모델 발굴, 유통 과정 부가가치 창출, 개인 및 기관의 연구 목적으로 활용 등 다양한 빅데이터를 활용하여 융복합 기대 - (유통) 농산물유통정보 분석으로 생산성 관리, 재고관리 등 유통 분야 활용 - (농업종사자) 농산물유통정보 가격등락, 추이 정보 등을 활용, 농산물유통정보 데이터 확보를 통한 출하선택·결정권 강화 - (정책담당자) 농산물유통정보 분석을 통해 주요품목 수급안정 및 농산물 가격변동 완화 - (지자체:도매시장 개설자)농산물유통정보를 활용한 재고 및 물류 최적화
 team:
   dept: 디지털AI운영부
@@ -95,6 +97,7 @@ schema:
     - name: item_cd
       title: 품목코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '242'
@@ -108,6 +111,7 @@ schema:
     - name: vrty_cd
       title: 품종코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '00'
@@ -118,12 +122,28 @@ schema:
         p50: 1
         max: 22
         unique: 10
+  foreign_keys:
+    - fields:
+        - item_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - vrty_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  category:
+    - hs_cd
+  category_fields:
+    - item_cd
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -167,7 +187,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156070-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(item_cd), agri_item_cd(vrty_cd)'
     evidence:
       - type: measured
         source: probe/stats/15156070.json
@@ -232,8 +252,6 @@ verification:
   run: probe/runs/15156070.json
   stats: probe/stats/15156070.json
   data: probe/data/15156070/
-status: active
-summary_user: 한국농수산식품유통공사가 조사한 농산물의 품목·품종·등급별 조사일 평균가격과 kg 환산가격, 그리고 1일·1주일·1개월·1년 전 대비 등락률을 전국 단위로 담은 API다. 식자재 구매 담당자나 유통업자가 "배추 가격이 지난주·작년 같은 때보다 얼마나 올랐나"를 확인하거나, 정책 담당자가 가격 급등 품목을 골라낼 때 쓴다. 전역 조인 키는 없으며, 품목코드(item_cd)와 품종코드(vrty_cd)를 KAMIS 코드 기준으로 맞춰 같은 기관의 다른 KAMIS 가격 데이터와 이어 쓰고, 도매시장·HS·KOSIS 품목코드와는 별도 매핑이 필요하다.
 limits: 품목코드 체계가 KAMIS·도매시장·HS·KOSIS마다 달라 다른 기관 데이터와 바로 붙일 수 없고, 이름·코드 매핑을 거쳐야 한다. 지역 구분이 없는 전국·비공간 데이터라 지역별 가격 비교에는 쓰지 못한다. 포털 활용신청 후 serviceKey로 호출하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -246,3 +264,4 @@ review:
     - c-15156070-04
     - c-15156070-06
   dropped_citations: 0
+status: active

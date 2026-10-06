@@ -1,4 +1,5 @@
-# Dataset 15094788 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15094788 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15094788'
 tier: verified
 title: 금융위원회_ISA다모아정보
@@ -22,6 +23,7 @@ synonyms:
   - 중개형 ISA 가입자수
   - 일임형 ISA
   - ISA 운용현황
+summary_user: 개인종합자산관리계좌(ISA)의 업권·ISA 유형(신탁형·일임형·투자중개형)별 가입자수·회사수·투자금액, 편입자산별 운용 금액·비중, 회사별 모델포트폴리오(MP) 기간별 수익률을 기준일자 단위로 담은 전국 집계 데이터로, 계좌 단위 원천이 아니다. ISA 가입을 고민하는 개인이 '일임형 ISA 중 최근 1년 수익률이 높은 MP는 어느 회사 것인가'를 비교하거나, 분석가가 업권별 ISA 자금 유입과 자산 구성 추이를 살피는 데 쓴다. 전역 조인 키는 없어 기준일자(basDt)·업권 구분(bzds)·ISA 구분(isaForm)으로 같은 데이터 안의 세 오퍼레이션을 맞추고, 다른 금융상품·금융회사 데이터와는 회사 명칭(cmpyNm) 이름 매칭으로만 잇는다.
 description_portal: 'ISA다모아정보는 개인종합자산관리계좌(ISA)의 가입 현황 및 운용 성과 등을 종합적으로 확인할 수 있는 데이터입니다.데이터는 다음 3가지 오퍼레이션으로 구성되어 있습니다.① ISA 업권별 가입현황 조회 : 기준일자 및 업권유형을 기준으로 업권별 계좌 수, 납입금액, 평균잔액, 계좌유형 등을 조회하는 기능② ISA 운용현황 조회 : 기준일자 및 업권유형을 기준으로 ISA 유형별 상품 보유 현황, 잔고 금액, 계좌 구성 내역 등을 제공하는 기능③ ISA MP 대표수익률 조회 : MP유형 및 업권 등을 기준으로 대표 모델포트폴리오(MP)의 수익률, MP명, 자산구성비율 등을 조회하는 기능※ 데이터 갱신주기는 월 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, ISA다모아정보의 데이터 개방 주기는 매월 초입니다.공개되는 데이터는 두 달 전 말일까지를 기준으로 제공됩니다.예를 들어, 12월 31일까지의 데이터는 2월 초에, 1월 31일까지의 데이터는 3월 초에 업데이트됩니다.'
 team:
   dept: 금융공공데이터팀
@@ -451,6 +453,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - basDt
+    - basDt
+    - basDt
 cycle: default
 classification:
   subsector_name: 금융상품 (펀드·변액/실손/생명/손해 보험·ISA·예금·대출·카드·서민금융 상품, 침수차량 조회)
@@ -560,8 +568,6 @@ verification:
   run: probe/runs/15094788.json
   stats: probe/stats/15094788.json
   data: probe/data/15094788/
-status: active
-summary_user: 개인종합자산관리계좌(ISA)의 업권·ISA 유형(신탁형·일임형·투자중개형)별 가입자수·회사수·투자금액, 편입자산별 운용 금액·비중, 회사별 모델포트폴리오(MP) 기간별 수익률을 기준일자 단위로 담은 전국 집계 데이터로, 계좌 단위 원천이 아니다. ISA 가입을 고민하는 개인이 '일임형 ISA 중 최근 1년 수익률이 높은 MP는 어느 회사 것인가'를 비교하거나, 분석가가 업권별 ISA 자금 유입과 자산 구성 추이를 살피는 데 쓴다. 전역 조인 키는 없어 기준일자(basDt)·업권 구분(bzds)·ISA 구분(isaForm)으로 같은 데이터 안의 세 오퍼레이션을 맞추고, 다른 금융상품·금융회사 데이터와는 회사 명칭(cmpyNm) 이름 매칭으로만 잇는다.
 limits: 실측 컬럼에 전역 조인 키가 없어 외부 데이터와는 회사명 등 이름 매핑으로만 연결되며 매칭 오류에 주의한다. 범위는 전국 단위의 비공간 집계라 지역별 분석에는 쓸 수 없고, 금액과 비중이 같은 값 필드에 구분(ctg)으로 섞여 있어 해석 시 구분값을 함께 봐야 한다.
 review:
   summary: draft
@@ -574,3 +580,4 @@ review:
     - c-15094788-04
     - c-15094788-06
   dropped_citations: 0
+status: active

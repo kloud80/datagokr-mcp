@@ -1,4 +1,5 @@
-# Dataset 15061288 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061288 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061288'
 tier: verified
 title: 금융위원회_금융통계공통(파생상품)정보
@@ -23,6 +24,7 @@ synonyms:
   - 업권별 금융통계
   - 금리 통화 주식 파생
   - 신탁 파생상품
+summary_user: 금융회사별·기준년월(basYm)별 파생상품 거래 규모를 담는 집계 통계로, 장내·장외·통화·주식·금리 관련 거래금액을 은행·증권·보험·기타 등 업권 구분 금액 항목으로 나눠 전국 단위로 제공한다. 금융 분석가가 특정 금융회사나 업권의 장외파생상품 거래 규모가 기간에 따라 어떻게 바뀌었는지 시계열로 비교하는 데 쓴다. 법인등록번호(crno)를 조인 키로 금융위원회 금융회사 기본·재무·지배구조 정보 등 같은 법인 단위 데이터와 이어 쓴다.
 description_portal: '금융통계공통(파생상품)정보는 기준년월과 업권구분을 기준으로 금융회사들의 파생상품 관련 통계를 제공하는 데이터입니다. 업권별로 전체 파생상품 총괄 현황, 신탁 관련 파생상품 현황, 회계처리 기준별 항목 등을 확인할 수 있으며, 시계열 통계 분석이 가능하도록 제공합니다.이 데이터는 2개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 파생상품 총괄현황 조회 : 업권별 전체 파생상품 취급 규모 및 회계기준별 통계를 제공합니다.② 파생상품 신탁 등 현황 조회 : 신탁상품 내 파생상품 운용 현황 및 업권별 신탁취급 규모를 조회할 수 있습니다.'
 team:
   dept: 금융공공데이터팀
@@ -95,6 +97,7 @@ schema:
         unique: 107
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010001'
@@ -690,6 +693,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -739,7 +747,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061288-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061288.json
@@ -804,8 +812,6 @@ verification:
   run: probe/runs/15061288.json
   stats: probe/stats/15061288.json
   data: probe/data/15061288/
-status: active
-summary_user: 금융회사별·기준년월(basYm)별 파생상품 거래 규모를 담는 집계 통계로, 장내·장외·통화·주식·금리 관련 거래금액을 은행·증권·보험·기타 등 업권 구분 금액 항목으로 나눠 전국 단위로 제공한다. 금융 분석가가 특정 금융회사나 업권의 장외파생상품 거래 규모가 기간에 따라 어떻게 바뀌었는지 시계열로 비교하는 데 쓴다. 법인등록번호(crno)를 조인 키로 금융위원회 금융회사 기본·재무·지배구조 정보 등 같은 법인 단위 데이터와 이어 쓴다.
 limits: 개별 거래나 계약 단위 내역이 아닌 금융회사 단위 집계 금액이며, 지역별로 나눌 수 없는 전국·비공간 데이터다. 필드 명세에 의미가 비어 있어 금액 항목의 업권·거래유형 구분은 필드명과 코드명 필드(…DcdNm)로 해석해야 한다.
 review:
   summary: draft
@@ -817,3 +823,4 @@ review:
     - c-15061288-04
     - c-15061288-06
   dropped_citations: 0
+status: active

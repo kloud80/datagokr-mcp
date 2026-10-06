@@ -1,4 +1,5 @@
-# Dataset 15111382 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15111382 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15111382'
 tier: verified
 title: 중앙선거관리위원회_후보자 사퇴/사망/등록무효 현황
@@ -25,6 +26,7 @@ synonyms:
   - 선거 후보 사퇴 사유
   - 등록무효 사유
   - 중도 사퇴 후보
+summary_user: 선거별로 후보자와 예비후보자의 사퇴·사망·등록무효 현황을 후보자 한 명 단위로 담으며, 정당·기호·성명·생년월일과 함께 해당 일자와 사유를 제공하고 범위는 전국 시도 단위입니다. 유권자나 언론·선거 분석가가 '이번 선거에서 어느 선거구 후보가 언제, 무슨 사유로 사퇴하거나 등록무효가 됐나'를 확인하는 데 쓴다. 전역 조인 키는 없어 선거ID(sgId)·선거유형코드로 같은 기관의 선거코드·후보자 데이터와 묶고, 그 밖에는 시도명·선거구명·성명 같은 이름으로 맞춰 잇는다.
 description_portal: 후보자 사퇴/사망/등록무효 현황은 후보자 등록이 무효된 사유 정보를 제공합니다.(선거ID와 선거종류코드, 선거구명, 시도명을 입력하여 (예비)후보자 사퇴/사망/등록무효 현황 정보를 조회할 수 있는 서비스)※ 확인사항 · 예비후보자 등록무효 현황은 후보자등록 개시일부터 조회되지 않음 · 2014년 이후 실시한 선거부터 등록무효인 경우에만 제공
 team:
   dept: 선거정보과
@@ -129,6 +131,7 @@ schema:
     - name: sgId
       title: 선거ID
       type: number
+      semantic_type: nec_sg_id
       null_rate: 0.0
       sample_values:
         - '20231011'
@@ -140,6 +143,7 @@ schema:
     - name: sgTypecode
       title: 선거유형코드
       type: number
+      semantic_type: nec_sg_typecode
       null_rate: 0.0
       sample_values:
         - '4'
@@ -246,12 +250,31 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - sgId
+      reference:
+        key: nec_sg_id
+      evidence: measured
+    - fields:
+        - sgTypecode
+      reference:
+        key: nec_sg_typecode
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - sdName
+  space_via: name
+  time: month
+  time_fields:
+    - birthday
 cycle: event
 classification:
   subsector_name: 선거
@@ -297,7 +320,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15111382-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: nec_sg_id(sgId), nec_sg_typecode(sgTypecode)'
     evidence:
       - type: measured
         source: probe/stats/15111382.json
@@ -375,8 +398,6 @@ verification:
   run: probe/runs/15111382.json
   stats: probe/stats/15111382.json
   data: probe/data/15111382/
-status: active
-summary_user: 선거별로 후보자와 예비후보자의 사퇴·사망·등록무효 현황을 후보자 한 명 단위로 담으며, 정당·기호·성명·생년월일과 함께 해당 일자와 사유를 제공하고 범위는 전국 시도 단위입니다. 유권자나 언론·선거 분석가가 '이번 선거에서 어느 선거구 후보가 언제, 무슨 사유로 사퇴하거나 등록무효가 됐나'를 확인하는 데 쓴다. 전역 조인 키는 없어 선거ID(sgId)·선거유형코드로 같은 기관의 선거코드·후보자 데이터와 묶고, 그 밖에는 시도명·선거구명·성명 같은 이름으로 맞춰 잇는다.
 limits: 조회하려면 선거ID와 선거유형코드를 다른 선거코드 데이터에서 먼저 받아 넘겨야 하며, 오퍼레이션 하나는 최소 파라미터로 호출했을 때 응답이 없었다. 선거 때 생성된 뒤 바뀌지 않는 이벤트성 데이터라 선거가 없는 기간에는 새 기록이 늘지 않는다.
 review:
   summary: draft
@@ -390,3 +411,4 @@ review:
     - c-15111382-10
     - c-15111382-11
   dropped_citations: 0
+status: active

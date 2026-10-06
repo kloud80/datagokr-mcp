@@ -1,4 +1,5 @@
-# Dataset 15056835 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056835 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056835'
 tier: verified
 title: 식품의약품안전처_의약품 임상시험 정보
@@ -22,6 +23,7 @@ synonyms:
   - 신약 개발 임상
   - 제약사 임상시험
   - clinical trial
+summary_user: 식약처가 승인한 의약품 임상시험을 건별로 담으며, 시험마다 신청자, 승인일, 실시기관명, 제품명, 시험제목, 임상 단계, 임상시험정보 일련번호가 들어 있다(전국 범위, 비공간). 제약사·연구자가 "특정 제품이나 신청 업체의 임상시험이 언제 어느 단계로 승인됐고 어느 병원에서 하는가"를 확인하거나, 환자가 특정 의료기관에서 진행 중인 임상시험을 찾는 데 쓴다. 다른 데이터와 공통으로 쓰는 조인 키는 없어서, 식약처 허가정보 같은 데이터와는 제품명·신청자(업체명)·실시기관명 같은 이름 매칭으로만 연결해야 한다.
 description_portal: 식품의약품안전처 「의약품 임상시험 정보」 OpenAPI는 의약품의 임상시험 계획 및 승인 관련 기본 정보를 제공합니다. 이 데이터에는 임상시험제목, 승인일자, 제품명 등 주요 항목이 포함되어 있어 임상시험의 세부 현황을 체계적으로 확인할 수 있습니다. 이를 통해 연구자와 제약사는 의약품 개발 과정에서 필요한 임상시험 정보를 확보할 수 있으며, 의료기관과 환자는 임상시험 참여 여부 및 진행 상황을 참고할 수 있습니다. 또한 보건당국은 임상시험 관리·감독, 정책 수립, 연구·분석 등 다양한 분야에서 본 데이터를 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -143,6 +145,7 @@ schema:
     - name: CLNC_TEST_SN
       title: 임상시험정보일련번호
       type: number
+      semantic_type: drug_clinical_sn
       null_rate: 0.058
       sample_values:
         - '201002160'
@@ -153,6 +156,12 @@ schema:
         p50: 201005409.5
         max: 20130000790
         unique: 942
+  foreign_keys:
+    - fields:
+        - CLNC_TEST_SN
+      reference:
+        key: drug_clinical_sn
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -203,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056835-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_clinical_sn(CLNC_TEST_SN)'
     evidence:
       - type: measured
         source: probe/stats/15056835.json
@@ -268,8 +277,6 @@ verification:
   run: probe/runs/15056835.json
   stats: probe/stats/15056835.json
   data: probe/data/15056835/
-status: active
-summary_user: 식약처가 승인한 의약품 임상시험을 건별로 담으며, 시험마다 신청자, 승인일, 실시기관명, 제품명, 시험제목, 임상 단계, 임상시험정보 일련번호가 들어 있다(전국 범위, 비공간). 제약사·연구자가 "특정 제품이나 신청 업체의 임상시험이 언제 어느 단계로 승인됐고 어느 병원에서 하는가"를 확인하거나, 환자가 특정 의료기관에서 진행 중인 임상시험을 찾는 데 쓴다. 다른 데이터와 공통으로 쓰는 조인 키는 없어서, 식약처 허가정보 같은 데이터와는 제품명·신청자(업체명)·실시기관명 같은 이름 매칭으로만 연결해야 한다.
 limits: 품목기준코드나 표준코드 같은 전역 키가 실측 컬럼에 없어, 심평원 약가·급여 목록과 코드로 바로 붙일 수 없다. 이름으로 매칭할 때는 표기 차이를 맞춰야 한다.
 review:
   summary: draft
@@ -281,3 +288,4 @@ review:
     - c-15056835-04
     - c-15056835-06
   dropped_citations: 0
+status: active

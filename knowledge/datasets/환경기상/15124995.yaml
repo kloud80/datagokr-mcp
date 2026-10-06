@@ -1,5 +1,3 @@
-# Dataset 15124995 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124995'
 tier: verified
 title: 한국환경공단_영농폐기물 관리 정보
@@ -108,6 +106,7 @@ schema:
     - name: itemCd
       title: 품목 코드
       type: code
+      semantic_type: agri_waste_item_cd
       null_rate: 0.0
       sample_values:
         - P001
@@ -274,6 +273,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - itemCd
+      reference:
+        key: agri_waste_item_cd
+      evidence: measured
+    - fields:
         - addr
       reference:
         key: address
@@ -286,6 +290,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lat
+    - lot
+  space_via: coord
 cycle: default
 classification:
   subsector_name: waste-collection-points
@@ -329,7 +339,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15124995-03
     kind: key
-    value: '실측 조인 키: address(addr), coord(lat)'
+    value: '실측 조인 키: agri_waste_item_cd(itemCd), address(addr), coord(lat)'
     evidence:
       - type: measured
         source: probe/stats/15124995.json

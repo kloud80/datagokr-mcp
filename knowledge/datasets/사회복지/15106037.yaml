@@ -1,4 +1,3 @@
-# Dataset 15106037 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15106037'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 행복이음시군구코드 정보 서비스
@@ -21,6 +20,7 @@ synonyms:
   - 아이돌봄 제공기관 코드
   - 돌봄 행정구역 코드표
   - 한국건강가정진흥원 코드
+summary_user: 아이돌봄 행복이음 시스템에서 쓰는 시군구 코드와 센터번호, 시군구명, 자료기준일자를 시군구 단위로 담은 전국 범위의 코드 참조 데이터이다. 아이돌봄 데이터를 다루는 분석가나 개발자가 '이 센터번호·시군구코드가 어느 시군구를 가리키는가'를 확인해 지역별 돌봄 서비스 자료를 정제·분류하는 데 쓴다. 실측 컬럼에 행정표준코드 같은 전역 조인 키는 없어, 같은 기관의 아이돌봄 데이터와는 센터번호(cnterNo)·시군구코드로, 다른 기관 데이터와는 시군구명 매핑으로 잇는다.
 description_portal: 아이돌봄 행복이음 시군구 코드 정보 서비스를 제공하는 오픈API입니다. 해당 개방 데이터를 통해 요청 시군구코드, 센터번호, 시군구명, 자료기준일자의 정보를 확인할 수 있습니다. 시군구 코드 정보는 행정구역 단위별 돌봄 서비스 데이터 정제와 분석에 있어 필수적인 기준 코드로 활용됩니다. 센터번호와 연계하여 데이터를 체계적으로 분류할 수 있어 지역별 정책 수립에 있어 정밀한 기초자료가 되며,  코드 일관성 확보를 통해 데이터 통합 및 비교 분석의 정확성을 높일 수 있습니다. 지역별 서비스 효율성 평가 및 시군구 단위 계획 수립에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -78,6 +78,7 @@ schema:
         unique: 61
     - name: cnterNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0372
@@ -102,12 +103,24 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - cnterNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - dmndSggCd
+    - sggNm
+  space_via: code
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -151,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15106037-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(cnterNo)'
     evidence:
       - type: measured
         source: probe/stats/15106037.json
@@ -205,8 +218,6 @@ verification:
   run: probe/runs/15106037.json
   stats: probe/stats/15106037.json
   data: probe/data/15106037/
-status: active
-summary_user: 아이돌봄 행복이음 시스템에서 쓰는 시군구 코드와 센터번호, 시군구명, 자료기준일자를 시군구 단위로 담은 전국 범위의 코드 참조 데이터이다. 아이돌봄 데이터를 다루는 분석가나 개발자가 '이 센터번호·시군구코드가 어느 시군구를 가리키는가'를 확인해 지역별 돌봄 서비스 자료를 정제·분류하는 데 쓴다. 실측 컬럼에 행정표준코드 같은 전역 조인 키는 없어, 같은 기관의 아이돌봄 데이터와는 센터번호(cnterNo)·시군구코드로, 다른 기관 데이터와는 시군구명 매핑으로 잇는다.
 limits: 전역 조인 키가 확인되지 않아 법정동·행정동 코드와 바로 맞물린다고 볼 수 없고, 다른 기관 데이터와는 시군구명 매핑을 따로 해야 한다. 개발계정은 일 3,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -218,3 +229,4 @@ review:
     - c-15106037-03
     - c-15106037-04
   dropped_citations: 0
+status: active

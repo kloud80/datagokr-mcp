@@ -1,4 +1,5 @@
-# Dataset 15106871 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15106871 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106871'
 tier: verified
 title: 한국수자원공사_누적강우량
@@ -25,6 +26,7 @@ synonyms:
   - 수문관측
   - WAMIS 우량
   - 누적 강수
+summary_user: 전국 우량관측소의 10분 단위 관측 기록을 관측소별로 담은 건별 원천 파일로, 관측시간·관측소코드·관측소명·우량·누적우량이 들어 있으며 포털 설명상 629개 관측소를 대상으로 한다. 홍수 대응이나 댐·보 운영을 검토하는 분석가가 '집중호우 기간에 특정 유역 관측소의 누적 강우가 얼마였나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 수문 관측 자료와는 우량관측소코드나 관측소명을 이름·코드 매핑으로 맞춰 연결해야 한다.
 description_portal: 본 데이터는 전국 629개 관측소의 10분 데이터로 각 지점별 누적 강우량 정보를 제공합니다. 누적강우량은 일정 기간 동안 내린 비의 총량을 의미하며, 홍수 예·경보, 댐 및 보의 수문 운영, 용수 공급 계획 수립 등에 필수적으로 활용됩니다. 데이터에는 측정 지점, 관측 시각, 누적 강우량 값이 포함되며, 실시간 강우 동향 파악과 과거 기상 패턴 분석에 유용합니다. 이를 통해 장마기와 태풍기 등 집중호우 시기에는 하천 범람 위험을 사전에 예측하고 대응할 수 있으며, 가뭄 시기에는 용수 확보 및 배분 계획에 참고자료로 사용할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 229
     - name: 우량관측소코드
       type: number
+      semantic_type: hydro_obs_cd
       null_rate: 0.0
       sample_values:
         - '5001452'
@@ -117,12 +120,22 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - 우량관측소코드
+      reference:
+        key: hydro_obs_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 관측시간
 cycle: default
 classification:
   subsector_name: 수문 관측 (수위·유량·강수 관측소, 10분·시·일 자료)
@@ -160,7 +173,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15106871-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hydro_obs_cd(우량관측소코드)'
     evidence:
       - type: measured
         source: probe/stats/15106871.json
@@ -252,8 +265,6 @@ verification:
   run: probe/runs/15106871.json
   stats: probe/stats/15106871.json
   data: probe/data/15106871/
-status: active
-summary_user: 전국 우량관측소의 10분 단위 관측 기록을 관측소별로 담은 건별 원천 파일로, 관측시간·관측소코드·관측소명·우량·누적우량이 들어 있으며 포털 설명상 629개 관측소를 대상으로 한다. 홍수 대응이나 댐·보 운영을 검토하는 분석가가 '집중호우 기간에 특정 유역 관측소의 누적 강우가 얼마였나'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 수문 관측 자료와는 우량관측소코드나 관측소명을 이름·코드 매핑으로 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 행정구역이나 다른 기관 자료와 바로 붙일 수 없고, 관측소코드·이름 매핑을 따로 만들어야 한다. 파일에 이름 없는 빈 열(Unnamed)이 여러 개 섞여 있어 파싱할 때 정리가 필요하다. 행정단위가 비공간으로 분류되어 관측소 위치 좌표는 이 파일만으로 얻을 수 없다.
 review:
   summary: draft
@@ -266,3 +277,4 @@ review:
     - c-15106871-04
     - c-15106871-06
   dropped_citations: 0
+status: active

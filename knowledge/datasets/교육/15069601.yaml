@@ -1,4 +1,5 @@
-# Dataset 15069601 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069601 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069601'
 tier: verified
 title: 한국산업인력공단_국가자격 CBT 시험장소 좌석 정보
@@ -21,6 +22,7 @@ synonyms:
   - 기능사 CBT 시험장
   - 큐넷 시험장소
   - 시험장 좌석 현황
+summary_user: 국가기술자격 CBT 시험의 시험장소별 좌석 정보를 시행계획번호·지사·시험장소·시험일·부 단위로, 좌석 하나당 한 행(내부좌석번호·좌석번호·좌석상태)으로 담은 전국 범위의 건별 파일(CSV 약 10.9MB)이다. 수험자가 '내가 볼 시험장에 어느 날, 몇 부에 좌석이 몇 개 있고 비어 있는지'를 확인하거나, 분석가가 지사·시험장별 CBT 좌석 규모와 운영 현황을 집계하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 같은 기관의 시험 일정·종목 데이터와는 시행계획번호나 지사명·시험장소 이름을 맞춰 연결해야 한다.
 description_portal: 한국산업인력공단의 "국가자격 CBT 시험장소 및 수험자 정보" 데이터는 국가기술자격 CBT(Computer Based Test) 시행을 위한 시험장소의 세부 정보를 제공합니다. 이 데이터는 시험일자, 시험장소명, 부별 좌석 수, 좌석 방향, 시험장 주소, 시험장 코드 등으로 구성되어 있으며, 각 시험장의 물리적 환경과 좌석 배치에 대한 정보를 담고 있습니다. 이를 통해 수험자는 시험장 위치와 좌석 정보를 사전에 파악할 수 있어 시험 준비에 도움이 됩니다. 이 자료는 국가기술자격법에 근거하여 수집되었으며, 자격시험 준비나 시험장 운영에 유용하게 활용될 수 있습니다. 예를 들어, 수험자는 시험장소의 좌석 배치와 방향을 미리 확인하여 시험 당일 혼란을 줄일 수 있고, 시험장 운영자는 좌석 배치 정보를 활용하여 효율적인 시험장 관리를 할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 시행계획번호
       type: code
+      semantic_type: qnet_exam_plan_id
       null_rate: 0.0
       sample_values:
         - PL2026593011
@@ -114,12 +117,22 @@ schema:
         - 미사용 좌석
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 시행계획번호
+      reference:
+        key: qnet_exam_plan_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 시험일
 cycle: default
 classification:
   subsector_name: 국가자격 (국가기술자격·국가전문자격)
@@ -157,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069601-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: qnet_exam_plan_id(시행계획번호)'
     evidence:
       - type: measured
         source: probe/stats/15069601.json
@@ -222,8 +235,6 @@ verification:
   run: probe/runs/15069601.json
   stats: probe/stats/15069601.json
   data: probe/data/15069601/
-status: active
-summary_user: 국가기술자격 CBT 시험의 시험장소별 좌석 정보를 시행계획번호·지사·시험장소·시험일·부 단위로, 좌석 하나당 한 행(내부좌석번호·좌석번호·좌석상태)으로 담은 전국 범위의 건별 파일(CSV 약 10.9MB)이다. 수험자가 '내가 볼 시험장에 어느 날, 몇 부에 좌석이 몇 개 있고 비어 있는지'를 확인하거나, 분석가가 지사·시험장별 CBT 좌석 규모와 운영 현황을 집계하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 같은 기관의 시험 일정·종목 데이터와는 시행계획번호나 지사명·시험장소 이름을 맞춰 연결해야 한다.
 limits: 표준 조인 키가 없어 다른 데이터와는 이름·기관 내부 코드 매핑으로만 연결된다. 좌석 정보만 담고 시험장 주소·좌표 같은 공간 정보는 실측 컬럼에 없어 지도 연계가 바로 되지 않는다.
 review:
   summary: draft
@@ -236,3 +247,4 @@ review:
     - c-15069601-04
     - c-15069601-06
   dropped_citations: 0
+status: active

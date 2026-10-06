@@ -1,4 +1,5 @@
-# Dataset 15115469 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15115469 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15115469'
 tier: verified
 title: 식품의약품안전처_의약외품 생산수입실적
@@ -21,6 +22,7 @@ synonyms:
   - 마스크 생산액
   - 품목별 생산수입금액
   - 식약처 생산실적 통계
+summary_user: '의약외품 품목별로 어느 연도에 어떤 업체가 생산 또는 수입했는지와 그 금액을 품목·업체·연도 단위 건별로 담는 전국 범위 데이터다. 사업자나 분석가가 특정 의약외품(예: 마스크·소독제)의 연도별 생산·수입 규모와 주요 업체를 비교해 시장 규모를 가늠하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으나, 식약처 품목기준코드(ITEM_SEQ)와 업일련번호·사업자번호로 같은 기관의 의약외품 허가정보나 업체 정보와 이름·코드 매핑으로 이어 쓴다.'
 description_portal: 식품의약품안전처 「의약외품 생산수입실적」 OpenAPI는 의약외품의 생산 또는 수입 실적에 대한 정보를 제공합니다. 제공 항목에는 품목기준코드, 생산수입연도, 품목명, 업체명, 업일련번호, 생산수입구분, 년도별 생산수입금액, 사업자번호, 보고연도 등이 포함되어 있습니다. 이 데이터로 특정 품목의 어느 년도에 어떤 업체가 얼마나 생산하거나 수입했는지를 확인할 수 있으며, 연도별 실적 비교가 가능합니다. 또한 사업자별 실적 파악, 시장 규모 추정, 제품별 유통 동향 분석 등에 객관적 데이터로 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -95,6 +97,7 @@ schema:
     - name: ITEM_SEQ
       title: 품목기준코드
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '202002619'
@@ -141,6 +144,7 @@ schema:
     - name: ENTP_SEQ
       title: 업일련번호
       type: number
+      semantic_type: drug_entp_seq
       null_rate: 0.0
       sample_values:
         - '20100275'
@@ -187,6 +191,7 @@ schema:
     - name: BIZRNO
       title: 사업자번호
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '3038154608'
@@ -210,12 +215,33 @@ schema:
         p50: 2025
         max: 2026
         unique: 6
+  foreign_keys:
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
+        - ENTP_SEQ
+      reference:
+        key: drug_entp_seq
+      evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - SM_YEAR
+    - REPORT_DATE
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -260,7 +286,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15115469-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(ITEM_SEQ), drug_entp_seq(ENTP_SEQ), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15115469.json
@@ -325,8 +351,6 @@ verification:
   run: probe/runs/15115469.json
   stats: probe/stats/15115469.json
   data: probe/data/15115469/
-status: active
-summary_user: '의약외품 품목별로 어느 연도에 어떤 업체가 생산 또는 수입했는지와 그 금액을 품목·업체·연도 단위 건별로 담는 전국 범위 데이터다. 사업자나 분석가가 특정 의약외품(예: 마스크·소독제)의 연도별 생산·수입 규모와 주요 업체를 비교해 시장 규모를 가늠하는 데 쓴다. 실측상 전역 조인 키는 확인되지 않았으나, 식약처 품목기준코드(ITEM_SEQ)와 업일련번호·사업자번호로 같은 기관의 의약외품 허가정보나 업체 정보와 이름·코드 매핑으로 이어 쓴다.'
 limits: 다른 기관 데이터와 바로 붙는 전역 조인 키가 없어 연계는 품목기준코드·업체명 등 이름·코드 매핑에 의존한다. 금액 단위가 생산은 백만원, 수입은 천달러로 섞여 있어 생산·수입구분을 확인한 뒤 합산·비교해야 하며, 지역별 분석은 불가한 전국·비공간 데이터다.
 review:
   summary: draft
@@ -339,3 +363,4 @@ review:
     - c-15115469-04
     - c-15115469-06
   dropped_citations: 0
+status: active

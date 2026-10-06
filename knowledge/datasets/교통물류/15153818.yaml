@@ -173,6 +173,7 @@ schema:
         unique: 53
     - name: 대상품목명
       type: code
+      semantic_type: korail_freight_item
       null_rate: 0.7437
       sample_values:
         - 벌크양회
@@ -193,6 +194,7 @@ schema:
         unique: 624
     - name: 대상예약번호
       type: number
+      semantic_type: korail_freight_rsv_no
       null_rate: 0.3947
       sample_values:
         - '0'
@@ -205,6 +207,7 @@ schema:
         unique: 787
     - name: 대상화통번호
       type: number
+      semantic_type: korail_waybill_no
       null_rate: 0.0566
       sample_values:
         - '0'
@@ -217,6 +220,7 @@ schema:
         unique: 16479
     - name: 대상화차차량번호
       type: number
+      semantic_type: korail_wagon_no
       null_rate: 0.2526
       sample_values:
         - '40017'
@@ -269,12 +273,39 @@ schema:
         min: '1998-01-03'
         max: '2025-09-15'
         unique: 6607
+  foreign_keys:
+    - fields:
+        - 대상품목명
+      reference:
+        key: korail_freight_item
+      evidence: measured
+    - fields:
+        - 대상예약번호
+      reference:
+        key: korail_freight_rsv_no
+      evidence: measured
+    - fields:
+        - 대상화통번호
+      reference:
+        key: korail_waybill_no
+      evidence: measured
+    - fields:
+        - 대상화차차량번호
+      reference:
+        key: korail_wagon_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 조정기간시작일자
+    - 조정기간종료일자
+    - 예약접수일자
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -310,7 +341,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15153818-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: korail_freight_item(대상품목명), korail_freight_rsv_no(대상예약번호), korail_waybill_no(대상화통번호), korail_wagon_no(대상화차차량번호)'
     evidence:
       - type: measured
         source: probe/stats/15153818.json

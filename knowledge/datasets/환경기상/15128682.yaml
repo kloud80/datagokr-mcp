@@ -1,0 +1,198 @@
+# Dataset 15128682 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15128682'
+tier: verified
+title: 경기도_대기환경정보 권역관리
+sector: 환경기상/대기/air-quality
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15128682/fileData.do
+synonyms:
+  - 대기환경지수
+  - 측정구분
+  - 분류
+  - 권역명칭
+  - 포함지역
+  - 권역코드
+  - 환경
+  - 대기 권역
+  - 대기환경 권역코드
+  - 경기도 생활권 구분
+  - 권역별 미세먼지
+  - 대기질 권역 매핑
+  - 경기 대기오염 권역
+summary_user: 경기도 대기환경 관리·분석에 쓰는 권역 구분표로, 권역마다 권역코드(distrct_cd)·권역명·권역포함지역 세 항목을 담은 비공간 기준 자료다. 분석가나 담당자가 "경기 북부·남부 같은 생활권 단위로 미세먼지 평균을 내려면 어떤 시군을 묶어야 하나" 같은 질문에 시군별 측정값을 권역으로 묶는 기준표로 쓴다. 실측 컬럼에 전역 조인 키가 없어, 대기질 측정 데이터와는 권역포함지역에 적힌 시군 이름을 매핑하거나 같은 기관 코드로만 연결한다.
+description_portal: 「경기도 대기환경정보 권역관리」 데이터는 경기도 대기환경 관리·분석을 위한 행정적 권역 구분 체계를 제공합니다.각 권역은 권역코드, 권역명, 권역포함지역으로 구성되어 있으며, 이는 대기질 측정과 통계 산출 시 행정 단위보다 넓은 생활권 중심의 기준을 제시합니다이 권역 구분은 **도시별 데이터(세밀)**와 전체 경기도 데이터(광역) 사이에서, 권역별 대기환경 패턴을 분석할 수 있는 중간 단위의 지리적 기준을 마련합니다.따라서 이 데이터는 권역별 평균 대기질 현황, 오염물질 발생 특성, 정책 우선순위 결정에 활용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: distrct_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '20'
+        - '30'
+      stats:
+        min: 10
+        p50: 25
+        max: 40
+        unique: 4
+    - name: distrct_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 동부
+        - 남부
+        - 북부
+      stats:
+        unique: 4
+    - name: distrct_incu_region
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가평,구리,광주,남양주,성남,하남,양평
+        - 안성,여주,용인,이천,평택
+        - 고양,김포,동두천,양주,연천,의정부,파주,포천
+      stats:
+        unique: 4
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3397
+  rank_in_sector: 930
+  brm: 환경기상 - 대기
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15128682-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15128682.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15128682-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15128682-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15128682.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15128682-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15128682.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15128682-06
+    kind: admin_note
+    value: "세부 부문 '대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)'의 가치: 측정소코드 기준 시간별 대기질, 경보·주의보 — 생활 즉시성 최상"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#air-quality
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128682-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128682-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15128682.json
+  stats: probe/stats/15128682.json
+  data: probe/data/15128682/
+limits: 측정값은 없고 권역 구분만 담으므로 대기질 수치는 별도 측정 데이터를 붙여야 한다. 외부 사이트(data.gg.go.kr) 인증키가 따로 필요하며 포털 활용신청과는 별개다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15128682-01
+    - c-15128682-03
+    - c-15128682-04
+  dropped_citations: 0
+status: active

@@ -48,6 +48,7 @@ schema:
         unique: 1
     - name: 열차번호(TRN_NO)
       type: number
+      semantic_type: korail_train_no
       null_rate: 0.0
       sample_values:
         - '00028'
@@ -60,6 +61,7 @@ schema:
         unique: 11
     - name: 역코드(STN_CD)
       type: number
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '3900023'
@@ -79,9 +81,24 @@ schema:
         - 대전
       stats:
         unique: 21
+  foreign_keys:
+    - fields:
+        - 열차번호(TRN_NO)
+      reference:
+        key: korail_train_no
+      evidence: measured
+    - fields:
+        - 역코드(STN_CD)
+      reference:
+        key: rail_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 운행일자(RUN_DT)
 cycle: default
 classification:
   subsector_name: rail-realtime
@@ -118,7 +135,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15138153-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: korail_train_no(열차번호(TRN_NO)), rail_station_cd(역코드(STN_CD))'
     evidence:
       - type: measured
         source: probe/stats/15138153.json

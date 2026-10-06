@@ -1,4 +1,5 @@
-# Dataset 3056343 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3056343 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3056343'
 tier: verified
 title: 해양수산부_공유수면매립 현황
@@ -22,6 +23,7 @@ synonyms:
   - 간척
   - 매립지구 고시
   - 공유수면 관리
+summary_user: 공유수면매립 기본계획에 반영된 매립지구를 한 행씩 담은 전국 단위 파일로, 지구명·고시일과 고시번호·신청인·법정동코드·전면해상 위치·매립목적(당시와 현행법 기준)·면적(제곱미터)을 담는다. 연구자나 사업자가 "특정 시군 앞바다에 어떤 목적의 매립지구가 언제, 얼마 규모로 고시됐는가"를 확인하거나 해안 토지 변동을 검토하는 데 쓴다. 법정동코드(bjd_cd)로 행정구역 코드표나 같은 코드를 가진 토지·지역 통계와 이어 쓴다.
 description_portal: 이 데이터는 해양수산부에서 공유수면매립(공유수면에 흙, 모래, 돌, 그 밖의 물건을 인위적으로 채워 넣어 공유수면이 상실되고 지번을 부여하여 소유권 취득이 가능한 토지를 조성하는 것) 현황을 관리하기 위해 수집한 데이터입니다.  본 데이터의 주요 내용은 공유수면매립지 법정동코드, 위치, 매립목적, 규모 등 정보로 구성되어 있습니다.  본 데이터는 공유수면 매립에 따른 토지 변동 상황을 확인하고자 하는 조사·연구, 토지 관리 정책의 수립, 공유수면 이용 및 개발 계획의 검토, 행정 심사 및 법적 근거 파악, 민간 사업자나 토지 소유자와의 협의 자료로 활용될 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 기본계획번호
       type: number
+      semantic_type: reclamation_plan_no
       null_rate: 0.0
       sample_values:
         - '10340'
@@ -137,6 +140,11 @@ schema:
         unique: 877
   foreign_keys:
     - fields:
+        - 기본계획번호
+      reference:
+        key: reclamation_plan_no
+      evidence: measured
+    - fields:
         - 법정동코드
       reference:
         key: bjd_cd
@@ -147,6 +155,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: bjd
+  space_fields:
+    - 법정동코드
+  space_via: code
+  time: day
+  time_fields:
+    - 고시년월일
 cycle: default
 classification:
   subsector_name: 해양공간 영역 (해양용도구역·해양/수산자원 보호구역·연안·EEZ·공유수면·특정도서)
@@ -183,7 +199,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3056343-03
     kind: key
-    value: '실측 조인 키: bjd_cd(법정동코드)'
+    value: '실측 조인 키: reclamation_plan_no(기본계획번호), bjd_cd(법정동코드)'
     evidence:
       - type: measured
         source: probe/stats/3056343.json
@@ -248,8 +264,6 @@ verification:
   run: probe/runs/3056343.json
   stats: probe/stats/3056343.json
   data: probe/data/3056343/
-status: active
-summary_user: 공유수면매립 기본계획에 반영된 매립지구를 한 행씩 담은 전국 단위 파일로, 지구명·고시일과 고시번호·신청인·법정동코드·전면해상 위치·매립목적(당시와 현행법 기준)·면적(제곱미터)을 담는다. 연구자나 사업자가 "특정 시군 앞바다에 어떤 목적의 매립지구가 언제, 얼마 규모로 고시됐는가"를 확인하거나 해안 토지 변동을 검토하는 데 쓴다. 법정동코드(bjd_cd)로 행정구역 코드표나 같은 코드를 가진 토지·지역 통계와 이어 쓴다.
 limits: 좌표나 경계 도형이 없는 비공간 데이터라 매립지의 정확한 범위를 지도에 그릴 수 없고, 위치는 법정동코드와 전면해상 설명 수준으로만 파악된다. 내려받기 형태의 파일 한 건이며 API로 조회하는 데이터가 아니다.
 review:
   summary: draft
@@ -261,3 +275,4 @@ review:
     - c-3056343-03
     - c-3056343-04
   dropped_citations: 0
+status: active

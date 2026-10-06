@@ -162,6 +162,7 @@ schema:
     - name: onbidCltrno
       title: 온비드물건번호
       type: number
+      semantic_type: onbid_cltr_no
       null_rate: 0.0
       sample_values:
         - '2063758'
@@ -175,6 +176,7 @@ schema:
     - name: cltrMngNo
       title: 물건관리번호
       type: string
+      semantic_type: onbid_cltr_no
       null_rate: 0.0
       sample_values:
         - 2026-0900-053149
@@ -185,6 +187,7 @@ schema:
     - name: pbctCdtnNo
       title: 공매조건번호(물건 입찰정보 조회시 물건관리번호와 함께 입력 필요)
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '6213978'
@@ -198,6 +201,7 @@ schema:
     - name: onbidPbancNo
       title: 온비드공고번호
       type: number
+      semantic_type: onbid_pbanc_no
       null_rate: 0.0
       sample_values:
         - '907285'
@@ -211,6 +215,7 @@ schema:
     - name: pbctNo
       title: 공매번호
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '10074201'
@@ -863,9 +868,45 @@ schema:
         - 입찰마감
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - onbidCltrno
+      reference:
+        key: onbid_cltr_no
+      evidence: measured
+    - fields:
+        - cltrMngNo
+      reference:
+        key: onbid_cltr_no
+      evidence: measured
+    - fields:
+        - pbctCdtnNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
+    - fields:
+        - onbidPbancNo
+      reference:
+        key: onbid_pbanc_no
+      evidence: measured
+    - fields:
+        - pbctNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - lctnEmdNm
+  space_via: name
+  time: realtime
+  time_fields:
+    - cltrBidBgngDt
+    - cltrBidEndDt
+    - mdfcnDt
 cycle: default
 classification:
   subsector_name: 국유·공유재산
@@ -910,7 +951,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15157233-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: onbid_cltr_no(onbidCltrno), onbid_cltr_no(cltrMngNo), onbid_pbct_no(pbctCdtnNo), onbid_pbanc_no(onbidPbancNo), onbid_pbct_no(pbctNo)'
     evidence:
       - type: measured
         source: probe/stats/15157233.json

@@ -94,6 +94,7 @@ schema:
     - name: airlineIata
       title: IATA 코드
       type: code
+      semantic_type: airline_cd
       null_rate: 0.0
       sample_values:
         - GA
@@ -102,11 +103,23 @@ schema:
     - name: airlineIcao
       title: ICAO 코드
       type: code
+      semantic_type: airline_cd
       null_rate: 0.0
       sample_values:
         - GIA
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - airlineIata
+      reference:
+        key: airline_cd
+      evidence: measured
+    - fields:
+        - airlineIcao
+      reference:
+        key: airline_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -153,7 +166,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15095073-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: airline_cd(airlineIata), airline_cd(airlineIcao)'
     evidence:
       - type: measured
         source: probe/stats/15095073.json

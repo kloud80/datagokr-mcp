@@ -133,6 +133,7 @@ schema:
     - name: airFln
       title: 항공편명
       type: code
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - ZE781A
@@ -218,6 +219,7 @@ schema:
     - name: city
       title: 운항구간코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - TPE
@@ -228,6 +230,7 @@ schema:
     - name: airport
       title: 기준공항코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - GMP
@@ -235,6 +238,22 @@ schema:
         - PUS
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - airFln
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - city
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - airport
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -281,7 +300,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15160195-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(airFln), airport_cd(city), airport_cd(airport)'
     evidence:
       - type: measured
         source: probe/stats/15160195.json

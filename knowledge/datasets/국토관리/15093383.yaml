@@ -1,4 +1,5 @@
-# Dataset 15093383 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15093383 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15093383'
 tier: verified
 title: 공무원연금공단_공무원 임대주택 예비입주자 선정 경쟁율 및 최저점
@@ -23,6 +24,7 @@ synonyms:
   - 공무원연금공단 임대아파트
   - 공무원 관사 입주 순위
   - 임대주택 당첨 가점
+summary_user: 공무원연금공단이 관리하는 공무원 임대주택의 단지·주택형별로 분기(1~4분기)마다 모집세대수, 신청세대수, 경쟁률, 최저 선정순위, 최저 가점을 담은 집계 파일이며 CSV 한 건(약 10KB)으로 제공된다. 임대주택 입주를 신청하려는 공무원이 '내가 희망하는 단지·평형에서 지난 분기 커트라인 순위와 가점이 얼마였고 내 점수로 예비입주자에 들 수 있는가'를 가늠하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 단지명·주택형 이름 매칭으로만 연결한다.
 description_portal: 공무원연금공단에서 관리하는 공무원 임대주택의 예비입주자 선정을 위한 경쟁률 및 최저점(커트라인) 정보를 정리한 데이터로, 신청 공무원들의 입주 가능성 판단을 위한 참고자료로 제공합니다.데이터는 임대주택 유형별로 분류되며, 각 유형에 대해 신청자 수 대비 예비입주자로 선정된 비율(경쟁률)과 선정 커트라인 점수를 포함합니다.신청자는 공단의 선정 순위 기준에 따라 1순위(전국무주택·비수혜), 2순위(소재지무주택·비수혜), 3순위(전국무주택·기수혜), 4순위(소재지무주택·기수혜)로 분류되며, 동일 순위 및 점수인 경우에는 무주택 기간이 긴 세대, 생년월일이 빠른 신청자 순으로 우선권이 부여됩니다.임대주택 입주 신청 시 희망 단지별 당첨 가능성 예측, 가점 전략 수립, 신청자 유형별 접근성 평가 등에 활용 가능하며, 지역별 입주 수요의 상대적 집중도 및 임대자격 충족자 수요 추세 분석 등에도 활용할 수 있다.
 accrual_periodicity: 연간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 단지명
       type: string
+      semantic_type: gepf_rental_complex_nm
       null_rate: 0.0
       sample_values:
         - 개포상록스타힐스
@@ -290,12 +293,24 @@ schema:
         p50: 34
         max: 63
         unique: 34
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: gepf_rental_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  time: quarter
+  time_fields:
+    - 1분기 모집세대수
+    - 1분기 신청세대수
+    - 1분기 경쟁률
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -337,7 +352,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15093383-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gepf_rental_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15093383.json
@@ -432,8 +447,6 @@ verification:
   run: probe/runs/15093383.json
   stats: probe/stats/15093383.json
   data: probe/data/15093383/
-status: active
-summary_user: 공무원연금공단이 관리하는 공무원 임대주택의 단지·주택형별로 분기(1~4분기)마다 모집세대수, 신청세대수, 경쟁률, 최저 선정순위, 최저 가점을 담은 집계 파일이며 CSV 한 건(약 10KB)으로 제공된다. 임대주택 입주를 신청하려는 공무원이 '내가 희망하는 단지·평형에서 지난 분기 커트라인 순위와 가점이 얼마였고 내 점수로 예비입주자에 들 수 있는가'를 가늠하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 단지명·주택형 이름 매칭으로만 연결한다.
 limits: 단지 주소나 코드가 없어 위치 기반 결합은 이름 매핑에 의존한다. 명세상 연간 단위로 생성된 뒤 바뀌지 않는 자료라 분기 이후의 최신 경쟁 상황은 담기지 않으며, 개별 신청자 단위 자료가 아닌 집계값이다.
 review:
   summary: draft
@@ -445,3 +458,4 @@ review:
     - c-15093383-02
     - c-15093383-03
   dropped_citations: 0
+status: active

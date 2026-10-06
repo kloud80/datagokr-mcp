@@ -1,4 +1,5 @@
-# Dataset 15125507 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125507 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125507'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 고객 판매 제한 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹 정보공개서
   - 가맹계약 거래조건
   - 판매 제한 위반 책임
+summary_user: 가맹 브랜드별로 가맹점이 특정 고객에게 상품·용역을 판매할 때 걸리는 제한을 기준년도·브랜드 단위로 담으며, 거래고객 구분, 제한 대상 상품·용역, 제한 조건, 조건 위반 시 책임 내용을 건별로 담는다. 가맹 창업 예정자가 '이 브랜드에 가입하면 어떤 고객에게 무엇을 팔 수 없고, 어기면 어떤 책임을 지나'를 확인하는 데 쓴다. 전역 조인 키는 없고, 같은 기관 가맹정보 서비스와는 브랜드관리번호(brandMnno)·가맹본부관리번호·기준년도로 맞춰 이어 쓴다.
 description_portal: 브랜드 고객 판매 제한에 대한 기준년도, 브랜드관리번호를 이용하여 거래고객 구분명, 사품용역명 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -136,12 +140,27 @@ schema:
         - “해당없음”
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -186,7 +205,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125507-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125507.json
@@ -251,8 +270,6 @@ verification:
   run: probe/runs/15125507.json
   stats: probe/stats/15125507.json
   data: probe/data/15125507/
-status: active
-summary_user: 가맹 브랜드별로 가맹점이 특정 고객에게 상품·용역을 판매할 때 걸리는 제한을 기준년도·브랜드 단위로 담으며, 거래고객 구분, 제한 대상 상품·용역, 제한 조건, 조건 위반 시 책임 내용을 건별로 담는다. 가맹 창업 예정자가 '이 브랜드에 가입하면 어떤 고객에게 무엇을 팔 수 없고, 어기면 어떤 책임을 지나'를 확인하는 데 쓴다. 전역 조인 키는 없고, 같은 기관 가맹정보 서비스와는 브랜드관리번호(brandMnno)·가맹본부관리번호·기준년도로 맞춰 이어 쓴다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 실측 컬럼에 없어 다른 기관 데이터와는 이름 매핑으로만 연결된다. 조회에는 기준년도와 브랜드관리번호가 필요하므로 브랜드관리번호를 먼저 다른 가맹정보 서비스에서 확보해야 한다.
 review:
   summary: draft
@@ -265,3 +282,4 @@ review:
     - c-15125507-04
     - c-15125507-07
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15061349 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061349 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061349'
 tier: verified
 title: 금융위원회_금융통계산림조합정보
@@ -24,6 +25,7 @@ synonyms:
   - 조합 금융통계
   - 산림조합 자산 부채
   - 금융회사 통계
+summary_user: 전국 산림조합의 일반현황·재무현황·주요경영지표를 기준년월(basYm)과 조합(금융회사코드·조합명) 단위로 담는 업권별 금융통계로, 금융회사 단위 원장 성격의 데이터다. 금융 분석가나 감독·연구 담당자가 특정 산림조합의 자산·부채·순이익이나 수익성·안정성 지표가 시점별로 어떻게 변했는지 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융위원회 기업정보·기업 재무 데이터나 다른 업권 금융통계와 법인 단위로 이어 쓴다.
 description_portal: '금융통계산림조합정보는 기준년월 및 조합명을 기준으로 산림조합의 주요 통계정보를 제공하는 데이터입니다. 조합의 설립 및 일반현황, 자산·부채 등 재무지표, 주요 경영성과 지표 등을 시계열로 조회할 수 있습니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 산림조합 일반현황 조회 : 산림조합의 설립연도, 소재지, 조직 정보 등 일반현황을 제공합니다.② 산림조합 재무현황 조회 : 자산, 부채, 자본, 순이익 등 주요 재무정보를 조회할 수 있습니다.③ 산림조합 주요경영지표 조회 : 자산증가율, 수익성, 안정성 등 경영성과 관련 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -65,6 +67,7 @@ schema:
         unique: 0
     - name: fncoCd
       type: string
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '00106571040'
@@ -143,6 +146,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -192,7 +200,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061349-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061349.json
@@ -257,8 +265,6 @@ verification:
   run: probe/runs/15061349.json
   stats: probe/stats/15061349.json
   data: probe/data/15061349/
-status: active
-summary_user: 전국 산림조합의 일반현황·재무현황·주요경영지표를 기준년월(basYm)과 조합(금융회사코드·조합명) 단위로 담는 업권별 금융통계로, 금융회사 단위 원장 성격의 데이터다. 금융 분석가나 감독·연구 담당자가 특정 산림조합의 자산·부채·순이익이나 수익성·안정성 지표가 시점별로 어떻게 변했는지 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융위원회 기업정보·기업 재무 데이터나 다른 업권 금융통계와 법인 단위로 이어 쓴다.
 limits: 범위는 전국이지만 비공간 데이터라 지역별 지도 분석에는 소재지 등을 따로 가공해야 한다. 개발계정은 일 10,000회 호출 한도가 있고, 실호출 검증은 오퍼레이션 1개에 대해서만 이뤄졌다.
 review:
   summary: draft
@@ -271,3 +277,4 @@ review:
     - c-15061349-04
     - c-15061349-06
   dropped_citations: 0
+status: active

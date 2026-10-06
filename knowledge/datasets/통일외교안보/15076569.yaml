@@ -1,4 +1,3 @@
-# Dataset 15076569 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15076569'
 tier: verified
 title: 외교부_국가 지역별 재외공관 정보
@@ -25,6 +24,7 @@ synonyms:
   - 영사콜센터
   - 대사관 좌표
   - 국가별 대사관 목록
+summary_user: 국가별 재외공관(대사관·총영사관·분관 등) 한 곳을 한 행으로, 공관 유형·이름·위도·경도·전화번호·영사콜센터·무료·긴급 전화번호·주소와 겸임(관할) 여부를 담은 CSV 파일이다(약 52KB). 해외 여행자·재외국민이 '이 나라에서 연락할 우리 공관과 긴급 연락처는 어디인가'를 찾거나, 분석가가 공관 위치를 지도에 표시할 때 쓴다. 전역 조인 키는 실측에서 확인되지 않았으나 ISO 2자리 국가코드(국가코드)와 국가명을 통해 여행경보·출입국·무역·관광 등 국적·국가 단위 데이터와 매핑해 이어 쓴다.
 description_portal: 국가별 재외공관(대사관, 총영사관, 분관 등) 정보를 제공합니다. - 국가별 공관의 위도/경도, 연락처 등 데이터를 CSV 파일로 제공1. 제공되는 정보 항목은-국가명-국가코드-겸임(관할)-재외공관 유형-재외공관명-재외공관 위도-재외공관 경도-전화번호-영사콜센터 번호-무료전화번호-긴급전화번호재외공관주소등이 제공됩니다.제공되는 정보의 예시를 보면1. 가나 GH 일반 대사관 주 가나 대한민국 대사관 5.575495 -0.185161 (233)302-771-705 (82)2-3210-0404 080-020-0219 (233)244-321-858 No.10, Fifth Avenue Extension, Cantonments, P.O.Box GP 13700, Accra, Ghana,로 제공되며, 이외에도 255건의 추가 정보가 제공됩니다.
 accrual_periodicity: 수시
 team:
@@ -47,6 +47,7 @@ schema:
         unique: 195
     - name: 국가코드(ISO 2자리 코드)
       type: string
+      semantic_type: country_cd
       null_rate: 0.0039
       sample_values:
         - US
@@ -146,6 +147,12 @@ schema:
         - Torre Empresarial Forum, Piso 14, Avenida 27 de Febrero No.495, El Millon, Santo
       stats:
         unique: 178
+  foreign_keys:
+    - fields:
+        - 국가코드(ISO 2자리 코드)
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -188,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15076569-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국가코드(ISO 2자리 코드))'
     evidence:
       - type: measured
         source: probe/stats/15076569.json
@@ -253,8 +260,6 @@ verification:
   run: probe/runs/15076569.json
   stats: probe/stats/15076569.json
   data: probe/data/15076569/
-status: active
-summary_user: 국가별 재외공관(대사관·총영사관·분관 등) 한 곳을 한 행으로, 공관 유형·이름·위도·경도·전화번호·영사콜센터·무료·긴급 전화번호·주소와 겸임(관할) 여부를 담은 CSV 파일이다(약 52KB). 해외 여행자·재외국민이 '이 나라에서 연락할 우리 공관과 긴급 연락처는 어디인가'를 찾거나, 분석가가 공관 위치를 지도에 표시할 때 쓴다. 전역 조인 키는 실측에서 확인되지 않았으나 ISO 2자리 국가코드(국가코드)와 국가명을 통해 여행경보·출입국·무역·관광 등 국적·국가 단위 데이터와 매핑해 이어 쓴다.
 limits: 공식 조인 키가 없어 다른 데이터와는 국가코드·국가명 매핑으로만 연결되며, 표기 차이를 확인해야 한다. 공관별 개별 주소·좌표 단위 정보로, 국가별 정치·경제 개황이나 입국조치 정보는 담지 않는다.
 review:
   summary: draft
@@ -268,3 +273,10 @@ review:
     - c-15076569-06
     - c-15076569-07
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - 재외공관 위도
+    - 재외공관 경도
+  space_via: coord

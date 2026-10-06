@@ -1,4 +1,3 @@
-# Dataset 15080961 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15080961'
 tier: verified
 title: 소방청_울산시 관할 서센터별 소방대상물 데이터
@@ -21,6 +20,7 @@ synonyms:
   - 소방점검 대상 건축물
   - 소방서별 관리대상
   - 울산소방본부
+summary_user: 울산광역시 소방서와 119안전센터가 관할하는 소방대상물을 관할서·서센터, 주용도, 대상물 기준, 시도·구군·동, 우편번호, 도로명 단위로 정리한 CSV 파일(약 4.3MB)입니다. 소방 실무자나 분석가가 '울산의 어느 동, 어느 안전센터 관할에 어떤 용도의 소방대상물이 몰려 있는가'를 파악해 점검 계획이나 취약지역 분석에 씁니다. 전역 조인 키는 없으므로 시도명·구군명·동명을 행정구역 이름으로 맞추거나 관할서명·서센터명을 다른 소방청 데이터(119안전센터, 화재 발생 등)와 이름으로 대조해 연결합니다.
 description_portal: 해당 데이터는 울산광역시 내 각 소방서와 119안전센터가 관리하는 소방대상물의 현황을 집계해 제공하는 자료입니다. 여기서 소방대상물이란 「소방시설 설치 및 관리에 관한 법률」 등에 따라 소방안전 관리와 점검이 필요한 건축물이나 시설을 의미하며, 주거용·상업용 건축물, 공장, 창고, 다중이용시설, 특정 위험물 저장·처리 시설 등이 포함됩니다.이 데이터에는 센터별 소방대상물의 수량, 업종·용도 분류, 관리 대상 여부 등의 항목이 정리되어 있어, 울산시 내 어느 지역에 소방대상물이 집중되어 있는지, 그리고 어떤 성격의 시설이 많은지를 확인할 수 있습니다. 이를 통해 소방당국은 관할 구역별 위험도 평가, 정기 점검 계획 수립, 안전 취약 지역 파악 등에 활용할 수 있고, 지자체 차원에서는 도시계획 및 안전관리 정책과 연계할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -46,6 +46,7 @@ schema:
         unique: 34858
     - name: 관할서명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 중부소방서
@@ -55,6 +56,7 @@ schema:
         unique: 7
     - name: 서센터명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 언양119안전센터
@@ -133,12 +135,28 @@ schema:
         - 수암로
       stats:
         unique: 3225
+  foreign_keys:
+    - fields:
+        - 관할서명
+      reference:
+        key: fire_center
+      evidence: measured
+    - fields:
+        - 서센터명
+      reference:
+        key: fire_center
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 읍면동
+grain:
+  space: sgg
+  space_fields:
+    - 도로명
+  space_via: address
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -175,7 +193,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080961-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fire_center(관할서명), fire_center(서센터명)'
     evidence:
       - type: measured
         source: probe/stats/15080961.json
@@ -240,8 +258,6 @@ verification:
   run: probe/runs/15080961.json
   stats: probe/stats/15080961.json
   data: probe/data/15080961/
-status: active
-summary_user: 울산광역시 소방서와 119안전센터가 관할하는 소방대상물을 관할서·서센터, 주용도, 대상물 기준, 시도·구군·동, 우편번호, 도로명 단위로 정리한 CSV 파일(약 4.3MB)입니다. 소방 실무자나 분석가가 '울산의 어느 동, 어느 안전센터 관할에 어떤 용도의 소방대상물이 몰려 있는가'를 파악해 점검 계획이나 취약지역 분석에 씁니다. 전역 조인 키는 없으므로 시도명·구군명·동명을 행정구역 이름으로 맞추거나 관할서명·서센터명을 다른 소방청 데이터(119안전센터, 화재 발생 등)와 이름으로 대조해 연결합니다.
 limits: 표준 행정코드나 건물 식별번호 같은 공통 키가 없어 다른 데이터와는 이름 매핑으로만 붙일 수 있습니다. 메타데이터의 범위는 전국·읍면동으로 적혀 있지만 제목과 설명은 울산시 관할 자료이므로 수록 지역을 직접 확인해야 합니다.
 review:
   summary: draft
@@ -254,3 +270,4 @@ review:
     - c-15080961-04
     - c-15080961-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15062529 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15062529 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062529'
 tier: verified
 title: 한국도로공사_영업소 이용차량
@@ -24,6 +25,7 @@ synonyms:
   - 톨게이트 진입 차량
   - 고속도로 이용 차량 수
   - 연도별 영업소 통행량
+summary_user: 고속도로 영업소별로 폐쇄식 요금 체계에서 진입한 차량의 통행량을 2023·2024·2025년 연도별 열로 집계한 전국 단위 파일(CSV 약 12KB)입니다. 교통 분석가나 정책 담당자가 '어느 영업소의 이용 차량이 최근 3년간 늘거나 줄었는가'를 비교하는 데 쓴다. 전역 조인 키가 없어 영업소 이름을 기준으로 같은 기관의 다른 고속도로 데이터(영업소 위치·교통량 등)와 이름 매칭으로만 잇는다.
 description_portal: 본 데이터는 한국도로공사에서 관리하던 고속도로 영업소를 통과한 차량의 폐쇄형 통행정보를 포함한다. 폐쇄식 톨링 시스템에 따라 차량이 진입한 영업소의 연도별 통행량 등을 포함하고 있다. 이 데이터는 고속도로 이용 행태 분석, 통행 패턴 예측, 구간별 교통량 산출 등에 활용될 수 있으며, 정책 수립 및 교통 계획 수립 시 유용한 기초자료로 사용된다. 특히, 특정 노선의 혼잡도 분석이나 요금제 설계, ITS 기반 서비스 개선 등 다양한 방면에서 공공 및 민간 활용이 가능하다. 또한 통계 기반의 교통 흐름 관리와 고속도로 운영 전략 수립에도 기여할 수 있는 실효성 있는 공공데이터이다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 영업소
       type: string
+      semantic_type: ex_tollgate
       null_rate: 0.0
       sample_values:
         - 청양
@@ -80,6 +83,12 @@ schema:
         p50: 4134
         max: 101811
         unique: 519
+  foreign_keys:
+    - fields:
+        - 영업소
+      reference:
+        key: ex_tollgate
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -122,7 +131,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15062529-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_tollgate(영업소)'
     evidence:
       - type: measured
         source: probe/stats/15062529.json
@@ -187,8 +196,6 @@ verification:
   run: probe/runs/15062529.json
   stats: probe/stats/15062529.json
   data: probe/data/15062529/
-status: active
-summary_user: 고속도로 영업소별로 폐쇄식 요금 체계에서 진입한 차량의 통행량을 2023·2024·2025년 연도별 열로 집계한 전국 단위 파일(CSV 약 12KB)입니다. 교통 분석가나 정책 담당자가 '어느 영업소의 이용 차량이 최근 3년간 늘거나 줄었는가'를 비교하는 데 쓴다. 전역 조인 키가 없어 영업소 이름을 기준으로 같은 기관의 다른 고속도로 데이터(영업소 위치·교통량 등)와 이름 매칭으로만 잇는다.
 limits: 영업소 이름과 연도별 통행량만 있어 차종·시간대·구간(진입–진출) 단위 분석에는 쓰지 못한다. 공통 코드 없이 영업소 이름으로만 연결되므로 다른 데이터와 붙일 때 명칭 표기 차이를 직접 맞춰야 한다.
 review:
   summary: draft
@@ -200,3 +207,4 @@ review:
     - c-15062529-03
     - c-15062529-04
   dropped_citations: 0
+status: active

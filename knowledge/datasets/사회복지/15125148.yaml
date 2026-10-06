@@ -1,4 +1,5 @@
-# Dataset 15125148 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125148 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125148'
 tier: verified
 title: 성평등가족부_국제 청소년 성취포상제 입회 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 포상단계
   - 청소년 자기도전 활동
   - 청소년 활동 프로그램
+summary_user: 국제청소년성취포상제 참가자의 입회 건별로 입회번호·입회상태, 신청·승인일자, 소속 시설명, 포상명과 포상단계, 활동 승인 상태, 다음 단계 도전 여부, 온·오프라인 구분을 담은 전국 범위의 원천 데이터입니다. 청소년 활동 분석가나 시설 운영자가 "어느 시설에서 어떤 포상 단계까지 진행한 청소년이 얼마나 되고, 다음 단계에 도전하는 비율은 어떤가"를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 청소년 시설·활동 데이터와는 시설명(fcltNm) 같은 이름 매칭으로만 잇는다.
 description_portal: 성평등가족부의 국제청소년성취포상제 입회 정보를 제공하는 오픈 API형 데이터입니다. 해당 개방데이터는 입회번호, 입회상태명, 신청일자, 승인일자, 시설명, 포상명, 활동 승인 상태명, 포상단계명, 활동신청여부, 포상승인일자, 다음단계 도전여부, 온오프라인 구분명의 내용을 확인할 수 있습니다. 국제청소년 성취포상제 입회 현황과 관련된 정보를 체계적으로 제공하여, 참여 단계별로 진행상황을 관리하고, 성취목표설정 및 과정의 객관적 검토를 가능하게 하며, 프로그램 운영의 일관성 유지에도 기여합니다.
 team:
   dept: 정보통계담당관실
@@ -67,6 +69,7 @@ schema:
     - name: wtnessNo
       title: 입회번호
       type: number
+      semantic_type: award_wtness_no
       null_rate: 0.0
       sample_values:
         - '32859'
@@ -188,6 +191,12 @@ schema:
         - 포상활동온라인관리
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - wtnessNo
+      reference:
+        key: award_wtness_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -238,7 +247,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125148-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: award_wtness_no(wtnessNo)'
     evidence:
       - type: measured
         source: probe/stats/15125148.json
@@ -292,8 +301,6 @@ verification:
   run: probe/runs/15125148.json
   stats: probe/stats/15125148.json
   data: probe/data/15125148/
-status: active
-summary_user: 국제청소년성취포상제 참가자의 입회 건별로 입회번호·입회상태, 신청·승인일자, 소속 시설명, 포상명과 포상단계, 활동 승인 상태, 다음 단계 도전 여부, 온·오프라인 구분을 담은 전국 범위의 원천 데이터입니다. 청소년 활동 분석가나 시설 운영자가 "어느 시설에서 어떤 포상 단계까지 진행한 청소년이 얼마나 되고, 다음 단계에 도전하는 비율은 어떤가"를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 청소년 시설·활동 데이터와는 시설명(fcltNm) 같은 이름 매칭으로만 잇는다.
 limits: 전역 조인 키가 없어 시설 코드나 행정구역 코드로 정확히 연결할 수 없고, 시설명 문자열 매칭에 의존해야 한다. 데이터는 비공간 전국 단위라 시군구·시도별 지역 분석에 바로 쓰기 어렵다. 이벤트성으로 생성된 뒤 바뀌지 않는 주기로 분류되어 있으므로, 최신 현황 반영 여부는 호출 결과로 확인해야 한다.
 review:
   summary: draft
@@ -306,3 +313,4 @@ review:
     - c-15125148-03
     - c-15125148-04
   dropped_citations: 0
+status: active

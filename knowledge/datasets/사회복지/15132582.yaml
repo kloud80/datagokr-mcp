@@ -1,4 +1,5 @@
-# Dataset 15132582 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132582 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132582'
 tier: verified
 title: 성평등가족부_국제청소년성취포상제 활동보고서 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 청소년 활동 기록
   - 활동보고서 제출 현황
   - 포상활동 확인
+summary_user: 국제청소년성취포상제에 참여한 청소년이 쓴 활동보고서를 보고서 한 건 단위로 담은 건별 원천 데이터로, 작성·제출·담당자 확인 일시와 제출확인 여부, 활동 시작·종료일자를 기록한다. 포상제 운영기관이나 분석가가 "보고서가 활동 종료 후 얼마 만에 제출되고 담당자 확인까지 얼마나 걸리는가"처럼 제출·확인 절차의 지연과 누락을 점검하는 데 쓴다. 활동프로그램 일련번호(actvPrgrmSn)와 시설물 일련번호(fcltySn)가 있어 같은 기관의 포상제 프로그램·시설 데이터와 이어 볼 여지는 있지만, 실측에서 전역 조인 키는 확인되지 않아 같은 기관 코드나 이름 매핑으로만 연결된다.
 description_portal: 국제 청소년 성취포상제 활동보고서 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 활동보고서의 수정일시, 활동 프로그램 일련번호, 활동보고서 일련번호, 활동보고서 작성일시, 담당자확인코드, 활동보고서 제출일시, 활동담당자 확인일시, 시설물일련번호, 제출확인여부, 활동시작일자, 활동종료일자, 등록일시의 정보를 확인할 수 있습니다.청소년이 수행한 활동을 보고서 형태로 기록한 데이터를 바탕으로 활동 시작부터 종료까지의 전 과정을 세부적으로 추적할 수 있으며, 활동 진행의 신뢰성 확인과 사후 피드백을 위한 기초 자료로 활용되며, 프로그램 운영의 질을 점검하고, 향후 활동의 설계 및 운영 개선에 있어 유용한 근거 자료로도 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -124,6 +126,7 @@ schema:
     - name: fcltySn
       title: 시설물일련번호
       type: code
+      semantic_type: youth_fclty_sn
       null_rate: 1.0
       stats:
         unique: 0
@@ -169,12 +172,24 @@ schema:
         p50: 20111120
         max: 20111120
         unique: 1
+  foreign_keys:
+    - fields:
+        - fcltySn
+      reference:
+        key: youth_fclty_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - actvRptpWrtDt
+    - regDt
+    - mdfcnDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -219,7 +234,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132582-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_fclty_sn(fcltySn)'
     evidence:
       - type: measured
         source: probe/stats/15132582.json
@@ -273,8 +288,6 @@ verification:
   run: probe/runs/15132582.json
   stats: probe/stats/15132582.json
   data: probe/data/15132582/
-status: active
-summary_user: 국제청소년성취포상제에 참여한 청소년이 쓴 활동보고서를 보고서 한 건 단위로 담은 건별 원천 데이터로, 작성·제출·담당자 확인 일시와 제출확인 여부, 활동 시작·종료일자를 기록한다. 포상제 운영기관이나 분석가가 "보고서가 활동 종료 후 얼마 만에 제출되고 담당자 확인까지 얼마나 걸리는가"처럼 제출·확인 절차의 지연과 누락을 점검하는 데 쓴다. 활동프로그램 일련번호(actvPrgrmSn)와 시설물 일련번호(fcltySn)가 있어 같은 기관의 포상제 프로그램·시설 데이터와 이어 볼 여지는 있지만, 실측에서 전역 조인 키는 확인되지 않아 같은 기관 코드나 이름 매핑으로만 연결된다.
 limits: 보고서 본문이나 참여 청소년·지역 정보가 없어 활동 내용 평가나 시군구별 집계에는 쓰기 어렵고, 범위는 전국·비공간이다. 다른 데이터와는 전역 조인 키가 없어 같은 기관의 일련번호 체계로만 연결해야 한다. 서비스키가 필요하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -286,3 +299,4 @@ review:
     - c-15132582-03
     - c-15132582-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15132499 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132499 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132499'
 tier: verified
 title: 중소벤처기업진흥공단_고비즈코리아 상품 기본정보
@@ -21,6 +22,7 @@ synonyms:
   - B2B 수출 상품 목록
   - 판매희망국가
   - 최소주문수량
+summary_user: 온라인수출플랫폼 고비즈코리아에 등록된 중소기업 상품의 기본정보를 상품 1건당 1행으로 담은 원천 목록으로, 원산지·판매희망국가(최대 5개)·최소구매 수량과 단위·최대공급 수량과 단위·API 개방 여부를 담는다. 수출 지원 기관이나 분석가가 특정 국가를 판매 희망지로 둔 중소기업 상품이 얼마나 되는지, 최소 주문 조건이 어떤지를 살피는 데 쓴다. 전역 조인 키는 없고, 같은 기관이 제공하는 고비즈코리아 기업 정보와는 업체번호로, 다른 무역 통계와는 국가명 매핑으로만 이어 쓴다.
 description_portal: 온라인수출플랫폼(Gobizkorea)를 통해 제공하는 중소기업 상품의 기본정보 데이터입니다.주요 제공 데이터로는 상품번호(고비즈코리아 내), 업체번호, 원산지, 판매희망국가, 최소구매수량, 최소구매단위, 최대공급, API상품개방여부, 최적화제목, 최적화설명 등의 데이터가 있습니다.*온라인수출플랫폼(Gobiz KOREA)는 해외 판로개척에 어려움을 겪고 있거나, 온라인 수출을 희망하는 국내 중소기업이 상품을 등록하고 해외바이어와 거래협상을 할 수 있는 온라인 B2B 수출플랫폼입니다.
 accrual_periodicity: 연간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 상품번호
       type: date
+      semantic_type: gobiz_product_no
       null_rate: 0.0
       sample_values:
         - GS2025061746892
@@ -45,6 +48,7 @@ schema:
         unique: 2711
     - name: 업체번호
       type: date
+      semantic_type: gobiz_company_no
       null_rate: 0.0
       sample_values:
         - CP20220117443322
@@ -173,12 +177,28 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 상품번호
+      reference:
+        key: gobiz_product_no
+      evidence: measured
+    - fields:
+        - 업체번호
+      reference:
+        key: gobiz_company_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 상품번호
+    - 업체번호
 cycle: default
 classification:
   subsector_name: 거래 상대 원장 (무역보험 바이어·전략물자 거래업체/물품·수출예정·고비즈코리아 상품·기업)
@@ -215,7 +235,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132499-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gobiz_product_no(상품번호), gobiz_company_no(업체번호)'
     evidence:
       - type: measured
         source: probe/stats/15132499.json
@@ -269,8 +289,6 @@ verification:
   run: probe/runs/15132499.json
   stats: probe/stats/15132499.json
   data: probe/data/15132499/
-status: active
-summary_user: 온라인수출플랫폼 고비즈코리아에 등록된 중소기업 상품의 기본정보를 상품 1건당 1행으로 담은 원천 목록으로, 원산지·판매희망국가(최대 5개)·최소구매 수량과 단위·최대공급 수량과 단위·API 개방 여부를 담는다. 수출 지원 기관이나 분석가가 특정 국가를 판매 희망지로 둔 중소기업 상품이 얼마나 되는지, 최소 주문 조건이 어떤지를 살피는 데 쓴다. 전역 조인 키는 없고, 같은 기관이 제공하는 고비즈코리아 기업 정보와는 업체번호로, 다른 무역 통계와는 국가명 매핑으로만 이어 쓴다.
 limits: 실측 컬럼에 법인번호·품목코드 같은 공통 조인 키가 없어 관세청 수출입 실적 등과 바로 결합할 수 없다. 범위는 전국 단위이며 지역(시도·시군구) 정보가 없어 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -283,3 +301,4 @@ review:
     - c-15132499-04
     - c-15132499-06
   dropped_citations: 0
+status: active

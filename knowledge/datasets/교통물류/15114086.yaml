@@ -1,4 +1,5 @@
-# Dataset 15114086 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15114086 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15114086'
 tier: verified
 title: 인천국제공항공사_화물기 정기운항편 현황 상세 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 카고 항공편 시간표
   - 화물기 요일별 운항
   - 인천공항 화물 노선
+summary_user: 인천공항을 오가는 화물기의 정기운항 스케줄을 편명 단위로 담으며, 항공사명·출발지 공항(IATA 코드)·정기운항 시작일과 종료일·요일별 취항 여부·시즌명·마스터편명과 코드셰어 여부를 포함한다. 물류 사업자나 분석가가 '특정 해외 공항과 인천을 잇는 화물기 정기편이 이번 시즌 무슨 요일에 운항하는가'를 확인하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없어서, 출발지 공항 IATA 코드(airportCode)나 공항명을 공항코드 자료와 맞추거나 편명으로 같은 기관의 운항 API와 대조하는 식으로 연결한다.
 description_portal: 공항코드값을 검색 조건으로 하여 인천공항 출발/도착 여객기의 항공사 이름,공항이름, 공항코드,정기운항편 일정 시작일,종료일,편명,요일정보,시즌코드값,코드세웨어구분,마스터편명 등의 정보를 다국어(국문,영문,일문,중문)로 나타내는 여객기 정기운항편 일정정보 서비스※ 개방중인 일일운항 API 에서 제공하는 MASTER FLIGHT/SLAVE편명에 대한 정보와 상이 할 수 있습니다. 해당 데이터는 1개시즌(하계 3월말~10월말/동계 10월말에서 익년3월말)에 대한 데이터로 업데이트주기가 아래 일일운항 API 와는 상이함을 알려드립니다.* 여객기 운항 현황 상세조회 서비스 API, 여객편 주간 운항현황 API, 여객편 운항현황(다국어) API 드
 team:
   dept: 인프라DX팀
@@ -110,6 +112,7 @@ schema:
     - name: flightid
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - GG9723
@@ -169,6 +172,7 @@ schema:
     - name: airportCode
       title: 인천공항에 도착하는 편명의 출발지공항(IATA) 코드
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - ORD
@@ -261,6 +265,7 @@ schema:
     - name: masterflightid
       title: 마스터편명
       type: code
+      semantic_type: flight_no
       null_rate: 0.9961
       sample_values:
         - NH8475
@@ -275,6 +280,22 @@ schema:
         - Slave
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - flightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airportCode
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - masterflightid
+      reference:
+        key: flight_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -324,7 +345,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15114086-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightid), airport_cd(airportCode), flight_no(masterflightid)'
     evidence:
       - type: measured
         source: probe/stats/15114086.json
@@ -401,8 +422,6 @@ verification:
   run: probe/runs/15114086.json
   stats: probe/stats/15114086.json
   data: probe/data/15114086/
-status: active
-summary_user: 인천공항을 오가는 화물기의 정기운항 스케줄을 편명 단위로 담으며, 항공사명·출발지 공항(IATA 코드)·정기운항 시작일과 종료일·요일별 취항 여부·시즌명·마스터편명과 코드셰어 여부를 포함한다. 물류 사업자나 분석가가 '특정 해외 공항과 인천을 잇는 화물기 정기편이 이번 시즌 무슨 요일에 운항하는가'를 확인하는 데 쓴다. 실측 컬럼에는 전역 조인 키가 없어서, 출발지 공항 IATA 코드(airportCode)나 공항명을 공항코드 자료와 맞추거나 편명으로 같은 기관의 운항 API와 대조하는 식으로 연결한다.
 limits: 두 오퍼레이션 가운데 실호출에서 성공한 것은 1개이며, 출발편 조회(/getCgoFltSchedDeparturesDeOdp)는 최소 파라미터로 호출했을 때 응답이 없었다. 포털 설명에 따르면 한 시즌 단위의 정기 스케줄이라 일일운항 API와 갱신 주기가 다르고 마스터·슬레이브 편명이 서로 다를 수 있으므로, 당일 실제 운항·지연 여부를 확인하는 데는 맞지 않는다. 개발계정 호출 한도는 하루 500회다.
 review:
   summary: draft
@@ -414,3 +433,4 @@ review:
     - c-15114086-03
     - c-15114086-10
   dropped_citations: 0
+status: active

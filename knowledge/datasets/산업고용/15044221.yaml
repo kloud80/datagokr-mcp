@@ -1,4 +1,5 @@
-# Dataset 15044221 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044221 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044221'
 tier: verified
 title: 한국지역난방공사_광주전남 및 대구 태양광발전소 시간대별 운영현황
@@ -22,6 +23,7 @@ synonyms:
   - 신재생에너지 발전량
   - 대구 태양광
   - 태양광 발전 시계열
+summary_user: 한국지역난방공사 대구지사와 광주전남지사(신안태양광) 태양광발전소의 발전량을 시간대별로 기록한 운영 실적 파일로, 실적일시마다 두 지사의 발전량(kWh)을 한 행에 담는다. 분석가가 "신안 태양광은 하루 중 몇 시에, 어느 계절에 발전량이 가장 많은가" 같은 시간대·요일·월별 패턴을 보거나 시계열 예측 모델을 만들 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 실적일시(날짜·시간)나 지사·발전소 이름으로 맞춰 이어야 하며, 발전소 주소·용량은 전국태양광발전소전기사업허가정보 표준데이터에서 이름으로 찾아 붙인다.
 description_portal: '(한국지역난방공사) 대구지사, 광주전남지사의 시간대별 태양광발전량에 대한 데이터1. 주의 사항 : 없음2. 컬럼 내용(일부 항목 기재)■ 실적일자(varchar)(예시 : 2017-01-01, 2017-01-16 17:00)■ 대구(numeric)(예시 : 0, 17.6)■ 광주전남 신안태양광(varchar)(예시 : 0, 104.659)■ 발전량단위(varchar)(예시 : kWh)3. 활용 예제■ 각 지사 시간대별 발전량 추이 및 패턴 분석■ 각 지사 요일별 발전량 추이 및 패턴 분석■ 각 지사 월별 발전량 추이 및 계절성 분석■ 시간대별 데이터 바탕으로 시계열 분석을 통한 예측 모델 생성'
 accrual_periodicity: 연간
 team:
@@ -81,6 +83,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 실적일시
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -182,8 +188,6 @@ verification:
   run: probe/runs/15044221.json
   stats: probe/stats/15044221.json
   data: probe/data/15044221/
-status: active
-summary_user: 한국지역난방공사 대구지사와 광주전남지사(신안태양광) 태양광발전소의 발전량을 시간대별로 기록한 운영 실적 파일로, 실적일시마다 두 지사의 발전량(kWh)을 한 행에 담는다. 분석가가 "신안 태양광은 하루 중 몇 시에, 어느 계절에 발전량이 가장 많은가" 같은 시간대·요일·월별 패턴을 보거나 시계열 예측 모델을 만들 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 실적일시(날짜·시간)나 지사·발전소 이름으로 맞춰 이어야 하며, 발전소 주소·용량은 전국태양광발전소전기사업허가정보 표준데이터에서 이름으로 찾아 붙인다.
 limits: 두 지사 발전소만 담으므로 전국 태양광 발전량이나 다른 사업자의 발전소 비교에는 쓰지 못한다. 공통 코드 키가 없어 다른 데이터와 연결할 때 이름·날짜 매핑에 의존하며, 광주전남 발전량 컬럼은 문자형으로 되어 있어 숫자로 변환한 뒤 써야 한다.
 review:
   summary: draft
@@ -196,3 +200,4 @@ review:
     - c-15044221-04
     - c-15044221-06
   dropped_citations: 0
+status: active

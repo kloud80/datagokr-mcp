@@ -1,4 +1,5 @@
-# Dataset 15095093 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15095093 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095093'
 tier: verified
 title: 인천국제공항공사_여객편 운항현황(다국어)
@@ -22,6 +23,7 @@ synonyms:
   - 인천공항 운항정보
   - flight status
   - 다국어 운항현황
+summary_user: 인천국제공항에 운항하는 여객기의 조회 당일 운항 현황을 항공편 한 편 단위로 담는 실시간 API로, 예정·변경 시각, 출발지·경유지 공항, 게이트·수하물수취대·출구 번호, 코드쉐어 여부, 현황(결항·지연 등)을 다국어로 제공한다. 여행객이나 마중 나가는 사람이 '오늘 이 편명이 몇 시에 어느 터미널·출구로 도착하나, 지연되거나 결항됐나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 다른 운항·공항 데이터와는 편명(flightId)이나 IATA 공항·항공사 코드를 이름·코드 매핑해 이어 쓴다.
 description_portal: 인천국제공항에 운항하는 여객기 항공편의 당일 운항 현황에 대한 다국어 데이터로 조회시간, 출발지 공항(IATA ) 편명, 항공사(IATA)를 기준으로 항공기 운항 타입, 항공사 한글명, 편명, 예정시간, 변경시간, 출발지공항, 도착게이트 번호, 수하물수취대 번호, 도시코드, 코드쉐어, 마스터편명, 출구 번호, 현황 코드, 출발공항코드(IATA),터미널,소요시간,경유지 공항코드, 경유지공항이름 등을 제공합니다. 조회 당일에 대한 데이터를 제공합니다. 개발 계정 일 1000 트래픽, 운영 계정 신청 시 일 1000000트래픽을 제공합니다.
 team:
   dept: 인프라DX팀
@@ -62,6 +64,7 @@ schema:
         unique: 97
     - name: flightId
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - TW248
@@ -154,6 +157,7 @@ schema:
         unique: 2
     - name: masterflightid
       type: string
+      semantic_type: flight_no
       null_rate: 0.4697
       sample_values:
         - KE744
@@ -163,6 +167,7 @@ schema:
         unique: 302
     - name: airportCode
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - NRT
@@ -231,6 +236,22 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - flightId
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - masterflightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airportCode
+      reference:
+        key: airport_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -280,7 +301,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15095093-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightId), flight_no(masterflightid), airport_cd(airportCode)'
     evidence:
       - type: measured
         source: probe/stats/15095093.json
@@ -345,8 +366,6 @@ verification:
   run: probe/runs/15095093.json
   stats: probe/stats/15095093.json
   data: probe/data/15095093/
-status: active
-summary_user: 인천국제공항에 운항하는 여객기의 조회 당일 운항 현황을 항공편 한 편 단위로 담는 실시간 API로, 예정·변경 시각, 출발지·경유지 공항, 게이트·수하물수취대·출구 번호, 코드쉐어 여부, 현황(결항·지연 등)을 다국어로 제공한다. 여행객이나 마중 나가는 사람이 '오늘 이 편명이 몇 시에 어느 터미널·출구로 도착하나, 지연되거나 결항됐나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 다른 운항·공항 데이터와는 편명(flightId)이나 IATA 공항·항공사 코드를 이름·코드 매핑해 이어 쓴다.
 limits: 조회 당일 데이터만 주므로 과거 운항 이력이나 정시율 같은 통계 분석에는 쓰지 못한다. 전역 조인 키가 없어 다른 데이터와는 편명·공항코드 매핑으로만 연결되고, 개발계정은 하루 1,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -358,3 +377,4 @@ review:
     - c-15095093-03
     - c-15095093-06
   dropped_citations: 0
+status: active

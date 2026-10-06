@@ -1,0 +1,246 @@
+id: '15121942'
+tier: verified
+title: 법무부_공증사무소 현황 정보
+sector: 법률/법무및검찰/crime-statistics
+agency:
+  id: '1270000'
+  name: 법무부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15121942/openapi.do
+synonyms:
+  - 전국
+  - 공증사무소
+  - 주소
+  - 공증사무소 주소
+  - 공증인 사무소 찾기
+  - 공증 사무소 연락처
+  - 관할 검찰청별 공증
+  - 인가 공증인
+  - 공증사무소 목록
+description_portal: 공증사무소 상세현황의 대상이 되는 공증사무소를 관할하는 관할검찰청과해당 검찰청이 관할하는 공증사무소의 이름, 주소, 우편번호, 전화번호,팩스번호를 제공
+team:
+  dept: 정보화데이터담당관실
+services:
+  - op: /moj
+    name: 공증사무소
+    endpoint: https://apis.data.go.kr/1270000/notary_public/moj
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '20'
+        desc: 한 페이지 결과 수
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: Area
+      title: 관할검찰청
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울중앙(85)
+        - 수원지검(25)
+        - 대구지검(14)
+      stats:
+        unique: 18
+    - name: Name
+      title: 사무소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 법무법인 민주
+        - 법무법인 한백
+        - 법무법인 비전(구 비전인터내셔널)
+      stats:
+        unique: 226
+    - name: Addr
+      title: 주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경기 평택시 평남로 1023 법률회관
+        - 서울 서초구 서초중앙로 215 홍익대 강남관 7층
+        - 서울 서초구 반포대로 138 (서초동 양진빌딩 4층)
+      stats:
+        unique: 225
+    - name: Zip
+      title: 우편번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6595'
+        - '6596'
+        - '22221'
+      stats:
+        min: 1062
+        p50: 10414
+        max: 63223
+        unique: 141
+    - name: Tel
+      title: 전화번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 02-591-8868
+        - 02-596-7370
+        - 02-6743-7001
+      stats:
+        unique: 226
+    - name: Fax
+      title: 팩스번호
+      type: string
+      null_rate: 0.0354
+      sample_values:
+        - 02-3019-2801
+        - 02-591-8162(공증)
+        - 02-596-7006
+      stats:
+        unique: 217
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 범죄·수사 통계 (대검 범죄분석·검찰 사건 처리·지자체 범죄 발생)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6427
+  brm: 법률 - 법무및검찰
+  why: 기관 분석 핵심 원장 — 법무부
+claims:
+  - id: c-15121942-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15121942.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15121942.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15121942-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15121942-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15121942.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15121942-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15121942.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15121942-06
+    kind: admin_note
+    value: "세부 부문 '범죄·수사 통계 (대검 범죄분석·검찰 사건 처리·지자체 범죄 발생)'의 가치: 시군구 × 죄명 × 월 = 지역 안전 지표, 지역 정보에 연결 (구름). 경찰청 발생 통계(재난안전)와 same_concept"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#crime-statistics
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121942-07
+    kind: admin_note
+    value: '[법률 - 법무및검찰 · 결정] 출입국 관리가 중심. 출입국·체류, 변호사·법무사, 범죄·수사 통계만 (`law-deferred`, `law-non-core`). 체류 외국인·범죄 통계는 시군구 × 월 격자 원장으로 보고 지역 정보에 연결 (구름).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L595
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121942-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121942.json
+  stats: probe/stats/15121942.json
+  data: probe/data/15121942/
+status: active
+summary_user: 전국 공증사무소를 사무소 한 곳당 한 행으로 담는 목록 데이터로, 관할 검찰청과 사무소 이름·주소·우편번호·전화·팩스를 제공한다. 국민이나 사업자가 '우리 지역 검찰청 관할에 있는 공증사무소는 어디이고 연락처는 무엇인가'를 찾을 때 쓴다. 전역 조인 키는 없어서 관할 검찰청 이름이나 주소를 문자열로 맞춰 지역 정보·검찰청 단위 자료와 연결해야 한다.
+limits: 사무소 코드나 행정구역 코드 같은 공통 키가 없어 다른 데이터와는 이름·주소 매칭으로만 이을 수 있다. 사무소 위치·연락처 목록일 뿐이므로 공증 처리 건수나 범죄·사건 통계는 이 데이터로 알 수 없다. API 호출에는 포털에서 발급한 서비스키가 필요하고, 개발계정은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15121942-01
+    - c-15121942-03
+    - c-15121942-04
+  dropped_citations: 0
+grain:
+  space: sgg
+  space_fields:
+    - Addr
+  space_via: address

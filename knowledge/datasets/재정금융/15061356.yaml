@@ -1,4 +1,5 @@
-# Dataset 15061356 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061356 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061356'
 tier: verified
 title: 금융위원회_금융통계할부금융사정보
@@ -24,6 +25,7 @@ synonyms:
   - 할부금융사 경영지표
   - 금융회사 임직원 수
   - 할부금융 영업실적
+summary_user: 할부금융사별로 기준년월(basYm) 기준의 일반 현황(임직원 수·점포 수 등)과 재무 현황·주요 경영지표·주요 영업활동 통계를 금융회사 단위로 담은 전국 범위의 API 데이터다. 분석가나 금융 소비자가 특정 할부금융사의 임직원·영업점 규모와 총자산·당기순이익 같은 재무 항목이 시점별로 어떻게 달라졌는지 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융위원회 기업정보·재무 데이터나 다른 업권별 금융회사 원장과 법인 단위로 이어 쓴다.
 description_portal: '금융통계할부금융사정보는 기준년월을 중심으로 할부금융사의 일반 현황 및 재무 현황에 대한 통계자료를 제공하는 데이터입니다. 할부금융사별 인가일자, 임직원 수, 본점·지점 수와 같은 조직 일반 정보뿐 아니라 자본금, 총자산, 영업수익, 당기순이익 등 주요 재무 항목을 시계열로 확인할 수 있도록 구성되어 있습니다.이 데이터는 4개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 할부금융사 일반현황 조회 : 할부금융사의 금융회사명, 임직원수, 임직원구분코드명 등의 일반 현황 정보를 제공합니다.② 할부금융사 재무현황 조회 : 자산요약재무상태표계정과정금액, 자산요약재무상태표계정과목코드, 자산요약재무상태표계정과목구성비율, 법인등록번호, 금융회사명 등 주요 재무 지표를 제공합니다.③ 할부금융사 주요 경영지표 조회 : 자본적성성항목코드, 자본적성성항목코드명, 자본적성성항목값내용, 금융회사명 등 할부금융사 주요 경영지표정보를 제공합니다.④ 할부금융사 주요 영업활동 조회 : 부문구분값 내용, 부문구분코드, 부문구분코드명 등 할부금융사 주요 영업활동 정보를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -72,6 +74,7 @@ schema:
         unique: 26
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010256'
@@ -157,6 +160,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -206,7 +214,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061356-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061356.json
@@ -271,8 +279,6 @@ verification:
   run: probe/runs/15061356.json
   stats: probe/stats/15061356.json
   data: probe/data/15061356/
-status: active
-summary_user: 할부금융사별로 기준년월(basYm) 기준의 일반 현황(임직원 수·점포 수 등)과 재무 현황·주요 경영지표·주요 영업활동 통계를 금융회사 단위로 담은 전국 범위의 API 데이터다. 분석가나 금융 소비자가 특정 할부금융사의 임직원·영업점 규모와 총자산·당기순이익 같은 재무 항목이 시점별로 어떻게 달라졌는지 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키여서 금융위원회 기업정보·재무 데이터나 다른 업권별 금융회사 원장과 법인 단위로 이어 쓴다.
 limits: 전국 단위 비공간 데이터라 지역·영업점 위치별 분석에는 쓰지 못한다. 개발계정은 일 10,000회 호출 제한이 있고 serviceKey 인증이 필요하다.
 review:
   summary: draft
@@ -285,3 +291,4 @@ review:
     - c-15061356-04
     - c-15061356-06
   dropped_citations: 0
+status: active

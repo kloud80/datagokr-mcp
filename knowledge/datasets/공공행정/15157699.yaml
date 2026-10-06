@@ -1,4 +1,5 @@
-# Dataset 15157699 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157699 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157699'
 tier: verified
 title: 한국자산관리공사_차세대 온비드 순위물건목록 관심물건순위 조회서비스
@@ -22,6 +23,7 @@ synonyms:
   - 자동차 공매
   - 국유재산 매각
   - 온비드 TOP20
+summary_user: 온비드에 등록된 물건 중 최근 일주일간 관심 저장이 가장 많은 상위 20개를 부동산·동산·자동차 유형별 순위로 담으며, 각 물건의 입찰기간, 감정평가금액, 최저입찰가격, 재산유형(압류재산·국유재산 등), 처분방식(매각·임대)을 함께 담는다. 공매 입찰을 준비하는 개인이나 사업자가 "지금 입찰 중인 자동차 공매 물건 중 사람들이 가장 많이 관심을 두는 것은 무엇이고 감정가 대비 얼마에 나와 있나"를 확인하는 데 쓴다. 전역 조인 키는 없고, 물건관리번호(cltrMngNo)와 공매조건번호를 함께 넣어 온비드 물건 입찰정보 조회로 이어 쓰거나 재산유형·용도분류 코드로 다른 온비드 목록과 맞춰 쓴다.
 description_portal: '한국자산관리공사에서 운영하는 온비드(Onbid) 홈페이지에 등록된 물건 중 일주일간 가장 많이 관심 저장된 상위 20개 물건 정보입니다. 물건 유형(부동산, 동산, 자동차)에 따라 관심 저장 수를 기준으로 한 물건 순위와 입찰종료일자, 최저입찰가격, 감정평가금액 등 주요 물건 정보를 조회할 수 있습니다. 순위물건은 입찰마감 전인 (입찰 준비중이거나 입찰 진행 중) 물건만 조회됩니다. 순위물건의 순위는 참고용으로만 활용하시기 바랍니다. 필수 입력 조건 : 물건유형구분(cltrDivNm) (부동산|동산|자동차 중 입력)'
 team:
   dept: 디지털시스템실
@@ -96,6 +98,7 @@ schema:
     - name: cltrMngNo
       title: 물건관리번호
       type: code
+      semantic_type: onbid_cltr_no
       null_rate: 0.0
       sample_values:
         - 2026-10100-001
@@ -106,6 +109,7 @@ schema:
     - name: pbctCdtnNo
       title: 공매조건번호(물건 입찰정보 조회시 물건관리번호와 함께 입력 필요)
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '6127370'
@@ -185,6 +189,7 @@ schema:
     - name: cltrUsgLclsCtgrId
       title: 용도대분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10000'
@@ -196,6 +201,7 @@ schema:
     - name: cltrUsgMclsCtgrId
       title: 용도중분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10200'
@@ -208,6 +214,7 @@ schema:
     - name: cltrUsgSclsCtgrId
       title: 용도소분류코드
       type: number
+      semantic_type: onbid_usg_ctgr_id
       null_rate: 0.0
       sample_values:
         - '10201'
@@ -340,12 +347,43 @@ schema:
         - 입찰진행중
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - cltrMngNo
+      reference:
+        key: onbid_cltr_no
+      evidence: measured
+    - fields:
+        - pbctCdtnNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
+    - fields:
+        - cltrUsgLclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
+    - fields:
+        - cltrUsgMclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
+    - fields:
+        - cltrUsgSclsCtgrId
+      reference:
+        key: onbid_usg_ctgr_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: realtime
+  time_fields:
+    - cltrBidBgngDt
+    - cltrBidEndDt
 cycle: default
 classification:
   subsector_name: 국유·공유재산
@@ -390,7 +428,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157699-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: onbid_cltr_no(cltrMngNo), onbid_pbct_no(pbctCdtnNo), onbid_usg_ctgr_id(cltrUsgLclsCtgrId), onbid_usg_ctgr_id(cltrUsgMclsCtgrId), onbid_usg_ctgr_id(cltrUsgSclsCtgrId)'
     evidence:
       - type: measured
         source: probe/stats/15157699.json
@@ -444,8 +482,6 @@ verification:
   run: probe/runs/15157699.json
   stats: probe/stats/15157699.json
   data: probe/data/15157699/
-status: active
-summary_user: 온비드에 등록된 물건 중 최근 일주일간 관심 저장이 가장 많은 상위 20개를 부동산·동산·자동차 유형별 순위로 담으며, 각 물건의 입찰기간, 감정평가금액, 최저입찰가격, 재산유형(압류재산·국유재산 등), 처분방식(매각·임대)을 함께 담는다. 공매 입찰을 준비하는 개인이나 사업자가 "지금 입찰 중인 자동차 공매 물건 중 사람들이 가장 많이 관심을 두는 것은 무엇이고 감정가 대비 얼마에 나와 있나"를 확인하는 데 쓴다. 전역 조인 키는 없고, 물건관리번호(cltrMngNo)와 공매조건번호를 함께 넣어 온비드 물건 입찰정보 조회로 이어 쓰거나 재산유형·용도분류 코드로 다른 온비드 목록과 맞춰 쓴다.
 limits: 입찰마감 전(입찰준비중·진행중) 물건만 나오므로 낙찰가나 유찰 이력 분석에는 쓸 수 없고, 순위는 관심 저장 수 기준 참고값이다. 호출할 때 물건유형(부동산·동산·자동차)을 반드시 넣어야 하며, 개발계정은 하루 1,000회로 제한된다.
 review:
   summary: draft
@@ -457,3 +493,4 @@ review:
     - c-15157699-03
     - c-15157699-04
   dropped_citations: 0
+status: active

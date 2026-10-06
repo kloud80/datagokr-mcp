@@ -78,6 +78,7 @@ schema:
     - name: dptreStnCd
       title: 출발 해당 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '0152'
@@ -101,6 +102,7 @@ schema:
     - name: dptreStnNo
       title: 출발 지하철 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '131'
@@ -114,6 +116,7 @@ schema:
     - name: arvlStnCd
       title: 도착 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '0153'
@@ -127,6 +130,7 @@ schema:
     - name: arvlStnNo
       title: 도착 지하철 역번호
       type: string
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '130'
@@ -356,10 +360,35 @@ schema:
         - "1.   신분당선 추가 요금\n1-1. DXLINE 구간 (강남 ~ 정자)\n-조건: 출발역과 도착역 모두 운영사가 DXLINE일 경우\n-추가 요금"
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - dptreStnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - dptreStnNo
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
+    - fields:
+        - arvlStnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - arvlStnNo
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-10-02 ~ 2026-10-02
+grain:
+  time: month
+  time_fields:
+    - crtrYmd
 cycle: default
 classification:
   subsector_name: 실시간 도착·시간표·운임 (조회 도구)
@@ -404,7 +433,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15143846-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_cd(dptreStnCd), seoul_metro_station_fr_cd(dptreStnNo), seoul_metro_station_cd(arvlStnCd), seoul_metro_station_fr_cd(arvlStnNo)'
     evidence:
       - type: measured
         source: probe/stats/15143846.json

@@ -1,5 +1,3 @@
-# Dataset 15047819 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15047819'
 tier: verified
 title: 건강보험심사평가원_의약품사용정보조회서비스
@@ -640,6 +638,7 @@ schema:
     - name: meftDivNo
       title: 약효분류군
       type: number
+      semantic_type: hira_meft_div_no
       null_rate: 0.0
       sample_values:
         - '111'
@@ -898,6 +897,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - meftDivNo
+      reference:
+        key: hira_meft_div_no
+      evidence: measured
+    - fields:
         - sidoCd
       reference:
         key: admin_area_code
@@ -910,6 +914,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - sgguCd
+    - sgguCdNm
+    - sidoCd
+  space_via: code
+  time: month
+  time_fields:
+    - diagYm
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -953,7 +967,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15047819-03
     kind: key
-    value: '실측 조인 키: admin_area_code(sidoCd), admin_area_code(sidoCdNm)'
+    value: '실측 조인 키: hira_meft_div_no(meftDivNo), admin_area_code(sidoCd), admin_area_code(sidoCdNm)'
     evidence:
       - type: measured
         source: probe/stats/15047819.json

@@ -45,6 +45,7 @@ schema:
         unique: 1304
     - name: 등록계정
       type: string
+      semantic_type: copyright_reg_no
       null_rate: 0.0245
       sample_values:
         - D-2010-000042
@@ -122,6 +123,7 @@ schema:
         unique: 168
     - name: 관련등록계정
       type: code
+      semantic_type: copyright_reg_no
       null_rate: 0.9701
       sample_values:
         - D-2010-000025
@@ -210,9 +212,26 @@ schema:
         min: '2003-09-30'
         max: '2021-09-13'
         unique: 559
+  foreign_keys:
+    - fields:
+        - 등록계정
+      reference:
+        key: copyright_reg_no
+      evidence: measured
+    - fields:
+        - 관련등록계정
+      reference:
+        key: copyright_reg_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공표일자
+    - 전산화일자
+    - 생성일시
 cycle: default
 classification:
   subsector_name: 저작권·콘텐츠 (저작권 등록·공유마당·게임 등급·영화·음악·웹툰)
@@ -250,7 +269,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15089980-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: copyright_reg_no(등록계정), copyright_reg_no(관련등록계정)'
     evidence:
       - type: measured
         source: probe/stats/15089980.json

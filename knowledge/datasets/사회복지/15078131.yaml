@@ -1,4 +1,5 @@
-# Dataset 15078131 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078131 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078131'
 tier: verified
 title: 한국건강가정진흥원_아이돌보미 교육과정 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 아이돌봄서비스 교육기관
   - 보수교육
   - 아이돌보미 자격 교육
+summary_user: 전국 시군구 단위 아이돌봄기관이 개설한 아이돌보미 교육과정을 과정·모집차수별로 담은 API로, 사업연도·기관명·교육구분·모집인원·신청기간·교육기간·총교육시간·교통정보 등을 담는다. 아이돌보미가 되려는 사람이 '우리 시군구에서 다음 교육 모집은 언제이고 몇 명을 뽑는가'를 확인하거나, 분석가가 지역별 교육 개설 현황과 교육시간을 비교하는 데 쓴다. 전역 조인 키는 없어 시도명·시군구명이나 아이돌봄기관 번호·이름(childCareInstNo)으로 같은 기관의 다른 아이돌봄 데이터와 매핑해 잇는다.
 description_portal: 아이돌보미 교육과정 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 사업연도, 시도명, 시군구명, 아이돌봄기관명, 교육구분명, 모집차수, 내용, 교통정보, 모집인원수, 결과발표 예정일자, 적용 시작 및 종료 일자, 교육 시작 및 종료일자, 총교육시간 등의 내용을 확인할 수 있습니다.지역별로 개설된 교육 프로그램의 세부 내용을 파악하는 데 활용될 수 있습니다. 교육 일정, 모집 인원, 교육 시간 등 다양한 정보를 포함하고 있어 지원자와 운영기관 모두에게 실질적인 안내 자료가 될 수 있습니다. 특히 각 지역별 특성에 맞는 교육 운영을 비교 분석하는 데도 도움이 됩니다. 이를 통해 효율적인 아이돌보미 양성 체계를 구축하는 데 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -74,6 +76,7 @@ schema:
         unique: 32
     - name: childCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0356
@@ -228,12 +231,23 @@ schema:
         p50: 20250409
         max: 20250409
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - sggNm
+  space_via: name
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -277,7 +291,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078131-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078131.json
@@ -331,8 +345,6 @@ verification:
   run: probe/runs/15078131.json
   stats: probe/stats/15078131.json
   data: probe/data/15078131/
-status: active
-summary_user: 전국 시군구 단위 아이돌봄기관이 개설한 아이돌보미 교육과정을 과정·모집차수별로 담은 API로, 사업연도·기관명·교육구분·모집인원·신청기간·교육기간·총교육시간·교통정보 등을 담는다. 아이돌보미가 되려는 사람이 '우리 시군구에서 다음 교육 모집은 언제이고 몇 명을 뽑는가'를 확인하거나, 분석가가 지역별 교육 개설 현황과 교육시간을 비교하는 데 쓴다. 전역 조인 키는 없어 시도명·시군구명이나 아이돌봄기관 번호·이름(childCareInstNo)으로 같은 기관의 다른 아이돌봄 데이터와 매핑해 잇는다.
 limits: 표준 행정코드 같은 전역 조인 키가 없어 다른 기관 데이터와는 지역명·기관명 문자열 매칭으로만 연결된다. 포털 활용신청 후 serviceKey가 필요하고 개발계정은 하루 3,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -344,3 +356,4 @@ review:
     - c-15078131-03
     - c-15078131-04
   dropped_citations: 0
+status: active

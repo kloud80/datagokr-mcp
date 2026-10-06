@@ -1,4 +1,5 @@
-# Dataset 15057999 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15057999 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057999'
 tier: verified
 title: 한국토지주택공사_분양임대공고별 상세정보 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 상가 입찰
   - 토지 분양 필지
   - 공공임대 모집공고
+summary_user: 한국토지주택공사(LH)의 분양·임대 공고 한 건을 지정해 그 공고의 상세 정보(토지는 접수처·입찰일정·추첨일정, 분양·임대주택은 단지정보·접수처, 주택형·필지·상가 호 목록)를 조회하는 공고 단위 API로, 범위는 전국이고 위치는 개별 주소·좌표 수준이다. 청약 대기자나 분석가가 '이 LH 공고의 주택형별 공급 내역과 접수·추첨 일정이 어떻게 되나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 공고아이디·공급정보구분코드 같은 LH 자체 코드로 같은 기관의 공고 목록 API와 잇거나 단지명·주소 매핑으로만 다른 데이터와 연결한다.
 description_portal: 한국토지주택공사에서 제공하는 분양임대공고별 상세정보 조회 서비스입니다. 입력하시는 파라미터에 따라 주택형, 필지, 상가 호 목록 정보를 조회할 수 있습니다.공급정보구분코드, 고객센터연계시스템구분코드, 공고아이디, 상위매물유형코드를 입력하시면 응답 메세지로 접수처 정보와 입찰일정, 추첨일정 등을 포함한 토지정보, 또는 단지정보와 접수처 정보를 포함한 분양주택 정보 또는 임대주택 정보를 받아보실 수 있습니다.활용 신청 후 API 서비스 키와 함꼐 이용하실 수 있으며, 자세한 내용은 OPEN API 활용 가이드를 참고해주시길 바랍니다.
 team:
   dept: IT운영처 데이터운영팀
@@ -67,6 +69,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - resHeader
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -207,8 +213,6 @@ verification:
   run: probe/runs/15057999.json
   stats: probe/stats/15057999.json
   data: probe/data/15057999/
-status: active
-summary_user: 한국토지주택공사(LH)의 분양·임대 공고 한 건을 지정해 그 공고의 상세 정보(토지는 접수처·입찰일정·추첨일정, 분양·임대주택은 단지정보·접수처, 주택형·필지·상가 호 목록)를 조회하는 공고 단위 API로, 범위는 전국이고 위치는 개별 주소·좌표 수준이다. 청약 대기자나 분석가가 '이 LH 공고의 주택형별 공급 내역과 접수·추첨 일정이 어떻게 되나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 공고아이디·공급정보구분코드 같은 LH 자체 코드로 같은 기관의 공고 목록 API와 잇거나 단지명·주소 매핑으로만 다른 데이터와 연결한다.
 limits: 공고가 나올 때 생성된 뒤 바뀌지 않는 이벤트성 데이터라 시계열 변화나 경쟁률·당첨 결과를 담지 않는다. 공고아이디 등 입력 파라미터가 있어야 호출되므로 공고 목록을 먼저 확보해야 하며, 개발계정은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -221,3 +225,4 @@ review:
     - c-15057999-03
     - c-15057999-04
   dropped_citations: 0
+status: active

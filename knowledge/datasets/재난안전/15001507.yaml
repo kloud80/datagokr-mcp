@@ -52,6 +52,7 @@ schema:
         unique: 18252
     - name: 사고번호
       type: string
+      semantic_type: gas_accident_no
       null_rate: 0.0
       sample_values:
         - N-2026-0876
@@ -138,6 +139,11 @@ schema:
         unique: 25
   foreign_keys:
     - fields:
+        - 사고번호
+      reference:
+        key: gas_accident_no
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -146,6 +152,15 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2020-09-05 ~ 2026-06-30
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 접수일자
+    - 사고일자
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -186,7 +201,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15001507-03
     kind: key
-    value: '실측 조인 키: address(주소)'
+    value: '실측 조인 키: gas_accident_no(사고번호), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15001507.json

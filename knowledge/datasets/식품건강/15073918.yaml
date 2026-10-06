@@ -93,6 +93,7 @@ schema:
     - name: OCTR_MNFT_BSSH_CD
       title: 해외제조업소코드
       type: code
+      semantic_type: ovs_mnft_bssh_cd
       null_rate: 0.0
       sample_values:
         - JP000060
@@ -120,6 +121,7 @@ schema:
     - name: NATN_CD
       title: 국가코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - JP
@@ -145,13 +147,32 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - OCTR_MNFT_BSSH_CD
+      reference:
+        key: ovs_mnft_bssh_cd
+      evidence: measured
+    - fields:
         - MNFT_ENTP_ADDR
       reference:
         key: address
       evidence: measured
+    - fields:
+        - NATN_CD
+      reference:
+        key: country_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MNFT_ENTP_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - MNFT_ENTP_ADDR
+    - USE_END_DTM
 cycle: default
 classification:
   subsector_name: 공중위생업소 (목욕장·이미용·세탁·위생관리용역·위생용품, LOCALDATA)
@@ -195,7 +216,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15073918-03
     kind: key
-    value: '실측 조인 키: address(MNFT_ENTP_ADDR)'
+    value: '실측 조인 키: ovs_mnft_bssh_cd(OCTR_MNFT_BSSH_CD), address(MNFT_ENTP_ADDR), country_cd(NATN_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073918.json

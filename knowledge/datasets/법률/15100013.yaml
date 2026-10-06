@@ -1,4 +1,5 @@
-# Dataset 15100013 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15100013 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100013'
 tier: verified
 title: 법무부_22(장단기체류외국인) 월별 국적(지역)별 체류외국인 현황
@@ -22,6 +23,7 @@ synonyms:
   - 단기체류외국인
   - 장기체류외국인
   - 외국국적동포
+summary_user: 단기체류외국인과 등록외국인·외국국적동포 거소신고자를 포함한 장기체류외국인, 즉 체류외국인 전체를 연·월과 국적(지역)별로 집계한 전국 단위 파일로, 시군구 등 지역 구분은 없다. 연구자나 정책 담당자가 특정 국적 체류외국인이 월별로 어떻게 늘고 줄었는지, 어느 나라 출신이 가장 많은지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 연·월과 국적(지역) 이름을 맞춰서만 연결하며, 같은 기관의 다른 출입국 통계와 시점·국적명 기준으로 비교한다.
 description_portal: 관광, 친지방문 등의 목적으로 입국하여 90일 이내에서 단기간 국내 체류하는 단기체류외국인 및 등록외국인과 외국국적동포 국내거소신고자를 포함하는 장기체류 외국인의 국적(지역)별 현황을 월별로 제공장단기체류외국인, 즉 체류외국인 전체의 국적(지역)별 현황입니다.원본 데이터는 출입국외국인정책본부 홈페이지의 통계월보에서 확인하실 수 있으며 경로는 아래와 같습니다.https://www.immigration.go.kr/immigration/1569/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjclMkY1OTU0MjYlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2
 applicable_legislation:
   - law: 출입국관리법
@@ -63,6 +65,7 @@ schema:
         unique: 12
     - name: 국적지역
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 한국계중국인
@@ -82,6 +85,12 @@ schema:
         p50: 155
         max: 647465
         unique: 3623
+  foreign_keys:
+    - fields:
+        - 국적지역
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -124,7 +133,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100013-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적지역)'
     evidence:
       - type: measured
         source: probe/stats/15100013.json
@@ -199,8 +208,6 @@ verification:
   run: probe/runs/15100013.json
   stats: probe/stats/15100013.json
   data: probe/data/15100013/
-status: active
-summary_user: 단기체류외국인과 등록외국인·외국국적동포 거소신고자를 포함한 장기체류외국인, 즉 체류외국인 전체를 연·월과 국적(지역)별로 집계한 전국 단위 파일로, 시군구 등 지역 구분은 없다. 연구자나 정책 담당자가 특정 국적 체류외국인이 월별로 어떻게 늘고 줄었는지, 어느 나라 출신이 가장 많은지를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 연·월과 국적(지역) 이름을 맞춰서만 연결하며, 같은 기관의 다른 출입국 통계와 시점·국적명 기준으로 비교한다.
 limits: 전국·비공간 집계라 시군구별 외국인 거주 분석에는 쓸 수 없고, 체류자격 구분 없이 국적(지역)별 인원만 담는다. 국적 코드가 없어 다른 데이터와 붙일 때 국적명 표기를 직접 맞춰야 한다.
 review:
   summary: draft
@@ -212,3 +219,4 @@ review:
     - c-15100013-03
     - c-15100013-04
   dropped_citations: 0
+status: active

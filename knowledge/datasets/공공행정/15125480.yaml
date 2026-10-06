@@ -1,4 +1,5 @@
-# Dataset 15125480 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125480 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125480'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 사업자의 예치금정보 제공 서비스
@@ -20,6 +21,7 @@ synonyms:
   - 공제조합 가입
   - 정보공개서
   - 가맹본부 신뢰도
+summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹점 사업자의 예치금 정보(예치금액 범위, 예치제도·보험·공제조합·채무보증계약 가입 여부)를 브랜드명·업종 분류와 함께 담은 전국 범위의 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드에 가맹금을 내면 예치나 보증보험으로 보호받는가"를 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 공정위 가맹정보 서비스(브랜드·가맹본부 정보)와 이어 쓰지만, 실측에서 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 description_portal: 브랜드 가맹점 사업자의 예치금에 대한 기준년도, 브랜드관리번호를 이용하여 브랜드명, 예치금액, 예치제도여부 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -81,6 +83,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100006
@@ -89,6 +92,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000001
@@ -174,12 +178,27 @@ schema:
         - (단위 :천원)
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -224,7 +243,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125480-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125480.json
@@ -289,8 +308,6 @@ verification:
   run: probe/runs/15125480.json
   stats: probe/stats/15125480.json
   data: probe/data/15125480/
-status: active
-summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹점 사업자의 예치금 정보(예치금액 범위, 예치제도·보험·공제조합·채무보증계약 가입 여부)를 브랜드명·업종 분류와 함께 담은 전국 범위의 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드에 가맹금을 내면 예치나 보증보험으로 보호받는가"를 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 공정위 가맹정보 서비스(브랜드·가맹본부 정보)와 이어 쓰지만, 실측에서 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 limits: 사업자등록번호 같은 전역 조인 키가 실측 컬럼에서 확인되지 않아, 공정위 외 데이터와 붙이려면 브랜드명·본부명 매핑이나 같은 기관 관리번호에 의존해야 한다. 조회 단위가 기준년도와 브랜드관리번호이므로 특정 브랜드의 관리번호를 먼저 알아야 하고, 공간 정보가 없어 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -303,3 +320,4 @@ review:
     - c-15125480-04
     - c-15125480-07
   dropped_citations: 0
+status: active

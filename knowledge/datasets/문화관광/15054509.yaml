@@ -1,4 +1,3 @@
-# Dataset 15054509 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15054509'
 tier: verified
 title: 울산시설공단_문수체육시설정보
@@ -22,6 +21,7 @@ synonyms:
   - 문수경기장
   - 울산 운동시설 주소
   - 체육시설 면적
+summary_user: 울산시설공단이 운영하는 문수체육시설의 시설별 연면적·부지면적·주요시설·주요기능·연락처·주소를 시설 한 곳당 한 행으로 담은 소규모 파일(csv, 약 1.4KB)입니다. 울산 시민이 문수 일대에서 어떤 체육시설이 어떤 기능을 하고 어디에 있으며 어디로 문의해야 하는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 체육시설 데이터와는 시설명이나 주소를 기준으로 맞춰 이어 쓴다.
 description_portal: 울산시설공단은 시민들의 건강한 여가 생활과 체육 활동을 지원하기 위해 운영 중인 문수체육시설에 대한 상세 정보를 데이터로 제공합니다. 이 데이터는 각 체육시설의 규모, 기능, 위치, 연락처 등을 항목별로 구체적으로 나누어 제공함으로써, 시민들이 시설을 보다 편리하게 이용할 수 있도록 돕는 것을 목적으로 합니다. 제공되는 항목에는 시설명, 연면적(㎡), 대지(부지)면적, 주요시설, 주요 기능, 연락처, 주소, 데이터 기준일자가 포함되어 있으며, 이를 통해 각 시설의 면적 규모와 주요 활용 목적, 위치 정보를 명확히 확인할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 문수축구경기장
@@ -107,12 +108,26 @@ schema:
         min: '2026-04-29'
         max: '2026-04-29'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -149,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15054509-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15054509.json
@@ -214,8 +229,6 @@ verification:
   run: probe/runs/15054509.json
   stats: probe/stats/15054509.json
   data: probe/data/15054509/
-status: active
-summary_user: 울산시설공단이 운영하는 문수체육시설의 시설별 연면적·부지면적·주요시설·주요기능·연락처·주소를 시설 한 곳당 한 행으로 담은 소규모 파일(csv, 약 1.4KB)입니다. 울산 시민이 문수 일대에서 어떤 체육시설이 어떤 기능을 하고 어디에 있으며 어디로 문의해야 하는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 체육시설 데이터와는 시설명이나 주소를 기준으로 맞춰 이어 쓴다.
 limits: 시설 코드 같은 공통 키가 없어 문체부 전국체육시설 DB 등과 연결하려면 시설명·주소를 직접 대조해야 합니다. 시설 현황만 담고 있어 예약·대관 가능 여부나 이용 프로그램은 알 수 없습니다.
 review:
   summary: draft
@@ -228,3 +241,4 @@ review:
     - c-15054509-04
     - c-15054509-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15043461 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15043461 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043461'
 tier: verified
 title: 금융위원회_신주인수권증권발행정보
@@ -25,6 +26,7 @@ synonyms:
   - 분리형 BW
   - 신주인수권 행사기간
   - 예탁결제원 증권정보
+summary_user: 신주인수권증권 종목별로 기준일자 단위의 기본정보(발행일·행사기간·행사가격·상장구분), 기초자산, 연관채권(발행일·만기일·표면금리·발행잔액·옵션 유형), 행사가격 변동 정보를 4개 조회 기능으로 나눠 담으며, 범위는 전국·비공간입니다. 투자자나 분석가가 특정 기업이 발행한 신주인수권의 행사가격과 행사 가능 기간, 연계된 채권의 조건을 확인해 자금조달 구조와 희석 가능성을 따질 때 쓴다. 법인등록번호(crno)와 종목코드(isinCd)가 실측 조인 키여서 같은 키를 쓰는 증권 시세·상장종목 원장, 기업 공시·재무 데이터와 이어 쓴다.
 description_portal: '신주인수권증권발행정보는 법인등록번호, 기준일자, 신주인수권 발행인명 등을 기준으로 신주인수권 관련 다양한 정보를 제공합니다.이 데이터는 4가지 오퍼레이션(조회기능)을 통해 다음과 같은 항목을 조회할 수 있습니다:1. 신주인수권증권기본정보: 종목코드, 발행일자, 행사기간, 행사가격, 상장구분 등2. 신주인수권증권기초자산정보: 기초자산 식별정보(ISIN, 종목코드), 액면가, 상장시장 등3. 신주인수권증권연관채권정보: 연관채권의 발행일, 만기일, 금리, 옵션 유형, 보증 여부, 상장일 등4. 신주인수권증권행사가격정보: 행사 적용일자 기준의 행사비율, 가격변동사유 등이 데이터는 신주인수권증권의 발행 및 행사 구조, 연계 채권과 기초자산의 특성을 파악하고, 투자 분석, 시장감시, 기업의 자금조달 수단 평가 등의 용도로 활용될 수 있습니다.※ 데이터 갱신주기는 일 1회입니다.※ 금융위원회의 모든 API는 데이터 보유기관으로부터 데이터를 연계받아 수집 후 개방하고 있습니다.금융위원회에서 제공하는 모든 서비스는 실시간이 아니며, 데이터 갱신은 기준일자로부터 영업일 하루 뒤 오후 1시 이후에 업데이트됩니다.예를 들어, 금요일 데이터는 차주 월요일에 제공됩니다. (월요일이 공휴일인 경우, 다음 영업일에 제공됩니다)** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
 team:
   dept: 금융공공데이터팀
@@ -239,6 +241,7 @@ schema:
     - name: itmsShrtnCd
       title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
       type: string
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - J00064217
@@ -394,6 +397,7 @@ schema:
     - name: itmsShrtnCd
       title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
       type: string
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - J00064217
@@ -543,6 +547,7 @@ schema:
     - name: itmsShrtnCd
       title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
       type: string
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - J00064217
@@ -878,6 +883,7 @@ schema:
     - name: itmsShrtnCd
       title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
       type: string
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - J09037215
@@ -975,12 +981,23 @@ schema:
       reference:
         key: stock_cd
       evidence: measured
+    - fields:
+        - itmsShrtnCd
+      reference:
+        key: stock_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - basDt
+    - basDt
+    - basDt
 cycle: default
 classification:
   subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
@@ -1025,7 +1042,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043461-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd)'
+    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd), stock_cd(itmsShrtnCd)'
     evidence:
       - type: measured
         source: probe/stats/15043461.json
@@ -1090,8 +1107,6 @@ verification:
   run: probe/runs/15043461.json
   stats: probe/stats/15043461.json
   data: probe/data/15043461/
-status: active
-summary_user: 신주인수권증권 종목별로 기준일자 단위의 기본정보(발행일·행사기간·행사가격·상장구분), 기초자산, 연관채권(발행일·만기일·표면금리·발행잔액·옵션 유형), 행사가격 변동 정보를 4개 조회 기능으로 나눠 담으며, 범위는 전국·비공간입니다. 투자자나 분석가가 특정 기업이 발행한 신주인수권의 행사가격과 행사 가능 기간, 연계된 채권의 조건을 확인해 자금조달 구조와 희석 가능성을 따질 때 쓴다. 법인등록번호(crno)와 종목코드(isinCd)가 실측 조인 키여서 같은 키를 쓰는 증권 시세·상장종목 원장, 기업 공시·재무 데이터와 이어 쓴다.
 limits: 데이터 보유기관에서 연계받아 개방하는 일 1회 갱신 자료로 실시간이 아니며, 기준일자 다음 영업일 오후 이후에 반영된다. 공공누리 2유형(출처표시·상업적 이용금지)이라 상업적 활용에는 한국예탁결제원과 별도 이용계약이 필요하고, 개발계정 호출은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -1104,3 +1119,4 @@ review:
     - c-15043461-04
     - c-15043461-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15086434 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15086434 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15086434'
 tier: verified
 title: 한국전기안전공사_긴급출동고충처리
@@ -24,6 +25,7 @@ synonyms:
   - 전기재해 예방 출동
   - 사회복지시설 전기점검
   - 전기설비 응급조치 건수
+summary_user: 한국전기안전공사가 취약계층 주거시설 등에 긴급출동해 전기설비 응급조치를 한 건수를 본사·사업소별, 연도별로 응급조치 대상(기초생활수급자, 차상위계층, 장애인, 국가유공자, 독립유공자, 5·18민주유공자, 사회복지시설, 취약시설, 임산부·다자녀)별로 집계한 전국 단위의 작은 파일(csv, 623바이트)이다. 복지·안전 분야 분석가가 '어느 사업소 관할에서 어떤 취약계층 대상 긴급출동이 많은가'를 비교하는 데 쓴다. 전역 조인 키가 없어 사업소 이름을 지역명으로 직접 매핑하거나 같은 기관의 다른 데이터와 이름으로만 연결한다.
 description_portal: 한국전기안전공사에서는 취약계층 주거시설 등에 전기설비 사용 중 고충발생 시 신속 출동하여 응급조치로 전기재해 예방 및 국민 불편을 해소시키기위해 긴급출동고충처리를 진행하고 있습니다.관련 법령은 전기안전관리법 제15조, 전기안전관리법 시행령 제8조에 해당됩니다.이 데이터는 긴급출동고충처리를 진행한 건수를 한국전기안전공사의 14개 본사 및 사업소별로 응급조치대상별(기초생활수급자, 차상위계층, 장애인, 국가유공자, 독립유공자, 518민주유공자, 사회복지시설, 취약시설) 진행한 건수를 제공합니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 사업소
       type: code
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - 서울
@@ -158,12 +161,22 @@ schema:
         p50: 0
         max: 2
         unique: 3
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: kesco_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -200,7 +213,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15086434-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kesco_office_cd(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15086434.json
@@ -265,8 +278,6 @@ verification:
   run: probe/runs/15086434.json
   stats: probe/stats/15086434.json
   data: probe/data/15086434/
-status: active
-summary_user: 한국전기안전공사가 취약계층 주거시설 등에 긴급출동해 전기설비 응급조치를 한 건수를 본사·사업소별, 연도별로 응급조치 대상(기초생활수급자, 차상위계층, 장애인, 국가유공자, 독립유공자, 5·18민주유공자, 사회복지시설, 취약시설, 임산부·다자녀)별로 집계한 전국 단위의 작은 파일(csv, 623바이트)이다. 복지·안전 분야 분석가가 '어느 사업소 관할에서 어떤 취약계층 대상 긴급출동이 많은가'를 비교하는 데 쓴다. 전역 조인 키가 없어 사업소 이름을 지역명으로 직접 매핑하거나 같은 기관의 다른 데이터와 이름으로만 연결한다.
 limits: 건별 출동 기록이 아니라 사업소·대상별 집계 건수라 개별 시설·주소나 출동 원인은 알 수 없다. 공간 좌표나 행정코드가 없는 비공간 데이터라 시군구 단위 결합에는 사업소명 수작업 매핑이 필요하다.
 review:
   summary: draft
@@ -278,3 +289,4 @@ review:
     - c-15086434-03
     - c-15086434-04
   dropped_citations: 0
+status: active

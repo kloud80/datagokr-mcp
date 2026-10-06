@@ -1,0 +1,339 @@
+# Dataset 15076820 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076820'
+tier: verified
+title: 한국도로공사_실시간 권역별 교통량
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076820/openapi.do
+synonyms:
+  - 고속도로
+  - 권역
+  - 교통량
+  - 도로이용현황
+  - 실시간데이터
+  - 출입구구분
+  - 차량종류
+  - 도로운영방식
+  - 고속도로 교통량
+  - 권역별 통행량
+  - 영업소 입출구 교통량
+  - 하이패스 교통량
+  - TCS 교통량
+  - 실시간 고속도로 통행량
+  - 도로공사 교통량 API
+summary_user: 전국 고속도로의 교통량을 권역 단위로 집계해 담으며, 도공·민자 구분, 입구·출구, TCS·하이패스, 폐쇄식·개방식 운영구분, 차종별로 나뉘고 1시간·15분·5분 단위로 집계된다. 분석가나 사업자가 '지금 특정 권역 고속도로 영업소로 드나드는 차량이 얼마나 되는가'를 보고 혼잡도를 판단하거나 상권·입지 분석의 교통량 입력값으로 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 권역명·권역코드(regionCode) 같은 이름·코드 매핑이나 한국도로공사의 다른 데이터셋 코드로만 이어 쓴다.
+description_portal: 본 데이터는 한국도로공사에서 관리하는 전국 고속도로의 권역별 교통량을 실시간으로 제공하는 자료이다.제공 항목에는 도공 및 민자도로 구분, 권역명, 입구·출구 구분, TCS 및 하이패스 구분, 교통량, 집계시간, 폐쇄식·개방식 운영구분, 차량종류 코드 등이 포함된다.자료는 1시간, 15분, 5분 단위로 수집·가공되어 제공되며, XML과 JSON 형식의 OpenAPI로 활용 가능하다.이 데이터는 특정 권역의 교통 혼잡도 파악, 도로 운영 효율성 분석, 요금소별 이용 현황 평가 등에 활용될 수 있다.또한 도로 이용 패턴 분석, 교통 예측 모델 개발, 정책 수립 등 다양한 공공·민간 분야에서 실시간 의사결정을 지원한다.정확하고 신속한 정보 제공을 통해 이용자 편의성을 높이고, 고속도로의 안전하고 원활한 운영에 기여한다.
+team:
+  dept: AI데이터처
+services:
+  - op: trafficRegion
+    name: trafficRegion
+    endpoint: https://data.ex.co.kr/openapi/trafficapi/trafficRegion
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tmType
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: exDivCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00'
+        - '10'
+        - '08'
+      stats:
+        min: 0
+        p50: 0
+        max: 18
+        unique: 7
+    - name: exDivName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 도공
+        - 민자
+      stats:
+        unique: 2
+    - name: openClType
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+      stats:
+        min: 0
+        p50: 0
+        max: 1
+        unique: 2
+    - name: openClName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 폐쇄식
+        - 개방식
+      stats:
+        unique: 2
+    - name: inoutType
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '0'
+      stats:
+        min: 0
+        p50: 1
+        max: 1
+        unique: 2
+    - name: inoutName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 출구
+        - 입구
+      stats:
+        unique: 2
+    - name: tmName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1시간
+      stats:
+        unique: 1
+    - name: tcsType
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+      stats:
+        min: 1
+        p50: 2
+        max: 2
+        unique: 2
+    - name: tcsName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - hi-pass
+        - TCS
+      stats:
+        unique: 2
+    - name: carType
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '6'
+      stats:
+        min: 1
+        p50: 3
+        max: 6
+        unique: 6
+    - name: trafficAmout
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '5'
+        - '1'
+      stats:
+        min: 1
+        p50: 187
+        max: 29609
+        unique: 315
+    - name: sumTm
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: sumDate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261006'
+      stats:
+        min: 20261006
+        p50: 20261006
+        max: 20261006
+        unique: 1
+    - name: regionCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '906'
+        - '901'
+        - '989'
+      stats:
+        min: 901
+        p50: 908
+        max: 989
+        unique: 15
+    - name: regionName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산경남본부
+        - 서울경기본부
+        - 수도권본부
+      stats:
+        unique: 15
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: traffic-volume
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.7009
+  rank_in_sector: 414
+  brm: 교통물류 - 도로
+  why: 전국 고속도로 권역별 실시간 교통량, 영업소 입출구 기반
+claims:
+  - id: c-15076820-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076820.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076820-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076820-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076820.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 16개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076820-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076820.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076820-06
+    kind: admin_note
+    value: "세부 부문 '교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)'의 가치: 조사지점·영업소 단위 교통량 = 상권·입지 분석의 표준 입력"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-volume
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076820-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076820-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076820.json
+  stats: probe/stats/15076820.json
+  data: probe/data/15076820/
+limits: 포털 활용신청과 별도로 외부 사이트(data.ex.co.kr)의 인증키를 받아 경로 파라미터로 넣어야 호출된다. 권역 단위 비공간 자료여서 좌표나 행정구역 코드로 지도·지역 통계와 바로 결합하지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076820-01
+    - c-15076820-03
+    - c-15076820-04
+    - c-15076820-06
+  dropped_citations: 0
+status: active

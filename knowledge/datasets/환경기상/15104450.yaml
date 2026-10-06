@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 관정번호
       type: number
+      semantic_type: gw_obs_well_no
       null_rate: 0.0
       sample_values:
         - '753444'
@@ -67,6 +68,7 @@ schema:
         unique: 3166
     - name: 허가신고번호
       type: string
+      semantic_type: gw_permit_no
       null_rate: 0.4833
       sample_values:
         - '4201300008'
@@ -240,6 +242,16 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - 관정번호
+      reference:
+        key: gw_obs_well_no
+      evidence: measured
+    - fields:
+        - 허가신고번호
+      reference:
+        key: gw_permit_no
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -258,6 +270,15 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1977-07-07 ~ 2026-07-24
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
+  time: day
+  time_fields:
+    - 설치일자
 cycle: default
 classification:
   subsector_name: 지하수 (관정·지하수 수위/수질·먹는샘물·약수터 수질검사)
@@ -298,7 +319,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15104450-03
     kind: key
-    value: '실측 조인 키: address(주소), coord(경도), coord(위도)'
+    value: '실측 조인 키: gw_obs_well_no(관정번호), gw_permit_no(허가신고번호), address(주소), coord(경도), coord(위도)'
     evidence:
       - type: measured
         source: probe/stats/15104450.json

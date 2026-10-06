@@ -1,0 +1,258 @@
+# Dataset 15152844 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15152844'
+tier: verified
+title: 경기도_임대주택 공급 및 재고 현황
+sector: 국토관리/주택/housing-supply
+domain: 국토관리/주택
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15152844/fileData.do
+synonyms:
+  - 임대주택
+  - 공급호수
+  - 재고호수
+  - 민간임대
+  - 공공임대
+  - 주택통계
+  - 경기도 임대주택 재고
+  - 공공임대 공급 호수
+  - 민간임대주택 현황
+  - 임대주택 통계
+  - 경기 임대주택 공급량
+  - 장기임대주택 재고
+summary_user: 경기도 내 자료 제공기관별로 임대주택을 공공·민간 구분과 임대 유형별로 나눠 연도별 공급 호수와 재고 호수를 담은 집계 자료다. 주택 정책 분석가나 연구자가 경기도에서 공공·민간 임대주택이 해마다 얼마나 공급되고 쌓여 있는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 주택 통계와는 기준연도(yr)와 제공기관명을 이름으로 맞춰 이어 써야 한다.
+description_portal: 경기도의 임대주택 공급 및 재고 현황입니다. 자료 제공기관별 임대주택 구분(공공/민간)별 공급 및 재고 호수 정보를 제공합니다.25년 10월 기준 국토교통부 통계누리에 공표된 가장 최신 통계인 2023년을 기준으로 제공하나, 제공기관별 보유 현황에 따라 기준연도가 다를 수 있으니 이용에 참고하시기 바랍니다.임대주택 공급 및 재고 호수관련 상세 문의는 제공기관의 주택관련 부서로 문의해주시기 바랍니다.LH(한국토지주택공사) 등 타기관이 보유한 자료는 미보유로 해당 수치는 제외되어 제공하며 [LH 청약플러스 - 청약 - 임대주택 검색]을 통해 시군구 단위의 임대주택 검색이 가능하니 참고해주시기바랍니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023'
+        - '2025'
+      stats:
+        min: 2023
+        p50: 2023
+        max: 2025
+        unique: 2
+    - name: provsn_inst_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 성남시
+        - 경기주택도시공사
+        - 이천시
+      stats:
+        unique: 22
+    - name: div
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 민간임대
+        - 공공임대
+      stats:
+        unique: 2
+    - name: rent_type_info
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 장기일반민간임대(건설)
+        - 장기일반민간임대(매입)
+        - 단기민간임대(건설)
+      stats:
+        unique: 36
+    - name: suply_lake_qty
+      type: number
+      null_rate: 0.0109
+      sample_values:
+        - '0.0'
+        - '15.0'
+        - '205.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 4332
+        unique: 35
+    - name: invt_lake_qty
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '4'
+      stats:
+        min: 0
+        p50: 269
+        max: 35474
+        unique: 79
+    - name: rm
+      type: code
+      null_rate: 0.8587
+      sample_values:
+        - 현재(25.10월)기준 데이터만 존재+공급호수와 재고호수 구분 불가로 두 값을 동일하게 기재
+        - 2023년 자료 부존재
+        - 재고호수 확인 불가
+      stats:
+        unique: 6
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공급·인허가·착공·준공·미분양·주택 현황
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3706
+  rank_in_sector: 1031
+  brm: 국토관리 - 지역및도시
+  sector_rule: land-restructure-주택
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15152844-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15152844.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15152844-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152844-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15152844.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152844-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15152844.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152844-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15152844-06
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15152844-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15152844.json
+  stats: probe/stats/15152844.json
+  data: probe/data/15152844/
+limits: 외부 사이트(data.gg.go.kr)의 별도 인증키가 필요하며 포털 활용신청과는 따로 발급받는다. 표준 행정코드 등 공통 조인 키가 없어 시군구 코드 기반 자료와 바로 결합할 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15152844-01
+    - c-15152844-03
+    - c-15152844-04
+  dropped_citations: 0
+status: active

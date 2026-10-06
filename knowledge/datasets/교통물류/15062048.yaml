@@ -1,0 +1,256 @@
+# Dataset 15062048 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15062048'
+tier: verified
+title: 한국도로공사_공간정보노선현황
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15062048/openapi.do
+synonyms:
+  - 고속도로
+  - 위치정보
+  - 노선데이터
+  - 좌표
+  - 도로망
+  - 공간데이터
+  - 경로정보
+  - 교통시스템
+  - 고속도로 노선 목록
+  - 고속도로 노선번호
+  - 고속도로 총연장
+  - 노선코드
+  - 도로망 공간정보
+  - 고속도로 시점 종점
+summary_user: 한국도로공사가 관리하는 고속도로 노선별 공간정보를 노선 단위로 담으며, 노선번호·노선코드·노선명과 시점·종점 거리, 총연장, 사용 여부를 전국 범위로 제공한다. 내비게이션·GIS 개발자나 교통 분석가가 '이 고속도로 노선의 시점·종점과 총연장은 얼마인가'를 확인하고 노선 목록을 정리하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 노선명·노선번호 매핑이나 같은 한국도로공사 노선코드(routeCd)로만 연결하며, 표준노드링크(link_id·node_id)와 바로 맞물리지 않는다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 노선의 공간정보를 OpenAPI 형식으로 제공하는 서비스이다.XML 및 JSON 형식으로 제공되며, 시작점, 종점, 주요 경유지의 좌표 등 기본 위치 정보가 포함된다.이 데이터는 위치 기반 서비스, 도로 관리 시스템, 교통 인프라 분석 등에 활용할 수 있다.구조화된 정보로 공간정보 시스템 연계 및 응용 서비스 개발에 적합하다.API는 실시간 접근이 가능하며, 민간 및 공공 부문에서 활용도가 높다.또한 GIS 시스템, 교통 연구, 내비게이션 등에 기여할 수 있다.서비스 이용을 위해서는 공공데이터 포털을 통해 인증키를 발급받아야 한다.정확한 노선 정보를 제공하여 교통 데이터 활용성과 정밀도를 높인다.
+team:
+  dept: AI데이터처
+services:
+  - op: spinRouteList
+    name: spinRouteList
+    endpoint: https://data.ex.co.kr/openapi/roadEtcInfo/spinRouteList
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: routeNo
+      type: number
+      null_rate: 0.0168
+      sample_values:
+        - '100'
+        - '65'
+        - '30'
+      stats:
+        min: 1
+        p50: 52
+        max: 993
+        unique: 52
+    - name: routeCd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6120'
+        - '2550'
+        - '0010'
+      stats:
+        min: 10
+        p50: 552
+        max: 9990
+        unique: 119
+    - name: routeNm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (조회용)88올림픽선
+        - 강진광주선
+        - 경부선
+      stats:
+        unique: 119
+    - name: stptDstnc
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0000'
+        - '4.1600'
+        - '83.2500'
+      stats:
+        min: 0
+        p50: 0
+        max: 326.0899
+        unique: 34
+    - name: edpntDstnc
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0000'
+        - '60.9800'
+        - '234.4000'
+      stats:
+        min: 0
+        p50: 61.36
+        max: 416.05
+        unique: 97
+    - name: totExtnsDstne
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.000'
+        - '79.420'
+        - '17.420'
+      stats:
+        min: 0
+        p50: 44.6
+        max: 418.33
+        unique: 108
+    - name: useYn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6994
+  rank_in_sector: 420
+  brm: 교통물류 - 도로
+  why: 고속도로 노선 공간정보, 도로망 기초자료
+claims:
+  - id: c-15062048-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15062048.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15062048-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15062048-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15062048.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15062048-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15062048.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15062048-06
+    kind: admin_note
+    value: "세부 부문 '도로망·표준노드링크 (노드·링크·도로명·노선번호·도로중심선·도로대장)'의 가치: 표준노드링크(link_id·node_id)는 교통 데이터 전체의 공간 기준 — 국토부 ITS 센터가 SHP로 주기 배포(파일인 마스터)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-network
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15062048-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15062048-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15062048.json
+  stats: probe/stats/15062048.json
+  data: probe/data/15062048/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr)에서 발급한 인증키를 경로 파라미터로 넣어야 호출된다. 국토부 표준노드링크 같은 공통 공간 키가 없으므로, 링크 단위 교통 데이터와 결합하려면 노선명·노선번호를 따로 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15062048-01
+    - c-15062048-03
+    - c-15062048-04
+    - c-15062048-06
+  dropped_citations: 0
+status: active

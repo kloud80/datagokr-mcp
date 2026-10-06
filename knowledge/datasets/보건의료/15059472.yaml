@@ -1,0 +1,206 @@
+# Dataset 15059472 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15059472'
+tier: verified
+title: 경기도_정신의료기관별 입원 진료실인원 집계현황
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15059472/openapi.do
+synonyms:
+  - 정신의료
+  - 건강보험
+  - 입원진료
+  - 의료기관종
+  - 병원통계
+  - 의료이용
+  - 정신과 입원환자 수
+  - 정신의료기관 입원 통계
+  - 건강보험 입원 실인원
+  - 정신병원 입원 현황
+  - 경기도 정신건강 통계
+  - 의료기관 종별 입원인원
+summary_user: 국민건강보험공단 자료를 바탕으로 경기도 내 정신의료기관의 건강보험 입원 진료실인원을 기준년도와 의료기관 종별(상급종합병원·병원·의원 등)로 집계한 시도 단위 통계입니다. 정신질환 입원 진료가 어떤 종류의 의료기관에서 몇 명 규모로 이뤄졌는지 연도별로 보려는 보건정책 담당자나 연구자에게 쓰입니다. 실측 컬럼에는 전역 조인 키가 없어서, 다른 통계와는 기준년도와 의료기관종별명(MEDINST_ASORTMT_NM)을 이름으로 맞춰 이어 써야 합니다.
+description_portal: 본 데이터는 국민건강보험공단에서 제공한 경기도 내 정신의료기관별 건강보험 입원진료실 인원 현황으로, 병원, 상급종합병원, 의원 등 의료기관 종류별로 입원진료실을 이용한 건강보험 가입자 수를 연도별로 집계한 통계입니다.항목은 ‘기준년도’, ‘의료기관종별명’, ‘건강보험입원진료실인원수(명)’로 구성되어 있으며, 정신질환자들의 입원 형태와 의료기관별 서비스 이용 실태를 파악하는 데 활용됩니다* 2016년 자료는 2017년 6월 청구분까지 반영※ 국민건강보험공단의 연구 종료로 인하여 집계가 중단된 데이터입니다(향후 연구 재개 시 갱신도 재개될 수 있음).
+team:
+  dept: AI미래행정과
+services:
+  - op: Ggmindmedinsthosptlz
+    name: Ggmindmedinsthosptlz
+    endpoint: https://openapi.gg.go.kr/Ggmindmedinsthosptlz
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: STD_YY
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2016'
+      stats:
+        min: 2016
+        p50: 2016
+        max: 2016
+        unique: 1
+    - name: MEDINST_ASORTMT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 상급종합병원
+        - 종합병원
+        - 병원
+      stats:
+        unique: 5
+    - name: HTIR_HOSPTLZ_TREAT_RL_PSN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '199'
+        - '350'
+        - '2443'
+      stats:
+        min: 199
+        p50: 580
+        max: 2443
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5281
+  brm: 보건의료 - 보건의료
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15059472-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15059472.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15059472-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059472-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059472.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059472-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059472.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059472-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059472-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059472-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15059472.json
+  stats: probe/stats/15059472.json
+  data: probe/data/15059472/
+limits: 개별 의료기관이나 시군 단위로는 나뉘지 않고, 경기도 전체의 종별 합계만 담습니다. 포털 설명상 공단 연구가 끝나 집계가 중단된 데이터이며, 2016년 값은 2017년 6월 청구분까지만 반영됩니다. 호출에는 포털 활용신청과 별도로 경기데이터드림(data.gg.go.kr)에서 발급한 인증키(KEY)가 필요합니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15059472-01
+    - c-15059472-03
+    - c-15059472-04
+  dropped_citations: 0
+status: active

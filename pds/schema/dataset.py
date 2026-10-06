@@ -125,6 +125,23 @@ class Coverage(Strict):
     temporal: str | None = None
 
 
+SPACE_LEVELS = ("point", "parcel", "bjd", "emd", "sgg", "sido", "national")   # 세밀 → 거침 (느슨한 조인은 둘 중 거친 쪽으로 맞춘다)
+TIME_LEVELS = ("realtime", "day", "month", "quarter", "year")
+
+
+class Grain(Strict):
+    """데이터의 단위 — 느슨한 조인(정렬 조인)의 근거. gen_dataset이 실측 필드·셀 통계로 채운다 (KNOWLEDGE-SPEC 느슨한 조인).
+    공간: point 좌표 · parcel 필지(PNU) · bjd 법정동 · emd 읍면동 · sgg 시군구 · sido 시도 · national 전국 1행
+    시간: realtime·day·month·quarter·year (시점 열이 있을 때) · 분류: 업종·품목 코드표 id (예: ksic, hs_cd)"""
+    space: Literal["point", "parcel", "bjd", "emd", "sgg", "sido", "national"] | None = None
+    space_fields: list[str] = Field(default_factory=list)
+    space_via: str | None = Field(None, description="공간 단위를 얻는 방법: code(코드 열) · name(행정구역 이름, R-14) · address(주소, R-13) · coord(좌표, R-12)")
+    time: Literal["realtime", "day", "month", "quarter", "year"] | None = None
+    time_fields: list[str] = Field(default_factory=list)
+    category: list[str] = Field(default_factory=list, description="분류 축 (업종 ksic · 품목 hs_cd …)")
+    category_fields: list[str] = Field(default_factory=list)
+
+
 class Verification(Strict):
     verdict: str
     probed_at: dt.date | None = None
@@ -181,6 +198,7 @@ class Dataset(Strict):
     schema_: TableSchema = Field(default_factory=TableSchema, alias="schema")
     facets: dict[str, list[str]] = Field(default_factory=dict)
     coverage: Coverage | None = None
+    grain: Grain | None = None
     cycle: Literal["default", "event", "annual-batch", "realtime", "ended"] = "default"
     classification: Classification | None = None
     claims: list[Claim] = Field(default_factory=list)

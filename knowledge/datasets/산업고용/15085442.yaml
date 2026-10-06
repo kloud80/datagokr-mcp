@@ -1,4 +1,5 @@
-# Dataset 15085442 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085442 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085442'
 tier: verified
 title: 한국수력원자력(주)_사용후핵연료 운반 현황
@@ -21,6 +22,7 @@ synonyms:
   - 핵연료 운반량
   - 경수로 중수로 사용후연료
   - 원전본부별 사용후핵연료
+summary_user: 한국수력원자력 원전본부별로 본부 내 발전소 사이에서 옮긴 사용후핵연료 운반수량을 원자로 구분(경수로·중수로)과 기준일과 함께 담은 집계 파일로, 내려받은 CSV는 325바이트 크기의 소규모 표다. 원전 지역 주민이나 분석가가 어느 원전본부에서 사용후핵연료를 얼마나 옮겼는지, 경수로와 중수로 사이에 차이가 있는지 확인하는 데 쓴다. 전역 조인 키가 없어서 다른 원전·방사성폐기물 데이터와는 원전본부 이름을 맞추거나 같은 기관 데이터끼리만 이어 쓴다.
 description_portal: 한국수력원자력㈜ 원전 본부별 사용후핵연료 운반 현황을 분기별로 업데이트하여 공개합니다. 공개 정보는 원자로 구분(경수로/중수로), 원전본부, 운반수량, 기준일 항목으로 구성되어 있습니다.사용후핵연료는 원자력 발전소 밖으로 운반된 후, 중간저장 시설을 거친 후 영구처분을 위해 원자력 발전소 내 임시저장 시설에서 외부로 사용후핵연료를 운반하는 과정이 필요하며, 본 정보는 원전본부 내 발전소간 운반 현황입니다. 운반을 수행하는 시점은 발전소가 포화되기 전이며 연료를 재장전하는데 충분한 여유 저장량을 확보하기 위해 필요한 양만 운반을 수행합니다. 물론 경우에 따라 운반용기 유지 보수, 정기 검사, 발전소 계획예방정비 등의 일정을 모두 고려하여 운반시기와 운반수량은 변경될 수 있습니다. 사용후핵연료는 원자로에서 핵연료 주기를 거치고 방출된 핵연료로써 방사능이 남아있는 연료입니다. 그냥 버리면 고준위 방사성 폐기물이지만 사용후핵연료에는 여전히 우라늄 자원이 남아 있기 때문에 재처리를 하면 핵연료로 재사용 할 수 있으며 산업 및 의료용으로 사용하는 희토류 자원도 회수 할 수 있게됩니다. 보는 시각에 따라 사용후핵연료는 골칫덩이가 될 수 있지만 한편으론 귀중한 자원이 될 수 있습니다.
 legal_basis_portal: 공공행정업무
 accrual_periodicity: 분기
@@ -43,6 +45,7 @@ schema:
         unique: 2
     - name: 원전본부
       type: code
+      semantic_type: khnp_site
       null_rate: 0.0
       sample_values:
         - 월성원자력본부
@@ -70,12 +73,22 @@ schema:
         min: '2026-06-30'
         max: '2026-06-30'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 원전본부
+      reference:
+        key: khnp_site
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준일
 cycle: default
 classification:
   subsector_name: 방사성폐기물 (반입·인수·처분·저장 현황)
@@ -113,7 +126,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085442-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_site(원전본부)'
     evidence:
       - type: measured
         source: probe/stats/15085442.json
@@ -177,8 +190,6 @@ verification:
   run: probe/runs/15085442.json
   stats: probe/stats/15085442.json
   data: probe/data/15085442/
-status: active
-summary_user: 한국수력원자력 원전본부별로 본부 내 발전소 사이에서 옮긴 사용후핵연료 운반수량을 원자로 구분(경수로·중수로)과 기준일과 함께 담은 집계 파일로, 내려받은 CSV는 325바이트 크기의 소규모 표다. 원전 지역 주민이나 분석가가 어느 원전본부에서 사용후핵연료를 얼마나 옮겼는지, 경수로와 중수로 사이에 차이가 있는지 확인하는 데 쓴다. 전역 조인 키가 없어서 다른 원전·방사성폐기물 데이터와는 원전본부 이름을 맞추거나 같은 기관 데이터끼리만 이어 쓴다.
 limits: 원전본부 안의 발전소 사이 운반 현황만 담고, 발전소 밖 중간저장·처분 시설로 옮긴 실적은 없다. 원전본부 이름 외에 표준 코드가 없어 다른 데이터와 붙일 때는 이름을 직접 맞춰야 한다.
 review:
   summary: draft
@@ -190,3 +201,4 @@ review:
     - c-15085442-03
     - c-15085442-04
   dropped_citations: 0
+status: active

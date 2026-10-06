@@ -1,4 +1,5 @@
-# Dataset 15069852 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069852 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069852'
 tier: verified
 title: 해양환경공단_해양환경측정망(CTD)_하천영향 및 반폐쇄성해역
@@ -25,6 +26,7 @@ synonyms:
   - 내만 수질
   - 해양환경측정망 정점
   - 염분 프로파일
+summary_user: 해양환경공단 해양환경측정망 가운데 하천영향 및 반폐쇄성 해역의 정점별 CTD 조사자료로, 생태구·정점·관측년월·수심마다 수온과 염분 측정값을 담은 건별 관측 파일(CSV 약 191KB)이다. 연구자나 지자체 담당자가 "하천이 흘러드는 내만 정점에서 계절에 따라 수온·염분의 수직분포가 어떻게 달라지는가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 해양수질 측정망 자료와는 정점명·생태구명과 관측년월을 이름으로 맞춰 이어 쓴다.
 description_portal: 해양환경공단이 운영하는 해양환경측정망 중 하천영향 및 반폐쇄성 해역을 대상으로 한 CTD 조사자료를 제공합니다. 본 데이터는 수온, 염분, 수심 등 수질 수직분포 특성을 포함하며, 하천 유입 및 해수 순환이 제한된 해역의 해양환경 상태를 정밀하게 파악하기 위해 활용됩니다. 조사는 정점별로 수심에 따라 CTD 센서를 활용하여 수행되며, 수질 변화의 계절성, 공간적 차이, 오염 특성 등을 분석할 수 있습니다. 데이터는 조사해역, 조사정점, 항목별 측정값, 조사시기 등으로 구성되며, 공공기관, 연구기관, 지자체 등에서 해역 수질평가, 장기변화 분석, 환경영향검토 등의 기초자료로 활용됩니다.
 applicable_legislation:
   - law: 해양환경관리법
@@ -51,6 +53,7 @@ schema:
         unique: 4
     - name: 정점명
       type: string
+      semantic_type: meis_stnpnt_cd
       null_rate: 0.0
       sample_values:
         - 아산3
@@ -116,12 +119,22 @@ schema:
         p50: 31.455
         max: 34.59
         unique: 932
+  foreign_keys:
+    - fields:
+        - 정점명
+      reference:
+        key: meis_stnpnt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 관측년도
 cycle: default
 classification:
   subsector_name: 해양 수질 측정 (해양수질자동측정망·해양환경측정망 실시간)
@@ -158,7 +171,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069852-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meis_stnpnt_cd(정점명)'
     evidence:
       - type: measured
         source: probe/stats/15069852.json
@@ -222,8 +235,6 @@ verification:
   run: probe/runs/15069852.json
   stats: probe/stats/15069852.json
   data: probe/data/15069852/
-status: active
-summary_user: 해양환경공단 해양환경측정망 가운데 하천영향 및 반폐쇄성 해역의 정점별 CTD 조사자료로, 생태구·정점·관측년월·수심마다 수온과 염분 측정값을 담은 건별 관측 파일(CSV 약 191KB)이다. 연구자나 지자체 담당자가 "하천이 흘러드는 내만 정점에서 계절에 따라 수온·염분의 수직분포가 어떻게 달라지는가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 해양수질 측정망 자료와는 정점명·생태구명과 관측년월을 이름으로 맞춰 이어 쓴다.
 limits: 표준 정점 코드나 좌표 같은 전역 조인 키가 없어 다른 데이터와는 정점·해역 이름 매핑으로만 연결된다. 측정 항목은 수심별 수온·염분뿐이라 영양염·용존산소 같은 오염 지표는 이 파일로 볼 수 없고, 관측 시점도 연·월 단위까지만 있다.
 review:
   summary: draft
@@ -235,3 +246,4 @@ review:
     - c-15069852-03
     - c-15069852-04
   dropped_citations: 0
+status: active

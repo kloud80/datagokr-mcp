@@ -1,4 +1,5 @@
-# Dataset 15125496 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125496 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125496'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 관리 감독 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 관리감독
   - 브랜드 가맹점 점검 빈도
   - 프랜차이즈 정보공개
+summary_user: 가맹본부가 정보공개서에 밝힌 브랜드별 가맹점 관리·감독 내용을 기준년도와 브랜드관리번호 단위로 담으며, 감독 항목명·절차·빈도와 시기·담당팀이 항목별 행으로 나온다. 창업 예정자나 분석가가 "이 브랜드 본부는 가맹점을 어떤 항목으로, 얼마나 자주, 어느 팀이 점검하나"를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 같은 기관의 다른 가맹정보 데이터와는 브랜드관리번호(brandMnno)·가맹본부관리번호 같은 기관 내부 번호로만 잇고 사업자등록번호 기반 연계는 되지 않는다.
 description_portal: 브랜드 가맹점 관리 감독에 대한 기준년도, 브랜드관리번호를 이용하여 관리감독항목명, 관리감독절차 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -142,12 +146,27 @@ schema:
         - 가맹사업팀
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -192,7 +211,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125496-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125496.json
@@ -257,8 +276,6 @@ verification:
   run: probe/runs/15125496.json
   stats: probe/stats/15125496.json
   data: probe/data/15125496/
-status: active
-summary_user: 가맹본부가 정보공개서에 밝힌 브랜드별 가맹점 관리·감독 내용을 기준년도와 브랜드관리번호 단위로 담으며, 감독 항목명·절차·빈도와 시기·담당팀이 항목별 행으로 나온다. 창업 예정자나 분석가가 "이 브랜드 본부는 가맹점을 어떤 항목으로, 얼마나 자주, 어느 팀이 점검하나"를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 같은 기관의 다른 가맹정보 데이터와는 브랜드관리번호(brandMnno)·가맹본부관리번호 같은 기관 내부 번호로만 잇고 사업자등록번호 기반 연계는 되지 않는다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 없어 다른 기관 데이터와 직접 조인할 수 없고, 이름 매핑이나 공정위 내부 관리번호로만 연결된다. 전국 단위 비공간 데이터라 지역별 분석에는 맞지 않는다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -271,3 +288,4 @@ review:
     - c-15125496-04
     - c-15125496-07
   dropped_citations: 0
+status: active

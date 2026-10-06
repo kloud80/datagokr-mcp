@@ -1,4 +1,5 @@
-# Dataset 15087954 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15087954 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087954'
 tier: verified
 title: 한국전기안전공사_사용전검사 사업소별 실시현황
@@ -25,6 +26,7 @@ synonyms:
   - 사업용 전기설비 검사
   - 전기설비 준공검사
   - 판정보류 임시사용
+summary_user: 한국전기안전공사가 위탁 수행한 2024년 사용전검사 실적을 전국 60개 사업소별로 합격·불합격·임시사용·판정보류 건수로 집계한 파일(csv, 약 1.9KB)이다. 전기설비 설치·변경공사 뒤 받는 사용전검사의 판정 결과가 지역 사업소마다 어떻게 다른지, 예컨대 어느 사업소의 불합격이나 판정보류 비중이 높은지를 살피는 분석가나 사업자가 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업소 이름을 매핑하거나 같은 기관(한국전기안전공사)의 다른 사업소별 통계와 이름으로 맞춰 잇는다.
 description_portal: '한국전기안전공사에서는 각종 발전설비, 송전·변전·배전설비 등 사업용 전기설비 및 아파트, 공장, 상가 등 자가용 전기설비의 설치공사 또는 변경공사를 완료하고, 그 전기설비가 공사계획의 인가 또는 신고를 한 내용 및 전기설비기술기준에 적합한 지의 여부에 대한 검사를 산업통상자원부장관 또는 시·도지사로부터 위탁받아 업무를 수행하고 있습니다.관련근거는 사업용 사용전검사 : 전기사업법 제 63조, 제98조제2항, 같은법 시행규칙 제31조, 자가용 사용전검사 : 전기안전관리법 제9조, 제43조제2항, 같은 법 시행규칙 제6조 가 해당됩니다.이 데이터는 2024년 사용전검사 실시한 내역을 한국전기안전공사의 사업소 60개소로 나눠서 합격, 불합격, 임시사용, 판정보류로 확인 할 수 있는 데이터입니다.'
 accrual_periodicity: 연간
 team:
@@ -48,6 +50,7 @@ schema:
         unique: 1
     - name: 사업소 명
       type: string
+      semantic_type: kesco_office_cd
       null_rate: 0.0
       sample_values:
         - 강원남부지사
@@ -103,12 +106,22 @@ schema:
         p50: 0
         max: 2
         unique: 3
+  foreign_keys:
+    - fields:
+        - 사업소 명
+      reference:
+        key: kesco_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -145,7 +158,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15087954-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kesco_office_cd(사업소 명)'
     evidence:
       - type: measured
         source: probe/stats/15087954.json
@@ -210,8 +223,6 @@ verification:
   run: probe/runs/15087954.json
   stats: probe/stats/15087954.json
   data: probe/data/15087954/
-status: active
-summary_user: 한국전기안전공사가 위탁 수행한 2024년 사용전검사 실적을 전국 60개 사업소별로 합격·불합격·임시사용·판정보류 건수로 집계한 파일(csv, 약 1.9KB)이다. 전기설비 설치·변경공사 뒤 받는 사용전검사의 판정 결과가 지역 사업소마다 어떻게 다른지, 예컨대 어느 사업소의 불합격이나 판정보류 비중이 높은지를 살피는 분석가나 사업자가 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업소 이름을 매핑하거나 같은 기관(한국전기안전공사)의 다른 사업소별 통계와 이름으로 맞춰 잇는다.
 limits: 사업소 단위 건수 집계라 개별 전기설비나 검사 건별 내역, 시설 고유번호 단위의 원장 조회에는 쓸 수 없다. 표준 행정코드 같은 조인 키가 없어 지역 통계와 연결하려면 사업소명을 직접 매핑해야 하고, 공간 정보도 없다.
 review:
   summary: draft
@@ -223,3 +234,4 @@ review:
     - c-15087954-03
     - c-15087954-04
   dropped_citations: 0
+status: active

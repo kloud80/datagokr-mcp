@@ -46,6 +46,7 @@ schema:
   fields:
     - name: UFID
       type: number
+      semantic_type: gis_bldg_ufid
       null_rate: 0.0
       sample_values:
         - '1963251967542643020600000000'
@@ -209,6 +210,7 @@ schema:
         unique: 3501
     - name: BLDRGST_PK
       type: number
+      semantic_type: bldg_register_pk
       null_rate: 0.5961
       sample_values:
         - '100184565'
@@ -330,13 +332,28 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - UFID
+      reference:
+        key: gis_bldg_ufid
+      evidence: measured
+    - fields:
         - PNU
       reference:
         key: pnu
       evidence: measured
+    - fields:
+        - BLDRGST_PK
+      reference:
+        key: bldg_register_pk
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: parcel
+  space_fields:
+    - PNU
+  space_via: code
 cycle: default
 classification:
   subsector_name: 건축물대장 (표제부·총괄·전유·폐쇄말소, GIS건물통합)
@@ -378,7 +395,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15146873-03
     kind: key
-    value: '실측 조인 키: pnu(PNU)'
+    value: '실측 조인 키: gis_bldg_ufid(UFID), pnu(PNU), bldg_register_pk(BLDRGST_PK)'
     evidence:
       - type: measured
         source: probe/stats/15146873.json

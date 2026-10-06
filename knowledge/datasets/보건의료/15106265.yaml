@@ -1,4 +1,5 @@
-# Dataset 15106265 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15106265 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106265'
 tier: verified
 title: 국민건강보험공단_수가코드별 진료현황
@@ -21,6 +22,7 @@ synonyms:
   - 상급종합병원 진료건수
   - 성별 연령별 진료현황
   - 건강보험 급여실적
+summary_user: 건강보험 급여실적 중 특정 암·심혈관·뇌혈관 질병코드와 지정 행위코드(상급종합병원 20개, 상급종합병원+종합병원 86개)에 대해 진료년도·성별·연령별 환자수와 진료건수를 담은 전국 단위 집계 파일이다. 특정 수가코드 진료가 연령·성별로 몇 명, 몇 건 이루어졌는지 보려는 분석가나 의료 정책 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 수가코드(구분)나 질병코드 이름·코드를 매핑해서만 이어 쓴다.
 description_portal: '1. 수진기준(한의분류 제외, 약국 제외), 연령(연말기준)2. 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외  - 2024년까지의 진료내역으로, 청구는 2025년 6월 지급분까지 반영3. 아래 질병통계 자료는 요양기관에서 환자진료중 진단명이 확정되지 않은 상태에서의 호소, 증세 등에 따라   일차진단명을 부여하고 청구한 내역중 주진단명 기준으로 발췌한 것이므로 최종확정된 질병과는 다를수 있음      -질병코드: C00-C26, C30-C41, C43-C58, C60-C97, D45, D46, I00-I02, I05-I09, I20-I28, I30-I52, I60-I69(3자리 소분류코드로만 발췌 가능하여 D47.1, D47.3, D47.4, D47.5, B37.6, A39.5는 제외)    -행위코드: 1) 상급종합병원 (20개) / 2) 상급종합병원 + 종합병원 (86개) : 첨부파일 참조※ 5인 미만인 경우 개인정보 보호를 위해 비식별 처리 "*" 하여 제공'
 accrual_periodicity: 연간
 team:
@@ -96,6 +98,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -197,8 +203,6 @@ verification:
   run: probe/runs/15106265.json
   stats: probe/stats/15106265.json
   data: probe/data/15106265/
-status: active
-summary_user: 건강보험 급여실적 중 특정 암·심혈관·뇌혈관 질병코드와 지정 행위코드(상급종합병원 20개, 상급종합병원+종합병원 86개)에 대해 진료년도·성별·연령별 환자수와 진료건수를 담은 전국 단위 집계 파일이다. 특정 수가코드 진료가 연령·성별로 몇 명, 몇 건 이루어졌는지 보려는 분석가나 의료 정책 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 수가코드(구분)나 질병코드 이름·코드를 매핑해서만 이어 쓴다.
 limits: 요양기관·지역별 구분이 없는 전국 집계라 기관·지역 단위 분석에는 쓰지 못한다. 조인 키가 없어 EDI 행위코드나 KCD 마스터와는 코드·이름을 직접 매핑해야 한다. 포털 설명에 따르면 주진단명 기준이라 확정 질병과 다를 수 있고, 5명 미만은 '*'로 비식별 처리되어 있다.
 review:
   summary: draft
@@ -210,3 +214,4 @@ review:
     - c-15106265-04
     - c-15106265-01
   dropped_citations: 0
+status: active

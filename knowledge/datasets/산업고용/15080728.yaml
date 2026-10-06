@@ -1,4 +1,5 @@
-# Dataset 15080728 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15080728 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080728'
 tier: verified
 title: 한국전력거래소_경주시 풍력 발전량
@@ -21,6 +22,7 @@ synonyms:
   - 시간별 발전량
   - 전력거래소 발전량
   - 재생에너지 경북
+summary_user: 경주시에 있는 풍력발전기 중 전력시장에 참여하는 사업자의 발전량 합계(MWh)를 거래일자·시간별로 담은 집계 파일이며, 포털 설명상 기간은 2015년부터 2021년 2월까지입니다. 에너지 분석가나 지자체 담당자가 경주 지역 풍력 발전량이 계절·시간대별로 어떻게 달라졌는지 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력거래소 발전량 자료와는 거래일자·시간·지역명·연료원 이름을 맞춰 붙여야 한다.
 description_portal: ㅇ 한국전력거래소는 전력을 생산하는 발전사업자, 전력을 수요지까지 전달하는 송배전사업자, 전력을 구매하여 판매하는 판매사업자, 전력을 사용하는 소비자 등으로 구성되는 전력시장에서 전력의 판매 및 구매 활동을 실시간으로 운영, 감시하는 "전력시장 운영 업무"와 전력 수요에 맞춰 전력 생산량을 결정하고 이를 안정적으로 수요지에 공급되도록 하는 "전력계통 운영 업무"등을 전담하고 있습니다.ㅇ 해당목록은 2015~2021년 2월까지의 경주시 풍력발전기 발전량 합계 자료입니다.ㅇ 해당 자료는 전력시장에 참여하고 있는 사업자만 포함한 자료로, 경주시 전체 풍력발전기 발전량을 의미하지 않습니다.ㅇ 또한 값이 수정정산 등에 의해 변동될 수 있습니다.ㅇ 해당 자료는 공공기관의 정보공개에 관한 법률 제9조에 따라 발전기 보유 법인의 권리를 침해하지 않는 범위에서 공개 가능합니다.
 applicable_legislation:
   - law: 전기사업법
@@ -68,6 +70,7 @@ schema:
         unique: 1
     - name: 연료원
       type: code
+      semantic_type: kpx_fuel_type
       null_rate: 0.0
       sample_values:
         - 풍력
@@ -85,12 +88,22 @@ schema:
         p50: 5.825294
         max: 55.375066
         unique: 47058
+  foreign_keys:
+    - fields:
+        - 연료원
+      reference:
+        key: kpx_fuel_type
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 거래일자
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -127,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080728-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_fuel_type(연료원)'
     evidence:
       - type: measured
         source: probe/stats/15080728.json
@@ -202,8 +215,6 @@ verification:
   run: probe/runs/15080728.json
   stats: probe/stats/15080728.json
   data: probe/data/15080728/
-status: active
-summary_user: 경주시에 있는 풍력발전기 중 전력시장에 참여하는 사업자의 발전량 합계(MWh)를 거래일자·시간별로 담은 집계 파일이며, 포털 설명상 기간은 2015년부터 2021년 2월까지입니다. 에너지 분석가나 지자체 담당자가 경주 지역 풍력 발전량이 계절·시간대별로 어떻게 달라졌는지 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력거래소 발전량 자료와는 거래일자·시간·지역명·연료원 이름을 맞춰 붙여야 한다.
 limits: 전력시장 참여 사업자만 포함하므로 경주시 전체 풍력 발전량이 아니며, 수정정산 등으로 값이 바뀔 수 있다. 2021년 2월 이후 자료는 이 파일에 없어 현재 수급 판단에는 쓰지 못한다. 법정동·행정코드 같은 공통 키가 없어 이름 기준 매칭이 필요하다.
 review:
   summary: draft
@@ -215,3 +226,4 @@ review:
     - c-15080728-03
     - c-15080728-04
   dropped_citations: 0
+status: active

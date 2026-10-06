@@ -1,4 +1,5 @@
-# Dataset 15044220 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044220 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044220'
 tier: verified
 title: 한국지역난방공사_태양광발전소 월별 운영현황 판교 함백 광양항만
@@ -23,6 +24,7 @@ synonyms:
   - 광양항 자전거도로 태양광
   - 신재생에너지 발전실적
   - 월별 발전량
+summary_user: 한국지역난방공사가 운영하는 태양광발전소 5곳(판교, 함백, 광양항만 제1~3자전거도로)의 발전량을 실적일자별로 담은 집계 파일이며, 발전소마다 열 하나에 kWh 단위 값이 들어 있다(csv 약 3.9KB). 에너지 분석가나 연구자가 '판교·함백·광양항만 태양광의 월별 발전량은 계절에 따라 얼마나 달라지는가'를 살피거나 발전량 추이로 예측 모델을 만들 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소 이름을 직접 맞추는 방식으로만 잇고, 주소·용량은 전국태양광발전소전기사업허가정보표준데이터에서 이름으로 찾아 붙인다.
 description_portal: '(한국지역난방공사) 태양광발전소(판교, 함백, 광양함만 1~3자전거도로)의 발전량에 대한 데이터1. 주의 사항 : 없음2. 컬럼 내용(일부 항목 기재)■ 실적일자(varchar)(예시 : 2021-02-28)■ 판교(numeric)(예시 : 4030)■ 함백(numeric)(예시 : 110614)■ 광양항만제1자전거도로(numeric)(예시 : 33486)■ 광양항만제2자전거도로(numeric)(예시 : 27640)■ 광양항만제3자전거도로(numeric)(예시 : 19612)■ 발전량단위(varchar)(예시 : kWh)3. 활용 예제■ 위치 기준 일자별 발전 실적 현황 및 추이 분석■ 위치 기준 월별 발전 실적 현황 및 계절성 분석■ 발전량 추이를 바탕으로 예측 모델 생성'
 accrual_periodicity: 연간
 team:
@@ -118,6 +120,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 실적일자
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -219,8 +225,6 @@ verification:
   run: probe/runs/15044220.json
   stats: probe/stats/15044220.json
   data: probe/data/15044220/
-status: active
-summary_user: 한국지역난방공사가 운영하는 태양광발전소 5곳(판교, 함백, 광양항만 제1~3자전거도로)의 발전량을 실적일자별로 담은 집계 파일이며, 발전소마다 열 하나에 kWh 단위 값이 들어 있다(csv 약 3.9KB). 에너지 분석가나 연구자가 '판교·함백·광양항만 태양광의 월별 발전량은 계절에 따라 얼마나 달라지는가'를 살피거나 발전량 추이로 예측 모델을 만들 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소 이름을 직접 맞추는 방식으로만 잇고, 주소·용량은 전국태양광발전소전기사업허가정보표준데이터에서 이름으로 찾아 붙인다.
 limits: 발전소가 열로 펼쳐진 넓은 형식이고 위치·설비용량 컬럼이 없어, 용량 대비 이용률 계산이나 지도 표시는 다른 데이터와 이름으로 맞춘 뒤에만 가능하다. 범위는 전국·비공간으로 분류되어 있지만 실제로는 공사 소유 5개 발전소만 담으며, 다른 태양광 사업자의 발전량은 없다.
 review:
   summary: draft
@@ -233,3 +237,4 @@ review:
     - c-15044220-04
     - c-15044220-06
   dropped_citations: 0
+status: active

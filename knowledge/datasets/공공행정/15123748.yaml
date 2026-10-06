@@ -1,4 +1,5 @@
-# Dataset 15123748 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123748 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123748'
 tier: verified
 title: 법제처_관보정정 현황
@@ -25,6 +26,7 @@ synonyms:
   - 공고 수정
   - 관보 정오표
   - 법령 변경 감지
+summary_user: 법제처가 관보 게재 후 발견된 오·탈자, 법령 적용일 변동, 고시·공고 수정 등 관보 정정 건을 정정 일자·소관부처·정정 내용과 함께 한 건씩 담은 전국 단위 파일(xlsx, 약 2.9MB)이다. 법률 실무자나 분석가가 특정 법령이 관보 게재 뒤 어떻게 정정됐는지, 정식으로 확정된 문안이 무엇인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았다. 다만 법령정보 일련번호 컬럼이 있어 법제처 법령 원장 데이터와 같은 기관 코드로 맞춰 법령별 변경 감지에 잇는 방식을 검토할 수 있다.
 description_portal: 법제처에서 제공하는 관보정정 현황은 관보 게재 이후 발견된 오·탈자, 법령 적용일 변동, 고시·공고 사항 수정 등을 체계적으로 정리한 자료입니다. 관보 정정 사유를 조목별로 명확히 구분하고, 원문 대비 변경된 내용을 비교할 수 있도록 수록합니다. 이를 통해 정정 전후의 관보 내용 차이를 정확히 파악할 수 있으며, 정식 고시된 법령 및 고시문이 무엇인지 이해할 수 있습니다. 정정된 항목은 시행일 및 근거 법령 등과 함께 제공되어 행정기관 및 법률 이용자가 법적 변경 사항을 신속하게 인식하고 대응하는 데 도움을 줍니다. 또한 관보의 신뢰성과 법적 명확성을 유지하는 데 기여합니다.
 accrual_periodicity: 수시
 team:
@@ -50,6 +52,7 @@ schema:
         unique: 10252
     - name: 법령정보 일련번호
       type: number
+      semantic_type: law_seq
       null_rate: 0.0
       sample_values:
         - '97726'
@@ -2226,12 +2229,23 @@ schema:
         - '705│00  │수집품과 표본[동물학·식물학·광물학·해부학·사학·고고학·고생물학·민족학 및 고전학(古錢學)에 관한 것에 한한다]│무세      '
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 법령정보 일련번호
+      reference:
+        key: law_seq
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 관보정정 일자
+    - 등록 일시
 cycle: default
 classification:
   subsector_name: 법령 원장 (연결·변경 감지용 마스터)
@@ -2269,7 +2283,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123748-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: law_seq(법령정보 일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15123748.json
@@ -2334,8 +2348,6 @@ verification:
   run: probe/runs/15123748.json
   stats: probe/stats/15123748.json
   data: probe/data/15123748/
-status: active
-summary_user: 법제처가 관보 게재 후 발견된 오·탈자, 법령 적용일 변동, 고시·공고 수정 등 관보 정정 건을 정정 일자·소관부처·정정 내용과 함께 한 건씩 담은 전국 단위 파일(xlsx, 약 2.9MB)이다. 법률 실무자나 분석가가 특정 법령이 관보 게재 뒤 어떻게 정정됐는지, 정식으로 확정된 문안이 무엇인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았다. 다만 법령정보 일련번호 컬럼이 있어 법제처 법령 원장 데이터와 같은 기관 코드로 맞춰 법령별 변경 감지에 잇는 방식을 검토할 수 있다.
 limits: 전역 조인 키가 없어 다른 기관 데이터와는 이름 매핑이나 법제처 내부 코드로만 연결된다. 실측 파일에 이름 없는 빈 컬럼(Unnamed)이 다수 있어 파싱할 때 정리가 필요하다. 지역 구분이 없는 전국·비공간 자료다.
 review:
   summary: draft
@@ -2348,3 +2360,4 @@ review:
     - c-15123748-04
     - c-15123748-06
   dropped_citations: 0
+status: active

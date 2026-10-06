@@ -1,4 +1,5 @@
-# Dataset 15114146 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15114146 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15114146'
 tier: verified
 title: 전국대형폐기물수거수수료정보표준데이터
@@ -19,6 +20,7 @@ synonyms:
   - 가구 가전 폐기 수수료
   - 대형쓰레기 스티커
   - 폐기물 처리 수수료 지자체별
+summary_user: 지방자치단체가 정한 대형폐기물 품목별 수거 수수료를 시군구 단위로 담은 표준데이터로, 품목명·구분·규격별로 유료 여부와 수수료 금액이 한 행씩 들어 있다. 주민이 '우리 동네에서 장롱이나 소파를 버리려면 수수료가 얼마인가'를 확인하거나, 분석가가 같은 품목의 수수료를 지자체끼리 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 시도명·시군구명 이름 매핑이나 제공기관코드로만 다른 생활폐기물 배출·수거 지점 데이터(수거함·종량제 판매소 등)와 이어 쓴다.
 description_portal: '지방자치단체가 관리하는 대형폐기물 수거 수수료 정보*항목명: 시도명,시군구명,대형폐기물명,대형폐기물구분명,대형폐기물규격,유무료여부,수수료,관리기관명'
 distributions:
   - title: 전국대형폐기물수거수수료정보표준데이터.csv
@@ -114,6 +116,7 @@ schema:
         unique: 116
     - name: 제공기관코드
       type: number
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - '3100000'
@@ -133,12 +136,26 @@ schema:
         - 서울특별시 용산구
       stats:
         unique: 143
+  foreign_keys:
+    - fields:
+        - 제공기관코드
+      reference:
+        key: instt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 미상
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구명
+  space_via: name
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 생활폐기물 배출·수거 지점 (대형폐기물 품목·수거함·종량제 판매소·음식물·재활용 정거장)
@@ -175,7 +192,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15114146-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: instt_cd(제공기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15114146.json
@@ -240,8 +257,6 @@ verification:
   run: probe/runs/15114146.json
   stats: probe/stats/15114146.json
   data: probe/data/15114146/
-status: active
-summary_user: 지방자치단체가 정한 대형폐기물 품목별 수거 수수료를 시군구 단위로 담은 표준데이터로, 품목명·구분·규격별로 유료 여부와 수수료 금액이 한 행씩 들어 있다. 주민이 '우리 동네에서 장롱이나 소파를 버리려면 수수료가 얼마인가'를 확인하거나, 분석가가 같은 품목의 수수료를 지자체끼리 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 시도명·시군구명 이름 매핑이나 제공기관코드로만 다른 생활폐기물 배출·수거 지점 데이터(수거함·종량제 판매소 등)와 이어 쓴다.
 limits: 수록 지자체 범위가 확인되지 않아 전국 모든 시군구의 수수료가 다 들어 있다고 볼 수 없다. 법정동·행정동 코드 같은 공통 키가 없어 다른 데이터와 붙일 때는 시군구 이름 표기를 맞추는 작업이 필요하다. 폐기물 발생량이나 처리현황 통계는 담지 않는다.
 review:
   summary: draft
@@ -255,3 +270,4 @@ review:
     - c-15114146-06
     - c-15114146-07
   dropped_citations: 0
+status: active

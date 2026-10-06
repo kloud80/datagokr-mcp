@@ -1,4 +1,5 @@
-# Dataset 15125501 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125501 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125501'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 점포 환경 개선 지원 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 프랜차이즈 인테리어 지원
   - 가맹 정보공개서
   - 매장 환경개선 지원금
+summary_user: 가맹 브랜드별로 점포 환경 개선(리뉴얼 등) 때 가맹본부가 부담하는 비용 항목·부담 비율·지급 방식·제외 사유를 기준년도 단위로 담는 정보공개서 기반 건별 데이터로, 범위는 전국입니다. 가맹점 창업 예정자나 가맹점주가 "이 브랜드는 매장 리뉴얼 때 본부가 비용을 얼마나, 어떤 항목까지 분담하나"를 확인하는 데 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보 계열(브랜드 개요·가맹본부 정보 등)과 이어 쓰며, 실측상 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑이나 사업자등록번호를 거친 간접 연결만 가능하다.
 description_portal: 브랜드 점포 환경 개선 지원에 대한 기준년도, 브랜드관리번호를 이용하여 가맹본부부담비용항목, 비율 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100023
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000006
@@ -144,12 +148,27 @@ schema:
         - ㅇ점포환경개선일로부터 3년 이내에 가맹본부의 책임없는 사유로 계약이 종료(계약의 해지·영업양도 포함)되는 경우 가맹본부 부담액 중 잔여기간에 비
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -194,7 +213,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125501-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125501.json
@@ -259,8 +278,6 @@ verification:
   run: probe/runs/15125501.json
   stats: probe/stats/15125501.json
   data: probe/data/15125501/
-status: active
-summary_user: 가맹 브랜드별로 점포 환경 개선(리뉴얼 등) 때 가맹본부가 부담하는 비용 항목·부담 비율·지급 방식·제외 사유를 기준년도 단위로 담는 정보공개서 기반 건별 데이터로, 범위는 전국입니다. 가맹점 창업 예정자나 가맹점주가 "이 브랜드는 매장 리뉴얼 때 본부가 비용을 얼마나, 어떤 항목까지 분담하나"를 확인하는 데 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보 계열(브랜드 개요·가맹본부 정보 등)과 이어 쓰며, 실측상 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑이나 사업자등록번호를 거친 간접 연결만 가능하다.
 limits: 실측 컬럼에서 사업자등록번호 같은 전역 조인 키가 확인되지 않아 타 기관 데이터와 직접 결합하기 어렵다. 조회는 기준년도와 브랜드관리번호를 입력으로 받으므로 브랜드관리번호를 먼저 다른 가맹정보 서비스에서 확보해야 하고, 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -273,3 +290,4 @@ review:
     - c-15125501-04
     - c-15125501-07
   dropped_citations: 0
+status: active

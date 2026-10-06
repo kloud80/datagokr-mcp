@@ -1,4 +1,5 @@
-# Dataset 15049996 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049996 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049996'
 tier: verified
 title: 제주관광공사_제주관광정보시스템(VISIT JEJU)_여행일정댓글
@@ -21,6 +22,7 @@ synonyms:
   - 제주관광 이용자 피드백
   - VISIT JEJU 커뮤니티
   - 제주 여행 후기
+summary_user: 제주관광공사 비짓제주(VISIT JEJU) 플랫폼에서 이용자가 여행일정에 단 댓글을 한 건씩 담은 원천 파일로, 포털 설명 기준 전체 161건이다. 비짓제주 운영자나 분석가가 어떤 여행일정에 댓글·답글이 달렸고 언제 소통이 있었는지 파악할 때 쓴다. 전역 조인 키는 없어, 같은 기관의 비짓제주 여행일정 데이터와 여행일정 식별값(여행일정)으로만 이어 볼 수 있고, 답글 구조는 상위댓글아이디와 깊이로 파일 안에서 재구성한다.
 description_portal: '- 제주관광공사에서 운영하는 제주관광정보플랫폼 비짓제주의 여행일정댓글 내역입니다.- 해당 데이터는 사용자가 여행일정에 댓글을 달았을 때 저장하여 생성합니다.- 개방데이터 항목은 댓글아이디, 여행일정, 상위댓글아이디, 깊이, 댓글, 등록일시, 사용여부이며 전체 데이터 수는 161건(데이터 기준일 기준)입니다.- 해당 데이터를 통해 비짓제주 플랫폼 내 여행일정에 대한 이용자 피드백 및 소통 현황 파악, 커뮤니티 활성화, 여행코스 기획 및 개선, 이용자 참여 유도, 관광객 만족도 향상, 마케팅 및 서비스 품질 개선 등 다양한 분야에 활용할 수 있을 것으로 기대됩니다.'
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 161
     - name: 여행일정
       type: string
+      semantic_type: visitjeju_schedule_id
       null_rate: 0.0
       sample_values:
         - 여행
@@ -103,12 +106,22 @@ schema:
         - y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 여행일정
+      reference:
+        key: visitjeju_schedule_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -145,7 +158,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15049996-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: visitjeju_schedule_id(여행일정)'
     evidence:
       - type: measured
         source: probe/stats/15049996.json
@@ -210,8 +223,6 @@ verification:
   run: probe/runs/15049996.json
   stats: probe/stats/15049996.json
   data: probe/data/15049996/
-status: active
-summary_user: 제주관광공사 비짓제주(VISIT JEJU) 플랫폼에서 이용자가 여행일정에 단 댓글을 한 건씩 담은 원천 파일로, 포털 설명 기준 전체 161건이다. 비짓제주 운영자나 분석가가 어떤 여행일정에 댓글·답글이 달렸고 언제 소통이 있었는지 파악할 때 쓴다. 전역 조인 키는 없어, 같은 기관의 비짓제주 여행일정 데이터와 여행일정 식별값(여행일정)으로만 이어 볼 수 있고, 답글 구조는 상위댓글아이디와 깊이로 파일 안에서 재구성한다.
 limits: TourAPI contentId나 지역코드 같은 전역 키가 없어 다른 관광 데이터와 직접 결합하기 어렵다. 규모가 161건으로 작아 이용자 만족도나 관광 동향을 일반화하는 근거로 쓰기 어렵다.
 review:
   summary: draft
@@ -223,3 +234,4 @@ review:
     - c-15049996-03
     - c-15049996-06
   dropped_citations: 0
+status: active

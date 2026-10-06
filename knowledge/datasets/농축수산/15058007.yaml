@@ -1,4 +1,5 @@
-# Dataset 15058007 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058007 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058007'
 tier: verified
 title: 해양수산부_수협 산지조합 위판장 현황
@@ -22,6 +23,7 @@ synonyms:
   - 어판장 현황
   - 수협 조합별 판매금액
   - 위판장 어선수
+summary_user: 수협 산지조합별 위판장 현황을 담은 데이터로, 위판장마다 조합명·위판장명과 코드, 어선수, 위탁판매인수, 판매금액을 전국 범위(비공간)로 제공한다. 수산물 유통업체가 어느 지역 어느 조합 위판장에서 거래처를 찾을지, 정책 담당자가 지역별 위판장 분포와 판매 규모가 어떤지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 수산물 유통 데이터와는 조합코드(mxtrCode)·위판장코드 같은 수협 내부 코드나 조합·위판장 이름 매핑으로만 연결한다.
 description_portal: 이 데이터는 해양수산부에서 수협 산지조합별 위판장 관련 정보를 제공하기 위해 수집한 데이터입니다.전체 데이터 또는 특정 조합, 위판장 명칭/코드 값을 파라미터로 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 조합명, 위판장명, 어선수, 위탁판매인수 및 판매금액 등 정보로 구성되어 있습니다.본 데이터는 수산물 유통업체에서 위판장 정보를 기반으로 거래처를 선정하는 데 활용될 수 있으며, 관련 기관에서는 수산물 유통 구조와 지역별 위판장 분포 정보를 활용한 지원 정책 수립 등에 사용할 수 있습니다.
 team:
   dept: 수산직불제팀
@@ -57,6 +59,7 @@ schema:
         unique: 83
     - name: mxtrCode
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '325'
@@ -78,6 +81,7 @@ schema:
         unique: 75
     - name: csmtmktCode
       type: number
+      semantic_type: fish_auction_mkt_cd
       null_rate: 0.0
       sample_values:
         - '325001'
@@ -133,6 +137,17 @@ schema:
         p50: 750734404
         max: 20999966500
         unique: 1000
+  foreign_keys:
+    - fields:
+        - mxtrCode
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
+    - fields:
+        - csmtmktCode
+      reference:
+        key: fish_auction_mkt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -182,7 +197,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058007-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(mxtrCode), fish_auction_mkt_cd(csmtmktCode)'
     evidence:
       - type: measured
         source: probe/stats/15058007.json
@@ -247,8 +262,6 @@ verification:
   run: probe/runs/15058007.json
   stats: probe/stats/15058007.json
   data: probe/data/15058007/
-status: active
-summary_user: 수협 산지조합별 위판장 현황을 담은 데이터로, 위판장마다 조합명·위판장명과 코드, 어선수, 위탁판매인수, 판매금액을 전국 범위(비공간)로 제공한다. 수산물 유통업체가 어느 지역 어느 조합 위판장에서 거래처를 찾을지, 정책 담당자가 지역별 위판장 분포와 판매 규모가 어떤지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키가 확인되지 않아, 다른 수산물 유통 데이터와는 조합코드(mxtrCode)·위판장코드 같은 수협 내부 코드나 조합·위판장 이름 매핑으로만 연결한다.
 limits: 다른 데이터와 공통으로 쓰는 조인 키가 없어 이름·코드 매핑 작업이 필요하다. 어종코드 체계가 수협·수산과학원·HS 간에 서로 달라 위판 경락가격 데이터와 엮을 때 코드 대응을 따로 확인해야 한다. 위치 좌표가 없는 비공간 데이터라 지도 분석에는 별도 주소 매핑이 필요하다.
 review:
   summary: draft
@@ -260,3 +273,4 @@ review:
     - c-15058007-04
     - c-15058007-06
   dropped_citations: 0
+status: active

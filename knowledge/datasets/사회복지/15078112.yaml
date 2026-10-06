@@ -1,4 +1,5 @@
-# Dataset 15078112 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078112 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078112'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 회원현황-서비스소득기준별 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 아이돌봄 회원 통계
   - 돌봄 소득구간별 이용현황
   - 건강가정진흥원 아이돌봄
+summary_user: 아이돌봄 서비스 회원 수를 기준연월·아이돌봄기관(상위기관 포함)별로 시간제·종일제로 나누고, 소득기준 유형(가형~라형)별 아동 수와 가정 수로 집계해 담는 전국 범위 API입니다. 정책 분석가나 지자체 담당자가 "우리 지역 기관의 종일제 이용 가정 중 소득 하위 유형(가형) 비중이 얼마인가" 같은 계층별 이용 분포와 형평성 질문에 씁니다. 전역 조인 키는 없어 기관번호·기관명(childCareInstNo, childCareInstNm)과 상위기관 정보로 같은 기관의 다른 아이돌봄 현황 데이터와 이름·코드 매핑으로 연결합니다.
 description_portal: 아이돌봄 서비스 소득 기준별 회원현황 조회 서비스를 제공하는 오픈API입니다. 해당 개방 데이터를 통해 기준연월, 아이돌봄기관명, 상위아이돌봄기관명, 시간제 및 종일제 서비스유형별로 가형부터 라형까지의 아동수와 가정수의 정보를 확인할 수 있습니다. 소득 기준별 아동 및 가정 수를 세분화하여 확인할 수 있어, 계층별 서비스 이용현황을 파악하는 데 유용합니다. 특히 서비스유형(시간제, 종일제)에 따라 유형별(가형~라형) 분포를 비교함으로써 서비스 접근성 및 형평성 평가가 가능해집니다. 이는 복지 예산의 효율적인 분배와 지원대상 확대 여부 판단에도 기여할 수 있으며, 다양한 정책 수립 시 실효성 있는 자료로 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -57,6 +59,7 @@ schema:
         unique: 5
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0421
@@ -75,6 +78,7 @@ schema:
         unique: 223
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -341,6 +345,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -390,7 +405,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078112-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078112.json
@@ -444,8 +459,6 @@ verification:
   run: probe/runs/15078112.json
   stats: probe/stats/15078112.json
   data: probe/data/15078112/
-status: active
-summary_user: 아이돌봄 서비스 회원 수를 기준연월·아이돌봄기관(상위기관 포함)별로 시간제·종일제로 나누고, 소득기준 유형(가형~라형)별 아동 수와 가정 수로 집계해 담는 전국 범위 API입니다. 정책 분석가나 지자체 담당자가 "우리 지역 기관의 종일제 이용 가정 중 소득 하위 유형(가형) 비중이 얼마인가" 같은 계층별 이용 분포와 형평성 질문에 씁니다. 전역 조인 키는 없어 기관번호·기관명(childCareInstNo, childCareInstNm)과 상위기관 정보로 같은 기관의 다른 아이돌봄 현황 데이터와 이름·코드 매핑으로 연결합니다.
 limits: 표준 행정코드 같은 전역 조인 키가 없어 다른 기관·지역 데이터와는 기관명이나 같은 기관 코드 매핑으로만 붙일 수 있습니다. 행정단위 공간 정보가 없는 비공간 집계라 좌표 기반 분석에는 쓸 수 없습니다. 호출에는 serviceKey가 필요하고 개발계정은 일 10,000회로 제한됩니다.
 review:
   summary: draft
@@ -457,3 +470,4 @@ review:
     - c-15078112-03
     - c-15078112-04
   dropped_citations: 0
+status: active

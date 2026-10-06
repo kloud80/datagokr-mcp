@@ -1,4 +1,5 @@
-# Dataset 15109162 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109162 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109162'
 tier: verified
 title: 행정안전부_관보_입법예고
@@ -19,6 +20,7 @@ synonyms:
   - 개정이유 주요내용
   - 법령안 예고
   - 정부 공고
+summary_user: 관보에 게재된 입법예고를 건별로 담으며, 제목·발행기관·근거법령·정정 여부·개정이유 및 주요내용(rvsnRsnMainCn)·원문 PDF 경로 등을 전국 범위로 제공한다. 어떤 법령이 어느 기관에서 어떤 이유로 개정 예고되었는지 확인하려는 국민·사업자·정책 분석가가 "우리 업종 관련 법령 중 최근 입법예고된 것은 무엇이고 주요 개정 내용은 무엇인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 근거법령명이나 발행기관명 같은 이름 매핑으로만 이어 쓴다.
 description_portal: 관보는 국가가 국민에게 널리 알릴 사항을 수록하여 발행하는 국가의 공식 기관지로 '관보'라는 제호로 발간되는 정기간행물입니다. 관보는 헌법개정, 법률, 조약, 대통령령, 총리령 및 부령의 공포와 헌법개정안, 예산 및 예산 외 국고부담계약의 공고 수단입니다. 또한, 법령 공포, 대통령·국무총리훈령 및 대통령·국무총리 지시사항, 각급 기관의 인사발령 통지 등 정부 기관간의 공문 시행을 대체하는 역할을 합니다.이 데이터는 관보에 게재된 입법예고 목록, 상세정보(제목, 구분, 발행일자, 편집구분, 테마구분, 발행기관, 근거법령, 정정여부, 개정이유 및 주요내용 등), 원문에 대한 정보를 제공합니다.
 team:
   dept: 법무담당관실
@@ -125,6 +127,7 @@ schema:
         unique: 1
     - name: cntntSeqNo
       type: string
+      semantic_type: gazette_cntnt_seq
       null_rate: 0.0
       sample_values:
         - I0000000000000001790665547303000
@@ -169,12 +172,22 @@ schema:
         p50: 1
         max: 1
         unique: 1
+  foreign_keys:
+    - fields:
+        - cntntSeqNo
+      reference:
+        key: gazette_cntnt_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - hopePblictDt
 cycle: default
 classification:
   subsector_name: 관보·고시공고
@@ -218,7 +231,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109162-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gazette_cntnt_seq(cntntSeqNo)'
     evidence:
       - type: measured
         source: probe/stats/15109162.json
@@ -272,8 +285,6 @@ verification:
   run: probe/runs/15109162.json
   stats: probe/stats/15109162.json
   data: probe/data/15109162/
-status: active
-summary_user: 관보에 게재된 입법예고를 건별로 담으며, 제목·발행기관·근거법령·정정 여부·개정이유 및 주요내용(rvsnRsnMainCn)·원문 PDF 경로 등을 전국 범위로 제공한다. 어떤 법령이 어느 기관에서 어떤 이유로 개정 예고되었는지 확인하려는 국민·사업자·정책 분석가가 "우리 업종 관련 법령 중 최근 입법예고된 것은 무엇이고 주요 개정 내용은 무엇인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 근거법령명이나 발행기관명 같은 이름 매핑으로만 이어 쓴다.
 limits: 코드형 조인 키가 없어 법령·기관 데이터와 연결할 때 이름 문자열 대조에 의존해야 하므로 표기 차이로 누락·오매칭이 생길 수 있다. 비공간 데이터라 지역별 분석에는 쓰지 않는다. 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -285,3 +296,4 @@ review:
     - c-15109162-03
     - c-15109162-04
   dropped_citations: 0
+status: active

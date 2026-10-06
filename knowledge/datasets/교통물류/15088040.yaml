@@ -1,4 +1,3 @@
-# Dataset 15088040 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15088040'
 tier: verified
 title: 한국교통안전공단_자동차검사관리시스템_내압용기검사소정보(샘플)
@@ -22,6 +21,7 @@ synonyms:
   - 수소버스 검사
   - 자동차 검사소 위치
   - 교통안전공단 검사소
+summary_user: CNG·수소 등 내압용기 검사소를 검사소 단위로 담은 샘플 파일로, 전국 범위에서 검사소명·구분·주소·전화번호·법정동코드와 경로·이동거리·검사량 같은 항목을 개별 주소 수준으로 담는다. 수소·CNG 차량 소유자나 운수사업자가 가까운 내압용기 검사소가 어디이고 연락처가 무엇인지 확인하거나, 분석가가 지역별 검사소 분포를 살펴보는 데 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아 다른 데이터와는 검사소명·주소 매칭이나 같은 기관(한국교통안전공단) 코드로만 이어 쓰며, 사이트법정동코드가 행정구역 코드와의 연결 후보가 된다.
 description_portal: 자동차관리법 및 자동차종합검사 시행 등에 관한 규칙에 따라 한국교통안전공단(KOTSA)에서 관리하는 자동차검사 자료 중 하나로, CNG 및 수소 등 내압용기 검사소의 검사소별 분포, 위치 정보, 진로 특성 등의 데이터를 포함한 샘플입니다. 또한 각 검사소별로의 주소, 연락처, 웹사이트 URL 등 기본 정보도 함께 제공되며, 이를 통해 내압용기검사장의 운영 현황을 한눈에 파악하고, 검사 대상자와 관련 기관이 검사소를 효과적으로 검색·이용할 수 있도록 구성된 실용적인 자료로 구성하였습니다.
 accrual_periodicity: 수시
 team:
@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 검사소코드
       type: code
+      semantic_type: vhcl_insp_office_cd
       null_rate: 0.0
       sample_values:
         - 강동내압용기검사소
@@ -182,12 +183,27 @@ schema:
         p50: 9.5
         max: 17
         unique: 16
+  foreign_keys:
+    - fields:
+        - 검사소코드
+      reference:
+        key: vhcl_insp_office_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: bjd
+  space_fields:
+    - 사이트법정동코드
+  space_via: code
+  time: day
+  time_fields:
+    - 업무시작일자
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -225,7 +241,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088040-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_insp_office_cd(검사소코드)'
     evidence:
       - type: measured
         source: probe/stats/15088040.json
@@ -290,8 +306,6 @@ verification:
   run: probe/runs/15088040.json
   stats: probe/stats/15088040.json
   data: probe/data/15088040/
-status: active
-summary_user: CNG·수소 등 내압용기 검사소를 검사소 단위로 담은 샘플 파일로, 전국 범위에서 검사소명·구분·주소·전화번호·법정동코드와 경로·이동거리·검사량 같은 항목을 개별 주소 수준으로 담는다. 수소·CNG 차량 소유자나 운수사업자가 가까운 내압용기 검사소가 어디이고 연락처가 무엇인지 확인하거나, 분석가가 지역별 검사소 분포를 살펴보는 데 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아 다른 데이터와는 검사소명·주소 매칭이나 같은 기관(한국교통안전공단) 코드로만 이어 쓰며, 사이트법정동코드가 행정구역 코드와의 연결 후보가 된다.
 limits: 샘플 파일(csv, 약 7KB)이라 전체 검사소나 전체 검사 실적을 대표한다고 보기 어렵다. 실측 컬럼에서 전역 조인 키를 찾지 못해 차량등록·검사 원장 등 다른 자료와 바로 결합되지 않는다.
 review:
   summary: draft
@@ -304,3 +318,4 @@ review:
     - c-15088040-04
     - c-15088040-06
   dropped_citations: 0
+status: active

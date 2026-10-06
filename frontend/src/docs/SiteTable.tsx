@@ -6,7 +6,7 @@ import type { SiteRow } from '../api'
 
 const PAGE = 20
 const KEY_CHIP: Record<SiteRow['key'], 'live' | 'primary' | 'hot' | 'neutral'> = {
-  '보유·검증': 'live', 보유: 'primary', 미보유: 'hot', '키 불필요': 'neutral',
+  '보유·검증': 'live', 보유: 'primary', 미보유: 'hot', '키 불필요': 'neutral', '가입 불필요(견본)': 'live', '승인·신청 대기': 'hot',
 }
 
 export function SiteTable({ sites }: { sites: SiteRow[] }) {
@@ -28,7 +28,7 @@ export function SiteTable({ sites }: { sites: SiteRow[] }) {
         <AgentSelect size="sm" value={kind} onChange={(e) => { setKind(e.target.value); setPage(1) }}
           options={[{ value: 'api', label: 'API 제공 사이트' }, { value: 'file', label: '파일만 제공' }, { value: 'all', label: '전체' }]} />
         <AgentSelect size="sm" value={key} onChange={(e) => { setKey(e.target.value); setPage(1) }}
-          options={[{ value: '', label: '모든 키 상태' }, ...(['보유·검증', '보유', '미보유', '키 불필요'] as const).map((k) => ({ value: k, label: k }))]} />
+          options={[{ value: '', label: '모든 키 상태' }, ...(['보유·검증', '가입 불필요(견본)', '보유', '승인·신청 대기', '미보유', '키 불필요'] as const).map((k) => ({ value: k, label: k }))]} />
       </div>
       <p className="doc-small">{shown.length.toLocaleString()}곳</p>
       <AgentTable

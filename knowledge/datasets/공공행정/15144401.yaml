@@ -1,4 +1,5 @@
-# Dataset 15144401 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15144401 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15144401'
 tier: verified
 title: 국가데이터처_SGIS_일자리맵지역모집인원
@@ -22,6 +23,7 @@ synonyms:
   - 통계지리정보서비스 일자리
   - 행정동별 모집인원
   - 구인정보 통계
+summary_user: SGIS 일자리맵 서비스가 구인사이트에서 모은 구인정보를 바탕으로, 전국 읍면동(행정동) 단위의 등록일자별 모집인원을 담은 집계 파일이다(csv 약 157KB). 구직자나 지역 고용 분석가가 '어느 동네에 구인 수요가 몰려 있나', '특정 행정동의 모집인원이 시기별로 어떻게 달라졌나' 같은 질문에 쓴다. 행정동 코드 같은 전역 조인 키가 없어, 다른 읍면동 통계나 SGIS 경계와는 행정동명(행정동명)을 이름으로 맞춰 이어 써야 한다.
 description_portal: '[SGIS 오픈 플랫폼] "일자리맵" 서비스의 일자리맵지역모집인원 정보를 담고 있습니다.데이터항목에는 등록일자, 행정동명, 모집인원을 포함합니다.[용어설명]1. 지리정보시스템 [GIS,Geographic Information System]지리공간데이터(geographic or geospatial data)를 기반으로 유용한 정보를 생성하는 정보시스템2. 통계지리정보시스템/서비스 [SGIS,Statistical Geographic Information System]국가데이터처가 보유한 인구·가구·주택·사업체 등의 센서스데이터와 공공 및 민간 자료와 연계∙융합할 수 있는 위치기반 개방형 서비스 플랫폼3.일자리맵 구인사이트에서 수집된 구인정보를 이용하여 오늘의구인현황, 일자리보기, 구인현황분석 등 사용자 조건에 맞는 일자리정보 및 현황을 제공하는 서비스'
 accrual_periodicity: 수시
 team:
@@ -65,6 +67,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - 행정동명
+  space_via: name
+  time: day
+  time_fields:
+    - 등록일자
 cycle: default
 classification:
   subsector_name: SGIS 통계지리 (집계구·통계주제도·분석지도)
@@ -166,8 +176,6 @@ verification:
   run: probe/runs/15144401.json
   stats: probe/stats/15144401.json
   data: probe/data/15144401/
-status: active
-summary_user: SGIS 일자리맵 서비스가 구인사이트에서 모은 구인정보를 바탕으로, 전국 읍면동(행정동) 단위의 등록일자별 모집인원을 담은 집계 파일이다(csv 약 157KB). 구직자나 지역 고용 분석가가 '어느 동네에 구인 수요가 몰려 있나', '특정 행정동의 모집인원이 시기별로 어떻게 달라졌나' 같은 질문에 쓴다. 행정동 코드 같은 전역 조인 키가 없어, 다른 읍면동 통계나 SGIS 경계와는 행정동명(행정동명)을 이름으로 맞춰 이어 써야 한다.
 limits: 실측 컬럼에 전역 조인 키가 없어 행정동명 이름 매핑에 의존하므로, 같은 이름의 동이나 행정구역 변경이 있으면 연결이 어긋날 수 있다. 구인사이트에서 수집된 공고 기반이라 전체 일자리 수요를 그대로 대표한다고 보기 어렵다.
 review:
   summary: draft
@@ -180,3 +188,4 @@ review:
     - c-15144401-04
     - c-15144401-06
   dropped_citations: 0
+status: active

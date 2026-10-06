@@ -1,4 +1,5 @@
-# Dataset 15087283 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15087283 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087283'
 tier: verified
 title: 한국동서발전(주)_발전소 건설 기자재 유자격품목 현황
@@ -21,6 +22,7 @@ synonyms:
   - 발전 설비 조달 품목
   - 동서발전 기자재
   - 건설 기자재 자격 품목
+summary_user: 한국동서발전이 발전소 건설에 쓰도록 사전에 자격을 부여한 기자재 품목 목록을 품목 1건당 1행(품목번호·품목명·운용구분)으로 담은 작은 CSV 파일(약 2.7KB)이며, 전국 단위의 비공간 목록이다. 발전소 건설 기자재 납품을 준비하는 사업자가 '내 품목이 동서발전 유자격 품목 대상에 들어가는가, 건설(기계)·건설(제어) 중 어느 운용구분인가'를 확인하거나, 연구자가 발전 기자재 조달·표준화 현황을 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 품목명 매핑이나 같은 기관(한국동서발전) 기준으로만 이어 쓸 수 있다.
 description_portal: '한국동서발전의 발전소 건설 기자재 유자격 품목 현황 정보 데이터입니다. 해당 데이터는 한국동서발전이 발전소 건설에 사용하기 위해 사전에 자격을 부여한 기자재 품목 목록을 포함하고 있으며, 데이터 항목은 품목번호, 품목명, 운용구분(예: 건설(기계), 건설(제어) 등)으로 구성되어 있습니다. 각 품목은 기술적 기준을 만족한 경우에만 유자격으로 분류되며, 발전소 건설 시 사용 가능한 품목 리스트로 관리됩니다. 학계 및 연구기관에서는 이 데이터를 기반으로 공공조달 및 기자재 표준화 연구, 발전 설비의 기술 사양 분석, 산업 안전 및 품질관리 체계 연구 등에 활용할 수 있습니다. 또한 기자재 인증 기준이나 국내외 기자재 비교 분석 자료로도 유용하며, 발전 설비 설계 및 시방서 작성 시 참고자료로 활용될 수 있습니다.'
 applicable_legislation:
   - law: 공기업·준정부 계약사무규칙
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 품목번호
       type: number
+      semantic_type: ewp_qualified_item_no
       null_rate: 0.0
       sample_values:
         - '5101065'
@@ -66,6 +69,12 @@ schema:
         - 건설(제어)
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 품목번호
+      reference:
+        key: ewp_qualified_item_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -108,7 +117,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15087283-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_qualified_item_no(품목번호)'
     evidence:
       - type: measured
         source: probe/stats/15087283.json
@@ -183,8 +192,6 @@ verification:
   run: probe/runs/15087283.json
   stats: probe/stats/15087283.json
   data: probe/data/15087283/
-status: active
-summary_user: 한국동서발전이 발전소 건설에 쓰도록 사전에 자격을 부여한 기자재 품목 목록을 품목 1건당 1행(품목번호·품목명·운용구분)으로 담은 작은 CSV 파일(약 2.7KB)이며, 전국 단위의 비공간 목록이다. 발전소 건설 기자재 납품을 준비하는 사업자가 '내 품목이 동서발전 유자격 품목 대상에 들어가는가, 건설(기계)·건설(제어) 중 어느 운용구분인가'를 확인하거나, 연구자가 발전 기자재 조달·표준화 현황을 살펴보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 품목명 매핑이나 같은 기관(한국동서발전) 기준으로만 이어 쓸 수 있다.
 limits: 공통 조인 키가 없어 다른 발전사·조달 데이터와 자동으로 결합하기 어렵고, 품목명 문자열 매칭에 의존해야 한다. 지역·발전소 단위 정보가 없는 비공간 품목 목록이라 개별 발전소나 업체(유자격 보유 업체) 단위 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -196,3 +203,4 @@ review:
     - c-15087283-03
     - c-15087283-04
   dropped_citations: 0
+status: active

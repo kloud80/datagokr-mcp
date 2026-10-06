@@ -85,6 +85,7 @@ schema:
     - name: fid
       title: 각 스케줄에 따른 편명별 유니크 코드값(랜덤생성)
       type: number
+      semantic_type: kac_fid
       null_rate: 0.0
       sample_values:
         - '0000000000000013008676'
@@ -118,6 +119,7 @@ schema:
     - name: city
       title: 출발공항코드(IATA)
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - CJU
@@ -148,6 +150,7 @@ schema:
     - name: airport
       title: 도착공항코드(IATA)
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - PUS
@@ -187,6 +190,7 @@ schema:
     - name: airFln
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - TW801
@@ -261,6 +265,7 @@ schema:
     - name: aplRegNo
       title: 항공기 고유 등록번호
       type: string
+      semantic_type: aircraft_reg_no
       null_rate: 0.199
       sample_values:
         - HL7741
@@ -291,6 +296,32 @@ schema:
         p50: 5
         max: 35
         unique: 24
+  foreign_keys:
+    - fields:
+        - fid
+      reference:
+        key: kac_fid
+      evidence: measured
+    - fields:
+        - city
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - airport
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - airFln
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - aplRegNo
+      reference:
+        key: aircraft_reg_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -337,7 +368,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15158519-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kac_fid(fid), airport_cd(city), airport_cd(airport), flight_no(airFln), aircraft_reg_no(aplRegNo)'
     evidence:
       - type: measured
         source: probe/stats/15158519.json

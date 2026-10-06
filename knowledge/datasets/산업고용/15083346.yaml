@@ -1,4 +1,5 @@
-# Dataset 15083346 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083346 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083346'
 tier: verified
 title: 한국서부발전(주)_발전실적정보
@@ -23,6 +24,7 @@ synonyms:
   - 발전원별 설비용량
   - 태안화력 발전실적
   - 발전기 성능 지표
+summary_user: 한국서부발전이 운영하는 발전기별로 연도·발전원과 함께 설비용량(MW), 발전량(MWh), 발전열효율, 이용률을 담은 연 단위 실적 파일(CSV, 약 14KB)이다. 에너지 분석가나 연구자가 서부발전 소속 발전기 중 어느 발전원·호기의 이용률과 열효율이 높거나 낮은지, 연도별로 어떻게 변했는지 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전기명·발전원 이름을 맞춰 매핑하거나 같은 기관(한국서부발전) 데이터끼리만 이어 쓴다.
 description_portal: 한국서부발전 발전기,발전원별 설비용량 및 발전량 데이터 정보입니다. 발전기별 및 발전원료별 설비용량, 발전량, 열효율, 이용률 데이터를 종합하면 각 발전기의 성능과 운영효율성을 다각도로 파악할 수 있습니다. 설비용량은 해당 발전기가 최대 출력으로 생산할 수 있는 이론적 전력규모를 의미하며, 실제 발전량은 일정 기간 동안 생산된 전력량을 보여줍니다. 열효율은 투입된 연료 에너지가 전력으로 얼마나 전환되었는지를 나타내는 지표로, 설비의 기술수준과 운영 조건을 반영합니다. 이용률은 설비용량 대비 실제 운전 비율을 보여주어 발전기가 얼마나 안정적이고 지속적으로 가동되는지를 알 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -48,6 +50,7 @@ schema:
         unique: 13
     - name: 발전기명
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 태안#2
@@ -112,12 +115,22 @@ schema:
         p50: 38.06
         max: 101.59
         unique: 298
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -154,7 +167,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083346-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15083346.json
@@ -219,8 +232,6 @@ verification:
   run: probe/runs/15083346.json
   stats: probe/stats/15083346.json
   data: probe/data/15083346/
-status: active
-summary_user: 한국서부발전이 운영하는 발전기별로 연도·발전원과 함께 설비용량(MW), 발전량(MWh), 발전열효율, 이용률을 담은 연 단위 실적 파일(CSV, 약 14KB)이다. 에너지 분석가나 연구자가 서부발전 소속 발전기 중 어느 발전원·호기의 이용률과 열효율이 높거나 낮은지, 연도별로 어떻게 변했는지 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전기명·발전원 이름을 맞춰 매핑하거나 같은 기관(한국서부발전) 데이터끼리만 이어 쓴다.
 limits: 전력거래소식 실시간·시간별 수급 데이터가 아니라 발전기별 연도 단위 실적이므로 오늘의 수급이나 시간대별 발전량 질문에는 쓰지 못한다. 발전소 코드 같은 공통 키가 없어 타 발전사·전력거래소 데이터와 결합할 때는 이름 매핑 오류에 주의해야 한다.
 review:
   summary: draft
@@ -233,3 +244,4 @@ review:
     - c-15083346-04
     - c-15083346-06
   dropped_citations: 0
+status: active

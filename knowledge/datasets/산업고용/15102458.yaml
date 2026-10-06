@@ -40,6 +40,7 @@ schema:
   fields:
     - name: 충전소 아이디
       type: number
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - '8119'
@@ -97,6 +98,11 @@ schema:
         unique: 4498
   foreign_keys:
     - fields:
+        - 충전소 아이디
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
         - 충전소주소
       reference:
         key: address
@@ -114,6 +120,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -150,7 +162,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15102458-03
     kind: key
-    value: '실측 조인 키: address(충전소주소), coord(위도), coord(경도)'
+    value: '실측 조인 키: fuel_station_id(충전소 아이디), address(충전소주소), coord(위도), coord(경도)'
     evidence:
       - type: measured
         source: probe/stats/15102458.json

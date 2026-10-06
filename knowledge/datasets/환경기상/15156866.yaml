@@ -1,0 +1,301 @@
+id: '15156866'
+tier: verified
+title: 기후에너지환경부_분리배출 정보조회 서비스
+sector: 환경기상/폐기물/waste-business
+agency:
+  id: '1482000'
+  name: 기후에너지환경부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15156866/openapi.do
+synonyms:
+  - 분리배출
+  - 배출장소
+  - 품목사전
+  - 배출품목
+  - 대표 배출방법
+  - 분리수거 방법
+  - 재활용 배출방법
+  - 폐건전지 수거함
+  - 폐형광등 수거함
+  - 생활쓰레기 버리는 법
+  - 배출함 위치
+  - 분리배출 품목 검색
+description_portal: 사용자가 생활폐기물 분리배출에 필요한 핵심 정보를 편리하게 조회할 수 있도록 돕습니다. 검색한 배출 품목명을 기준으로 해당 품목의 대표 배출방법과 배출장소의 주소를 제공합니다.
+team:
+  dept: 자원재활용과
+services:
+  - op: /getItem
+    name: 배출품목 정보 조회
+    endpoint: https://apis.data.go.kr/1482000/WasteRecyclingService/getItem
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        desc: 한 페이지 결과 수
+      - name: itemNm
+        required: true
+        desc: '품목명 검색어 (예: 생수병, 우유팩)'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /getSpot
+    name: 분리배출 장소정보 조회
+    endpoint: https://apis.data.go.kr/1482000/WasteRecyclingService/getSpot
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: addr
+        required: true
+        example: 문래동
+        desc: '주소 검색어 (동/읍/면 단위) (예 : 문래동)'
+      - name: latitude
+        required: false
+        example: '37.5182396969791'
+        desc: 현재 위치 위도 (Y좌표) - 좌표 검색 시 longitude와 함께 필수
+      - name: longitude
+        required: false
+        example: '126.895880210522'
+        desc: 현재 위치 경도 (X좌표) - 좌표 검색 시 latitude와 함께 필수
+      - name: radius
+        required: false
+        example: '500'
+        desc: '검색 반경 (미터 단위) - 좌표 검색 시 유효. 기본값: 500m'
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: itemNm
+      title: 품목명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 단소(플라스틱)
+        - 핸드크림(도포·첩합)
+        - 염색약 용기(도포·첩합)
+      op: /getItem
+      stats:
+        unique: 770
+    - name: dschgMthd
+      title: 배출 방법
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 종량제봉투
+        - 소형전기전자제품 수거함, 무상방문수거
+        - 대형폐기물
+      op: /getItem
+      stats:
+        unique: 71
+    - name: spotNm
+      title: 장소(배출함) 명칭
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종량제봉투 판매소
+        - 중소형 수거함
+        - 폐휴대폰 배출처
+      op: /getSpot
+      stats:
+        unique: 4
+    - name: addrBase
+      title: 기본 주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 영등포구 당산로 42
+        - 서울특별시 영등포구 경인로 775 (에이스하이테크시티)
+        - 서울특별시 영등포구 도림로 441-1
+      op: /getSpot
+      stats:
+        unique: 16
+    - name: addrDtl
+      title: 상세 주소
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 홈플러스 영등포점
+        - 지하 1층
+        - GS25문래LG점
+      op: /getSpot
+      stats:
+        unique: 19
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5915
+  brm: 환경기상 - 폐기물
+  why: 기관 분석 핵심 원장 — 기후에너지환경부
+claims:
+  - id: c-15156866-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 2/2
+    evidence:
+      - type: measured
+        source: probe/runs/15156866.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 2/2
+      - type: measured
+        source: probe/apply/15156866.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15156866-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15156866-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15156866.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15156866-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15156866.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15156866-06
+    kind: admin_note
+    value: "세부 부문 '폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)'의 가치: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#waste-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15156866-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 폐기물] 생활폐기물 배출·수거 지점(대형폐기물·수거함·종량제 판매소) · 폐기물 처리업·배출자. 발생량·처리현황 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L683
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156866-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15156866-10
+    kind: pitfall
+    value: 필수 파라미터 itemNm는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15156866.json
+        observed_at: '2026-10-07'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 2/2
+  run: probe/runs/15156866.json
+  stats: probe/stats/15156866.json
+  data: probe/data/15156866/
+status: active
+summary_user: 생활폐기물 품목명을 넣으면 그 품목의 대표 배출방법과 배출장소(배출함) 이름·주소를 돌려주는 조회 API로, 전국을 대상으로 장소를 개별 주소 단위로 담는다. 주민이 '폐건전지나 형광등은 어떻게 버리고 가까운 수거함은 어디 있나'를 확인하거나, 분리배출 안내 앱을 만드는 개발자가 품목별 배출 안내에 쓴다. 전역 조인 키는 없어서 다른 데이터와는 기본 주소(addrBase) 같은 주소 문자열이나 품목명 매칭으로만 이어 쓴다.
+limits: 필수 입력인 품목명(itemNm)은 다른 데이터에서 쓰는 품목 값을 먼저 받아 넘겨야 해서, 임의의 단어로는 조회가 되지 않을 수 있다. 폐기물 발생량이나 처리현황 같은 통계는 담지 않으며, 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15156866-01
+    - c-15156866-03
+    - c-15156866-04
+    - c-15156866-07
+    - c-15156866-10
+  dropped_citations: 0
+grain:
+  space: sgg
+  space_fields:
+    - addrBase
+  space_via: address

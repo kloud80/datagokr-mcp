@@ -1,4 +1,5 @@
-# Dataset 15157429 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157429 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157429'
 tier: verified
 title: 한국예탁결제원_파생결합증권정보서비스_GW
@@ -22,6 +23,7 @@ synonyms:
   - 파생결합사채
   - 기초자산 코드
   - 조기상환
+summary_user: 한국예탁결제원이 관리하는 ELS·DLS·ELW 등 파생결합증권 정보를 담는 API로, 기준년월(yyyymm)별 상품 유형·원화/외화별 발행·조기상환·만기상환 종목수와 금액 집계, 그리고 예탁결제원이 발급한 표준기초자산 코드·명칭·유형 정보를 제공한다. 분석가나 투자자가 "최근 몇 달 사이 ELS 발행액과 조기상환액이 어떻게 바뀌었나", "특정 기초자산은 어떤 유형으로 분류되나" 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 종목코드(ISIN)·표준기초자산코드를 이름·코드 매핑으로 맞춰야 다른 증권 시장 데이터와 이을 수 있다.
 description_portal: 파생결합증권이란 기초자산의 가격·이자율·지표·단위 또는 이를 기초로 하는 지수 등의 변동과 연계하여 미리 정하여진 방법에 따라 지급하거나 회수하는 금전 등이 결정되는 권리가 표시된 증권을 의미합니다. 한국예탁결제원은 이러한 파생결합증권의 종목생성, 발행 및 전자등록, 계좌간 대체를 통한 유통과 권리행사를 지원하고 있습니다. 주가연계증권 ELS (Equity Linked Securities) 특정 주식의 가격이나 코스피200 등 지수에 연동하여 수익률이 결정되는 증권(비상장) 파생결합증권 DLS (Derivatives Linked Securities) 주식, 주가지수 이외의 기초자산(원유, 금, 금리, 신용 등)의 가격변동에 따라 투자수익이 결정되는 증권(비상장) 파생결합사채 ELB · DLB ELS · DLS와 상품 구성이 동일하나 원금이 보장된 증권(비상장)으로 상법적용 주식워런트증권 ELW (Equity Linked Warrant) 주식과 지수 등 기초자산을 사전에 정한 미래의 시점(만기일)에 미리 정한 가격(행사가격)으로 사거나 팔 수 있는 권리를 갖는 증권(KRX 상장) 상장지수증권 ETN (Exchange Traded Note) 기초지수(ex. KOSPI 선물지수, ELS 발행지수, 전략지수 등)의 수익률에 따라 수익을 지급하는 신종 파생결합증권
 team:
   dept: 증권데이터부
@@ -754,6 +756,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - yyyymm
 cycle: default
 classification:
   subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
@@ -887,8 +893,6 @@ verification:
   run: probe/runs/15157429.json
   stats: probe/stats/15157429.json
   data: probe/data/15157429/
-status: active
-summary_user: 한국예탁결제원이 관리하는 ELS·DLS·ELW 등 파생결합증권 정보를 담는 API로, 기준년월(yyyymm)별 상품 유형·원화/외화별 발행·조기상환·만기상환 종목수와 금액 집계, 그리고 예탁결제원이 발급한 표준기초자산 코드·명칭·유형 정보를 제공한다. 분석가나 투자자가 "최근 몇 달 사이 ELS 발행액과 조기상환액이 어떻게 바뀌었나", "특정 기초자산은 어떤 유형으로 분류되나" 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 종목코드(ISIN)·표준기초자산코드를 이름·코드 매핑으로 맞춰야 다른 증권 시장 데이터와 이을 수 있다.
 limits: 오퍼레이션 6개 중 실호출에 성공한 것은 2개이고, 발행사별 잔액·ISIN 정보·상환조건·종목명 검색 등 4개는 최소 파라미터로 호출했을 때 응답이 없었다. 필수 파라미터인 ISIN·종목명·기준일자는 다른 데이터에서 먼저 받아 넘겨야 하며, 개발계정은 하루 100회로 제한된다.
 review:
   summary: draft
@@ -902,3 +906,4 @@ review:
     - c-15157429-10
     - c-15157429-11
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15073919 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073919'
 tier: verified
 title: 식품의약품안전처_의료기기 재평가공고
@@ -19,6 +18,7 @@ synonyms:
   - 의료기기 취하
   - 재평가 자료 제출
   - 식약처 의료기기 공고
+summary_user: 식약처가 공고한 의료기기 재평가 대상을 품목 단위로 담은 API로, 재평가 연도·공고번호·공고일자와 품목명·허가일자, 제조·수입업체와 제조국·판매국, 제출방법·제출자료, 취소·취하 구분과 그 일자를 함께 제공한다. 의료기기 제조·수입업체가 자사 허가 품목이 재평가 대상인지, 언제까지 어떤 자료를 내야 하는지 확인하는 데 쓰고, 분석가는 재평가 뒤 취소·취하된 품목이 어느 정도인지 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 의료기기 품목허가 데이터와는 품목번호(MEDDEV_ITEM_NO)나 품목명·업체명을 맞춰 이어 써야 한다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 재평가공고에 관한 정보입니다. 이 공공데이터에는 재평가 공고에 따른 재평가 공고번호, 코드명, 공고일자, 품목명, 허가일자, 제조·수입업체명 및 국가, 제출방법 및 자료, 취소/취하 구분 등 세부 항목을 담고 있습니다. 해당 데이터 활용을 통해 품목별 대응전략 수립 및 업계 전반의 품질 향상 그리고 정부의 평가 절차 개선 등 정책적 및 산업적 파급 효과 산출 또한 기대할 수 있습니다. 또한 이 데이터는 의료기기 안전성 개선에 참고가 될 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -123,6 +123,7 @@ schema:
         unique: 2
     - name: MEDDEV_ITEM_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제허 95-2 호
@@ -152,6 +153,7 @@ schema:
         unique: 327
     - name: MNFT_NATN_CD
       type: code
+      semantic_type: country_cd
       null_rate: 0.897
       sample_values:
         - US
@@ -242,12 +244,33 @@ schema:
         min: '1980-12-18'
         max: '2026-08-21'
         unique: 171
+  foreign_keys:
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
+    - fields:
+        - MNFT_NATN_CD
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MANUF_IMPORT_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - REVL_PBANC_NO
+    - NTFCTN_DT
+    - PRMSN_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -292,7 +315,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073919-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_permit_no(MEDDEV_ITEM_NO), country_cd(MNFT_NATN_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073919.json
@@ -357,8 +380,6 @@ verification:
   run: probe/runs/15073919.json
   stats: probe/stats/15073919.json
   data: probe/data/15073919/
-status: active
-summary_user: 식약처가 공고한 의료기기 재평가 대상을 품목 단위로 담은 API로, 재평가 연도·공고번호·공고일자와 품목명·허가일자, 제조·수입업체와 제조국·판매국, 제출방법·제출자료, 취소·취하 구분과 그 일자를 함께 제공한다. 의료기기 제조·수입업체가 자사 허가 품목이 재평가 대상인지, 언제까지 어떤 자료를 내야 하는지 확인하는 데 쓰고, 분석가는 재평가 뒤 취소·취하된 품목이 어느 정도인지 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 의료기기 품목허가 데이터와는 품목번호(MEDDEV_ITEM_NO)나 품목명·업체명을 맞춰 이어 써야 한다.
 limits: 다른 데이터셋과 바로 묶을 공통 키가 없어 품목명·업체명 매핑에 의존해야 한다. 호출에는 포털에서 발급받은 serviceKey가 필요하며, 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -369,3 +390,4 @@ review:
     - c-15073919-01
     - c-15073919-03
   dropped_citations: 0
+status: active

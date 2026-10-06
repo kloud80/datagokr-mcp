@@ -1,0 +1,242 @@
+# Dataset 15076687 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076687'
+tier: verified
+title: 한국도로공사_고속도로 출입시설 위치정보
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076687/openapi.do
+synonyms:
+  - 고속도로
+  - 출입시설
+  - 위치
+  - 나들목
+  - 분기점
+  - 위치좌표
+  - 위치기반
+  - 방향정보
+  - 고속도로 IC 좌표
+  - 나들목 위치
+  - 분기점 JC 위치
+  - 인터체인지 목록
+  - 고속도로 진출입로
+  - 도로공사 IC 코드
+  - 고속도로 노선별 IC
+summary_user: 전국 고속도로의 나들목·분기점 등 출입시설을 시설 한 곳당 한 행으로 담고, 노선명·노선번호, 시설 코드·명칭, 경도·위도 좌표(xValue·yValue)를 개별 지점 단위로 제공한다. 내비게이션·지도 서비스 개발자나 교통 분석가가 "이 고속도로 노선의 나들목은 어디에 있고 좌표는 무엇인가"를 확인하거나 출입시설을 지도에 찍을 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 한국도로공사의 다른 고속도로 데이터와 시설 코드(icCode)·노선번호(routeNo)가 같은 체계일 때만 연결하고, 그 밖의 데이터와는 시설명 매칭이나 좌표 기반 공간 결합으로 잇는다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로 출입시설의 위치 정보를 수록한 OpenAPI 서비스이다.전국 고속도로의 나들목, 분기점, 휴게소, 졸음쉼터 등 다양한 출입 관련 시설의 위치 정보를 포함하며, XML 및 JSON 형식으로 제공된다.각 시설의 명칭, 도로 구간, 방향, 위도·경도 좌표 등의 세부 항목이 포함되어 있다.출입시설 정보는 위치 기반 서비스, 교통 경로 안내, 응급 대응 시스템 등에서 활용 가능하다.데이터는 정기적으로 갱신되며, 교통 정보 서비스의 정확성과 활용도를 높이는 데 기여한다.운전자의 안전하고 효율적인 고속도로 이용을 지원하며, 민간 내비게이션 및 지도 서비스 개발에도 유용하게 활용될 수 있다.또한 공공 부문에서의 정책 수립, 교통 시설 계획, 위치 기반 행정 서비스 개발 등에 참고 자료로 활용 가능하다.
+team:
+  dept: AI데이터처
+services:
+  - op: locationinfoIc
+    name: locationinfoIc
+    endpoint: https://data.ex.co.kr/openapi/locationinfo/locationinfoIc
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 통영대전선,중부선
+        - 서해안선
+      stats:
+        unique: 47
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0350'
+        - '0150'
+      stats:
+        min: 10
+        p50: 350
+        max: 7000
+        unique: 47
+    - name: icCode
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0010I00001
+        - 0010I00003
+        - 0010I00004
+      stats:
+        unique: 525
+    - name: icName
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울주JCT
+        - 경주IC
+        - 장수IC
+      stats:
+        unique: 519
+    - name: xValue
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '129.097294'
+        - '129.049554'
+        - '129.095698'
+      stats:
+        min: 126.389586
+        p50: 127.474086
+        max: 129.432687
+        unique: 525
+    - name: yValue
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.250563'
+        - '35.377922'
+        - '35.499555'
+      stats:
+        min: 34.691508
+        p50: 36.24055
+        max: 38.203435
+        unique: 525
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: road-facilities
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6664
+  rank_in_sector: 588
+  brm: 교통물류 - 도로
+  why: 고속도로 IC·JC·휴게소·졸음쉼터 위치 전국 원장
+claims:
+  - id: c-15076687-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076687.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076687-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076687-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076687.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076687-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15076687.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076687-06
+    kind: admin_note
+    value: "세부 부문 '도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)'의 가치: 터널·교량·지하차도는 제공표준 — 지자체 파일 수백 건이 표준 하나로 접힌다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076687-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076687-08
+    kind: admin_note
+    value: wave3 p1 · 이동 제안 → 교통물류 - 도로 / 도로 시설물
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076687.json
+  stats: probe/stats/15076687.json
+  data: probe/data/15076687/
+limits: 호출에는 외부 사이트(data.ex.co.kr)에서 따로 받은 인증키를 경로 파라미터로 넣어야 하며, 포털 활용신청과는 별개다. 전역 조인 키가 없어 다른 기관 데이터와 직접 결합하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076687-01
+    - c-15076687-03
+    - c-15076687-04
+  dropped_citations: 0
+status: active

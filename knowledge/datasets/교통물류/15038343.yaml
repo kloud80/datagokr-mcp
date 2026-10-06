@@ -1,4 +1,3 @@
-# Dataset 15038343 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15038343'
 tier: verified
 title: 한전KDN(주)_나주시 버스 정류소 정보
@@ -24,6 +23,7 @@ synonyms:
   - 나주시 대중교통
   - 정류소 목록
   - 버스정류장 위경도
+summary_user: 나주시 버스 정류소를 한 줄에 한 곳씩 담은 CSV 파일(약 10KB)로, 정류소ID·정류소명·위도·경도·위치 설명(정류소위치)을 담는다. 나주 시민이나 앱 개발자가 "이 근처 버스 정류소는 어디이고 어떤 랜드마크 옆에 있나"를 지도에 표시하거나 찾을 때 쓴다. 실측 컬럼에 전국 공통 조인 키가 없어 다른 노선·도착 데이터와는 정류소명 매칭이나 같은 기관 코드로만 잇고, 위도·경도로 주변 시설 데이터와 공간 결합해 쓴다.
 description_portal: 나주시 버스 정류소 정보는 정류소ID, 정류소명, 위도와 경도, 그리고 정류소 위치 설명을 포함합니다. 각 정류소는 고유 ID로 식별되며, 명칭을 통해 이용자가 쉽게 인식할 수 있습니다. 위도와 경도 정보는 정류소의 정확한 위치를 제공해 지도나 내비게이션과 연동할 수 있습니다. 위치 설명은 주변 환경과 주요 지점을 안내해 접근성을 높입니다. 이 정보는 나주시 대중교통의 효율적 운영과 이용자 편의 향상에 기여하며, 도시계획과 교통 관리에도 중요한 역할을 합니다. 정확한 정류소 데이터는 신뢰받는 대중교통 서비스를 만드는 기반입니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 정류소ID
       type: number
+      semantic_type: transit_node_cd
       null_rate: 0.0
       sample_values:
         - '47 '
@@ -89,6 +90,12 @@ schema:
         - 나주시내방향
       stats:
         unique: 52
+  foreign_keys:
+    - fields:
+        - 정류소ID
+      reference:
+        key: transit_node_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -131,7 +138,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15038343-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: transit_node_cd(정류소ID)'
     evidence:
       - type: measured
         source: probe/stats/15038343.json
@@ -196,8 +203,6 @@ verification:
   run: probe/runs/15038343.json
   stats: probe/stats/15038343.json
   data: probe/data/15038343/
-status: active
-summary_user: 나주시 버스 정류소를 한 줄에 한 곳씩 담은 CSV 파일(약 10KB)로, 정류소ID·정류소명·위도·경도·위치 설명(정류소위치)을 담는다. 나주 시민이나 앱 개발자가 "이 근처 버스 정류소는 어디이고 어떤 랜드마크 옆에 있나"를 지도에 표시하거나 찾을 때 쓴다. 실측 컬럼에 전국 공통 조인 키가 없어 다른 노선·도착 데이터와는 정류소명 매칭이나 같은 기관 코드로만 잇고, 위도·경도로 주변 시설 데이터와 공간 결합해 쓴다.
 limits: 정류소ID는 전역 조인 키로 확인되지 않아 국가 정류소 체계나 다른 기관 데이터와 바로 붙지 않으며, 이름 매핑이 필요하다. 노선·실시간 도착 정보는 없으므로 TAGO나 지자체 BIS 등 별도 데이터와 함께 써야 한다.
 review:
   summary: draft
@@ -210,3 +215,10 @@ review:
     - c-15038343-04
     - c-15038343-06
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord

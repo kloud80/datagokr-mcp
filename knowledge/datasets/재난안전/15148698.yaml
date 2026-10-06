@@ -1,4 +1,5 @@
-# Dataset 15148698 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15148698 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15148698'
 tier: verified
 title: 국토교통부_지반정보_암석시험정보(점하중시험코드)
@@ -21,6 +22,7 @@ synonyms:
   - 지반조사결과
   - 국토지반정보
   - Point Load Test
+summary_user: 시추조사로 만든 지반조사결과 가운데 암석 점하중시험 결과를 시추공·시료 깊이별로 담은 전국 단위 파일(csv, 약 28KB)이다. 지반·토목 설계자나 분석가가 특정 사업(프로젝트) 시추공의 깊이별 암석 강도(일축압축강도 추정값 등)를 확인하는 데 쓴다. 전역 조인 키는 없고, 프로젝트코드·시추공코드로 같은 기관의 다른 지반정보(시추공·암석시험) 파일과 이어 쓴다.
 description_portal: 시추조사를 통해 생산된 지반조사결과의 암석시험 내용 중 점하중 시험의 결과를 제공합니다. 점하중시험은 암석을 성형하지 않고 채취한 원시료에 점하중을 가해 파괴시킬 때의 하중을 측정하는 시험으로, 일축압축강도를 간접적으로 추정하고 암석의 공학적 특성을 파악하기 위해 사용됩니다. 불규칙한 형상이나 현장에서 채취한 시료를 그대로 시험할 수 있으며, 시험편을 성형할 필요가 없어 간편하게 암석의 강도를 평가할 수 있는 장점이 있습니다.
 legal_basis_portal: 지반조사결과 전산화 및 활용에 관한 지침
 accrual_periodicity: 수시
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 프로젝트코드
       type: code
+      semantic_type: geo_project_cd
       null_rate: 0.0
       sample_values:
         - K074
@@ -77,6 +80,7 @@ schema:
         unique: 45
     - name: 시추공코드
       type: string
+      semantic_type: geo_borehole_cd
       null_rate: 0.0
       sample_values:
         - K073B003
@@ -108,6 +112,17 @@ schema:
         p50: 4.4
         max: 23.4
         unique: 41
+  foreign_keys:
+    - fields:
+        - 프로젝트코드
+      reference:
+        key: geo_project_cd
+      evidence: measured
+    - fields:
+        - 시추공코드
+      reference:
+        key: geo_borehole_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -150,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15148698-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: geo_project_cd(프로젝트코드), geo_borehole_cd(시추공코드)'
     evidence:
       - type: measured
         source: probe/stats/15148698.json
@@ -225,8 +240,6 @@ verification:
   run: probe/runs/15148698.json
   stats: probe/stats/15148698.json
   data: probe/data/15148698/
-status: active
-summary_user: 시추조사로 만든 지반조사결과 가운데 암석 점하중시험 결과를 시추공·시료 깊이별로 담은 전국 단위 파일(csv, 약 28KB)이다. 지반·토목 설계자나 분석가가 특정 사업(프로젝트) 시추공의 깊이별 암석 강도(일축압축강도 추정값 등)를 확인하는 데 쓴다. 전역 조인 키는 없고, 프로젝트코드·시추공코드로 같은 기관의 다른 지반정보(시추공·암석시험) 파일과 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑으로만 연결된다. 비공간 데이터라 좌표 기반 분석은 이 파일만으로 하지 못한다.
 review:
   summary: draft
@@ -238,3 +251,4 @@ review:
     - c-15148698-03
     - c-15148698-04
   dropped_citations: 0
+status: active

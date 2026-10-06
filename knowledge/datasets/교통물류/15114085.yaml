@@ -112,6 +112,7 @@ schema:
     - name: flightid
       title: 편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - CA709
@@ -176,6 +177,7 @@ schema:
     - name: airportcode
       title: 인천공항에 도착하는 편명의 출발지공항(IATA) 코드
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - NRT
@@ -277,6 +279,7 @@ schema:
     - name: masterflightid
       title: 마스터편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.473
       sample_values:
         - EY822
@@ -298,6 +301,7 @@ schema:
     - name: flightid
       title: 편명
       type: code
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - 7C6001
@@ -361,6 +365,7 @@ schema:
     - name: airportcode
       title: 인천공항에 도착하는 편명의 출발지공항(IATA) 코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - MFM
@@ -451,6 +456,7 @@ schema:
     - name: masterflightid
       title: 마스터편명
       type: code
+      semantic_type: flight_no
       null_rate: 0.5
       sample_values:
         - KE2015
@@ -469,6 +475,22 @@ schema:
       op: /getPaxFltSchedDeparturesDeOdp
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - flightid
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airportcode
+      reference:
+        key: airport_cd
+      evidence: measured
+    - fields:
+        - masterflightid
+      reference:
+        key: flight_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -515,7 +537,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15114085-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightid), airport_cd(airportcode), flight_no(masterflightid)'
     evidence:
       - type: measured
         source: probe/stats/15114085.json

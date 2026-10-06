@@ -66,6 +66,7 @@ schema:
     - name: orgNo
       title: 발전소코드
       type: number
+      semantic_type: koen_plant_unit
       null_rate: 0.0
       sample_values:
         - '8580'
@@ -77,6 +78,7 @@ schema:
     - name: locCd
       title: 지역코드
       type: number
+      semantic_type: koen_env_loc_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -103,6 +105,7 @@ schema:
     - name: airCode
       title: 농도코드
       type: number
+      semantic_type: koen_env_item_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -156,9 +159,29 @@ schema:
         p50: 20220520
         max: 20220524
         unique: 2
+  foreign_keys:
+    - fields:
+        - orgNo
+      reference:
+        key: koen_plant_unit
+      evidence: measured
+    - fields:
+        - locCd
+      reference:
+        key: koen_env_loc_cd
+      evidence: measured
+    - fields:
+        - airCode
+      reference:
+        key: koen_env_item_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  time: month
+  time_fields:
+    - ym
 cycle: default
 classification:
   subsector_name: plant-emissions
@@ -202,7 +225,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15119645-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koen_plant_unit(orgNo), koen_env_loc_cd(locCd), koen_env_item_cd(airCode)'
     evidence:
       - type: measured
         source: probe/stats/15119645.json

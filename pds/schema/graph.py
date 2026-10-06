@@ -18,6 +18,12 @@ class RelatedKey(Strict):
     note: str | None = None
 
 
+class KeyField(Strict):
+    """이 키를 담은 필드 — 기관 고유 키처럼 필드명이 데이터마다 다를 때 (pds.knowledge.agency_review가 제안, 실측 컬럼으로 확인)."""
+    names: list[str] = Field(min_length=1, description="실측 컬럼명")
+    datasets: list[str] = Field(default_factory=list, description="이 필드명이 이 키인 데이터 id (비우면 모든 데이터)")
+
+
 class Key(Strict):
     id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
     name: str
@@ -30,6 +36,8 @@ class Key(Strict):
     issuer: str | None = Field(None, description="코드 부여 주체")
     related_keys: list[RelatedKey] = Field(default_factory=list)
     shape_names: list[str] = Field(default_factory=list, description="pds/rank/shape.py 연계 키 판정 이름")
+    fields: list[KeyField] = Field(default_factory=list, description="이 키를 담은 필드 (데이터별) — gen_dataset이 semantic_type으로 붙인다")
+    agency: str | None = Field(None, description="고유 키를 부여·운영하는 기관 코드")
     notes: str | None = None
 
 
@@ -289,10 +297,48 @@ class Target(Strict):
     prelim_score: float
     usage: int
     url: str
-    round: Literal["1", "2", "3", "4", "5", "6", "7", "8", "external"]  # 4·5·6·7 = 2·3·4·5차 확대 (knowledge/expansion/wave2·3·4·5)
+    round: Literal["1", "2", "3", "4", "5", "6", "7", "8", "9", "external"]  # 4·5·6·7 = 2·3·4·5차 확대 (knowledge/expansion/wave2·3·4·5)
     why: str
     status: Literal["pending", "verified", "failed"]
     probe: dict[str, Any] | None = None
     note: str | None = None
     substitute_for: str | None = None
     substituted_by: str | None = None
+
+
+# ─────────────────────────── Agency — knowledge/agencies/{agency_code}.yaml (기관별 핵심 데이터·관계)
+class AgencySystem(Strict):
+    """기관이 운영하는 원천 시스템 하나 (예: 나라장터, 건축HUB, 가맹사업거래) — 그 시스템에서 나온 데이터 묶음."""
+    name: str
+    description: str | None = None
+    datasets: list[str] = Field(default_factory=list, description="이 시스템에서 나온 데이터 id (층 무관)")
+    core: list[str] = Field(default_factory=list, description="시스템의 핵심 원장 (개체 단위·전수) — 검증 대상 우선")
+    native_keys: list[str] = Field(default_factory=list, description="시스템 고유 식별자 (Key id 또는 필드명)")
+
+
+class AgencyRelation(Strict):
+    """기관 안(시스템 사이) 또는 기관 밖(다른 기관)과의 관계 — 조인은 Edge로만 선언·실측한다. 여기는 지도."""
+    to: str = Field(description="상대 기관 코드 또는 'self:<시스템>'")
+    via: str = Field(description="잇는 키 (Key id 또는 필드명)")
+    datasets: list[str] = Field(default_factory=list)
+    status: Literal["proposed", "declared", "measured", "failed"] = "proposed"
+    edges: list[str] = Field(default_factory=list, description="이 관계를 실현한 Edge id")
+    note: str | None = None
+
+
+class Agency(Strict):
+    id: str = Field(pattern=r"^[0-9A-Z]{7}$", description="행정표준 기관코드 (포털 제공기관코드)")
+    name: str
+    type: Literal["central", "public", "metro", "local", "education", "other"]
+    parent: str | None = Field(None, description="상위 기관 코드 (instt_cd 비고)")
+    tier: Literal["A", "B", "C", "D"] = Field(description="A 중앙·공공 정밀 · B 광역 · C 기초 · D 소규모")
+    counts: dict[str, int] = Field(default_factory=dict, description="catalog · verified · core · edges_within · edges_across")
+    systems: list[AgencySystem] = Field(default_factory=list)
+    core_missing: list[str] = Field(default_factory=list, description="핵심인데 아직 검증 안 된 데이터 id")
+    native_keys: list[str] = Field(default_factory=list)
+    relations: list[AgencyRelation] = Field(default_factory=list)
+    gaps: list[str] = Field(default_factory=list, description="이 기관 데이터로 답할 수 없는 것·접근 막힘")
+    external_portal: str | None = Field(None, description="기관 자체 개방 사이트 (예: data.gg.go.kr)")
+    analyzed_by: str | None = None
+    analyzed_at: dt.date | None = None
+    note: str | None = None

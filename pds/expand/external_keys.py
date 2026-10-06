@@ -54,6 +54,32 @@ SITES: dict[str, dict] = {
     "file.localdata.go.kr": {"name": "지방행정 인허가(LOCALDATA) 파일", "env": "(없음)", "how": "키 없이 파일 다운로드 — 바로 처리 가능"},
 }
 
+# 2026-10-06 가입·검증 결과 (mode: key 인증키 · session 로그인 세션 · sample 견본 키(가입 불필요) · per_api 서비스마다 키 · pending 승인·신청 대기)
+SITES.update({
+    "data.ex.co.kr": {"name": "한국도로공사 고속도로 공공데이터 포털", "env": "", "mode": "sample", "how": "가입 없이 key=test로 오픈API 호출 확인 (운영은 회원가입 → 인증키)"},
+    "www.foodsafetykorea.go.kr": {"name": "식품안전나라 (식약처)", "env": "", "mode": "sample", "how": "가입 없이 sample 키로 견본 5행 (전수는 회원가입 → 인증키)"},
+    "openapi.foodsafetykorea.go.kr": {"name": "식품안전나라 오픈API", "env": "", "mode": "sample", "how": "sample 키 견본"},
+    "www.safemap.go.kr": {"name": "생활안전지도 (행안부)", "env": "SAFEMAP_API_KEY", "mode": "pending", "how": "가입·인증키 신청 완료 — 승인 대기 (등록되지 않은 서비스키)"},
+    "apihub.kma.go.kr": {"name": "기상청 API허브", "env": "KMA_APIHUB_API_KEY", "mode": "pending", "how": "가입·인증키 완료 — API마다 활용신청 필요(키는 같음)"},
+    "www.lofin365.go.kr": {"name": "지방재정365 (행안부)", "env": "LOFIN365_API_KEY", "mode": "key", "how": "회원가입 → 마이페이지 인증키. 포털 링크는 공시 화면이라 제목 유사도로 데이터셋 짝짓기"},
+    "open.assembly.go.kr": {"name": "열린국회정보", "env": "OPEN_ASSEMBLY_API_KEY", "mode": "key", "how": "회원가입 → 인증키(즉시). 상세 시트는 키 없이도 조회"},
+    "opendart.fss.or.kr": {"name": "OpenDART (금감원 전자공시)", "env": "OPEN_DART_API_KEY", "mode": "key", "how": "인증키 신청(이메일 인증) → 즉시"},
+    "www.safetydata.go.kr": {"name": "재난안전데이터공유플랫폼 (행안부)", "env": "", "mode": "session", "how": "회원가입·로그인 → 데이터별 샘플 다운로드(첫 100건). 전수 API는 데이터별 이용신청"},
+    "www.culture.go.kr": {"name": "문화공공데이터광장", "env": "CULTURE_API_KEY", "mode": "per_api", "how": "회원가입 → API마다 활용신청 → API별 서비스키가 메일로 (115건 신청)"},
+    "culture.go.kr": {"name": "문화공공데이터광장", "env": "CULTURE_API_KEY", "mode": "per_api", "how": "API마다 활용신청 → API별 서비스키 메일 (115건 신청)"},
+    "data.gg.go.kr": {"name": "경기데이터드림", "env": "", "mode": "session", "how": "로그인 세션 · 상세 시트(searchSheetData)와 오픈API(키 없이 견본)"},
+    "www.work24.go.kr": {"name": "고용24 (고용노동부)", "env": "", "mode": "per_api", "how": "회원가입 → 서비스별 인증키(11개 승인). 채용정보는 기업회원 전용"},
+    "data.mafra.go.kr": {"name": "농림축산식품 공공데이터 포털", "env": "DATA_MAFRA_API_KEY", "mode": "key", "how": "회원가입 시 인증키 자동 발급. 파일은 로그인 없이, API는 sample 키 견본"},
+    "www.jejudatahub.net": {"name": "제주데이터허브", "env": "JEJU_DATA_HUB_API_KEY", "mode": "key", "how": "가입·키 완료. 상세 미리보기 표로 확인 — 원본·API는 데이터별 프로젝트 담기 필요"},
+    "jejudatahub.net": {"name": "제주데이터허브", "env": "JEJU_DATA_HUB_API_KEY", "mode": "key", "how": "상세 미리보기 표로 확인"},
+    "www.nongsaro.go.kr": {"name": "농사로 (농촌진흥청)", "env": "NONGSARO_API_KEY", "mode": "pending", "how": "회원가입 없음 — 공공데이터 신청서 제출 → 승인 대기"},
+    "nongsaro.go.kr": {"name": "농사로 (농촌진흥청)", "env": "NONGSARO_API_KEY", "mode": "pending", "how": "공공데이터 신청 → 승인 대기"},
+    "openapi.jigu.go.kr": {"name": "택지정보시스템 (LX)", "env": "", "mode": "sample", "how": "가입 없이 월별 파일(/openApi/down.do)"},
+    "data.gm.go.kr": {"name": "광명시 데이터", "env": "", "mode": "pending", "how": "파일 다운로드에 로그인 필요 — 보류"},
+    "eis.work24.go.kr": {"name": "고용24 고용행정통계", "env": "", "mode": "per_api", "how": "통계 화면 — 오픈API 대응 없음"},
+})
+
+
 
 def _have(env: str) -> bool:
     if not env or env.startswith("("):
@@ -81,13 +107,19 @@ def build() -> str:
                              "how": "사이트에서 회원가입 → 오픈API 인증키 신청 — 확인 필요"})
         pr = [_priority(r) for r in rows]
         groups.append((host, s, rows, pr.count(1), len(rows)))
-    have = [g for g in groups if _have(g[1]["env"])]
-    need = sorted([g for g in groups if not _have(g[1]["env"])], key=lambda g: (-g[3], -g[4]))
+    ok_ = lambda st: st.get("mode") in ("session", "sample", "per_api") or (st.get("mode") != "pending" and _have(st["env"]))  # noqa: E731
+    have = [g for g in groups if ok_(g[1])]
+    wait = [g for g in groups if g[1].get("mode") == "pending"]
+    need = sorted([g for g in groups if not ok_(g[1]) and g[1].get("mode") != "pending"], key=lambda g: (-g[3], -g[4]))
     total_need = sum(g[4] for g in need)
 
     L = ["# 추가 외부 키", "",
          f"외부 사이트 키가 있어야 검증·편입할 수 있는 데이터 **{len(links):,}건** — 제공처 {len(groups)}곳. "
-         f"이미 키가 있는 곳 {len(have)}곳({sum(g[4] for g in have):,}건) · **새로 받아야 하는 곳 {len(need)}곳({total_need:,}건)**.",
+         f"키·접근 확보 {len(have)}곳({sum(g[4] for g in have):,}건) · 승인·신청 대기 {len(wait)}곳({sum(g[4] for g in wait):,}건) · "
+         f"**새로 받아야 하는 곳 {len(need)}곳({total_need:,}건)**.",
+         "",
+         "- 2026-10-06 가입·검증: 경기데이터드림·제주데이터허브·재난안전·농식품·국회·지방재정365·문화(API별 키)·OpenDART·고용24 확보, "
+         "식품안전나라·도로공사·택지정보는 가입 없이 견본 키. 생활안전지도·농사로·기상청 API허브는 승인·활용신청 대기.",
          "",
          "- 받은 키는 `.env`에 아래 **변수 이름**으로 넣어 주세요 (값은 git에 올라가지 않습니다).",
          "- 순서는 1순위(바로 편입) 데이터가 많은 곳부터. 1순위는 2·3차 부문 검토에서 '전국 원장·실시간·많이 이어짐'으로 판정된 것.",
@@ -97,12 +129,15 @@ def build() -> str:
          "| # | 제공처 | 데이터 | 1순위 | .env 변수 | 발급 |", "|---:|---|---:|---:|---|---|"]
     for n, (host, s, rows, p1, cnt) in enumerate(need, 1):
         L.append(f"| {n} | [{s['name']}](https://{host}) | {cnt} | {p1} | `{s['env']}` | {s['how']} |")
-    L += ["", "## 이미 있는 키 (바로 편입 진행 가능)", "", "| 제공처 | 데이터 | 1순위 | .env 변수 |", "|---|---:|---:|---|"]
+    L += ["", "## 승인·신청 대기", "", "| 제공처 | 데이터 | .env 변수 | 상태 |", "|---|---:|---|---|"]
+    for host, s, rows, p1, cnt in sorted(wait, key=lambda g: -g[4]):
+        L.append(f"| [{s['name']}](https://{host}) | {cnt} | `{s['env']}` | {s['how']} |")
+    L += ["", "## 확보한 키·접근 (바로 편입 진행 가능)", "", "| 제공처 | 데이터 | 1순위 | .env 변수 | 방식 |", "|---|---:|---:|---|---|"]
     for host, s, rows, p1, cnt in sorted(have, key=lambda g: -g[4]):
-        L.append(f"| [{s['name']}](https://{host}) | {cnt} | {p1} | `{s['env']}` |")
+        L.append(f"| [{s['name']}](https://{host}) | {cnt} | {p1} | `{s['env'] or '-'}` | {s.get('how', '')} |")
     L += ["", "## 제공처별 데이터", ""]
-    for host, s, rows, p1, cnt in need + sorted(have, key=lambda g: -g[4]):
-        status = "보유" if _have(s["env"]) else "필요"
+    for host, s, rows, p1, cnt in need + wait + sorted(have, key=lambda g: -g[4]):
+        status = "확보" if ok_(s) else ("대기" if s.get("mode") == "pending" else "필요")
         L += [f"### {s['name']} — {cnt}건 · 키 {status}", "",
               f"제공처 예: {rows[0].get('link')}", "", "| 우선 | 데이터 | 기관 | 포털 |", "|---:|---|---|---|"]
         for r in sorted(rows, key=lambda r: (_priority(r), r["title"])):

@@ -1,0 +1,248 @@
+# Dataset 15126024 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126024'
+tier: verified
+title: 국회 국회사무처_역대 정당별 국회의원 선거결과
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126024/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 총선 결과
+  - 정당별 의석수
+  - 국회의원 선거 득표율
+  - 역대 총선
+  - 비례대표 당선자 수
+  - 지역구 당선자 수
+  - 정당 득표율
+summary_user: 역대 국회의원 선거 결과를 대수(ORD_NO)·정당별로 묶어 득표율, 지역구 당선자 수, 비례대표 당선자 수 같은 집계 값을 담는 전국 단위 비공간 데이터로 보인다. 정치학 연구자나 기자가 "특정 대수 총선에서 각 정당이 몇 석을 얻었고 득표율은 얼마였나"를 대수별로 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 국회 의정활동 데이터(의원·표결 등)와는 대수(ORD_NO)나 정당명(PLPT_NM)을 이름·코드로 맞춰 연결한다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://open.assembly.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: UNIT_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100013'
+        - '100012'
+        - '100011'
+      stats:
+        min: 100010
+        p50: 100014.5
+        max: 100021
+        unique: 12
+    - name: ORD_NO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제13대
+        - 제12대
+        - 제11대
+      stats:
+        unique: 12
+    - name: PLPT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 무소속
+        - 합계
+        - 한나라당
+      stats:
+        unique: 58
+    - name: NFVP_RT
+      type: number
+      null_rate: 0.18
+      sample_values:
+        - '3.2'
+        - '6.7'
+        - '0.6'
+      stats:
+        min: 0.01
+        p50: 9.49
+        max: 42.8
+        unique: 73
+    - name: PLMST_PSNCNT
+      type: number
+      null_rate: 0.19
+      sample_values:
+        - '1.0'
+        - '2.0'
+        - '299.0'
+      stats:
+        min: 1
+        p50: 25
+        max: 300
+        unique: 48
+    - name: PRPRR_PSNCNT
+      type: number
+      null_rate: 0.44
+      sample_values:
+        - '13.0'
+        - '17.0'
+        - '5.0'
+      stats:
+        min: 1
+        p50: 17
+        max: 92
+        unique: 30
+    - name: DATA_COLT_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '207'
+        - '208'
+        - '209'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 215
+        unique: 100
+    - name: OPB_FL_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7254
+  rank_in_sector: 48
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 열린국회정보 (인증키)
+claims:
+  - id: c-15126024-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126024.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126024-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126024-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126024.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126024-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126024.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126024-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126024-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126024-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126024.json
+  stats: probe/stats/15126024.json
+  data: probe/data/15126024/
+limits: open.assembly.go.kr 전용 인증키를 경로의 KEY 파라미터에 넣어야 하며, 이 키는 포털 활용신청과 별개다. 전역 조인 키가 없어 정당명 표기 차이를 직접 매핑해야 하고, 범위가 전국·비공간이라 선거구·지역별 결과는 다룰 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126024-01
+    - c-15126024-03
+    - c-15126024-04
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15125514 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125514 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125514'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 경쟁 금지 업종 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹계약 겸업 금지
   - 정보공개서 경쟁금지
   - 가맹본부 허가절차
+summary_user: 가맹사업 브랜드별로 가맹점사업자에게 금지되는 경쟁 업종명과 그 업종을 하려 할 때의 허가 절차 내용을 기준년도·브랜드관리번호 단위로 담은 전국 범위 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드와 계약하면 어떤 업종을 함께 못 하고, 하려면 본부 허가를 어떻게 받아야 하나"를 확인하는 데 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보 계열 데이터(브랜드·가맹본부 정보)와 이어 쓰며, 실측상 사업자등록번호 같은 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 description_portal: 브랜드 경쟁 금지 업종에 대한 기준년도, 브랜드관리번호를 이용하여 경쟁금지 업종명, 허가절차내용 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -128,12 +132,27 @@ schema:
         - '문의: 가맹사업팀02)546-4007'
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -178,7 +197,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125514-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125514.json
@@ -243,8 +262,6 @@ verification:
   run: probe/runs/15125514.json
   stats: probe/stats/15125514.json
   data: probe/data/15125514/
-status: active
-summary_user: 가맹사업 브랜드별로 가맹점사업자에게 금지되는 경쟁 업종명과 그 업종을 하려 할 때의 허가 절차 내용을 기준년도·브랜드관리번호 단위로 담은 전국 범위 API입니다. 가맹 창업을 준비하는 사람이 "이 브랜드와 계약하면 어떤 업종을 함께 못 하고, 하려면 본부 허가를 어떻게 받아야 하나"를 확인하는 데 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보 계열 데이터(브랜드·가맹본부 정보)와 이어 쓰며, 실측상 사업자등록번호 같은 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 limits: 실측 컬럼에서 전역 조인 키가 없어 사업자등록번호·법인등록번호 기반의 타 기관 연계는 직접 되지 않고 이름이나 공정위 내부 관리번호로만 묶인다. 조회에 기준년도와 브랜드관리번호가 필요하므로 브랜드관리번호를 먼저 다른 가맹정보 서비스에서 얻어야 한다.
 review:
   summary: draft
@@ -257,3 +274,4 @@ review:
     - c-15125514-04
     - c-15125514-07
   dropped_citations: 0
+status: active

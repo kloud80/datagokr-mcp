@@ -1,4 +1,5 @@
-# Dataset 15056875 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056875 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056875'
 tier: verified
 title: 한국지역정보개발원_신규채용현황 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 클린아이 경영공시
   - 지방공기업 경영정보
   - 공공기관 채용현황
+summary_user: 지방공기업별·연도별 신규채용 인원을 총인원과 청년(여성 포함), 이공계대졸, 기능인재(전문대·고졸), 여성, 장애인, 북한이탈주민 등 채용 유형별로 나눠 담은 전국 단위 경영공시 집계 자료다. 분석가나 구직자가 '어느 지방공기업이 청년·장애인·여성을 해마다 몇 명씩 새로 뽑았는가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 경영공시 자료와는 기관명(ENT_NAME)과 연도를 맞춰 이어 써야 한다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 지방공기업별 신규채용현황 자료에는 연도, 기관명, 총인원, 청년총원, 청년(여성), 이공계대졸, 기능인재전문대, 기능인재고졸, 여성, 장애인, 북한이탈주민 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -91,6 +93,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 청주도시공사
@@ -213,12 +216,22 @@ schema:
         p50: 3
         max: 170
         unique: 24
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -262,7 +275,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056875-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15056875.json
@@ -316,8 +329,6 @@ verification:
   run: probe/runs/15056875.json
   stats: probe/stats/15056875.json
   data: probe/data/15056875/
-status: active
-summary_user: 지방공기업별·연도별 신규채용 인원을 총인원과 청년(여성 포함), 이공계대졸, 기능인재(전문대·고졸), 여성, 장애인, 북한이탈주민 등 채용 유형별로 나눠 담은 전국 단위 경영공시 집계 자료다. 분석가나 구직자가 '어느 지방공기업이 청년·장애인·여성을 해마다 몇 명씩 새로 뽑았는가'를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 경영공시 자료와는 기관명(ENT_NAME)과 연도를 맞춰 이어 써야 한다.
 limits: 기관 코드 같은 공통 키가 없어 다른 데이터와 연결할 때 기관명 표기 차이를 직접 맞춰야 한다. 지도에 올릴 공간 정보는 없다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -329,3 +340,4 @@ review:
     - c-15056875-03
     - c-15056875-04
   dropped_citations: 0
+status: active

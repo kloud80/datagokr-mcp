@@ -45,6 +45,7 @@ schema:
   fields:
     - name: facilNo
       type: code
+      semantic_type: fms_facil_no
       null_rate: 0.0
       sample_values:
         - AR1196-0000001
@@ -155,6 +156,7 @@ schema:
         unique: 8
     - name: mgmBldrgstPk
       type: code
+      semantic_type: bldg_register_pk
       null_rate: 0.9
       sample_values:
         - 42720-2570
@@ -175,14 +177,29 @@ schema:
         unique: 20
   foreign_keys:
     - fields:
+        - facilNo
+      reference:
+        key: fms_facil_no
+      evidence: measured
+    - fields:
         - facilAddr
       reference:
         key: address
+      evidence: measured
+    - fields:
+        - mgmBldrgstPk
+      reference:
+        key: bldg_register_pk
       evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2008-03-05 ~ 2024-12-19
+grain:
+  space: sgg
+  space_fields:
+    - facilAddr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -227,7 +244,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15017291-03
     kind: key
-    value: '실측 조인 키: address(facilAddr)'
+    value: '실측 조인 키: fms_facil_no(facilNo), address(facilAddr), bldg_register_pk(mgmBldrgstPk)'
     evidence:
       - type: measured
         source: probe/stats/15017291.json

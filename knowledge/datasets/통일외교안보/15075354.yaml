@@ -1,5 +1,3 @@
-# Dataset 15075354 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15075354'
 tier: verified
 title: 외교부_국가·지역별 재외공관 정보
@@ -118,6 +116,7 @@ schema:
     - name: embassy_cd
       title: 재외공관코드
       type: string
+      semantic_type: embassy_cd
       null_rate: 0.0
       sample_values:
         - ao
@@ -254,6 +253,11 @@ schema:
         key: country_cd
       evidence: measured
     - fields:
+        - embassy_cd
+      reference:
+        key: embassy_cd
+      evidence: measured
+    - fields:
         - emblgbd_addr
       reference:
         key: address
@@ -261,6 +265,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - embassy_lat
+    - embassy_lng
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 재외공관·주한공관·여권·국가 표준코드·국가 기본정보
@@ -304,7 +314,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15075354-03
     kind: key
-    value: '실측 조인 키: country_cd(country_iso_alp2), address(emblgbd_addr)'
+    value: '실측 조인 키: country_cd(country_iso_alp2), embassy_cd(embassy_cd), address(emblgbd_addr)'
     evidence:
       - type: measured
         source: probe/stats/15075354.json

@@ -1,4 +1,5 @@
-# Dataset 15128393 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15128393 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15128393'
 tier: verified
 title: 조달청_글로벌장터 물품정보
@@ -19,6 +20,7 @@ synonyms:
   - 해외조달인증
   - 물품식별번호
   - K-조달 수출
+summary_user: 조달청 글로벌장터에 올라온 물품을 건별로 담은 파일로, 카테고리·물품분류(한글·영문)·물품식별번호·영문 물품설명·영문 업체명과 업체설명·해외조달 인증과 물품인증 목록을 담는다(약 536KB csv). 해외 바이어나 수출을 준비하는 국내 조달기업, 분석가가 '어떤 분류의 한국 조달물품이 어떤 해외 인증을 갖추고 영문으로 소개되는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 물품분류번호·물품식별번호를 나라장터 물품 목록정보 등 조달청 데이터와 코드·이름으로 맞춰 이어 쓴다.
 description_portal: 카테고리한글명, 카테고리영문명, 물품분류번호, 물품분류한글명, 물품분류영문명, 영문물품설명, 물품식별번호, 물품식별한글명, 영문업체명, 영문업체설명, 해외조달인증목록, 물품인증목록을 포함한 조달청 글로벌장터 물품정보
 applicable_legislation:
   - law: 국가를당사자로하는계약에관한법률
@@ -54,6 +56,7 @@ schema:
         unique: 12
     - name: 물품분류번호
       type: number
+      semantic_type: g2b_prdct_clsfc_no
       null_rate: 0.0
       sample_values:
         - '30121703'
@@ -93,6 +96,7 @@ schema:
         unique: 252
     - name: 물품식별번호
       type: number
+      semantic_type: g2b_prdct_idnt_no
       null_rate: 0.0
       sample_values:
         - '22183932'
@@ -146,6 +150,17 @@ schema:
         - '[ISO9001]'
       stats:
         unique: 103
+  foreign_keys:
+    - fields:
+        - 물품분류번호
+      reference:
+        key: g2b_prdct_clsfc_no
+      evidence: measured
+    - fields:
+        - 물품식별번호
+      reference:
+        key: g2b_prdct_idnt_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -189,7 +204,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15128393-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: g2b_prdct_clsfc_no(물품분류번호), g2b_prdct_idnt_no(물품식별번호)'
     evidence:
       - type: measured
         source: probe/stats/15128393.json
@@ -275,8 +290,6 @@ verification:
   run: probe/runs/15128393.json
   stats: probe/stats/15128393.json
   data: probe/data/15128393/
-status: active
-summary_user: 조달청 글로벌장터에 올라온 물품을 건별로 담은 파일로, 카테고리·물품분류(한글·영문)·물품식별번호·영문 물품설명·영문 업체명과 업체설명·해외조달 인증과 물품인증 목록을 담는다(약 536KB csv). 해외 바이어나 수출을 준비하는 국내 조달기업, 분석가가 '어떤 분류의 한국 조달물품이 어떤 해외 인증을 갖추고 영문으로 소개되는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 물품분류번호·물품식별번호를 나라장터 물품 목록정보 등 조달청 데이터와 코드·이름으로 맞춰 이어 쓴다.
 limits: 표준 조인 키가 없어 다른 데이터와는 물품분류·식별번호나 업체명 매칭으로만 연결되며 매칭 품질은 직접 확인해야 한다. 입찰·계약 금액이나 실적은 담지 않으므로 거래 규모 분석에는 나라장터 조달 원장 데이터를 따로 써야 한다.
 review:
   summary: draft
@@ -289,3 +302,4 @@ review:
     - c-15128393-04
     - c-15128393-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15109157 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109157 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109157'
 tier: verified
 title: 행정안전부_관보 목록 정보
@@ -20,6 +21,7 @@ synonyms:
   - 정부 공보
   - 관보 원문 PDF
   - 대통령령 공포
+summary_user: 1948년부터 현재까지 발행된 관보를 수록 내용 건별로 담은 목록으로, 제목(cntntSj)·편집구분·테마구분·발행기관·근거법령·발행일자와 원문 PDF 경로, 정정 여부·정정 사유를 함께 제공하며 범위는 전국·비공간이다. 특정 법령의 공포일이나 어느 기관이 어떤 고시·공고·인사발령을 관보에 실었는지를 확인하려는 국민·법무 실무자·정책 분석가가 쓴다. 전역 조인 키가 없어 다른 데이터와는 발행기관명이나 근거법령명 같은 이름 매핑으로만 연결한다.
 description_portal: 관보는 국가가 국민에게 널리 알릴 사항을 수록하여 발행하는 국가의 공식 기관지로 '관보'라는 제호로 발간되는 정기간행물입니다. 관보는 헌법개정, 법률, 조약, 대통령령, 총리령 및 부령의 공포와 헌법개정안, 예산 및 예산 외 국고부담계약의 공고 수단입니다. 또한, 법령 공포, 대통령·국무총리훈령 및 대통령·국무총리 지시사항, 각급 기관의 인사발령 통지 등 정부 기관간의 공문 시행을 대체하는 역할을 합니다.이 데이터는 관보 전체 목록에 대한 자료로 1948년부터 현재까지 관보 목록, 상세정보(제목, 구분, 발행일자, 편집구분, 테마구분, 발행기관, 근거법령 등), 원문에 대한 정보를 제공합니다.
 team:
   dept: 법무담당관실
@@ -127,6 +129,7 @@ schema:
         unique: 3
     - name: cntntSeqNo
       type: code
+      semantic_type: gazette_cntnt_seq
       null_rate: 0.0
       sample_values:
         - I0000000000000001790585836785000
@@ -170,12 +173,22 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - cntntSeqNo
+      reference:
+        key: gazette_cntnt_seq
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - hopePblictDt
 cycle: default
 classification:
   subsector_name: 관보·고시공고
@@ -219,7 +232,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109157-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gazette_cntnt_seq(cntntSeqNo)'
     evidence:
       - type: measured
         source: probe/stats/15109157.json
@@ -273,8 +286,6 @@ verification:
   run: probe/runs/15109157.json
   stats: probe/stats/15109157.json
   data: probe/data/15109157/
-status: active
-summary_user: 1948년부터 현재까지 발행된 관보를 수록 내용 건별로 담은 목록으로, 제목(cntntSj)·편집구분·테마구분·발행기관·근거법령·발행일자와 원문 PDF 경로, 정정 여부·정정 사유를 함께 제공하며 범위는 전국·비공간이다. 특정 법령의 공포일이나 어느 기관이 어떤 고시·공고·인사발령을 관보에 실었는지를 확인하려는 국민·법무 실무자·정책 분석가가 쓴다. 전역 조인 키가 없어 다른 데이터와는 발행기관명이나 근거법령명 같은 이름 매핑으로만 연결한다.
 limits: 표준 기관코드나 법령ID 같은 공통 키가 없어 법령·기관 데이터와 정확히 조인하기 어렵고, 이름 문자열 대조에 의존해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -286,3 +297,4 @@ review:
     - c-15109157-03
     - c-15109157-04
   dropped_citations: 0
+status: active

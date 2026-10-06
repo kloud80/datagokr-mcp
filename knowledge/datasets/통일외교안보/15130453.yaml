@@ -38,6 +38,7 @@ schema:
   fields:
     - name: 아이디
       type: number
+      semantic_type: ikm_person_dict_id
       null_rate: 0.0
       sample_values:
         - '78'
@@ -72,6 +73,7 @@ schema:
         unique: 116
     - name: 공훈번호
       type: number
+      semantic_type: merit_person_mgmt_no
       null_rate: 0.0
       sample_values:
         - '6448'
@@ -192,9 +194,26 @@ schema:
         p50: 642
         max: 7818
         unique: 1315
+  foreign_keys:
+    - fields:
+        - 아이디
+      reference:
+        key: ikm_person_dict_id
+      evidence: measured
+    - fields:
+        - 공훈번호
+      reference:
+        key: merit_person_mgmt_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 생성일
+    - 변경일
+    - 이미지파일명
 cycle: default
 classification:
   subsector_name: 공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)
@@ -231,7 +250,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15130453-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ikm_person_dict_id(아이디), merit_person_mgmt_no(공훈번호)'
     evidence:
       - type: measured
         source: probe/stats/15130453.json

@@ -1,4 +1,5 @@
-# Dataset 15095068 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15095068 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095068'
 tier: verified
 title: 인천국제공항공사_화물편 운항현황(다국어)
@@ -21,6 +22,7 @@ synonyms:
   - 인천공항 화물터미널
   - 카고 항공편 현황
   - 화물기 실시간 운항
+summary_user: 인천공항 화물편의 조회 당일 운항현황을 편 단위로 담으며, 항공사·편명·예정시간·변경시간·상대 공항과 공항코드(IATA)·탑승구·터미널·현황(도착·결항·지연·회항·착륙)을 언어별로 제공한다. 물류업체나 화주가 "오늘 인천에 들어오는 특정 화물편이 지연·결항됐는지, 어느 화물터미널로 오는지"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어 공항코드(airportCode, IATA)나 편명·항공사명을 이름·코드로 맞춰 공항코드 정보나 인천공항 여객편 운항현황 등과 연결한다.
 description_portal: '인천공항 화물편의 운항현황에 대한 데이터입니다. 조회시간, 출발지 공항(IATA),편명,항공사(IATA),언어구분을 기준으로 항공사,편명,예정시간,변경시간,출발공항,탑승구,현황(도착,결항,지연,회항,착륙),출발공항코드(IATA),터미널(P0:제1터미널,P02:탑승동,P03:제2터미널,C01: 화물터미널 남측, C02: 화물터미널 북측,C03:제 2화물터미널)데이터를 제공합니다. 조회당일에 대한 데이터를 조회하실 수 있습니다. 개발 계정 일 1000 트래픽, 운영 계정 신청 시 일 1000000 트래픽을 제공합니다.'
 team:
   dept: 인프라DX팀
@@ -53,6 +55,7 @@ schema:
         unique: 18
     - name: flightId
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - KJ998
@@ -115,6 +118,7 @@ schema:
         unique: 2
     - name: airportCode
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - LAX
@@ -130,6 +134,17 @@ schema:
         - C02
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - flightId
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airportCode
+      reference:
+        key: airport_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -179,7 +194,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15095068-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightId), airport_cd(airportCode)'
     evidence:
       - type: measured
         source: probe/stats/15095068.json
@@ -244,8 +259,6 @@ verification:
   run: probe/runs/15095068.json
   stats: probe/stats/15095068.json
   data: probe/data/15095068/
-status: active
-summary_user: 인천공항 화물편의 조회 당일 운항현황을 편 단위로 담으며, 항공사·편명·예정시간·변경시간·상대 공항과 공항코드(IATA)·탑승구·터미널·현황(도착·결항·지연·회항·착륙)을 언어별로 제공한다. 물류업체나 화주가 "오늘 인천에 들어오는 특정 화물편이 지연·결항됐는지, 어느 화물터미널로 오는지"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어 공항코드(airportCode, IATA)나 편명·항공사명을 이름·코드로 맞춰 공항코드 정보나 인천공항 여객편 운항현황 등과 연결한다.
 limits: 조회 당일 데이터만 제공해 과거 운항 이력이나 통계 분석에는 쓸 수 없다. 개발계정은 일 1,000회 호출 제한이 있다. 다른 데이터와 직접 이을 공통 키가 없어 이름·코드 매핑이 필요하다.
 review:
   summary: draft
@@ -257,3 +270,4 @@ review:
     - c-15095068-03
     - c-15095068-06
   dropped_citations: 0
+status: active

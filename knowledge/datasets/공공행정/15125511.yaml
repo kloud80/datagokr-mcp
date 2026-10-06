@@ -1,4 +1,5 @@
-# Dataset 15125511 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125511 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125511'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 영업지역 재조정 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 영업지역
   - 프랜차이즈 영업지역
   - 가맹계약 영업지역 동의
+summary_user: 가맹 브랜드별로 정보공개서에 기재된 영업지역 재조정 사유·절차·가맹점주 동의 방법을 기준년도·브랜드 단위로 담는 전국 범위 API로, 업종 대·중분류명이 함께 붙는다. 가맹 창업 예정자나 가맹점주가 '이 브랜드는 어떤 사유와 절차로 내 영업지역을 바꿀 수 있나'를 계약 전에 확인하는 데 쓴다. 전역 조인 키는 실측에서 찾지 못했으며, 같은 공정위 가맹정보 계열 데이터와 브랜드관리번호·가맹본부관리번호·기준년도로 맞춰 이어 쓴다.
 description_portal: 브랜드 영업지역 재조정에 대한 기준년도, 브랜드관리번호를 이용하여 영영업지역재조정 사유 및 절차 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -144,12 +148,27 @@ schema:
         - 영업지역 변경(안)을 서면으로 통지하고 30일 이내에 동의여부 회신  동의가 있는 경우 15일 이내에 영업지역 재조정 완료 (신규점포 입점 가능
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -194,7 +213,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125511-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125511.json
@@ -259,8 +278,6 @@ verification:
   run: probe/runs/15125511.json
   stats: probe/stats/15125511.json
   data: probe/data/15125511/
-status: active
-summary_user: 가맹 브랜드별로 정보공개서에 기재된 영업지역 재조정 사유·절차·가맹점주 동의 방법을 기준년도·브랜드 단위로 담는 전국 범위 API로, 업종 대·중분류명이 함께 붙는다. 가맹 창업 예정자나 가맹점주가 '이 브랜드는 어떤 사유와 절차로 내 영업지역을 바꿀 수 있나'를 계약 전에 확인하는 데 쓴다. 전역 조인 키는 실측에서 찾지 못했으며, 같은 공정위 가맹정보 계열 데이터와 브랜드관리번호·가맹본부관리번호·기준년도로 맞춰 이어 쓴다.
 limits: 사업자등록번호 같은 전역 조인 키가 없어 공정위 밖 데이터와는 이름·코드 매핑으로만 연결된다. 비공간 데이터라 실제 영업지역의 범위나 위치는 알 수 없고, 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -273,3 +290,4 @@ review:
     - c-15125511-04
     - c-15125511-07
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15092423 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15092423 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15092423'
 tier: verified
 title: 한국건강증진개발원_단기금연캠프 서비스정보
@@ -21,6 +22,7 @@ synonyms:
   - 금연지원센터
   - 흡연자 금연 지원
   - 금연 캠프 일정
+summary_user: 국가금연지원서비스의 하나인 단기금연캠프를 캠프 한 건 단위로 담은 전국 파일 데이터로, 운영기관 유형·지역·기관명·서비스유형·캠프장소·일정·시작/종료일자·서비스정원을 담는다. 금연을 원하는 흡연자나 보건 담당자가 '우리 지역에서 언제 어떤 단기금연캠프가 열리고 정원은 몇 명인가'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 지역명이나 기관명을 이름으로 맞춰 이어 써야 한다.
 description_portal: '- 국민건강증진사업 중 국가금연지원서비스의 일환으로 운영되는 단기금연캠프에 대한 정보를 제공하고 있습니다. - 개방데이터는 캠프운영지역, 캠프주체기관명, 캠프유형, 캠프시작일자, 캠프종료일자, 캠프 서비스 정원에 대한 정보를 제공하며, 제공건수는 총 160건으로 구성되어있습니다. - 본 개방 데이터는 각 지역에서 운영중인 단기금연캠프 정보를 개방함으로써, 금연에 관심이 있는 국민에게 정보를 공유하고 금연캠프 참여를 독려할수 있으며, 장기적으로 흡연자의 금연유도에 기여할 수 있습니다.'
 accrual_periodicity: 연간
 team:
@@ -50,6 +52,7 @@ schema:
         unique: 11
     - name: 기관명
       type: code
+      semantic_type: smoking_cessation_provider
       null_rate: 0.0
       sample_values:
         - 경기북부금연지원센터
@@ -114,12 +117,23 @@ schema:
         p50: 12
         max: 20
         unique: 17
+  foreign_keys:
+    - fields:
+        - 기관명
+      reference:
+        key: smoking_cessation_provider
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 캠프시작일자
+    - 캠프종료일자
 cycle: default
 classification:
   subsector_name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
@@ -156,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15092423-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: smoking_cessation_provider(기관명)'
     evidence:
       - type: measured
         source: probe/stats/15092423.json
@@ -221,8 +235,6 @@ verification:
   run: probe/runs/15092423.json
   stats: probe/stats/15092423.json
   data: probe/data/15092423/
-status: active
-summary_user: 국가금연지원서비스의 하나인 단기금연캠프를 캠프 한 건 단위로 담은 전국 파일 데이터로, 운영기관 유형·지역·기관명·서비스유형·캠프장소·일정·시작/종료일자·서비스정원을 담는다. 금연을 원하는 흡연자나 보건 담당자가 '우리 지역에서 언제 어떤 단기금연캠프가 열리고 정원은 몇 명인가'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 다른 데이터와는 지역명이나 기관명을 이름으로 맞춰 이어 써야 한다.
 limits: 보건소코드·시군구코드 같은 표준 코드가 없어 지역사회 건강조사 등 시군구 지표와 바로 붙일 수 없고, 지역·기관명 문자열 매핑이 필요하다. 좌표가 없는 비공간 데이터라 지도 위치 분석에는 바로 쓰지 못한다.
 review:
   summary: draft
@@ -235,3 +247,4 @@ review:
     - c-15092423-04
     - c-15092423-06
   dropped_citations: 0
+status: active

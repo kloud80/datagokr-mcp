@@ -1,4 +1,5 @@
-# Dataset 15069251 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069251 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069251'
 tier: verified
 title: 한국서부발전(주)_소비탄 성상
@@ -24,6 +25,7 @@ synonyms:
   - 유황 함량
   - 석탄화력 연료
   - 서부발전 석탄 사용량
+summary_user: 한국서부발전 석탄화력 발전소에서 쓴 석탄(소비탄)의 사용량과 품질 성상을 연도·호기 단위로 담은 집계 파일로, 총수분·휘발분·회분·고정탄소·유황률·인수식 발열량·미연탄소분율 등 성분 분석값이 들어 있다(csv 약 8KB). 에너지·환경 분석가가 "호기별로 쓰는 석탄의 발열량과 황·회분 함량이 연도에 따라 어떻게 달라졌나" 같은 연료 품질과 배출 관련 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 기관의 발전량·배출 측정 자료와는 연도와 호기 이름을 맞춰 연결해야 한다.
 description_portal: 한국서부발전의 전력생산을 위한 소비탄 성상 정보입니다. 전력생산을 위한 소비탄 성상정보 데이터는 발전소에서 사용되는 석탄의 품질 특성과 물리·화학적 속성을 기록한 자료로, 안정적인 전력 생산과 효율적 연료 관리에 중요한 역할을 합니다. 이 데이터에는 석탄 사용량, 총수분율, 수분, 휘발분, 회분, 고정탄소, 건식유황률, 인수식발열량, 미연탄소분율, 인수유황률 등 주요 성분 분석 결과가 포함됩니다. 발열량은 전력 생산 효율에 직접적인 영향을 주며, 회분과 황 함량은 환경오염 물질 배출과 관련된 중요한 지표입니다. 또한 수분과 휘발분은 연소 안정성과 보일러 효율에 영향을 주기 때문에 운영 전략 수립에 활용됩니다.
 accrual_periodicity: 연간
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 11
     - name: 호기
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 1호기
@@ -183,12 +186,22 @@ schema:
         p50: 0.435
         max: 0.62
         unique: 28
+  foreign_keys:
+    - fields:
+        - 호기
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -225,7 +238,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069251-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15069251.json
@@ -290,8 +303,6 @@ verification:
   run: probe/runs/15069251.json
   stats: probe/stats/15069251.json
   data: probe/data/15069251/
-status: active
-summary_user: 한국서부발전 석탄화력 발전소에서 쓴 석탄(소비탄)의 사용량과 품질 성상을 연도·호기 단위로 담은 집계 파일로, 총수분·휘발분·회분·고정탄소·유황률·인수식 발열량·미연탄소분율 등 성분 분석값이 들어 있다(csv 약 8KB). 에너지·환경 분석가가 "호기별로 쓰는 석탄의 발열량과 황·회분 함량이 연도에 따라 어떻게 달라졌나" 같은 연료 품질과 배출 관련 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 기관의 발전량·배출 측정 자료와는 연도와 호기 이름을 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 다른 기관 데이터와 코드로 바로 붙일 수 없고, 호기명·연도 매핑에 기대야 한다. 위치 정보가 없는 비공간 자료라 지역별 분석에는 쓰기 어렵다. 실시간·일별 전력 수급 정보가 아니라 연도 단위 연료 성상 자료다.
 review:
   summary: draft
@@ -303,3 +314,4 @@ review:
     - c-15069251-03
     - c-15069251-04
   dropped_citations: 0
+status: active

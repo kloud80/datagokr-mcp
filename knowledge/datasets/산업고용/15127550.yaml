@@ -1,4 +1,5 @@
-# Dataset 15127550 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15127550 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15127550'
 tier: verified
 title: 한국남부발전(주)_사업소별 발전실적
@@ -25,6 +26,7 @@ synonyms:
   - 복합화력 발전량
   - 발전원별 발전량
   - 설비용량 대비 발전량
+summary_user: 한국남부발전(주)의 하동·영월·안동·신인천·삼척·부산·남제주 빛드림본부 등 사업소(플랜트)별·호기별로 2021년부터 2025년까지 연도별 발전원(석탄·복합·중유 등), 설비용량, 발전량(kWh)을 담은 연간 집계 파일(CSV, 약 6KB)이다. 에너지 분석가가 "남부발전 삼척 석탄 호기의 용량 대비 연간 발전량은 몇 년 사이 어떻게 바뀌었나"나 "남부발전 전체 발전량 중 석탄과 복합의 비율은 얼마인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 전력거래소 등 다른 발전 자료와는 발전소명·호기명·연도를 직접 맞춰 이어 써야 한다.
 description_portal: 본 데이터는 한국남부발전(주) 사업소별 발전실적 파일데이터입니다.본 데이터는 한국남부발전(주)의 각 사업소별(하동, 영월, 안동, 신인천, 삼척, 부산, 남제주 빛드림본부 등)로 2021년부터 2025년까지 각 연도별과 발전원별(석탄, 복합, 중유 등) 세부 발전량(kWh 단위)을 포함하고 있습니다.해당 데이터를 활용하여 발전소의 세부 호기별 용량 대비 발전량을 분석할 수 있고, 각 발전원별 한국남부발전(주)의 발전량 비율을 파악하는데 활용할 수 있습니다.추가적으로 전력거래소 등의 자료와 결합하여 세부적인 분석을 위한 기초자료로 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -59,6 +61,7 @@ schema:
         unique: 3
     - name: 플랜트
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - 하동빛드림본부
@@ -68,6 +71,7 @@ schema:
         unique: 8
     - name: 호기
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - '#1 CC'
@@ -99,12 +103,27 @@ schema:
         p50: 1668612011
         max: 6012868877
         unique: 122
+  foreign_keys:
+    - fields:
+        - 플랜트
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 년도
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -141,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15127550-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_plant_unit(플랜트), kospo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15127550.json
@@ -206,8 +225,6 @@ verification:
   run: probe/runs/15127550.json
   stats: probe/stats/15127550.json
   data: probe/data/15127550/
-status: active
-summary_user: 한국남부발전(주)의 하동·영월·안동·신인천·삼척·부산·남제주 빛드림본부 등 사업소(플랜트)별·호기별로 2021년부터 2025년까지 연도별 발전원(석탄·복합·중유 등), 설비용량, 발전량(kWh)을 담은 연간 집계 파일(CSV, 약 6KB)이다. 에너지 분석가가 "남부발전 삼척 석탄 호기의 용량 대비 연간 발전량은 몇 년 사이 어떻게 바뀌었나"나 "남부발전 전체 발전량 중 석탄과 복합의 비율은 얼마인가" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 전력거래소 등 다른 발전 자료와는 발전소명·호기명·연도를 직접 맞춰 이어 써야 한다.
 limits: 연도 단위 집계라 시간별·일별 수급이나 실시간 전력시장 분석에는 쓰지 못한다. 표준 발전소 코드 같은 공통 키가 없어 다른 데이터와 결합할 때 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -219,3 +236,4 @@ review:
     - c-15127550-03
     - c-15127550-04
   dropped_citations: 0
+status: active

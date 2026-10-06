@@ -71,6 +71,7 @@ schema:
         unique: 70671
     - name: 열차번호
       type: number
+      semantic_type: korail_train_no
       null_rate: 0.0
       sample_values:
         - '1197'
@@ -172,6 +173,7 @@ schema:
         unique: 3591
     - name: 화차차량번호
       type: number
+      semantic_type: korail_wagon_no
       null_rate: 0.5557
       sample_values:
         - '76054'
@@ -512,9 +514,26 @@ schema:
         p50: 3900
         max: 12240
         unique: 535
+  foreign_keys:
+    - fields:
+        - 열차번호
+      reference:
+        key: korail_train_no
+      evidence: measured
+    - fields:
+        - 화차차량번호
+      reference:
+        key: korail_wagon_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 화차출발일시
+    - 식별값
+    - 발생일시
 cycle: default
 classification:
   subsector_name: 철도 물류·화물
@@ -551,7 +570,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15153677-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: korail_train_no(열차번호), korail_wagon_no(화차차량번호)'
     evidence:
       - type: measured
         source: probe/stats/15153677.json

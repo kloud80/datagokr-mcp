@@ -1,4 +1,5 @@
-# Dataset 15110011 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15110011 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15110011'
 tier: verified
 title: 한국남부발전(주)_법정 시설물 현황
@@ -24,6 +25,7 @@ synonyms:
   - 1종 2종 시설물
   - 발전소 부두 옹벽
   - 시설물 안전관리 대상
+summary_user: 한국남부발전(주)이 관리하는 법정 시설물을 시설 한 건씩 번호·소속 사업소·시설명·법적 종별로 정리한 소규모 원장 파일(CSV 약 2.3KB)로, 연료하역부두·석회석 반입부두·저탄장 호안·옹벽 같은 발전소 시설을 담는다. 발전소 인근 주민이나 안전 분야 분석가가 '남부발전 어느 사업소에 몇 종 법정 시설물이 있는가'를 확인하거나 유지보수·안전점검 대상 목록을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 시설물 안전등급·점검 결과 데이터와는 사업소명·시설명 같은 이름 매핑이나 같은 기관 기준으로만 이어 쓴다.
 description_portal: 한국남부발전(주)이 보유·관리하는 법정 시설물의 현황을 정리한 자료로, 각 시설의 번호, 위치한 사업소, 시설명, 그리고 법적 종별 구분을 포함합니다. 여기에는 연료하역부두, 석회석 반입부두, 저탄장 호안, 옹벽 등 발전소 운영과 안전 관리에 중요한 주요 시설들이 기록되어 있습니다. 해당 자료를 통해 국민은 발전소 내 법정 시설물의 종류와 위치를 쉽게 이해할 수 있으며, 공공기관의 시설 관리 투명성을 높이는 데 기여합니다. 또한 연구자, 정책 담당자, 산업 종사자에게는 시설 안전 관리 정책 수립, 유지보수 계획 마련, 발전 인프라 관리 등 다양한 분야에서 분석에 이용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 57
     - name: 사업소
       type: code
+      semantic_type: kospo_saupso_cd
       null_rate: 0.0
       sample_values:
         - 하동빛드림본부
@@ -74,6 +77,12 @@ schema:
         - 1종
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: kospo_saupso_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -117,7 +126,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15110011-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_saupso_cd(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15110011.json
@@ -182,8 +191,6 @@ verification:
   run: probe/runs/15110011.json
   stats: probe/stats/15110011.json
   data: probe/data/15110011/
-status: active
-summary_user: 한국남부발전(주)이 관리하는 법정 시설물을 시설 한 건씩 번호·소속 사업소·시설명·법적 종별로 정리한 소규모 원장 파일(CSV 약 2.3KB)로, 연료하역부두·석회석 반입부두·저탄장 호안·옹벽 같은 발전소 시설을 담는다. 발전소 인근 주민이나 안전 분야 분석가가 '남부발전 어느 사업소에 몇 종 법정 시설물이 있는가'를 확인하거나 유지보수·안전점검 대상 목록을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 시설물 안전등급·점검 결과 데이터와는 사업소명·시설명 같은 이름 매핑이나 같은 기관 기준으로만 이어 쓴다.
 limits: 시설물 고유 코드나 좌표가 없어 다른 데이터와 키로 정확히 결합하거나 지도에 표시할 수 없다. 범위는 전국이지만 비공간 자료라 위치는 사업소 이름 수준으로만 알 수 있다.
 review:
   summary: draft
@@ -196,3 +203,4 @@ review:
     - c-15110011-04
     - c-15110011-06
   dropped_citations: 0
+status: active

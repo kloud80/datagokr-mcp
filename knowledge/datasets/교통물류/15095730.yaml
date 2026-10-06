@@ -1,0 +1,190 @@
+# Dataset 15095730 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15095730'
+tier: verified
+title: 제주특별자치도_제주 주유소 연평균 판매 가격 정보
+sector: 교통물류/도로/ev-fuel
+agency:
+  id: '6500000'
+  name: 제주특별자치도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15095730/openapi.do
+synonyms:
+  - 휘발유
+  - 경유
+  - LPG
+  - 제주 유가
+  - 제주 기름값
+  - 휘발유 평균가격
+  - 경유 가격 추이
+  - 오피넷 연평균
+  - 등유 가격
+  - 석유제품 판매가
+summary_user: 제주도 주유소 판매가격을 연도별·유종별 연평균(원/리터)으로 담은 시도 단위 집계 데이터이며, 개별 주유소 판매가격의 합을 주유소 수로 나눈 값입니다(제공처 한국석유공사 오피넷, 고급휘발유는 2012년부터, 보일러등유는 2010년까지만 있음). 분석가나 운송·물류 사업자가 '제주의 휘발유·경유 연평균 가격이 해마다 어떻게 변했나'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 연도와 유종 이름을 맞춰 연결해야 합니다.
+description_portal: '제주도 내 주유소 연평균 판매 가격 정보를 제공합니다.평균 판매 가격은 개별 주유소 판매가격의 합을 전체 주유소 개수로 나눈 값입니다.고급휘발유의 경우 2012년부터 데이터가 존재하고, 보일러등유의 경우 2010년까지만 데이터가 존재합니다.- 데이터 제공처: 한국석유공사 오피넷'
+team:
+  dept: 디지털혁신과
+services:
+  - op: preview
+    name: preview
+    endpoint: https://jejudatahub.net/api/data/view?id=893
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: jejudatahub.net
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: "\uFEFF연도"
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2000'
+        - '2001'
+        - '2002'
+      stats:
+        min: 2000
+        p50: 2001.5
+        max: 2003
+        unique: 4
+    - name: 제품 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 고급휘발유
+        - 보통휘발유
+        - 자동차용경유
+      stats:
+        unique: 5
+    - name: 판매 가격(원/리터)
+      type: number
+      null_rate: 0.2
+      sample_values:
+        - '1272.32'
+        - '637.16'
+        - '569.75'
+      stats:
+        min: 552.18
+        p50: 655.4749999999999
+        max: 1349.95
+        unique: 16
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - "\uFEFF연도"
+cycle: default
+classification:
+  subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6823
+  rank_in_sector: 504
+  brm: 교통물류 - 도로
+  why: 제주데이터허브 (상세 페이지 미리보기 — 원본·API는 projectKey)
+claims:
+  - id: c-15095730-01
+    kind: access
+    value: 외부 사이트 jejudatahub.net 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15095730.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 jejudatahub.net
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15095730-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095730-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15095730.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095730-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15095730.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15095730-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15095730-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15095730.json
+  stats: probe/stats/15095730.json
+  data: probe/data/15095730/
+limits: 연평균 집계라 개별 주유소별·월별 가격이나 지역 내 차이는 알 수 없습니다. 호출하려면 포털 활용신청과 별개로 외부 사이트(jejudatahub.net) 인증키를 경로 파라미터로 넣어야 합니다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15095730-01
+    - c-15095730-03
+    - c-15095730-04
+  dropped_citations: 0
+status: active

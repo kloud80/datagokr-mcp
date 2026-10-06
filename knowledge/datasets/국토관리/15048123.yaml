@@ -47,6 +47,7 @@ schema:
   fields:
     - name: GIS건물통합식별번호
       type: number
+      semantic_type: gis_bldg_ufid
       null_rate: 0.0
       sample_values:
         - '2018206372334092527300000000'
@@ -59,6 +60,7 @@ schema:
         unique: 3142
     - name: 고유번호
       type: number
+      semantic_type: pnu
       null_rate: 0.0
       sample_values:
         - '4159710200101610000'
@@ -431,6 +433,16 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - GIS건물통합식별번호
+      reference:
+        key: gis_bldg_ufid
+      evidence: measured
+    - fields:
+        - 고유번호
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
         - 법정동코드
       reference:
         key: bjd_cd
@@ -438,6 +450,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: parcel
+  space_fields:
+    - 고유번호
+  space_via: code
+  time: day
+  time_fields:
+    - 허가일자
+    - 사용승인일자
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 건축물대장 (표제부·총괄·전유·폐쇄말소, GIS건물통합)
@@ -479,7 +501,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15048123-03
     kind: key
-    value: '실측 조인 키: bjd_cd(법정동코드)'
+    value: '실측 조인 키: gis_bldg_ufid(GIS건물통합식별번호), pnu(고유번호), bjd_cd(법정동코드)'
     evidence:
       - type: measured
         source: probe/stats/15048123.json

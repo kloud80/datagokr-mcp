@@ -1,4 +1,5 @@
-# Dataset 15098227 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15098227 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15098227'
 tier: verified
 title: 인천국제공항공사_운항마감정보
@@ -25,6 +26,7 @@ synonyms:
   - 회항 정보
   - 게이트 스팟 배정
   - 인천공항 운항통계
+summary_user: 인천국제공항의 운항마감 정보를 운항편 단위로 담으며, 도착·출발 구분, 스케줄 일자·시간, 국내·국제와 정기·부정기 구분, 지연·결항·회항 여부, 기체 용도, 게이트·스팟 번호가 들어 있다. 항공 분석가나 공항 이용 관련 사업자가 '이번 달 인천공항 국제선 출발편 중 지연·결항된 편은 몇 편이고 어느 게이트에 몰렸나' 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 운항정보 데이터와는 운항편 ID(flightNum)·스케줄 일자 같은 이름·코드 매칭으로만 연결한다.
 description_portal: '인천국제공항 항공통계정보 중 운항마감 정보에 관한 데이터입니다. 여객/화물구분,스케줄 일자,도착/출발 구분,운항편 ID, 상태ID(0:정상,1:회항(Return)1,2:Return1에 의한 도착,3:회항(Divert),4:회항(Return),5: Return2에 의한 도착1, 6:회항(Return)3,7:Return3에 의한 도착1, 스케줄시간,연월,국내/국제구분, 정기/비정기구분,지연여부(0:정상,1:지연,2:결항,3:회항),용도(0:여객기,1:화물기,2:군용기,3:자가용,8:특별기,9:기타),Gate번호,Spot 번호 등의 정보를 제공합니다. 조회 당월/당일의 데이터를 제공하고 있습니다. 개발계정 일 10000 트래픽, 운영계정 신청 시 일 1000000 트래픽을 제공합니다.'
 team:
   dept: 인프라DX팀
@@ -87,6 +89,7 @@ schema:
     - name: flightNum
       title: 운항편ID
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - A7950
@@ -222,12 +225,23 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - flightNum
+      reference:
+        key: flight_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - msDate
+    - month
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -271,7 +285,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15098227-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(flightNum)'
     evidence:
       - type: measured
         source: probe/stats/15098227.json
@@ -336,8 +350,6 @@ verification:
   run: probe/runs/15098227.json
   stats: probe/stats/15098227.json
   data: probe/data/15098227/
-status: active
-summary_user: 인천국제공항의 운항마감 정보를 운항편 단위로 담으며, 도착·출발 구분, 스케줄 일자·시간, 국내·국제와 정기·부정기 구분, 지연·결항·회항 여부, 기체 용도, 게이트·스팟 번호가 들어 있다. 항공 분석가나 공항 이용 관련 사업자가 '이번 달 인천공항 국제선 출발편 중 지연·결항된 편은 몇 편이고 어느 게이트에 몰렸나' 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 운항정보 데이터와는 운항편 ID(flightNum)·스케줄 일자 같은 이름·코드 매칭으로만 연결한다.
 limits: 조회 당월·당일 데이터 위주로 제공되므로 장기 시계열 분석에는 별도로 쌓아 두어야 한다. 표준 조인 키가 없어 다른 기관 데이터와의 결합은 편명·일자 매칭에 의존한다. 개발계정은 하루 10,000회 호출 한도가 있다.
 review:
   summary: draft
@@ -349,3 +361,4 @@ review:
     - c-15098227-03
     - c-15098227-06
   dropped_citations: 0
+status: active

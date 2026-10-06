@@ -1,4 +1,5 @@
-# Dataset 15156222 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156222 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156222'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_딥페이크
@@ -22,6 +23,7 @@ synonyms:
   - 딥페이크 성범죄 기사
   - 뉴스 키워드 분석
   - 언론 보도 메타데이터
+summary_user: 빅카인즈(BIGKinds)에서 수집한 딥페이크·AI 변조기술 관련 국내 뉴스 기사를 기사 한 건당 한 행으로 담은 메타데이터 파일(CSV, 약 36MB)로, 보도 일자·언론사·제목·통합분류 1~3단계·인물·지역·기관 개체명·키워드·특성추출 값이 들어 있다. 언론·커뮤니케이션 연구자나 디지털 정책 분석가가 "딥페이크 성범죄·사기 보도가 언제 몰렸고 어떤 키워드와 기관이 함께 언급됐는가"를 시기별·언론사별로 따지는 데 쓴다. 다른 데이터와 맞출 공통 조인 키는 없어서, 보도 일자로 기간을 맞추거나 언론사명·개체명(기관·지역)을 이름으로 대조해 이어 쓴다.
 description_portal: 이 자료는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 딥페이크 관련 뉴스 메타정보 자료입니다. 포함 항목으로는 기사 주소, 보도 일자, 언론사, 제목, 통합분류(1~3단계), 개체명(인물·지역·기관·기업), 키워드, 특성추출 값, 본문 내용 등이 있으며, 이를 통해 개별 기사에 대한 구조적·정량적 분석이 가능합니다.본 자료는 국내 주요 언론사의 딥페이크 및 AI 기반 변조기술 관련 보도를 대상으로, 어떤 범죄·사회·정책 이슈가 어느 시기에 집중 보도되었는지, 주요 키워드와 프레임이 어떻게 형성되었는지 등을 파악하는 데 중점을 두고 있습니다. 이러한 분석을 통해 언론이 딥페이크 성범죄·사기·협박 등 디지털 범죄 문제, 피해자 보호 및 수사 대응 체계, 기술의 확산과 위험성, 온라인 플랫폼의 책임성, AI 규제 논의, 사회·윤리적 쟁점 등 다양한 사안을 어떤 관점에서 재현하는지를 확인할 수 있으며, 이러한 보도 경향이 여론 형성, 정책 추진, 기술 규제 환경 변화 등에 어떤 영향을 미쳤는지를 추적하는 데도 유용합니다.아울러 이 자료는 범죄학·디지털 정책 연구자, AI 기술 전문가, 법·제도 관계자, 언론·커뮤니케이션 연구자 등에게 딥페이크 보도의 흐름, 이슈별 프레임 변화, 언론의 기술·범죄·사회 이슈 재현 방식을 이해하는 데 기초 자료로 활용될 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -52,6 +54,7 @@ schema:
         unique: 359
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - YTN
@@ -140,12 +143,22 @@ schema:
         - 대한민국,비상계엄,국정원,국헌,선관위,국방장관,자신들,민주주의,위헌적,사법부,사실상
       stats:
         unique: 15276
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -182,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156222-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15156222.json
@@ -257,8 +270,6 @@ verification:
   run: probe/runs/15156222.json
   stats: probe/stats/15156222.json
   data: probe/data/15156222/
-status: active
-summary_user: 빅카인즈(BIGKinds)에서 수집한 딥페이크·AI 변조기술 관련 국내 뉴스 기사를 기사 한 건당 한 행으로 담은 메타데이터 파일(CSV, 약 36MB)로, 보도 일자·언론사·제목·통합분류 1~3단계·인물·지역·기관 개체명·키워드·특성추출 값이 들어 있다. 언론·커뮤니케이션 연구자나 디지털 정책 분석가가 "딥페이크 성범죄·사기 보도가 언제 몰렸고 어떤 키워드와 기관이 함께 언급됐는가"를 시기별·언론사별로 따지는 데 쓴다. 다른 데이터와 맞출 공통 조인 키는 없어서, 보도 일자로 기간을 맞추거나 언론사명·개체명(기관·지역)을 이름으로 대조해 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 데이터와 붙이려면 이름이나 날짜로 맞춰야 한다. 범위는 전국이고 공간 단위가 없는 자료라 지역별 통계로는 쓰기 어렵다.
 review:
   summary: draft
@@ -270,3 +281,4 @@ review:
     - c-15156222-03
     - c-15156222-04
   dropped_citations: 0
+status: active

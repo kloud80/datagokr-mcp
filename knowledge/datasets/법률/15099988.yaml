@@ -1,4 +1,5 @@
-# Dataset 15099988 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15099988 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099988'
 tier: verified
 title: 법무부_3(출입국심사)연도별 국적(지역)별 외국인 입국자 현황
@@ -21,6 +22,7 @@ synonyms:
   - 출입국 통계연보
   - 외래객 입국
   - 국가별 외국인 입국
+summary_user: 2011년부터 2025년 12월까지 연도별·국적(지역)별 외국인 입국자 수를 담은 전국 단위 집계 파일로, 연도·국적지역·입국자수 세 항목으로 구성된다. 관광·출입국 분석가나 사업자가 '특정 국가 출신 외국인 입국자가 해마다 어떻게 늘고 줄었는가'를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국적(지역) 이름이나 연도를 직접 맞춰 이어 써야 한다.
 description_portal: 2011년부터 업데이트 시점인 2025년 12월까지 연도별 외국인 입국자 수 및 국적(지역)별 외국인 입국자 수를 제공 (연도, 국적별, 입국자수)1. 해당 통계는 중복 집계 통계로서, 한 명이 여러 번 출입국 한 경우 다수로 집계 됨(일정기간 대한민국을 출입국한 모든 내외국인의 누계로 유량 통계 -1명이 수회 출입국한 경우 출입국 횟수 만큼 출입국자 수 에 포함)2. 해당 통계는 출입국외국인정책본부 홈페이지의 통계연보에서도 확인하실 수 있습니다. (출입국외국인정책본부 홈페이지 - 빅데이터 통계 - 통계연보 - 해당연도 통계연보 게시물 - 엑셀 파일 2024. 1장 _ 2_1. 국적(지역) 및 체류자격별 외국인 입국자)3. 상기 경로는 다음과 같습니다.https://www.immigration.go.kr/immigration/1570/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjglMkY1OTY0NjQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI24. 월별 자료는 통계월보를 통해 확인 가능5. 매년 통계연보는 6월말경 발표되며 해당 통계는 7월초 업데이트 됨
 applicable_legislation:
   - law: 출입국관리법
@@ -50,6 +52,7 @@ schema:
         unique: 15
     - name: 국적지역
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 가나
@@ -69,6 +72,12 @@ schema:
         p50: 739
         max: 8001132
         unique: 1975
+  foreign_keys:
+    - fields:
+        - 국적지역
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -111,7 +120,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15099988-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적지역)'
     evidence:
       - type: measured
         source: probe/stats/15099988.json
@@ -186,8 +195,6 @@ verification:
   run: probe/runs/15099988.json
   stats: probe/stats/15099988.json
   data: probe/data/15099988/
-status: active
-summary_user: 2011년부터 2025년 12월까지 연도별·국적(지역)별 외국인 입국자 수를 담은 전국 단위 집계 파일로, 연도·국적지역·입국자수 세 항목으로 구성된다. 관광·출입국 분석가나 사업자가 '특정 국가 출신 외국인 입국자가 해마다 어떻게 늘고 줄었는가'를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 국적(지역) 이름이나 연도를 직접 맞춰 이어 써야 한다.
 limits: 전국 단위 비공간 집계라 시군구 등 지역별 분석에는 쓸 수 없다. 포털 설명상 한 사람이 여러 번 입국하면 횟수만큼 세는 중복(누계) 통계이므로 실제 입국 인원 수로 해석하면 안 된다.
 review:
   summary: draft
@@ -199,3 +206,4 @@ review:
     - c-15099988-03
     - c-15099988-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15076566 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15076566 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15076566'
 tier: verified
 title: 외교부_국가_지역별 표준코드
@@ -24,6 +25,7 @@ synonyms:
   - 국적코드 매핑
   - alpha-2 alpha-3 코드
   - 나라 코드표
+summary_user: 외교부가 관리하는 국가·지역별 ISO 3166-1 표준코드(2자리·3자리·숫자)와 한글·영문 국가명을 국가 1개당 1행으로 담은 코드표 CSV 파일이며, 포털 설명 기준 231개 국가·지역을 담는다. 분석가가 출입국·무역·관광 통계의 국적·국가 표기를 하나의 기준으로 맞출 때, 예컨대 한글 국가명만 있는 방문객 통계를 ISO 코드 기반 해외 데이터와 맞추려 할 때 쓴다. 실측에서 전역 조인 키는 확인되지 않아 국가명이나 ISO 코드(ISO2자리·ISO3자리)를 매핑 기준으로 삼아 다른 국가 단위 데이터와 연결한다.
 description_portal: 외교부에서 보유하고 있는 국가별, 지역별 ISO3166 1 표준코드(2자리, 3자리) 및 한글명칭, 영문명칭을 CSV 파일로 제공합니다.국가는 231개 제공되며, 제공되는 국가의 코드 예시를 보면1. Ghana 가나 GH GHA 2882. Gabon 가봉 GA GAB 2663. Guyana 가이아나 GY GUY 3284. Gambia 감비아 GM GMB 2705. Bailiwick of Guernsey 건지 GG GGY 8316. Guadeloupe 과들루프 GP GLP 312등의 형식으로 다른 국가의 정보도 제공됩니다.
 accrual_periodicity: 수시
 team:
@@ -55,6 +57,7 @@ schema:
         unique: 231
     - name: ISO2자리
       type: string
+      semantic_type: country_cd
       null_rate: 0.0043
       sample_values:
         - GH
@@ -83,6 +86,12 @@ schema:
         p50: 434
         max: 894
         unique: 229
+  foreign_keys:
+    - fields:
+        - ISO2자리
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -125,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15076566-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(ISO2자리)'
     evidence:
       - type: measured
         source: probe/stats/15076566.json
@@ -190,8 +199,6 @@ verification:
   run: probe/runs/15076566.json
   stats: probe/stats/15076566.json
   data: probe/data/15076566/
-status: active
-summary_user: 외교부가 관리하는 국가·지역별 ISO 3166-1 표준코드(2자리·3자리·숫자)와 한글·영문 국가명을 국가 1개당 1행으로 담은 코드표 CSV 파일이며, 포털 설명 기준 231개 국가·지역을 담는다. 분석가가 출입국·무역·관광 통계의 국적·국가 표기를 하나의 기준으로 맞출 때, 예컨대 한글 국가명만 있는 방문객 통계를 ISO 코드 기반 해외 데이터와 맞추려 할 때 쓴다. 실측에서 전역 조인 키는 확인되지 않아 국가명이나 ISO 코드(ISO2자리·ISO3자리)를 매핑 기준으로 삼아 다른 국가 단위 데이터와 연결한다.
 limits: 국가 코드·명칭만 담은 마스터 표여서 국가별 정치·경제 현황이나 여행경보 같은 내용은 없다. 실측 컬럼에 전역 조인 키가 없어 데이터마다 국가명 표기가 다르면 이름·코드 매핑을 따로 맞춰야 한다.
 review:
   summary: draft
@@ -204,3 +211,4 @@ review:
     - c-15076566-06
     - c-15076566-07
   dropped_citations: 0
+status: active

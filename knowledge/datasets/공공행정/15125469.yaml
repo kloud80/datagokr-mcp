@@ -78,6 +78,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: string
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20210431
@@ -88,6 +89,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: string
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_009019
@@ -201,6 +203,16 @@ schema:
         unique: 120
   foreign_keys:
     - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
+    - fields:
         - brno
       reference:
         key: bizno
@@ -213,6 +225,10 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -257,7 +273,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15125469-03
     kind: key
-    value: '실측 조인 키: bizno(brno), corp_rgst_no(crno)'
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno), bizno(brno), corp_rgst_no(crno)'
     evidence:
       - type: measured
         source: probe/stats/15125469.json

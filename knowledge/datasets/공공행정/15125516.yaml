@@ -1,4 +1,5 @@
-# Dataset 15125516 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125516 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125516'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 경영지원 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 경영지원
   - 프랜차이즈 본부 지원 내용
   - 가맹사업 브랜드 정보
+summary_user: 가맹사업 브랜드별로 가맹본부가 가맹점에 제공하는 경영지원 정책의 이름·내용·조건·기간을 기준년도와 브랜드관리번호 단위로 조회하는 전국 범위의 API입니다. 가맹점 창업 예정자가 '이 브랜드 본부는 가맹점에 어떤 경영지원을 어떤 조건으로 해 주나'를 비교·확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 기관의 가맹정보 서비스(브랜드·본부 정보)와 이어 쓰지만, 실측 컬럼에서 사업자등록번호 같은 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 description_portal: 브랜드 경영지원에 따른 기준년도, 브랜드관리번호를 이용하여 경영목적지원정책,조건 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100014
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000003
@@ -155,12 +159,27 @@ schema:
         - 전체 청소 비용의 20% 지원(최대 30만원 한도)
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -205,7 +224,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125516-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125516.json
@@ -270,8 +289,6 @@ verification:
   run: probe/runs/15125516.json
   stats: probe/stats/15125516.json
   data: probe/data/15125516/
-status: active
-summary_user: 가맹사업 브랜드별로 가맹본부가 가맹점에 제공하는 경영지원 정책의 이름·내용·조건·기간을 기준년도와 브랜드관리번호 단위로 조회하는 전국 범위의 API입니다. 가맹점 창업 예정자가 '이 브랜드 본부는 가맹점에 어떤 경영지원을 어떤 조건으로 해 주나'를 비교·확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 기관의 가맹정보 서비스(브랜드·본부 정보)와 이어 쓰지만, 실측 컬럼에서 사업자등록번호 같은 전역 조인 키는 확인되지 않아 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 limits: 사업자등록번호·법인등록번호 등 전역 조인 키가 실측 컬럼에 없어 다른 공정거래 체인이나 외부 데이터와 직접 결합하기 어렵다. 조회에는 기준년도와 브랜드관리번호가 필요하며, 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -284,3 +301,4 @@ review:
     - c-15125516-04
     - c-15125516-07
   dropped_citations: 0
+status: active

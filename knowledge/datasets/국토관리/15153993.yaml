@@ -1,4 +1,5 @@
-# Dataset 15153993 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15153993 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15153993'
 tier: verified
 title: 학교법인한국기술교육대학교_NCS(국가직무능력표준)분류별 원격훈련과정 공급수준
@@ -26,6 +27,7 @@ synonyms:
   - 직업능력개발훈련 지원율
   - 이러닝 훈련비 지원
   - 원격훈련심사
+summary_user: 사업주 원격훈련 훈련비 지원율에 적용하는 NCS 소분류별 원격훈련과정 조정계수를 소분류 코드·코드명·조정계수 한 줄씩 담은 전국 단위 집계표이며, 683바이트 크기의 작은 CSV 파일입니다. 원격훈련과정을 운영하는 훈련기관이나 사업주가 '우리 과정의 NCS 소분류에 적용되는 조정계수는 얼마인가'를 확인해 훈련비 지원 수준을 가늠할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 훈련과정 데이터와는 NCS 소분류 코드나 코드명을 직접 맞춰서만 연결된다.
 description_portal: '해당 데이터는 한국기술교육대학교 직업능력심사평가원에서 산출하는 사업주 원격훈련 훈련비에 적용되는 NCS분류별 원격훈련과정 조정계수 입니다.활용목적은 원격훈련과정 운영시 훈련비 지원율에 적용됩니다. 사업주 원격훈련 조정계수는 원격훈련심사시스템 홈페이지를 통해 매년 공고됩니다.제공항목: NCS 소분류 코드, NCS 소분류 코드명, 조정계수  *해당 자료는 사업주 직업능력개발훈련 지원규정에 따라 변동될 수 있으며, 현재 폐지여부를 논의중으로 변동 사항 발생 시 관련 자료가 폐지 또는 업데이트 될 수 있습니다.'
 legal_basis_portal: 고용노동부 고시 - 사업주 직업능력개발훈련 지원규정
 accrual_periodicity: 연간
@@ -40,6 +42,7 @@ schema:
   fields:
     - name: 국가직무능력표준(NCS) 소분류 코드
       type: number
+      semantic_type: job_code
       null_rate: 0.0
       sample_values:
         - '10101'
@@ -71,6 +74,12 @@ schema:
         p50: 0.9
         max: 0.9
         unique: 3
+  foreign_keys:
+    - fields:
+        - 국가직무능력표준(NCS) 소분류 코드
+      reference:
+        key: job_code
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -114,7 +123,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15153993-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: job_code(국가직무능력표준(NCS) 소분류 코드)'
     evidence:
       - type: measured
         source: probe/stats/15153993.json
@@ -216,8 +225,6 @@ verification:
   run: probe/runs/15153993.json
   stats: probe/stats/15153993.json
   data: probe/data/15153993/
-status: active
-summary_user: 사업주 원격훈련 훈련비 지원율에 적용하는 NCS 소분류별 원격훈련과정 조정계수를 소분류 코드·코드명·조정계수 한 줄씩 담은 전국 단위 집계표이며, 683바이트 크기의 작은 CSV 파일입니다. 원격훈련과정을 운영하는 훈련기관이나 사업주가 '우리 과정의 NCS 소분류에 적용되는 조정계수는 얼마인가'를 확인해 훈련비 지원 수준을 가늠할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 훈련과정 데이터와는 NCS 소분류 코드나 코드명을 직접 맞춰서만 연결된다.
 limits: 전역 조인 키가 없어 NCS 소분류 코드·이름 매핑으로만 다른 데이터와 연결되며, 상수도 부문으로 분류돼 있지만 내용은 직업훈련 훈련비 계수라 재분류(move) 판정이 붙어 있다. 포털 설명상 지원규정에 따라 값이 바뀔 수 있고 폐지 여부가 논의 중이라 자료가 폐지되거나 갱신될 수 있다.
 review:
   summary: draft
@@ -230,3 +237,4 @@ review:
     - c-15153993-04
     - c-15153993-08
   dropped_citations: 0
+status: active

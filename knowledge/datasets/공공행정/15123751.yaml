@@ -1,4 +1,5 @@
-# Dataset 15123751 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123751 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123751'
 tier: verified
 title: 법제처_국가코드
@@ -25,6 +26,7 @@ synonyms:
   - 국가 식별 코드
   - country code
   - 법제처 코드표
+summary_user: 법제처가 정리한 국가 식별 코드표로, 국가별 한 행에 국가 코드·영문 국가명·한글 국가명·지역 구분 코드를 담은 작은 CSV 파일(약 8KB)이다. 행정·통계·시스템 개발 담당자가 해외 자료나 조약·법령 정보에 섞여 있는 국가 표기를 하나의 코드로 맞추려 할 때 "이 국가명은 어떤 코드로 적어야 하나"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없으므로, 다른 데이터와는 국가 코드나 국가명(한글·영문)을 문자열로 대조해 매핑하는 방식으로만 이어 쓴다.
 description_portal: 법제처에서 제공하는 국가코드 데이터는 각국을 고유하게 식별할 수 있는 표준 코드 체계를 정리한 자료입니다. 이 데이터에는 ISOㆍUN 기준의 알파벳 약어가 포함되며, 국가명(한글·영문), 코드체계별 식별 정보를 함께 제공합니다. 또한 코드 변경 이력과 적용 시점, 코드 사용 기준 등에 대한 설명을 수록하여 최신성과 적합성을 확보합니다. 이를 통해 행정업무, 통계분석, 시스템 연계 등에서 국가 식별 및 구분을 위한 일관된 코드 정보를 제공할 수 있습니다. 해당 자료는 데이터베이스 구축 및 국제 협력 업무, 해외 정보 교류, 통계 연계 분석 시 정확한 국가 매칭을 지원하며, 코드 간 혼용이나 오류를 예방합니다. 또한 국내외 다자간 시스템과의 연계성 강화를 위한 기반 자료로 활용됩니다.
 accrual_periodicity: 수시
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 국가 코드
       type: number
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - '1'
@@ -78,6 +81,12 @@ schema:
         p50: 440404
         max: 440407
         unique: 7
+  foreign_keys:
+    - fields:
+        - 국가 코드
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -121,7 +130,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123751-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국가 코드)'
     evidence:
       - type: measured
         source: probe/stats/15123751.json
@@ -175,8 +184,6 @@ verification:
   run: probe/runs/15123751.json
   stats: probe/stats/15123751.json
   data: probe/data/15123751/
-status: active
-summary_user: 법제처가 정리한 국가 식별 코드표로, 국가별 한 행에 국가 코드·영문 국가명·한글 국가명·지역 구분 코드를 담은 작은 CSV 파일(약 8KB)이다. 행정·통계·시스템 개발 담당자가 해외 자료나 조약·법령 정보에 섞여 있는 국가 표기를 하나의 코드로 맞추려 할 때 "이 국가명은 어떤 코드로 적어야 하나"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없으므로, 다른 데이터와는 국가 코드나 국가명(한글·영문)을 문자열로 대조해 매핑하는 방식으로만 이어 쓴다.
 limits: 공식 조인 키가 확인되지 않아 다른 데이터셋과 연결할 때 코드 체계나 국가명 표기가 다르면 직접 대조·보정해야 한다. 지역 구분 코드의 의미를 풀어 주는 코드표가 함께 제공되지 않으므로 해석에 주의한다.
 review:
   summary: draft
@@ -188,3 +195,4 @@ review:
     - c-15123751-03
     - c-15123751-04
   dropped_citations: 0
+status: active

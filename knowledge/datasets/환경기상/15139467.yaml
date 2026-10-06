@@ -1,0 +1,198 @@
+# Dataset 15139467 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139467'
+tier: verified
+title: 기상청_수치예보모델 조회서비스
+sector: 환경기상/대기/weather-forecast
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139467/openapi.do
+synonyms:
+  - 수치모델
+  - 경량화
+  - 예측모델
+  - 전지구모델
+  - 지역모델
+  - GDAPS
+  - LDAPS
+  - 전지구 예보모델
+  - 국지예보모델
+  - 수치예보 자료
+  - 기상 모델 예측장
+  - GRIB2
+  - 기상청 API허브
+description_portal: '(전구) 전지구 예보모델(GDAPS)은 전지구 날씨 예측, 동네예보, 중기예보 등을 목적으로 영국 통합모델(UM)을 기반 구축된 수치예보시스템입니다.6시간 주기 순환예측에 필요한 각종 배경장을 생산하기 위한 일 4회의 15시간 예측을 수행하며, 일 1회 06UTC에는 해수면온도, 해빙자료 및 동서평균 오존량을 갱신하기 위한 배경장 갱신과정을 별도로 수행합니다. 현재 기상청에서는 GDAPS 예측자료를 GRIB2형식과 이미지형태로 생산, 제공하고 있습니다.(국지) 국지예보모델(LDAPS,)은 3시간 간격으로 전지구 예보모델로부터 경계장을 제공받아 1일 4회 예측을 수행하는 수치예보 시스템입니다.생산주기: 일 4회(00, 06, 12, 18UTC)보유기간: (전구) 2011년 5월 ~ 현재(지역) 2010년 3월 ~ 현재(국지) 2012년 5월 ~ 현재'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: nwp_vars_down.php
+    name: nwp_vars_down.php
+    endpoint: https://apihub.kma.go.kr/api/typ06/url/nwp_vars_down.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: nwp
+        required: true
+        example: g128
+      - name: sub
+        required: true
+        example: pres
+      - name: vars
+        required: true
+        example: tmpr
+      - name: pres
+        required: true
+        example: '850'
+      - name: tmfc
+        required: true
+        example: '2021081012'
+      - name: ef
+        required: true
+        example: '24'
+      - name: dataType
+        required: true
+        example: TEXT
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - ' 2.71875e+02  2.71875e+02  2.71875e+02  2.71875e+02  2.71875e+02  2.71875e+02  2'
+        - ' 2.72000e+02  2.72000e+02  2.72000e+02  2.72000e+02  2.72000e+02  2.72000e+02  2'
+        - ' 2.72000e+02  2.71875e+02  2.71875e+02  2.71875e+02  2.71875e+02  2.71875e+02  2'
+      stats:
+        unique: 44
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7531
+  rank_in_sector: 61
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139467-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139467.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139467-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139467-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139467.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139467-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139467.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139467-06
+    kind: admin_note
+    value: "세부 부문 '기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)'의 가치: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-forecast
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139467-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139467-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139467.json
+  stats: probe/stats/15139467.json
+  data: probe/data/15139467/
+status: active
+summary_user: 기상청 수치예보모델(전지구 GDAPS·지역·국지 LDAPS)의 예측 결과를 일 4회(00·06·12·18UTC) 생산 주기로 담는 외부 API로, 범위는 전국이며 행정구역 단위가 아닌 모델 격자 기반 비공간 자료다. 분석가나 사업자가 '특정 시각 모델이 예측한 기온·바람·강수 같은 기상장이 어떻게 나왔는가'를 확인하거나 자체 예측·분석의 입력 자료로 쓴다. 실측 필드에서 전역 조인 키는 확인되지 않아, 다른 기상 예보·관측 데이터와는 예보구역·격자 좌표나 같은 기관 코드 매핑으로만 연결한다.
+limits: 포털 활용신청과 별개로 기상청 API허브(apihub.kma.go.kr) 인증키를 경로 파라미터로 넣어야 호출된다. 행정구역 코드나 공통 조인 키가 없어 지역 통계와 바로 붙일 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139467-01
+    - c-15139467-03
+    - c-15139467-04
+    - c-15139467-06
+  dropped_citations: 0

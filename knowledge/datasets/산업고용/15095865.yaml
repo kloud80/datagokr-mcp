@@ -1,5 +1,3 @@
-# Dataset 15095865 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095865'
 tier: verified
 title: 한국서부발전(주)_신재생에너지발전량
@@ -50,6 +48,7 @@ schema:
         unique: 1277
     - name: 발전기명
       type: code
+      semantic_type: ewp_renew_generator
       null_rate: 0.0
       sample_values:
         - (군산)삼랑진태양광
@@ -378,9 +377,23 @@ schema:
         - 전라남도 영암군 삼호읍 에프원로 2 영암 F1 태양광 발전소
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: ewp_renew_generator
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소지
+  space_via: address
+  time: day
+  time_fields:
+    - 날짜
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -417,7 +430,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15095865-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_generator(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15095865.json

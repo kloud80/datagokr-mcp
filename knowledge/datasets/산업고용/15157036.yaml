@@ -1,4 +1,5 @@
-# Dataset 15157036 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157036 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157036'
 tier: verified
 title: 한국중부발전(주)_일자별 바이오매스 사용량 조회 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 바이오매스 혼소
   - 일별 연료 사용 실적
   - 목재펠릿 사용량
+summary_user: 한국중부발전 발전소의 호기(발전기)별로 하루 단위 바이오매스 연료 사용량을 담는 API이며, 운전일자·호기코드·사용량으로 구성된 일자별 원천 기록이다. 발전사 바이오매스 연료 소비 추이를 살피는 분석가가 '특정 호기가 월별·연도별로 바이오매스를 얼마나 썼는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 호기코드 같은 기관 내부 코드나 이름 매핑으로만 연결한다.
 description_portal: 년, 월, 일, 호기코드를 기준으로 일자별 바이오매스 사용량을 조회 하는 중부발전 일자별 바이오매스 사용량 정보 조회 서비스 입니다.
 team:
   dept: ICT기획부
@@ -69,6 +71,7 @@ schema:
     - name: hogi
       title: 호기코드
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - 7호기
@@ -87,12 +90,22 @@ schema:
         p50: 28.82
         max: 57.82
         unique: 15
+  foreign_keys:
+    - fields:
+        - hogi
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - ymd
 cycle: default
 classification:
   subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157036-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komipo_plant_unit(hogi)'
     evidence:
       - type: measured
         source: probe/stats/15157036.json
@@ -201,8 +214,6 @@ verification:
   run: probe/runs/15157036.json
   stats: probe/stats/15157036.json
   data: probe/data/15157036/
-status: active
-summary_user: 한국중부발전 발전소의 호기(발전기)별로 하루 단위 바이오매스 연료 사용량을 담는 API이며, 운전일자·호기코드·사용량으로 구성된 일자별 원천 기록이다. 발전사 바이오매스 연료 소비 추이를 살피는 분석가가 '특정 호기가 월별·연도별로 바이오매스를 얼마나 썼는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 호기코드 같은 기관 내부 코드나 이름 매핑으로만 연결한다.
 limits: 전역 조인 키가 없어 지역·발전소 원장 등 외부 데이터와 바로 결합하기 어렵고, 공간 정보가 없는 비공간 데이터다. 호출에는 serviceKey가 필요하며 개발계정은 하루 1,000회로 제한된다.
 review:
   summary: draft
@@ -214,3 +225,4 @@ review:
     - c-15157036-03
     - c-15157036-04
   dropped_citations: 0
+status: active

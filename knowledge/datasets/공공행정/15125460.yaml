@@ -1,4 +1,5 @@
-# Dataset 15125460 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125460 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125460'
 tier: verified
 title: 공정거래위원회_가맹정보_가맹본부 임원 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 프랜차이즈 대표 경력
   - 가맹사업 임원 경력
   - 본사 임원 이력
+summary_user: 가맹사업 기준년도와 가맹본부관리번호로 조회하는 가맹본부 임원 정보로, 임원별 이름·직위와 경력 기간·직위·업무를 임원·경력 일련번호 단위의 건별 행으로 담으며 범위는 전국이다. 가맹점 창업을 앞둔 사람이 "이 가맹본부 경영진이 어떤 사업 경력을 가졌고 믿을 만한가"를 정보공개서 차원에서 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했고, 같은 공정위 가맹정보 계열 데이터와는 가맹본부관리번호와 기준년도로 맞춰 쓰며, 다른 기관 데이터와는 이름 매핑으로만 이을 수 있다.
 description_portal: 가맹본부 임원 정보에 대한 기준년도, 가맹본부관리번호를 이용하여 임원경력, 임원 사업경력 내용 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -157,12 +160,22 @@ schema:
         - 기업경영
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - jnghdqrtrsExctvCarrPdCn
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -207,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125460-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125460.json
@@ -272,8 +285,6 @@ verification:
   run: probe/runs/15125460.json
   stats: probe/stats/15125460.json
   data: probe/data/15125460/
-status: active
-summary_user: 가맹사업 기준년도와 가맹본부관리번호로 조회하는 가맹본부 임원 정보로, 임원별 이름·직위와 경력 기간·직위·업무를 임원·경력 일련번호 단위의 건별 행으로 담으며 범위는 전국이다. 가맹점 창업을 앞둔 사람이 "이 가맹본부 경영진이 어떤 사업 경력을 가졌고 믿을 만한가"를 정보공개서 차원에서 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했고, 같은 공정위 가맹정보 계열 데이터와는 가맹본부관리번호와 기준년도로 맞춰 쓰며, 다른 기관 데이터와는 이름 매핑으로만 이을 수 있다.
 limits: 사업자등록번호·법인등록번호 같은 전역 조인 키가 응답에 없어 다른 기관의 사업자 데이터와 바로 연결되지 않는다. 기준년도와 가맹본부관리번호를 알아야 조회되므로 관리번호를 먼저 다른 가맹정보 목록에서 확보해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -286,3 +297,4 @@ review:
     - c-15125460-04
     - c-15125460-07
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15051017 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15051017 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15051017'
 tier: verified
 title: 교육부_학생건강검사 결과
@@ -24,6 +25,7 @@ synonyms:
   - 학생 혈압 혈당
   - 청소년 건강 지표
   - 학생 신체검사
+summary_user: 학생 한 명당 한 행으로 키·몸무게·식전 혈당·총콜레스테롤·간기능(AST·ALT)·혈색소·혈압·간염검사 결과를 담은 표본조사 원자료이며, 학년도·시도·도시규모·학교급·학년·성별과 최종가중치가 함께 들어 있다. 연구자나 보건·교육 분석가가 '도시규모별·학년별로 학생 비만이나 혈압·혈당 이상 비율이 어떻게 다른가' 같은 질문에 가중치를 적용해 집계할 때 쓴다. 전역 조인 키가 없어 다른 학교 데이터와는 학교명이나 시도 이름을 매핑해서만 이을 수 있고, 학교고유번호(ID)는 이 조사 안에서만 쓰는 번호로 보아야 한다.
 description_portal: 이 자료는 서울 지역 학생들의 건강검사 결과를 표본조사 방식으로 수집한 것으로, 신체 치수와 생화학적 검사를 포함한다. 키, 몸무게, 혈당, 콜레스테롤, 간기능 수치 및 혈색소 등 다양한 건강 지표가 포함되어 있으며, 도시규모별, 성별, 학년별 분석이 가능하다. 특히 건강검진일과 개별 학생의 고유식별번호가 부여되어 상세한 추적과 비교 연구에 활용할 수 있다. 이러한 데이터는 학생들의 전반적 건강 상태를 평가하고 지역사회 건강 관리에 유용한 기초 자료로 활용된다.(제공데이터)학생건강검사 결과(표본) 서울지역 고유식별번호(ID),최종가중치,학교고유번호(ID),도시규모,도시규모별분석용,학년도,광역시도,시도별,학교급별,학교명,공학여부,학년,반,성별,건강검진일,키,몸무게,혈당식전(mgdl),총콜레스테롤(mgdl),간기능(AST)단위(UL),간기능(ALT)단위(UL),혈색소(gdl),간염검사,수축기,이완기 에 대한 raw data
 accrual_periodicity: 수시
 team:
@@ -60,6 +62,7 @@ schema:
         unique: 583
     - name: 학교고유번호(ID)
       type: code
+      semantic_type: health_survey_school_id
       null_rate: 0.0
       sample_values:
         - Aa01
@@ -294,12 +297,28 @@ schema:
         p50: 62
         max: 98
         unique: 62
+  foreign_keys:
+    - fields:
+        - 학교고유번호(ID)
+      reference:
+        key: health_survey_school_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 광역시도
+    - 시도별
+  space_via: name
+  time: day
+  time_fields:
+    - 고유식별번호(ID)
+    - 건강검진일
 cycle: default
 classification:
   subsector_name: 학교 기본정보 (+연계 가능한 통계·재정)
@@ -336,7 +355,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15051017-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: health_survey_school_id(학교고유번호(ID))'
     evidence:
       - type: measured
         source: probe/stats/15051017.json
@@ -401,8 +420,6 @@ verification:
   run: probe/runs/15051017.json
   stats: probe/stats/15051017.json
   data: probe/data/15051017/
-status: active
-summary_user: 학생 한 명당 한 행으로 키·몸무게·식전 혈당·총콜레스테롤·간기능(AST·ALT)·혈색소·혈압·간염검사 결과를 담은 표본조사 원자료이며, 학년도·시도·도시규모·학교급·학년·성별과 최종가중치가 함께 들어 있다. 연구자나 보건·교육 분석가가 '도시규모별·학년별로 학생 비만이나 혈압·혈당 이상 비율이 어떻게 다른가' 같은 질문에 가중치를 적용해 집계할 때 쓴다. 전역 조인 키가 없어 다른 학교 데이터와는 학교명이나 시도 이름을 매핑해서만 이을 수 있고, 학교고유번호(ID)는 이 조사 안에서만 쓰는 번호로 보아야 한다.
 limits: 실측 컬럼에서 표준 학교코드 같은 전역 조인 키를 찾지 못해 학교 기본정보와 바로 붙지 않는다. 포털 설명은 서울 지역 표본이라고 하나 실측 범위는 전국·시도 단위로 잡혀 있으니 지역 범위를 먼저 확인하고, 표본 자료이므로 집계할 때 최종가중치를 적용해야 한다.
 review:
   summary: draft
@@ -414,3 +431,4 @@ review:
     - c-15051017-03
     - c-15051017-04
   dropped_citations: 0
+status: active

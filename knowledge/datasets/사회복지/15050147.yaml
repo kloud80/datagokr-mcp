@@ -1,4 +1,5 @@
-# Dataset 15050147 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15050147 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15050147'
 tier: verified
 title: 한국노인인력개발원_노인일자리사업 홈페이지 공고 정보
@@ -22,6 +23,7 @@ synonyms:
   - 시니어 일자리 채용
   - 노인 구인 공고
   - 노인인력개발원 공고
+summary_user: 한국노인인력개발원 홈페이지에 올라온 노인일자리 모집 공고를 사업 단위로 담은 건별 파일로, 사업유형·사업연도·사업명과 모집·공고 기간, 담당자, 모집 인원을 전국 범위로 담는다. 구직 중인 어르신이나 가족이 '올해 공익활동형 노인일자리 모집이 언제 열리고 몇 명을 뽑는지' 확인하거나, 분석가가 사업유형별 모집 인원과 모집 시기를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매핑이나 같은 기관 자료(사업번호)로만 연결된다.
 description_portal: 홈페이지에 공고한 노인공익활동형, 공동체사업단의 노인일자리 홈페이지 모집 기간, 담당자, 인원 등의 정보를 제공하는 데이터입니다.중요 모집 정보인 기간, 사업명 등 필요한 정보를 빠르게 파악할 수 있습니다. 모집 인원, 자격 요건 등을 명확하게 제시하여 모집 공고를 확인하고 인재를 확보할 수 있습니다. 사업 유형, 모집 기간, 근무 조건 등을 고려하여 일자리를 확인 할 수 있습니다. 객관적인 데이터에 근거하여 노인 일자리 정책 방향을 설정하고, 의사 결정의 정확성을 높일 수 있습니다. 공공데이터 개방 및 활용을 장려하고, 데이터 경제 활성화에 기여할 수 있습니다.
 accrual_periodicity: 월간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 3
     - name: 사업번호
       type: string
+      semantic_type: senior_job_proj_no
       null_rate: 0.0
       sample_values:
         - 2024-117702
@@ -143,12 +146,24 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 사업번호
+      reference:
+        key: senior_job_proj_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 홈페이지모집시작일자
+    - 홈페이지모집종료일자
+    - 홈페이지공고시작일
 cycle: default
 classification:
   subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
@@ -185,7 +200,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15050147-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: senior_job_proj_no(사업번호)'
     evidence:
       - type: measured
         source: probe/stats/15050147.json
@@ -250,8 +265,6 @@ verification:
   run: probe/runs/15050147.json
   stats: probe/stats/15050147.json
   data: probe/data/15050147/
-status: active
-summary_user: 한국노인인력개발원 홈페이지에 올라온 노인일자리 모집 공고를 사업 단위로 담은 건별 파일로, 사업유형·사업연도·사업명과 모집·공고 기간, 담당자, 모집 인원을 전국 범위로 담는다. 구직 중인 어르신이나 가족이 '올해 공익활동형 노인일자리 모집이 언제 열리고 몇 명을 뽑는지' 확인하거나, 분석가가 사업유형별 모집 인원과 모집 시기를 비교하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 사업명 같은 이름 매핑이나 같은 기관 자료(사업번호)로만 연결된다.
 limits: 지역 행정단위 컬럼이 없는 전국·비공간 자료라 시군구별 공고 분포나 수행기관 위치 분석에는 바로 쓰기 어렵다. 장기요양기관·사회복지시설 코드 같은 공통 키가 없어 시설 데이터와 정확히 조인하려면 이름 매핑이 필요하다. 삭제여부 컬럼이 있으니 집계 전에 삭제된 공고를 걸러야 한다.
 review:
   summary: draft
@@ -263,3 +276,4 @@ review:
     - c-15050147-03
     - c-15050147-04
   dropped_citations: 0
+status: active

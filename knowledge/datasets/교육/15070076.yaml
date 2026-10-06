@@ -1,4 +1,5 @@
-# Dataset 15070076 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070076 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070076'
 tier: verified
 title: 한국장학재단_대학생 청소년교육지원장학금_교부금반환내역
@@ -23,6 +24,7 @@ synonyms:
   - 국고반납
   - 부당수급 환수
   - 한국장학재단 반환내역
+summary_user: 대학생 청소년교육지원장학금 사업에서 대학이 반환한 교부금을 반환 건별로 담은 전국 단위 파일로, 배정년도·학기·배정구분, 대학명, 반환금액·이자·국고반납금액, 반환취소, 부당수급 반환 여부를 기록한다. 장학 사업을 분석하는 연구자나 예산 담당자가 '어느 대학이 어느 연도·학기 배정분을 얼마나 반환했고, 그중 부당수급 반환은 얼마인가'를 확인하는 데 쓴다. 공통 조인 키가 없어 다른 대학 데이터와는 대학명 문자열을 맞춰 연결해야 하고, 같은 재단의 장학금 지급 자료와는 상품명·배정년도·학기 기준으로 대조한다.
 description_portal: '대학생 청소년교육지원장학금 관련 반환 교부금 내역: 상품명, 배정년도, 배정구분, 배정학기, 대학명, 반환금액, 반환일시 등의 정보를 제공함데이터 제공항목은 사업 상품명, 예산 교부년도, 예산 교부 형태, 예산 교부 학기, 반환 대학명, 반환금액, 반환일자, 이자금액, 국고반납금액, 반환취소일자, 반환취소금액, 반환승인일시, 부당수급 반환여부가 있습니다. 대학생 청소년교육지원장학금은 초중고등학생 대상으로  멘토링을 지원하고, 대학생에게는 장학금을 지원하는 것을 목적으로 합니다. 대학생 청소년교육지원장학금 관련 정보는 "한국장학재단 누리집(https://www.kosaf.go.kr) > 인재육성 > 대학생지식멘토링 > 대학생 청소년교육지원장학금"에서 확인 가능'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -40,6 +42,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 대학생 청소년교육지원 장학금
@@ -75,6 +78,7 @@ schema:
         unique: 2
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 경인교육대학교(본교) 학부
@@ -158,12 +162,28 @@ schema:
         - Y
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 반환일시
+    - 반환승인일시
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -200,7 +220,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070076-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_scholarship_product(상품명), univ_school_cd(대학명)'
     evidence:
       - type: measured
         source: probe/stats/15070076.json
@@ -264,8 +284,6 @@ verification:
   run: probe/runs/15070076.json
   stats: probe/stats/15070076.json
   data: probe/data/15070076/
-status: active
-summary_user: 대학생 청소년교육지원장학금 사업에서 대학이 반환한 교부금을 반환 건별로 담은 전국 단위 파일로, 배정년도·학기·배정구분, 대학명, 반환금액·이자·국고반납금액, 반환취소, 부당수급 반환 여부를 기록한다. 장학 사업을 분석하는 연구자나 예산 담당자가 '어느 대학이 어느 연도·학기 배정분을 얼마나 반환했고, 그중 부당수급 반환은 얼마인가'를 확인하는 데 쓴다. 공통 조인 키가 없어 다른 대학 데이터와는 대학명 문자열을 맞춰 연결해야 하고, 같은 재단의 장학금 지급 자료와는 상품명·배정년도·학기 기준으로 대조한다.
 limits: 실측 컬럼에 대학코드 같은 전역 조인 키가 없어 대학명 표기 차이에 따라 결합이 어긋날 수 있다. 비공간 자료여서 지역별 분석은 대학 소재지를 따로 붙여야 한다.
 review:
   summary: draft
@@ -277,3 +295,4 @@ review:
     - c-15070076-03
     - c-15070076-04
   dropped_citations: 0
+status: active

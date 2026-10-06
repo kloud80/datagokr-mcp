@@ -1,4 +1,5 @@
-# Dataset 15125486 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125486 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125486'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹점 사업자 보험 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹본부 보험 제공
   - 프랜차이즈 창업 정보
   - 가맹사업 정보
+summary_user: 가맹본부가 정보공개서에 밝힌 브랜드별 가맹점 사업자 보험 내용을 가맹사업 기준년도·브랜드 단위로 담으며, 보험마다 일련번호와 상세 구분 항목명·상세 내용이 행으로 나온다. 가맹 창업 예정자가 '이 브랜드 가맹점이 되면 본부가 어떤 보험을 들게 하거나 제공하는가'를 확인하는 데 쓴다. 브랜드관리번호(brandMnno)와 가맹본부관리번호로 같은 공정위 가맹정보 계열의 브랜드·본부 데이터와 묶어 쓰되, 실측상 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 description_portal: 브랜드 가맹점 사업자 보험에 대한 기준년도, 브랜드관리번호를 이용하여 보험상세구분항목명,보험상세내용 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100014
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000003
@@ -126,12 +130,27 @@ schema:
         - 가맹점사업자의 예치가맹금 범위 내 피해액 일부 보장
       stats:
         unique: 8
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -176,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125486-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125486.json
@@ -241,8 +260,6 @@ verification:
   run: probe/runs/15125486.json
   stats: probe/stats/15125486.json
   data: probe/data/15125486/
-status: active
-summary_user: 가맹본부가 정보공개서에 밝힌 브랜드별 가맹점 사업자 보험 내용을 가맹사업 기준년도·브랜드 단위로 담으며, 보험마다 일련번호와 상세 구분 항목명·상세 내용이 행으로 나온다. 가맹 창업 예정자가 '이 브랜드 가맹점이 되면 본부가 어떤 보험을 들게 하거나 제공하는가'를 확인하는 데 쓴다. 브랜드관리번호(brandMnno)와 가맹본부관리번호로 같은 공정위 가맹정보 계열의 브랜드·본부 데이터와 묶어 쓰되, 실측상 전역 조인 키는 없어 다른 기관 데이터와는 이름 매핑으로만 연결된다.
 limits: 사업자등록번호 같은 전역 키가 응답에 없어 공정위 가맹정보 계열 밖의 데이터와 바로 조인할 수 없다. 기준년도와 브랜드관리번호를 알아야 조회되므로 브랜드 목록을 먼저 확보해야 하고, 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -255,3 +272,4 @@ review:
     - c-15125486-04
     - c-15125486-07
   dropped_citations: 0
+status: active

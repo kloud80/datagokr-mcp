@@ -1,4 +1,3 @@
-# Dataset 15108185 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15108185'
 tier: verified
 title: 국립공원공단_무등산국립공원 생물자원 현황
@@ -19,6 +18,7 @@ synonyms:
   - 종 분포 좌표
   - 무등산 자연자원조사
   - 야생생물 관찰기록
+summary_user: 무등산국립공원에서 조사된 생물자원을 종 단위 건별 관찰 기록으로 담으며, 생물분류·종명·학명·분류명과 함께 조사위치(경도·위도), 조사일자, 개체수를 기록한다. 연구자나 탐방객이 '무등산 안에서 특정 종이 어디서 언제 몇 개체 관찰됐나'를 확인하거나, 공원 내 생물종 분포를 지도로 그리는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 학명·종명 같은 이름 매핑이나 경위도 좌표 중첩으로만 잇고, 다른 국립공원 생물자원 현황 파일과는 같은 컬럼 구성을 기준으로 이어 붙인다.
 description_portal: 데이터 기준 년도에 조사된 무등산국립공원 생물자원 현황에 대해 다음과 같은 정보를 제공합니다.- 국립공원명, 생물분류, 종명(영문), 학명(영문), 분류명(국문),  조사위치(경도), 조사위치(위도),  조사일자, 개체수
 accrual_periodicity: 수시
 team:
@@ -47,6 +47,7 @@ schema:
         unique: 2
     - name: 종명
       type: code
+      semantic_type: species_name
       null_rate: 0.0
       sample_values:
         - 깽깽이풀
@@ -56,6 +57,7 @@ schema:
         unique: 22
     - name: 학명
       type: code
+      semantic_type: species_name
       null_rate: 0.0
       sample_values:
         - Jeffersonia dubia
@@ -119,12 +121,32 @@ schema:
         p50: 30
         max: 700
         unique: 19
+  foreign_keys:
+    - fields:
+        - 종명
+      reference:
+        key: species_name
+      evidence: measured
+    - fields:
+        - 학명
+      reference:
+        key: species_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
+  time: day
+  time_fields:
+    - 조사일자
 cycle: default
 classification:
   subsector_name: 자연·환경 보전 공간 레이어 (국토환경성평가 60여 레이어·국립공원 용도지구·습지/생태경관/야생생물 보호구역·무인도서)
@@ -161,7 +183,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15108185-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: species_name(종명), species_name(학명)'
     evidence:
       - type: measured
         source: probe/stats/15108185.json
@@ -226,8 +248,6 @@ verification:
   run: probe/runs/15108185.json
   stats: probe/stats/15108185.json
   data: probe/data/15108185/
-status: active
-summary_user: 무등산국립공원에서 조사된 생물자원을 종 단위 건별 관찰 기록으로 담으며, 생물분류·종명·학명·분류명과 함께 조사위치(경도·위도), 조사일자, 개체수를 기록한다. 연구자나 탐방객이 '무등산 안에서 특정 종이 어디서 언제 몇 개체 관찰됐나'를 확인하거나, 공원 내 생물종 분포를 지도로 그리는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 학명·종명 같은 이름 매핑이나 경위도 좌표 중첩으로만 잇고, 다른 국립공원 생물자원 현황 파일과는 같은 컬럼 구성을 기준으로 이어 붙인다.
 limits: 표준 종 코드나 행정 코드 같은 전역 조인 키가 없어 다른 생물종·보호구역 데이터와 연결할 때 이름 표기 차이에 주의해야 한다. 포털 설명상 데이터 기준 년도의 조사 결과만 담으므로 연도별 변화 추적에는 다른 연도 자료가 따로 필요하다.
 review:
   summary: draft
@@ -240,3 +260,4 @@ review:
     - c-15108185-04
     - c-15108185-07
   dropped_citations: 0
+status: active

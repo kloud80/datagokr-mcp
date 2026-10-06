@@ -1,0 +1,242 @@
+# Dataset 15076768 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076768'
+tier: verified
+title: 한국도로공사_노선별 LCS시행유무(콘존단위)(5분 지연)
+sector: 교통물류/도로/bus-transit
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076768/openapi.do
+synonyms:
+  - 고속도로
+  - LCS
+  - 시행유무
+  - 차로통제
+  - 속도제한
+  - 교통흐름
+  - 교통분석
+  - 데이터연계
+  - 차로제어시스템
+  - 가변차로
+  - 고속도로 LCS
+  - 콘존
+  - 한국도로공사 실시간
+  - 갓길차로 운영
+summary_user: 한국도로공사 고속도로의 노선별 LCS(차로제어시스템) 시행 여부를 콘존(구간) 단위로 담는 API로, 콘존 이름·노선·방향(기점/종점)과 시행 여부를 5분 지연된 현황으로 제공하며 범위는 전국이다. 내비게이션·교통정보 사업자나 분석가가 '지금 이 고속도로 구간에서 차로 통제가 시행 중인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어, 콘존ID·노선번호 같은 한국도로공사 자체 코드나 콘존명·노선명으로 같은 기관의 콘존 단위 교통 데이터와 맞춰 쓴다.
+description_portal: 본 데이터는 한국도로공사가 제공하는 노선별 LCS(Lane Control System) 시행 여부를 콘존 단위로 제공하는 OpenAPI이다.제공 항목에는 콘존ID, 콘존명, 노선명, 시행유무, 방향 구분(S:기점, E:종점), 노선번호가 포함된다.본 API는 5분 지연된 정보를 제공하여 안정성과 정확성을 확보하였다.LCS는 차로 통제와 속도 제한 등 도로 교통 흐름을 효율적으로 관리하는 시스템으로, 해당 데이터는 구간별 시행 현황 확인에 활용된다.노선 정보와 방향 정보는 구간 식별과 교통 분석에 기초자료가 되며, XML과 JSON 형식으로 제공되어 교통정보 서비스, 내비게이션, 도로 관리, 데이터 분석 등에 연계 가능하다.공공기관, 민간기업, 연구기관은 이를 활용하여 차로 운영 효율성 향상과 안전성 강화, 교통 혼잡 완화를 위한 계획을 수립할 수 있다.
+team:
+  dept: AI데이터처
+services:
+  - op: lcsRtLineGrp
+    name: lcsRtLineGrp
+    endpoint: https://data.ex.co.kr/openapi/lcs/lcsRtLineGrp
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pageNo
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: conzoneId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0010CZS385
+        - 0010CZE385
+        - 0010CZE400
+      stats:
+        unique: 26
+    - name: conzoneName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안성IC-북천안IC
+        - 북천안IC-안성IC
+        - 안성JC-남사진위IC
+      stats:
+        unique: 26
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+        - S
+      stats:
+        unique: 2
+    - name: applyYn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: lineCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+        - '0150'
+        - '0100'
+      stats:
+        min: 10
+        p50: 10
+        max: 150
+        unique: 3
+    - name: lineName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+        - 서해안선
+        - 남해선(순천-부산)
+      stats:
+        unique: 3
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: road-regulations
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7308
+  rank_in_sector: 268
+  brm: 교통물류 - 도로
+  why: LCS 시행 여부 콘존 단위, 실시간 운영
+claims:
+  - id: c-15076768-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076768.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076768-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076768-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076768.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076768-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076768.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076768-06
+    kind: admin_note
+    value: "세부 부문 '규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)'의 가치: 무인교통단속카메라·어린이보호구역은 제공표준(전국 통일 형식), 내비 기본 데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-regulations
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076768-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076768-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076768.json
+  stats: probe/stats/15076768.json
+  data: probe/data/15076768/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr) 인증키를 받아 경로 파라미터로 넣어야 호출된다. 법정동·좌표 같은 공통 키나 공간정보가 없는 비공간 데이터라 지도·행정구역 데이터와 바로 결합되지 않는다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076768-01
+    - c-15076768-03
+    - c-15076768-04
+  dropped_citations: 0
+status: active

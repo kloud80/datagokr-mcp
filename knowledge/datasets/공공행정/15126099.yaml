@@ -1,0 +1,220 @@
+# Dataset 15126099 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126099'
+tier: verified
+title: 국회 국회사무처_회기정보
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126099/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 국회 회기
+  - 정기회 임시회
+  - 국회 대수
+  - 회기 일정
+  - 회기 시작일 종료일
+  - 열린국회정보
+summary_user: 국회 회기별로 대수(ERACO), 회기 번호, 회기 시작일과 종료일을 담은 회기 단위 목록으로, 전국 단위의 비공간 데이터다. 의정 활동을 분석하는 사람이 특정 표결이나 회의가 어느 대수의 몇 회 회기에 열렸는지, 그 회기가 언제 시작해 언제 끝났는지 확인하는 데 쓴다. 전역 조인 키는 없으며, 회의·표결·의안 데이터와는 대수·회기 번호 값이나 회기 기간 날짜를 맞춰 이어 쓴다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: BILLSESSPROD
+    name: BILLSESSPROD
+    endpoint: https://open.assembly.go.kr/portal/openapi/BILLSESSPROD
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ERACO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제21대
+        - 제20대
+        - 제22대
+      stats:
+        unique: 4
+    - name: SESS
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 제439회
+        - 제438회
+        - 제437회
+      stats:
+        unique: 100
+    - name: SESS_BG_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026.09.01
+        - 2026.08.02
+        - 2026.07.06
+      stats:
+        min: '2016-02-10'
+        max: '2026-09-01'
+        unique: 100
+    - name: SESS_ED_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026.12.09
+        - 2026.08.31
+        - 2026.07.31
+      stats:
+        min: '2016-03-10'
+        max: '2026-12-09'
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - SESS_BG_DT
+    - SESS_ED_DT
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5853
+  rank_in_sector: 269
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 기관 분석 핵심 원장 — 국회 국회사무처
+claims:
+  - id: c-15126099-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126099.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126099-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126099-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126099.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126099-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126099.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126099-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126099-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126099-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126099.json
+  stats: probe/stats/15126099.json
+  data: probe/data/15126099/
+limits: 포털 활용신청과 별도로 open.assembly.go.kr 인증키(KEY)가 필요하다. 실측 컬럼에서 표준 조인 키가 확인되지 않아 다른 데이터와는 이름·코드 매핑으로만 연결된다. 필드 명세에 의미 설명이 비어 있어 각 컬럼의 뜻은 필드명으로 추정한 것이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126099-01
+    - c-15126099-03
+    - c-15126099-04
+    - c-15126099-06
+  dropped_citations: 0
+status: active

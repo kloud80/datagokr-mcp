@@ -1,4 +1,5 @@
-# Dataset 15058741 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15058741 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058741'
 tier: verified
 title: 예금보험공사_영업정지저축은행 수익성 보고서 조회 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 예금보험공사 부보금융회사 종합정보
   - 저축은행 구조조정 재무자료
   - 보험사고 저축은행
+summary_user: 영업정지 처분을 받은 저축은행이 보험사고 이전에 작성한 수익성 관련 재무보고서를 저축은행·기준년월·항목별로 담으며, 항목마다 전기값·당기값·증감이 들어 있는 것으로 보인다(필드 명세에 의미 설명이 없음). 연구자나 감독 관련 기관이 '과거 영업정지된 저축은행들의 수익성 지표가 부실 직전에 어떻게 변했는가'를 분석하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관이 제공하는 영업정지저축은행 재무상태표·손익계산서·유동성·자본적정성 보고서와는 금융회사명(fnccmpNm)과 기준년월을 이름 매핑으로 맞춰 연결한다.
 description_portal: (부보금융회사 종합정보) - 영업정지 처분을 부과받은 저축은행에 대해 보험사고가 발생하기 이전 작성되었던 재무상태표, 손익계산서 및 수신과 여신, 수익성과 유동성, 자본적정성과 자산건전성 등의 재무제표 관련 정보 활용 요청 증가에 따라 예금보험공사는 동 정보를 제공하고 있습니다. - 개방데이터는 영업정지 저축은행에 대한 보험사고 발생 이전까지의 BS/PL 및 여수신, 수익성, 유동성, 자본적정성, 자산건전성 관련 주요 재무보고서입니다. - 학계·연구기관은 현 저축은행을 비롯한 다양한 금융업권에서 과거 영업정지 처분을 받은 저축은행들의 재무제표를 활용하여 연구 등에 활용하고, 관계기관은 동 정보를 활용하여 금융계약자들의 보호를 비롯한 금융시장 안정에 기여할 수 있습니다.
 team:
   dept: 저축은행리스크관리부
@@ -77,6 +79,7 @@ schema:
         unique: 28
     - name: colnCd
       type: code
+      semantic_type: kdic_coln_cd
       null_rate: 0.0
       sample_values:
         - A
@@ -129,6 +132,12 @@ schema:
         p50: 115.955
         max: 1007601
         unique: 738
+  foreign_keys:
+    - fields:
+        - colnCd
+      reference:
+        key: kdic_coln_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -179,7 +188,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058741-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kdic_coln_cd(colnCd)'
     evidence:
       - type: measured
         source: probe/stats/15058741.json
@@ -244,8 +253,6 @@ verification:
   run: probe/runs/15058741.json
   stats: probe/stats/15058741.json
   data: probe/data/15058741/
-status: active
-summary_user: 영업정지 처분을 받은 저축은행이 보험사고 이전에 작성한 수익성 관련 재무보고서를 저축은행·기준년월·항목별로 담으며, 항목마다 전기값·당기값·증감이 들어 있는 것으로 보인다(필드 명세에 의미 설명이 없음). 연구자나 감독 관련 기관이 '과거 영업정지된 저축은행들의 수익성 지표가 부실 직전에 어떻게 변했는가'를 분석하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관이 제공하는 영업정지저축은행 재무상태표·손익계산서·유동성·자본적정성 보고서와는 금융회사명(fnccmpNm)과 기준년월을 이름 매핑으로 맞춰 연결한다.
 limits: 표준 금융회사 코드 같은 전역 조인 키가 없어 다른 데이터와는 회사명 매핑으로만 붙일 수 있다. 보험사고 이전 시점까지의 과거 자료만 담으므로 현재 영업 중인 저축은행 분석에는 쓰지 못한다. 필드 명세에 의미 설명이 없어 항목 코드와 값 단위는 실제 응답으로 확인해야 한다.
 review:
   summary: draft
@@ -258,3 +265,4 @@ review:
     - c-15058741-04
     - c-15058741-06
   dropped_citations: 0
+status: active

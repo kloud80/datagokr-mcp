@@ -1,4 +1,5 @@
-# Dataset 15129051 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15129051 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15129051'
 tier: verified
 title: 한국보훈복지의료공단_국가유공자자격확인서비스_위탁병원 정보
@@ -21,6 +22,7 @@ synonyms:
   - 보훈환자 진료병원
   - 위탁병원 병상수
   - 보훈 의료기관 목록
+summary_user: 국가보훈부로부터 전송받아 국가유공자자격확인서비스에서 쓰는 보훈 위탁병원 목록으로, 병원 한 곳당 한 행에 기관코드·기관명·전문의 수·병상 수·진료과 수·등록일시를 담은 전국 단위 파일(csv, 약 3KB)입니다. 보훈대상자나 분석가가 "보훈환자가 이용할 수 있는 위탁병원은 어디이고 병상과 전문의 규모는 어느 정도인가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 기관명 매핑이나 같은 기관의 기관코드(기관코드)로만 연결한다.
 description_portal: '한국보훈복지의료공단_국가유공자자격확인서비스의 국가보훈부로 부터 전송받은 보훈환자 자격서비스 사용을 위한 위탁병원 정보 관리데이터 입니다.("기관코드","기관명","전문의수","병상수","진료과수","등록일시")* 국가유공자자격확인서비스:  보훈환자자격 이력관리로 다양한 관리정보 제공 및 전국 위탁병원, 약국 사용자 급증에 따른 신속하고 효율적인 운영관리체계 확립 - 보훈환자 자격조회 및 이력관리  - 위탁병원, 약국의 청구내역 및 진료승인관리 ** 운영기관: 중앙보훈병원(05368 서울시 강동구 진황도로 61길 53)'
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 기관코드
       type: number
+      semantic_type: bohun_consign_hosp_cd
       null_rate: 0.0
       sample_values:
         - '41377605'
@@ -100,12 +103,22 @@ schema:
         min: '2024-01-09'
         max: '2024-06-27'
         unique: 19
+  foreign_keys:
+    - fields:
+        - 기관코드
+      reference:
+        key: bohun_consign_hosp_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 공훈·안장자 기록 (독립유공자 공훈록·국립묘지 안장자·이달의 독립운동가·전몰용사·유해발굴)
@@ -142,7 +155,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15129051-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bohun_consign_hosp_cd(기관코드)'
     evidence:
       - type: measured
         source: probe/stats/15129051.json
@@ -207,8 +220,6 @@ verification:
   run: probe/runs/15129051.json
   stats: probe/stats/15129051.json
   data: probe/data/15129051/
-status: active
-summary_user: 국가보훈부로부터 전송받아 국가유공자자격확인서비스에서 쓰는 보훈 위탁병원 목록으로, 병원 한 곳당 한 행에 기관코드·기관명·전문의 수·병상 수·진료과 수·등록일시를 담은 전국 단위 파일(csv, 약 3KB)입니다. 보훈대상자나 분석가가 "보훈환자가 이용할 수 있는 위탁병원은 어디이고 병상과 전문의 규모는 어느 정도인가"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 기관명 매핑이나 같은 기관의 기관코드(기관코드)로만 연결한다.
 limits: 주소·좌표 같은 공간 정보가 없어 지역별 분포나 지도 분석에는 바로 쓰지 못하고, 전역 조인 키가 없어 건강보험 요양기관 등 외부 병원 데이터와 연결하려면 이름 매핑이 필요하다. 내부 검토에서 보조 등급·보류(defer)로 분류된 데이터다.
 review:
   summary: draft
@@ -222,3 +233,4 @@ review:
     - c-15129051-07
     - c-15129051-08
   dropped_citations: 0
+status: active

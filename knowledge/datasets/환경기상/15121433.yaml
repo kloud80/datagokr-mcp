@@ -1,4 +1,5 @@
-# Dataset 15121433 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121433 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121433'
 tier: verified
 title: 한국수자원공사_국가지하수 데이터_원천
@@ -22,6 +23,7 @@ synonyms:
   - GIMS
   - 국가지하수정보센터
   - 우물 정호
+summary_user: 전국 지하수 관정을 한 행씩 담은 원천 원장으로, 허가·신고 형태와 번호, 시도·시군구·읍면동 소재지, 용도, 연사용량, 개발일자, 굴착심도·직경, 양수능력, 펌프마력 같은 관정 제원을 담는다. 분석가나 지자체 담당자가 '우리 시군구에 음용 목적의 암반 관정이 몇 개이고 연간 얼마나 퍼 올리는가'처럼 지역별 지하수 개발·이용 현황을 비교할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구·읍면동 이름을 행정구역 코드에 맞춰 붙이거나 같은 기관(한국수자원공사·국가지하수정보센터)의 수위·수질 자료와 지역 단위로 연결한다.
 description_portal: 국가지하수정보센터에서 제공하는 통계정보의 원천 데이터 입니다. 전국 지하수 관정에 대한 제원 및 관련 개발정보를 포함하고 있으며 상세 항목은 아래와 같습니다.□ 제공항목허가신고형허가신고번호관련법시도시군구읍면동지하수용도코드지하수세부용도코드연사용량산정기준공공사설구분음용여부정호형태코드충적암반구분개발일자(YYYY-MM-DD)취수계획량(㎥)양수능력(㎥)굴착심도(m)굴착직경(mm)펌프마력토출관직경(mm)유량계설치유무출수장치설치유무 제공되는 지하수 정보는 지역 간 지하수 현황 비교, 지질 및 환경 여건 파악, 지하수 개발이용을 위한 참고자료로의 활용 등 다양한 분야에서 사용될 수 있습니다. 기타 관련된 지하수 정보는 국가지하수정보센터 홈페이지(https://www.gims.go.kr)에서 확인하실 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 6
     - name: 허가신고번호
       type: number
+      semantic_type: gw_permit_no
       null_rate: 0.0
       sample_values:
         - '2201500017'
@@ -261,12 +264,26 @@ schema:
         - 설치
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 허가신고번호
+      reference:
+        key: gw_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: emd
+  space_fields:
+    - 읍면동
+  space_via: name
+  time: day
+  time_fields:
+    - 개발일자
 cycle: default
 classification:
   subsector_name: 지하수 (관정·지하수 수위/수질·먹는샘물·약수터 수질검사)
@@ -303,7 +320,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121433-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gw_permit_no(허가신고번호)'
     evidence:
       - type: measured
         source: probe/stats/15121433.json
@@ -368,8 +385,6 @@ verification:
   run: probe/runs/15121433.json
   stats: probe/stats/15121433.json
   data: probe/data/15121433/
-status: active
-summary_user: 전국 지하수 관정을 한 행씩 담은 원천 원장으로, 허가·신고 형태와 번호, 시도·시군구·읍면동 소재지, 용도, 연사용량, 개발일자, 굴착심도·직경, 양수능력, 펌프마력 같은 관정 제원을 담는다. 분석가나 지자체 담당자가 '우리 시군구에 음용 목적의 암반 관정이 몇 개이고 연간 얼마나 퍼 올리는가'처럼 지역별 지하수 개발·이용 현황을 비교할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구·읍면동 이름을 행정구역 코드에 맞춰 붙이거나 같은 기관(한국수자원공사·국가지하수정보센터)의 수위·수질 자료와 지역 단위로 연결한다.
 limits: 관정마다 좌표가 없는 비공간 자료여서 지도 위 위치 분석은 하지 못하고, 행정구역 이름으로만 묶을 수 있다. 다른 데이터와 직접 이을 공통 코드가 없어 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -382,3 +397,4 @@ review:
     - c-15121433-04
     - c-15121433-06
   dropped_citations: 0
+status: active

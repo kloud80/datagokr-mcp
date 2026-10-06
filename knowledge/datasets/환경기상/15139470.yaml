@@ -1,0 +1,179 @@
+# Dataset 15139470 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139470'
+tier: verified
+title: 기상청_단기예보 조회서비스(기상청API허브 연계)
+sector: 환경기상/대기/weather-forecast
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139470/openapi.do
+synonyms:
+  - 단기예보
+  - 초단기예보
+  - 실황
+  - 동네예보
+  - 행정구역
+  - 날씨예보 API
+  - 격자예보
+  - 시간별 날씨
+  - 강수확률
+  - 기온 예보
+  - 기상청 API허브
+  - nx ny 격자
+description_portal: '단기예보란 예보기간과 구역을 시 · 공간적으로 세분화하여 발표하는 예보입니다. 지역별, 시간별 차이로 인한 수요자의 불편을 최소화하기 위해 전국을 5km * 5km 간격의 격자(동서 149(745km) × 남북 253(1.265km)), 총 37,697개로 나누어, 3시간 간격으로 읍, 면, 동 단위의 행정구역 중심으로 상세한 날씨를 발표합니다.생산주기: 2시부터 3시간 간격(02, 05, 08, 11, 14, 17, 20, 23시, 일 8회)보유기간: 2008년 10월 30일 17:00KST(시행일 기준)부터  현재까지'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: fct_shrt_reg.php
+    name: fct_shrt_reg.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/fct_shrt_reg.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tmfc
+        required: true
+        example: '0'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '11000000 199001010000 210012310000 A      육상 '
+        - '11A00000 201501221100 210012310000 A      서해5도 '
+        - '11A00100 199001010000 210012310000 B      서해5도 '
+      stats:
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8071
+  rank_in_sector: 22
+  brm: 환경기상 - 대기
+  why: 전국 5km 격자 단기예보, 좌표 조인 용이
+claims:
+  - id: c-15139470-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139470.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139470-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139470-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139470.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139470-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139470.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139470-06
+    kind: admin_note
+    value: "세부 부문 '기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)'의 가치: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-forecast
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139470-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139470-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139470.json
+  stats: probe/stats/15139470.json
+  data: probe/data/15139470/
+status: active
+summary_user: 전국을 5km×5km 격자 37,697개로 나눠 기상청이 하루 8회(02시부터 3시간 간격) 발표하는 단기예보를 격자·시간대별로 담으며, 포털 설명상 2008년 10월 30일부터 보유한다. 사업자나 일반 이용자가 '내일 오후 우리 동네(읍·면·동) 비 올 확률과 기온은 얼마인가'처럼 특정 지역·시각의 예보를 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했고, 예보 격자 좌표(nx, ny)나 지역 이름 매핑을 통해 같은 기상청의 관측·특보 데이터나 행정구역 자료와 이어 쓴다.
+limits: 기상청 API허브(apihub.kma.go.kr)의 별도 인증키가 필요하며 포털 활용신청만으로는 호출되지 않는다. 행정구역 코드 같은 공통 키가 없어 다른 데이터와 붙이려면 격자 좌표나 지역 이름을 따로 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139470-01
+    - c-15139470-03
+    - c-15139470-04
+    - c-15139470-06
+  dropped_citations: 0

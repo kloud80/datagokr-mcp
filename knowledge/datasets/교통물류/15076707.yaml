@@ -1,0 +1,268 @@
+# Dataset 15076707 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076707'
+tier: verified
+title: 한국도로공사_버스전용차로 운영구간/시간 조회(콘존단위)
+sector: 교통물류/도로/bus-transit
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076707/openapi.do
+synonyms:
+  - 고속도로
+  - 버스전용차로
+  - 운영구간
+  - 차로정보
+  - 운영시간
+  - 시각정보
+  - 도로정책
+  - 교통운영
+  - 고속도로 버스전용차로 시간
+  - 전용차로 운영구간
+  - 버스차로 시행시간
+  - 콘존
+  - 한국도로공사 오픈API
+  - 전용차로 위반
+summary_user: 고속도로 버스전용차로가 운영되는 구간을 콘존(구간 단위) 별로 담은 데이터로, 노선명·노선번호, 콘존 이름, 상하행 방향, 운영 시작·종료 시각을 담는다. 운전자가 '주말 오후 경부고속도로 이 구간에서 버스전용차로가 시행되는가'를 미리 확인하거나, 내비·교통정보 서비스 사업자가 경로 안내에 시행 구간·시간을 반영하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 같은 한국도로공사 데이터와는 노선번호(routeNo)·콘존 ID(conzoneId) 같은 기관 내부 코드나 노선·콘존 이름 매핑으로 이어 쓴다.
+description_portal: 본 데이터는 고속도로 내 콘존 단위로 운영되는 버스전용차로의 구간 및 시간 정보를 제공한다.API를 통해 각 노선의 시작지점과 종료지점, 적용 방향, 운영 시작 및 종료 시각 등을 조회할 수 있다.운전자는 이를 통해 특정 시간대에 버스전용차로가 시행되는 구간을 사전에 확인할 수 있어 위반 방지 및 경로 설정에 도움이 된다.해당 정보는 교통운영기관, 정책 수립기관, 민간 서비스 제공자에게도 교통관리와 정보제공의 기초자료로 활용될 수 있다.제공되는 응답 데이터는 운영구간, 적용시간, 방향, 노선명 등의 항목으로 구성되며 XML과 JSON 형식으로 제공된다.본 API는 한국도로공사에서 관리하고 있으며, 최신 운영 현황이 반영되어 주기적으로 갱신된다.
+team:
+  dept: AI데이터처
+services:
+  - op: buslaneSrch
+    name: buslaneSrch
+    endpoint: https://data.ex.co.kr/openapi/buslane/buslaneSrch
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pageNo
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+      stats:
+        unique: 1
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: conzoneId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0010CZE390
+        - 0010CZE400
+        - 0010CZE405
+      stats:
+        unique: 28
+    - name: conzoneName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 안성IC-안성JC
+        - 안성JC-남사진위IC
+        - 남사진위IC-오산IC
+      stats:
+        unique: 28
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+        - S
+      stats:
+        unique: 2
+    - name: opEndHour
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '21'
+      stats:
+        min: 21
+        p50: 21
+        max: 21
+        unique: 1
+    - name: opStartHour
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '07'
+      stats:
+        min: 7
+        p50: 7
+        max: 7
+        unique: 1
+    - name: gubunCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: gubunCodeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 평일
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: road-regulations
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7497
+  rank_in_sector: 194
+  brm: 교통물류 - 도로
+  why: 고속도로 버스전용차로 운영구간, 규제 부문이 맞음
+claims:
+  - id: c-15076707-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076707.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076707-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076707-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076707.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076707-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076707.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076707-06
+    kind: admin_note
+    value: "세부 부문 '규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)'의 가치: 무인교통단속카메라·어린이보호구역은 제공표준(전국 통일 형식), 내비 기본 데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-regulations
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076707-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076707-08
+    kind: admin_note
+    value: wave3 p3 · 이동 제안 → 교통물류 - 도로 / 규제·단속
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076707.json
+  stats: probe/stats/15076707.json
+  data: probe/data/15076707/
+limits: 좌표 등 공간 정보가 없는 비공간 데이터이므로 지도에 바로 올릴 수 없고, 다른 기관 데이터와 연결하려면 이름 매핑이 필요하다. 공공데이터포털 활용신청과 별도로 data.ex.co.kr 인증키(KEY)를 받아야 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076707-01
+    - c-15076707-03
+    - c-15076707-04
+  dropped_citations: 0
+status: active

@@ -1,5 +1,3 @@
-# Dataset 15155811 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15155811'
 tier: verified
 title: 국토교통부_이륜차정보 서울경기
@@ -37,6 +35,7 @@ schema:
   fields:
     - name: 이륜차등록번호
       type: string
+      semantic_type: vhcl_no
       null_rate: 0.0
       sample_values:
         - 경기김포나94**
@@ -181,9 +180,23 @@ schema:
         p50: 41
         max: 41
         unique: 2
+  foreign_keys:
+    - fields:
+        - 이륜차등록번호
+      reference:
+        key: vhcl_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sido
+  space_fields:
+    - 폐지차량시도코드
+  space_via: code
+  time: year
+  time_fields:
+    - 모델연도
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -221,7 +234,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15155811-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_no(이륜차등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15155811.json

@@ -1,4 +1,5 @@
-# Dataset 15089189 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15089189 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15089189'
 tier: verified
 title: 울산시설공단_동천국민체육센터 수영장수질현황정보
@@ -22,6 +23,7 @@ synonyms:
   - 울산 수영장
   - 동천체육관 수영장
   - 공공체육시설 수질
+summary_user: 울산시설공단이 운영하는 동천국민체육센터 수영장의 수질 검사 결과를 검사일자·검사항목별로 기준, 단위, 측정값과 함께 담은 CSV 파일(약 35KB)이다. 수영장 이용자나 시설 관리·점검 담당자가 이 수영장의 수질 측정값이 항목별 기준 안에 있는지, 시기별로 어떻게 달라졌는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 공공 수영장 수질 데이터와는 시설명·검사항목 이름을 맞춰서만 이어 쓴다.
 description_portal: 울산시설공단은 시민들이 쾌적하고 안전하게 이용할 수 있도록 동천국민체육센터 수영장의 수질 현황 정보를 체계적으로 관리하고 있습니다. 이에 따라 해당 수영장 수질 검사 결과를 다양한 항목으로 구분하여 데이터를 제공합니다. 이 데이터는 수영장의 시설명을 비롯해, 검사 시점을 나타내는 일자, 수질을 평가하는 데 사용되는 검사 항목, 각 항목별로 정해진 기준, 검사 결과의 단위를 나타내는 단위, 그리고 실제로 측정된 검사 결과를 포함하고 있습니다. 또한, 이 정보가 수집되고 정리된 날짜를 나타내는 기준일자 항목도 포함되어 있어 데이터의 최신성과 신뢰도를 확인할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 동천국민체육센터
@@ -96,12 +99,23 @@ schema:
         min: '2026-03-25'
         max: '2026-03-25'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 수질 측정 (수질측정망·자동측정 실시간·조류경보·수질검사)
@@ -138,7 +152,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15089189-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15089189.json
@@ -203,8 +217,6 @@ verification:
   run: probe/runs/15089189.json
   stats: probe/stats/15089189.json
   data: probe/data/15089189/
-status: active
-summary_user: 울산시설공단이 운영하는 동천국민체육센터 수영장의 수질 검사 결과를 검사일자·검사항목별로 기준, 단위, 측정값과 함께 담은 CSV 파일(약 35KB)이다. 수영장 이용자나 시설 관리·점검 담당자가 이 수영장의 수질 측정값이 항목별 기준 안에 있는지, 시기별로 어떻게 달라졌는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 공공 수영장 수질 데이터와는 시설명·검사항목 이름을 맞춰서만 이어 쓴다.
 limits: 단일 시설(동천국민체육센터) 수영장의 검사 결과만 담으므로 다른 수영장이나 하천·상수도 수질 측정망 자료와 직접 비교·조인할 키가 없다. 포털 메타의 범위가 '전국'으로 표기돼 있지만 실제 내용은 울산 한 시설에 한정된다.
 review:
   summary: draft
@@ -216,3 +228,4 @@ review:
     - c-15089189-03
     - c-15089189-04
   dropped_citations: 0
+status: active

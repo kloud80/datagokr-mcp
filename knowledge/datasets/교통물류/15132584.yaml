@@ -1,4 +1,5 @@
-# Dataset 15132584 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132584 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132584'
 tier: verified
 title: 해양수산부_해운항만물류정보_예선면제신청정보
@@ -22,6 +23,7 @@ synonyms:
   - 선박 접안
   - 항만 예선
   - 호출부호
+summary_user: 선박이 항만시설에 접안할 때 예선 사용을 면제받으려고 낸 신청을 건별로 담은 전국 파일(csv, 약 447KB)로, 선박명·호출부호·총톤수·국적·위험물 적재 여부, 신청일과 면제 여부, 면제허가 유효기간, 관할기관을 담는다. 항만 행정 담당자나 해운 분석가가 '어느 관할 항만에서 어떤 크기·종류의 선박이 예선 면제를 받고 있고 허가가 언제 끝나는가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 호출부호(호출부호)와 선박명으로 Port-MIS 입출항 신고나 선박 등록 자료에 이름·코드를 맞춰 붙이는 방식으로만 이어 쓴다.
 description_portal: 이 데이터는 항만별 예선사용 규칙에 따라 선박이 항만시설에 접안할 때 예선을 사용하지 않고 면제받기 위해 민원인이 신청한 예선면제신청 내역을 관리할 목적으로 수집된 데이터입니다.  본 데이터의 주요 내용은 예선면제 선박 정보, 신청 일자, 면제 여부, 면제허가 유효기간 등으로 구성되어 있습니다.  본 데이터는 예선면제 제도 관련 업무를 수행하는 행정기관에서 항만별 예선면제 신청 현황을 점검할 때 참고자료로 활용되며, 항만 운영 방식 분석자료, 선박 운항 및 항만 이용 정책 수립, 항만 업무 효율성 개선 등 행정적 분석자료로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -65,6 +67,7 @@ schema:
         unique: 1
     - name: 호출부호
       type: string
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - 3FQJ3
@@ -338,12 +341,24 @@ schema:
         min: '2023-01-29'
         max: '2026-07-31'
         unique: 484
+  foreign_keys:
+    - fields:
+        - 호출부호
+      reference:
+        key: vessel_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 접수일
+    - 신청일
+    - 면제허가일자
 cycle: default
 classification:
   subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
@@ -380,7 +395,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132584-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vessel_id(호출부호)'
     evidence:
       - type: measured
         source: probe/stats/15132584.json
@@ -445,8 +460,6 @@ verification:
   run: probe/runs/15132584.json
   stats: probe/stats/15132584.json
   data: probe/data/15132584/
-status: active
-summary_user: 선박이 항만시설에 접안할 때 예선 사용을 면제받으려고 낸 신청을 건별로 담은 전국 파일(csv, 약 447KB)로, 선박명·호출부호·총톤수·국적·위험물 적재 여부, 신청일과 면제 여부, 면제허가 유효기간, 관할기관을 담는다. 항만 행정 담당자나 해운 분석가가 '어느 관할 항만에서 어떤 크기·종류의 선박이 예선 면제를 받고 있고 허가가 언제 끝나는가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 호출부호(호출부호)와 선박명으로 Port-MIS 입출항 신고나 선박 등록 자료에 이름·코드를 맞춰 붙이는 방식으로만 이어 쓴다.
 limits: 표준 조인 키가 없어 다른 데이터와 연결하려면 호출부호·선박명·관할기관명을 직접 매핑해야 한다. 지역 범위는 전국이지만 좌표가 없는 비공간 자료라 지도 분석에는 바로 쓰지 못하고, 입출항 사실은 신청 건마다 최대 4회만 함께 적혀 있어 전체 운항 이력으로 보기 어렵다.
 review:
   summary: draft
@@ -459,3 +472,4 @@ review:
     - c-15132584-04
     - c-15132584-06
   dropped_citations: 0
+status: active

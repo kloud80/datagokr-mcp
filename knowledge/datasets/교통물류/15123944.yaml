@@ -1,0 +1,215 @@
+# Dataset 15123944 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123944'
+tier: verified
+title: 경기도_버스 노선별 운행 차량 이력
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123944/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 버스노선ID
+  - 차량이력코드
+  - BMS
+  - 이력정보
+  - 노선이력
+  - 버스 배차 이력
+  - 노선별 차량 배정
+  - 경기버스 차량 교체
+  - 운수업체 보유 차량
+  - BMS 운행 이력
+  - 버스 차량 운행 기록
+summary_user: 경기도버스운송관리시스템(BMS)에서 나온 노선별 운행 차량 이력으로, 이력 한 건마다 어떤 노선(route_id)을 어느 운수업체 차량이 운행했는지를 담은 건별 원천 데이터다. 버스 운영 분석가나 정책 담당자가 '이 노선에는 어떤 차량이 배정돼 왔고 언제 차량이 바뀌었나', '운수업체별로 운영 차량이 몇 대인가'를 확인할 때 쓴다. 전역 조인 키는 없고, 노선ID·업체ID·차량ID 같은 경기도 내부 코드를 통해 같은 기관의 버스 노선·정류장·도착 정보 데이터와만 이어 쓸 수 있다.
+description_portal: 이 데이터는 경기도버스운송관리시스템(BMS)에서 제공하는 노선별 운행 차량 이력 정보로, 경기도 내 각 버스 노선에 대해 어떤 차량이 어느 시점에 운행되었는지를 기록한 데이터입니다. 주요 항목으로는 '이력ID', '노선ID', '업체ID', '차량ID'가 포함되며, '노선ID'는 특정 노선을 식별하는 고유번호, '차량ID'는 해당 노선을 운행한 차량의 고유 식별번호, '업체ID'는 차량을 운영한 운수업체를 나타냅니다. 이 데이터는 차량 배차 이력 분석, 노선별 차량 운행 이력 추적, 운수업체별 운영 차량 파악 등에 활용되며, 특히 노선 변경 이력이나 차량 교체 패턴을 분석하는 데 유용합니다. 또한 교통정책 수립, 버스 운영 효율화, 이용자 민원 대응 등의 기반 자료로 사용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: hist_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1000000000'
+        - '1000008301'
+        - '1000005662'
+      stats:
+        min: 1000000000
+        p50: 1000000000
+        max: 1000008301
+        unique: 3
+    - name: route_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '212000001'
+        - '200000115'
+        - '200000028'
+      stats:
+        min: 200000014
+        p50: 204000019
+        max: 238000015
+        unique: 47
+    - name: entrps_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4103600'
+        - '4102600'
+        - '4101900'
+      stats:
+        min: 4100200
+        p50: 4102700
+        max: 4107100
+        unique: 15
+    - name: vehcle_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000761'
+        - '200000764'
+        - '231000002'
+      stats:
+        min: 200000515
+        p50: 204000114.5
+        max: 238000018
+        unique: 96
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3704
+  rank_in_sector: 4047
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15123944-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123944.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15123944-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123944-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123944.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123944-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123944.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15123944-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123944-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123944-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123944.json
+  stats: probe/stats/15123944.json
+  data: probe/data/15123944/
+limits: data.gg.go.kr에서 별도 인증키(KEY)를 받아 호출해야 하며 포털 활용신청과는 별개다. 실측 컬럼에 전국 공통 조인 키가 없어 국토부·타 지자체 버스 데이터와 직접 연결되지 않고, 같은 기관 코드나 이름 매핑으로만 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15123944-01
+    - c-15123944-03
+    - c-15123944-04
+  dropped_citations: 0
+status: active

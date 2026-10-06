@@ -1,0 +1,205 @@
+# Dataset 15130763 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15130763'
+tier: verified
+title: 경기도_어업 허가 및 신고 현황
+sector: 농축수산/해양수산·어촌/fishery-licenses
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15130763/fileData.do
+synonyms:
+  - 내수면어업
+  - 근해어업
+  - 연안구획신고어업
+  - 어업분류
+  - 허가건수
+  - 어업신고
+  - 어업허가
+  - 연안구획어업
+  - 시군별 어업 현황
+  - 자망 통발 허가건수
+  - 경기도 수산
+summary_user: 경기도 시군별로 어업분류(내수면어업, 연안구획신고어업 등)와 어업중분류(자망, 통발, 종묘채포 등)에 따른 어업 허가·신고 건수를 집계한 통계로, 건별 허가 원장이 아닙니다. 어느 시군에 어떤 유형의 어업 허가가 많은지 비교하려는 분석가나, 내수면·연안 어업 정책을 세우는 담당자가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 다른 데이터와는 시군명 이름 매핑으로만 연결한다.
+description_portal: '이 데이터는 경기도 내 어업에 대한 허가 및 신고 현황을 나타낸 자료로, 시군명, 어업분류명(예: 내수면어업, 연안구획신고어업 등), 어업중분류명(예: 자망, 통발, 종묘채포 등), 허가건수로 구성되어 있습니다. 어업활동의 유형별로 분류되어 있어 어업의 형태와 규모를 파악할 수 있으며, 시군 단위의 공간정보가 포함되어 지역별 어업 활동의 밀도와 특성을 분석할 수 있습니다. 특히 내수면 중심 어업이나 연안구획 신고 어업과 같은 세부 유형별 허가 건수 통계를 통해 수산 자원관리, 어업정책 수립, 허가제 운영의 실태 평가 등에서 활용될 수 있는 기초자료입니다.'
+accrual_periodicity: 수시
+team:
+  dept: AI데이터행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sigun_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 김포시
+        - 가평군
+        - 경기도
+      stats:
+        unique: 16
+    - name: fishry_class_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 내수면어업
+        - 연안구획신고어업
+        - 근해어업
+      stats:
+        unique: 3
+    - name: fishry_mdclass_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자망
+        - 낭장망
+        - 각망
+      stats:
+        unique: 15
+    - name: prmsn_noc
+      type: number
+      null_rate: 0.42
+      sample_values:
+        - '1.0'
+        - '0.0'
+        - '6.0'
+      stats:
+        min: 0
+        p50: 24
+        max: 132
+        unique: 42
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 어업 허가·면허·어장·어선 등록
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3372
+  rank_in_sector: 553
+  brm: 농축수산 - 해양수산·어촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15130763-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15130763.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15130763-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15130763-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15130763.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15130763-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15130763.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15130763-06
+    kind: admin_note
+    value: "세부 부문 '어업 허가·면허·어장·어선 등록'의 가치: 면허·허가번호·어장코드·어선번호 원장, 어업인 사업자번호로 기업 축. 해운·항만 선박 등록과 어선에서만 겹침"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fishery-licenses
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15130763-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15130763-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15130763.json
+  stats: probe/stats/15130763.json
+  data: probe/data/15130763/
+limits: 허가번호·어선번호·사업자번호 같은 건별 식별자가 없어 개별 어업인이나 선박 단위 분석, 선박 등록 데이터와의 직접 연결에는 쓰지 못한다. 호출하려면 data.gg.go.kr에서 별도로 받은 인증키(KEY)가 필요하며, 이는 공공데이터포털 활용신청과 별개다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15130763-01
+    - c-15130763-03
+    - c-15130763-06
+  dropped_citations: 0
+status: active

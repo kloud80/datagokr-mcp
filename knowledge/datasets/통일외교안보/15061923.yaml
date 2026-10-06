@@ -1,4 +1,5 @@
-# Dataset 15061923 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061923 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061923'
 tier: verified
 title: 방위사업청_식재료 입찰정보
@@ -24,6 +25,7 @@ synonyms:
   - 군 급식 조달
   - 국방전자조달 식재료
   - 군부대 식재료 발주
+summary_user: 방위사업청이 추진한 군 식재료 입찰을 건별로 담은 파일로, 공고일자·발주처·입찰건명·요구년도·판단번호·금액을 한 행에 기록한다. 식재료 공급업체가 과거 어떤 발주처가 어떤 품목을 얼마 규모로 입찰에 부쳤는지 보고 다음 입찰 참여를 준비하거나, 정책 담당자가 군 급식 식재료 조달 비용 추이를 검토할 때 쓴다. 전역 조인 키가 없어 다른 방위사업청 조달 데이터(입찰결과·계약정보 등)와는 판단번호나 입찰건명 같은 이름·번호 매칭으로만 이어 쓰며, 나라장터와는 별도인 국방전자조달 체계의 자료다.
 description_portal: 최근 7년간 방위사업청에서 추진한 식재료 관련 입찰정보를 제공합니다. 주요 항목은 공고일자, 발주처, 입찰건명, 요구연도, 판단번호, 계약금액 등으로 구성되어 있으며 군 급식체계의 안정적 운영을 위한 조달 현황을 확인할 수 있습니다. 해당 데이터를 통해 업체는 과거 식재료 발주 추이를 바탕으로 향후 공급 전략을 수립할 수 있으며 조달 참여 기회를 모색할 수 있습니다. 또한 정책 담당자는 식재료 조달 비용과 발주 구조를 분석하여 예산 운영의 합리성을 검토하고, 투명한 군 급식 시스템 구축에 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -84,6 +86,7 @@ schema:
         unique: 2
     - name: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '50396'
@@ -106,12 +109,22 @@ schema:
         p50: 37719000
         max: 2391480000
         unique: 199
+  foreign_keys:
+    - fields:
+        - 판단번호
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공고일자
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -149,7 +162,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061923-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(판단번호)'
     evidence:
       - type: measured
         source: probe/stats/15061923.json
@@ -214,8 +227,6 @@ verification:
   run: probe/runs/15061923.json
   stats: probe/stats/15061923.json
   data: probe/data/15061923/
-status: active
-summary_user: 방위사업청이 추진한 군 식재료 입찰을 건별로 담은 파일로, 공고일자·발주처·입찰건명·요구년도·판단번호·금액을 한 행에 기록한다. 식재료 공급업체가 과거 어떤 발주처가 어떤 품목을 얼마 규모로 입찰에 부쳤는지 보고 다음 입찰 참여를 준비하거나, 정책 담당자가 군 급식 식재료 조달 비용 추이를 검토할 때 쓴다. 전역 조인 키가 없어 다른 방위사업청 조달 데이터(입찰결과·계약정보 등)와는 판단번호나 입찰건명 같은 이름·번호 매칭으로만 이어 쓰며, 나라장터와는 별도인 국방전자조달 체계의 자료다.
 limits: 전국 단위 비공간 자료라 지역별 분석에는 맞지 않고, 표준 조인 키가 없어 업체(사업자번호)나 계약 결과와 직접 연결되지 않는다. 국방전자조달 자료이므로 나라장터 공공조달 데이터와 같은 체계로 취급하면 안 된다.
 review:
   summary: draft
@@ -229,3 +240,4 @@ review:
     - c-15061923-06
     - c-15061923-07
   dropped_citations: 0
+status: active

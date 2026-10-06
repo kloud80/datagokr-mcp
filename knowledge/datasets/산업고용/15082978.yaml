@@ -1,4 +1,5 @@
-# Dataset 15082978 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15082978 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15082978'
 tier: verified
 title: 한국남부발전(주)_연료소비실적 정보
@@ -25,6 +26,7 @@ synonyms:
   - 호기별 연료
   - 남부발전 연료
   - 에너지 믹스
+summary_user: 한국남부발전의 발전본부(플랜트)·호기별로 우드펠릿·가축분뇨·유연탄·무연탄(톤), 중유·경유·실내 등유(L), LNG(kg) 사용량을 날짜 단위로 기록한 연료소비 실적 파일(CSV)입니다. 에너지·탄소 분석가가 "하동발전본부 호기별 석탄 대비 바이오매스 사용 비중이 해마다 어떻게 바뀌었나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·배출 데이터와는 플랜트명·호기 이름을 맞춰 연결하거나 같은 기관(한국남부발전) 자료끼리만 이어 쓴다.
 description_portal: 이 데이터는 한국남부발전의 발전소별 연료소비 실적을 정리한 자료입니다. 하동발전본부 등 각 플랜트와 호기별로 우드펠릿, 가축분뇨, 석탄(유연탄·무연탄), 중유, 경유, 실내 등유, 액화천연가스(LNG) 등의 사용량이 연도·월별 단위로 기록되어 있습니다. 이를 통해 화석연료와 바이오매스, LNG 등 다양한 연료가 발전 과정에서 어떤 비중으로 활용되는지 파악할 수 있으며, 발전소 운영의 에너지 믹스와 친환경 연료 도입 현황을 수치로 확인할 수 있습니다. 본 자료는 에너지 사용 패턴 분석, 발전 효율 평가, 탄소배출 저감 정책 연구에 기초자료로 활용될 수 있으며, 장기적으로는 신재생에너지 확대와 에너지 전환 정책의 효과를 검토하는 데에도 유용한 정보를 제공합니다.
 accrual_periodicity: 연간
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 163
     - name: 플랜트
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - 하동발전본부
@@ -58,6 +61,7 @@ schema:
         unique: 16
     - name: 호기
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - '#1 CC'
@@ -160,12 +164,27 @@ schema:
         p50: 0
         max: 64391000
         unique: 1797
+  foreign_keys:
+    - fields:
+        - 플랜트
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 날짜
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -202,7 +221,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15082978-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_plant_unit(플랜트), kospo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15082978.json
@@ -267,8 +286,6 @@ verification:
   run: probe/runs/15082978.json
   stats: probe/stats/15082978.json
   data: probe/data/15082978/
-status: active
-summary_user: 한국남부발전의 발전본부(플랜트)·호기별로 우드펠릿·가축분뇨·유연탄·무연탄(톤), 중유·경유·실내 등유(L), LNG(kg) 사용량을 날짜 단위로 기록한 연료소비 실적 파일(CSV)입니다. 에너지·탄소 분석가가 "하동발전본부 호기별 석탄 대비 바이오매스 사용 비중이 해마다 어떻게 바뀌었나" 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·배출 데이터와는 플랜트명·호기 이름을 맞춰 연결하거나 같은 기관(한국남부발전) 자료끼리만 이어 쓴다.
 limits: 표준 발전소 코드 같은 공통 키가 없어 외부 데이터와 이으려면 플랜트·호기 이름을 직접 매핑해야 한다. 한국남부발전 소속 발전소만 담으며 지역 단위의 공간 정보는 없다.
 review:
   summary: draft
@@ -280,3 +297,4 @@ review:
     - c-15082978-03
     - c-15082978-04
   dropped_citations: 0
+status: active

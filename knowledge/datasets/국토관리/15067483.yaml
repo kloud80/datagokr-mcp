@@ -1,4 +1,5 @@
-# Dataset 15067483 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067483 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067483'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_항공사진촬영기록코스
@@ -21,6 +22,7 @@ synonyms:
   - 사진 중복도
   - 정사영상 촬영 이력
   - 항공측량 기록
+summary_user: 국토지리정보원 항공사진 촬영기록부 가운데 촬영코스 정보를 담은 파일로, 사업지구·촬영일자·렌즈·코스번호별로 개시시간, 노출·조리개·필터 같은 촬영조건, 촬영방향·각도, 사진 매수, 진행방향·촬영 중복도를 한 행씩 기록한다(전국 범위, CSV 약 7.7MB). 특정 사업지구 항공사진이 언제 어떤 방향과 조건으로 촬영됐고 중복도가 얼마였는지 확인하려는 측량·공간정보 분석가가 정사영상 제작이나 사진 품질을 검토할 때 쓴다. 전역 조인 키는 없으므로 같은 기관의 다른 항공사진 데이터(촬영기록부·사진 목록 등)와 사업지구코드·촬영일자·코스번호를 이름 그대로 맞춰 이어 쓴다.
 description_portal: '항공사진 촬영기록부의 촬영코스 정보 (촬영일의 순차적코스번호에 대하여 촬영방향, 정북방위각, 촬영조건 정보를 관리)▷ 식별정보 : 사업지구코드, 촬영일자, 렌즈번호, 코스일련번호, 코스번호▷ 속성정보 : 개시시간, 필터, 노출, 조리개, 대표필름번호, 매수, 촬영방향, 촬영각도, 진행방향중복도_최대/최소, 촬영중복도_최대/최소 * 항공사진 : 항공기나 드론 등의 항공 플랫폼에서 지표면을 촬영한 사진으로, 지도 제작, 지형 분석, 도시계획, 환경 모니터링 등 다양한 분야에서 활용- 전국을 촬영하여, 국토 변화상황을 모니터링 하고 정사영상 제작 및 국가기본도 수정 등에 활용- 전국을 도시지역(해상도 12cm) 및 비도시지역(해상도 25cm)으로 구분하여 도시지역, 비도시지역 1년 주기 촬영'
 accrual_periodicity: 월간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 사업지구코드
       type: code
+      semantic_type: aerial_project_district_cd
       null_rate: 0.0
       sample_values:
         - 202102A102C
@@ -54,6 +57,7 @@ schema:
         unique: 3903
     - name: 렌즈번호
       type: code
+      semantic_type: aerial_lens_no
       null_rate: 0.0
       sample_values:
         - '1307'
@@ -75,6 +79,7 @@ schema:
         unique: 997
     - name: 코스번호
       type: code
+      semantic_type: aerial_photo_no
       null_rate: 0.0
       sample_values:
         - '1'
@@ -223,12 +228,32 @@ schema:
         p50: 35
         max: 65
         unique: 27
+  foreign_keys:
+    - fields:
+        - 사업지구코드
+      reference:
+        key: aerial_project_district_cd
+      evidence: measured
+    - fields:
+        - 렌즈번호
+      reference:
+        key: aerial_lens_no
+      evidence: measured
+    - fields:
+        - 코스번호
+      reference:
+        key: aerial_photo_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 촬영일자
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -266,7 +291,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067483-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: aerial_project_district_cd(사업지구코드), aerial_lens_no(렌즈번호), aerial_photo_no(코스번호)'
     evidence:
       - type: measured
         source: probe/stats/15067483.json
@@ -341,8 +366,6 @@ verification:
   run: probe/runs/15067483.json
   stats: probe/stats/15067483.json
   data: probe/data/15067483/
-status: active
-summary_user: 국토지리정보원 항공사진 촬영기록부 가운데 촬영코스 정보를 담은 파일로, 사업지구·촬영일자·렌즈·코스번호별로 개시시간, 노출·조리개·필터 같은 촬영조건, 촬영방향·각도, 사진 매수, 진행방향·촬영 중복도를 한 행씩 기록한다(전국 범위, CSV 약 7.7MB). 특정 사업지구 항공사진이 언제 어떤 방향과 조건으로 촬영됐고 중복도가 얼마였는지 확인하려는 측량·공간정보 분석가가 정사영상 제작이나 사진 품질을 검토할 때 쓴다. 전역 조인 키는 없으므로 같은 기관의 다른 항공사진 데이터(촬영기록부·사진 목록 등)와 사업지구코드·촬영일자·코스번호를 이름 그대로 맞춰 이어 쓴다.
 limits: 공식 조인 키가 없어 다른 데이터와는 사업지구코드·코스번호 같은 컬럼 값을 직접 맞춰야 하며, 연결이 보장되지 않는다. 좌표가 없는 비공간 기록이어서 이 파일만으로 촬영 위치를 지도에 표시할 수 없다.
 review:
   summary: draft
@@ -354,3 +377,4 @@ review:
     - c-15067483-03
     - c-15067483-04
   dropped_citations: 0
+status: active

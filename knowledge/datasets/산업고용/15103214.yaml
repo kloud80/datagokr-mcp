@@ -1,4 +1,5 @@
-# Dataset 15103214 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103214 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103214'
 tier: verified
 title: 한국전력거래소_연료원별 SMP 결정 횟수(일별)
@@ -22,6 +23,7 @@ synonyms:
   - LNG 가격결정 비중
   - 전력거래소 SMP
   - 제주 SMP
+summary_user: 전력시장에서 거래시간별 시장가격(SMP)을 어느 연료원(LNG·유류·유연탄·무연탄·원자력) 발전기가 결정했는지 그 횟수를 거래일별로 합산한 집계 데이터로, 육지와 제주를 구분해 담는다. 에너지 분석가나 발전사업자가 '최근 SMP를 주로 LNG가 결정했는지 석탄이 결정했는지'처럼 가격결정 연료 구성의 변화를 확인하는 데 쓴다. 전역 조인 키는 없으며 거래일자(tradeDay)와 지역(육지/제주)을 기준으로 같은 전력거래소의 일별 SMP·발전원별 발전량 데이터와 맞춰 쓴다.
 description_portal: 전력시장의 연료원별 시장가격을 결정한 횟수를 일별로 합산하여 제공합니다. LNG, 유류, 유연탄, 무연탄, 원자력 항목을 제공합니다.ㅇ SMP란 거래시간별로 적용되는 전력량에 대한 전력시장가격(원/kWh)을 말하며, 육지 및 제주지역으로 구분ㅇ SMP 결정이란 가격결정발전계획 수립 시 발전기별 발전계획 누적량이 전력수요량에 해당하는 발전기의 발전비용으로 거래시간별로 적용되는 전력량에 대한 전력시장가격 결정을 의미ㅇ 2024년 8월 20일 부터 제주와 육지의 연료원별 SMP 결정횟수를 구분하여 API를 제공합니다.
 team:
   dept: 전사AX총괄팀
@@ -68,6 +70,7 @@ schema:
     - name: fuelType
       title: 연료원
       type: code
+      semantic_type: kpx_fuel_type
       null_rate: 0.0
       sample_values:
         - LNG
@@ -120,12 +123,22 @@ schema:
         p50: 20240819
         max: 20240819
         unique: 1
+  foreign_keys:
+    - fields:
+        - fuelType
+      reference:
+        key: kpx_fuel_type
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - tradeDay
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -169,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103214-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_fuel_type(fuelType)'
     evidence:
       - type: measured
         source: probe/stats/15103214.json
@@ -234,8 +247,6 @@ verification:
   run: probe/runs/15103214.json
   stats: probe/stats/15103214.json
   data: probe/data/15103214/
-status: active
-summary_user: 전력시장에서 거래시간별 시장가격(SMP)을 어느 연료원(LNG·유류·유연탄·무연탄·원자력) 발전기가 결정했는지 그 횟수를 거래일별로 합산한 집계 데이터로, 육지와 제주를 구분해 담는다. 에너지 분석가나 발전사업자가 '최근 SMP를 주로 LNG가 결정했는지 석탄이 결정했는지'처럼 가격결정 연료 구성의 변화를 확인하는 데 쓴다. 전역 조인 키는 없으며 거래일자(tradeDay)와 지역(육지/제주)을 기준으로 같은 전력거래소의 일별 SMP·발전원별 발전량 데이터와 맞춰 쓴다.
 limits: 결정 횟수만 담고 SMP 가격 수준이나 발전량은 담지 않으므로 다른 데이터와 함께 봐야 한다. 지역 구분은 육지/제주뿐인 비공간 데이터이며, 개발계정은 하루 100회 호출로 제한된다.
 review:
   summary: draft
@@ -247,3 +258,4 @@ review:
     - c-15103214-03
     - c-15103214-04
   dropped_citations: 0
+status: active

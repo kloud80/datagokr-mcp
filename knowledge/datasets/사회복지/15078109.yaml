@@ -1,4 +1,5 @@
-# Dataset 15078109 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078109 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078109'
 tier: verified
 title: 한국건강가정진흥원_아이돌봄 월별신청현황-연령대별 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 나이별 아이돌봄 이용
   - 돌봄 공백 분석
   - 영유아 초등 돌봄 신청 현황
+summary_user: 아이돌봄 서비스의 월별 신청 건수를 기준연월·아이돌봄기관별로 묶어 0세부터 12세까지 나이별로 담은 집계 데이터이며, 범위는 전국이고 지도 좌표는 없다. 지자체·정책 분석가가 "우리 지역 기관에서 어느 나이대 아동의 돌봄 신청이 몰리거나 비어 있는가" 같은 연령별 수요 편차를 살피는 데 쓴다. 기관 번호(childCareInstNo)와 상위 기관 번호·명칭이 있으나 다른 데이터와 공통으로 쓰는 전역 조인 키는 확인되지 않아, 같은 기관의 다른 아이돌봄 현황 데이터와 기관 번호·기관명으로 맞춰 잇는다.
 description_portal: 아이돌봄 월별 신청현황 연령대별 정보 서비스를 제공하는 오픈API입니다. 해당 개방 데이터를 통해 기준연월, 아이돌봄기관명, 전염성 질병 아동 여부, 돌봄구분명, 상위아이돌봄기관명, 0세부터 12세까지의 신청건수 등의 정보를 확인할 수 있습니다. 0세부터 12세까지 아동의 서비스 신청 분포를 한눈에 파악할 수 있어 연령대별 수요 편차 분석을 통해 특정 연령대의 돌봄 공백 여부를 조기 진단할 수 있습니다. 또한, 연령 맞춤형 서비스 설계나 보육 정책 수립에 있어 실증적 데이터를 제공할 수 있습니다. 연령별 돌봄 정책의 미비점을 보완하는 데 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -55,6 +57,7 @@ schema:
         unique: 2
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0396
@@ -97,6 +100,7 @@ schema:
         unique: 2
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -279,6 +283,17 @@ schema:
         p50: 20260413
         max: 20260413
         unique: 1
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -328,7 +343,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078109-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078109.json
@@ -382,8 +397,6 @@ verification:
   run: probe/runs/15078109.json
   stats: probe/stats/15078109.json
   data: probe/data/15078109/
-status: active
-summary_user: 아이돌봄 서비스의 월별 신청 건수를 기준연월·아이돌봄기관별로 묶어 0세부터 12세까지 나이별로 담은 집계 데이터이며, 범위는 전국이고 지도 좌표는 없다. 지자체·정책 분석가가 "우리 지역 기관에서 어느 나이대 아동의 돌봄 신청이 몰리거나 비어 있는가" 같은 연령별 수요 편차를 살피는 데 쓴다. 기관 번호(childCareInstNo)와 상위 기관 번호·명칭이 있으나 다른 데이터와 공통으로 쓰는 전역 조인 키는 확인되지 않아, 같은 기관의 다른 아이돌봄 현황 데이터와 기관 번호·기관명으로 맞춰 잇는다.
 limits: 전역 조인 키가 없어 외부 시설·행정 데이터와는 기관명 등 이름 매핑으로만 연결되므로 매칭 오류에 주의한다. 집계된 신청 건수라 개별 아동·가구 단위 분석이나 위치 기반 분석은 할 수 없다. 개발계정은 하루 5,000회 호출로 제한된다.
 review:
   summary: draft
@@ -395,3 +408,4 @@ review:
     - c-15078109-03
     - c-15078109-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,190 @@
+# Dataset 15151050 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15151050'
+tier: verified
+title: 경기도_사이버식물병원 진단작목증상
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15151050/fileData.do
+synonyms:
+  - 사이버식물병원
+  - 작목번호
+  - 증상분류번호
+  - 병해유형
+  - 증상분류
+  - 목록관리
+  - 작물 병해 증상
+  - 병해충 진단
+  - 식물병 증상분류
+  - 작목별 병해
+  - 경기데이터드림 식물병원
+  - 작물 질병 코드
+summary_user: 경기도 사이버식물병원 시스템의 병해충 진단 정보 중, 작물(작목번호)마다 발생할 수 있는 병해 증상분류번호를 짝지어 담은 건별 매핑 테이블이다. 농업 진단·모니터링 시스템을 만드는 분석가가 '이 작물에는 어떤 증상 유형이 걸릴 수 있나'를 정의하거나 작물별 병해 양상을 정리할 때 쓴다. 증상분류번호(symptms_class_no)로 같은 시스템의 '증상_분류' 테이블과 이어 병해 명칭을 확인하고 '진단_의뢰_증상' 테이블과 엮어 쓰지만, 전역 조인 키는 없어 같은 기관 코드로만 연결된다.
+description_portal: 본 데이터는 사이버식물병원 시스템에서 수집된 병해충 진단 정보를 기반으로 하며, 특정 작물에서 발생 가능한 병해 증상을 증상 분류 체계와 연계하여 구성된 '작목_증상' 테이블입니다. 각 행은 고유 식별자인 작목번호와 증상분류번호로 이루어져 있으며, 이를 통해 개별 작물에 발생 가능한 병해 유형과 그에 대한 분류체계를 정의합니다. 이 데이터는 ‘증상_분류’ 테이블과 연계하여 병해의 명칭과 상세 분류 정보를 확인할 수 있으며, ‘진단_의뢰_증상’ 테이블과의 분석적 연계를 통해 병해 발생 이력 분석도 가능합니다. 작물별 병해 양상, 주요 증상 분포, 병해 유형별 대응 전략 수립 등 농업 진단·예방·모니터링 시스템 구축에 유용한 기반 정보로 활용될 수 있습니다. 특히 병해 발생의 시계열적 추이 분석, 병해 다발 작물 탐지, 지역별 병해 경향 파악 등에도 확장 활용이 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: tre_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '26'
+        - '24'
+        - '25'
+      stats:
+        min: 24
+        p50: 25
+        max: 27
+        unique: 4
+    - name: symptms_class_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2443'
+        - '2445'
+        - '2447'
+      stats:
+        min: 17
+        p50: 2447
+        max: 2514
+        unique: 48
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3094
+  brm: 농축수산 - 농업·농촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15151050-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15151050.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15151050-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151050-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15151050.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151050-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15151050.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15151050-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15151050-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15151050-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15151050.json
+  stats: probe/stats/15151050.json
+  data: probe/data/15151050/
+limits: 작목번호·증상분류번호 두 코드만 있어 작물명·병해명을 알려면 같은 기관의 코드 테이블이 따로 필요하고, KAMIS 품목코드 등 외부 작물 코드와 바로 연결되지 않는다. 호출하려면 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15151050-01
+    - c-15151050-03
+    - c-15151050-06
+  dropped_citations: 0
+status: active

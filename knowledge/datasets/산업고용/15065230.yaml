@@ -1,4 +1,5 @@
-# Dataset 15065230 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15065230 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15065230'
 tier: verified
 title: 한국전력거래소_서울시 전력거래량
@@ -22,6 +23,7 @@ synonyms:
   - 송전단 거래량
   - 서울 전력 생산
   - KPX 거래량
+summary_user: 2021년 10월 서울시의 연료원별 일별 전력거래량(MWh, 송전단 기준)을 지역·연료원·거래일 단위로 담은 집계 파일입니다. 서울에서 특정 연료원으로 하루에 얼마만큼의 전력이 전력시장에서 거래됐는지 확인하려는 에너지 분석가나 연구자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력거래소 자료와는 지역명·연료원 이름이나 거래일로 맞춰 이어 써야 한다.
 description_portal: 'ㅇ 한국전력거래소는 전력을 생산하는 발전사업자, 전력을 수요지까지 전달하는 송배전사업자, 전력을 구매하여 판매하는 판매사업자, 전력을 사용하는 소비자 등으로 구성되는 전력시장에서 전력의 판매 및 구매 활동을 실시간으로 운영, 감시하는 "전력시장 운영 업무"와 전력 수요에 맞춰 전력 생산량을 결정하고 이를 안정적으로 수요지에 공급되도록 하는 "전력계통 운영 업무"등을 전담하고 있습니다.ㅇ 2021년 10월 서울시 연료원별 일별 전력거래량 자료입니다.* 개별 발전기의 전력거래량, 주소 등은 해당 사업자의 영업정보이므로 정보공개법(제9조)에 따라 제 3자에게 제공하지 않고 있습니다.*전력거래량은 한전 전력수급계약(PPA) 등 전력시장에 미등록한 발전기의 발전량은 포함하지 않습니다. 우리나라 총발전량은 “한국전력통계”(한전발간)의 공식 자료 참조하시기 바랍니다.* 거래량은 송전단 기준이며, 한전 전력수급계약(PPA)등은 포함하지 않아 서울의 전체 발전량을 의미하지 않음.단위 : MWh'
 accrual_periodicity: 수시
 team:
@@ -42,6 +44,7 @@ schema:
         unique: 1
     - name: 연료원
       type: code
+      semantic_type: kpx_fuel_type
       null_rate: 0.0
       sample_values:
         - LNG
@@ -72,12 +75,22 @@ schema:
         p50: 407.149789
         max: 18563.0521
         unique: 1494
+  foreign_keys:
+    - fields:
+        - 연료원
+      reference:
+        key: kpx_fuel_type
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 거래일
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -114,7 +127,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15065230-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpx_fuel_type(연료원)'
     evidence:
       - type: measured
         source: probe/stats/15065230.json
@@ -179,8 +192,6 @@ verification:
   run: probe/runs/15065230.json
   stats: probe/stats/15065230.json
   data: probe/data/15065230/
-status: active
-summary_user: 2021년 10월 서울시의 연료원별 일별 전력거래량(MWh, 송전단 기준)을 지역·연료원·거래일 단위로 담은 집계 파일입니다. 서울에서 특정 연료원으로 하루에 얼마만큼의 전력이 전력시장에서 거래됐는지 확인하려는 에너지 분석가나 연구자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 전력거래소 자료와는 지역명·연료원 이름이나 거래일로 맞춰 이어 써야 한다.
 limits: 한전 전력수급계약(PPA) 등 전력시장에 등록하지 않은 발전기의 발전량은 빠져 있어 서울의 전체 발전량을 뜻하지 않으며, 개별 발전기 단위 거래량은 담지 않는다. 범위가 2021년 10월 한 달이라 실시간·최신 수급 파악에는 맞지 않고, 공통 코드 키가 없어 이름 매핑으로만 연결된다.
 review:
   summary: draft
@@ -192,3 +203,4 @@ review:
     - c-15065230-03
     - c-15065230-06
   dropped_citations: 0
+status: active

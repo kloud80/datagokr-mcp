@@ -1,5 +1,3 @@
-# Dataset 15157604 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157604'
 tier: verified
 title: 행정안전부 한국지역정보개발원_(전국 통합데이터) 교통안전 신호등 실시간 정보
@@ -121,6 +119,7 @@ schema:
     - name: crsrdId
       title: 교차로아이디(148)
       type: number
+      semantic_type: klid_crsrd_id
       null_rate: 0.0
       sample_values:
         - '1'
@@ -279,6 +278,7 @@ schema:
     - name: crsrdId
       title: 교차로아이디(148)
       type: number
+      semantic_type: klid_crsrd_id
       null_rate: 0.0
       sample_values:
         - '1'
@@ -1181,6 +1181,11 @@ schema:
         key: bjd_cd
       evidence: measured
     - fields:
+        - crsrdId
+      reference:
+        key: klid_crsrd_id
+      evidence: measured
+    - fields:
         - crsrdNm
       reference:
         key: address
@@ -1194,6 +1199,16 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2026-10-02 ~ 2026-10-02
+grain:
+  space: point
+  space_fields:
+    - mapCtptIntLat
+    - mapCtptIntLot
+  space_via: coord
+  time: realtime
+  time_fields:
+    - totDt
+    - totDt
 cycle: default
 classification:
   subsector_name: road-regulations
@@ -1238,7 +1253,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15157604-03
     kind: key
-    value: '실측 조인 키: bjd_cd(stdgCd), address(crsrdNm), coord(mapCtptIntLat)'
+    value: '실측 조인 키: bjd_cd(stdgCd), klid_crsrd_id(crsrdId), address(crsrdNm), coord(mapCtptIntLat)'
     evidence:
       - type: measured
         source: probe/stats/15157604.json

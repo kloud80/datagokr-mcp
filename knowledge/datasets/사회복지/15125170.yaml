@@ -1,4 +1,5 @@
-# Dataset 15125170 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125170 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125170'
 tier: verified
 title: 성평등가족부_청소년 매체이용 및 유해환경 실태조사 통계데이터 항목 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 스마트폰 인터넷 이용 조사
   - 청소년 유해매체 노출 통계
   - 조사 문항 목록
+summary_user: 청소년 매체이용 및 유해환경 실태조사에서 연도별로 어떤 통계 항목을 조사했는지를 담은 항목 목록(메타데이터)으로, 조사분류·조사명·조사년도·통계항목 ID와 이름을 행 단위로 제공하며 범위는 전국이고 지역 구분은 없다. 연구자나 정책 평가 담당자가 '특정 매체이용·유해환경 항목이 몇 년부터 반복 조사됐고 언제 바뀌었나'를 확인해 분석 설계나 시계열 연속성을 점검하는 데 쓴다. 전역 조인 키는 없고, 같은 실태조사의 통계 수치 데이터와는 통계항목ID(statsId)나 조사명·연도를 이름 매칭해 잇는 방식으로만 연결한다.
 description_portal: 청소년 매체이용 및 유해환경 실태조사 통계데이터 항목 정보를 오픈 API형 데이터입니다.해당 개방 데이터는 실태조사분류명, 실태조사명, 실태조사년도, 통계항목명 등의 내용을 확인할 수 있습니다.연도별 조사 항목 변화를 비교 분석하거나 특정 항목의 반복적 조사 추이를 파악함으로써 정책 수립에 필요한 데이터 연속성을 확보할 수 있습니다. 실태조사명을 기준으로 다층적인 데이터 연계를 시도할 수 있으며, 연구기관이나 정책 평가 담당자들이 보다 정밀한 분석 설계를 구성할 수 있으며,  청소년 관련 정책의 정합성과 실효성을 높이기 위한 기초 자료로 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -94,6 +96,7 @@ schema:
     - name: statsId
       title: 통계항목ID
       type: code
+      semantic_type: youth_survey_stats_id
       null_rate: 0.0
       sample_values:
         - DT_MOGE_1540002597
@@ -111,12 +114,22 @@ schema:
         - 종이 만화책 이용 빈도
       stats:
         unique: 49
+  foreign_keys:
+    - fields:
+        - statsId
+      reference:
+        key: youth_survey_stats_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - exmnYr
 cycle: default
 classification:
   subsector_name: 청소년 보호·복지 (상담복지센터·쉼터·꿈드림·자립지원관)
@@ -160,7 +173,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125170-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_survey_stats_id(statsId)'
     evidence:
       - type: measured
         source: probe/stats/15125170.json
@@ -225,8 +238,6 @@ verification:
   run: probe/runs/15125170.json
   stats: probe/stats/15125170.json
   data: probe/data/15125170/
-status: active
-summary_user: 청소년 매체이용 및 유해환경 실태조사에서 연도별로 어떤 통계 항목을 조사했는지를 담은 항목 목록(메타데이터)으로, 조사분류·조사명·조사년도·통계항목 ID와 이름을 행 단위로 제공하며 범위는 전국이고 지역 구분은 없다. 연구자나 정책 평가 담당자가 '특정 매체이용·유해환경 항목이 몇 년부터 반복 조사됐고 언제 바뀌었나'를 확인해 분석 설계나 시계열 연속성을 점검하는 데 쓴다. 전역 조인 키는 없고, 같은 실태조사의 통계 수치 데이터와는 통계항목ID(statsId)나 조사명·연도를 이름 매칭해 잇는 방식으로만 연결한다.
 limits: 조사 결과 수치가 아니라 항목 정보만 담고, 전국 단위 비공간 데이터라 시군구·시도 지역 통계와 연계할 수 없다. 공용 조인 키가 없어 다른 데이터와는 이름·코드 매핑으로만 이을 수 있으며, 개발계정은 하루 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -239,3 +250,4 @@ review:
     - c-15125170-04
     - c-15125170-07
   dropped_citations: 0
+status: active

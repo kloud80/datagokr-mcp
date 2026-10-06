@@ -1,4 +1,3 @@
-# Dataset 15125482 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15125482'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 가맹금 예치 정보 제공 서비스
@@ -19,6 +18,7 @@ synonyms:
   - 가맹비 예치 은행
   - 가맹사업 정보공개
   - 가맹본부 브랜드 조회
+summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹금을 맡긴 예치기관의 상호명, 담당 지점·부서, 주소, 전화번호를 담는 브랜드 단위 원천 데이터로, 범위는 전국입니다. 창업 예정자가 "이 브랜드에 낸 가맹금이 어느 은행·기관에 예치되는지"를 확인하고 해당 지점에 문의할 때 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보(정보공개서·브랜드·가맹본부) 데이터와 잇지만, 실측 컬럼에서 전역 조인 키는 찾지 못해 다른 기관 데이터와는 이름 매핑으로만 연결한다.
 description_portal: 브랜드 가맹금 예치 정보에 대한 기준년도, 브랜드관리번호를 이용하여 예치기관 상호명, 예치기관 주소 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +80,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +89,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -128,12 +130,31 @@ schema:
         p50: 15991114025081112
         max: 15991114025081112
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - depoInstAddr
+  space_via: address
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -178,7 +199,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125482-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125482.json
@@ -243,8 +264,6 @@ verification:
   run: probe/runs/15125482.json
   stats: probe/stats/15125482.json
   data: probe/data/15125482/
-status: active
-summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹금을 맡긴 예치기관의 상호명, 담당 지점·부서, 주소, 전화번호를 담는 브랜드 단위 원천 데이터로, 범위는 전국입니다. 창업 예정자가 "이 브랜드에 낸 가맹금이 어느 은행·기관에 예치되는지"를 확인하고 해당 지점에 문의할 때 쓴다. 브랜드관리번호와 가맹본부관리번호로 같은 공정위 가맹정보(정보공개서·브랜드·가맹본부) 데이터와 잇지만, 실측 컬럼에서 전역 조인 키는 찾지 못해 다른 기관 데이터와는 이름 매핑으로만 연결한다.
 limits: 사업자등록번호·법인등록번호 같은 전역 키가 없어 외부 데이터와 바로 결합하기 어렵다. 조회에는 기준년도와 브랜드관리번호가 필요하고, 개발계정은 일 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -257,3 +276,4 @@ review:
     - c-15125482-04
     - c-15125482-07
   dropped_citations: 0
+status: active

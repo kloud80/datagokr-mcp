@@ -1,4 +1,5 @@
-# Dataset 15126489 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15126489 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126489'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_수능난이도보도
@@ -21,6 +22,7 @@ synonyms:
   - 수능 과목별 난이도
   - 불수능 물수능 보도
   - 입시 뉴스 데이터
+summary_user: BIGKinds 뉴스데이터베이스에서 모은 수능 난이도 관련 기사를 기사 한 건 단위로 담은 CSV 파일(약 3.3MB)로, 기사마다 제목·본문·언론사·보도 일자·사건/사고 분류·키워드와 국어·수학·영어 과목별 난이도 평가(쉬움·보통·어려움)가 들어 있다. 교육학·언론 연구자나 입시 정책 담당자가 "특정 연도에 언론이 수능 국어·수학·영어 난이도를 어떻게 평가해 보도했는가"를 연도·언론사별로 비교하는 데 쓴다. 다른 데이터와 묶을 전역 조인 키는 없으므로, 언론사 이름이나 보도 일자를 기준으로 이름 매핑해 다른 뉴스·입시 자료와 이어 써야 한다.
 description_portal: 이 데이터는 한국언론진흥재단의 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 수능 난이도 보도 메타데이터 자료입니다. 각 기사에는 제목, 본문, 언론사, 보도 일자, 사건/사고 분류, 키워드, 그리고 국어·수학·영어 등 주요 과목의 난이도 평가(쉬움·보통·어려움) 정보가 포함되어 있습니다. 이를 통해 특정 연도와 시기별로 언론이 수능 난이도를 어떻게 해석하고 보도했는지, 과목별 난이도 평가가 어떻게 달리 나타났는지를 체계적으로 분석할 수 있습니다. 특히 보도 키워드와 분류 체계를 함께 제공하여, 수능 난이도 담론이 교육 정책, 사회적 논란, 입시 제도 변화와 어떤 연관성을 보였는지 파악할 수 있도록 돕습니다. 본 자료는 교육학 연구, 언론 보도 분석, 입시 정책 검토, 사회 인식 변화 탐구 등 다양한 분야에서 활용할 수 있는 기초 데이터로서 가치가 큽니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -58,6 +60,7 @@ schema:
         unique: 1056
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - YTN
@@ -121,12 +124,22 @@ schema:
         - 보통
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -163,7 +176,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15126489-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15126489.json
@@ -238,8 +251,6 @@ verification:
   run: probe/runs/15126489.json
   stats: probe/stats/15126489.json
   data: probe/data/15126489/
-status: active
-summary_user: BIGKinds 뉴스데이터베이스에서 모은 수능 난이도 관련 기사를 기사 한 건 단위로 담은 CSV 파일(약 3.3MB)로, 기사마다 제목·본문·언론사·보도 일자·사건/사고 분류·키워드와 국어·수학·영어 과목별 난이도 평가(쉬움·보통·어려움)가 들어 있다. 교육학·언론 연구자나 입시 정책 담당자가 "특정 연도에 언론이 수능 국어·수학·영어 난이도를 어떻게 평가해 보도했는가"를 연도·언론사별로 비교하는 데 쓴다. 다른 데이터와 묶을 전역 조인 키는 없으므로, 언론사 이름이나 보도 일자를 기준으로 이름 매핑해 다른 뉴스·입시 자료와 이어 써야 한다.
 limits: 표준 코드나 전역 식별자가 없어 다른 데이터와는 언론사명·일자 같은 이름 매핑으로만 연결된다. 범위는 전국·비공간 자료라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -251,3 +262,4 @@ review:
     - c-15126489-03
     - c-15126489-04
   dropped_citations: 0
+status: active

@@ -78,6 +78,7 @@ schema:
     - name: gsteukgiCd
       title: 군사특기코드
       type: string
+      semantic_type: military_specialty_cd
       null_rate: 0.0
       sample_values:
         - A001
@@ -118,6 +119,7 @@ schema:
     - name: iybudaeCdm
       title: 입영부대명
       type: code
+      semantic_type: induction_unit_cd
       null_rate: 0.0
       sample_values:
         - 육군훈련소
@@ -264,10 +266,25 @@ schema:
         p50: 17
         max: 2118
         unique: 160
+  foreign_keys:
+    - fields:
+        - gsteukgiCd
+      reference:
+        key: military_specialty_cd
+      evidence: measured
+    - fields:
+        - iybudaeCdm
+      reference:
+        key: induction_unit_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2024-09-23 ~ 2025-07-17
+grain:
+  time: month
+  time_fields:
+    - ipyeongDe
 cycle: event
 classification:
   subsector_name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
@@ -312,7 +329,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15031295-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: military_specialty_cd(gsteukgiCd), induction_unit_cd(iybudaeCdm)'
     evidence:
       - type: measured
         source: probe/stats/15031295.json

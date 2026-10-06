@@ -1,0 +1,232 @@
+# Dataset 15058613 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058613'
+tier: verified
+title: 경기도_시군별어항수 현황
+sector: 농축수산/해양수산·어촌/seafood-prices
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058613/openapi.do
+synonyms:
+  - 어항현황
+  - 시군별통계
+  - 어항위치
+  - 어촌인프라
+  - 수산시설
+  - 어항명
+  - 경기도해양
+  - 경기도 어항
+  - 국가어항 지방어항
+  - 어항 위치
+  - 어항 목록
+  - 시군별 어항
+  - 어촌 인프라
+  - 항구 현황
+summary_user: 경기도 시군별 어항을 한 건씩 담은 목록으로, 시군명과 어항명, 국가어항·지방어항 같은 구분, 도로명·지번 주소로 된 위치, 비고를 시군구 단위로 제공한다. 어촌 정비나 수산 기반 시설을 검토하는 분석가가 '경기도 어느 시군에 국가어항과 지방어항이 몇 곳씩 있는가' 같은 질문에 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않았으며, 시군명이나 시군 코드(SIGUN_CD)를 다른 경기도 데이터와 이름·코드로 맞춰 연결해야 한다.
+description_portal: '이 데이터는 경기도 해양수산과에서 제공하는 시군별 어항 수 및 관련 정보를 담고 있으며, 주요 항목에는 시군명, 어항명, 어항 위치, 어항의 구분명(예: 국가어항, 지방어항), 비고란 등이 포함됩니다. 경기도 내 어촌과 수산업의 기초 인프라인 어항의 분포를 파악하고, 어항 기능과 역할에 따른 공간적 특성을 확인할 수 있는 자료로 활용됩니다. 어항 위치는 도로명 및 지번 주소로 제공되며, 지역 해양 자원의 개발 가능성 평가, 어촌 정비 사업, 수산물 유통 기반 구축, 어업인 편의시설 확보 등에 참고자료로 유용합니다. 특히, 항만계획이나 해양공간계획 수립 시 기반 자료로도 활용될 수 있습니다.'
+team:
+  dept: AI데이터행정과
+services:
+  - op: BysigunFishpor
+    name: BysigunFishpor
+    endpoint: https://openapi.gg.go.kr/BysigunFishpor
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 김포시
+        - 시흥시
+      stats:
+        unique: 2
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41570'
+        - '41390'
+      stats:
+        min: 41390
+        p50: 41570
+        max: 41570
+        unique: 2
+    - name: DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 어촌정주어항
+        - 지방어항
+        - 소규모항
+      stats:
+        unique: 3
+    - name: FISHPORT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신안항
+        - 고양항
+        - 대명항
+      stats:
+        unique: 5
+    - name: FISHPORT_LOC
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대곶면 송마리
+        - 월곶면 고양리
+        - 대곶면 대명리
+      stats:
+        unique: 5
+    - name: RM
+      type: code
+      null_rate: 0.8
+      sample_values:
+        - 구오이도항은 오이도항에 편입
+      stats:
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6933
+  brm: 농축수산 - 해양수산·어촌
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058613-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058613.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058613-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058613-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058613.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058613-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15058613.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058613-06
+    kind: admin_note
+    value: "세부 부문 '수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)'의 가치: 위판장 경락 가격 = 농산물 KAMIS와 같은 물가 수요, 어종코드(수협·수산과학원·HS 상이)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#seafood-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15058613-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058613-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058613.json
+  stats: probe/stats/15058613.json
+  data: probe/data/15058613/
+limits: 수산물 유통 가격 부문으로 분류돼 있으나 위판 가격이나 경락 정보는 담지 않는 어항 목록이다. 경기도 데이터포털(data.gg.go.kr)의 별도 인증키를 경로 파라미터로 받아 호출해야 하며, 공공데이터포털 활용신청과는 별개다. 어촌·어항 영역은 우선 정비 대상에서 미뤄진 영역이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058613-01
+    - c-15058613-03
+    - c-15058613-04
+    - c-15058613-06
+    - c-15058613-07
+  dropped_citations: 0
+status: active

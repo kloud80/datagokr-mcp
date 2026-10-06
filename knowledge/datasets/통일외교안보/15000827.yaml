@@ -1,4 +1,5 @@
-# Dataset 15000827 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15000827 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15000827'
 tier: verified
 title: 외교부_여행경보제도
@@ -25,6 +26,7 @@ synonyms:
   - 출국권고
   - 해외안전여행
   - 국가별 여행경보
+summary_user: 외교부 해외안전여행의 여행경보를 국가별 한 행으로 담은 API로, 국가명·영문명·ISO 국가코드·대륙과 함께 여행유의·여행자제·철수권고·여행금지 단계별 지정 여부, 일부 지역 지정 여부, 내용 설명, 국기·여행위험지도 이미지 경로, 등록일을 제공한다. 해외여행객이나 여행·출장 담당자가 '이 나라(또는 그 일부 지역)에 지금 몇 단계 경보가 걸려 있는가'를 출국 전에 확인하는 데 쓴다. 공식 전역 조인 키는 실측에서 확인되지 않았으므로, ISO 국가코드(iso_code)나 국가명을 매핑해 같은 외교부의 국가별 안전공지·입국허가요건·재외공관 정보 등과 이어 쓴다.
 description_portal: 여행경보제도는 특정 국가(지역) 여행·체류시 특별한 주의가 요구되는 국가 및 지역에 경보를 지정하여 위험수준과 이에 따른 안전대책(행동지침)의 기준을 안내하는 제도입니다. 우리국민의 안전에 대한 위험(위협)을 중요한 기준으로 해당 국가(지역)의 치안정세와 기타 위험요인을 종합적으로 판단하여 안전대책의 기준을 판단할 수 있도록 중·장기적 관점에서 여행경보를 지정·공지하고 있습니다.외교부 해외안전여행(https://www.0404.go.kr/)의 여행경보제도를 서비스하며, 발령 대상 국가(지역)의 위험 수준에 따라 1~4단계(여행유의, 여행자제, 출국권고, 여행금지)로 구분됩니다.
 team:
   dept: 정보화담당관실
@@ -217,6 +219,7 @@ schema:
     - name: iso_code
       title: ISO 국가코드
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - AF
@@ -256,6 +259,12 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - iso_code
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -306,7 +315,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15000827-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(iso_code)'
     evidence:
       - type: measured
         source: probe/stats/15000827.json
@@ -371,8 +380,6 @@ verification:
   run: probe/runs/15000827.json
   stats: probe/stats/15000827.json
   data: probe/data/15000827/
-status: active
-summary_user: 외교부 해외안전여행의 여행경보를 국가별 한 행으로 담은 API로, 국가명·영문명·ISO 국가코드·대륙과 함께 여행유의·여행자제·철수권고·여행금지 단계별 지정 여부, 일부 지역 지정 여부, 내용 설명, 국기·여행위험지도 이미지 경로, 등록일을 제공한다. 해외여행객이나 여행·출장 담당자가 '이 나라(또는 그 일부 지역)에 지금 몇 단계 경보가 걸려 있는가'를 출국 전에 확인하는 데 쓴다. 공식 전역 조인 키는 실측에서 확인되지 않았으므로, ISO 국가코드(iso_code)나 국가명을 매핑해 같은 외교부의 국가별 안전공지·입국허가요건·재외공관 정보 등과 이어 쓴다.
 limits: 실측 컬럼에서 전역 조인 키가 확인되지 않아 다른 데이터와는 국가명·코드 매핑으로만 연결된다. 갱신 주기는 이벤트형으로 분류돼 있으나 경보 조정은 시의성이 중요하므로 호출 시점의 등록일을 확인해야 한다. 개발계정은 일 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -385,3 +392,4 @@ review:
     - c-15000827-03
     - c-15000827-06
   dropped_citations: 0
+status: active

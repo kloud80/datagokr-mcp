@@ -1,4 +1,5 @@
-# Dataset 15119679 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119679 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119679'
 tier: verified
 title: 한국서부발전(주)_(발전공기업 표준) 석탄재활용 현황
@@ -25,6 +26,7 @@ synonyms:
   - 발전공기업 석탄재
   - 자원순환 실적
   - 석탄회 처리
+summary_user: 한국서부발전 석탄화력발전소에서 나온 석탄재의 발생량과 재활용량을 발전소별·석탄회 유형별·월별(년월)로 정리한 집계 파일(CSV, 약 36KB)이다. 발전소 환경관리 분석가나 자원순환 정책 담당자가 '서부발전 발전소별 석탄재 재활용률이 월별로 어떻게 변했나' 같은 질문에 쓴다. 전역 조인 키는 없어 발전소명·년월로 맞춰 다른 발전공기업(남동·남부·동서·중부)의 같은 표준 석탄재활용 현황이나 같은 기관의 발전소 배출 측정 데이터와 이어 쓴다.
 description_portal: 한국서부발전의 (발전공기업 표준) 석탄재활용 현황 데이터 입니다. 한국서부발전 석탄재활용 현황 데이터는 석탄 화력발전 과정에서 발생하는 석탄재의 발생량과 이를 재활용한 내역을 정리한 자료입니다. 이 데이터에는 월별 석탠자 총 발생량과 재활용량이 포함됩니다. 대표적인 활용처로는 시멘트 원료, 콘크리트 혼합재, 토목·매립 복토재, 친환경 건축자재 등이 있으며, 이를 통해 폐기물 감축과 자원순환 효과를 동시에 달성할 수 있습니다. 현황 데이터는 단순 처리량 뿐 아니라, 재활용률 변화를 통해 환경정책 이행 성과와 발전소의 친환경 경영 수준을 정량적으로 평가할 수 있습니다.- 발전공기업(남동, 남부, 서부, 동서, 중부) 표준 데이터 입니다.
 accrual_periodicity: 연간
 team:
@@ -57,6 +59,7 @@ schema:
         unique: 1
     - name: 발전소명
       type: code
+      semantic_type: ewp_plant_unit
       null_rate: 0.0
       sample_values:
         - 태안
@@ -101,12 +104,22 @@ schema:
         p50: 37622.09
         max: 158277
         unique: 555
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: ewp_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 년월
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -143,7 +156,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119679-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_plant_unit(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15119679.json
@@ -208,8 +221,6 @@ verification:
   run: probe/runs/15119679.json
   stats: probe/stats/15119679.json
   data: probe/data/15119679/
-status: active
-summary_user: 한국서부발전 석탄화력발전소에서 나온 석탄재의 발생량과 재활용량을 발전소별·석탄회 유형별·월별(년월)로 정리한 집계 파일(CSV, 약 36KB)이다. 발전소 환경관리 분석가나 자원순환 정책 담당자가 '서부발전 발전소별 석탄재 재활용률이 월별로 어떻게 변했나' 같은 질문에 쓴다. 전역 조인 키는 없어 발전소명·년월로 맞춰 다른 발전공기업(남동·남부·동서·중부)의 같은 표준 석탄재활용 현황이나 같은 기관의 발전소 배출 측정 데이터와 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명 같은 이름 매핑이나 같은 기관 기준으로만 연결된다. 지역은 전국·비공간으로 다뤄져 좌표나 행정구역 단위 분석에는 바로 쓰기 어렵다.
 review:
   summary: draft
@@ -222,3 +233,4 @@ review:
     - c-15119679-04
     - c-15119679-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15059056 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15059056 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059056'
 tier: verified
 title: 식품의약품안전처_추적관리대상 의료기기 정보
@@ -22,6 +23,7 @@ synonyms:
   - 의료기기 품목허가
   - 의료기기 제조국
   - 식약처 의료기기 API
+summary_user: 식약처가 회수·판매중지 등 유통 중 추적이 필요하다고 지정한 의료기기를 품목 단위로 담으며, 업체명·품목명·품목 일련번호·허가일자·제조원·제조국가를 전국 범위로 제공한다. 의료기관이나 유통업체가 '지금 다루는 이 의료기기가 추적관리 대상인지, 언제 허가됐고 어느 나라 제조원 제품인지'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 의료기기 품목허가 데이터와는 품목명·업체명 매칭이나 같은 식약처 품목 일련번호(MEDDEV_ITEM_SEQ)·사업자등록번호(BRNO)로만 맞춰 붙인다.
 description_portal: 식품의약품안전처 「추적관리대상 의료기기 정보」 OpenAPI는 의료기기의 허가 및 유통 중 회수·판매 중지 등 추적이 필요한 의료기기 정보를 제공합니다. 주요 제공 항목에는 업체명, 품목명, 품목허가번호, 허가일자, 제조원, 제조국가 등이 포함되어 있습니다. 이를 통해 특정 의료기기의 허가 시점과 제조 업체를 확인할 수 있으며, 제조국가 정보를 통해 제품의 출처도 파악할 수 있습니다. 또한 의료 관계기관은 유통 과정에서 문제가 발생했을 때 추적 관리가 필요한 제품을 신속히 식별하는 데 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -71,6 +73,7 @@ schema:
         unique: 60
     - name: MEDDEV_ITEM_SEQ
       type: string
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - 수허 24-272 호
@@ -110,6 +113,7 @@ schema:
         unique: 25
     - name: BRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '1208688018'
@@ -120,6 +124,17 @@ schema:
         p50: 1208688018
         max: 8798700810
         unique: 90
+  foreign_keys:
+    - fields:
+        - MEDDEV_ITEM_SEQ
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -170,7 +185,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15059056-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MEDDEV_ITEM_SEQ), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15059056.json
@@ -235,8 +250,6 @@ verification:
   run: probe/runs/15059056.json
   stats: probe/stats/15059056.json
   data: probe/data/15059056/
-status: active
-summary_user: 식약처가 회수·판매중지 등 유통 중 추적이 필요하다고 지정한 의료기기를 품목 단위로 담으며, 업체명·품목명·품목 일련번호·허가일자·제조원·제조국가를 전국 범위로 제공한다. 의료기관이나 유통업체가 '지금 다루는 이 의료기기가 추적관리 대상인지, 언제 허가됐고 어느 나라 제조원 제품인지'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 의료기기 품목허가 데이터와는 품목명·업체명 매칭이나 같은 식약처 품목 일련번호(MEDDEV_ITEM_SEQ)·사업자등록번호(BRNO)로만 맞춰 붙인다.
 limits: 전역 조인 키가 없어 건강보험 급여·약가 목록 등 타 기관 데이터와 코드로 바로 연결되지 않고, 이름·코드 매핑이 필요하다. 지역 정보가 없는 전국 단위 비공간 데이터라 지역별 분석에는 쓰지 못한다. 포털 활용신청 후 serviceKey로 호출하며 개발계정은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -248,3 +261,4 @@ review:
     - c-15059056-03
     - c-15059056-04
   dropped_citations: 0
+status: active

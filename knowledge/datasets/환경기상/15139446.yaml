@@ -1,0 +1,187 @@
+# Dataset 15139446 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139446'
+tier: verified
+title: 기상청_레이더강수량(HSR) 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139446/openapi.do
+synonyms:
+  - 레이더
+  - HSR
+  - 레이더강수량
+  - 강수량
+  - 에코
+  - 레이더 강우량
+  - 하이브리드 지상 강우
+  - 레이더 강수 추정
+  - 에코고도
+  - 기상레이더 합성
+  - 5분 강수량
+description_portal: '지형차폐의 영향이 없는 지상에 가장 가까운 고도각 자료로 추정한 레이더 강우량(HSR: Hybrid Surface Rainfall)으로, 지형에코와 비기상에코 등의 영향을 최소화하여 레이더 강우량의 정확도를 향상시켰고, 에코고도를 함께 제공하여 레이더양상 분석능력을 강화하였습니다.생산주기: 분(5분 주기)보유기간: 2016년 ~ 현재(참고) 기상레이더는 전파를 대기 중에 발사하여 강수입자에 부딪혀 산란되어 되돌아오는 신호를 이용하여 강수지역, 강수세기, 이동속도 등을 탐지하는 원격관측장비입니다.'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: rdr_stn_file_list.php
+    name: rdr_stn_file_list.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/rdr_stn_file_list.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: stn
+        required: true
+        example: KWK
+      - name: rdr
+        required: true
+        example: HSR
+      - name: tm
+        required: true
+        example: '20210815'
+      - name: size
+        required: true
+        example: Y
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - RDR_KWK_HSR2_202108150000.nc,    400240,=
+        - RDR_KWK_HSR2_202108150000.uf,    381234,=
+        - RDR_KWK_HSR2_202108150005.nc,    399923,=
+      stats:
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.749
+  rank_in_sector: 64
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139446-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139446.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139446-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139446-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139446.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139446-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139446.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139446-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139446-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139446-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139446.json
+  stats: probe/stats/15139446.json
+  data: probe/data/15139446/
+status: active
+summary_user: 전국을 대상으로 지형차폐 영향이 없는 가장 낮은 고도각 자료로 추정한 레이더 강수량(HSR)과 에코고도를 5분 주기로 담은 관측 원천 자료이며, 포털 설명상 2016년부터 보유한다. 분석가가 '특정 시각에 지상 관측소가 없는 지역에 비가 얼마나 왔는가'를 확인하거나, 기후·농업·보험 분석에서 강수 원천으로 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로 ASOS·AWS 같은 다른 기상청 관측 자료와는 시각과 이름·코드 매핑으로만 맞춰 쓴다.
+limits: 포털 활용신청과 별개로 apihub.kma.go.kr 인증키(KEY 파라미터)가 필요하다. 응답이 텍스트 한 줄 단위(line)로 오므로 직접 파싱해야 한다. 행정구역 단위 구분이 없어 시군구별 강수량 집계에는 그대로 쓸 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139446-01
+    - c-15139446-03
+    - c-15139446-04
+    - c-15139446-06
+  dropped_citations: 0

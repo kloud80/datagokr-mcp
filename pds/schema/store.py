@@ -18,6 +18,7 @@ K = config.KNOWLEDGE
 PATHS = {
     "key": K / "keys",               # {id}.yaml
     "context": K / "contexts",       # {id}.yaml
+    "agency": K / "agencies",        # {기관코드}.yaml
     "mapping": K / "mappings",       # {a}__{b}.yaml (+ .parquet)
     "recipe": K / "recipes",         # {slug}.yaml
     "law": K / "laws",               # {law_id}.yaml

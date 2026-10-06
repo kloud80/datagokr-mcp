@@ -45,6 +45,7 @@ schema:
         unique: 7
     - name: 운항편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - CA131
@@ -94,6 +95,7 @@ schema:
         unique: 153
     - name: 공항코드
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - KIX
@@ -110,9 +112,25 @@ schema:
         - 칭다오
       stats:
         unique: 154
+  foreign_keys:
+    - fields:
+        - 운항편명
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - 공항코드
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 시작일자
+    - 종료일자
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -149,7 +167,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15066339-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(운항편명), airport_cd(공항코드)'
     evidence:
       - type: measured
         source: probe/stats/15066339.json

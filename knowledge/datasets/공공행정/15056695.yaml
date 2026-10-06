@@ -1,4 +1,5 @@
-# Dataset 15056695 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056695 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056695'
 tier: verified
 title: 한국지역정보개발원_예산결산 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 지방공기업 통합경영공시
   - 사업예산 자본예산
   - 지방공기업 부채 차입
+summary_user: 전국 지방공기업의 예산결산을 연도·기관별로 담은 경영공시 자료로, 사업예산 수입(영업수익·이자수익·타회계전입금 등)과 지출(인건비·이자비용 등), 자본예산 수입(자산매각·고정부채차입·잉여금·출연금)과 지출(유형·무형자산, 고정부채상환), 이월재원·이월지출을 담는다. 분석가나 주민이 '우리 지역 공사·공단의 인건비와 이자비용이 해마다 어떻게 변했나', '부채 차입과 상환 규모는 얼마인가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 맞춰 이어 쓴다.
 description_portal: 해당 자료는 지방공기업법 제46조 등에 근거하여 행정안전부가 지방공기업 통합경영공시를 통해 관리, 공개하는 지방공기업의 경영정보 중 하나이며, 예산결산 자료에는 연도, 기관명, 사업예산수입 영업수익, 영업외수익(이자수익, 타회계전입금, 기타), 특별이익등, 이월재원, 사업예산지출 영업비용(인건비, 기타), 영업외비용(이자비용, 기타), 특별손실등, 이월지출, 자산매각수입, 고정부채차입, 잉여금, 출연금 수입 등 지표가 포함됩니다.지방공공기관 경영정보공개시스템(www.cleaneye.go.kr)을 통해 공시되는 항목 자료입니다.  지방공기업의 주요 경영정보를 공시함으로써 국민의 알권리를 충족하고, 지방공기업의 정책 수립 등 기초 자료로 활용됩니다.
 team:
   dept: 공기업정보부
@@ -90,6 +92,7 @@ schema:
     - name: ENT_NAME
       title: 기관명
       type: string
+      semantic_type: cleaneye_ent_name
       null_rate: 0.0
       sample_values:
         - 고성군상수도
@@ -435,12 +438,22 @@ schema:
         p50: 1446
         max: 329723
         unique: 279
+  foreign_keys:
+    - fields:
+        - ENT_NAME
+      reference:
+        key: cleaneye_ent_name
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - AC_YEAR
 cycle: default
 classification:
   subsector_name: 지방공기업·출자출연기관 (목록·경영공시)
@@ -484,7 +497,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056695-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cleaneye_ent_name(ENT_NAME)'
     evidence:
       - type: measured
         source: probe/stats/15056695.json
@@ -538,8 +551,6 @@ verification:
   run: probe/runs/15056695.json
   stats: probe/stats/15056695.json
   data: probe/data/15056695/
-status: active
-summary_user: 전국 지방공기업의 예산결산을 연도·기관별로 담은 경영공시 자료로, 사업예산 수입(영업수익·이자수익·타회계전입금 등)과 지출(인건비·이자비용 등), 자본예산 수입(자산매각·고정부채차입·잉여금·출연금)과 지출(유형·무형자산, 고정부채상환), 이월재원·이월지출을 담는다. 분석가나 주민이 '우리 지역 공사·공단의 인건비와 이자비용이 해마다 어떻게 변했나', '부채 차입과 상환 규모는 얼마인가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 경영공시 자료와는 연도(AC_YEAR)와 기관명(ENT_NAME)을 맞춰 이어 쓴다.
 limits: 기관 코드 같은 공통 조인 키가 없어 다른 데이터와 연결할 때 기관명 표기 차이를 직접 맞춰야 한다. 행정단위가 전국·비공간이라 시군구 단위 공간 분석에는 바로 쓰기 어렵다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -551,3 +562,4 @@ review:
     - c-15056695-03
     - c-15056695-04
   dropped_citations: 0
+status: active

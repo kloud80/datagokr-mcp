@@ -1,4 +1,5 @@
-# Dataset 15061312 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061312 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061312'
 tier: verified
 title: 금융위원회_금융통계종합금융회사정보
@@ -23,6 +24,7 @@ synonyms:
   - 금융회사 통계
   - 종금사 연체율
   - 금융통계정보
+summary_user: 종합금융회사별로 기준년월(basYm) 단위의 일반 현황(인가일자·임직원 수·본점·지점 수), 재무 현황(자산총액·자기자본·영업수익·순이익), 주요 경영지표(예대금리차·BIS비율·연체율 등)를 담은 전국 범위의 회사 단위 통계다. 분석가나 투자자가 '특정 종합금융회사의 BIS비율과 연체율이 기준년월별로 어떻게 변했고, 지점·임직원 규모는 어느 정도인가'를 확인하는 데 쓴다. 법인등록번호(crno)를 조인 키로 삼아 금융위원회 기업정보·공시 재무 데이터나 다른 업권별 금융회사 원장 데이터와 이어 쓰고, 금융회사 코드(fncoCd)로 회사를 구분한다.
 description_portal: '금융통계종합금융회사정보는 기준년월을 중심으로 종합금융회사의 일반 현황, 재무 현황, 주요 경영지표 등을 제공하는 데이터입니다. 각 회사별 인가일자, 조직규모, 자산 현황, 수익구조, 자본금, 경영성과 등을 통계 형식으로 확인할 수 있도록 구성되어 있습니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 종합금융회사 일반현황 조회 : 종합금융회사별 인가일자, 임직원 수, 본점·지점 수 등 조직 및 기본 현황 정보를 제공합니다.② 종합금융회사 재무현황 조회 : 자산총액, 자기자본, 영업수익, 순이익 등 재무 상태를 조회합니다.③ 종합금융회사 주요 경영지표 조회 : 예대금리차, BIS비율, 연체율, 총수익률 등 핵심 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -70,6 +72,7 @@ schema:
         unique: 2
     - name: fncoCd
       type: code
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010288'
@@ -152,6 +155,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -201,7 +209,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061312-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061312.json
@@ -266,8 +274,6 @@ verification:
   run: probe/runs/15061312.json
   stats: probe/stats/15061312.json
   data: probe/data/15061312/
-status: active
-summary_user: 종합금융회사별로 기준년월(basYm) 단위의 일반 현황(인가일자·임직원 수·본점·지점 수), 재무 현황(자산총액·자기자본·영업수익·순이익), 주요 경영지표(예대금리차·BIS비율·연체율 등)를 담은 전국 범위의 회사 단위 통계다. 분석가나 투자자가 '특정 종합금융회사의 BIS비율과 연체율이 기준년월별로 어떻게 변했고, 지점·임직원 규모는 어느 정도인가'를 확인하는 데 쓴다. 법인등록번호(crno)를 조인 키로 삼아 금융위원회 기업정보·공시 재무 데이터나 다른 업권별 금융회사 원장 데이터와 이어 쓰고, 금융회사 코드(fncoCd)로 회사를 구분한다.
 limits: 지도에 올릴 위치 정보가 없는 전국 단위 비공간 데이터라 지역별 분석에는 쓰지 못한다. 실측 호출은 3개 오퍼레이션 중 1개만 확인되어 나머지 오퍼레이션의 응답은 따로 확인해야 하며, 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -280,3 +286,4 @@ review:
     - c-15061312-04
     - c-15061312-06
   dropped_citations: 0
+status: active

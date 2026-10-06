@@ -1,4 +1,5 @@
-# Dataset 15121592 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121592 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121592'
 tier: verified
 title: 한국서부발전(주)_신재생에너지 발전량
@@ -23,6 +24,7 @@ synonyms:
   - 발전기별 시간대 발전량
   - 신재생 설비용량
   - 서부발전 발전 데이터
+summary_user: 한국서부발전이 운영하는 태양광·풍력 발전기별로 일자마다 설비용량(MW)과 1시부터 24시까지 시간별 발전량을 한 행에 담은 건별 운영 기록이다. 분석가나 에너지 사업자가 '서부발전 태양광 발전기의 시간대별 발전 패턴과 설비용량 대비 이용률은 어떤가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전·기상 데이터와는 발전기명(genNm)과 일자를 이름 매핑해 이어 써야 한다.
 description_portal: 한국서부발전의 신재생에너지 발전량 데이터 입니다. 한국서부발전에서 운영하고 있는 신재생에너지(태양광, 풍력) 발전의 일일 시간별 발전량을 제공합니다. 태양광·풍력 발전소별 발전량을 시간 단위로 기록한 데이터는 재생에너지의 생산 특성을 정밀하게 분석할 수 있는 핵심 자료입니다. 이 데이터는 발전소별 위치와 설비 용량에 따른 실제 발전량을 시간대별로 구분하여 제공합니다. 특히 태양광은 일출·일몰에 따른 일변화가 뚜렷하고, 풍력은 시간대별 바람 세기와 방향 변화에 크게 영향을 받기 때문에 해당 데이터는 수급 예측, 전력 계통 안정화 대책 수립, 운영 효율화 방안 마련에 필수적입니다.제공데이터는 일별, 발전기명 , 설비용량, 24시 발전량 입니다.일자검색은 월단위로 하시기 바랍니다.예) startDate=20230101, endDate=20230131
 team:
   dept: 디지털운영부
@@ -82,6 +84,7 @@ schema:
     - name: genNm
       title: 발전기명
       type: code
+      semantic_type: ewp_renew_generator
       null_rate: 0.0
       sample_values:
         - 서인천연료전지3~5단계
@@ -414,6 +417,12 @@ schema:
         p50: 0
         max: 21770409
         unique: 297
+  foreign_keys:
+    - fields:
+        - genNm
+      reference:
+        key: ewp_renew_generator
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -463,7 +472,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121592-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_generator(genNm)'
     evidence:
       - type: measured
         source: probe/stats/15121592.json
@@ -528,8 +537,6 @@ verification:
   run: probe/runs/15121592.json
   stats: probe/stats/15121592.json
   data: probe/data/15121592/
-status: active
-summary_user: 한국서부발전이 운영하는 태양광·풍력 발전기별로 일자마다 설비용량(MW)과 1시부터 24시까지 시간별 발전량을 한 행에 담은 건별 운영 기록이다. 분석가나 에너지 사업자가 '서부발전 태양광 발전기의 시간대별 발전 패턴과 설비용량 대비 이용률은 어떤가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전·기상 데이터와는 발전기명(genNm)과 일자를 이름 매핑해 이어 써야 한다.
 limits: 발전소 위치 좌표나 행정구역 코드가 없는 비공간 데이터라 지역 단위 분석에 바로 쓰기 어렵고, 다른 데이터와 연결하려면 발전기명을 직접 매핑해야 한다. 포털 안내대로 조회 기간은 월 단위로 나눠 호출하고, 개발계정은 하루 100회로 제한된다.
 review:
   summary: draft
@@ -541,3 +548,4 @@ review:
     - c-15121592-03
     - c-15121592-04
   dropped_citations: 0
+status: active

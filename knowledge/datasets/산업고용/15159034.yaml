@@ -51,6 +51,7 @@ schema:
         unique: 165130
     - name: 발전단지명
       type: code
+      semantic_type: ewp_wind_turbine
       null_rate: 0.0
       sample_values:
         - 장흥풍력
@@ -58,6 +59,7 @@ schema:
         unique: 1
     - name: 발전호기
       type: number
+      semantic_type: ewp_wind_turbine
       null_rate: 0.0
       sample_values:
         - '3'
@@ -172,6 +174,16 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - 발전단지명
+      reference:
+        key: ewp_wind_turbine
+      evidence: measured
+    - fields:
+        - 발전호기
+      reference:
+        key: ewp_wind_turbine
+      evidence: measured
+    - fields:
         - 주소
       reference:
         key: address
@@ -190,6 +202,15 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2022-01-01 ~ 2025-12-31
+grain:
+  space: point
+  space_fields:
+    - 위도(십진수)
+    - 경도(십진수)
+  space_via: coord
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -230,7 +251,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15159034-03
     kind: key
-    value: '실측 조인 키: address(주소), coord(위도(십진수)), coord(경도(십진수))'
+    value: '실측 조인 키: ewp_wind_turbine(발전단지명), ewp_wind_turbine(발전호기), address(주소), coord(위도(십진수)), coord(경도(십진수))'
     evidence:
       - type: measured
         source: probe/stats/15159034.json

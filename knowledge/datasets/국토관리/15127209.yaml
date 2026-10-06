@@ -1,4 +1,5 @@
-# Dataset 15127209 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15127209 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15127209'
 tier: verified
 title: 한국산업단지공단_공장설립온라인지원_팩토리온_도로명주소변경신청내역
@@ -22,6 +23,7 @@ synonyms:
   - 공장등록 주소
   - 공장설립 인허가 주소
   - 공장관리번호
+summary_user: 공장설립온라인지원시스템(팩토리온)에 공장 인·허가를 신청한 기업·민원인의 도로명주소 변경 이력을 공장관리번호별로 담은 건별 행정 이력 파일로, 전국 범위이며 개별 주소 단위이고 CSV 한 파일이 약 33MB입니다. 분석가가 특정 공장의 주소가 언제 어떤 주소로 바뀌었는지 확인하거나, 시도·행정동별 공장 주소 변경 신청이 어디에 몰리는지 볼 때 쓴다. 전역 조인 키는 실측에서 확인되지 않아, 팩토리온 공장등록 자료와는 공장관리번호나 시도명·행정동명 같은 이름 매핑으로만 이어 쓴다.
 description_portal: 「공장설립온라인지원시스템 도로명주소 변경신청내역」 자료는산업단지 및 일반 지역의 공장설립 관련 인·허가를 신청한 기업 및 민원인의 주소정보 변경 이력을 관리하기 위해 구축된 데이터로,공장관리번호 별 기존 주소 및 변경 주소, 처리상태 등 행정 이력으로 구성된 자료입니다.데이터 건수가 많아 일반적인 엑셀, 메모장 등에서 전체 레코드가 모두 표출되지 않을 수 있으므로,**대용량 데이터 처리 프로그램(R, Python, Excel PowerQuery 등)**을 사용하여 분석하시기 바랍니다.
 accrual_periodicity: 수시
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 공장관리번호
       type: number
+      semantic_type: factory_rgst_no
       null_rate: 0.0
       sample_values:
         - '115000000000000'
@@ -83,12 +86,26 @@ schema:
         - 지호콘크리트
       stats:
         unique: 33
+  foreign_keys:
+    - fields:
+        - 공장관리번호
+      reference:
+        key: factory_rgst_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 행정동명
+  space_via: name
+  time: day
+  time_fields:
+    - 최초등록일시
 cycle: default
 classification:
   subsector_name: 공장 등록 (팩토리온 공장등록·필지·생산정보, 시군구 공장등록 현황)
@@ -126,7 +143,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15127209-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: factory_rgst_no(공장관리번호)'
     evidence:
       - type: measured
         source: probe/stats/15127209.json
@@ -221,8 +238,6 @@ verification:
   run: probe/runs/15127209.json
   stats: probe/stats/15127209.json
   data: probe/data/15127209/
-status: active
-summary_user: 공장설립온라인지원시스템(팩토리온)에 공장 인·허가를 신청한 기업·민원인의 도로명주소 변경 이력을 공장관리번호별로 담은 건별 행정 이력 파일로, 전국 범위이며 개별 주소 단위이고 CSV 한 파일이 약 33MB입니다. 분석가가 특정 공장의 주소가 언제 어떤 주소로 바뀌었는지 확인하거나, 시도·행정동별 공장 주소 변경 신청이 어디에 몰리는지 볼 때 쓴다. 전역 조인 키는 실측에서 확인되지 않아, 팩토리온 공장등록 자료와는 공장관리번호나 시도명·행정동명 같은 이름 매핑으로만 이어 쓴다.
 limits: 사업자번호·산업분류·필지고유번호(PNU) 같은 전역 키가 실측 컬럼에 없어 기업·토지 데이터와 바로 연결되지 않는다. 행 수가 많아 엑셀·메모장에서는 전체가 표시되지 않을 수 있으므로 R·Python 등 대용량 처리 도구로 읽어야 한다.
 review:
   summary: draft
@@ -235,3 +250,4 @@ review:
     - c-15127209-04
     - c-15127209-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15099713 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15099713 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099713'
 tier: verified
 title: 한국남부발전(주)_대기오염물질 배출량 현황
@@ -24,6 +25,7 @@ synonyms:
   - 빛드림본부 배출량
   - 화력발전소 미세먼지 배출
   - 남부발전 환경 정보
+summary_user: 한국남부발전(주)의 발전소 사업장(하동·삼척·신인천·남제주·부산·영월·신세종 빛드림본부)별·호기별로 월별 총계 처리한 황산화물·질소산화물·총먼지 배출량(kg)을 담은 집계 파일로, 2010년 1월부터 2025년 12월까지를 포함한다(신규 사업장은 발전 시작 시점부터). 분석가나 지역 주민이 '우리 지역 남부발전 발전소의 질소산화물 배출량이 해마다 줄고 있는가'처럼 발전소별 배출 추세를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 배출원·대기질 데이터와는 사업장명이나 년월을 이름·기간 기준으로 맞춰 이어 써야 한다.
 description_portal: 해당 데이터는 한국남부발전(주) 대기오염물질 배출량 현황 파일데이터입니다.해당 데이터는 한국남부발전(주)의 각 사업장(하동, 삼척, 신인천, 남제주, 부산, 영월, 신세종 빛드림본부)별 월별 총계처리된 황산화물 배출량(kg), 질소산화물 배출량(kg), 총먼지 배출량(kg)의 정보를 포함하고 있습니다. 2010년 01월부터 2025년 12월까지의 자료를 포함하고 있으며 신규 사업장의 경우 발전을 시작한 기간부터 자료를 포함하고 있습니다. 해당 데이터를 활용하여 발전소별 대기오염물질 배출량 현황 및 추세 분석에 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 10
     - name: 호기
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -98,12 +101,22 @@ schema:
         p50: 0
         max: 28250
         unique: 1885
+  foreign_keys:
+    - fields:
+        - 호기
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 년월
 cycle: default
 classification:
   subsector_name: 대기 배출원·자동차 환경 (배출시설 사업장·굴뚝 TMS·비산먼지·석면·온실가스 배출·자동차 배출가스/환경인증)
@@ -140,7 +153,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15099713-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15099713.json
@@ -205,8 +218,6 @@ verification:
   run: probe/runs/15099713.json
   stats: probe/stats/15099713.json
   data: probe/data/15099713/
-status: active
-summary_user: 한국남부발전(주)의 발전소 사업장(하동·삼척·신인천·남제주·부산·영월·신세종 빛드림본부)별·호기별로 월별 총계 처리한 황산화물·질소산화물·총먼지 배출량(kg)을 담은 집계 파일로, 2010년 1월부터 2025년 12월까지를 포함한다(신규 사업장은 발전 시작 시점부터). 분석가나 지역 주민이 '우리 지역 남부발전 발전소의 질소산화물 배출량이 해마다 줄고 있는가'처럼 발전소별 배출 추세를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 배출원·대기질 데이터와는 사업장명이나 년월을 이름·기간 기준으로 맞춰 이어 써야 한다.
 limits: 사업자번호나 표준 시설코드 같은 공통 키가 없어 굴뚝 TMS나 배출시설 원장과 자동으로 결합하기 어렵고, 사업장명 매핑을 직접 해야 한다. 월별 총계라 일·시간 단위 배출 변동은 볼 수 없으며, 행정구역 좌표 없이 비공간 자료로 제공된다.
 review:
   summary: draft
@@ -218,3 +229,4 @@ review:
     - c-15099713-03
     - c-15099713-04
   dropped_citations: 0
+status: active

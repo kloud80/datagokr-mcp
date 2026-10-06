@@ -1,4 +1,5 @@
-# Dataset 15081763 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15081763 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15081763'
 tier: verified
 title: 한국장학재단_다문화탈북(이주 북한배경)학생 멘토링장학금_멘토 언어권 내역
@@ -22,6 +23,7 @@ synonyms:
   - 다문화 언어권
   - 북한이탈주민 학생 학습지원
   - 대학생 멘토 장학금
+summary_user: 다문화·탈북(이주 북한배경)학생 멘토링장학금 사업에 참여하는 대학(원)생 멘토의 소속 대학, 멘토링 사업명, 멘토링 가능 언어권을 대학·사업·언어권 단위로 담은 전국 범위 파일(CSV, 약 16.7KB)이다. 다문화 가정 학생이나 학부모, 지원기관이 '어느 대학에 베트남어·중국어 등 특정 언어권 멘토가 있는가'를 확인하거나, 분석가가 대학별 언어권 멘토 분포를 살피는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명(대학명)을 이름으로 맞춰야만 이어 쓸 수 있다.
 description_portal: '다문화·탈북(이주 북한배경)학생 멘토링장학금 사업에 참여하고 있는 대학(원)생 멘토의 소속 학교와 등록된 언어권(멘토링 가능 언어권)을 보여주는 데이터입니다.데이터 항목은 다문화·탈북(이주 북한배경)학생 멘토링장학금의 사업 참여 대학(원), 멘토링 사업명, 멘토링 사업 언어권이 있습니다. 다문화·탈북(이주 북한배경)학생 멘토링장학금은 이주 북한배경 학생과 대학(원)생 간 매칭을 통해 이주 북한배경학생의 학교생활 적응 및 기초학습을 지원하고, 대학(원)생에게는 멘토링장학금을 지원하는 것을 목적으로 합니다.※ 장학금 관련 상세 정보는 한국장학재단 홈페이지 참고(경로: 한국장학재단 홈페이지(https://www.kosaf.go.kr) > 인재육성 > 다문화·탈북학생 멘토링)'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -39,6 +41,7 @@ schema:
   fields:
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 선문대학교(본교) 학부
@@ -48,6 +51,7 @@ schema:
         unique: 80
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 다문화·탈북학생멘토링장학금
@@ -62,6 +66,17 @@ schema:
         - 중국어
       stats:
         unique: 24
+  foreign_keys:
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -104,7 +119,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15081763-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: univ_school_cd(대학명), kosaf_scholarship_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15081763.json
@@ -168,8 +183,6 @@ verification:
   run: probe/runs/15081763.json
   stats: probe/stats/15081763.json
   data: probe/data/15081763/
-status: active
-summary_user: 다문화·탈북(이주 북한배경)학생 멘토링장학금 사업에 참여하는 대학(원)생 멘토의 소속 대학, 멘토링 사업명, 멘토링 가능 언어권을 대학·사업·언어권 단위로 담은 전국 범위 파일(CSV, 약 16.7KB)이다. 다문화 가정 학생이나 학부모, 지원기관이 '어느 대학에 베트남어·중국어 등 특정 언어권 멘토가 있는가'를 확인하거나, 분석가가 대학별 언어권 멘토 분포를 살피는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명(대학명)을 이름으로 맞춰야만 이어 쓸 수 있다.
 limits: 표준 대학 코드 같은 조인 키가 없어 대학 공시 등 다른 데이터와는 이름 매칭으로만 연결되며, 표기 차이에 주의해야 한다. 지역 구분이 없는 전국·비공간 자료라 지역별 분석에는 바로 쓰기 어렵다.
 review:
   summary: draft
@@ -181,3 +194,4 @@ review:
     - c-15081763-03
     - c-15081763-04
   dropped_citations: 0
+status: active

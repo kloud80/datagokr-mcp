@@ -76,6 +76,7 @@ schema:
         unique: 524
     - name: 측정소코드
       type: number
+      semantic_type: air_station_cd
       null_rate: 0.0
       sample_values:
         - '632131'
@@ -169,9 +170,23 @@ schema:
         p50: 13
         max: 123
         unique: 93
+  foreign_keys:
+    - fields:
+        - 측정소코드
+      reference:
+        key: air_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도
+  space_via: name
+  time: day
+  time_fields:
+    - 통계월일
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -208,7 +223,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15150388-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: air_station_cd(측정소코드)'
     evidence:
       - type: measured
         source: probe/stats/15150388.json

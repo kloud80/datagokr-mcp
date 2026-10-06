@@ -1,4 +1,5 @@
-# Dataset 15119593 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15119593 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119593'
 tier: verified
 title: 한국중부발전(주)_(AI 친화 데이터)발전기별 열효율 정보
@@ -25,6 +26,7 @@ synonyms:
   - 발전소 효율 월별
   - 에너지 전환 효율
   - 연료 효율
+summary_user: 한국중부발전 발전소의 호기(발전기)별 열효율(%)을 연월 단위로 정리한 집계 파일로, 발전소·호기·연월·열효율 네 항목으로 구성되며 CSV 약 13KB 규모다. 분석가나 에너지 연구자가 '특정 호기의 열효율이 정비 이후 개선됐는가', '같은 발전소 안에서 어느 호기의 연료 전환 효율이 낮은가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명·호기 이름을 맞추거나 같은 기관(한국중부발전) 자료끼리만 연결한다.
 description_portal: 본 데이터는 한국중부발전의 각 발전기별 열효율을 연월 단위로 정리한 자료입니다. 열효율은 발전소별로 설치된 호기(발전기 단위)의 운전 성능을 나타내며, 연료를 전기에너지로 얼마나 효율적으로 전환했는지를 백분율(%)로 나타냅니다. 항목은 발전소, 호기, 연월, 열효율로 구성되어 있으며, 본 데이터는 설비별 에너지 전환 효율 분석, 연료 사용량 대비 출력 성능 평가, 탄소배출과의 상관 분석 등에 활용될 수 있습니다. 또한 발전설비의 성능 개선 여부, 유지보수 효과 검토, 장기 투자계획 수립 등 전략적 설비 운영 의사결정을 위한 기초자료로 유용합니다.
 accrual_periodicity: 연간
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 발전소
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - 보령복합
@@ -47,6 +50,7 @@ schema:
         unique: 10
     - name: 호기
       type: code
+      semantic_type: komipo_plant_unit
       null_rate: 0.0
       sample_values:
         - CG1
@@ -75,12 +79,27 @@ schema:
         p50: 28.165
         max: 44.85
         unique: 306
+  foreign_keys:
+    - fields:
+        - 발전소
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: komipo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 연월
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -117,7 +136,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15119593-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komipo_plant_unit(발전소), komipo_plant_unit(호기)'
     evidence:
       - type: measured
         source: probe/stats/15119593.json
@@ -182,8 +201,6 @@ verification:
   run: probe/runs/15119593.json
   stats: probe/stats/15119593.json
   data: probe/data/15119593/
-status: active
-summary_user: 한국중부발전 발전소의 호기(발전기)별 열효율(%)을 연월 단위로 정리한 집계 파일로, 발전소·호기·연월·열효율 네 항목으로 구성되며 CSV 약 13KB 규모다. 분석가나 에너지 연구자가 '특정 호기의 열효율이 정비 이후 개선됐는가', '같은 발전소 안에서 어느 호기의 연료 전환 효율이 낮은가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 발전소명·호기 이름을 맞추거나 같은 기관(한국중부발전) 자료끼리만 연결한다.
 limits: 발전소·호기를 식별하는 표준 코드가 없어 전력거래소 발전량·배출 자료 등과 붙이려면 이름 매핑이 필요하다. 연월 단위 집계라 실시간·일별 수급이나 시간별 운전 성능은 담지 않는다.
 review:
   summary: draft
@@ -195,3 +212,4 @@ review:
     - c-15119593-03
     - c-15119593-04
   dropped_citations: 0
+status: active

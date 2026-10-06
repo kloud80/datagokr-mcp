@@ -1,4 +1,5 @@
-# Dataset 15059582 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15059582 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059582'
 tier: verified
 title: 금융위원회_국제거래종목정보
@@ -25,6 +26,7 @@ synonyms:
   - 해외상장 주식
   - 예탁증권 권리일정
   - 원주 전환비율
+summary_user: 해외에서 발행된 DR(주식예탁증서) 종목을 기준일자·법인별로 담은 API로, DR 종목 조회(발행회사, 주식종류, 원주와 DR 비율, 전환가능·전환된 주식 수, 거래 거래소, 예탁기관)와 배당·분배 등 권리행사 사유별 일정 조회 2개 오퍼레이션으로 구성된다. 투자자나 분석가가 '특정 국내 기업이 해외 어느 거래소에 DR을 상장했고, 원주 몇 주가 DR 1단위에 해당하며 배당 등 권리일정은 언제인가'를 확인하는 데 쓴다. 법인등록번호(crno)와 ISIN 코드(isinCd)가 실측 조인 키여서 같은 키를 쓰는 금융위원회 주식시세·상장종목·배당 정보나 기업 공시·재무 데이터와 이어 쓴다.
 description_portal: '국제거래종목정보는 기준일자와 법인등록번호 등을 기반으로 해외 발행 DR(대체증권, Depositary Receipt) 관련 정보를 제공하는 데이터입니다.총 2가지 오퍼레이션으로 구성되어 있으며,① DR종목 조회를 통해 DR 발행회사명, 주식종류, 종목단축코드, ISIN코드, 거래소 정보, 예탁기관명, 전환비율, 전환가능주식 수 등의 정보를 제공하고,② 사유별 일정정보 조회에서는 권리행사사유(예: 배당, 분배 등), 신규상장구분, DR 종목 및 원주의 상세 정보를 확인할 수 있습니다.※ 데이터 갱신주기는 일 1회이며, 주말 및 공휴일은 다음 영업일에 데이터가 제공됩니다.** 유의사항본 개방데이터는 공공누리 2유형임을 참고하시기 바랍니다.이용허락범위 제2유형 : 출처표시 + 상업적 이용금지해당 데이터를 상업적으로 활용하고자 하는 이용자는 데이터 원천 소유자인 한국예탁결제원과 사용 목적과 범위에 따른 정보이용계약이 필요합니다. 정보이용계약 또는 해당 정보에 관하여 궁금한 점이 있으시면 한국예탁결제원 증권정보부(연락처: portal@ksd.or.kr)로 이메일 문의 주시기 바랍니다.'
 team:
   dept: 금융공공데이터팀
@@ -208,6 +210,7 @@ schema:
     - name: orshIsinCd
       title: 원주의 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호
       type: code
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - KR7016830002
@@ -219,6 +222,7 @@ schema:
     - name: itmsShrtnCd
       title: 국제 채권 식별 번호. 유가증권(채권)의 국제인증 고유번호의 단축번호
       type: number
+      semantic_type: stock_cd
       null_rate: 0.0
       sample_values:
         - '016830'
@@ -491,12 +495,27 @@ schema:
       reference:
         key: stock_cd
       evidence: measured
+    - fields:
+        - orshIsinCd
+      reference:
+        key: stock_cd
+      evidence: measured
+    - fields:
+        - itmsShrtnCd
+      reference:
+        key: stock_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - basDt
+    - basDt
 cycle: default
 classification:
   subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
@@ -540,7 +559,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15059582-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd)'
+    value: '실측 조인 키: corp_rgst_no(crno), stock_cd(isinCd), stock_cd(orshIsinCd), stock_cd(itmsShrtnCd)'
     evidence:
       - type: measured
         source: probe/stats/15059582.json
@@ -605,8 +624,6 @@ verification:
   run: probe/runs/15059582.json
   stats: probe/stats/15059582.json
   data: probe/data/15059582/
-status: active
-summary_user: 해외에서 발행된 DR(주식예탁증서) 종목을 기준일자·법인별로 담은 API로, DR 종목 조회(발행회사, 주식종류, 원주와 DR 비율, 전환가능·전환된 주식 수, 거래 거래소, 예탁기관)와 배당·분배 등 권리행사 사유별 일정 조회 2개 오퍼레이션으로 구성된다. 투자자나 분석가가 '특정 국내 기업이 해외 어느 거래소에 DR을 상장했고, 원주 몇 주가 DR 1단위에 해당하며 배당 등 권리일정은 언제인가'를 확인하는 데 쓴다. 법인등록번호(crno)와 ISIN 코드(isinCd)가 실측 조인 키여서 같은 키를 쓰는 금융위원회 주식시세·상장종목·배당 정보나 기업 공시·재무 데이터와 이어 쓴다.
 limits: 해외 DR 종목 정보와 권리일정만 담아 DR의 해외 시세나 거래량은 이 데이터로 알 수 없다. 개발계정은 일 10,000회 호출 제한이 있으며, 전국 단위 비공간 데이터라 지역별 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -619,3 +636,4 @@ review:
     - c-15059582-04
     - c-15059582-06
   dropped_citations: 0
+status: active

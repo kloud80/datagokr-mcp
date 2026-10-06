@@ -1,4 +1,5 @@
-# Dataset 15125503 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125503 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125503'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 온라인오프라인 판매 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 매출비율
   - 온라인전용상품
   - 가맹브랜드 오프라인 매출
+summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹브랜드의 회계년도 매출 구성 비율(가맹점·기타 오프라인, 자사·기타 온라인)과 오프라인·온라인 전용상품 비율을 담는 전국 단위 브랜드별 공시 정보다. 창업 예정자나 분석가가 '이 브랜드는 가맹점 매장 판매 비중이 얼마이고 본부가 온라인으로 직접 파는 비중은 얼마인가'를 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 기관의 다른 가맹정보 API와 잇는다. 실측에서는 사업자등록번호 같은 전역 조인 키를 찾지 못해, 기관 밖 데이터와는 이름 매핑으로만 연결한다.
 description_portal: 브랜드 온라인오프라인 판매에 대한 기준년도, 브랜드관리번호를 이용하여 오프라인, 온라인 매출비율 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100014
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000003
@@ -170,12 +174,28 @@ schema:
         p50: 2
         max: 2
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
+    - acntgYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -220,7 +240,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125503-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125503.json
@@ -285,8 +305,6 @@ verification:
   run: probe/runs/15125503.json
   stats: probe/stats/15125503.json
   data: probe/data/15125503/
-status: active
-summary_user: 가맹사업 기준년도와 브랜드관리번호별로 가맹브랜드의 회계년도 매출 구성 비율(가맹점·기타 오프라인, 자사·기타 온라인)과 오프라인·온라인 전용상품 비율을 담는 전국 단위 브랜드별 공시 정보다. 창업 예정자나 분석가가 '이 브랜드는 가맹점 매장 판매 비중이 얼마이고 본부가 온라인으로 직접 파는 비중은 얼마인가'를 확인하는 데 쓴다. 브랜드관리번호·가맹본부관리번호로 같은 기관의 다른 가맹정보 API와 잇는다. 실측에서는 사업자등록번호 같은 전역 조인 키를 찾지 못해, 기관 밖 데이터와는 이름 매핑으로만 연결한다.
 limits: 사업자등록번호 같은 전역 조인 키가 실측 컬럼에 없어 다른 기관 데이터와 바로 붙이기 어렵다. 매출액 자체가 아니라 비율만 담으므로 절대 규모는 다른 자료로 보완해야 한다. 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -299,3 +317,4 @@ review:
     - c-15125503-04
     - c-15125503-07
   dropped_citations: 0
+status: active

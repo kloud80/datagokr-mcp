@@ -1,5 +1,3 @@
-# Dataset 15003469 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15003469'
 tier: verified
 title: 국립공원공단_국립공원 야영장 공간데이터
@@ -48,6 +46,7 @@ schema:
         unique: 54
     - name: 국립공원관리번호(ID_CD)
       type: number
+      semantic_type: npark_gis_obj_id
       null_rate: 0.0
       sample_values:
         - '120000000000'
@@ -60,6 +59,7 @@ schema:
         unique: 36
     - name: 공원사무소코드(PO_CD)
       type: number
+      semantic_type: npark_dept_cd
       null_rate: 0.0
       sample_values:
         - '101'
@@ -214,6 +214,17 @@ schema:
         - G
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 국립공원관리번호(ID_CD)
+      reference:
+        key: npark_gis_obj_id
+      evidence: measured
+    - fields:
+        - 공원사무소코드(PO_CD)
+      reference:
+        key: npark_dept_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -253,7 +264,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15003469-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: npark_gis_obj_id(국립공원관리번호(ID_CD)), npark_dept_cd(공원사무소코드(PO_CD))'
     evidence:
       - type: measured
         source: probe/stats/15003469.json
@@ -330,3 +341,9 @@ review:
     - c-15003469-04
   dropped_citations: 0
 status: active
+grain:
+  space: point
+  space_fields:
+    - 경도(LONGITUDE)
+    - 위도(LATITUDE)
+  space_via: coord

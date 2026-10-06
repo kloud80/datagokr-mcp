@@ -154,6 +154,7 @@ schema:
     - name: masterFlightId
       title: 마스터편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.474
       sample_values:
         - EY823
@@ -164,6 +165,7 @@ schema:
     - name: flightId
       title: 항공편명
       type: string
+      semantic_type: flight_no
       null_rate: 0.0
       sample_values:
         - CA710
@@ -304,6 +306,7 @@ schema:
     - name: airlineCode
       title: 항공사코드(IATA)
       type: string
+      semantic_type: airline_cd
       null_rate: 0.0
       sample_values:
         - KE
@@ -314,6 +317,7 @@ schema:
     - name: airportCode
       title: 인천공항에서 출발하는 편명의 도착지공항코드(IATA)
       type: string
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - NRT
@@ -343,9 +347,34 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - masterFlightId
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - flightId
+      reference:
+        key: flight_no
+      evidence: measured
+    - fields:
+        - airlineCode
+      reference:
+        key: airline_cd
+      evidence: measured
+    - fields:
+        - airportCode
+      reference:
+        key: airport_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - season
 cycle: default
 classification:
   subsector_name: 운항정보 (실시간 출도착·정기운항 스케줄·결항·지연)
@@ -389,7 +418,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15143060-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: flight_no(masterFlightId), flight_no(flightId), airline_cd(airlineCode), airport_cd(airportCode)'
     evidence:
       - type: measured
         source: probe/stats/15143060.json

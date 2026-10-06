@@ -1,4 +1,5 @@
-# Dataset 15061331 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061331 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061331'
 tier: verified
 title: 금융위원회_금융통계리스사정보
@@ -22,6 +23,7 @@ synonyms:
   - 리스업 금융통계
   - 리스사 ROA ROE
   - 리스회사 영업점 현황
+summary_user: 리스회사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요경영지표를 담는 업권별 금융통계로, 전국 범위의 비공간 데이터다. 금융 분석가나 사업자가 특정 리스사의 총자산·부채·자본 규모나 ROA·ROE 같은 수익성, 영업점 분포를 시점별로 비교하는 데 쓴다. 법인등록번호(crno)로 금융위원회 기업정보·공시 재무 등 다른 금융회사 원장 데이터와 잇는다. 금융회사코드(fncoCd)와 회사명(fncoNm)은 보조 식별자로 쓴다.
 description_portal: '금융통계리스사정보는 기준년월 및 회사명을 기준으로 리스회사의 일반현황, 재무상태, 경영성과 등을 제공하는 데이터입니다. 이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 리스사 일반현황 조회 : 설립연도, 본점소재지, 영업점 분포 등 일반정보를 제공합니다.② 리스사 재무현황 조회 : 총자산, 부채, 자본 등 리스사의 재무구조를 조회할 수 있습니다.③ 리스사 주요경영지표 조회 : ROA, ROE, 순이익률 등 주요 경영성과 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -70,6 +72,7 @@ schema:
         unique: 29
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010237'
@@ -155,6 +158,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -204,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061331-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061331.json
@@ -269,8 +277,6 @@ verification:
   run: probe/runs/15061331.json
   stats: probe/stats/15061331.json
   data: probe/data/15061331/
-status: active
-summary_user: 리스회사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요경영지표를 담는 업권별 금융통계로, 전국 범위의 비공간 데이터다. 금융 분석가나 사업자가 특정 리스사의 총자산·부채·자본 규모나 ROA·ROE 같은 수익성, 영업점 분포를 시점별로 비교하는 데 쓴다. 법인등록번호(crno)로 금융위원회 기업정보·공시 재무 등 다른 금융회사 원장 데이터와 잇는다. 금융회사코드(fncoCd)와 회사명(fncoNm)은 보조 식별자로 쓴다.
 limits: 실호출 검증은 오퍼레이션 1개에서만 성공했으므로 재무현황·경영지표 오퍼레이션은 따로 호출해 확인해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -283,3 +289,4 @@ review:
     - c-15061331-04
     - c-15061331-06
   dropped_citations: 0
+status: active

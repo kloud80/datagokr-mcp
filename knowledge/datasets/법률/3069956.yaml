@@ -1,4 +1,3 @@
-# Dataset 3069956 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '3069956'
 tier: verified
 title: 법무부_사회통합 및 결혼이민자 데이터
@@ -22,6 +21,7 @@ synonyms:
   - 다문화 한국어교육
   - 이민자 이수현황
   - 외국인 사회통합교육
+summary_user: 사회통합프로그램·이민자 조기적응프로그램 참여자를 건별로 담은 원천 파일로, 참여자의 성별·생년·국적과 관할 출입국사무소, 운영기관과 주소, 과정명·세부과정·이수 구분을 전국 범위로 담는다(CSV 약 70MB). 다문화·이민정책 분석가가 "어느 지역 운영기관에서 어떤 국적의 이민자가 한국어·한국사회 이해 과정을 얼마나 이수하는가"를 따지는 데 쓴다. 전역 조인 키는 없어 국적명·관할사무소명 같은 이름 매핑이나 운영기관주소를 시군구로 바꿔 지역별 체류 외국인·주민등록 인구 통계와 잇는다.
 description_portal: □ 사회통합관련 프로그램의 온라인 신청 및 국제결혼 이민자에 대한 정보 (성별, 생년, 국적명, 관할사무소명 , 운영기관명, 과정명, 세부과정, 과정이수구분, 운영기관주소) ○ 2009년부터 이민자가 우리 사회 구성원으로 적응･자립하는데 필수적인 한국어와 한국문화, 한국사회 이해 및 헌법적 가치 등의 기본소양을 함양할 수 있도록 사회통합프로그램을 운영 ○ 결혼이민자, 외국국적동포, 중도입국 외국인 자녀, 외국인유학생 등 장기체류 하고자 하는 외국인의 조기적응을 지원하기 위하여 대한민국 기초법·제도 안내 및 사회 적응 정보를 제공하는 이민자 조기적응프로그램을 2015년부터 본격 시행함
 applicable_legislation:
   - law: 출입국관리법
@@ -62,6 +62,7 @@ schema:
         unique: 71
     - name: 국적명
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 베트남
@@ -71,6 +72,7 @@ schema:
         unique: 161
     - name: 관할사무소명
       type: code
+      semantic_type: immigration_office
       null_rate: 0.0
       sample_values:
         - 서울출입국·외국인청
@@ -120,6 +122,17 @@ schema:
         - 인천광역시 남구 인하로 100  (용현동, 인하대학교)
       stats:
         unique: 437
+  foreign_keys:
+    - fields:
+        - 국적명
+      reference:
+        key: country_cd
+      evidence: measured
+    - fields:
+        - 관할사무소명
+      reference:
+        key: immigration_office
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -162,7 +175,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3069956-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적명), immigration_office(관할사무소명)'
     evidence:
       - type: measured
         source: probe/stats/3069956.json
@@ -237,8 +250,6 @@ verification:
   run: probe/runs/3069956.json
   stats: probe/stats/3069956.json
   data: probe/data/3069956/
-status: active
-summary_user: 사회통합프로그램·이민자 조기적응프로그램 참여자를 건별로 담은 원천 파일로, 참여자의 성별·생년·국적과 관할 출입국사무소, 운영기관과 주소, 과정명·세부과정·이수 구분을 전국 범위로 담는다(CSV 약 70MB). 다문화·이민정책 분석가가 "어느 지역 운영기관에서 어떤 국적의 이민자가 한국어·한국사회 이해 과정을 얼마나 이수하는가"를 따지는 데 쓴다. 전역 조인 키는 없어 국적명·관할사무소명 같은 이름 매핑이나 운영기관주소를 시군구로 바꿔 지역별 체류 외국인·주민등록 인구 통계와 잇는다.
 limits: 표준 코드형 조인 키가 없어 다른 데이터와는 이름이나 주소 매핑으로만 연결되며, 매핑 오류에 주의해야 한다. 파일 다운로드 형태여서 실시간 조회 API로 쓰지 못한다.
 review:
   summary: draft
@@ -251,3 +262,9 @@ review:
     - c-3069956-04
     - c-3069956-06
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - 운영기관주소
+  space_via: address

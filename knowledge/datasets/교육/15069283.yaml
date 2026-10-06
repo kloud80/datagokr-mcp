@@ -1,4 +1,5 @@
-# Dataset 15069283 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069283 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069283'
 tier: verified
 title: 한국장학재단_학자금대출 최대 대출기간 및 거치기간
@@ -22,6 +23,7 @@ synonyms:
   - 학점은행제 학자금대출
   - 장학재단 대출 기간
   - 원금 상환 유예기간
+summary_user: 한국장학재단이 현재 운영하는 학자금대출 상품 가운데 거치기간(이자만 내는 기간)이 있는 상품(일반상환학자금대출, 학점은행제 학습자 학자금대출 등)별로 최대 대출기간과 최대 거치기간을 개월 수로 담은 소규모 기준표(CSV 약 405바이트)입니다. 학생·학부모가 '일반상환 학자금대출을 받으면 최대 몇 년 동안 이자만 내고 언제부터 원금을 갚아야 하나'를 확인하거나, 상담·안내 서비스가 상품별 상환 일정 기준을 설정할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 학자금대출·장학 데이터와는 상품명을 기준으로 이름 매핑해 이어 써야 한다.
 description_portal: 한국장학재단에서는 경제적 여건에 관계없이 능력과 의지가 있는 학생이면 누구나 균등한 고등교육 기회를 가질 수 있도록 다양한 대출제도를 운영하고 있습니다. 해당 데이터는 한국장학재단에서 운영하는 대출상품 중 거치기간(학생이 이자만 납부하는 기간)이 존재하는 상품(일반상환학자금대출, 학점은행제 학습자 학자금대출 등)의 최대 대출기간 및 거치기간에 관한 데이터입니다.  -현재 한국장학재단에서 운영하지 않는 대출상품은 제외학자금대출 상품에 관한 자세한 정보는 재단 홈페이지(https://www.kosaf.go.kr/ko/tuition.do?pg=tuition_main)를 참고바랍니다.
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -39,6 +41,7 @@ schema:
   fields:
     - name: 상품명
       type: code
+      semantic_type: kosaf_loan_product
       null_rate: 0.0
       sample_values:
         - 일반상환학자금_등록금
@@ -76,6 +79,12 @@ schema:
         p50: 120
         max: 120
         unique: 3
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_loan_product
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -118,7 +127,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069283-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_loan_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15069283.json
@@ -182,8 +191,6 @@ verification:
   run: probe/runs/15069283.json
   stats: probe/stats/15069283.json
   data: probe/data/15069283/
-status: active
-summary_user: 한국장학재단이 현재 운영하는 학자금대출 상품 가운데 거치기간(이자만 내는 기간)이 있는 상품(일반상환학자금대출, 학점은행제 학습자 학자금대출 등)별로 최대 대출기간과 최대 거치기간을 개월 수로 담은 소규모 기준표(CSV 약 405바이트)입니다. 학생·학부모가 '일반상환 학자금대출을 받으면 최대 몇 년 동안 이자만 내고 언제부터 원금을 갚아야 하나'를 확인하거나, 상담·안내 서비스가 상품별 상환 일정 기준을 설정할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 학자금대출·장학 데이터와는 상품명을 기준으로 이름 매핑해 이어 써야 한다.
 limits: 상품 단위 제도 기준표일 뿐 개인별 대출 실적·금리·상환 현황은 담지 않으며, 현재 운영하지 않는 대출상품은 빠져 있다. 공통 코드 없이 상품명으로만 연결되므로 다른 데이터와 결합할 때 이름 표기 차이에 주의한다.
 review:
   summary: draft
@@ -195,3 +202,4 @@ review:
     - c-15069283-03
     - c-15069283-04
   dropped_citations: 0
+status: active

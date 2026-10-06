@@ -1,4 +1,5 @@
-# Dataset 15093625 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15093625 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15093625'
 tier: verified
 title: 식품의약품안전처_조직은행 바코드 장비 목록
@@ -21,6 +22,7 @@ synonyms:
   - 조직은행 전산화 장비
   - 인체조직 표준코드
   - 조직 입출고 관리
+summary_user: 식약처가 표준코드·바코드 제도 정착을 위해 조직은행에 대여한 입출고 전산화 장비의 현황을 담으며, 조직은행 허가번호와 장비 유형명이 행 단위로 들어 있는 전국 범위 목록입니다. 인체조직 추적관리 담당자나 분석가가 '어느 조직은행이 어떤 바코드 장비를 대여받았는가'를 확인할 때 씁니다. 전역 조인 키는 없으며, 조직은행 허가번호로 보이는 필드(TSBNK_PRMSN_NO)를 써서 같은 기관이 낸 조직은행 허가 정보와 이름·코드 매핑으로만 이어 붙일 수 있습니다.
 description_portal: 「인체조직안전 및 관리 등에 관한 법률」 제19조제3항에 따라 인체조직은 각 조직마다 분배부터 이식까지 추적조사를 하도록 하고 있습니다. 이에 따라 조직은행은 입고 출고하는 조직에 대한 기록을 하여야 합니다. 또한 추적관리를 위해 모든 조직에 대해 「조직은행 허가 및 인체조직 안전관리 등에 관한 규정」제17조의2에 따른 표준코드 및 바코드를 표시하도록 하고 있습니다. 표준코드 및 바코드 정책 도입시 빠른 제도 정착을 위하여 조직의 입출고 정보를 전산화 할 수 있게 전산화 장비를 구입하여 조직은행에게 대여하고 있습니다. 동 서비스에는 해당장비 대여 현황에 대한 정보가 포함되어 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: TSBNK_PRMSN_NO
       type: number
+      semantic_type: tissue_bank_permit_no
       null_rate: 0.0
       sample_values:
         - '76'
@@ -63,6 +66,12 @@ schema:
         - ZT230 프린터
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - TSBNK_PRMSN_NO
+      reference:
+        key: tissue_bank_permit_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -112,7 +121,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15093625-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tissue_bank_permit_no(TSBNK_PRMSN_NO)'
     evidence:
       - type: measured
         source: probe/stats/15093625.json
@@ -177,8 +186,6 @@ verification:
   run: probe/runs/15093625.json
   stats: probe/stats/15093625.json
   data: probe/data/15093625/
-status: active
-summary_user: 식약처가 표준코드·바코드 제도 정착을 위해 조직은행에 대여한 입출고 전산화 장비의 현황을 담으며, 조직은행 허가번호와 장비 유형명이 행 단위로 들어 있는 전국 범위 목록입니다. 인체조직 추적관리 담당자나 분석가가 '어느 조직은행이 어떤 바코드 장비를 대여받았는가'를 확인할 때 씁니다. 전역 조인 키는 없으며, 조직은행 허가번호로 보이는 필드(TSBNK_PRMSN_NO)를 써서 같은 기관이 낸 조직은행 허가 정보와 이름·코드 매핑으로만 이어 붙일 수 있습니다.
 limits: 식품 제품 바코드나 품목제조보고번호와는 관련이 없는 장비 대여 목록이라 제품 단위 조인에는 쓰지 않습니다. 위치 정보가 없어 지역별 분석은 할 수 없고, 다른 데이터와 붙이려면 허가번호나 이름을 따로 매핑해야 합니다. 개발계정은 하루 10,000회까지 호출할 수 있습니다.
 review:
   summary: draft
@@ -190,3 +197,4 @@ review:
     - c-15093625-03
     - c-15093625-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15123321 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123321 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123321'
 tier: verified
 title: 기후에너지환경부 한강홍수통제소_대권역코드
@@ -23,6 +24,7 @@ synonyms:
   - 권역코드표
   - 홍수위험지도 권역
   - 한강홍수통제소 코드
+summary_user: '홍수위험지도가 속한 수자원단위지도상 대권역의 코드(대권역코드)와 이름(대권역명)을 짝지은 소형 코드표로, 전국 범위의 비공간 파일(csv 326바이트)입니다. 홍수위험지도나 수자원 관련 자료에 적힌 대권역코드가 어느 권역(예: 한강 등)을 뜻하는지 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 대권역코드나 대권역명을 같은 기관의 홍수위험지도·중권역·표준유역 자료와 이름·코드 매핑으로 이어 쓴다.'
 description_portal: 제방월류, 제방파제, 내수침수 등 홍수시나리오에 따라 예상되는 최대 범람지역을 표시하는 홍수위험지도이 속한 대권역을 표시.* 홍수위험지도란? 하천제방의 설계빈도를 초과하는 홍수가 발생하여 제방붕괴, 제방월류 등 극한의 상황이 발생한다는 가정하에 하천 주변지역의 침수범위, 침수깊이를 나타낸 지도. 이를 통해 최악의 홍수상황을 사전에 대비하고 인명 및 재산피해를 최소화하며, 지자체의 재해지도 제작, 홍수 관련 보험의 기초자료를 제공 및 수해방지대책 수립 등에 활용이 가능한 홍수 대비를 위한 기초정보. 홍수위험지도의 제방붕괴 등의 홍수 예상 시나리오는 실제 하천제방의 안정성과 무관하며, 구조물적 대책이 실패한다는 최악의 경우를 가정한 것으로서 홍수 시 가상의 최대 범람 범위 산정을 위한 것임* 수자원단위지도란? 국가 자원의 수자원개발, 계획 및 관리업무의 효율적 추진을 위하여 수자원 업무에 활용되는 자료의 수집, 분석과 관련된 기관 간 자료와 공동활용을 목적으로 지형공간 상에 대권역, 중권역 및 표준유역의 가상의 구역을 설정한 지도
 accrual_periodicity: 수시
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 대권역코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '11'
@@ -55,6 +58,12 @@ schema:
         - 한강동해
       stats:
         unique: 21
+  foreign_keys:
+    - fields:
+        - 대권역코드
+      reference:
+        key: river_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -102,7 +111,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123321-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: river_cd(대권역코드)'
     evidence:
       - type: measured
         source: probe/stats/15123321.json
@@ -194,8 +203,6 @@ verification:
   run: probe/runs/15123321.json
   stats: probe/stats/15123321.json
   data: probe/data/15123321/
-status: active
-summary_user: '홍수위험지도가 속한 수자원단위지도상 대권역의 코드(대권역코드)와 이름(대권역명)을 짝지은 소형 코드표로, 전국 범위의 비공간 파일(csv 326바이트)입니다. 홍수위험지도나 수자원 관련 자료에 적힌 대권역코드가 어느 권역(예: 한강 등)을 뜻하는지 확인하려는 분석가·지자체 담당자가 쓴다. 실측 컬럼에 전역 조인 키가 없어, 대권역코드나 대권역명을 같은 기관의 홍수위험지도·중권역·표준유역 자료와 이름·코드 매핑으로 이어 쓴다.'
 limits: 권역 이름과 코드만 담고 경계 공간정보나 침수범위·침수깊이는 없어 지도 분석에는 별도 자료가 필요하다. 명세상 수시·이벤트성으로 생성된 뒤 바뀌지 않는 성격이라 갱신을 기대하기 어렵다.
 review:
   summary: draft
@@ -208,3 +215,4 @@ review:
     - c-15123321-03
     - c-15123321-04
   dropped_citations: 0
+status: active

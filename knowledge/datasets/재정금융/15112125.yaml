@@ -1,0 +1,247 @@
+# Dataset 15112125 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15112125'
+tier: verified
+title: 과학기술정보통신부 우정사업본부_우체국 펀드상품 정보조회 서비스
+sector: 재정금융/재정·금융/national-budget
+agency:
+  id: '1721301'
+  name: 과학기술정보통신부 우정사업본부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15112125/openapi.do
+synonyms:
+  - 경제경영
+  - 거시경제
+  - 금융(화폐)경제
+  - 전문가관리
+  - 집합투자
+  - 낮은위험(채권)
+  - 우체국
+  - MMF
+  - 우체국 펀드
+  - 우체국 MMF
+  - 채권형 펀드
+  - 펀드 위험등급
+  - 우정사업본부 금융상품
+  - 펀드 가입 가능 여부
+  - 우체국 투자상품
+description_portal: '현재 우체국에서 판매하고 있는 펀드상품에 관한 정보입니다. 해당 데이터가 보유한 컬럼은 다음과 같습니다. 컬럼명 : 유형구분, 펀드번호, 펀드상품명, 위험등급, 단말신규가능여부, 인터넷신규가능여부, 개인개설가능여부, 법인개설가능여부 우체국 펀드 상품은 일반적인 금융기관의 펀드와 마찬가지로 고객의 투자 자금을 모아 전문가가 운영하는 상품이며, 주로 원금 손실 위험이 극히 적은 상품들을 판매 합니다. 예를들어 MMF, 채권형, 채권혼합형 펀드 등 비교적 보수적인 상품들 입니다.'
+team:
+  dept: 우정정보관리원 예금운영팀
+services:
+  - op: /FundProducts
+    name: 우체국 펀드상품정보 조회
+    endpoint: https://apis.data.go.kr/1721301/KrpostFundProductView/FundProducts
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '50'
+        desc: 한 페이지 결과수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 수
+      - name: GDS_KORN_NM
+        required: true
+        example: 키움
+        desc: 상품한글명
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FND_INLW_CLSF_CD_NM_S100
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 증권펀드(채권형)
+        - 증권펀드(혼합채권형)
+        - 단기금융펀드(MMF)
+      stats:
+        unique: 3
+    - name: GDS_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '700001303011'
+        - '700001303911'
+        - '710000101011'
+      stats:
+        min: 700001303011
+        p50: 710001203461
+        max: 720001903911
+        unique: 18
+    - name: GDS_KORN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 키움프런티어개인용MMF제1호[국공채]C1
+        - 키움프런티어개인용MMF제1호[국공채]Ce
+        - 키움단기국공채증권자투자신탁제1호[채권]A1
+      stats:
+        unique: 18
+    - name: FND_RSGR_DVSN_CD_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 6등급
+        - 4등급
+      stats:
+        unique: 2
+    - name: TMNL_NEW_PSBL_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: INET_NEW_PSBL_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: PPSN_ESTBL_PSBL_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: CORP_ESTBL_PSBL_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+        - N
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.4282
+  brm: 재정금융 - 재정·금융
+  why: 기관 분석 핵심 원장 — 과학기술정보통신부 우정사업본부
+claims:
+  - id: c-15112125-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15112125.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15112125.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15112125-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15112125-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15112125.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15112125-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15112125.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15112125-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15112125-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15112125.json
+  stats: probe/stats/15112125.json
+  data: probe/data/15112125/
+status: active
+summary_user: 우체국에서 현재 판매 중인 펀드상품을 상품 한 건씩 담으며, 유형구분·펀드번호·상품명·위험등급과 창구·인터넷 신규가입 가능 여부, 개인·법인 개설 가능 여부를 함께 제공한다. 우체국에서 MMF·채권형 같은 보수적 펀드에 가입하려는 개인이나 법인이 '인터넷으로 바로 가입할 수 있는 저위험 펀드가 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 조인 키는 확인되지 않아, 다른 펀드·금융상품 데이터와는 펀드번호(GDS_CD)나 상품명 매칭, 또는 같은 기관(우정사업본부) 데이터 범위 안에서만 이어 쓴다.
+limits: 전역 조인 키가 없어 외부 펀드 공시·수익률 데이터와 바로 결합할 수 없고, 이름·코드 매핑을 직접 해야 한다. 범위는 전국 단위의 비공간 데이터라 지역·지점별 판매 현황은 알 수 없다. 개발계정은 하루 10,000회까지 호출할 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15112125-01
+    - c-15112125-03
+    - c-15112125-04
+  dropped_citations: 0

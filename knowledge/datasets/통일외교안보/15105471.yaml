@@ -1,4 +1,5 @@
-# Dataset 15105471 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15105471 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15105471'
 tier: verified
 title: 한국국제협력단_혁신적개발협력 진행사업 목록
@@ -22,6 +23,7 @@ synonyms:
   - CTS 창의적가치창출
   - 개발도상국 협력사업
   - 소셜벤처 ODA
+summary_user: KOICA가 민간기업·스타트업·사회적기업 등 혁신 주체와 함께 추진하는 혁신적 개발협력 사업을 사업 한 건당 한 행으로 담은 사업 단위 목록 파일(CSV, 약 146KB)로, 사업명(국·영문), 시작·종료연도, 원화·미화 예산총액, 대상 국가·지역, 수행기관, 담당부서, 사업단계를 포함한다. 분석가나 개발협력 참여를 검토하는 사업자가 'KOICA가 어느 나라에서 어떤 기관과 얼마 규모의 혁신 협력사업을 진행 중인가'를 파악하는 데 쓴다. 전역 조인 키는 없으므로 KOICA의 다른 사업·조달 데이터와는 사업번호·시행계획번호나 사업명, 국가명 같은 이름 매칭으로만 잇는다.
 description_portal: 한국국제협력단(KOICA)이 추진하는 혁신적 개발협력 사업의 목록을 제공합니다. 개발도상국의 난제들을 해결하고 원조 효과성을 높이기 위해 다양한 분야의 전문성을 가진 파트너들과 협력하여 진행하는 사업들의 정보를 포함하고 있습니다. 제공되는 주요 항목으로는 사업명(국문 및 영문), 시작 및 종료 연도, 예산 총액(원화 및 미화), 대상 국가 및 지역, 수행기관, 담당 부서, 사업 단계 등이 있습니다. 이 데이터를 통해 민간기업, 스타트업, 사회적기업 등 다양하고 새로운 혁신 주체들과 협력해 추진 중인 국제개발협력 사업의 현황을 파악하는데 활용할 수 있습니다.
 accrual_periodicity: 분기
 team:
@@ -156,6 +158,7 @@ schema:
         unique: 1
     - name: 시행계획번호
       type: date
+      semantic_type: koica_impl_plan_no
       null_rate: 0.464
       sample_values:
         - B260003_2019_548
@@ -167,6 +170,7 @@ schema:
         unique: 3
     - name: 사업번호
       type: string
+      semantic_type: koica_project_no
       null_rate: 0.0099
       sample_values:
         - 2019-02457
@@ -183,12 +187,27 @@ schema:
         - 사업착수이전
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 시행계획번호
+      reference:
+        key: koica_impl_plan_no
+      evidence: measured
+    - fields:
+        - 사업번호
+      reference:
+        key: koica_project_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 시행계획번호
 cycle: default
 classification:
   subsector_name: ODA 사업·조달 (KOICA 사업정보·국가별 협력사업·발주계획·조달·해외봉사단 파견)
@@ -225,7 +244,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15105471-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: koica_impl_plan_no(시행계획번호), koica_project_no(사업번호)'
     evidence:
       - type: measured
         source: probe/stats/15105471.json
@@ -290,8 +309,6 @@ verification:
   run: probe/runs/15105471.json
   stats: probe/stats/15105471.json
   data: probe/data/15105471/
-status: active
-summary_user: KOICA가 민간기업·스타트업·사회적기업 등 혁신 주체와 함께 추진하는 혁신적 개발협력 사업을 사업 한 건당 한 행으로 담은 사업 단위 목록 파일(CSV, 약 146KB)로, 사업명(국·영문), 시작·종료연도, 원화·미화 예산총액, 대상 국가·지역, 수행기관, 담당부서, 사업단계를 포함한다. 분석가나 개발협력 참여를 검토하는 사업자가 'KOICA가 어느 나라에서 어떤 기관과 얼마 규모의 혁신 협력사업을 진행 중인가'를 파악하는 데 쓴다. 전역 조인 키는 없으므로 KOICA의 다른 사업·조달 데이터와는 사업번호·시행계획번호나 사업명, 국가명 같은 이름 매칭으로만 잇는다.
 limits: 표준 국가코드가 없어 국가 단위로 다른 외교 데이터와 붙이려면 국가명을 직접 매핑해야 한다. 공간 정보가 없는 비공간 데이터라 국내 지역 단위 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -304,3 +321,4 @@ review:
     - c-15105471-04
     - c-15105471-06
   dropped_citations: 0
+status: active

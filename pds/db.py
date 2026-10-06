@@ -54,9 +54,14 @@ def migrate(conn: psycopg.Connection) -> list[str]:
     return applied
 
 
+def _clean(v):
+    # Postgres text·jsonb는 NUL(\u0000)을 못 담는다 — 이진 파일 샘플값 등에서 들어온다
+    return v.replace("\x00", "").replace("\\u0000", "") if isinstance(v, str) else v
+
+
 def _rows(df: pd.DataFrame):
     for rec in df.itertuples(index=False, name=None):
-        yield tuple(None if (v is None or (not isinstance(v, (str, list, dict)) and pd.isna(v))) else v
+        yield tuple(None if (v is None or (not isinstance(v, (str, list, dict)) and pd.isna(v))) else _clean(v)
                     for v in rec)
 
 

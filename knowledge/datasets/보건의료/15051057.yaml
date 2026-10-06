@@ -42,6 +42,7 @@ schema:
   fields:
     - name: 암호화된요양기호
       type: string
+      semantic_type: ykiho
       null_rate: 0.0
       sample_values:
         - 2026.1.1. 이후 폐업된 요양기관 등
@@ -117,6 +118,11 @@ schema:
         unique: 13491
   foreign_keys:
     - fields:
+        - 암호화된요양기호
+      reference:
+        key: ykiho
+      evidence: measured
+    - fields:
         - 도로명주소
       reference:
         key: address
@@ -125,6 +131,15 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 1900-01-01 ~ 2025-12-31
+grain:
+  space: sgg
+  space_fields:
+    - 시군구명
+    - 도로명주소
+  space_via: name
+  time: day
+  time_fields:
+    - 개설일자
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -165,7 +180,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15051057-03
     kind: key
-    value: '실측 조인 키: address(도로명주소)'
+    value: '실측 조인 키: ykiho(암호화된요양기호), address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15051057.json

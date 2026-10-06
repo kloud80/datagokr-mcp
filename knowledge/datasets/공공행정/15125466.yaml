@@ -1,4 +1,5 @@
-# Dataset 15125466 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125466 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125466'
 tier: verified
 title: 공정거래위원회_가맹정보_가맹본부 법 위반 형벌선고 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 가맹본부 처벌 이력
   - 프랜차이즈 정보공개서
   - 가맹본부 범죄 선고
+summary_user: 가맹본부별로 가맹사업법 위반에 따른 형벌 선고 내역을 기준년도·가맹본부관리번호 단위로 담으며, 선고 건마다 피고명·사건번호·선고법원·선고일자·범죄 사실과 선고 내용을 기록한 건별 원천 데이터다. 가맹점 창업을 준비하는 사람이 계약하려는 가맹본부가 과거 법 위반으로 형사 처벌을 받은 적이 있는지 확인하는 데 쓴다. 실측 컬럼에 사업자등록번호 같은 전역 조인 키가 없어, 같은 기관 가맹정보 데이터와는 가맹본부관리번호(jnghdqrtrsMnno)와 기준년도로, 그 밖의 데이터와는 가맹본부명 매핑으로만 잇는다.
 description_portal: 가맹본부 법 위반 형벌선고에 대한 기준년도, 가맹본부관리번호를 이용하여 가맹본부 법위반 형벌선고 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000029
@@ -149,12 +152,22 @@ schema:
         - 징역 *년집행유예 *년
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - jngBizCrtraYr
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -199,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125466-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125466.json
@@ -264,8 +277,6 @@ verification:
   run: probe/runs/15125466.json
   stats: probe/stats/15125466.json
   data: probe/data/15125466/
-status: active
-summary_user: 가맹본부별로 가맹사업법 위반에 따른 형벌 선고 내역을 기준년도·가맹본부관리번호 단위로 담으며, 선고 건마다 피고명·사건번호·선고법원·선고일자·범죄 사실과 선고 내용을 기록한 건별 원천 데이터다. 가맹점 창업을 준비하는 사람이 계약하려는 가맹본부가 과거 법 위반으로 형사 처벌을 받은 적이 있는지 확인하는 데 쓴다. 실측 컬럼에 사업자등록번호 같은 전역 조인 키가 없어, 같은 기관 가맹정보 데이터와는 가맹본부관리번호(jnghdqrtrsMnno)와 기준년도로, 그 밖의 데이터와는 가맹본부명 매핑으로만 잇는다.
 limits: 사업자등록번호·법인등록번호 같은 전역 조인 키가 없어 다른 기관 데이터와 직접 결합하기 어렵다. 조회에는 기준년도와 가맹본부관리번호가 필요하다. 개발계정은 일 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -278,3 +289,4 @@ review:
     - c-15125466-04
     - c-15125466-07
   dropped_citations: 0
+status: active

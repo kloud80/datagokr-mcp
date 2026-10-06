@@ -1,4 +1,5 @@
-# Dataset 15132858 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15132858 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15132858'
 tier: verified
 title: 성평등가족부_청소년활동프로그램 후기 정보 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 청소년 체험활동 후기
   - 청소년수련시설 프로그램 평가
   - 활동프로그램 만족도
+summary_user: 청소년 활동 프로그램 참여 후기를 게시물 한 건 단위로 담으며, 제목·본문·활동프로그램명·기관명·참석 연령대(초등~대학·일반)·숙박 구분·작성일시·조회수가 포함되고 범위는 전국입니다. 학부모나 청소년 지도자가 '어떤 기관의 어떤 활동 프로그램이 후기와 조회수가 많고, 숙박형인지와 어느 연령대가 참여했는지'를 확인하는 데 쓴다. 전역 조인 키는 없어서 기관명·활동프로그램명 같은 이름이나 같은 기관의 시설물일련번호(fcltySn)로 청소년 수련시설·인증 프로그램 데이터와 맞춰 이어 쓴다.
 description_portal: 청소년 활동 프로그램 후기 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 조회수, 게시물내용, 프로그램구분, 시설물, 제목, 활동구분, 활동프로그램명, 기관명, 숙박구분 등의 내용을 확인할 수 있습니다. 청소년 활동 프로그램 후기 정보는 프로그램의 질적 개선과 만족도 제고에 중요한 인사이트를 제공합니다. 조회수, 제목, 활동구분 등의 정보는 인기 활동 유형이나 주제를 파악하는 데 유리하며, 참여 경험에 기반한 데이터가 누적됨으로써 현장 중심의 실효성 있는 프로그램 설계에 적극 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -81,6 +83,7 @@ schema:
     - name: prgrmSeCd
       title: 프로그램구분코드
       type: number
+      semantic_type: youth_prgrm_key
       null_rate: 0.0227
       sample_values:
         - '001005'
@@ -93,6 +96,7 @@ schema:
     - name: sn1Cn
       title: 일련번호1내용
       type: number
+      semantic_type: youth_prgrm_key
       null_rate: 0.0195
       sample_values:
         - '367212'
@@ -106,6 +110,7 @@ schema:
     - name: sn2Cn
       title: 일련번호2내용
       type: number
+      semantic_type: youth_prgrm_key
       null_rate: 0.0195
       sample_values:
         - '0'
@@ -117,6 +122,7 @@ schema:
     - name: fcltySn
       title: 시설물일련번호
       type: number
+      semantic_type: youth_fclty_sn
       null_rate: 0.013
       sample_values:
         - '304'
@@ -276,12 +282,38 @@ schema:
         p50: 683.5
         max: 12844
         unique: 283
+  foreign_keys:
+    - fields:
+        - prgrmSeCd
+      reference:
+        key: youth_prgrm_key
+      evidence: measured
+    - fields:
+        - sn1Cn
+      reference:
+        key: youth_prgrm_key
+      evidence: measured
+    - fields:
+        - sn2Cn
+      reference:
+        key: youth_prgrm_key
+      evidence: measured
+    - fields:
+        - fcltySn
+      reference:
+        key: youth_fclty_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - wrtDt
+    - mdfcnDt
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -326,7 +358,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15132858-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: youth_prgrm_key(prgrmSeCd), youth_prgrm_key(sn1Cn), youth_prgrm_key(sn2Cn), youth_fclty_sn(fcltySn)'
     evidence:
       - type: measured
         source: probe/stats/15132858.json
@@ -380,8 +412,6 @@ verification:
   run: probe/runs/15132858.json
   stats: probe/stats/15132858.json
   data: probe/data/15132858/
-status: active
-summary_user: 청소년 활동 프로그램 참여 후기를 게시물 한 건 단위로 담으며, 제목·본문·활동프로그램명·기관명·참석 연령대(초등~대학·일반)·숙박 구분·작성일시·조회수가 포함되고 범위는 전국입니다. 학부모나 청소년 지도자가 '어떤 기관의 어떤 활동 프로그램이 후기와 조회수가 많고, 숙박형인지와 어느 연령대가 참여했는지'를 확인하는 데 쓴다. 전역 조인 키는 없어서 기관명·활동프로그램명 같은 이름이나 같은 기관의 시설물일련번호(fcltySn)로 청소년 수련시설·인증 프로그램 데이터와 맞춰 이어 쓴다.
 limits: 실측 컬럼에 공통 조인 키가 없어 다른 데이터와 연결하려면 이름 매칭이나 같은 기관 내부 코드에 의존해야 합니다. 후기는 개별 게시물이라 프로그램 만족도 통계나 지역별 집계는 직접 제공되지 않으며, 행정단위 정보가 없는 비공간 데이터입니다. 개발계정은 하루 10,000회까지 호출할 수 있습니다.
 review:
   summary: draft
@@ -393,3 +423,4 @@ review:
     - c-15132858-03
     - c-15132858-04
   dropped_citations: 0
+status: active

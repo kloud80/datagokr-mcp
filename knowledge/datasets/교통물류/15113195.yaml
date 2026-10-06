@@ -1,4 +1,5 @@
-# Dataset 15113195 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15113195 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15113195'
 tier: verified
 title: 인천광역시_택시 운행 통계 조회 서비스
@@ -22,6 +23,7 @@ synonyms:
   - 행정동별 택시 이동
   - 택시 수요 분석
   - 택시 평균 이동거리
+summary_user: 인천광역시 관내 택시의 승차일별 승차·하차 행정동 쌍마다 이동횟수, 평균 이동시간(분), 평균 이동거리(km)를 담은 집계 통계로, 범위는 시도 단위이고 읍면동(행정동) 단위로 나뉜다. 교통 분석가나 정책 담당자가 '인천에서 어느 동에서 어느 동으로 택시 이동이 가장 많고, 평균 몇 분·몇 km를 가는가' 같은 택시 수요 흐름(O-D)과 승차 집중지역을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 승차·하차 행정동명(rideDongName)을 행정동 이름 매핑으로 맞추거나 같은 기관 데이터와만 연결해 쓴다.
 description_portal: 인천광역시가 제공하는 택시 운행 통계 조회 서비스 API는 관내를 운행하는 택시의 운행 실적 및 관련 통계 데이터를 제공합니다. 이 API는 택시 운송 서비스의 운영 효율성을 분석하고, 수요-공급 예측 및 교통 정책 수립의 기초 자료로 활용되어 시민들의 택시 이용 편의를 개선하는 데 목적이 있습니다.택시 자치구별 이동패턴(O-D) TOP50, 택시 승차 집중지역 TOP50 등의 서비스를 제공합니다.교통 정보의 투명성을 높이고 도시 교통 효율성을 강화하는 핵심 데이터 소스로 활용됩니다.
 team:
   dept: 교통정보운영과
@@ -167,6 +169,15 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - rideDongName
+    - dropDongName
+  space_via: name
+  time: month
+  time_fields:
+    - rideDate
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -287,8 +298,6 @@ verification:
   run: probe/runs/15113195.json
   stats: probe/stats/15113195.json
   data: probe/data/15113195/
-status: active
-summary_user: 인천광역시 관내 택시의 승차일별 승차·하차 행정동 쌍마다 이동횟수, 평균 이동시간(분), 평균 이동거리(km)를 담은 집계 통계로, 범위는 시도 단위이고 읍면동(행정동) 단위로 나뉜다. 교통 분석가나 정책 담당자가 '인천에서 어느 동에서 어느 동으로 택시 이동이 가장 많고, 평균 몇 분·몇 km를 가는가' 같은 택시 수요 흐름(O-D)과 승차 집중지역을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 승차·하차 행정동명(rideDongName)을 행정동 이름 매핑으로 맞추거나 같은 기관 데이터와만 연결해 쓴다.
 limits: 두 오퍼레이션 중 승차 집중지역 조회(/TaxiIntensiveAreaInfo)는 최소 파라미터로 호출했을 때 응답이 없었으므로 호출 조건을 따로 확인해야 한다. 행정동 코드 같은 공통 키가 없어 다른 데이터와는 동 이름 문자열로만 이어야 한다.
 review:
   summary: draft
@@ -301,3 +310,4 @@ review:
     - c-15113195-04
     - c-15113195-10
   dropped_citations: 0
+status: active

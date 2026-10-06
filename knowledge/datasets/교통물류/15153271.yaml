@@ -1,4 +1,5 @@
-# Dataset 15153271 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15153271 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15153271'
 tier: verified
 title: 경기도 하남시_집계 가공 통합 구간 1일 정보
@@ -22,6 +23,7 @@ synonyms:
   - 도로 소통정보
   - 링크별 교통량
   - 지체 혼잡 시간대
+summary_user: 하남시 ITS가 수집한 교통 정보를 도로 구간(링크)별·하루 단위로 집계한 파일로, 구간마다 최소·최대·평균 교통량과 속도, 그리고 원활·지체·혼잡이 발생한 시간대 수를 담는다(CSV 약 30KB). 교통 행정 담당자나 분석가가 '하남시에서 혼잡 시간대가 가장 많이 나오는 구간은 어디이고 평균속도는 얼마인가'를 확인해 혼잡구간 선정이나 개선 우선순위 판단에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 구간아이디를 하남시 ITS 링크 정보와 이름·코드로 맞춰 보거나 같은 기관 데이터끼리만 연결한다.
 description_portal: 경기도 하남시 ITS에서 제공하는 일 단위 교통집계 정보로, 각 도로 구간의 하루 교통 패턴을 명확하게 파악할 수 있는 구조화된 자료이다. ‘구간아이디’는 각 도로의 특정 링크를 의미하며, 최소·최대·평균교통량은 구간별 이용수요와 흐름 특성을 분석하는 데 핵심 지표로 활용됩니다. 속도 항목(최소속도·최대속도·평균속도)은 해당 구간의 소통상태를 직관적으로 보여주며, 특히 평균속도는 구간 전체의 총체적 소통 수준을 나타냅니다. 또한 원활구간발생시간대수·지체발생시간대수·혼잡발생시간대수는 구간별 원활·지체·혼잡 패턴을 정량적으로 제시하여, 혼잡구간 선정·우선개선 대상 도출·신호운영 전략 수립 등 행정적 활용도가 매우 높습니다. 본 데이터는 도시 교통 혼잡 해소, 도로 개선 우선순위 판단, 출퇴근 시간대 관리 등 교통 혼잡도 행정활용에 필수적인 기반자료라고 할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -165,6 +167,10 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 집계기준일자
 cycle: default
 classification:
   subsector_name: 도로 기타
@@ -254,8 +260,6 @@ verification:
   run: probe/runs/15153271.json
   stats: probe/stats/15153271.json
   data: probe/data/15153271/
-status: active
-summary_user: 하남시 ITS가 수집한 교통 정보를 도로 구간(링크)별·하루 단위로 집계한 파일로, 구간마다 최소·최대·평균 교통량과 속도, 그리고 원활·지체·혼잡이 발생한 시간대 수를 담는다(CSV 약 30KB). 교통 행정 담당자나 분석가가 '하남시에서 혼잡 시간대가 가장 많이 나오는 구간은 어디이고 평균속도는 얼마인가'를 확인해 혼잡구간 선정이나 개선 우선순위 판단에 쓴다. 실측 컬럼에 전역 조인 키가 없어, 구간아이디를 하남시 ITS 링크 정보와 이름·코드로 맞춰 보거나 같은 기관 데이터끼리만 연결한다.
 limits: 구간아이디가 표준 노드링크 등 전역 키로 확인되지 않아 다른 기관 교통·도로 데이터와 바로 붙이기 어렵다. 하남시 범위의 비공간 집계라서 구간 위치나 도로명은 이 파일만으로 알 수 없다.
 review:
   summary: draft
@@ -267,3 +271,4 @@ review:
     - c-15153271-03
     - c-15153271-04
   dropped_citations: 0
+status: active

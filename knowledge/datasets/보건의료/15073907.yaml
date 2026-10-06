@@ -1,4 +1,5 @@
-# Dataset 15073907 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073907 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073907'
 tier: verified
 title: 식품의약품안전처_의료기기 품목별 원자재정보
@@ -21,6 +22,7 @@ synonyms:
   - 인체접촉 원자재
   - 의료기기 소재
   - 식약처 의료기기 허가정보
+summary_user: 식약처가 허가·신고한 의료기기 품목마다 사용된 원자재(원자재명·원자재코드)를 품목일련번호·품목허가번호, 허가신고 구분, 허가일자, 취소·취하 여부와 함께 담는 품목별 원천 목록이며 범위는 전국입니다. 의료기기 제조·수입 사업자나 분석가가 특정 품목에 어떤 원자재가 쓰였는지, 인체 접촉 여부가 어떤지, 현재 취소·취하되지 않은 제품인지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·품목명 같은 이름·코드 매핑이나 같은 식약처 의료기기 품목허가 데이터로만 연결합니다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 품목별 원자재정보입니다.  이 공공데이터는 의료기기품목일련번호와 의료기기품목허가번호를 통해 각 의료기기를 고유하게 식별하며 기관지역구분과 업종으로 제품 분류 체계를 제공합니다. 허가신고구분과 품목명 허가일자로 승인 상태와 시점을 확인할 수 있고 취소취하구분과 일자로 현재 유통 가능한 제품을 구분할 수 있습니다. 그리고 원자재명과 원재재코드는 사용된 원료의 구체적인 정보를 파악하는데 도움을 줍니다.
 team:
   dept: 데이터혁신기획팀
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '199900929'
@@ -82,6 +85,7 @@ schema:
         unique: 3
     - name: MEDDEV_ITEM_NO
       type: string
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 제인 99-107 호
@@ -151,6 +155,7 @@ schema:
         unique: 133
     - name: CMDT_CD
       type: number
+      semantic_type: meddev_cmdt_cd
       null_rate: 0.0
       sample_values:
         - '000000'
@@ -185,12 +190,32 @@ schema:
         - 예
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
+    - fields:
+        - CMDT_CD
+      reference:
+        key: meddev_cmdt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PRMSN_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -235,7 +260,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073907-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN), meddev_permit_no(MEDDEV_ITEM_NO), meddev_cmdt_cd(CMDT_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073907.json
@@ -300,8 +325,6 @@ verification:
   run: probe/runs/15073907.json
   stats: probe/stats/15073907.json
   data: probe/data/15073907/
-status: active
-summary_user: 식약처가 허가·신고한 의료기기 품목마다 사용된 원자재(원자재명·원자재코드)를 품목일련번호·품목허가번호, 허가신고 구분, 허가일자, 취소·취하 여부와 함께 담는 품목별 원천 목록이며 범위는 전국입니다. 의료기기 제조·수입 사업자나 분석가가 특정 품목에 어떤 원자재가 쓰였는지, 인체 접촉 여부가 어떤지, 현재 취소·취하되지 않은 제품인지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·품목명 같은 이름·코드 매핑이나 같은 식약처 의료기기 품목허가 데이터로만 연결합니다.
 limits: 전역 조인 키가 없어 심평원 급여 목록 등 외부 데이터와 바로 결합되지 않고 이름·코드 매핑이 필요하다. 개발계정은 일 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -313,3 +336,4 @@ review:
     - c-15073907-03
     - c-15073907-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15131502 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15131502 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15131502'
 tier: verified
 title: 한국동서발전(주)_발전소별 수질정보
@@ -23,6 +24,7 @@ synonyms:
   - 총질소
   - 동서발전 환경정보
   - ESG 수질
+summary_user: 한국동서발전이 운영하는 발전소의 배출수 수질을 사업소·굴뚝(처리장)별, 처리 일자별로 담은 측정 자료로, pH·화학적 산소요구량·부유물질·총질소·온도·유량 같은 항목을 기록한다. 연구자나 환경 분석가가 특정 발전소 배출수의 오염물질 농도가 시기별로 어떻게 변했는지, 유량과 농도가 함께 움직이는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 수질측정망·하천 수질 자료와는 사업소 이름을 직접 맞춰 연결해야 한다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소의 수질정보 데이터는 발전소 주변 수계 및 배출수의 수질 상태를 정량적으로 측정한 자료로, 굴뚝 기준 수질 정보와 처리장 기준 수질 정보’ 두 형태로 제공됩니다. 두 데이터는 공통적으로 pH 농도, 화학적 산소 요구량(COD, mg/ℓ), 부유물질 수치(SS, mg/ℓ), 총질소(T-N, mg/ℓ), 총인(T-P, mg/ℓ), 온도(℃), 유량(㎥) 등의 항목으로 구성되며, 이를 통해 발전소 배출수의 수질 특성과 배출량을 종합적으로 파악할 수 있습니다. 이 데이터는 발전소가 환경 기준을 준수하고 있는지 여부를 확인할 수 있는 기초자료로 활용되며, 수질오염 저감 노력, 환경영향 평가, 수계 생태계 보호 정책 수립에 중요한 근거를 제공합니다. 학계 및 연구기관에서는 해당 데이터를 활용해 발전소별 수질 변화 추이 분석, 계절별 수질 성분 변동 비교, 오염물질 농도 및 배출 유량 간 상관관계 분석 등을 수행할 수 있습니다.또한, 지역 수계 환경과의 비교 분석, 공공기관의 환경관리 수준 평가, 물환경 보전정책의 실효성 검토, ESG(환경·사회·지배구조) 경영 활동 분석 등의 연구 주제에 실증 자료로 활용될 수 있습니다.
 applicable_legislation:
   - law: 물환경보전법
@@ -40,6 +42,7 @@ schema:
   fields:
     - name: 사업소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 호남
@@ -148,12 +151,22 @@ schema:
         p50: 0
         max: 8.674
         unique: 29
+  foreign_keys:
+    - fields:
+        - 사업소
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 처리 일자
 cycle: default
 classification:
   subsector_name: 수질 측정 (수질측정망·자동측정 실시간·조류경보·수질검사)
@@ -190,7 +203,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15131502-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(사업소)'
     evidence:
       - type: measured
         source: probe/stats/15131502.json
@@ -265,8 +278,6 @@ verification:
   run: probe/runs/15131502.json
   stats: probe/stats/15131502.json
   data: probe/data/15131502/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소의 배출수 수질을 사업소·굴뚝(처리장)별, 처리 일자별로 담은 측정 자료로, pH·화학적 산소요구량·부유물질·총질소·온도·유량 같은 항목을 기록한다. 연구자나 환경 분석가가 특정 발전소 배출수의 오염물질 농도가 시기별로 어떻게 변했는지, 유량과 농도가 함께 움직이는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 수질측정망·하천 수질 자료와는 사업소 이름을 직접 맞춰 연결해야 한다.
 limits: 실측 컬럼에 공통 코드가 없어 다른 기관 수질 자료와 자동으로 결합되지 않고, 사업소명 매핑이 필요하다. 받은 파일은 zip 약 4.8KB로 작아, 장기·전체 발전소 시계열로 쓰기 전에 실제 기간과 사업소 범위를 확인해야 한다.
 review:
   summary: draft
@@ -279,3 +290,4 @@ review:
     - c-15131502-04
     - c-15131502-06
   dropped_citations: 0
+status: active

@@ -1,0 +1,239 @@
+# Dataset 15126017 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126017'
+tier: verified
+title: 국회 국회사무처_역대 국회의원 의원이력
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126017/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 국회의원 경력
+  - 의원 약력
+  - 역대 의원 프로필
+  - 국회의원 이력 조회
+  - 전직 국회의원
+  - 의원 경력사항
+summary_user: 역대 국회의원의 이력을 의원 한 명의 이력 항목 단위로 담는 원천 데이터로, 대수(PROFILE_UNIT_CD·PROFILE_UNIT_NM), 한글·한자 이름, 기간, 이력 내용 같은 항목으로 이뤄지며 범위는 전국·비공간이다. 연구자나 기자가 '특정 의원이 어느 대에 어떤 경력을 거쳤는가'를 확인하거나 역대 의원의 경력 구성을 비교할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 표결·의안 등 다른 의정 활동 데이터와는 의원 이름이나 대수 코드를 맞춰 이어 써야 한다.
+description_portal: https://open.assembly.go.kr/portal/data/service/selectServicePage.do?infId=O0MH4O001149BH11948
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://open.assembly.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: PROFILE_UNIT_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100021'
+      stats:
+        min: 100021
+        p50: 100021
+        max: 100021
+        unique: 1
+    - name: PROFILE_UNIT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제21대
+      stats:
+        unique: 1
+    - name: HG_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 김병욱
+        - 강기윤
+        - 강민정
+      stats:
+        unique: 99
+    - name: HJ_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 金炳旭
+        - 姜起潤
+        - 姜旼姃
+      stats:
+        unique: 99
+    - name: FRTO_DATE
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2020.05.30 ~ 2024.05.29
+        - 2020.05.30 ~ 2022.04.29
+        - 2023.04.06 ~ 2024.05.29
+      stats:
+        min: '2020-05-30'
+        max: '2024-01-30'
+        unique: 17
+    - name: PROFILE_SJ
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 제21대 더불어시민당 비례대표
+        - 제21대 미래한국당 비례대표
+        - 제21대 정의당 비례대표
+      stats:
+        unique: 82
+    - name: STATUS_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '060999'
+      stats:
+        min: 60999
+        p50: 60999
+        max: 60999
+        unique: 1
+    - name: OPB_FL_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - FRTO_DATE
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7327
+  rank_in_sector: 41
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 역대 의원 이력 개체 단위
+claims:
+  - id: c-15126017-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126017.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126017-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126017-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126017.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126017-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126017.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126017-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126017-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126017-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126017.json
+  stats: probe/stats/15126017.json
+  data: probe/data/15126017/
+limits: 의원 고유 식별 코드 같은 전역 조인 키가 없어, 동명이인이 있으면 이름만으로 다른 데이터와 정확히 연결하기 어렵다. 공공데이터포털 활용신청과 별개로 open.assembly.go.kr 인증키(KEY)를 받아야 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126017-01
+    - c-15126017-03
+    - c-15126017-04
+    - c-15126017-06
+  dropped_citations: 0
+status: active

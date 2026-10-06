@@ -1,0 +1,188 @@
+# Dataset 15126689 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15126689'
+tier: verified
+title: 기상청_표류부이 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126689/openapi.do
+synonyms:
+  - 해양기상관측
+  - 표류부이
+  - 부이
+  - 파고부이
+  - 해상관측
+  - 해수온 관측
+  - 해상 기압
+  - 부이 위치 추적
+  - 기상청 API허브
+  - 해양 부이 자료
+description_portal: '기상청에서 관측하는 표류부이의 관측시간, 이동 위경도,  해수온, 기압 관측자료를 제공합니다.기상청 API허브를 통해 표류부이 뿐만 아니라 해양기상부이, 파고부이 등 해양기상관측에 대한 종합적인 자료를 한눈에 확인할 수 있습니다.※ 표류부이는 수시로 운영하며, 관측종류의 결과값이 D인 자료만 해당함- 표류부이: 표류부이는 해상에서 표류하면서 해면 상태를 관측기기로 측정하고, 측정한 값을 일정한 물리량으로 변환·처리한 후에 사용 가능한 위성통신을 이용하여 관측자료를 전송하는 장비입니다. 표류부이는 해양기상부이를 설치·운용하기가 어려운 해상이나, 유류 유출·해양오염 발생과 같이 긴급히 기상 및 해상자료가 필요할 때, 태풍의 접근 시와 같이 많은 자료가 필요할 때 사용됩니다. 표류부이에서 관측되는 기본요소는 기압, 파고, 파주기, 수온 등 입니다.'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: sea_obs.php
+    name: sea_obs.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/sea_obs.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '202301241200'
+      - name: stn
+        required: true
+        example: '0'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - B, 202301241200,    21229,               울릉도, 131.11440000,  37.45540000,   3.3,
+        - B, 202301241200,    22101,               덕적도, 126.01880000,  37.23610000,   1.4,
+        - B, 202301241200,    22102,               칠발도, 125.77690000,  34.79330000,   4.0,
+      stats:
+        min: '2023-01-24'
+        max: '2023-01-24'
+        unique: 100
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - line
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.709
+  rank_in_sector: 89
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15126689-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126689.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126689-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126689-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126689.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126689-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126689.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126689-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126689-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126689-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126689.json
+  stats: probe/stats/15126689.json
+  data: probe/data/15126689/
+status: active
+summary_user: 기상청이 해상에 띄운 표류부이가 관측한 자료를 관측시간별로 담는 건별 관측 원천으로, 부이의 이동 위경도와 해수온·기압 등을 포함하며 범위는 전국 해상(비공간 행정단위)이다. 유류 유출·해양오염이나 태풍 접근처럼 고정 해양기상부이가 없는 해역의 해면 상태를 알아야 할 때, 분석가가 특정 기간 부이 이동 경로와 수온·기압 변화를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 관측시간·위경도나 같은 기관(기상청 API허브)의 해양기상부이·파고부이 자료와 이름·코드 매핑으로만 이어 쓴다.
+limits: 포털 활용신청과 별개로 외부 사이트 apihub.kma.go.kr의 인증키(경로 파라미터 KEY)를 따로 받아야 호출된다. 공통 조인 키가 없어 행정구역·관측지점번호 기준 결합은 직접 매핑해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15126689-01
+    - c-15126689-03
+    - c-15126689-04
+  dropped_citations: 0

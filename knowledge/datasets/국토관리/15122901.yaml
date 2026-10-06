@@ -1,4 +1,3 @@
-# Dataset 15122901 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15122901'
 tier: verified
 title: 국토교통부_지적확정측량지구관리
@@ -22,6 +21,7 @@ synonyms:
   - 지적측량 완료지구
   - 도곽
   - 지적재조사 현황
+summary_user: 지적재조사 사업에서 확정측량이 끝난 지구를 한 건씩 담은 파일로, 지구별 일련번호·사업지구명·위치·면적(m²)·도곽 수·기준년도·등록일시를 전국 시군구 단위로 정리한다. 지자체 담당자나 분석가가 "우리 시군구에서 확정측량을 마친 지적재조사 지구는 몇 곳이고 면적 규모는 어느 정도인가"를 확인하거나 지역별 사업량을 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 시군구코드·시군구명을 행정구역 코드표와 맞춰 다른 시군구 단위 통계와 잇는 방식으로 연결한다.
 description_portal: '지적재조사 사업 중 확정측량이 완료된 지구에 대한 정보를 행정구역 단위로 관리하는 자료로, 해당 지구의 위치, 면적, 도곽 수, 등록일 등을 포함합니다.1. 형식: CSV2. 내용 요약■ 사업지구일련번호: 지구별 고유 식별번호■ 시군구코드: 행정구역별 코드 (예: 11140 = 서울 중구)■ 시군구명: 사업지구가 속한 행정구역 명칭■ 기준년도: 사업 기준 연도 (예: 2022-12-31)■ 사업지구명: 지적확정측량이 실시된 지구의 명칭■ 위치: 측량이 이루어진 필지의 상세 위치 주소■ 면적: 해당 지구의 총 면적 (단위: m²)■ 도곽수: 도면 상의 도곽(블록) 수(2021년도 시군구 기준으로  500,600,1000,1200,2400,3000,6000 의 합)■ 등록일시: 사업지구가 시스템에 등록된 날짜3. 활용 예제■ 지자체별 지적재조사 확정측량 진행 현황 파악 및 통계 분석■ 지역별 면적 기반 사업 규모 비교 및 도곽 수 기반 업무량 예측■ 위치 정보를 활용한 공간정보 시스템(GIS) 연계 시각화 자료 구축■ 등록일자와 기준년도 분석을 통한 사업 진행 시기 추이 파악'
 accrual_periodicity: 수시
 team:
@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 사업지구일련번호
       type: number
+      semantic_type: cadastral_resurvey_zone_sn
       null_rate: 0.0
       sample_values:
         - '952'
@@ -130,12 +131,28 @@ schema:
         min: '2012-01-01'
         max: '2023-07-11'
         unique: 609
+  foreign_keys:
+    - fields:
+        - 사업지구일련번호
+      reference:
+        key: cadastral_resurvey_zone_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 시군구코드
+    - 시군구명
+  space_via: code
+  time: day
+  time_fields:
+    - 기준년도
+    - 등록일시
 cycle: default
 classification:
   subsector_name: 지적 (토지·임야대장·연속지적도·지적도근점·지번)
@@ -173,7 +190,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15122901-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cadastral_resurvey_zone_sn(사업지구일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15122901.json
@@ -259,8 +276,6 @@ verification:
   run: probe/runs/15122901.json
   stats: probe/stats/15122901.json
   data: probe/data/15122901/
-status: active
-summary_user: 지적재조사 사업에서 확정측량이 끝난 지구를 한 건씩 담은 파일로, 지구별 일련번호·사업지구명·위치·면적(m²)·도곽 수·기준년도·등록일시를 전국 시군구 단위로 정리한다. 지자체 담당자나 분석가가 "우리 시군구에서 확정측량을 마친 지적재조사 지구는 몇 곳이고 면적 규모는 어느 정도인가"를 확인하거나 지역별 사업량을 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으며, 시군구코드·시군구명을 행정구역 코드표와 맞춰 다른 시군구 단위 통계와 잇는 방식으로 연결한다.
 limits: 필지 고유번호(PNU) 같은 전역 키가 없어 필지 단위 지적 데이터와 바로 결합하기 어렵고, 시군구 코드·이름 매핑으로만 연결된다. 위치는 주소 문자열이어서 공간 분석에는 별도 좌표 변환이 필요하다.
 review:
   summary: draft
@@ -272,3 +287,4 @@ review:
     - c-15122901-03
     - c-15122901-04
   dropped_citations: 0
+status: active

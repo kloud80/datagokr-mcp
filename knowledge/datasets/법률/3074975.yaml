@@ -1,4 +1,5 @@
-# Dataset 3074975 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3074975 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3074975'
 tier: verified
 title: 법무부_항공기 및 승무원에 대한 국적별 공항별 출입국 현황
@@ -21,6 +22,7 @@ synonyms:
   - 공항 출입국 통계
   - 항공 승무원 수
   - 출입국외국인정책본부 통계
+summary_user: 국내 9개 공항(인천·김해·김포·대구·제주·청주·무안·양양·성남)별로 입항·출항한 항공기 수와 승무원 수(내외국인 포함)를 담은 공항 단위 집계 통계로, 358바이트 크기의 작은 CSV 파일입니다. 공항별 국제선 운항 규모나 승무원 출입국 규모를 비교하려는 분석가·항공 관련 사업자가 "어느 공항에 출입국 항공기와 승무원이 가장 많이 드나드는가"를 확인하는 데 쓴다. 전역 조인 키나 코드표가 없어 다른 데이터와는 공항 이름을 직접 맞춰 연결해야 하며, 출입국자·체류 외국인 등 같은 법무부 출입국 통계와 나란히 참고하는 용도에 맞다.
 description_portal: 해당 통계는 국내 공항별 입항, 출항한 항공기 수 및 승무원 수 통계입니다.인천공항, 김해공항, 김포공항, 대구공항, 제주공항, 청주공항, 무안공항, 양양공항 및 성남공항 현황입니다.해당 통계는 매년 1번 업데이트 됩니다. 다음 통계는 27년 1월 업데이트 예정입니다.입항 항공기수 / 입항승무원 수/ 출항항공기수/ 출국항승무원 수 칼럼으로 구분됩니다.이때 승무원은 내외국인 포함입니다.기타  국적별 통계 등은 출입국외국인정책본부 홈페이지의 통계연보를 참고하여 주시기 바랍니다.https://www.immigration.go.kr/immigration/index.do
 legal_basis_portal: 출입국관리
 accrual_periodicity: 연간
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 공항별
       type: code
+      semantic_type: airport_cd
       null_rate: 0.0
       sample_values:
         - 인천공항
@@ -90,6 +93,12 @@ schema:
         p50: 27941.5
         max: 1749432
         unique: 9
+  foreign_keys:
+    - fields:
+        - 공항별
+      reference:
+        key: airport_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -132,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3074975-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: airport_cd(공항별)'
     evidence:
       - type: measured
         source: probe/stats/3074975.json
@@ -207,8 +216,6 @@ verification:
   run: probe/runs/3074975.json
   stats: probe/stats/3074975.json
   data: probe/data/3074975/
-status: active
-summary_user: 국내 9개 공항(인천·김해·김포·대구·제주·청주·무안·양양·성남)별로 입항·출항한 항공기 수와 승무원 수(내외국인 포함)를 담은 공항 단위 집계 통계로, 358바이트 크기의 작은 CSV 파일입니다. 공항별 국제선 운항 규모나 승무원 출입국 규모를 비교하려는 분석가·항공 관련 사업자가 "어느 공항에 출입국 항공기와 승무원이 가장 많이 드나드는가"를 확인하는 데 쓴다. 전역 조인 키나 코드표가 없어 다른 데이터와는 공항 이름을 직접 맞춰 연결해야 하며, 출입국자·체류 외국인 등 같은 법무부 출입국 통계와 나란히 참고하는 용도에 맞다.
 limits: 공항 이름 외에 표준 코드나 조인 키가 없어 다른 데이터와 자동 연결이 어렵다. 범위는 전국 공항 단위의 비공간 집계로, 시군구 등 지역 단위 분석에는 쓸 수 없다. 제목과 달리 실측 필드에 국적 구분 컬럼은 없으므로 국적별 수치는 출입국외국인정책본부 통계연보를 따로 봐야 한다.
 review:
   summary: draft
@@ -220,3 +227,4 @@ review:
     - c-3074975-03
     - c-3074975-04
   dropped_citations: 0
+status: active

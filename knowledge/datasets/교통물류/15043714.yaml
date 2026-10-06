@@ -1,4 +1,5 @@
-# Dataset 15043714 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15043714 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043714'
 tier: verified
 title: 한국도로공사_복합휴게시설 운영현황
@@ -24,6 +25,7 @@ synonyms:
   - 고속도로 편의시설
   - 휴게소 위치
   - 도로공사 휴게소
+summary_user: 고속도로 복합휴게시설별로 휴게시설명, 위치, 주요시설을 한 행씩 담은 전국 단위 현황 목록으로, 파일 크기가 866바이트인 소규모 CSV입니다. 고속도로 이용자나 분석가가 어느 노선에 쇼핑·외식·문화 기능을 갖춘 복합휴게시설이 있고 어떤 시설을 갖췄는지 확인할 때 씁니다. 실측 컬럼에 전역 조인 키가 없어 다른 휴게소·도로 데이터와는 휴게시설명이나 위치 문자열을 맞춰 연결해야 합니다.
 description_portal: 본 데이터는 고속도로 복합휴게시설의 운영 현황을 제공하는 공공자료이다. 한국도로공사에서 관리하며, 휴게시설 명, 위치, 주요시설 항목으로 구성되어 있다. 복합휴게시설은 일반 휴게기능 외에도 쇼핑, 외식, 문화 등 다양한 서비스를 제공하는 공간으로, 이용자 편의 증진과 서비스 품질 향상에 기여한다. 해당 데이터는 각 시설의 운영 현황, 입지, 주요 서비스 내용을 포함하고 있어 도로 이용자 안내, 서비스 개선, 정책 수립 등의 기초자료로 활용된다. 또한 시설별 비교 분석, 수요 대응 전략, 지역경제 연계 방안 검토 등에도 활용 가능하다. 본 자료는 고속도로 편의시설의 체계적인 관리와 이용자 중심 서비스 운영을 위한 기반 정보로 제공되는 공공데이터이다.
 accrual_periodicity: 연간
 team:
@@ -49,6 +51,7 @@ schema:
         unique: 12
     - name: 휴게시설명
       type: code
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 행담도 휴게소
@@ -74,6 +77,12 @@ schema:
         - 휴게소, 주유소, 아웃렛, 반려동물 놀이터 등
       stats:
         unique: 10
+  foreign_keys:
+    - fields:
+        - 휴게시설명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -116,7 +125,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043714-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(휴게시설명)'
     evidence:
       - type: measured
         source: probe/stats/15043714.json
@@ -181,8 +190,6 @@ verification:
   run: probe/runs/15043714.json
   stats: probe/stats/15043714.json
   data: probe/data/15043714/
-status: active
-summary_user: 고속도로 복합휴게시설별로 휴게시설명, 위치, 주요시설을 한 행씩 담은 전국 단위 현황 목록으로, 파일 크기가 866바이트인 소규모 CSV입니다. 고속도로 이용자나 분석가가 어느 노선에 쇼핑·외식·문화 기능을 갖춘 복합휴게시설이 있고 어떤 시설을 갖췄는지 확인할 때 씁니다. 실측 컬럼에 전역 조인 키가 없어 다른 휴게소·도로 데이터와는 휴게시설명이나 위치 문자열을 맞춰 연결해야 합니다.
 limits: 좌표나 노드·링크 ID가 없는 비공간 데이터라 표준노드링크 등 도로망 데이터와 바로 공간 결합할 수 없습니다. 연결하려면 휴게시설명 같은 이름 매칭에 기대야 합니다.
 review:
   summary: draft
@@ -194,3 +201,4 @@ review:
     - c-15043714-03
     - c-15043714-04
   dropped_citations: 0
+status: active

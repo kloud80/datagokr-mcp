@@ -1,0 +1,330 @@
+# Dataset 15076800 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076800'
+tier: verified
+title: 한국도로공사_LCS운영구간 교통량
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076800/openapi.do
+synonyms:
+  - 고속도로
+  - LCS
+  - 교통량
+  - 교통흐름
+  - 콘존
+  - VDS
+  - 차로유형
+  - 노선데이터
+  - 차로제어시스템 교통량
+  - 고속도로 콘존 교통량
+  - VDS 교통량 속도
+  - 고속도로 지정체
+  - 차로별 교통량
+  - 고속도로 소통정보
+  - LCS 구간 속도
+summary_user: 한국도로공사가 LCS(차로제어) 운영구간의 콘존(conzone) 구간별 교통량(대)·속도(km/h)·지정체 길이(km)를 기준일자·시간·방향(기점/종점)·차로유형별로 집계해 담은 전국 범위 OpenAPI 데이터다. 도로 운영 분석가나 물류·버스 운행 계획 담당자가 "특정 고속도로 노선의 어느 콘존에서 몇 시에 어떤 차로가 막히는가"를 확인하거나, 매일 쌓아 상습 정체 구간을 분석하는 데 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 노선번호(routeNo)·콘존 ID(conzoneId)·VDS ID처럼 같은 한국도로공사 코드 체계를 쓰는 다른 도공 교통 데이터와 코드 매핑으로만 이어 쓴다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 LCS운영구간 교통량 정보로, 노선별 콘존 구간의 교통 흐름과 이용 현황을 OpenAPI 형태로 제공한다.제공 형식은 XML과 JSON이며, 출력 항목에는 기간, 시간, 콘존명과 ID, VDS_ID, 도로이정(km), 교통량(대), 속도(km/h), 차로유형구분명과 코드, 지정체길이(km), 노선번호, 기준일자, 방향(S:기점/E:종점), 집계시간단위구분코드가 포함된다.이 데이터는 구간별 교통량, 속도, 혼잡 정도를 분석하여 도로 운영 효율성을 높이는 데 유용하다.이를 통해 교통 패턴과 차로별 이용 특성, 지정체 발생 양상을 세부적으로 파악할 수 있다.또한 교통정책 수립, 혼잡 완화 대책, 물류와 버스 운행 계획, 도로 서비스 개선 등 다양한 분야에서 활용된다.
+team:
+  dept: AI데이터처
+services:
+  - op: lcsSctnTrfl
+    name: lcsSctnTrfl
+    endpoint: https://data.ex.co.kr/openapi/trafficOprgPrcd/lcsSctnTrfl
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: term
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026.10.05(월)
+      stats:
+        min: '2026-10-05'
+        max: '2026-10-05'
+        unique: 1
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: trafficAmout
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '266'
+        - '255'
+      stats:
+        min: 0
+        p50: 179
+        max: 402
+        unique: 56
+    - name: conzoneId
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 0010CZE080
+        - 0010CZE050
+        - 0010CZE100
+      stats:
+        unique: 18
+    - name: laneTypeCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: updownType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E
+      stats:
+        unique: 1
+    - name: sumTmUnitTypeCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: vdsId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0010VDE00100
+        - 0010VDE00200
+        - 0010VDE00300
+      stats:
+        unique: 99
+    - name: speed
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.00'
+        - '92.91'
+        - '100.55'
+      stats:
+        min: 0
+        p50: 96.48
+        max: 110.83
+        unique: 73
+    - name: laneTypeNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반차로
+      stats:
+        unique: 1
+    - name: conzoneNm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 언양JC-활천IC
+        - 양산IC-통도사Hi
+        - 서경주IC-영천JC
+      stats:
+        unique: 18
+    - name: criteriaDate
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261005'
+      stats:
+        min: 20261005
+        p50: 20261005
+        max: 20261005
+        unique: 1
+    - name: sTime
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: roadShift
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '40.11'
+        - '17.94'
+        - '78.66'
+      stats:
+        min: 0.2
+        p50: 40.11
+        max: 102.89
+        unique: 18
+    - name: dlcnLength
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.00'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - term
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6679
+  rank_in_sector: 578
+  brm: 교통물류 - 도로
+  why: LCS 콘존 구간 교통량, 실시간 소통 성격
+claims:
+  - id: c-15076800-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076800.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076800-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076800-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076800.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 15개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076800-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076800.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076800-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076800-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076800-08
+    kind: admin_note
+    value: wave3 p2 · 이동 제안 → 교통물류 - 도로 / 실시간 소통
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076800.json
+  stats: probe/stats/15076800.json
+  data: probe/data/15076800/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr)의 인증키를 받아 경로 파라미터 KEY로 넣어야 호출된다. 행정구역 코드나 좌표가 없는 비공간 데이터라 지역 통계나 지도와 바로 결합되지 않는다. 실시간 위주라 정체 이력을 분석하려면 직접 호출 결과를 쌓아 두어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076800-01
+    - c-15076800-03
+    - c-15076800-04
+    - c-15076800-06
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15061797 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061797 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061797'
 tier: verified
 title: 대구교통공사_3호선 역 구간정보
@@ -25,6 +26,7 @@ synonyms:
   - 구간 운행정보
   - 회차역
   - 도시철도 운행 기술정보
+summary_user: 대구도시철도 3호선의 역별 구간정보를 역 단위로 담은 파일(csv, 약 4KB)로, 역코드·역명·역종류와 상하행 방향별 거리(키로)·소요시간·정차시간, 표준구배, 최고·평균속도, 회차·측선·승무교대 여부 같은 운행 기술 정보를 포함한다. 운영 분석가나 연구자가 '3호선 각 역 사이 거리와 소요시간, 회차가 가능한 역은 어디인가'처럼 구간별 운행 특성을 파악할 때 쓴다. 전역 조인 키가 없어서 다른 데이터와는 역명이나 대구교통공사 자체 역코드로 맞춰 이어 써야 한다.
 description_portal: '[ESG-Social] 본 데이터는 대구교통공사의 ESG 사회(Social) 분야에 해당하는 시민편의 및 운영정보 데이터로, 대구도시철도 3호선의 역별 구간정보를 제공합니다. 주요 항목은 역코드, 역종류, 역명, 승무소속 등의 기본 정보와 상행·하행 방향별 거리(km), 소요시간, 회차 여부 및 회차 시간, 표준구배, 최고속도, 평균속도 등 열차 운행과 관련된 주요 기술 정보로 구성되어 있습니다. 또한 회차선(회차키로), 측선 유무, 승무원 교대 여부, 역 운영 상태, 역 강조 여부 등 다양한 운영 정보를 포함하고 있어 역사 및 구간별 운행 특성을 체계적으로 파악할 수 있습니다. 본 자료는 열차 운행계획 수립, 노선 운영 분석, 시설 유지관리, 시스템 운영 및 유지보수 전략 수립, 데이터 기반 운영 의사결정 등을 위한 기초자료로 활용될 수 있으며, 도시철도 운영 효율성 향상과 공공교통 서비스 개선을 지원하는 자료로 활용할 수 있습니다. 본 데이터는 연 1회 정기적으로 갱신됩니다.'
 accrual_periodicity: 연간
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 역코드
       type: number
+      semantic_type: daegu_metro_station_no
       null_rate: 0.0
       sample_values:
         - '300'
@@ -240,6 +243,12 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 역코드
+      reference:
+        key: daegu_metro_station_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -282,7 +291,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061797-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: daegu_metro_station_no(역코드)'
     evidence:
       - type: measured
         source: probe/stats/15061797.json
@@ -347,8 +356,6 @@ verification:
   run: probe/runs/15061797.json
   stats: probe/stats/15061797.json
   data: probe/data/15061797/
-status: active
-summary_user: 대구도시철도 3호선의 역별 구간정보를 역 단위로 담은 파일(csv, 약 4KB)로, 역코드·역명·역종류와 상하행 방향별 거리(키로)·소요시간·정차시간, 표준구배, 최고·평균속도, 회차·측선·승무교대 여부 같은 운행 기술 정보를 포함한다. 운영 분석가나 연구자가 '3호선 각 역 사이 거리와 소요시간, 회차가 가능한 역은 어디인가'처럼 구간별 운행 특성을 파악할 때 쓴다. 전역 조인 키가 없어서 다른 데이터와는 역명이나 대구교통공사 자체 역코드로 맞춰 이어 써야 한다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어서 다른 기관 데이터와 연결하려면 역명 매칭이나 같은 기관 코드 매핑이 필요하다. 좌표가 없는 비공간 데이터라 역세권 판정이나 지도 표시에 바로 쓸 수 없다.
 review:
   summary: draft
@@ -360,3 +367,4 @@ review:
     - c-15061797-03
     - c-15061797-04
   dropped_citations: 0
+status: active

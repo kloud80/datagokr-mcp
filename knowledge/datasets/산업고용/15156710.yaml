@@ -1,4 +1,5 @@
-# Dataset 15156710 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156710 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156710'
 tier: verified
 title: 한국서부발전(주)_AI 디지털트윈 솔루션 개발용 신재생 데이터 정보 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 디지털트윈 학습 데이터
   - 설비 알람 상태
   - 서부발전 신재생
+summary_user: 한국서부발전 신재생 발전설비의 장치(장치아이디)별·측정 시점별 전기 운전 기록으로, 3상(R·S·T) 전압·전류·역률, 주파수, 유효·무효전력, 설비상태·알람·개폐 여부를 절대시간과 로컬시간과 함께 담는 시계열 원천 데이터다. 디지털트윈·AI 모델을 개발하는 분석가가 "이 설비의 상별 전압·역률이 언제 흔들렸고 그때 알람이나 개폐 동작이 있었나" 같은 운전 상태·성능 이상 탐지 질문에 쓴다. 실측 컬럼에 다른 데이터와 맞출 전역 조인 키가 없어 장치아이디 이름 매핑이나 같은 기관 코드로만 연결할 수 있고, 태양광 발전사업 허가 표준데이터 같은 발전소 원장과도 직접 키로 붙지 않는다.
 description_portal: 한국서부발전에서 제공하는 AI 디지털트윈 솔루션 개발용 신재생 데이터 정보 조회 서비스는 장치아이디, 절대시간, 로컬시간, 설비상태, 알람상세, 전압(R, S, T), 전류(R, S, T), 역률(R, S, T), 주파수, 유효전력, 무효전력(지상, 진상), 계폐여부로 구성됩니다. 각 항목은 발전설비의 전기적 상태와 운전 정보를 나타내며, 절대시간과 로컬시간을 통해 측정 시점을 확인할 수 있습니다. 전압, 전류, 역률, 주파수, 유효전력, 무효전력 값은 설비 운전 상태와 성능 평가에 활용되며, 설비상태, 알람상세, 계폐여부 정보는 장치 운전 및 안전 관리에 사용됩니다
 team:
   dept: 디지털운영부
@@ -254,6 +256,7 @@ schema:
     - name: did
       title: 장치아이디
       type: code
+      semantic_type: ewp_renew_eqpm_id
       null_rate: 0.0
       sample_values:
         - 0574af15-a5ed-44d3-b3fd-9c2c8d6c9e5a
@@ -271,12 +274,22 @@ schema:
         min: '2025-10-12'
         max: '2025-10-13'
         unique: 439
+  foreign_keys:
+    - fields:
+        - did
+      reference:
+        key: ewp_renew_eqpm_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - timestamp
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -320,7 +333,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156710-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ewp_renew_eqpm_id(did)'
     evidence:
       - type: measured
         source: probe/stats/15156710.json
@@ -385,8 +398,6 @@ verification:
   run: probe/runs/15156710.json
   stats: probe/stats/15156710.json
   data: probe/data/15156710/
-status: active
-summary_user: 한국서부발전 신재생 발전설비의 장치(장치아이디)별·측정 시점별 전기 운전 기록으로, 3상(R·S·T) 전압·전류·역률, 주파수, 유효·무효전력, 설비상태·알람·개폐 여부를 절대시간과 로컬시간과 함께 담는 시계열 원천 데이터다. 디지털트윈·AI 모델을 개발하는 분석가가 "이 설비의 상별 전압·역률이 언제 흔들렸고 그때 알람이나 개폐 동작이 있었나" 같은 운전 상태·성능 이상 탐지 질문에 쓴다. 실측 컬럼에 다른 데이터와 맞출 전역 조인 키가 없어 장치아이디 이름 매핑이나 같은 기관 코드로만 연결할 수 있고, 태양광 발전사업 허가 표준데이터 같은 발전소 원장과도 직접 키로 붙지 않는다.
 limits: 장치아이디만 있고 발전소 주소·용량 같은 원장 정보나 공간 좌표가 없어 위치·지역 단위 분석에 바로 쓰기 어렵다. 개발계정은 하루 100회 호출로 제한된다.
 review:
   summary: draft
@@ -399,3 +410,4 @@ review:
     - c-15156710-04
     - c-15156710-06
   dropped_citations: 0
+status: active

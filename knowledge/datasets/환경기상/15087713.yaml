@@ -1,4 +1,5 @@
-# Dataset 15087713 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15087713 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087713'
 tier: verified
 title: 한국환경산업기술원_녹색제품정보시스템_장소별 녹색제품 정보
@@ -20,6 +21,7 @@ synonyms:
   - EL인증
   - 녹색구매
   - 친환경 인증 현황
+summary_user: 한국환경산업기술원 녹색제품정보시스템에 등록된 녹색제품을 장소별로 정리한 파일로, 제품마다 업체명·모델명·제품용도·인증번호(EL번호)·인증상태·환경표지 인증 시작일과 종료일·지역을 담으며 범위는 전국입니다. 공공기관 구매 담당자나 사업자가 특정 장소·지역에 놓인 녹색제품이 현재 환경표지 인증을 유지하고 있는지, 인증이 언제 끝나는지 확인하는 데 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 조인 키는 확인되지 않아, 환경표지 인증 목록 같은 같은 기관 데이터와는 인증번호나 업체명·모델명 같은 이름으로 맞춰 이어 써야 합니다.
 description_portal: 본 데이터는 한국환경산업기술원 녹색제품정보시스템의 장소별 녹색제품 정보를 제공하는 통계형 공공데이터로, 장소, 업체명, 제품번호, 인증번호(EL번호), 제품용도명, 모델명, 규격, 분류번호, 식별번호, 인증상태, 환경표지여부, 환경표지인증심사일(갱신 예정일 포함), 환경표지인증종료일, 지역 등의 필드를 포함합니다. 장소별 녹색제품의 위치 및 인증 현황을 파악할 수 있으며, 장소별 제품 배치 계획, 인증  모니터링, 지역 특성 분석, 품질 보증, 환경표지 통계, 시설별 설비 관리, 데이터 기반 서비스 개발, 대 시보드 시각화 등에 활용할 수 있도록 설계되었습니다. 또한 현장 점검 일정 수립, 유지보수 계획, 긴급 대응 프로토콜, 사용자 접근성 분석, IoT 연계, 보고서 작성, 모바일 앱 연동, API 서비스 제공, 정책 모니터링 자료로 활용 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -60,6 +62,7 @@ schema:
         unique: 834
     - name: 제품번호
       type: string
+      semantic_type: green_product_no
       null_rate: 0.0
       sample_values:
         - '1.01E+12'
@@ -69,6 +72,7 @@ schema:
         unique: 96351
     - name: 인증번호
       type: string
+      semantic_type: green_product_cert_no
       null_rate: 0.0
       sample_values:
         - 27475(172)
@@ -96,6 +100,7 @@ schema:
         unique: 99728
     - name: 분류번호
       type: number
+      semantic_type: g2b_prdct_clsfc_no
       null_rate: 0.2485
       sample_values:
         - '56101520'
@@ -108,6 +113,7 @@ schema:
         unique: 162
     - name: 식별번호
       type: number
+      semantic_type: g2b_prdct_idnt_no
       null_rate: 0.248
       sample_values:
         - '24375453'
@@ -163,12 +169,38 @@ schema:
         - 경북
       stats:
         unique: 17
+  foreign_keys:
+    - fields:
+        - 제품번호
+      reference:
+        key: green_product_no
+      evidence: measured
+    - fields:
+        - 인증번호
+      reference:
+        key: green_product_cert_no
+      evidence: measured
+    - fields:
+        - 분류번호
+      reference:
+        key: g2b_prdct_clsfc_no
+      evidence: measured
+    - fields:
+        - 식별번호
+      reference:
+        key: g2b_prdct_idnt_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 환경표지인증시작일
+    - 환경표지인증종료일
 cycle: default
 classification:
   subsector_name: 환경 업체·인증 (환경전문공사·측정대행·컨설팅·녹색기업·환경표지·환경정보공개)
@@ -205,7 +237,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15087713-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: green_product_no(제품번호), green_product_cert_no(인증번호), g2b_prdct_clsfc_no(분류번호), g2b_prdct_idnt_no(식별번호)'
     evidence:
       - type: measured
         source: probe/stats/15087713.json
@@ -259,8 +291,6 @@ verification:
   run: probe/runs/15087713.json
   stats: probe/stats/15087713.json
   data: probe/data/15087713/
-status: active
-summary_user: 한국환경산업기술원 녹색제품정보시스템에 등록된 녹색제품을 장소별로 정리한 파일로, 제품마다 업체명·모델명·제품용도·인증번호(EL번호)·인증상태·환경표지 인증 시작일과 종료일·지역을 담으며 범위는 전국입니다. 공공기관 구매 담당자나 사업자가 특정 장소·지역에 놓인 녹색제품이 현재 환경표지 인증을 유지하고 있는지, 인증이 언제 끝나는지 확인하는 데 쓴다. 실측 컬럼에서 다른 데이터와 공통으로 쓰는 조인 키는 확인되지 않아, 환경표지 인증 목록 같은 같은 기관 데이터와는 인증번호나 업체명·모델명 같은 이름으로 맞춰 이어 써야 합니다.
 limits: 전역 조인 키가 없어 다른 데이터와의 연결은 이름이나 인증번호 대조에 의존하며, 범위는 전국이지만 좌표가 없는 비공간 데이터라 지도 분석에는 바로 쓰기 어렵습니다. 포털 설명에 적힌 '인증심사일' 대신 실제 파일에는 인증시작일 컬럼이 있으므로 필드 해석에 주의합니다.
 review:
   summary: draft
@@ -272,3 +302,4 @@ review:
     - c-15087713-03
     - c-15087713-04
   dropped_citations: 0
+status: active

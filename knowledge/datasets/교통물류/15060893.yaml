@@ -1,4 +1,5 @@
-# Dataset 15060893 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15060893 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15060893'
 tier: verified
 title: 대구교통공사_2호선 월별 열차운행실적
@@ -24,6 +25,7 @@ synonyms:
   - 영업열차 비영업열차
   - 대구도시철도 운행통계
   - 열차운행 월별 통계
+summary_user: 대구도시철도 2호선의 열차 운행실적을 연·월 단위로 집계한 파일로, 영업일수와 영업·비영업열차의 운행횟수(정기·임시)와 운행거리(킬로미터)를 담는다. 교통 분석가나 정책 담당자가 '2호선의 월별 열차 운행횟수와 운행거리는 어떻게 변해 왔나'를 확인하거나 운행계획·차량 정비 계획의 기초자료로 쓴다. 전역 조인 키가 없어 다른 데이터와는 연도·월이나 호선 이름을 맞춰 대구교통공사의 다른 호선 운행실적, 승하차 통계 등과 이어 쓴다.
 description_portal: '[ESG-Governance] 본 데이터는 대구교통공사의 ESG 지배구조(Governance) 분야에 해당하는 운영정보 데이터로, 2005년 10월부터 현재까지 대구도시철도 2호선의 월별 영업열차 운행횟수(정기·임시), 비영업열차 운행횟수 및 운행거리(정기·임시), 영업열차 운행거리(정기·임시), 비영업열차 운행거리(정기·임시)를 제공하고 있습니다. 해당 자료는 도시철도 운행 효율성 분석, 차량 정비 및 운행계획 수립, 정책 수립 등 다양한 행정 및 연구 목적의 기초자료로 활용할 수 있으며, 공공교통 서비스 품질 향상 및 데이터 기반 정책결정 지원에도 폭넓게 기여할 수 있습니다. 본 데이터는 매월 정기적으로 갱신됩니다.'
 accrual_periodicity: 월간
 team:
@@ -61,6 +63,7 @@ schema:
         unique: 12
     - name: 호선
       type: number
+      semantic_type: urban_rail_line_no
       null_rate: 0.0
       sample_values:
         - '2'
@@ -201,12 +204,22 @@ schema:
         p50: 271492.7
         max: 297245.6
         unique: 239
+  foreign_keys:
+    - fields:
+        - 호선
+      reference:
+        key: urban_rail_line_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -242,7 +255,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15060893-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: urban_rail_line_no(호선)'
     evidence:
       - type: measured
         source: probe/stats/15060893.json
@@ -296,8 +309,6 @@ verification:
   run: probe/runs/15060893.json
   stats: probe/stats/15060893.json
   data: probe/data/15060893/
-status: active
-summary_user: 대구도시철도 2호선의 열차 운행실적을 연·월 단위로 집계한 파일로, 영업일수와 영업·비영업열차의 운행횟수(정기·임시)와 운행거리(킬로미터)를 담는다. 교통 분석가나 정책 담당자가 '2호선의 월별 열차 운행횟수와 운행거리는 어떻게 변해 왔나'를 확인하거나 운행계획·차량 정비 계획의 기초자료로 쓴다. 전역 조인 키가 없어 다른 데이터와는 연도·월이나 호선 이름을 맞춰 대구교통공사의 다른 호선 운행실적, 승하차 통계 등과 이어 쓴다.
 limits: 역별·시간대별 운행이나 승객 수는 담지 않는 월별 노선 단위 집계라 혼잡도나 이용 수요 분석에는 따로 승하차 데이터가 필요하다. 다른 데이터와 직접 연결할 공통 코드가 없어 연도·월·호선명으로 수동 매칭해야 한다.
 review:
   summary: draft
@@ -309,3 +320,4 @@ review:
     - c-15060893-03
     - c-15060893-04
   dropped_citations: 0
+status: active

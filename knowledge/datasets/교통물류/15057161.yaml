@@ -1,0 +1,262 @@
+# Dataset 15057161 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057161'
+tier: verified
+title: 경기도_택시 면허발급 집계 현황
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057161/openapi.do
+synonyms:
+  - 택시면허
+  - 개인택시
+  - 법인택시
+  - 면허발급
+  - 시군현황
+  - 모범택시
+  - 대형택시
+  - 집계현황
+  - 택시 면허 대수
+  - 개인택시 법인택시
+  - 택시 총량
+  - 시군별 택시 현황
+  - 경기도 택시
+summary_user: 경기도 시군별로 발급된 택시 면허를 집계년월(SUM_YM) 단위로 정리한 집계 자료로, 개인 일반·모범·대형택시 면허 대수와 법인 면허 대수, 법인업체 수를 담는다. 교통정책 담당자나 분석가가 "우리 시의 개인택시와 법인택시 비율은 이웃 시군과 비교해 어떤가"처럼 지역별 택시 공급 구조를 비교하거나 면허 총량을 점검할 때 쓴다. 전역 조인 키는 확인되지 않아, 다른 데이터와는 시군명(SIGUN_NM)이나 시군코드를 이름·코드 매핑으로 맞추거나 경기도의 같은 코드 체계를 쓰는 자료끼리만 이어 쓴다.
+description_portal: 이 데이터는 경기도 내 각 시군별로 발급된 택시 면허 현황을 집계한 자료로, 개인면허대수, 개인모범택시, 개인대형택시, 법인면허대수 및 법인업체 수 등의 항목으로 구성되어 있습니다. 집계년월 단위로 기록되며, 일반택시 외에도 모범택시 및 대형택시 등 다양한 형태의 택시면허 발급 실적을 확인할 수 있어 지역별 택시 운영 구조를 파악하는 데 유용합니다. 데이터는 교통정책 수립, 대중교통 수요 분석, 개인·법인택시 비율 비교, 면허총량 관리 등 다양한 행정 및 연구 목적에 활용될 수 있으며, 연간 주기로 갱신되며 Open API 방식으로 제공되어 정기적 데이터 접근이 가능합니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: TaxiLicenseStatus
+    name: TaxiLicenseStatus
+    endpoint: https://openapi.gg.go.kr/TaxiLicenseStatus
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원시
+        - 용인시
+        - 고양시
+      stats:
+        unique: 5
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41110'
+        - '41460'
+        - '41280'
+      stats:
+        min: 41110
+        p50: 41280
+        max: 41590
+        unique: 5
+    - name: INDVDL_LICENSE_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3128'
+        - '1614'
+        - '2118'
+      stats:
+        min: 1042
+        p50: 2118
+        max: 3128
+        unique: 5
+    - name: INDVDL_PRGN_CNT
+      type: number
+      null_rate: 0.4
+      sample_values:
+        - '152.0'
+        - '1.0'
+        - '9.0'
+      stats:
+        min: 1
+        p50: 9
+        max: 152
+        unique: 3
+    - name: INDVDL_LGZ_CNT
+      type: number
+      null_rate: 0.6
+      sample_values:
+        - '4.0'
+        - '1.0'
+      stats:
+        min: 1
+        p50: 2.5
+        max: 4
+        unique: 2
+    - name: COPRTN_LICENSE_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1570'
+        - '337'
+        - '717'
+      stats:
+        min: 246
+        p50: 717
+        max: 1570
+        unique: 5
+    - name: COPRTN_ENTRPS_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '26'
+        - '4'
+        - '7'
+      stats:
+        min: 3
+        p50: 7
+        max: 26
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5982
+  rank_in_sector: 1101
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15057161-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057161.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15057161-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057161-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057161.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057161-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057161.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15057161-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057161-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057161-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057161.json
+  stats: probe/stats/15057161.json
+  data: probe/data/15057161/
+limits: 면허 발급 집계라 실제 운행 대수, 승객 수요, 개별 면허 내역은 알 수 없고, 전역 조인 키가 없어 다른 기관 데이터와 붙이려면 시군명·코드 매핑을 직접 해야 한다. 호출에는 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키(KEY)가 필요하다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15057161-01
+    - c-15057161-03
+  dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15056488 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056488 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056488'
 tier: verified
 title: 대전교통공사_휠체어리프트 정기검사결과
@@ -20,6 +21,7 @@ synonyms:
   - 교통약자 이동편의
   - 대전 지하철 리프트
   - 승강기 법정검사
+summary_user: 대전교통공사가 관리하는 역사별 휠체어리프트의 정기검사 결과를 호기 단위로 담은 소규모 CSV 파일(약 2.9KB)로, 역사명·위치·형식·길이·운행속도·제조사와 검사 만료일·검사분기·검사결과를 한 행에 기록한다. 교통약자 이동편의를 점검하는 시민단체나 분석가가 대전 도시철도 어느 역의 휠체어리프트가 언제 검사를 받았고 합격했는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 역사명을 기준으로 역 시설·승하차 데이터와 이름 매칭으로만 이어 쓴다.
 description_portal: 에스컬레이터 법정검사(정기검사) / 유효기간이 만료되는 에스컬레이터의 법정검사를 적기에 시행하여 승강기 안전관리법을 준수하고 승강기 정상운영에 만전을 기함.* 관련근거- 승강기 안전관리법 제32조(승강기의 안전검사)관리주체는 승강기에 대하여 행정안전부장관이 실기하는 안전검사를 받아야함.- 승강기 안전관리업무 수수료에 관한 고시[별표4] "승강기 안전검사 수수료"승강기 안전관리업무 수수료에 관한 고시(행정안전부고시 제 2022-64호)- 법정검사 미 수검 및 불합격 시 승강기 운행 불가
 accrual_periodicity: 연간
 team:
@@ -45,6 +47,7 @@ schema:
         unique: 12
     - name: 고유번호
       type: date
+      semantic_type: elevator_no
       null_rate: 0.0
       sample_values:
         - ' 5900_106 '
@@ -166,12 +169,23 @@ schema:
         - 합격
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 고유번호
+      reference:
+        key: elevator_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 고유번호
+    - 검사(만료일)
 cycle: default
 classification:
   subsector_name: 철도 기타 (운영·안내·유실물 등)
@@ -207,7 +221,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056488-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: elevator_no(고유번호)'
     evidence:
       - type: measured
         source: probe/stats/15056488.json
@@ -261,8 +275,6 @@ verification:
   run: probe/runs/15056488.json
   stats: probe/stats/15056488.json
   data: probe/data/15056488/
-status: active
-summary_user: 대전교통공사가 관리하는 역사별 휠체어리프트의 정기검사 결과를 호기 단위로 담은 소규모 CSV 파일(약 2.9KB)로, 역사명·위치·형식·길이·운행속도·제조사와 검사 만료일·검사분기·검사결과를 한 행에 기록한다. 교통약자 이동편의를 점검하는 시민단체나 분석가가 대전 도시철도 어느 역의 휠체어리프트가 언제 검사를 받았고 합격했는지 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 역사명을 기준으로 역 시설·승하차 데이터와 이름 매칭으로만 이어 쓴다.
 limits: 고유번호·역사명 외에 표준 코드가 없어 다른 기관 데이터와 직접 조인할 수 없고, 역사명 문자열 매핑이 필요하다. 포털 설명은 에스컬레이터 법정검사를 설명하고 있어 제목(휠체어리프트)과 맞지 않으므로 대상 설비를 실제 행 내용으로 확인해야 한다. 메타데이터상 범위는 전국·비공간으로 표기돼 있으나 내용은 대전교통공사 소관 역사에 한정된다.
 review:
   summary: draft
@@ -274,3 +286,4 @@ review:
     - c-15056488-03
     - c-15056488-04
   dropped_citations: 0
+status: active

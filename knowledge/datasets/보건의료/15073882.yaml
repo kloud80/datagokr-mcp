@@ -1,4 +1,5 @@
-# Dataset 15073882 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073882 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073882'
 tier: verified
 title: 식품의약품안전처_의료기기 포장단위정보
@@ -21,6 +22,7 @@ synonyms:
   - 의료기기 포장규격
   - 의료기기 취소취하
   - 식약처 의료기기 품목정보
+summary_user: 식약처가 허가한 의료기기 품목별 포장단위를 담은 건별 원천 데이터로, 품목일련번호·품목허가번호·품목명·허가일자·취소취하 여부와 함께 전국 범위로 제공한다. 의료기기 유통·조달 담당자나 병원 구매 담당자가 '이 허가번호 의료기기는 어떤 포장단위로 나오며 현재 허가가 유효한가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 의료기기 품목허가 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·품목명 같은 이름·번호 매핑으로만 이어 쓴다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 포장단위정보에 관한 데이터입니다.  이 공공데이터는 식품의약품안전처에서 허가된 의료기기 품목의 포장단위정보를 제공합니다. 그 외에도 사용자 편의성을 위해 의료기기품목일련번호,기관지역구분(업체 관리하는 지방청),업종,허가신고구분,의료기기품목허가번호,허가일자, 취소취하구분, 취소취하일자 등의 정보를 제공하여 사용자가 확인하고 싶은 의료기기 품목의 정보를 한눈에 파악할 수 있도록 돕고 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -66,6 +68,7 @@ schema:
   fields:
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '2011002698'
@@ -103,6 +106,7 @@ schema:
         unique: 2
     - name: MEDDEV_ITEM_NO
       type: code
+      semantic_type: meddev_permit_no
       null_rate: 0.0
       sample_values:
         - 서울 수신 11-884 호
@@ -167,12 +171,27 @@ schema:
         - 자사 포장단위
       stats:
         unique: 15
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
+    - fields:
+        - MEDDEV_ITEM_NO
+      reference:
+        key: meddev_permit_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PRMSN_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -217,7 +236,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073882-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN), meddev_permit_no(MEDDEV_ITEM_NO)'
     evidence:
       - type: measured
         source: probe/stats/15073882.json
@@ -282,8 +301,6 @@ verification:
   run: probe/runs/15073882.json
   stats: probe/stats/15073882.json
   data: probe/data/15073882/
-status: active
-summary_user: 식약처가 허가한 의료기기 품목별 포장단위를 담은 건별 원천 데이터로, 품목일련번호·품목허가번호·품목명·허가일자·취소취하 여부와 함께 전국 범위로 제공한다. 의료기기 유통·조달 담당자나 병원 구매 담당자가 '이 허가번호 의료기기는 어떤 포장단위로 나오며 현재 허가가 유효한가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 의료기기 품목허가 데이터와는 품목허가번호(MEDDEV_ITEM_NO)·품목명 같은 이름·번호 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 심평원 급여·약가 목록 등 외부 데이터와 직접 연결되지 않고 이름·번호 매칭에 의존해야 한다. 지역 단위 분석이 아닌 전국·비공간 데이터이며, 개발계정은 일 10,000회 호출로 제한된다.
 review:
   summary: draft
@@ -295,3 +312,4 @@ review:
     - c-15073882-03
     - c-15073882-04
   dropped_citations: 0
+status: active

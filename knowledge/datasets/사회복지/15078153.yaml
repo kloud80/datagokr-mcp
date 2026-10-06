@@ -1,4 +1,5 @@
-# Dataset 15078153 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15078153 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15078153'
 tier: verified
 title: 한국건강가정진흥원_아이돌보미 현황 정보 서비스
@@ -21,6 +22,7 @@ synonyms:
   - 육아도우미
   - 긴급 돌봄 인력
   - 자격증 소지 돌보미
+summary_user: 아이돌봄기관별로 기준연월(crtrYm)마다 당월 돌보미 수와 종합형 가능·자격증 소지·바로 연계 가능 돌보미 수, 누적 자격증 소지 돌보미 수를 담은 집계 API이며, 범위는 전국이다. 지자체·돌봄 정책 분석가가 "우리 지역 아이돌봄기관에 지금 바로 투입 가능한 돌보미가 몇 명이고 자격증 소지 비율은 어떤가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관명이나 같은 기관(한국건강가정진흥원)의 아이돌봄기관 번호·상위기관 번호로만 연결하며, 상위기관 번호로 기관 간 상하 관계를 묶어 볼 수 있다.
 description_portal: 아이돌보미 현황 정보 서비스를 제공하는 오픈 API형 데이터입니다.해당 개방 데이터는 아이돌봄기관명, 상위아이돌봄기관명, 당월 돌보미 수, 당월 종합형/자격증소지/바로연계가능 별 돌보미 수 등의 정보를 확인할 수 있습니다.인력의 질적 수준을 점검하고 현장의 대응 역량을 평가하는 데 활용됩니다. 자격 보유 여부와 바로 연계 가능한 인력 수치를 비교함으로써 현장 투입 가능 인력의 실효성을 판단할 수 있습니다. 또한 종합형 돌보미 비율을 통해 전문성과 업무 다양성 확보 현황도 분석할 수 있습니다. 궁극적으로 돌봄서비스 품질 향상과 긴급 돌봄 대응 체계 마련에 활용될 수 있습니다.
 team:
   dept: 경영관리부 지능정보화팀
@@ -56,6 +58,7 @@ schema:
         unique: 5
     - name: childCareInstNo
       type: string
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0421
@@ -74,6 +77,7 @@ schema:
         unique: 223
     - name: upChildCareInstNo
       type: code
+      semantic_type: child_care_inst_no
       null_rate: 0.0
       sample_values:
         - C0498
@@ -150,6 +154,17 @@ schema:
         p50: 11
         max: 106
         unique: 57
+  foreign_keys:
+    - fields:
+        - childCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
+    - fields:
+        - upChildCareInstNo
+      reference:
+        key: child_care_inst_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -199,7 +214,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15078153-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: child_care_inst_no(childCareInstNo), child_care_inst_no(upChildCareInstNo)'
     evidence:
       - type: measured
         source: probe/stats/15078153.json
@@ -253,8 +268,6 @@ verification:
   run: probe/runs/15078153.json
   stats: probe/stats/15078153.json
   data: probe/data/15078153/
-status: active
-summary_user: 아이돌봄기관별로 기준연월(crtrYm)마다 당월 돌보미 수와 종합형 가능·자격증 소지·바로 연계 가능 돌보미 수, 누적 자격증 소지 돌보미 수를 담은 집계 API이며, 범위는 전국이다. 지자체·돌봄 정책 분석가가 "우리 지역 아이돌봄기관에 지금 바로 투입 가능한 돌보미가 몇 명이고 자격증 소지 비율은 어떤가"를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관명이나 같은 기관(한국건강가정진흥원)의 아이돌봄기관 번호·상위기관 번호로만 연결하며, 상위기관 번호로 기관 간 상하 관계를 묶어 볼 수 있다.
 limits: 표준 행정구역 코드나 좌표가 없는 비공간 데이터라 지역별 집계·지도화는 기관명 매핑을 거쳐야 한다. 돌보미 개인 단위가 아닌 기관별 인원 집계이며, 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -266,3 +279,4 @@ review:
     - c-15078153-03
     - c-15078153-04
   dropped_citations: 0
+status: active

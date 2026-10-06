@@ -1,4 +1,5 @@
-# Dataset 3045188 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3045188 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3045188'
 tier: verified
 title: 법무부_체류외국인 국적 및 체류자격별 현황
@@ -22,6 +23,7 @@ synonyms:
   - 외국인 비자별 통계
   - 등록외국인 국적별
   - 출입국 통계
+summary_user: 국내 체류 외국인 수를 대륙·국적·성별 행마다 체류자격(외교·유학·비전문취업·재외동포·영주·결혼이민 등)별 열로 나눠 담은 전국 단위 집계표이며, 시군구 같은 지역 구분은 없다. 정책 담당자나 분석가가 '특정 국적 동포 중 재외동포·영주·방문취업 자격자가 각각 몇 명인가'처럼 국적과 체류자격을 교차한 규모를 확인할 때 쓴다. 실측 컬럼에 공통 조인 키가 없어, 다른 출입국·체류 통계와는 국적명·체류자격 이름을 맞춰서만 이어 쓴다.
 description_portal: 국내체류 외국국적동포에 대한 정부정책수립의 기초자료로 활용할 수 있으며, 동포에 대한 영주자격 부여 등 외국인정책 수립의 기초자료로 제공(국내 체류 외국인의 국적별, 체류자격별 등 체류현황)https://www.immigration.go.kr/immigration/1570/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjglMkY1OTY0NjQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2위 통계연보를 통해서도 매년 통계 제공
 applicable_legislation:
   - law: 출입국관리법
@@ -50,6 +52,7 @@ schema:
         unique: 7
     - name: 국적
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 미국
@@ -522,6 +525,12 @@ schema:
         p50: 1
         max: 40795
         unique: 82
+  foreign_keys:
+    - fields:
+        - 국적
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -565,7 +574,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3045188-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적)'
     evidence:
       - type: measured
         source: probe/stats/3045188.json
@@ -640,8 +649,6 @@ verification:
   run: probe/runs/3045188.json
   stats: probe/stats/3045188.json
   data: probe/data/3045188/
-status: active
-summary_user: 국내 체류 외국인 수를 대륙·국적·성별 행마다 체류자격(외교·유학·비전문취업·재외동포·영주·결혼이민 등)별 열로 나눠 담은 전국 단위 집계표이며, 시군구 같은 지역 구분은 없다. 정책 담당자나 분석가가 '특정 국적 동포 중 재외동포·영주·방문취업 자격자가 각각 몇 명인가'처럼 국적과 체류자격을 교차한 규모를 확인할 때 쓴다. 실측 컬럼에 공통 조인 키가 없어, 다른 출입국·체류 통계와는 국적명·체류자격 이름을 맞춰서만 이어 쓴다.
 limits: 전국·비공간 집계라 시군구나 월 단위의 지역별 외국인 거주 분석에는 바로 쓰지 못한다. 전역 조인 키가 없어 국적·체류자격 이름 매핑이 필요하다.
 review:
   summary: draft
@@ -654,3 +661,4 @@ review:
     - c-3045188-04
     - c-3045188-06
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15083335 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083335 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083335'
 tier: verified
 title: 한국수자원공사_수문현황정보
@@ -24,6 +25,7 @@ synonyms:
   - K-water 댐 운영
   - 강우량 누가
   - 다목적댐 저수량
+summary_user: K-water가 관리하는 댐·보·하굿둑 등 61개 지점의 저수위·저수량·저수율·유입량·총방류량·강수량을 관측일자(관측년월일)와 댐별로 담은 관측 시계열 파일이며, 포털 설명상 10분·시간·일 단위로 2025년 기준 최근 1만 건을 제공하고 전년·예년 대비 값과 발전·여수로 방류량, 취수량도 함께 담는다. 수자원 분석가나 지자체 담당자가 '이번 가뭄에 우리 지역 댐 저수율이 예년보다 얼마나 낮은가'나 '집중호우 때 댐 유입량과 방류량이 어떻게 움직였나'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 댐코드·댐명을 매개로 같은 기관의 다른 댐·수문 자료나 이름 매핑을 거친 하천·유역 자료와 이어 쓴다.
 description_portal: 'ㅁ 개     요 :  K-water에서 관리중인 댐 및 보의 수문정보를 제공합니다.ㅁ 제공항목 : 댐수위[EL.m], 강우량[mm], 유입량[㎥/sec], 총방류량[㎥/sec], 저수량[백만㎥/sec], 저수율[%]ㅁ 제공지점 : 61개소(다목적댐 21, 용수전용댐 14, 낙동강하굿둑, 홍수조절용댐 3, 조정지 6, 보 16)ㅁ 제공데이터 : 2025년 기준으로 최근 1만 개의 데이터              * 지점별로 보유기간 상이함ㅁ 제공주기 : 10분별, 시간별, 일별* 해당 자료는 다양한 기관의 연구와 정책 수립, 산업 발전, 시민 생활 개선 등 여러 분야에서 활용되어, 이용자의 편익 증진과 신산업 창출에 기여합니다.'
 accrual_periodicity: 연간
 team:
@@ -48,6 +50,7 @@ schema:
         unique: 372
     - name: 댐코드
       type: number
+      semantic_type: dam_cd
       null_rate: 0.0
       sample_values:
         - '1001210'
@@ -355,12 +358,22 @@ schema:
         p50: 0
         max: 337.554
         unique: 1277
+  foreign_keys:
+    - fields:
+        - 댐코드
+      reference:
+        key: dam_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 관측년월일
 cycle: default
 classification:
   subsector_name: 하천 시설·공간 (하천 목록·구역·제방·수문·배수펌프장·유역·점용)
@@ -397,7 +410,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083335-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: dam_cd(댐코드)'
     evidence:
       - type: measured
         source: probe/stats/15083335.json
@@ -489,8 +502,6 @@ verification:
   run: probe/runs/15083335.json
   stats: probe/stats/15083335.json
   data: probe/data/15083335/
-status: active
-summary_user: K-water가 관리하는 댐·보·하굿둑 등 61개 지점의 저수위·저수량·저수율·유입량·총방류량·강수량을 관측일자(관측년월일)와 댐별로 담은 관측 시계열 파일이며, 포털 설명상 10분·시간·일 단위로 2025년 기준 최근 1만 건을 제공하고 전년·예년 대비 값과 발전·여수로 방류량, 취수량도 함께 담는다. 수자원 분석가나 지자체 담당자가 '이번 가뭄에 우리 지역 댐 저수율이 예년보다 얼마나 낮은가'나 '집중호우 때 댐 유입량과 방류량이 어떻게 움직였나'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 댐코드·댐명을 매개로 같은 기관의 다른 댐·수문 자료나 이름 매핑을 거친 하천·유역 자료와 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 하천코드나 행정구역과 바로 결합하지 못하고, 댐명·댐코드 기준 이름 매핑이 필요하다. 행정단위가 없는 비공간 자료라 지도 위치 분석에는 별도의 지점 좌표 자료가 있어야 한다. 파일 용량이 약 51MB인 zip이다.
 review:
   summary: draft
@@ -502,3 +513,4 @@ review:
     - c-15083335-03
     - c-15083335-04
   dropped_citations: 0
+status: active

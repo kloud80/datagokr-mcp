@@ -1,4 +1,5 @@
-# Dataset 3034926 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3034926 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3034926'
 tier: verified
 title: 예금보험공사_채권발행 현황_예금보험기금특별계정채권
@@ -20,6 +21,7 @@ synonyms:
   - 상환잔액
   - 차환발행
   - 공공기관 채권
+summary_user: 예금보험공사가 부보금융회사 지원자금 부족재원 조달이나 만기 채권 차환을 위해 발행한 예금보험기금특별계정채권(예특채)을 채권번호 단위로 담으며, 채권 종류·기금명·발행일·만기일·이자율·발행금액·상환잔액·원금상환 구분을 포함한다. 금융 분석가나 재정 연구자가 '예특채가 언제 얼마나 발행됐고 아직 상환되지 않은 잔액은 얼마인가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 채권번호·기금명 같은 이름 매핑이나 같은 기관(예금보험공사)의 다른 채권발행 현황 데이터와 맞춰서만 이어 쓴다.
 description_portal: (부보금융회사 종합정보)지원자금 마련과 관련하여 부족재원을 조달하기 위해 발행하거나, 채권 만기도래 금액 중 단기 상환이 불가능한 자금의 조달을 위해 차환발행 한 예특채 현황 정보
 team:
   dept: 개인정보보호관리체계강화TF
@@ -62,6 +64,7 @@ schema:
         unique: 1
     - name: bndNo
       type: number
+      semantic_type: kdic_bond_no
       null_rate: 0.0
       sample_values:
         - '2011001'
@@ -146,6 +149,12 @@ schema:
         - 만기
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - bndNo
+      reference:
+        key: kdic_bond_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -196,7 +205,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3034926-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kdic_bond_no(bndNo)'
     evidence:
       - type: measured
         source: probe/stats/3034926.json
@@ -261,8 +270,6 @@ verification:
   run: probe/runs/3034926.json
   stats: probe/stats/3034926.json
   data: probe/data/3034926/
-status: active
-summary_user: 예금보험공사가 부보금융회사 지원자금 부족재원 조달이나 만기 채권 차환을 위해 발행한 예금보험기금특별계정채권(예특채)을 채권번호 단위로 담으며, 채권 종류·기금명·발행일·만기일·이자율·발행금액·상환잔액·원금상환 구분을 포함한다. 금융 분석가나 재정 연구자가 '예특채가 언제 얼마나 발행됐고 아직 상환되지 않은 잔액은 얼마인가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 채권번호·기금명 같은 이름 매핑이나 같은 기관(예금보험공사)의 다른 채권발행 현황 데이터와 맞춰서만 이어 쓴다.
 limits: ISIN 같은 표준 종목코드가 확인되지 않아 증권 시장 시세·보유 데이터와 바로 조인되지 않는다. 범위는 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다.
 review:
   summary: draft
@@ -274,3 +281,4 @@ review:
     - c-3034926-04
     - c-3034926-06
   dropped_citations: 0
+status: active

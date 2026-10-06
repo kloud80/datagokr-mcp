@@ -1,0 +1,262 @@
+# Dataset 15063974 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15063974'
+tier: verified
+title: 한국마사회_발매창구정보
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15063974/openapi.do
+synonyms:
+  - 판매
+  - 발매
+  - 매출액
+  - 발매건수
+  - 환급금액
+  - 마권 발매창구
+  - 경마 발매소
+  - 장외발매소
+  - 렛츠런파크
+  - 경마장 매장
+  - 발매기
+  - 마사회 창구
+description_portal: 한국마사회 서울, 제주, 부산경남, 영천 경마장에서 시행하는 경주에 대해 발매창구정보를 제공합니다.제공정보는 발매창구번호(betwindowNum), 경마장번호(racecourseName), 발매소명(betplaceName), 매장명(divisionName), 발매기유형명(winTypeName), 발매장비모델번호(betdeviceModelNum), 매장구분명(divisionTypeName) 자료입니다.) - 요청메세지에 경마장번호(race-01:지사 포함 서울 02:제주 03:부산경남 04:영천), 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다.※ 영천경마 시행 이후 요청메세지 경마장번호에 04를 입력시 영천경마 자료를 조회할 수 있습니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /Betwindow_1
+    name: 발매창구정보
+    endpoint: https://apis.data.go.kr/B551015/API209_1/Betwindow_1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: race
+        required: false
+        example: '03'
+        desc: 경마장(01:서울 02:제주 03:부경)
+      - name: _type
+        required: false
+        example: xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: betdeviceModelNum
+      title: 발매장비모델번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '141'
+        - '027'
+        - '026'
+      stats:
+        unique: 15
+    - name: betplaceName
+      title: 발매소명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부경본장계좌
+        - 부경3,4층
+        - 부경1층
+      stats:
+        unique: 7
+    - name: betwindowNum
+      title: 발매창구번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '051527'
+        - '775011'
+        - '775012'
+      stats:
+        min: 50101
+        p50: 55539.5
+        max: 988426
+        unique: 1000
+    - name: divisionName
+      title: 매장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부경모바일
+        - 부경1A2
+        - 부경2층계좌
+      stats:
+        unique: 47
+    - name: divisionTypeName
+      title: 매장구분명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MOBILE
+        - 현금투표유인매장
+        - 계좌투표무인매장
+      stats:
+        unique: 4
+    - name: racecourseName
+      title: 경마장명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 부산경남
+      stats:
+        unique: 1
+    - name: winTypeName
+      title: 발매기유형명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MOBILE단말
+        - 현금자동발매기
+        - 현금유인발매기
+      stats:
+        unique: 10
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6207
+  brm: 농축수산 - 임업·산촌
+  sector_rule: forestry-misfiled-agri
+  why: 기관 분석 핵심 원장 — 한국마사회
+claims:
+  - id: c-15063974-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15063974.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15063974.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15063974-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063974-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15063974.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063974-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15063974.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063974-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15063974-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15063974-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15063974.json
+  stats: probe/stats/15063974.json
+  data: probe/data/15063974/
+status: active
+summary_user: 한국마사회 서울(지사 포함)·제주·부산경남·영천 경마장 경주의 마권 발매창구를 창구 단위로 담으며, 창구번호·발매소명·매장명·매장구분·발매기 유형·장비 모델번호를 제공한다. 경마 이용자나 분석가가 특정 경마장·발매소에 어떤 매장과 발매기 유형의 창구가 있는지 확인하는 데 쓴다. 전역 조인 키는 없어 경마장명·발매소명 같은 이름 매핑이나 같은 기관(한국마사회)의 다른 데이터와만 이어 쓴다.
+limits: 실측 컬럼에 전역 조인 키가 없어 다른 기관 데이터와 코드로 바로 연결할 수 없다. 범위는 전국·비공간이라 좌표나 행정구역 단위 분석에는 따로 주소 매핑이 필요하다. 개발계정은 하루 3,000회 호출로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15063974-01
+    - c-15063974-03
+    - c-15063974-04
+  dropped_citations: 0

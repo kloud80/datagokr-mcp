@@ -1,4 +1,3 @@
-# Dataset 15112619 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15112619'
 tier: verified
 title: 해양수산부_해수유동 3분 서비스
@@ -23,6 +22,7 @@ synonyms:
   - 해수 흐름
   - 격자 해류 예측
   - 바다 물흐름
+summary_user: 해양수산부가 3분 간격(3단계) 격자별로 분석한 해수 유동 정보로, 격자번호·분석일자·분석시간마다 위도·경도와 유향·유속을 담으며 범위는 전국 해역이다. 연구기관·관계기관이나 해양 사고 대응 담당자가 '특정 해역 격자에서 그 시각 해류가 어느 방향으로 얼마나 빠르게 흘렀나'를 확인해 해수 유동 모델링이나 연안 관리 분석에 쓴다. 실측 컬럼에 전역 조인 키는 없어, 격자의 위도·경도 좌표로 다른 해양 관측 자료와 공간적으로 맞추거나 격자번호(gridCd)를 같은 기관 자료와 대조해 이어 쓴다.
 description_portal: 이 데이터는 해양수산부에서 해수의 유동과 관련된 정보를 3분 간격(3단계)의 격자별로 제공하기 위해 수집한 데이터입니다.  격자번호, 분석일자, 분석시간 등 파라미터 입력을 통해 데이터를 조회할 수 있으며, 본 데이터의 주요 내용은 격자코드, 분석시간, 유향, 유속 등으로 구성되어 있습니다.   본 데이터는 연구기관이나 관계기관에서 해양 환경 변화 분석, 해수 유동성 모델링, 연안 관리 정책 수립, 해양 사고 대응 계획 수립 등 해수 유동 정보에 기반한 분석 및 정책 수립 등 활동을 위한 기초 자료로 활용될 수 있습니다.
 team:
   dept: 해양공간정책과
@@ -77,6 +77,7 @@ schema:
     - name: gridCd
       title: 격자번호
       type: code
+      semantic_type: ocean_model_grid_cd
       null_rate: 0.0
       sample_values:
         - GR3_G1E23_P
@@ -159,6 +160,12 @@ schema:
         p50: 20220103140332
         max: 20220103140332
         unique: 1
+  foreign_keys:
+    - fields:
+        - gridCd
+      reference:
+        key: ocean_model_grid_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -208,7 +215,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15112619-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ocean_model_grid_cd(gridCd)'
     evidence:
       - type: measured
         source: probe/stats/15112619.json
@@ -273,8 +280,6 @@ verification:
   run: probe/runs/15112619.json
   stats: probe/stats/15112619.json
   data: probe/data/15112619/
-status: active
-summary_user: 해양수산부가 3분 간격(3단계) 격자별로 분석한 해수 유동 정보로, 격자번호·분석일자·분석시간마다 위도·경도와 유향·유속을 담으며 범위는 전국 해역이다. 연구기관·관계기관이나 해양 사고 대응 담당자가 '특정 해역 격자에서 그 시각 해류가 어느 방향으로 얼마나 빠르게 흘렀나'를 확인해 해수 유동 모델링이나 연안 관리 분석에 쓴다. 실측 컬럼에 전역 조인 키는 없어, 격자의 위도·경도 좌표로 다른 해양 관측 자료와 공간적으로 맞추거나 격자번호(gridCd)를 같은 기관 자료와 대조해 이어 쓴다.
 limits: 다른 데이터셋과 바로 연결되는 공통 조인 키가 없어 좌표나 이름·코드 매핑으로만 연결된다. 개발계정은 하루 50회 호출로 제한되고, 격자번호·분석일자·분석시간을 지정해 조회해야 한다.
 review:
   summary: draft
@@ -286,3 +291,10 @@ review:
     - c-15112619-03
     - c-15112619-04
   dropped_citations: 0
+status: active
+grain:
+  space: point
+  space_fields:
+    - lo
+    - la
+  space_via: coord

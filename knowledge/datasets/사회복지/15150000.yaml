@@ -1,4 +1,5 @@
-# Dataset 15150000 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15150000 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150000'
 tier: verified
 title: 성평등가족부_청소년활동 자원봉사 터전 봉사활동 운영 정보
@@ -21,6 +22,7 @@ synonyms:
   - 청소년 봉사 프로그램
   - 봉사활동 기록
   - 청소년활동 봉사
+summary_user: 청소년 자원봉사 터전에서 운영된 봉사활동을 운영번호 단위의 건별 기록으로 담으며, 단체번호·활동인원수·장소·프로그램 내용·활동 내용·자원봉사시스템 활용 여부가 들어 있고 범위는 전국이다. 청소년 활동 담당자나 분석가가 "자원봉사 터전들은 어떤 프로그램을 몇 명 규모로 운영하는가"를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 단체번호(grpNo)를 같은 기관의 터전·단체 정보와 맞추거나 이름으로 매핑하는 방식으로만 연결된다.
 description_portal: 성평등가족부 청소년활동 자원봉사 터전 봉사활동 운영 정보는 청소년 자원봉사 터전에서 진행되는 봉사활동의 구체적 운영 내역을 체계적으로 기록하고 관리하기 위해 제공되는 자료입니다. 활동명, 운영 일자, 참여자 명단, 지도자 정보, 활동 장소, 진행 상태 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 봉사활동 계획 관리, 참여자 안내, 안전 점검, 활동 기록 관리, 프로그램 평가, 정책 분석, 교육 지도, 프로그램 개선 등 다양한 목적으로 활용할 수 있습니다. 또한 봉사활동 운영 정보는 터전 활동 기록 관리와 프로그램 신뢰성 확보에도 중요한 기초 자료입니다.
 team:
   dept: 정보통계담당관실
@@ -63,6 +65,7 @@ schema:
     - name: grpNo
       title: 단체번호
       type: number
+      semantic_type: vltr_grp_no
       null_rate: 0.0
       sample_values:
         - '56617'
@@ -151,6 +154,12 @@ schema:
         p50: 7030262.5
         max: 7820430
         unique: 22
+  foreign_keys:
+    - fields:
+        - grpNo
+      reference:
+        key: vltr_grp_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -201,7 +210,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15150000-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vltr_grp_no(grpNo)'
     evidence:
       - type: measured
         source: probe/stats/15150000.json
@@ -255,8 +264,6 @@ verification:
   run: probe/runs/15150000.json
   stats: probe/stats/15150000.json
   data: probe/data/15150000/
-status: active
-summary_user: 청소년 자원봉사 터전에서 운영된 봉사활동을 운영번호 단위의 건별 기록으로 담으며, 단체번호·활동인원수·장소·프로그램 내용·활동 내용·자원봉사시스템 활용 여부가 들어 있고 범위는 전국이다. 청소년 활동 담당자나 분석가가 "자원봉사 터전들은 어떤 프로그램을 몇 명 규모로 운영하는가"를 살펴보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으며, 단체번호(grpNo)를 같은 기관의 터전·단체 정보와 맞추거나 이름으로 매핑하는 방식으로만 연결된다.
 limits: 다른 기관 데이터와 바로 붙일 공통 코드가 없어 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 행정구역 코드나 좌표가 없는 비공간 자료여서 시군구별 집계나 지도화에는 바로 쓰기 어렵다. 갱신 방식은 이벤트 때 생성된 뒤 바뀌지 않는 형태로 분류되어 있다.
 review:
   summary: draft
@@ -268,3 +275,4 @@ review:
     - c-15150000-04
     - c-15150000-02
   dropped_citations: 0
+status: active

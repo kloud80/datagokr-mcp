@@ -1,4 +1,5 @@
-# Dataset 15075618 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15075618 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15075618'
 tier: verified
 title: 경기도 수원시_지역화폐 결제 정보
@@ -26,6 +27,7 @@ synonyms:
   - 업종별 결제금액
   - 연령대별 소비 패턴
   - 골목상권 매출
+summary_user: 경기도 수원시 지역화폐 결제 내역을 기준년월별로 시군구·읍면동, 업종, 성별, 연령대에 따라 묶은 결제건수와 결제금액 집계 파일로, 행정단위는 읍면동까지 내려간다. 수원시 정책 담당자나 상권 분석가가 '어느 동네, 어느 업종에서 지역화폐가 많이 쓰이고 어떤 연령·성별이 주로 쓰는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키(행정동 코드 등)가 없어 다른 데이터와는 시군구명·읍면동명·업종명 같은 이름을 매핑해서만 이어 쓸 수 있다.
 description_portal: 경기도 수원시 지역화폐 결제 정보로 지역별(시군구, 읍면동), 업종별, 성별, 연령대별 지역화폐 결제 정보(건수, 금액)를 포함합니다. 지역화폐 결제 정보를 통해서 시민이 지역화폐 정책이 실제로 효과있게 사용하는지 여부를 파악하고, 어느 업종에서 실제로 매출 증대 효과가 있는지 데이터 기반으로 파악하는데 활용할 수 있습니다. 또한 지역화폐 발행, 사용규모, 업종별 사용현황 등을 확인해 지역경제 활성화 효과를 검증할 수 있습니다. 결제 데이터로 동네 상권의 소비 패턴을 볼 수 있어, 소상공인 스타트업에 활용도 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -131,6 +133,15 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - 읍면동명
+  space_via: name
+  time: day
+  time_fields:
+    - 기준년월
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 미분류 (재구성 후 잔여)
@@ -232,8 +243,6 @@ verification:
   run: probe/runs/15075618.json
   stats: probe/stats/15075618.json
   data: probe/data/15075618/
-status: active
-summary_user: 경기도 수원시 지역화폐 결제 내역을 기준년월별로 시군구·읍면동, 업종, 성별, 연령대에 따라 묶은 결제건수와 결제금액 집계 파일로, 행정단위는 읍면동까지 내려간다. 수원시 정책 담당자나 상권 분석가가 '어느 동네, 어느 업종에서 지역화폐가 많이 쓰이고 어떤 연령·성별이 주로 쓰는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키(행정동 코드 등)가 없어 다른 데이터와는 시군구명·읍면동명·업종명 같은 이름을 매핑해서만 이어 쓸 수 있다.
 limits: 행정구역 코드가 없어 다른 통계와 붙이려면 읍면동명·업종명을 직접 맞춰야 하며, 명칭 변경이나 표기 차이에 주의해야 한다. 건별 결제가 아닌 집계값이므로 개별 가맹점이나 개인 단위 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -245,3 +254,4 @@ review:
     - c-15075618-03
     - c-15075618-04
   dropped_citations: 0
+status: active

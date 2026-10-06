@@ -1,4 +1,5 @@
-# Dataset 15125485 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125485 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125485'
 tier: verified
 title: 공정거래위원회_가맹정보_브랜드 광고판촉 지출 정보 제공 서비스
@@ -19,6 +20,7 @@ synonyms:
   - 정보공개서 광고판촉
   - 프랜차이즈 마케팅 비용
   - 가맹사업 광고판촉 지출
+summary_user: 가맹 브랜드별로 기준년도·회계년도마다 광고·판촉 구분과 방법, 기간, 그리고 합계·가맹본부·가맹점 부담 비용 범위를 담은 전국 단위 정보공개 데이터다. 창업 예정자가 "이 브랜드는 광고판촉비를 가맹점에 얼마나 떠넘기는가"를 확인하거나, 분석가가 브랜드 간 본부·가맹점 비용 분담 구조를 비교하는 데 쓴다. 실측상 전역 조인 키는 없고, 같은 기관의 가맹정보 서비스와 브랜드관리번호(brandMnno)·가맹본부관리번호 같은 기관 내부 코드로 이어 쓴다.
 description_portal: 브랜드 광고판촉 지출 정보에 대한 기준년도, 브랜드관리번호를 이용하여 광고판촉구분명, 광고판촉방법구분명 등 정보 조회 서비스를 제공합니다.
 team:
   dept: 정보화담당관실
@@ -80,6 +82,7 @@ schema:
     - name: brandMnno
       title: 브랜드관리번호
       type: code
+      semantic_type: franchise_brand_mnno
       null_rate: 0.0
       sample_values:
         - BRD_20080100007
@@ -88,6 +91,7 @@ schema:
     - name: jnghdqrtrsMnno
       title: 가맹본부관리번호
       type: code
+      semantic_type: franchise_hq_mnno
       null_rate: 0.0
       sample_values:
         - JNG_000002
@@ -150,12 +154,27 @@ schema:
         - 85000~94000
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - brandMnno
+      reference:
+        key: franchise_brand_mnno
+      evidence: measured
+    - fields:
+        - jnghdqrtrsMnno
+      reference:
+        key: franchise_hq_mnno
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - jnghdqrtrsCtScopeVal
 cycle: default
 classification:
   subsector_name: 가맹사업
@@ -200,7 +219,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125485-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: franchise_brand_mnno(brandMnno), franchise_hq_mnno(jnghdqrtrsMnno)'
     evidence:
       - type: measured
         source: probe/stats/15125485.json
@@ -265,8 +284,6 @@ verification:
   run: probe/runs/15125485.json
   stats: probe/stats/15125485.json
   data: probe/data/15125485/
-status: active
-summary_user: 가맹 브랜드별로 기준년도·회계년도마다 광고·판촉 구분과 방법, 기간, 그리고 합계·가맹본부·가맹점 부담 비용 범위를 담은 전국 단위 정보공개 데이터다. 창업 예정자가 "이 브랜드는 광고판촉비를 가맹점에 얼마나 떠넘기는가"를 확인하거나, 분석가가 브랜드 간 본부·가맹점 비용 분담 구조를 비교하는 데 쓴다. 실측상 전역 조인 키는 없고, 같은 기관의 가맹정보 서비스와 브랜드관리번호(brandMnno)·가맹본부관리번호 같은 기관 내부 코드로 이어 쓴다.
 limits: 비용은 정확한 금액이 아니라 범위값(명세상 편차 5%)으로 제공돼 정밀한 금액 비교에는 맞지 않는다. 사업자등록번호 같은 전역 키가 실측 컬럼에 없어 다른 기관 데이터와는 이름 매핑이나 공정위 내부 코드로만 연결된다. 기준년도와 브랜드관리번호를 넣어 조회하는 방식이며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -279,3 +296,4 @@ review:
     - c-15125485-04
     - c-15125485-07
   dropped_citations: 0
+status: active

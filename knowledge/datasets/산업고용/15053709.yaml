@@ -1,4 +1,5 @@
-# Dataset 15053709 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15053709 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15053709'
 tier: verified
 title: 한국동서발전(주)_연료소비현황
@@ -22,6 +23,7 @@ synonyms:
   - 발전연료 현황
   - 동서발전 연료
   - 에너지 믹스
+summary_user: 한국동서발전이 운영하는 발전소별로 유연탄·국내 무연탄·수입 무연탄·실내등유 소비량을 연월 단위로 정리한 집계 파일(CSV, 약 8KB)입니다. 연구자나 에너지 분석가가 "동서발전 각 발전소의 수입 무연탄 사용 비중은 해마다 어떻게 변했나" 같은 연료 믹스·해외 의존도 추이를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 발전소 원장이나 배출 측정 데이터와는 발전소명을 이름으로 맞추거나 같은 기관 자료끼리만 이어 쓴다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소의 연도별 연료 소비 현황 정보는 발전소별로 사용된 주요 연료의 소비량을 연도 및 월 단위로 정리한 데이터입니다.이 데이터는 연월, 발전소명, 유연탄, 국내 무연탄, 수입 무연탄, 실내등유 등의 항목으로 구성되어 있으며, 발전소별 연료 사용 추이를 확인할 수 있도록 설계되었습니다.각 연료 유형에 대한 소비량이 정량적으로 제공되므로, 발전소의 연료 수급 구조, 에너지 믹스 변화, 해외 연료 의존도 등을 파악하는 데 유용한 기초자료로 활용됩니다.학계 및 연구기관에서는 이 데이터를 통해 발전소별 연료 소비 패턴 비교, 연료별 사용 비중의 변화 분석, 화석연료 사용량과 온실가스 배출량 간의 상관관계 분석 등이 가능하며,더 나아가 탄소중립 정책 대응, 친환경 연료 전환 가능성 평가, 에너지 안보 관점에서의 국내외 연료 수급 전략 연구 등 다양한 분야에서 실증적 분석 자료로 활용할 수 있습니다.이 데이터는 에너지 정책 수립, 발전연료 최적화, 지속가능한 발전 전략 수립 등에 중요한 참고자료가 됩니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +46,7 @@ schema:
         unique: 90
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진화력
@@ -99,12 +102,22 @@ schema:
         p50: 317335.5
         max: 6202941
         unique: 177
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - 연월
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -141,7 +154,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15053709-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15053709.json
@@ -206,8 +219,6 @@ verification:
   run: probe/runs/15053709.json
   stats: probe/stats/15053709.json
   data: probe/data/15053709/
-status: active
-summary_user: 한국동서발전이 운영하는 발전소별로 유연탄·국내 무연탄·수입 무연탄·실내등유 소비량을 연월 단위로 정리한 집계 파일(CSV, 약 8KB)입니다. 연구자나 에너지 분석가가 "동서발전 각 발전소의 수입 무연탄 사용 비중은 해마다 어떻게 변했나" 같은 연료 믹스·해외 의존도 추이를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 발전소 원장이나 배출 측정 데이터와는 발전소명을 이름으로 맞추거나 같은 기관 자료끼리만 이어 쓴다.
 limits: 발전소 코드 같은 공통 키가 없어 외부 데이터와 연결할 때는 발전소명 표기를 직접 대조해야 한다. 지역을 나누지 않은 비공간 자료이고 월 단위 집계라 실시간·일별 전력 수급 판단에는 쓰지 않는다.
 review:
   summary: draft
@@ -219,3 +230,4 @@ review:
     - c-15053709-03
     - c-15053709-04
   dropped_citations: 0
+status: active

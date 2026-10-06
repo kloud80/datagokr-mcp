@@ -1,0 +1,226 @@
+# Dataset 15120513 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15120513'
+tier: verified
+title: 경기도_호선별 정체구간비율
+sector: 교통물류/도로/road-other
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15120513/fileData.do
+synonyms:
+  - 도로정체
+  - 차량정체
+  - 교통통행
+  - 도로혼잡
+  - 교통정체
+  - 교통통계
+  - 도로 혼잡도
+  - 노선별 정체율
+  - 교통 정체 비율
+  - 경기도 도로 정체
+  - 혼잡구간 비율
+  - 통행속도 정체기준
+summary_user: 경기도 내 도로 호선별 정체구간 비율(%)을 연도별로 담은 집계 자료로, 도로종류(고속국도·일반국도·국가지원지방도·시군도 등)와 호선명·호선코드별로 한 행씩 기록한다. 교통 분석가나 도로 정책 담당자가 '경기도에서 정체 비중이 가장 높은 노선은 어디이고 해마다 나아지고 있는가'를 따질 때 쓴다(정체 기준은 고속도로 통행속도 40km/h 미만, 그 외 도로 20km/h 미만). 전역 조인 키는 없어 다른 도로 데이터와는 호선코드(route_cd)·도로종류코드나 호선명을 이름·코드로 맞춰 연결해야 한다.
+description_portal: '이 데이터는 경기도 내 각 도로 호선별 정체구간 비율을 연도별로 기록한 자료로, 도로종류(고속국도, 일반국도, 국가지원지방도, 시군도 등), 호선명, 호선코드, 정체구간비율(%) 등의 항목으로 구성됩니다. 특정 노선에서 발생하는 정체 구간의 비중을 수치로 표현함으로써 도로별 혼잡도를 정량적으로 비교할 수 있으며, 도로 효율성 분석과 교통 개선 정책 수립에 활용됩니다. 연도별 정체 비율의 추이를 통해 교통상황의 변화와 인프라 개선 효과를 평가할 수 있으며, 교통체계 개선을 위한 우선순위 설정, 정체 해소 사업의 타당성 검토 등 실효적인 도로 정책 설계에 기초 자료로 사용될 수 있습니다.* 고속도로 정체기준 : 통행속도 40km/h 미만* 고속도로 이외 정체기준 : 통행속도 20km/h 미만'
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2022'
+        - '2023'
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2022
+        max: 2023
+        unique: 3
+    - name: road_kind
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반국도
+        - 고속국도
+        - 시군도
+      stats:
+        unique: 4
+    - name: road_kind_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2'
+        - '1'
+        - '5'
+      stats:
+        min: 1
+        p50: 2
+        max: 5
+        unique: 4
+    - name: route_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수서분당
+        - 동탄기흥로
+        - 국도1호선(북부)
+      stats:
+        unique: 50
+    - name: route_cd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5040'
+        - '5070'
+        - '2020'
+      stats:
+        min: 1010
+        p50: 2060
+        max: 5100
+        unique: 48
+    - name: all_section_rt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '2.0'
+        - '6.3'
+      stats:
+        min: 0
+        p50: 1.45
+        max: 30.1
+        unique: 48
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  category:
+    - ksic
+  category_fields:
+    - road_kind_cd
+cycle: default
+classification:
+  subsector_name: 도로 기타
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.3398
+  rank_in_sector: 4359
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15120513-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15120513.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15120513-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120513-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15120513.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120513-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15120513.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15120513-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15120513-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15120513.json
+  stats: probe/stats/15120513.json
+  data: probe/data/15120513/
+limits: 외부 사이트 data.gg.go.kr의 별도 인증키(KEY)가 필요하며 포털 활용신청과는 별개다. 시도 단위의 비공간 자료라 구간 위치나 시군별 정체 현황은 알 수 없고, 다른 데이터와는 공통 키 없이 이름·코드 매핑으로만 이어진다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15120513-01
+    - c-15120513-03
+    - c-15120513-04
+  dropped_citations: 0
+status: active

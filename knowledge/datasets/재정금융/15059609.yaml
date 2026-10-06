@@ -87,6 +87,7 @@ schema:
     - name: issuCmpyKsdCustNo
       title: 한국예탁결제원에서 부여한 전자단기사채(전자등록기관(한국예탁결제원)을 통하여 발행․유통하는 단기 회사채)의 발행회사의 번호
       type: number
+      semantic_type: ksd_cust_no
       null_rate: 0.0
       sample_values:
         - '6986'
@@ -293,6 +294,11 @@ schema:
         unique: 30
   foreign_keys:
     - fields:
+        - issuCmpyKsdCustNo
+      reference:
+        key: ksd_cust_no
+      evidence: measured
+    - fields:
         - crno
       reference:
         key: corp_rgst_no
@@ -301,6 +307,10 @@ coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2010-01-01 ~ 9999-12-31
+grain:
+  time: month
+  time_fields:
+    - basDt
 cycle: default
 classification:
   subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
@@ -345,7 +355,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15059609-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: ksd_cust_no(issuCmpyKsdCustNo), corp_rgst_no(crno)'
     evidence:
       - type: measured
         source: probe/stats/15059609.json

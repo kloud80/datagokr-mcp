@@ -1,4 +1,5 @@
-# Dataset 15118462 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15118462 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15118462'
 tier: verified
 title: 국토교통부_최근 5년간 완료된 지적재조사 사업지구 필지의  공유지 연명부
@@ -22,6 +23,7 @@ synonyms:
   - 공동소유 필지
   - 소유권 변동 이력
   - PNU 공유지분
+summary_user: 최근 5년간 지적재조사 사업이 끝난 지구에서 소유자가 여럿인 공유지 필지의 공유자별 지분·소유권 변동 원인·변동 일자를 공유자 한 명당 한 행으로 담은 전국 단위 CSV 파일(약 23MB)이다. 지적재조사 완료 지구에서 공유 필지가 어느 지역에 얼마나 몰려 있고 필지당 공유자가 몇 명인지 파악하려는 지자체 담당자나 연구자가 쓴다. 필지고유번호(PNU)를 키로 토지대장·연속지적도 같은 필지 단위 데이터와 이어 쓰고, 시도·시군구 코드로 지역별 집계에도 쓴다.
 description_portal: '지적재조사 사업이 완료된 지구 중, 복수의 소유자가 존재하는 공유지에 대한 상세 정보를 담은 자료입니다. 각 필지에 대한 소유자의 지분, 변동 원인, 변동 일자 등이 포함되어 있어 공유관계 현황을 확인할 수 있습니다.1. 형식: CSV2. 내용 요약■ 시도코드: 사업지구가 속한 광역지자체 코드 (예: 11000 = 서울특별시)■ 시도명: 광역지자체 이름■ 시군구코드: 기초자치단체 코드■ 시군구명: 기초자치단체 이름■ 사업지구일련번호: 고유 식별 번호■ 사업지구명: 지적재조사가 완료된 지구 이름■ 필지고유번호: 공유지 필지의 고유 번호■ 공유순번: 동일 필지 내 소유자 순번■ 지분: 해당 공유자의 소유 지분 (예: 1/2, 1/3 등)■ 변동원인코드: 소유권 변동의 사유를 나타내는 코드■ 변동원인명: 변동 사유의 명칭 (예: 소유권이전)■ 변동일자: 소유권 변동이 발생한 날짜3. 활용 예제■ 공유지 필지에 대한 지분 구조 분석 및 소유자 수 파악■ 소유권 변동 이력 기반의 소유자 변경 추이 연구■ 지역별 공유 필지 수에 따른 관리 정책 수립■ 공간정보 시스템(GIS)과 연계하여 공유지 위치 및 현황 시각화'
 accrual_periodicity: 수시
 team:
@@ -77,6 +79,7 @@ schema:
         unique: 103
     - name: 사업지구일련번호
       type: number
+      semantic_type: cadastral_resurvey_zone_sn
       null_rate: 0.0
       sample_values:
         - '4522'
@@ -164,6 +167,11 @@ schema:
         unique: 9429
   foreign_keys:
     - fields:
+        - 사업지구일련번호
+      reference:
+        key: cadastral_resurvey_zone_sn
+      evidence: measured
+    - fields:
         - 필지고유번호
       reference:
         key: pnu
@@ -174,6 +182,14 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: parcel
+  space_fields:
+    - 필지고유번호
+  space_via: code
+  time: day
+  time_fields:
+    - 변동일자
 cycle: default
 classification:
   subsector_name: 지적 (토지·임야대장·연속지적도·지적도근점·지번)
@@ -211,7 +227,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15118462-03
     kind: key
-    value: '실측 조인 키: pnu(필지고유번호)'
+    value: '실측 조인 키: cadastral_resurvey_zone_sn(사업지구일련번호), pnu(필지고유번호)'
     evidence:
       - type: measured
         source: probe/stats/15118462.json
@@ -297,8 +313,6 @@ verification:
   run: probe/runs/15118462.json
   stats: probe/stats/15118462.json
   data: probe/data/15118462/
-status: active
-summary_user: 최근 5년간 지적재조사 사업이 끝난 지구에서 소유자가 여럿인 공유지 필지의 공유자별 지분·소유권 변동 원인·변동 일자를 공유자 한 명당 한 행으로 담은 전국 단위 CSV 파일(약 23MB)이다. 지적재조사 완료 지구에서 공유 필지가 어느 지역에 얼마나 몰려 있고 필지당 공유자가 몇 명인지 파악하려는 지자체 담당자나 연구자가 쓴다. 필지고유번호(PNU)를 키로 토지대장·연속지적도 같은 필지 단위 데이터와 이어 쓰고, 시도·시군구 코드로 지역별 집계에도 쓴다.
 limits: 지적재조사가 완료된 지구의 공유지만 담으므로 전국 공유지 전체 현황으로 볼 수 없다. 소유자 개인 정보는 없고 공유 순번과 지분만 있어 공유자 신원은 알 수 없다.
 review:
   summary: draft
@@ -311,3 +325,4 @@ review:
     - c-15118462-04
     - c-15118462-06
   dropped_citations: 0
+status: active

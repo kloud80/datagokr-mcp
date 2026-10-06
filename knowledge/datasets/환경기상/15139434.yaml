@@ -1,0 +1,189 @@
+# Dataset 15139434 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139434'
+tier: verified
+title: 기상청_북한기상관측 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139434/openapi.do
+synonyms:
+  - 세계기상
+  - 북한기상관측
+  - 북한
+  - GTS
+  - 전문
+  - 북한 날씨
+  - 북한 기온
+  - 북한 강수량
+  - GTS 관측자료
+  - 평양 기상
+  - 북한 기후 자료
+  - WMO 북한 관측
+description_portal: '북한이 세계기상기구(WMO, World Meteorogical Organization)의 기상통신망(GTS)을 통해 보낸 27개 지점의 관측 자료입니다.생산주기: 시간, 일보유기간: 1973년 1월~현재(지점별 상이함)27개 지점: 원산, 장전, 평강, 삼지연, 풍산, 혜산, 강계, 중강, 희천, 남포, 안주, 양덕, 평양, 구성, 수풍, 신의주, 신포, 장진, 함흥, 김책, 선봉, 청진, 용연, 해주, 개성, 사리원, 신계관측 자료: 기온, 강수량/관측시각, 풍향, 풍속, , 기압, 습도, 전운량, 최저운고, 중하층운량, 하층운형, 중층운형, 상층운형, 시정, 해면기압, 현지기압, 상대습도 등'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: nko_sfctm.php
+    name: nko_sfctm.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/nko_sfctm.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '201703300900'
+      - name: stn
+        required: true
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '  #-----------------------------------------------------------------------------'
+        - '201703300900 47003   8.0     3.4   -99.0   -9.0  32  5.0   1.7  64.0  -9  30.0  '
+        - '201703300900 47005   0.2    -6.0   -99.0    0.8  18  2.0  -5.7  64.0  -9  20.0  '
+      stats:
+        min: '2017-03-30'
+        max: '2017-03-30'
+        unique: 28
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - line
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5929
+  rank_in_sector: 359
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139434-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139434.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139434-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139434-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139434.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139434-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139434.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139434-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139434-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139434-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139434.json
+  stats: probe/stats/15139434.json
+  data: probe/data/15139434/
+status: active
+summary_user: 북한이 세계기상기구 기상통신망(GTS)으로 보낸 27개 지점(평양·원산·신의주·청진 등)의 시간·일 단위 관측 자료로, 기온·강수량·풍향·풍속·기압·습도·운량·시정 등을 지점별 건별 원천으로 담는다. 북한 지역의 장기 기후 변화나 특정 시기 강수·기온 상황을 확인하려는 기후·농업·보험 분석가가 "평양의 지난 수십 년간 여름 강수량 추이는 어떤가" 같은 질문에 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해, 국내 ASOS 등 다른 관측 자료와는 지점명 또는 같은 기관의 관측지점번호 매핑으로만 이어 쓴다.
+limits: 포털 활용신청과 별개로 외부 사이트(apihub.kma.go.kr)의 인증키를 받아 호출해야 한다. 전역 조인 키가 없어 다른 데이터와 연결하려면 지점명·코드 매핑을 직접 해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139434-01
+    - c-15139434-03
+    - c-15139434-06
+  dropped_citations: 0

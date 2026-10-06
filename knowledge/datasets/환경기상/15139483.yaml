@@ -1,0 +1,192 @@
+# Dataset 15139483 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139483'
+tier: verified
+title: 기상청_항공기상관측 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139483/openapi.do
+synonyms:
+  - 항공기상관측
+  - 공항관측
+  - METAR
+  - 항공관측
+  - 기상관측
+  - 공항 기상
+  - 항공 기상 관측
+  - 공항 날씨
+  - 시정
+  - 풍향 풍속
+  - ICAO 공항코드
+description_portal: '항공기상관측은 항공기 안전운항에 필요한 기상정보를 생산·제공하기 위하여 공항 내 기상상태를 항공기상관측지침에 의해 측정하는 업무이며, 해당 관측은 당해 공항 내에서 사용하는 보고와 당해 공항 밖으로 통보되는 보고로 구분됩니다.항공기상관측은 정해진 시간간격을 두고 실시하는 정시관측 및 특정 기준에 해당하는 변화가 있을 때 실시하는 특별관측, 관제기관 등의 요청 및 항공기 사고 시 실시하는 수시관측이 있습니다.- 요 소: 바람(풍향, 풍속), 하늘상태, 시정, 강수량 등이 있음- 지 점: 6개소 공항'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: getMetar
+    name: getMetar
+    endpoint: https://apihub.kma.go.kr/api/typ02/openApi/AmmIwxxmService/getMetar
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+      - name: numOfRows
+        required: true
+        example: '10'
+      - name: dataType
+        required: true
+        example: XML
+      - name: icao
+        required: true
+        example: RKSI
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: icaoCode
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: airportName
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: metarMsg
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6908
+  rank_in_sector: 109
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139483-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139483.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139483-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139483-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139483.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139483-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139483.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139483-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139483-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139483-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139483.json
+  stats: probe/stats/15139483.json
+  data: probe/data/15139483/
+status: active
+summary_user: 공항 6개소에서 항공기상관측지침에 따라 측정한 바람(풍향·풍속), 하늘상태, 시정, 강수량 등 공항 기상 관측 보고를 공항별 전문(METAR 메시지) 형태로 담는다. 항공 운항 관계자나 분석가가 특정 공항의 현재 바람·시정 상태가 이착륙에 영향을 줄 수준인지 확인하는 데 쓴다. 공항은 ICAO 공항 코드(icaoCode)와 공항명으로 식별되며 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 공항 코드·이름 매핑이나 같은 기관 코드로만 연결한다.
+limits: 외부 사이트 apihub.kma.go.kr의 별도 인증키(KEY 파라미터)가 필요하며 포털 활용신청과는 별개다. 공항 지점 단위 비공간 자료로 행정구역과 바로 연결되는 키가 없고, 관측값이 METAR 전문 문자열로 제공되어 요소별 값은 직접 해석해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139483-01
+    - c-15139483-03
+    - c-15139483-04
+  dropped_citations: 0

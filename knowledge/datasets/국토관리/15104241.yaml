@@ -1,5 +1,3 @@
-# Dataset 15104241 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15104241'
 tier: verified
 title: 한국농어촌공사_농업기반시설_시설제원_저수지(지사별)
@@ -55,6 +53,7 @@ schema:
         unique: 2527
     - name: 표준코드
       type: number
+      semantic_type: dam_cd
       null_rate: 0.0
       sample_values:
         - '2671010056'
@@ -123,6 +122,11 @@ schema:
         unique: 264
   foreign_keys:
     - fields:
+        - 표준코드
+      reference:
+        key: dam_cd
+      evidence: measured
+    - fields:
         - 소재지
       reference:
         key: address
@@ -135,6 +139,13 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+    - 대표지번
+    - 관리자주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 댐·저수지 (댐 제원·운영·수위·방류, 농업용 저수지 저수율)
@@ -172,7 +183,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15104241-03
     kind: key
-    value: '실측 조인 키: address(소재지), address(관리자주소)'
+    value: '실측 조인 키: dam_cd(표준코드), address(소재지), address(관리자주소)'
     evidence:
       - type: measured
         source: probe/stats/15104241.json

@@ -1,4 +1,3 @@
-# Dataset 15080941 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15080941'
 tier: verified
 title: 소방청_울산시 재난별 출동보고현황
@@ -23,6 +22,7 @@ synonyms:
   - 울산 화재 구조 구급
   - 재난 유형별 출동
   - 119 신고 접수
+summary_user: 울산시 소방관서의 재난별 출동 내역을 담은 CSV 파일(약 146MB)로, 필드 구성상 접수 건마다 접수경로·접수일시·상황종료일시, 긴급구조 종별·분류·규모, 시도·구군·동·리와 우편번호, 관할 소방서·센터, 공동대응·고속도로사고 여부가 한 행씩 기록된 건별 원천에 가깝습니다. 분석가나 지자체 안전 담당자가 '울산에서 어떤 재난 유형의 출동이 어느 달, 어느 구군·센터 관할에 몰리는가'를 따져 소방 인력 배치나 계절별 예방 정책을 검토하는 데 쓴다. 전역 조인 키는 없고, 우편번호·시도·구군·동 이름이나 관할서·센터 이름을 매핑해 행정구역 통계나 119안전센터 목록 같은 다른 소방 데이터와 잇는다.
 description_portal: “울산시 재난별 출동현황 보고” 데이터는 울산광역시에서 발생한 각종 재난 상황에 대해 소방관서가 출동한 내역을 유형별로 정리한 통계자료입니다. 이 데이터에는 화재, 구조, 구급, 교통사고, 풍수해, 붕괴, 낙뢰, 가스·전기 사고, 생활안전사고 등 다양한 재난별 출동 건수가 포함되며, 연도별·월별 추이를 통해 시기별 변화를 확인할 수 있습니다. 특히 특정 시기에 집중적으로 발생하는 재난 유형이나 계절적 요인에 따른 출동 증가 양상을 파악할 수 있어, 울산시의 안전 취약 요인을 분석하는 데 유용합니다. 또한 출동 건수의 증감 추세를 통해 지역별 위험도를 객관적으로 평가하고, 소방 인력과 장비의 효율적 배치, 재난 예방 정책 수립, 시민 대상 맞춤형 안전교육 프로그램 기획에 활용할 수 있습니다. 결과적으로 이 데이터는 울산시의 재난 대응 역량 강화와 지역 안전관리 정책 개선을 위한 핵심 기초자료로 기능합니다.
 accrual_periodicity: 연간
 team:
@@ -164,6 +164,7 @@ schema:
         unique: 7587
     - name: 관할서명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 남부소방서
@@ -173,6 +174,7 @@ schema:
         unique: 6
     - name: 서센터명
       type: code
+      semantic_type: fire_center
       null_rate: 0.0
       sample_values:
         - 언양119안전센터
@@ -252,12 +254,33 @@ schema:
         - 10:04:47
       stats:
         unique: 56776
+  foreign_keys:
+    - fields:
+        - 관할서명
+      reference:
+        key: fire_center
+      evidence: measured
+    - fields:
+        - 서센터명
+      reference:
+        key: fire_center
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 도로명
+  space_via: address
+  time: day
+  time_fields:
+    - 접수일시
+    - 상황종료일시
+    - 관제진행일시
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -294,7 +317,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15080941-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fire_center(관할서명), fire_center(서센터명)'
     evidence:
       - type: measured
         source: probe/stats/15080941.json
@@ -359,8 +382,6 @@ verification:
   run: probe/runs/15080941.json
   stats: probe/stats/15080941.json
   data: probe/data/15080941/
-status: active
-summary_user: 울산시 소방관서의 재난별 출동 내역을 담은 CSV 파일(약 146MB)로, 필드 구성상 접수 건마다 접수경로·접수일시·상황종료일시, 긴급구조 종별·분류·규모, 시도·구군·동·리와 우편번호, 관할 소방서·센터, 공동대응·고속도로사고 여부가 한 행씩 기록된 건별 원천에 가깝습니다. 분석가나 지자체 안전 담당자가 '울산에서 어떤 재난 유형의 출동이 어느 달, 어느 구군·센터 관할에 몰리는가'를 따져 소방 인력 배치나 계절별 예방 정책을 검토하는 데 쓴다. 전역 조인 키는 없고, 우편번호·시도·구군·동 이름이나 관할서·센터 이름을 매핑해 행정구역 통계나 119안전센터 목록 같은 다른 소방 데이터와 잇는다.
 limits: 실측 컬럼에서 공통 코드형 조인 키가 확인되지 않아, 다른 데이터와는 이름·우편번호를 직접 맞춰야 연결된다. 범위가 전국으로 판정되어 있어 제목의 울산 한정 여부는 시도명 필드로 직접 확인한 뒤 써야 한다.
 review:
   summary: draft
@@ -372,3 +393,4 @@ review:
     - c-15080941-03
     - c-15080941-04
   dropped_citations: 0
+status: active

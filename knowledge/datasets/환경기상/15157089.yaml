@@ -1,4 +1,5 @@
-# Dataset 15157089 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157089 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157089'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_환경영향평가_온실가스
@@ -21,6 +22,7 @@ synonyms:
   - 이산화탄소 메탄 아산화질소 배출
   - 사업구역 온실가스 평가
   - EIA 온실가스
+summary_user: 환경영향평가 대상 개발사업별로 공사 시와 운영 시의 이산화탄소·메탄·아산화질소·기타 온실가스 배출량(t CO₂eq, 운영 시는 연간)을 사업코드 단위로 담은 전국 범위의 파일 데이터다. 개발사업을 검토하는 분석가나 주민이 '이 사업은 공사 중과 운영 중에 온실가스를 얼마나 배출한다고 평가됐나'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 같은 기관이 내는 환경영향평가 협의 현황·사업구역 등 다른 항목별 평가정보와는 사업코드를 매칭해 이어 쓴다.
 description_portal: 환경부 국립환경과학원이 제공하는 환경영향평가 관련 데이터는 특정 사업구역을 중심으로 조사된 온실가스 속성 정보를 기반으로 해당 지역의 온실가스 특성을 정량적으로 파악할 수 있도록 지원하는 서비스로, 공사 시 이산화탄소(t CO₂eq), 메탄(t CO₂eq), 아산화질소(t CO₂eq), 기타 온실가스 배출량(t CO₂eq)과 함께 운영 시 이산화탄소(t CO₂eq/년), 메탄(t CO₂eq/년), 아산화질소(t CO₂eq/년), 기타 온실가스 배출량(t CO₂eq/년) 등의 상세정보를 제공하는 서비스를 제공합니다.
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 사업코드
       type: string
+      semantic_type: eia_biz_cd
       null_rate: 0.0
       sample_values:
         - WJ2018E001
@@ -175,12 +178,23 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: eia_biz_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 생성일
+    - 수정일
 cycle: event
 classification:
   subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
@@ -222,7 +236,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157089-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eia_biz_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15157089.json
@@ -287,8 +301,6 @@ verification:
   run: probe/runs/15157089.json
   stats: probe/stats/15157089.json
   data: probe/data/15157089/
-status: active
-summary_user: 환경영향평가 대상 개발사업별로 공사 시와 운영 시의 이산화탄소·메탄·아산화질소·기타 온실가스 배출량(t CO₂eq, 운영 시는 연간)을 사업코드 단위로 담은 전국 범위의 파일 데이터다. 개발사업을 검토하는 분석가나 주민이 '이 사업은 공사 중과 운영 중에 온실가스를 얼마나 배출한다고 평가됐나'를 확인하는 데 쓴다. 전역 조인 키는 없어서, 같은 기관이 내는 환경영향평가 협의 현황·사업구역 등 다른 항목별 평가정보와는 사업코드를 매칭해 이어 쓴다.
 limits: 표준 행정코드나 전역 조인 키가 없어 지역·다른 기관 데이터와 바로 연결하기 어렵고, 공간 정보가 없는 비공간 데이터다. 갱신은 사업 평가가 생길 때마다 수시로 이뤄지는 이벤트형이다.
 review:
   summary: draft
@@ -302,3 +314,4 @@ review:
     - c-15157089-04
     - c-15157089-06
   dropped_citations: 0
+status: active

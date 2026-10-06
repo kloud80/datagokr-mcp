@@ -1,4 +1,5 @@
-# Dataset 15102797 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15102797 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15102797'
 tier: verified
 title: 해양수산부_수협물류센터공판장품목별입출고현황
@@ -21,6 +22,7 @@ synonyms:
   - 냉동 수산물 입출고
   - 수협 물류센터 품목별
   - 수산물 유통 물량
+summary_user: 수협이 운영하는 전국 물류센터·공판장별로 기준일자마다 수산물 품목과 상태·가공 구분(냉동 등)에 따른 입고량과 출고량(킬로그램 환산 포함)을 담은 파일 데이터로, 내려받은 CSV는 약 69만 바이트 규모다. 수산물 유통 분석가나 사업자가 특정 물류센터·공판장에 어떤 품목이 언제 얼마나 들어오고 나갔는지, 냉동·선어 등 상태별 물동량이 어떻게 변하는지 확인하는 데 쓴다. 전역 조인 키는 없어 수산물품목코드·품목명이나 물류센터-공판장 코드를 같은 수협 계열 데이터와 이름·코드 매핑으로 이어 써야 하며, 어종코드 체계가 수협·수산과학원·HS 간에 서로 달라 위판 가격 데이터와 맞출 때 별도 대응이 필요하다.
 description_portal: 수산물 수협 물류센터/공판장 입출고 정보는 수협이 운영하고 있는 물류센터나 공판장 기본정보 및 해당 물류센터 및 공판장에 입출고 되는 품목에 대한 정보 및 품목별 정보를 제공하는 목록입니다."물류센터-공판장 코드","물류센터-공판장명","기준일자","수산물품목코드","수산물품목명","상태가공분류코드","상태가공분류명","입고량","출고량","입고량(킬로그램)","출고량(킬로그램)","데이터기준일자" 해당 내용을 포함하고 있습니다.데이터 예시입니다"000157","(춘천) 강원물류센터","2025-05-01","720199","기타논우렁이류","30","(냉동)","0","0","0","0","2025-05-31"자세한 데이터를 원하실 경우 파일 다운로드 후 확인 부탁드립니다.
 accrual_periodicity: 월간
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 물류센터-공판장 코드
       type: number
+      semantic_type: suhyup_logistics_center_cd
       null_rate: 0.0
       sample_values:
         - '218020'
@@ -66,6 +69,7 @@ schema:
         unique: 31
     - name: 수산물품목코드
       type: number
+      semantic_type: fish_species_cd
       null_rate: 0.0
       sample_values:
         - '640599'
@@ -163,12 +167,32 @@ schema:
         min: '2026-08-31'
         max: '2026-08-31'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 물류센터-공판장 코드
+      reference:
+        key: suhyup_logistics_center_cd
+      evidence: measured
+    - fields:
+        - 수산물품목코드
+      reference:
+        key: fish_species_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준일자
+    - 데이터기준일자
+  category:
+    - hs_cd
+  category_fields:
+    - 수산물품목코드
 cycle: default
 classification:
   subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
@@ -205,7 +229,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15102797-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_logistics_center_cd(물류센터-공판장 코드), fish_species_cd(수산물품목코드)'
     evidence:
       - type: measured
         source: probe/stats/15102797.json
@@ -270,8 +294,6 @@ verification:
   run: probe/runs/15102797.json
   stats: probe/stats/15102797.json
   data: probe/data/15102797/
-status: active
-summary_user: 수협이 운영하는 전국 물류센터·공판장별로 기준일자마다 수산물 품목과 상태·가공 구분(냉동 등)에 따른 입고량과 출고량(킬로그램 환산 포함)을 담은 파일 데이터로, 내려받은 CSV는 약 69만 바이트 규모다. 수산물 유통 분석가나 사업자가 특정 물류센터·공판장에 어떤 품목이 언제 얼마나 들어오고 나갔는지, 냉동·선어 등 상태별 물동량이 어떻게 변하는지 확인하는 데 쓴다. 전역 조인 키는 없어 수산물품목코드·품목명이나 물류센터-공판장 코드를 같은 수협 계열 데이터와 이름·코드 매핑으로 이어 써야 하며, 어종코드 체계가 수협·수산과학원·HS 간에 서로 달라 위판 가격 데이터와 맞출 때 별도 대응이 필요하다.
 limits: 입출고 물량만 담고 가격이나 경락 정보는 없으며, 지도 좌표 없는 비공간 데이터다. 품목코드가 수협 체계라 수산과학원·HS 코드 기반 데이터와 바로 붙지 않는다.
 review:
   summary: draft
@@ -284,3 +306,4 @@ review:
     - c-15102797-04
     - c-15102797-06
   dropped_citations: 0
+status: active

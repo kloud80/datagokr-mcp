@@ -99,6 +99,7 @@ schema:
         unique: 19
     - name: 품목기준코드
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.0
       sample_values:
         - '199704510 '
@@ -131,7 +132,7 @@ schema:
         unique: 6
     - name: 대표코드
       type: number
-      semantic_type: corp_rgst_no
+      semantic_type: drug_barcode_std_cd
       null_rate: 0.0
       sample_values:
         - '8806833000307 '
@@ -144,7 +145,7 @@ schema:
         unique: 110888
     - name: 표준코드
       type: number
-      semantic_type: corp_rgst_no
+      semantic_type: drug_barcode_std_cd
       null_rate: 0.0
       sample_values:
         - '8800628000107 '
@@ -157,6 +158,7 @@ schema:
         unique: 309889
     - name: 제품코드(개정후)
       type: number
+      semantic_type: drug_cd
       null_rate: 0.7884
       sample_values:
         - '685100120 '
@@ -169,6 +171,7 @@ schema:
         unique: 22496
     - name: 일반명코드(성분명코드)
       type: string
+      semantic_type: hira_gnl_nm_cd
       null_rate: 0.5561
       sample_values:
         - 482501BIJ
@@ -263,19 +266,40 @@ schema:
         unique: 2
   foreign_keys:
     - fields:
+        - 품목기준코드
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
         - 대표코드
       reference:
-        key: corp_rgst_no
+        key: drug_barcode_std_cd
       evidence: measured
     - fields:
         - 표준코드
       reference:
-        key: corp_rgst_no
+        key: drug_barcode_std_cd
+      evidence: measured
+    - fields:
+        - 제품코드(개정후)
+      reference:
+        key: drug_cd
+      evidence: measured
+    - fields:
+        - 일반명코드(성분명코드)
+      reference:
+        key: hira_gnl_nm_cd
       evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 1955-01-16 ~ 9999-01-01
+grain:
+  time: day
+  time_fields:
+    - 품목허가일자
+    - 취소일자
+    - 양도양수적용(공고)일자
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -316,7 +340,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15067462-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(대표코드), corp_rgst_no(표준코드)'
+    value: '실측 조인 키: drug_item_seq(품목기준코드), drug_barcode_std_cd(대표코드), drug_barcode_std_cd(표준코드), drug_cd(제품코드(개정후)), hira_gnl_nm_cd(일반명코드(성분명코드))'
     evidence:
       - type: measured
         source: probe/stats/15067462.json

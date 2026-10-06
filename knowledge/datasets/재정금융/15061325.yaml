@@ -1,4 +1,5 @@
-# Dataset 15061325 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061325 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061325'
 tier: verified
 title: 금융위원회_금융통계자산운용사정보
@@ -23,6 +24,7 @@ synonyms:
   - 펀드 운용사 현황
   - 자산운용사 경영지표
   - 금융회사 업권별 통계
+summary_user: 자산운용사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요 경영지표(임직원·점포 수, 자본금·영업이익, 수탁고·운용자산 등)를 담은 전국 단위 금융회사 통계다. 투자자나 분석가가 '특정 자산운용사의 운용자산 규모와 순이익이 다른 운용사와 비교해 어떤가'를 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키로 확인되어, 같은 키를 가진 금융위 기업정보·재무 데이터나 다른 업권 금융회사 원장과 이어 쓴다.
 description_portal: '금융통계자산운용사정보는 기준년월을 중심으로 자산운용사의 일반 현황, 재무 현황, 주요 경영지표 등에 대한 통계를 제공하는 데이터입니다. 자산운용사별 사업구조, 인력, 자본금, 수익현황, 운용자산 규모 등 운용사 경영 전반을 수치화하여 비교 및 분석할 수 있도록 구성되어 있습니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 자산운용사 일반현황 조회 : 운용사별 회사 유형, 인가일자, 임직원 수, 점포 수 등 조직 일반 정보를 제공합니다.② 자산운용사 재무현황 조회 : 운용사별 자본금, 총자산, 영업수익, 영업이익, 순이익 등 재무 항목을 조회합니다.③ 자산운용사 주요 경영지표 조회 : 수탁고, 운용자산(AUM), 펀드수, 위탁고, 수익구조 등 핵심 경영성과 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -71,6 +73,7 @@ schema:
         unique: 48
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010170'
@@ -126,6 +129,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -175,7 +183,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061325-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061325.json
@@ -240,8 +248,6 @@ verification:
   run: probe/runs/15061325.json
   stats: probe/stats/15061325.json
   data: probe/data/15061325/
-status: active
-summary_user: 자산운용사별로 기준년월(basYm) 단위의 일반현황·재무현황·주요 경영지표(임직원·점포 수, 자본금·영업이익, 수탁고·운용자산 등)를 담은 전국 단위 금융회사 통계다. 투자자나 분석가가 '특정 자산운용사의 운용자산 규모와 순이익이 다른 운용사와 비교해 어떤가'를 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키로 확인되어, 같은 키를 가진 금융위 기업정보·재무 데이터나 다른 업권 금융회사 원장과 이어 쓴다.
 limits: 전국·비공간 데이터라 지역별 분석에는 쓰지 못한다. 실호출은 3개 오퍼레이션 중 1개만 확인됐고, 개발계정은 일 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -254,3 +260,4 @@ review:
     - c-15061325-04
     - c-15061325-06
   dropped_citations: 0
+status: active

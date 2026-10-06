@@ -1,4 +1,5 @@
-# Dataset 15061320 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061320 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061320'
 tier: verified
 title: 금융위원회_금융통계증권사정보
@@ -23,6 +24,7 @@ synonyms:
   - 증권사 임직원 수
   - 금융투자회사 통계
   - 증권사 영업실적
+summary_user: 증권사별로 기준년월(basYm)마다 일반현황·재무현황·주요 경영지표·주요 영업활동·보도자료 요약 통계를 담은 전국 단위 시계열 데이터로, 금융회사 하나를 단위로 한 원장 성격의 자료다. 분석가나 투자자가 "특정 증권사의 임직원 수와 지점 수가 최근 몇 년간 어떻게 바뀌었고, 자기자본·순이익은 어느 수준인가"를 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위 기업정보·공시 재무 데이터 등 법인등록번호를 가진 다른 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 회사명으로 업권별 금융통계와 맞춰 볼 수 있다.
 description_portal: '금융통계증권사정보는 기준년월을 중심으로 증권사의 일반 현황, 재무 상태, 주요 경영지표, 영업활동 실적, 보도자료 기반 통계정보 등을 제공하는 데이터입니다. 증권사별 조직 규모, 자산 현황, 수익 구조, 주요 영업 부문별 실적 등을 종합적으로 확인할 수 있도록 시계열 데이터로 구성되어 있습니다.이 데이터는 5개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 증권사 일반현황 조회 : 증권사별 인가일자, 본점·지점 수, 임직원 수 등의 조직 및 기본 정보를 조회합니다.② 증권사 재무현황 조회 : 자산총액, 자기자본, 영업수익, 순이익 등 재무 항목을 조회합니다.③ 증권사 주요 경영지표 조회 : 수익성, 안정성, 성장성 등 핵심 경영지표를 제공합니다.④ 증권사 주요 영업활동 조회 : 위탁매매, 인수, 자기매매, 자산관리, 신용공여 등 주요 영업 항목별 실적을 조회합니다.⑤ 증권사 보도자료 통계정보 조회 : 보도자료에 포함되는 증권사별 요약 통계 정보(예: 주요지표 요약)를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -71,6 +73,7 @@ schema:
         unique: 41
     - name: fncoCd
       type: number
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010090'
@@ -156,6 +159,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -205,7 +213,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061320-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061320.json
@@ -270,8 +278,6 @@ verification:
   run: probe/runs/15061320.json
   stats: probe/stats/15061320.json
   data: probe/data/15061320/
-status: active
-summary_user: 증권사별로 기준년월(basYm)마다 일반현황·재무현황·주요 경영지표·주요 영업활동·보도자료 요약 통계를 담은 전국 단위 시계열 데이터로, 금융회사 하나를 단위로 한 원장 성격의 자료다. 분석가나 투자자가 "특정 증권사의 임직원 수와 지점 수가 최근 몇 년간 어떻게 바뀌었고, 자기자본·순이익은 어느 수준인가"를 확인할 때 쓴다. 법인등록번호(crno)가 실측 조인 키라서 금융위 기업정보·공시 재무 데이터 등 법인등록번호를 가진 다른 데이터와 이어 쓰고, 금융회사 코드(fncoCd)와 회사명으로 업권별 금융통계와 맞춰 볼 수 있다.
 limits: 지역을 나누지 않은 전국·비공간 자료라서 지점 위치나 지역별 분석에는 쓸 수 없다. 실호출 검증은 5개 오퍼레이션 중 1개에서만 성공이 확인됐으므로 나머지 오퍼레이션은 직접 호출해 응답을 확인해야 하고, 개발계정 호출 한도는 일 10,000회다.
 review:
   summary: draft
@@ -284,3 +290,4 @@ review:
     - c-15061320-04
     - c-15061320-06
   dropped_citations: 0
+status: active

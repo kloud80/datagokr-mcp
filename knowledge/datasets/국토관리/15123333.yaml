@@ -86,6 +86,7 @@ schema:
         unique: 64
     - name: 수위관측소코드
       type: number
+      semantic_type: hydro_obs_cd
       null_rate: 0.0
       sample_values:
         - '1003666'
@@ -116,6 +117,7 @@ schema:
         unique: 58
     - name: 하천코드
       type: code
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - 하천코드없음
@@ -125,6 +127,7 @@ schema:
         unique: 18
     - name: 표준유역코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '101811'
@@ -153,12 +156,33 @@ schema:
         - 옥계천
       stats:
         unique: 37
+  foreign_keys:
+    - fields:
+        - 수위관측소코드
+      reference:
+        key: hydro_obs_cd
+      evidence: measured
+    - fields:
+        - 하천코드
+      reference:
+        key: river_cd
+      evidence: measured
+    - fields:
+        - 표준유역코드
+      reference:
+        key: river_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 읍면동
+  space_via: name
 cycle: event
 classification:
   subsector_name: 홍수 예보·경보 (특보·예보 지점·댐 방류 예고·도시 침수 예보)
@@ -199,7 +223,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123333-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hydro_obs_cd(수위관측소코드), river_cd(하천코드), river_cd(표준유역코드)'
     evidence:
       - type: measured
         source: probe/stats/15123333.json

@@ -1,4 +1,5 @@
-# Dataset 15123288 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15123288 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15123288'
 tier: verified
 title: 국토교통부_교통영향평가정보_주차발생 원단위
@@ -21,6 +22,7 @@ synonyms:
   - 유사시설 주차대수
   - 주차장 수요 예측
   - 주차 산정 기준
+summary_user: 교통영향평가에서 조사한 유사시설별 주차발생 원단위를 담은 전국 단위 파일(CSV 약 2MB)로, 시설마다 조사일·규모(세대수·연면적)와 평일·주말 첨두주차대수, 평일·주말 주차원단위를 한 행씩 기록한다. 신규 건물·사업의 교통영향평가나 주차계획을 세우는 사업자·분석가가 '비슷한 규모의 시설은 평일과 주말 첨두에 주차가 몇 대 발생하는가'를 가늠하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 유사시설명이나 같은 기관 내부 식별자(유사시설아이디)로만 이어 쓸 수 있다.
 description_portal: 교통영향평가 내용중 주차발생원단위에 대한 정보를 제공합니다. 유사시설 및 사업에 따른 첨두주차수 평일,주말 및 주차원단위 평일,주말  등의 정보를 제공합니다.
 applicable_legislation:
   - law: 도시교통정비촉진법
@@ -130,6 +132,7 @@ schema:
         unique: 2178
     - name: 유사시설아이디
       type: number
+      semantic_type: tia_similar_fclt_id
       null_rate: 0.0
       sample_values:
         - '232000042635 '
@@ -149,12 +152,22 @@ schema:
         - 사업지(주거3)
       stats:
         unique: 14145
+  foreign_keys:
+    - fields:
+        - 유사시설아이디
+      reference:
+        key: tia_similar_fclt_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 조사일
 cycle: default
 classification:
   subsector_name: 교통량 (상시·수시 조사 지점, 고속도로 영업소 입출구, TCS)
@@ -191,7 +204,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15123288-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tia_similar_fclt_id(유사시설아이디)'
     evidence:
       - type: measured
         source: probe/stats/15123288.json
@@ -266,8 +279,6 @@ verification:
   run: probe/runs/15123288.json
   stats: probe/stats/15123288.json
   data: probe/data/15123288/
-status: active
-summary_user: 교통영향평가에서 조사한 유사시설별 주차발생 원단위를 담은 전국 단위 파일(CSV 약 2MB)로, 시설마다 조사일·규모(세대수·연면적)와 평일·주말 첨두주차대수, 평일·주말 주차원단위를 한 행씩 기록한다. 신규 건물·사업의 교통영향평가나 주차계획을 세우는 사업자·분석가가 '비슷한 규모의 시설은 평일과 주말 첨두에 주차가 몇 대 발생하는가'를 가늠하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 유사시설명이나 같은 기관 내부 식별자(유사시설아이디)로만 이어 쓸 수 있다.
 limits: 표준 행정코드나 위치 정보가 없는 비공간 데이터라 지역별 집계나 지도 결합은 바로 하지 못하고, 시설명 매칭이 필요하다. 사용여부·승인여부 필드가 있으므로 분석 전에 이 값으로 유효한 행을 걸러야 한다.
 review:
   summary: draft
@@ -279,3 +290,4 @@ review:
     - c-15123288-03
     - c-15123288-04
   dropped_citations: 0
+status: active

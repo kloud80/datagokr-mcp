@@ -1,4 +1,5 @@
-# Dataset 15073874 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073874 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073874'
 tier: verified
 title: 식품의약품안전처_의료기기 표준코드(UDI코드)정보
@@ -24,6 +25,7 @@ synonyms:
   - 의료기기 표준코드 조회
   - 의료기기 제조수입업체
   - 의료기기 추적관리
+summary_user: 국내 유통 의료기기에 부여된 표준코드(UDI-DI)를 제품 단위 목록으로 담고, 코드 체계 구분, 업체명, 업체 형태(제조·수입 등), 사업자등록번호를 함께 제공하며 범위는 전국이다. 의료기관 구매 담당자나 유통업체가 '이 바코드(UDI-DI)는 어느 업체가 등록한 코드인가'를 확인하거나, 분석가가 업체별 등록 코드 현황을 살피는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 업체명(BSSH_NM)·사업자등록번호 같은 이름·코드 매핑이나 같은 식약처 의료기기 데이터의 코드로만 이어 쓴다.
 description_portal: 이 공공데이터는 의료기기 표준코드(UDI코드)정보는 국내에서 유통되는 의료기기에 부여된 고유식별자인 UDI-DI(의료기기 표준코드)와 관련 정보를 제공하는 공공데이터입니다. 이 공공데이터는 각 의료기기의 UDI-DI 코드와 함께 코드 체계, 업체명, 업체 형태를 포함하여 목록 형태로 제공되고 있습니다. 이 공공데이터를 통해서 의료기기의 유통 현황, 이력 관리, 제품 식별이 가능해지며 추적성과 투명성을 높이고 의료기기 안전관리와 시장 분석에도 유용하게 활용될 것으로 예상됩니다.
 team:
   dept: 데이터혁신기획팀
@@ -47,6 +49,7 @@ schema:
   fields:
     - name: UDIDI_CD
       type: number
+      semantic_type: meddev_udi_di
       null_rate: 0.0
       sample_values:
         - '04048844006549'
@@ -95,6 +98,7 @@ schema:
         unique: 2
     - name: BRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '2298139589'
@@ -105,6 +109,17 @@ schema:
         p50: 2298139589
         max: 6218104914
         unique: 12
+  foreign_keys:
+    - fields:
+        - UDIDI_CD
+      reference:
+        key: meddev_udi_di
+      evidence: measured
+    - fields:
+        - BRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -155,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073874-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_udi_di(UDIDI_CD), bizno(BRNO)'
     evidence:
       - type: measured
         source: probe/stats/15073874.json
@@ -220,8 +235,6 @@ verification:
   run: probe/runs/15073874.json
   stats: probe/stats/15073874.json
   data: probe/data/15073874/
-status: active
-summary_user: 국내 유통 의료기기에 부여된 표준코드(UDI-DI)를 제품 단위 목록으로 담고, 코드 체계 구분, 업체명, 업체 형태(제조·수입 등), 사업자등록번호를 함께 제공하며 범위는 전국이다. 의료기관 구매 담당자나 유통업체가 '이 바코드(UDI-DI)는 어느 업체가 등록한 코드인가'를 확인하거나, 분석가가 업체별 등록 코드 현황을 살피는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 업체명(BSSH_NM)·사업자등록번호 같은 이름·코드 매핑이나 같은 식약처 의료기기 데이터의 코드로만 이어 쓴다.
 limits: 표준 조인 키가 없어 다른 데이터와는 업체명·코드 매핑으로만 연결되며, 매칭 정확도를 따로 확인해야 한다. 활용신청은 자동승인이지만 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -233,3 +246,4 @@ review:
     - c-15073874-03
     - c-15073874-04
   dropped_citations: 0
+status: active

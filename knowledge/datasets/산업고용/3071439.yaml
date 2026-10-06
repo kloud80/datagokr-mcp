@@ -1,4 +1,5 @@
-# Dataset 3071439 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3071439 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3071439'
 tier: verified
 title: 한국동서발전(주)_발전소 주변 기상 및 대기질 정보
@@ -21,6 +22,7 @@ synonyms:
   - 동서발전 대기환경
   - 발전소 인근 공기질
   - 아황산가스 이산화질소 농도
+summary_user: 한국동서발전이 운영하는 각 발전소 주변의 대기질 측정값을 연도·발전소·측정 기준항목별로 정리한 집계 파일로, 미세먼지·초미세먼지·오존·이산화질소·일산화탄소·아황산가스 농도를 담는다(CSV 약 2.9KB 규모). 연구자나 지역 주민이 '우리 지역 발전소 주변의 미세먼지·아황산가스 수준이 해마다 어떻게 변했는가'를 확인하거나 일반 지역 대기질과 비교할 때 쓴다. 전역 조인 키는 없어 발전소명(발전소명)이나 연도를 이름 매핑해 같은 기관의 발전소 배출 측정 자료나 환경기상·대기질 측정망 자료와 이어 쓴다.
 description_portal: 한국동서발전에서 운영 중인 각 발전소 주변의 대기환경 정보 데이터는, 발전소 인근 지역의 대기 질 현황을 연도별로 정리한 자료입니다.해당 데이터는 연도, 기준항목(발전소 주변 대기환경 기준 측정 지점), 미세먼지(PM10), 초미세먼지(PM2.5), 오존(O₃, ppm), 이산화질소(NO₂, ppm), 아황산가스(SO₂, ppm), 일산화탄소(CO, ppm) 등으로 구성되어 있어 발전소 주변의 공기 질을 정량적으로 파악할 수 있도록 설계되었습니다.학계 및 연구기관에서는 이 데이터를 일반 지역의 대기환경 정보와 비교 분석함으로써 발전소 인근의 대기 질 특성을 규명할 수 있으며, 오염물질별로 어떤 유형의 대기환경이 주로 나타나는지에 대한 통계적 분포와 경향성을 분석하는 데에도 활용할 수 있습니다.나아가 발전소 운영이 지역 대기환경에 미치는 영향을 과학적으로 평가하거나 환경정책 수립을 위한 기초 자료로도 유용하게 사용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -55,6 +57,7 @@ schema:
         unique: 11
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 당진발전
@@ -132,12 +135,22 @@ schema:
         p50: 0.003
         max: 0.005
         unique: 5
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 연도
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -174,7 +187,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3071439-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/3071439.json
@@ -239,8 +252,6 @@ verification:
   run: probe/runs/3071439.json
   stats: probe/stats/3071439.json
   data: probe/data/3071439/
-status: active
-summary_user: 한국동서발전이 운영하는 각 발전소 주변의 대기질 측정값을 연도·발전소·측정 기준항목별로 정리한 집계 파일로, 미세먼지·초미세먼지·오존·이산화질소·일산화탄소·아황산가스 농도를 담는다(CSV 약 2.9KB 규모). 연구자나 지역 주민이 '우리 지역 발전소 주변의 미세먼지·아황산가스 수준이 해마다 어떻게 변했는가'를 확인하거나 일반 지역 대기질과 비교할 때 쓴다. 전역 조인 키는 없어 발전소명(발전소명)이나 연도를 이름 매핑해 같은 기관의 발전소 배출 측정 자료나 환경기상·대기질 측정망 자료와 이어 쓴다.
 limits: 연도 단위 집계라 일별·시간별 농도 변화나 특정 시점의 고농도 사례는 볼 수 없다. 표준 코드 키가 없어 다른 데이터와 연결하려면 발전소명을 직접 맞춰야 한다.
 review:
   summary: draft
@@ -252,3 +263,4 @@ review:
     - c-3071439-03
     - c-3071439-06
   dropped_citations: 0
+status: active

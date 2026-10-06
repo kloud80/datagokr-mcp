@@ -1,4 +1,5 @@
-# Dataset 3069963 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3069963 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3069963'
 tier: verified
 title: 법무부_외국인체류데이터
@@ -21,6 +22,7 @@ synonyms:
   - 비자 종류별 외국인
   - 출입국 통계
   - 국적별 거주 외국인
+summary_user: 등록외국인(90일 미만 단기체류자 제외)을 대륙·국적·성별로 나누고, 문화예술(D1)부터 방문취업(H2)까지 체류자격별 인원을 열로 펼친 전국 단위 집계표(csv 약 34KB)이다. 연구자나 정책 담당자가 '어느 국적 외국인이 유학·비전문취업·결혼이민 등 어떤 자격으로 많이 머무는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 통계와는 국적명을 국가코드로 매핑하거나 같은 법무부 통계끼리 이름으로 맞춰 이어 쓴다.
 description_portal: 내·외국인의 입국 및 출국 상황을 파악하여 출입국 관리 업무와 관련된 정책 판단 및 수립의 기초 자료(등록 외국인의 국적별 체류 정보)해당 통계는 등록외국인을 대상으로 작성한 국적(지역)별 통계로, 90일 미만 단기체류자는 제외한 통계입니다.해당  통계를 통해 체류자격 대분류별 한국에 거주하고 있는 등록외국인의 거주 유형을 파악할 수 있습니다.법무부 출입국외국인정책본부 홈페이지를 통해  통계연보 등록외국인 국적별(지역별)  현황을 매년 공개하고 있습니다.참고로, 등록외국인의  지역별(시군구별) 현황은 분기별로 공개하고 있습니다.
 applicable_legislation:
   - law: 출입국관리법
@@ -49,6 +51,7 @@ schema:
         unique: 7
     - name: 국적
       type: string
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 베트남
@@ -412,6 +415,12 @@ schema:
         p50: 9
         max: 7669
         unique: 105
+  foreign_keys:
+    - fields:
+        - 국적
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -454,7 +463,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3069963-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적)'
     evidence:
       - type: measured
         source: probe/stats/3069963.json
@@ -529,8 +538,6 @@ verification:
   run: probe/runs/3069963.json
   stats: probe/stats/3069963.json
   data: probe/data/3069963/
-status: active
-summary_user: 등록외국인(90일 미만 단기체류자 제외)을 대륙·국적·성별로 나누고, 문화예술(D1)부터 방문취업(H2)까지 체류자격별 인원을 열로 펼친 전국 단위 집계표(csv 약 34KB)이다. 연구자나 정책 담당자가 '어느 국적 외국인이 유학·비전문취업·결혼이민 등 어떤 자격으로 많이 머무는가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 통계와는 국적명을 국가코드로 매핑하거나 같은 법무부 통계끼리 이름으로 맞춰 이어 쓴다.
 limits: 전국 단위 비공간 통계라 시군구 등 지역별 외국인 분포는 이 파일로 알 수 없고, 별도로 공개되는 지역별 현황을 써야 한다. 국가코드 같은 표준 키가 없어 국적명 문자열 매핑이 필요하다.
 review:
   summary: draft
@@ -542,3 +549,4 @@ review:
     - c-3069963-03
     - c-3069963-04
   dropped_citations: 0
+status: active

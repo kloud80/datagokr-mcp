@@ -1,4 +1,5 @@
-# Dataset 15085917 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085917 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085917'
 tier: verified
 title: 기후에너지환경부 한강홍수통제소_홍수예보_수위유량곡선식
@@ -23,6 +24,7 @@ synonyms:
   - 한강 수계 유량
   - H-Q 곡선
   - 수문 관측
+summary_user: 한강 수계 수위 관측소별로 수위를 유량으로 바꾸는 수위유량곡선식을 적용기간(시작·종료일자)과 수위 구간(하한·상한·간격)별로 담은 파일(CSV, 약 2MB)입니다. 하천 분석가나 수자원 실무자가 '이 관측소의 특정 시기 수위값을 유량으로 환산하려면 어떤 식을 써야 하나'를 확인할 때 쓴다. 전역 조인 키는 없어 수위관측소코드나 지점명을 같은 기관의 수위 관측 자료와 맞춰 이어 쓴다.
 description_portal: 한강홍수통제소에서는 예보대상인 한강 수계 내의 표준유역마다 적절한 위치에 수위 관측소를 설치하여 해당 지점의 수위와 유량을 측정하고 있습니다. 이 데이터는 한강홍수통제소에서 운영하는 수위 관측소 별 측정데이터인 수위 데이터를 기초로 하여 도출되는 수위유량곡선식입니다. 데이터 필드에는 수문 관측소에서 실시간으로 측정하여 수집한 수위 데이터의 하한값, 상한값, 간격 및 관계식(관계식은 하천 수위와 일정 기간 유량 간의 관계식을 말합니다.) 이 적용기간 별로 포함되어 있습니다.
 accrual_periodicity: 수시
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 수위관측소코드
       type: number
+      semantic_type: hydro_obs_cd
       null_rate: 0.0
       sample_values:
         - '4005670'
@@ -134,12 +137,23 @@ schema:
         p50: 0.01
         max: 0.5
         unique: 6
+  foreign_keys:
+    - fields:
+        - 수위관측소코드
+      reference:
+        key: hydro_obs_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 적용시작일자
+    - 적용종료일자
 cycle: event
 classification:
   subsector_name: 홍수 예보·경보 (특보·예보 지점·댐 방류 예고·도시 침수 예보)
@@ -181,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085917-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: hydro_obs_cd(수위관측소코드)'
     evidence:
       - type: measured
         source: probe/stats/15085917.json
@@ -273,8 +287,6 @@ verification:
   run: probe/runs/15085917.json
   stats: probe/stats/15085917.json
   data: probe/data/15085917/
-status: active
-summary_user: 한강 수계 수위 관측소별로 수위를 유량으로 바꾸는 수위유량곡선식을 적용기간(시작·종료일자)과 수위 구간(하한·상한·간격)별로 담은 파일(CSV, 약 2MB)입니다. 하천 분석가나 수자원 실무자가 '이 관측소의 특정 시기 수위값을 유량으로 환산하려면 어떤 식을 써야 하나'를 확인할 때 쓴다. 전역 조인 키는 없어 수위관측소코드나 지점명을 같은 기관의 수위 관측 자료와 맞춰 이어 쓴다.
 limits: 이 파일은 관계식만 담고 실제 수위·유량 관측값은 담지 않으므로, 유량을 구하려면 별도의 수위 자료가 필요하다. 명세상 수시·이벤트성으로 생성되는 파일이라 실시간 갱신을 기대하기 어렵고, 다른 기관 데이터와는 공통 코드 없이 이름·코드 매핑으로만 연결된다.
 review:
   summary: draft
@@ -286,3 +298,4 @@ review:
     - c-15085917-02
     - c-15085917-03
   dropped_citations: 0
+status: active

@@ -1,4 +1,3 @@
-# Dataset 15045311 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15045311'
 tier: verified
 title: 서울주택도시개발공사_장기전세주택 공급계획
@@ -23,6 +22,7 @@ synonyms:
   - 장기전세 입주 예정
   - 서울 임대주택 공급계획
   - SH공사 공급일정
+summary_user: SH공사의 장기전세주택 공급계획을 단지별 한 행으로 담은 약 2.9KB 분량의 CSV 파일로, 주택 유형·단지명·소재지·공급예정 연월과 전용면적별(43~84㎡) 공급예정 세대수 및 합계(계)를 담는다. 장기전세 입주를 준비하는 시민이 언제 어느 지역에 어떤 면적의 세대가 나오는지 확인하거나, 분석가가 지역·시기별 공급 분포를 살필 때 쓴다. 전역 조인 키가 없어 소재지 주소나 단지명을 이름으로 맞춰 같은 기관의 다른 주택 데이터나 주소 기반 자료와 잇는다.
 description_portal: 이 데이터는 서울주택도시공사(SH공사)가 제공하는 장기전세주택에 대한 공급계획 정보를 포함하고 있습니다. 각 공급 항목은 주택 유형, 단지명, 공급 세대수(계), 전용면적, 소재지, 공급예정년도, 공급예정월 등의 항목으로 구분되어 있습니다. 이를 통해 SH공사가 향후 어느 지역에, 어떤 규모의 장기전세주택을, 어느 시점에 공급할 계획인지 사전에 확인할 수 있습니다. 장기전세는 서민 주거 안정을 위한 대표적인 공공임대주택 유형으로, 이 데이터를 활용하면 지역별 수요 대응 상황이나 주택 공급의 시기별 분포를 분석할 수 있습니다. 또한 주거정책 수립, 부동산 시장 전망, 지역별 인프라 수요 분석 등 다양한 공공 및 민간 분야에서 참고 자료로 활용 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -44,6 +44,7 @@ schema:
         unique: 2
     - name: 단지명
       type: code
+      semantic_type: sh_complex_nm
       null_rate: 0.0
       sample_values:
         - 청담르엘
@@ -223,12 +224,26 @@ schema:
         p50: 8
         max: 12
         unique: 5
+  foreign_keys:
+    - fields:
+        - 단지명
+      reference:
+        key: sh_complex_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+  time: year
+  time_fields:
+    - 공급예정년도
 cycle: event
 classification:
   subsector_name: 도시개발구역·환지·역세권 개발
@@ -270,7 +285,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15045311-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sh_complex_nm(단지명)'
     evidence:
       - type: measured
         source: probe/stats/15045311.json
@@ -354,8 +369,6 @@ verification:
   run: probe/runs/15045311.json
   stats: probe/stats/15045311.json
   data: probe/data/15045311/
-status: active
-summary_user: SH공사의 장기전세주택 공급계획을 단지별 한 행으로 담은 약 2.9KB 분량의 CSV 파일로, 주택 유형·단지명·소재지·공급예정 연월과 전용면적별(43~84㎡) 공급예정 세대수 및 합계(계)를 담는다. 장기전세 입주를 준비하는 시민이 언제 어느 지역에 어떤 면적의 세대가 나오는지 확인하거나, 분석가가 지역·시기별 공급 분포를 살필 때 쓴다. 전역 조인 키가 없어 소재지 주소나 단지명을 이름으로 맞춰 같은 기관의 다른 주택 데이터나 주소 기반 자료와 잇는다.
 limits: 명세상 연간·이벤트 주기로 만들어진 뒤 바뀌지 않는 파일이라, 최신 공급계획이 반영됐는지는 따로 확인해야 한다. 공통 코드 키가 없어 다른 데이터와 연결하려면 주소·단지명 문자열 매칭에 기대야 한다.
 review:
   summary: draft
@@ -367,3 +380,4 @@ review:
     - c-15045311-02
     - c-15045311-03
   dropped_citations: 0
+status: active

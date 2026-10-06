@@ -1,0 +1,261 @@
+# Dataset 15108105 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15108105'
+tier: verified
+title: 통일부_신착자료 조회 서비스
+sector: 통일외교안보/통일/inter-korean
+agency:
+  id: '1250000'
+  name: 통일부
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108105/openapi.do
+synonyms:
+  - 도서관
+  - 신착자료
+  - 조회
+  - 통일부 도서 목록
+  - 통일부 자료실 신간
+  - 북한 관련 도서 검색
+  - 통일 자료 소장 정보
+  - 청구기호 조회
+  - 신간 자료
+description_portal: 통일부 신착자료의 목록과 내용에 대한 데이터로 조회된 결과의 서명, 저자, 출판사, 출판연도, 등록번호, 소장처, 청구기호 등의 데이터를 제공합니다.
+team:
+  dept: 정보화담당관
+services:
+  - op: /getNewbook
+    name: getNewbook
+    endpoint: https://apis.data.go.kr/1250000/newbook/getNewbook
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: catgory
+        required: true
+        example: '1'
+        desc: 카테고리
+      - name: ttl
+        required: false
+        example: 조선
+        desc: 서명 키워드
+      - name: authr
+        required: false
+        example: 전준현
+        desc: 저자 키워드
+      - name: plscmpn
+        required: false
+        example: 과학백과사전종합출판사
+        desc: 출판사 키워드
+      - name: bgng_yr
+        required: true
+        example: '1984'
+        desc: 시작연도
+      - name: end_yr
+        required: true
+        example: '2017'
+        desc: 종료연도
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: catgory
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: ttl
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '조선민족의 반침략투쟁사 : 고조선~발해편'
+      stats:
+        unique: 1
+    - name: authr
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전준현 저
+      stats:
+        unique: 1
+    - name: plscmpn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 과학백과사전종합출판사
+      stats:
+        unique: 1
+    - name: pblcate_yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1988'
+      stats:
+        min: 1988
+        p50: 1988
+        max: 1988
+        unique: 1
+    - name: doi
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - EM10628
+      stats:
+        unique: 1
+    - name: call_no
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 911.0099전75ㅈ v.고조선-발해
+      stats:
+        unique: 1
+    - name: owner
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 북한자료센터 / 5층 문헌자료실
+      stats:
+        unique: 1
+    - name: book_st
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서가배치
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 남북회담·남북합의서·북한정보포털 검색
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.4819
+  brm: 통일외교안보 - 통일
+  why: 기관 분석 핵심 원장 — 통일부
+claims:
+  - id: c-15108105-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15108105.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15108105.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15108105-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108105-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15108105.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108105-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15108105.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108105-06
+    kind: admin_note
+    value: '[통일외교안보 · 통일] 북한 동향(일일)·김정은 공개 활동·북한 인물·허가법인·협력사업 승인·남북회담·합의서만. 북한 개황·용어·도서·TV 편성표, 남북교역·개성공단·북한이탈주민 통계 배제 (`unification-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L699
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108105-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15108105.json
+  stats: probe/stats/15108105.json
+  data: probe/data/15108105/
+status: active
+summary_user: 통일부가 새로 들여온 신착 자료를 한 권(건)씩 담은 목록 데이터로, 자료 구분·서명·저자·출판사·출판연도·등록번호·청구기호·소장처·대출 상태를 제공한다. 연구자나 일반 이용자가 "최근 통일부 자료실에 들어온 북한·통일 관련 신간이 무엇이고 어디에 소장돼 있나"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 서명·저자 같은 이름 매칭으로만 이을 수 있다.
+limits: 공통 조인 키가 없어 다른 데이터셋과 정확히 연결되지 않는다. 신착 도서 목록이므로 북한 동향·남북회담·합의서처럼 분석 대상으로 고른 핵심 데이터 범위에는 들지 않는다. 개발계정은 하루 10,000회로 호출이 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15108105-01
+    - c-15108105-03
+    - c-15108105-06
+  dropped_citations: 0

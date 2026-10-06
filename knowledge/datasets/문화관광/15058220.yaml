@@ -1,0 +1,243 @@
+# Dataset 15058220 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15058220'
+tier: verified
+title: 경기도_다양성 영화 상영 현황
+sector: 문화관광/문화예술/copyright-contents
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15058220/openapi.do
+synonyms:
+  - 다양성영화
+  - 독립영화
+  - 예술영화
+  - 상영현황
+  - 감독
+  - 개봉일
+  - 영화관
+  - 배급사
+  - 다큐멘터리 영화
+  - 경기콘텐츠진흥원 지원 영화
+  - 다양성영화 개봉 목록
+  - 영화 배급사
+  - 경기도 영화
+summary_user: 경기콘텐츠진흥원이 지원한 다양성영화(독립·예술·다큐멘터리 등)의 작품별 개봉·상영 정보를 집계년도(SUM_YY)별로 담는 건별 목록으로, 작품명·감독·장르·상영시간·상영등급·개봉일·배급사를 포함한다. 지역 영화관 프로그래머나 정책 분석가가 '특정 연도에 경기도 지원을 받아 개봉한 다양성영화는 어떤 장르·배급사에 몰려 있나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 영화·공연 데이터와는 작품명·감독명·배급사명 같은 이름 매칭으로만 이어 붙인다.
+description_portal: 「다양성 영화 상영 현황」 데이터는 경기콘텐츠진흥원이 지원하는 다양성영화의 개봉 목록과 상영 정보를 제공하는 자료입니다. 주요 항목은 작품명(WORK_NM), 감독명(MNG_NM), 장르구분명(GENRE_DIV_NM), 상영시간(SCREEN_TM), 상영등급(SCREEN_GRAD), 개봉일정보(PREMIERE_DE_INFO), 배급사명(DISTRBTR_NM) 등으로 구성됩니다. 해당 데이터는 독립영화, 예술영화, 다큐멘터리 등 상업 블록버스터 외 영화작품의 상영 현황을 파악할 수 있는 중요한 기초자료로, 다양성영화 지원 정책 수립, 문화예술산업 연구, 지역 영화관 운영 및 상영 프로그램 기획 등에 활용될 수 있습니다. 또한 집계년도(SUM_YY)별로 데이터를 제공하여 연도별 영화 개봉 및 상영 추세를 분석할 수 있습니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: DiversityMovieScreening
+    name: DiversityMovieScreening
+    endpoint: https://openapi.gg.go.kr/DiversityMovieScreening
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YY
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: WORK_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 우리 손자 베스트
+        - 비치 온 더 비치
+        - 다방의 푸른 꿈
+      stats:
+        unique: 5
+    - name: MNG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 김수현
+        - 정가영
+        - 김대현
+      stats:
+        unique: 5
+    - name: GENRE_DIV_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 드라마
+        - 다큐멘터리
+        - 옴니버스
+      stats:
+        unique: 3
+    - name: SCREEN_TM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '131'
+        - '99'
+        - '70'
+      stats:
+        min: 62
+        p50: 95
+        max: 131
+        unique: 5
+    - name: SCREEN_GRAD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 청소년 관람불가
+        - 전체관람가
+        - 15세
+      stats:
+        unique: 3
+    - name: PREMIERE_DE_INFO
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2016-12-08'
+        - '2016-12-15'
+        - '2016-12-22'
+      stats:
+        min: '2016-12-08'
+        max: '2017-01-05'
+        unique: 4
+    - name: DISTRBTR_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인디플러그
+        - 로카픽처스
+        - 인디라인
+      stats:
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - PREMIERE_DE_INFO
+cycle: default
+classification:
+  subsector_name: 저작권·콘텐츠 (저작권 등록·공유마당·게임 등급·영화·음악·웹툰)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6435
+  rank_in_sector: 199
+  brm: 문화관광 - 문화예술
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15058220-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15058220.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15058220-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058220-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15058220.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058220-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15058220.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15058220-06
+    kind: admin_note
+    value: '[문화관광 - 문화예술 · 문화재 · 문화체육관광일반 · 문화예술] 공연·문화시설·전시/행사·도서관·저작권/콘텐츠. 가사집·문예연감 텍스트, 공공미술, 종교시설, 실태조사·기금, 문화누리카드, 국어사전(우리말샘) 등 배제 (`arts-deferred`, `arts-non-core`). 키 `kopis_id`, `cultural_facility_cd`, 발급처 `kopis.or.kr`·`data4library.kr`.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L587
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15058220-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15058220.json
+  stats: probe/stats/15058220.json
+  data: probe/data/15058220/
+limits: 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 발급받아 호출해야 한다. 공통 영화 식별 코드가 없어 관객 수·매출 등 다른 데이터와 붙일 때 이름 표기 차이로 매칭 오류가 생길 수 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15058220-01
+    - c-15058220-03
+    - c-15058220-04
+  dropped_citations: 0
+status: active

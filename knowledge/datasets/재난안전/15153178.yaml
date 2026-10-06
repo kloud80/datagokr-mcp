@@ -1,0 +1,212 @@
+# Dataset 15153178 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15153178'
+tier: verified
+title: 행정안전부_소방장비현황
+sector: 재난안전/안전관리/fire-rescue
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15153178/openapi.do
+synonyms:
+  - 공동구재난
+  - 다중밀집건축물붕괴대형사고
+  - 다중밀집시설대형화재
+  - 산불
+  - 일상생활안전
+  - 소방장비 보유현황
+  - 소방차 보유대수
+  - 경기도 소방장비
+  - 소방 장비 수량
+  - 재난안전데이터 공유플랫폼 소방
+  - 소방 차량 현황
+summary_user: 경기도(지자체)가 제공하는 소방장비현황으로, 장비 구분·용도 구분·장비명별 보유수량(HLD_QTY_CNT)을 담은 집계 현황이며 위치 정보는 없다. 소방 행정 분석가나 연구자가 '어떤 종류의 소방장비를 용도별로 몇 대씩 보유하고 있는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어서 다른 소방 데이터(화재 발생, 119안전센터 등)와는 장비명·구분명 같은 이름으로 맞추거나 같은 기관 코드로만 이어 쓴다.
+description_portal: "\"행정안전부에서는 「재난 및 안전관리 기본법」에 따라 데이터 기반 재난 및 안전관리체제 확립 및 재난안전데이터 수집·연계·분석·활용·공유·공개를 위하여 재난안전데이터통합관리시스템인 '재난안전데이터 공유플랫폼' 구축·운영하여 안전분야 공공데이터를 제공하고 있습니다.- 재난안전데이터 공유플랫폼(https://www.safetydata.go.kr)과 공공데이터포털에서 연계하여 제공하고 있습니다.- 해당 데이터는 경기도(지자체)에서 제공하는 소방장비현황에 대한 관련 정보입니다.\""
+team:
+  dept: 재난안전데이터과
+services:
+  - op: DSSP-IF-20606
+    name: DSSP-IF-20606
+    endpoint: https://www.safetydata.go.kr/V2/api/DSSP-IF-20606
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: www.safetydata.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: EQPMNT_SE_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기동장비
+        - 구조장비
+        - 구급장비
+      stats:
+        unique: 4
+    - name: USG_SE_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 소방자동차
+        - 수난구조장비
+        - 교육실습장비
+      stats:
+        unique: 5
+    - name: FWK_SE_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 재난현장 지원차
+        - 구조차
+        - 소방고가차
+      stats:
+        unique: 20
+    - name: EQPMNT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 장비명
+        - 중형펌프차
+        - 대형펌프차
+      stats:
+        unique: 101
+    - name: HLD_QTY_CNTOO
+      type: number
+      null_rate: 0.4356
+      sample_values:
+        - '3'
+        - '2'
+        - '1'
+      stats:
+        min: 0
+        p50: 26.5
+        max: 1052
+        unique: 42
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5194
+  brm: 재난안전 - 안전관리
+  why: 재난안전데이터공유플랫폼 (샘플 다운로드)
+claims:
+  - id: c-15153178-01
+    kind: access
+    value: 외부 사이트 www.safetydata.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15153178.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.safetydata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15153178-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153178-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15153178.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153178-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15153178.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153178-06
+    kind: admin_note
+    value: "세부 부문 '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)'의 가치: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fire-rescue
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15153178-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15153178-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15153178.json
+  stats: probe/stats/15153178.json
+  data: probe/data/15153178/
+limits: 재난안전데이터 공유플랫폼(safetydata.go.kr)의 별도 인증키(KEY)가 필요하며, 포털 활용신청과는 따로 받는다. 포털 설명은 경기도 제공 데이터라고 하지만 범위 메타데이터는 전국·비공간으로 되어 있어 실제 지역 범위를 확인한 뒤 써야 한다. 장비가 어느 관서·위치에 배치됐는지는 공간 정보나 조인 키가 없어 이 데이터만으로 알 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15153178-01
+    - c-15153178-03
+    - c-15153178-04
+  dropped_citations: 0
+status: active

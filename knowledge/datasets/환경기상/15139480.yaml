@@ -1,0 +1,227 @@
+# Dataset 15139480 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139480'
+tier: verified
+title: 기상청_전력기상지수 조회서비스
+sector: 환경기상/대기/weather-forecast
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139480/openapi.do
+synonyms:
+  - 전력기상지수
+  - 전력
+  - 전기
+  - 난방
+  - 냉방
+  - PWI
+  - 전력수요 예측
+  - 공동주택 전력
+  - 정전 예방
+  - 생활기상지수
+  - 전력수급 날씨
+  - 한전 기상지수
+description_portal: 공동주택의 전기안전관리자와 일반 국민들이 기상변화에 따른전력수요의 변화를 쉽게 예측하여 전력 수요가 급증할 수 있는 시기에 전력 수요관리를 통해 정전사고 예방에 활용할 수 있도록 공동주택의 전력 수요를예측하는 전력기상지수를 한국전력공사와 공동개발하였습니다.(참고) 전력기상지수(PWI)는 기상 상황이 전력 수요 및 전력설비 운용에 미치는 영향을 수치화한 지표입니다.기온, 습도, 바람, 적설 등 기상요소들이 전력수급에 미치는 영향을 고려하여 전력 수요 급증·감소 및 설비 이상 가능성을 사전에 예측·평가하기 위해 사용됩니다.
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: getFmlandPwn
+    name: getFmlandPwn
+    endpoint: https://apihub.kma.go.kr/api/typ02/openApi/FmlandWthrInfoService/getFmlandPwn
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+      - name: numOfRows
+        required: true
+        example: '10'
+      - name: dataType
+        required: true
+        example: XML
+      - name: CURRENT_TM
+        required: true
+        example: '2019100516'
+      - name: AREA_ID
+        required: true
+        example: '4122000000'
+      - name: PA_CROP_SPE_ID
+        required: true
+        example: PA130201
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: dataType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - XML
+      stats:
+        unique: 1
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: pageNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5194
+  rank_in_sector: 583
+  brm: 환경기상 - 대기
+  why: 기상청 API허브 (키 + API별 활용신청)
+claims:
+  - id: c-15139480-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139480.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139480-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139480-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139480.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139480-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139480.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139480-06
+    kind: admin_note
+    value: "세부 부문 '기상 예보·특보 (단기·중기예보·특보·태풍·지진·생활기상지수·도로/산악 날씨)'의 가치: 오늘의 날씨·특보 = 모델이 모르는 실시간 사실, 기상청 API허브 병존. 예보구역·격자(nx,ny)가 키"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-forecast
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139480-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139480-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139480.json
+  stats: probe/stats/15139480.json
+  data: probe/data/15139480/
+status: active
+summary_user: 기상 상황이 공동주택 전력 수요와 전력설비 운용에 미치는 영향을 수치화한 전력기상지수(PWI)를 전국 범위로 조회하는 API이며, 기상청이 한국전력공사와 함께 개발한 예측 지수다. 공동주택 전기안전관리자나 일반 국민이 "며칠 뒤 기온·습도 변화로 우리 단지 전력 수요가 급증할 시기인가"를 미리 판단해 수요관리와 정전 예방에 쓴다. 실측 응답에서 다른 데이터와 바로 맞물리는 공통 조인 키는 확인되지 않아, 같은 기상청 단기예보 등과는 지역명·예보구역 코드 매핑으로 이어 써야 한다.
+limits: 포털 활용신청과 별개로 기상청 API허브(apihub.kma.go.kr)의 인증키를 경로 파라미터로 넣어야 호출된다. 응답 필드에 전역 조인 키가 없어 행정구역·격자 단위 데이터와 자동으로 결합되지 않고, 비공간 데이터라 위치 좌표 분석에는 바로 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139480-01
+    - c-15139480-03
+    - c-15139480-04
+    - c-15139480-06
+  dropped_citations: 0

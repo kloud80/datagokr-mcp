@@ -1,0 +1,272 @@
+# Dataset 15109004 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15109004'
+tier: verified
+title: 한국마사회_소유자기본연계
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15109004/openapi.do
+synonyms:
+  - 말산업
+  - 소유자
+  - 소유자기본
+  - 말이력
+  - 말정보
+  - 마주 정보
+  - 경주마 소유자
+  - 등록마 소유자
+  - 말 소유주
+  - 마주 등록
+  - 말 생산자
+description_portal: 한국마사회의 등록마에 대해 소유자 정보를 재공합니다. (제공정보는 소유자명(owrNm), 등록일(regDt), 생산자여부(prodYn), 개인법인구분코드(indvCpbGbCd), 성별(wkerGndrCd), 등록사유코드(regRsCd), 신청방법코드(applMthCd), 말소사유코드(eraRsCd), 외국인국가코드(frnrCtryCd) 자료입니다.)- 요청메세지에 소유자명(owr_nm), 등록일 검색시작일자(reg_dt_fr), 등록일 검색종료일자(reg_dt_to), 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다.- 요청변수 미입력시 등록일 기준 1년간의 데이터를 표출합니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /ownerbasic
+    name: 소유자기본연계 정보 조회 서비스
+    endpoint: https://apis.data.go.kr/B551015/API288/ownerbasic
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: owr_nm
+        required: false
+        example: 조현영
+        desc: 소유자명
+      - name: reg_dt_fr
+        required: false
+        example: '20220116'
+        desc: 등록일 검색시작일(FROM)
+      - name: reg_dt_to
+        required: false
+        example: '20220116'
+        desc: 등록일 검색종료일(TO)
+      - name: _type
+        required: false
+        example: xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: applMthCd
+      title: 신청방법
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: eraRsCd
+      title: 말소사유
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: frnrCtryCd
+      title: 외국인국가코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: indvCpbGbCd
+      title: 개인법인구분코드(개인/법인)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 개인
+      stats:
+        unique: 1
+    - name: owrNm
+      title: 소유자명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 조현영
+      stats:
+        unique: 1
+    - name: prodYn
+      title: 생산자여부(Y/N)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: regDt
+      title: 등록일
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20220116'
+      stats:
+        min: 20220116
+        p50: 20220116
+        max: 20220116
+        unique: 1
+    - name: regRsCd
+      title: 등록사유
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 신규등록
+      stats:
+        unique: 1
+    - name: wkerGndrCd
+      title: 성별
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5113
+  brm: 농축수산 - 농업·농촌
+  why: 기관 분석 핵심 원장 — 한국마사회
+claims:
+  - id: c-15109004-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15109004.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15109004.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15109004-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15109004-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15109004.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15109004-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15109004.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15109004-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15109004-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15109004-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15109004.json
+  stats: probe/stats/15109004.json
+  data: probe/data/15109004/
+status: active
+summary_user: 한국마사회에 등록된 경주마 등 등록마의 소유자 정보를 소유자 한 명(등록 건) 단위로 담으며, 소유자명·등록일·생산자 여부·개인/법인 구분·성별·등록사유·말소사유·외국인 국가코드를 제공한다. 마주나 말 산업 분석가가 "최근 1년간 새로 등록하거나 말소된 마주는 개인과 법인이 각각 몇 명인가"처럼 소유자 구성과 등록 추이를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 마사회 데이터와는 소유자명(owrNm) 같은 이름이나 같은 기관의 코드로만 연결한다.
+limits: 말 단위 정보나 고유 소유자 번호가 없어 다른 데이터와 정확히 조인하기 어렵고, 이름이 같으면 구분할 수 없다. 요청변수를 넣지 않으면 등록일 기준 1년치만 나오므로, 그보다 긴 기간은 등록일 검색 범위를 지정해 조회해야 한다. 세부 부문이 농산물 유통 가격으로 분류돼 있으나 내용은 말 소유자 정보이며 가격 정보는 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15109004-01
+    - c-15109004-03
+    - c-15109004-04
+  dropped_citations: 0

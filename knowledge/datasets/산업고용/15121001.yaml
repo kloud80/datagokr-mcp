@@ -1,4 +1,5 @@
-# Dataset 15121001 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15121001 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15121001'
 tier: verified
 title: 한국산업안전보건공단_국내재해사례 게시판 정보 조회서비스
@@ -25,6 +26,7 @@ synonyms:
   - 건설업 재해사례
   - 제조업 사고사례
   - 안전보건공단 게시판
+summary_user: '산업안전포털에 게시된 국내재해사례 게시물을 건별로 담으며, 게시판 종류(제조업·건설업·조선업 등), 제목, 본문 내용, 첨부파일 건수, 게시판 번호를 전국 범위로 제공한다. 안전관리자나 사업주가 "우리 업종(예: 건설업)에서 최근 어떤 유형의 재해가 났고 원인과 예방대책은 무엇인가"를 찾아 안전교육 자료로 쓰는 데 활용한다. 실측 컬럼에 전역 조인 키가 없어 다른 산재 통계와 연결하려면 업종명 같은 이름 매핑에 의존해야 하며, 게시판 번호(boardno)는 이 게시판 안에서만 쓰는 식별자다.'
 description_portal: '산언안전포털 홈페이지(https://portal.kosha.or.kr)에서 제공 중인 국내재해사례 게시판 정보를 실시간으로 조회하실 수 있도록 제공하는 데이터입니다.■ API 활용 관련- 홈페이지(https://kosha.or.kr/kosha/data/machine.do) 에서 게시판 종류 확인이 가능합니다. (제조업/건설업/조선업 등)- API는 홈페이지 자료 등록일 역순으로 조회됩니다. *요청메세지 명세ServiceKey :공공데이터포털에서 발급받은 인증키business :  게시판 종류keyword : 게시판 제목callApiId :국내재해사례 게시판 조회(필수입력 고정값)pageNo : 페이지번호numOfRows : 한 페이지 결과 수'
 team:
   dept: 디지털계획부
@@ -118,6 +120,7 @@ schema:
     - name: boardno
       title: 게시판 번호
       type: date
+      semantic_type: kosha_disaster_board_no
       null_rate: 0.0
       sample_values:
         - 20260930133133DR22BM
@@ -127,12 +130,22 @@ schema:
         min: '2015-12-17'
         max: '2026-09-30'
         unique: 1000
+  foreign_keys:
+    - fields:
+        - boardno
+      reference:
+        key: kosha_disaster_board_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - boardno
 cycle: default
 classification:
   subsector_name: 산업재해·산재보험 (국내재해사례·사고사망·건설업 일별 중대재해·산재 판례/질병판정/심사결정·요양 승인)
@@ -176,7 +189,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15121001-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosha_disaster_board_no(boardno)'
     evidence:
       - type: measured
         source: probe/stats/15121001.json
@@ -230,8 +243,6 @@ verification:
   run: probe/runs/15121001.json
   stats: probe/stats/15121001.json
   data: probe/data/15121001/
-status: active
-summary_user: '산업안전포털에 게시된 국내재해사례 게시물을 건별로 담으며, 게시판 종류(제조업·건설업·조선업 등), 제목, 본문 내용, 첨부파일 건수, 게시판 번호를 전국 범위로 제공한다. 안전관리자나 사업주가 "우리 업종(예: 건설업)에서 최근 어떤 유형의 재해가 났고 원인과 예방대책은 무엇인가"를 찾아 안전교육 자료로 쓰는 데 활용한다. 실측 컬럼에 전역 조인 키가 없어 다른 산재 통계와 연결하려면 업종명 같은 이름 매핑에 의존해야 하며, 게시판 번호(boardno)는 이 게시판 안에서만 쓰는 식별자다.'
 limits: 전역 조인 키가 없어 사고사망·중대재해 통계 등과 코드로 직접 결합할 수 없고, 이름 매핑이나 같은 기관 기준으로만 연결된다. 지역 구분이 없는 전국·비공간 자료라 지역별 분석에는 맞지 않는다. 개발계정은 하루 1,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -243,3 +254,4 @@ review:
     - c-15121001-03
     - c-15121001-04
   dropped_citations: 0
+status: active

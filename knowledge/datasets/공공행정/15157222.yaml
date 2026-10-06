@@ -96,6 +96,7 @@ schema:
     - name: onbidPbancNo
       title: 온비드공고번호
       type: number
+      semantic_type: onbid_pbanc_no
       null_rate: 0.0
       sample_values:
         - '891115'
@@ -109,6 +110,7 @@ schema:
     - name: pbctNo
       title: 공매번호
       type: number
+      semantic_type: onbid_pbct_no
       null_rate: 0.0
       sample_values:
         - '10064908'
@@ -122,6 +124,7 @@ schema:
     - name: pbancMngNo
       title: 공고관리번호
       type: date
+      semantic_type: onbid_pbanc_no
       null_rate: 0.0
       sample_values:
         - 202606-17411-00
@@ -282,9 +285,33 @@ schema:
         - 개찰완료
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - onbidPbancNo
+      reference:
+        key: onbid_pbanc_no
+      evidence: measured
+    - fields:
+        - pbctNo
+      reference:
+        key: onbid_pbct_no
+      evidence: measured
+    - fields:
+        - pbancMngNo
+      reference:
+        key: onbid_pbanc_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: realtime
+  time_fields:
+    - cltrOpbdDt
+  category:
+    - ksic
+  category_fields:
+    - pbancKindCd
 cycle: default
 classification:
   subsector_name: 국유·공유재산
@@ -329,7 +356,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15157222-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: onbid_pbanc_no(onbidPbancNo), onbid_pbct_no(pbctNo), onbid_pbanc_no(pbancMngNo)'
     evidence:
       - type: measured
         source: probe/stats/15157222.json

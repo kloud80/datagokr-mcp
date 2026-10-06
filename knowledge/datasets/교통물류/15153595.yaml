@@ -1,4 +1,3 @@
-# Dataset 15153595 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15153595'
 tier: verified
 title: 한국환경공단_기후에너지환경부 전기차 충전소 충전건별 충전량 합성데이터 조회서비스
@@ -25,6 +24,7 @@ synonyms:
   - AI 학습 데이터
   - 충전 세션
   - 급속충전 완속충전
+summary_user: 2024년 환경부 전기차 충전기의 충전건별 충전량 원본(약 630만 건)을 바탕으로 만든 합성(가상) 데이터로, 충전소·충전기별 충전 시작·종료일시, 총충전시간, 총충전량, 충전기 유형·용량을 건 단위로 담는다. 분석가나 AI 개발자가 실제 개인정보 없이 '급속·완속 충전기별 충전량 분포는 어떤 모양인가' 같은 모델 학습·테스트용 질문에 쓴다. 전역 조인 키는 없고, 충전소아이디(chrsId)·충전기아이디(chrgrId)나 지역명·시군구명, 주소를 매개로 같은 기관의 충전소 정보 데이터와 이름·코드 매칭으로 연결한다.
 description_portal: '1. 전기차는 고전압 배터리에서 전기에너지를 전기모터로 공급하여 구동력을 발생시키는 차량으로 화석연료를 전혀 사용하지 않는 무공해차량입니다. 전기차의 배터리를 충전할 수 있도록 전기를 공급하는 충전소 및 충전기는 공공기관/민간기업 에서 설치 운영하고 있습니다.이 API는 2024년의 환경부 전기차 충전소 충전기에서 전기차별로 충전한 충전량 데이터를 기반으로 AI학습 테스트용으로 생성한 합성데이터(가상데이터) 조회서비스 입니다.2. 합성데이터 설명- 원본데이터 이용기간 및 건수: 2024년, 약 630만건- 원본데이터 특성 : 충전건별 충전량데이터, 범주형 및 수치형 데이터로 구성, 충전시간과 충전량이 비례하지 않음- 합성데이터 특성 : 범주형 및 수치형 데이터 생성, 충전시작 및 종료일시 조건에 따른 충전시간 및 충전량 생성- 합성데이터 활용 : 실제 측정 데이터의 구조와 통계적 특성을 반영하되 민감정보를 포함하지 않아 AI학습 테스트 데이터로 활용 가능'
 team:
   dept: 정보관리부
@@ -103,6 +103,7 @@ schema:
     - name: chrsId
       title: 충전소아이디
       type: code
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - AI100000
@@ -111,6 +112,7 @@ schema:
     - name: chrgrId
       title: 충전기아이디
       type: number
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - '12'
@@ -206,12 +208,33 @@ schema:
         - 급속(200kW동시)
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - chrsId
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
+        - chrgrId
+      reference:
+        key: ev_charger_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+    - sggNm
+  space_via: address
+  time: day
+  time_fields:
+    - chargBgngDt
+    - chargEndDt
 cycle: default
 classification:
   subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
@@ -256,7 +279,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15153595-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: fuel_station_id(chrsId), ev_charger_id(chrgrId)'
     evidence:
       - type: measured
         source: probe/stats/15153595.json
@@ -310,8 +333,6 @@ verification:
   run: probe/runs/15153595.json
   stats: probe/stats/15153595.json
   data: probe/data/15153595/
-status: active
-summary_user: 2024년 환경부 전기차 충전기의 충전건별 충전량 원본(약 630만 건)을 바탕으로 만든 합성(가상) 데이터로, 충전소·충전기별 충전 시작·종료일시, 총충전시간, 총충전량, 충전기 유형·용량을 건 단위로 담는다. 분석가나 AI 개발자가 실제 개인정보 없이 '급속·완속 충전기별 충전량 분포는 어떤 모양인가' 같은 모델 학습·테스트용 질문에 쓴다. 전역 조인 키는 없고, 충전소아이디(chrsId)·충전기아이디(chrgrId)나 지역명·시군구명, 주소를 매개로 같은 기관의 충전소 정보 데이터와 이름·코드 매칭으로 연결한다.
 limits: 실측값이 아닌 합성데이터이므로 실제 충전소 이용 실적 집계나 특정 충전소 운영 판단에 그대로 쓰면 안 된다. 원본에서도 충전시간과 충전량은 비례하지 않는다. 다른 데이터와 묶을 공통 키가 없어 이름·코드 매핑이 필요하다.
 review:
   summary: draft
@@ -323,3 +344,4 @@ review:
     - c-15153595-03
     - c-15153595-04
   dropped_citations: 0
+status: active

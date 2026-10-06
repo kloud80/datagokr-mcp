@@ -1,0 +1,269 @@
+# Dataset 15059316 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15059316'
+tier: verified
+title: 경기도_대형 화재발생 현황
+sector: 재난안전/안전관리/fire-rescue
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15059316/openapi.do
+synonyms:
+  - 대형화재
+  - 재난안전
+  - 인명피해
+  - 재산피해
+  - 화재원인
+  - 발생장소
+  - 재난데이터
+  - 소방대응
+  - 경기도 화재 통계
+  - 대형화재 사고
+  - 화재 피해 현황
+  - 화재 원인
+  - 재산피해액
+  - 시군별 화재
+  - 소방 화재 발생
+summary_user: 경기도 내에서 발생한 대형 화재를 사건 한 건씩 담은 원천 데이터로, 집계년도·시군과 함께 발생일자·시각·장소, 화재원인, 인명피해 재난규모, 재산피해액을 기록한다. 소방·안전 분석가나 지자체 담당자가 "우리 시군에서 대형 화재는 주로 어떤 원인과 시간대에 일어나고 피해 규모는 어느 정도인가"를 살필 때 쓴다. 전역 조인 키는 실측 컬럼에서 확인되지 않아, 시군명이나 시군코드(SIGUN_CD)를 같은 경기도 기관 데이터와 이름·코드로 맞춰 이어 쓴다.
+description_portal: 「대형 화재발생 현황」 데이터는 경기도 내에서 발생한 대형 화재 사건의 정보를 제공하는 자료입니다. 주요 항목은 발생일자(OCCUR_DE), 발생시각(OCCUR_TM), 발생장소(OCCURPLC), 화재원인(FIRE_CAUSE), 인명피해재난규모(HUMNLF_DAMAGE_CALMTY_SCALE), 재산피해액(PRPRTY_DAMAGE_AMT), 시군명(SIGUN_NM), 집계년도(SUM_YY) 등입니다. 이 데이터는 특정 시군 단위로 화재 발생 현황을 확인할 수 있으며, 화재 발생 원인과 피해 규모를 분석하여 지역별 위험 요인을 파악하는 데 유용합니다. 또한 인명 및 재산 피해 항목을 포함하고 있어 화재 예방 정책 수립, 안전관리 계획 수립, 도시계획 및 소방인프라 강화 연구 등에 활용될 수 있습니다. 시간대별, 장소별 발생 특성을 분석하면 화재 취약 지역이나 시기를 도출하는 데에도 도움이 됩니다.
+team:
+  dept: AI데이터행정과
+services:
+  - op: LargeSizeFireOccurrence
+    name: LargeSizeFireOccurrence
+    endpoint: https://openapi.gg.go.kr/LargeSizeFireOccurrence
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SUM_YY
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 의왕시
+        - 안산시
+        - 이천시
+      stats:
+        unique: 5
+    - name: SIGUN_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '41430'
+        - '41270'
+        - '41500'
+      stats:
+        min: 41270
+        p50: 41460
+        max: 41820
+        unique: 5
+    - name: OCCUR_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20070809'
+        - '20071226'
+        - '20080107'
+      stats:
+        min: 20070809
+        p50: 20080107
+        max: 20080725
+        unique: 5
+    - name: OCCUR_TM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 20:41
+        - 17:18
+        - 10:38
+      stats:
+        unique: 5
+    - name: OCCURPLC
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 원진산업
+        - 성인 오락실
+        - 코리아냉동
+      stats:
+        unique: 5
+    - name: FIRE_CAUSE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 화학적 요인
+        - 부주의
+        - 미상
+      stats:
+        unique: 5
+    - name: HUMNLF_DAMAGE_CALMTY_SCALE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '7'
+        - '50'
+      stats:
+        min: 0
+        p50: 8
+        max: 50
+        unique: 5
+    - name: PRPRTY_DAMAGE_AMT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '188283'
+        - '22882'
+        - '7877683'
+      stats:
+        min: 22882
+        p50: 188283
+        max: 37600000
+        unique: 5
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7723
+  rank_in_sector: 37
+  brm: 재난안전 - 안전관리
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15059316-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15059316.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15059316-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059316-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15059316.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059316-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15059316.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15059316-06
+    kind: admin_note
+    value: "세부 부문 '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)'의 가치: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fire-rescue
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15059316-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15059316-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15059316.json
+  stats: probe/stats/15059316.json
+  data: probe/data/15059316/
+limits: 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 받아 호출해야 한다. 실측 컬럼에서 전역 조인 키를 찾지 못해 타 기관 데이터와는 시군 이름·코드 매핑으로만 연결되고, 좌표가 없어 지도 위 위치 분석에는 바로 쓰지 못한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15059316-01
+    - c-15059316-03
+    - c-15059316-04
+    - c-15059316-06
+  dropped_citations: 0
+status: active

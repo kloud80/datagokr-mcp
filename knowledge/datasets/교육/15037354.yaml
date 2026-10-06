@@ -1,4 +1,5 @@
-# Dataset 15037354 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15037354 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15037354'
 tier: verified
 title: 한국산업인력공단_국가자격 경력정보 제공기관 현황
@@ -21,6 +22,7 @@ synonyms:
   - 응시자격 경력 기관
   - 국가자격 경력 인정 기관 목록
   - Q-Net 경력기관
+summary_user: 청소년상담사 등 국가자격 시험에서 경력 증빙 기관으로 인정된 기관의 목록을 기관 단위로 담으며, 기관명(compnm)과 인정기관 구분 코드·코드명을 함께 제공하는 전국 범위의 비공간 데이터다. 국가자격 응시자가 자신의 근무 기관이 응시 자격 경력으로 인정되는지 확인하거나, 분석가가 자격별 경력 인정 기관 구성을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기관명 매핑이나 인정기관코드(rcoginsticd) 같은 기관 내부 코드로만 연결하며, 채용·창업 요건이나 면허제한 업종 같은 국가자격 관련 데이터와 이어 보는 보조 자료로 쓴다.
 description_portal: “국가자격 경력정보 제공기관 현황” API는 한국산업인력공단이 제공하는 REST 기반 공공데이터 서비스로, 청소년상담사 등 국가자격 시험에서 경력 증빙 기관으로 인정된 기관의 목록을 XML 형식으로 제공합니다. 요청 시 ServiceKey(공공데이터포털 발급), pageNo, numOfRows 등의 파라미터를 통해 페이지 단위로 결과를 조회할 수 있으며, 반환 항목에는 기관명(compnm), 인정기관코드(rcoginsticd), 코드명(rcoginstinm), 페이지 정보(numOfRows, pageNo, totalCount)가 포함됩니다
 team:
   dept: 자격정보화부
@@ -53,6 +55,7 @@ schema:
         unique: 371
     - name: rcoginsticd
       type: number
+      semantic_type: career_recog_inst_cd
       null_rate: 0.0
       sample_values:
         - '00001'
@@ -72,6 +75,12 @@ schema:
         - 청소년기본법제48조의2의 규정에 의한 여성가족부에서 확정하여 시행하는 청소년방과후아카데미에서 근무한 경력 (경력 100% 인정)
       stats:
         unique: 15
+  foreign_keys:
+    - fields:
+        - rcoginsticd
+      reference:
+        key: career_recog_inst_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -122,7 +131,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15037354-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: career_recog_inst_cd(rcoginsticd)'
     evidence:
       - type: measured
         source: probe/stats/15037354.json
@@ -187,8 +196,6 @@ verification:
   run: probe/runs/15037354.json
   stats: probe/stats/15037354.json
   data: probe/data/15037354/
-status: active
-summary_user: 청소년상담사 등 국가자격 시험에서 경력 증빙 기관으로 인정된 기관의 목록을 기관 단위로 담으며, 기관명(compnm)과 인정기관 구분 코드·코드명을 함께 제공하는 전국 범위의 비공간 데이터다. 국가자격 응시자가 자신의 근무 기관이 응시 자격 경력으로 인정되는지 확인하거나, 분석가가 자격별 경력 인정 기관 구성을 파악하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 기관명 매핑이나 인정기관코드(rcoginsticd) 같은 기관 내부 코드로만 연결하며, 채용·창업 요건이나 면허제한 업종 같은 국가자격 관련 데이터와 이어 보는 보조 자료로 쓴다.
 limits: 사업자등록번호 같은 전역 조인 키가 없어 다른 기관 데이터와 정확히 결합하기 어렵고, 기관명 문자열 매칭에 의존해야 한다. 개발계정은 일 1,000회 호출로 제한된다.
 review:
   summary: draft
@@ -201,3 +208,4 @@ review:
     - c-15037354-04
     - c-15037354-06
   dropped_citations: 0
+status: active

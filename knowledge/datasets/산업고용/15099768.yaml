@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 한국동서발전㈜울산발전본부
@@ -46,6 +47,7 @@ schema:
         unique: 6
     - name: 호기
       type: number
+      semantic_type: kps_unit_nm
       null_rate: 0.0
       sample_values:
         - '1'
@@ -127,9 +129,24 @@ schema:
         p50: 20.6920033
         max: 312.7341745
         unique: 5095
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: power_plant_id
+      evidence: measured
+    - fields:
+        - 호기
+      reference:
+        key: kps_unit_nm
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 날짜
 cycle: default
 classification:
   subsector_name: plant-emissions
@@ -166,7 +183,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15099768-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전소명), kps_unit_nm(호기)'
     evidence:
       - type: measured
         source: probe/stats/15099768.json

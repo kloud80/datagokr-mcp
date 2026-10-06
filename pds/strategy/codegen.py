@@ -140,6 +140,42 @@ def load_mapping(name):
     return None
 
 
+LEVEL_LEN = {"bjd": 10, "emd": 8, "sgg": 5, "sido": 2}
+
+
+NAME_TOKENS = {"sido": 1, "sgg": 2, "emd": 3}
+
+
+def to_unit(df, space_cols, space, time_cols, time, via="code"):
+    """느슨한 조인용 — 공간은 코드면 앞자리(R-20·21), 주소·이름이면 앞 낱말(시도·시군구·읍면동),
+    시점은 일·월·분기·연(R-22)으로 내린 열 _space·_time을 만든다."""
+    if df is None or not len(df):
+        return df
+    df = df.copy()
+    cols = [c for c in space_cols or [] if c in df]
+    if space and cols and via in ("address", "name"):
+        s = df[cols].astype(str).agg(" ".join, axis=1).str.replace(r"\(.*?\)", " ", regex=True).str.split()
+        df["_space"] = s.str[:NAME_TOKENS.get(space, 2)].str.join(" ")
+    elif space and cols:
+        s = df[cols[0]].astype(str).str.replace(r"\D", "", regex=True)
+        df["_space"] = s.str[:LEVEL_LEN[space]] if space in LEVEL_LEN else s
+    if time and time_cols and time_cols[0] in df:
+        d = df[time_cols[0]].astype(str).str.replace(r"\D", "", regex=True)
+        q = d.str[:4] + "Q" + d.str[4:6].where(d.str.len() > 5, None).astype(float).sub(1).floordiv(3).add(1).astype("Int64").astype(str)
+        q = q.where(d.str.len() != 5, d.str[:4] + "Q" + d.str[4])  # 연도+분기 코드(20243 = 2024년 3분기)
+        df["_time"] = {"year": d.str[:4], "month": d.str[:6], "day": d.str[:8]}.get(time, q)
+    return df
+
+
+def unit_summary(df, keys):
+    """공통 단위별 건수와 숫자 열 평균 — 느슨한 조인은 행이 아니라 집계끼리 잇는다."""
+    num = [c for c in df.columns if c not in keys and pd.to_numeric(df[c], errors="coerce").notna().mean() > 0.9]
+    agg = df.groupby(keys).size().rename("건수").to_frame()
+    if num:
+        agg = agg.join(df[keys + num].assign(**{c: pd.to_numeric(df[c], errors="coerce") for c in num}).groupby(keys)[num].mean().add_suffix("_평균"))
+    return agg.reset_index()
+
+
 def read_file(path, url):
     """포털에서 내려받은 파일. 아직 없으면 안내만 하고 건너뛴다."""
     if not os.path.exists(path):
@@ -399,6 +435,27 @@ def render(p: dict) -> str:
                              f"    {la} = {la}.merge({rb}, left_on={on['left']!r}, right_on={on['right']!r}, how='left', suffixes=('', '_{b}'))"]
     if merged_lines:
         L += ["", "", "# ── 잇기 (선언된 조인만)"] + merged_lines
+    al_lines = []
+    for al in p.get("aligned") or []:
+        a, b = al["left"], al["right"]
+        if a not in ds or b not in ds:
+            continue
+        g = al["align"]
+        la, rb = _var(a), _var(b)
+        ga, gb = al.get("grain_left") or {}, al.get("grain_right") or {}
+        keys = [k for k, v in (("_space", g.get("space")), ("_time", g.get("time"))) if v]
+        al_lines += [f"# 느슨한 조인: {_short(ds[a]['title'])} ~ {_short(ds[b]['title'])} — {g['label']} 단위로 집계해 결합 ({', '.join(g['rules'])})"]
+        va, vb = ("code" if x.get("space_via") in (None, "code") else "text" for x in (ga, gb))
+        if g.get("space") and ("coord" in (ga.get("space_via"), gb.get("space_via")) or va != vb):
+            al_lines.append("#   한쪽은 좌표이거나, 한쪽은 코드·한쪽은 주소·이름이다 — 먼저 같은 표현으로 바꿔야 한다"
+                            " (좌표→필지 R-12 · 주소→좌표 R-13 · 이름→코드 R-14). 같은 표현이 되면 아래가 동작")
+        al_lines += [f"_a = to_unit({la}, {ga.get('space_fields', [])!r}, {g.get('space')!r}, {ga.get('time_fields', [])!r}, {g.get('time')!r}, {ga.get('space_via') or 'code'!r})",
+                     f"_b = to_unit({rb}, {gb.get('space_fields', [])!r}, {g.get('space')!r}, {gb.get('time_fields', [])!r}, {g.get('time')!r}, {gb.get('space_via') or 'code'!r})",
+                     f"if _a is not None and _b is not None and all(k in _a and k in _b for k in {keys!r}):",
+                     f"    aligned_{b} = unit_summary(_a, {keys!r}).merge(unit_summary(_b, {keys!r}), on={keys!r}, how='inner', suffixes=('', '_{b}'))",
+                     f"    print('느슨한 조인 {g['label']}:', len(aligned_{b}), '단위')"]
+    if al_lines:
+        L += ["", "", "# ── 느슨하게 잇기 (공통 단위로 집계한 뒤 결합 — 정확한 키 조인이 아니므로 비교·상관용)"] + al_lines
     for key, xs in hub_cols.items():
         if len(xs) >= 1:
             name = "by_pnu" if key == "pnu" else "by_bjd"

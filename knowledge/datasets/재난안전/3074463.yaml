@@ -1,4 +1,5 @@
-# Dataset 3074463 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3074463 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3074463'
 tier: verified
 title: 경찰청_범죄 발생 장소별 통계
@@ -24,6 +25,7 @@ synonyms:
   - 강력범죄 발생장소
   - 편의점 범죄
   - 공원 범죄
+summary_user: 범죄대분류·중분류별로 아파트·단독주택·일반도로·편의점·숙박업소·버스·공원 등 40여 개 발생 장소 유형마다 범죄 발생 건수를 표로 집계한 전국 단위 통계 파일(csv)입니다. 지자체·경찰 정책 담당자나 분석가가 '편의점이나 주점 같은 특정 장소에서 어떤 유형의 범죄가 많이 일어나는가'를 확인해 장소별 치안 대책의 우선순위를 정할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 범죄 대·중분류 이름을 맞추는 방식으로만 이어 쓰며, 경찰청의 다른 범죄 발생·검거 통계와 범죄 분류명을 기준으로 함께 본다.
 description_portal: 제공된 자료는 경찰청의 범죄 발생 장소별 통계입니다. 강력범죄, 폭력범죄, 지능범죄 등 다양한 범죄 유형이 아파트, 단독주택, 고속도로, 노상, 백화점, 슈퍼마켓 등 구체적인 장소별로 얼마나 발생했는지 보여줍니다. 이를 통해 특정 장소에서 어떤 유형의 범죄가 주로 발생하는지 파악할 수 있습니다.특히 2023년부터는 공원, 놀이시설 항목이 추가되어, 여가 공간에서의 범죄 발생 현황까지 파악할 수 있게 되었습니다. 이 통계는 특정 장소의 안전도를 평가하고, 범죄 취약 지역을 식별하여 맞춤형 치안 대책을 마련하는 데 활용될 수 있으며, 시민들의 안전한 생활 환경 조성에 기여할 것입니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 범죄대분류
       type: code
+      semantic_type: crime_clsf
       null_rate: 0.0
       sample_values:
         - 지능범죄
@@ -46,6 +49,7 @@ schema:
         unique: 15
     - name: 범죄중분류
       type: code
+      semantic_type: crime_clsf
       null_rate: 0.0
       sample_values:
         - 살인기수
@@ -797,6 +801,17 @@ schema:
         p50: 177
         max: 120352
         unique: 36
+  foreign_keys:
+    - fields:
+        - 범죄대분류
+      reference:
+        key: crime_clsf
+      evidence: measured
+    - fields:
+        - 범죄중분류
+      reference:
+        key: crime_clsf
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -839,7 +854,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3074463-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: crime_clsf(범죄대분류), crime_clsf(범죄중분류)'
     evidence:
       - type: measured
         source: probe/stats/3074463.json
@@ -904,8 +919,6 @@ verification:
   run: probe/runs/3074463.json
   stats: probe/stats/3074463.json
   data: probe/data/3074463/
-status: active
-summary_user: 범죄대분류·중분류별로 아파트·단독주택·일반도로·편의점·숙박업소·버스·공원 등 40여 개 발생 장소 유형마다 범죄 발생 건수를 표로 집계한 전국 단위 통계 파일(csv)입니다. 지자체·경찰 정책 담당자나 분석가가 '편의점이나 주점 같은 특정 장소에서 어떤 유형의 범죄가 많이 일어나는가'를 확인해 장소별 치안 대책의 우선순위를 정할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 범죄 대·중분류 이름을 맞추는 방식으로만 이어 쓰며, 경찰청의 다른 범죄 발생·검거 통계와 범죄 분류명을 기준으로 함께 본다.
 limits: 지역(시도·경찰서) 구분 컬럼이 없어 장소 유형별 전국 합계만 보이며 특정 동네의 범죄 위험도는 알 수 없다. 공통 코드가 없어 다른 데이터와 연결하려면 범죄 분류명을 직접 매핑해야 하고, 대검찰청 처리 통계와는 집계 기준이 달라 수치를 그대로 비교하면 안 된다.
 review:
   summary: draft
@@ -918,3 +931,4 @@ review:
     - c-3074463-04
     - c-3074463-06
   dropped_citations: 0
+status: active

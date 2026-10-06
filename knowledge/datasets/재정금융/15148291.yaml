@@ -1,0 +1,199 @@
+# Dataset 15148291 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15148291'
+tier: verified
+title: 경기도_시군 재정자립도 현황
+sector: 재정금융/세제/regional-tax
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15148291/fileData.do
+synonyms:
+  - 재정자립비율
+  - 지방재정
+  - 시군별통계
+  - 재정지표
+  - 자치단체
+  - 공공재정
+  - 재정자립도
+  - 경기도 시군 재정
+  - 지방재정 자립도
+  - 자체수입 비율
+  - 시군별 재정지표
+  - 지방자치단체 재정자율성
+summary_user: 경기도 내 각 시군의 재정자립도(%)를 집계년도별로 한 행씩 담은 집계 자료로, 행정단위는 시군구다. 경기도 시군 간 자체 수입 비중을 비교하거나 특정 시군의 재정 자율성이 해마다 어떻게 달라졌는지 확인하려는 분석가·정책 담당자가 쓴다. 전역 조인 키는 없어 시군명(sigun_nm)과 집계년도를 이름 매핑으로 맞춰 다른 시군구 단위 지역 지표와 이어 쓴다.
+description_portal: 이 데이터는 각 시군별로 연도에 따라 집계된 재정자립도(%) 현황을 수록한 자료입니다. 재정자립도는 지방자치단체의 자체 수입이 전체 재정에서 차지하는 비율을 의미하며, 자치단체의 재정 자율성과 독립성을 나타내는 주요 지표입니다. 데이터는 집계년도, 시군명, 재정자립도(%) 항목으로 구성되어 있으며, 경기도 내 각 시군을 대상으로 수집된 값이 포함되어 있습니다. 본 데이터는 지역 간 재정 역량 비교, 재정 운영 개선 방안 수립, 정책 결정의 기초자료로 활용될 수 있습니다. ※ 1) 재정자립도 산출식재정자립도(%) = {(지방세 세외수입-지방채)/일반회계 세입} * 100
+accrual_periodicity: 수시
+team:
+  dept: AI데이터행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sum_yr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+        - '2026'
+      stats:
+        min: 2025
+        p50: 2025
+        max: 2026
+        unique: 2
+    - name: sigun_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가평군
+        - 고양시
+        - 과천시
+      stats:
+        unique: 31
+    - name: fnanc_indepndt_rt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '28.6'
+        - '41.6'
+        - '17.1'
+      stats:
+        min: 12.6
+        p50: 31.7
+        max: 55.1
+        unique: 43
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.474
+  brm: 재정금융 - 세제
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15148291-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15148291.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15148291-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15148291-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15148291.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15148291-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15148291.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15148291-06
+    kind: admin_note
+    value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-tax
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15148291-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15148291-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15148291.json
+  stats: probe/stats/15148291.json
+  data: probe/data/15148291/
+limits: 표준 행정구역 코드 같은 전역 조인 키가 없어 다른 데이터와는 시군명 문자열 매핑으로만 연결된다. 원천은 외부 사이트(data.gg.go.kr)이며 포털 활용신청과 별개로 그 사이트의 인증키(KEY)를 따로 받아야 호출된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15148291-01
+    - c-15148291-03
+    - c-15148291-04
+    - c-15148291-06
+  dropped_citations: 0
+status: active

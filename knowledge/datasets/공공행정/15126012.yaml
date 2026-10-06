@@ -1,0 +1,217 @@
+# Dataset 15126012 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15126012'
+tier: verified
+title: 국회 국회사무처_아트갤러리 전시 일정
+sector: 공공행정/법제/assembly-activity
+agency:
+  id: '9710000'
+  name: 국회 국회사무처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15126012/openapi.do
+synonyms:
+  - 국회
+  - 입법
+  - 의안
+  - 국회 전시
+  - 국회 미술관
+  - 국회 갤러리 일정
+  - 국회 전시회
+  - 국회 문화행사
+  - 국회 아트갤러리 전시
+summary_user: 국회 아트갤러리에서 열리는 전시의 일정을 게시글 단위로 담으며, 게시물 번호·제목·날짜·상세 링크·첨부파일명 같은 항목을 제공한다. 국회를 방문하려는 국민이 지금 또는 다가오는 기간에 국회 아트갤러리에서 어떤 전시가 열리는지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 전시명·날짜 같은 이름 매칭으로만 느슨하게 연결한다.
+description_portal: 국회 의정활동 정보는 국회가 보유·관리하는 각종 정보와 국회 회의록을 체계적·효과적으로 등록·공개·제공을 통해 국민의 알권리 및 국회 정보 이용권을 보장하기 위한 정보입니다
+team:
+  dept: 기획조정실 디지털운영담당관실
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://open.assembly.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: open.assembly.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: BOARD_NO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - EVT304
+      stats:
+        unique: 1
+    - name: ARTICLE_TITLE
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - <a href="https://reservation.assembly.go.kr/reserve/contents/booking/contentsDet
+        - <a href="https://reservation.assembly.go.kr/reserve/contents/booking/contentsDet
+        - <a href="https://reservation.assembly.go.kr/reserve/contents/booking/contentsDet
+      stats:
+        unique: 100
+    - name: DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-10-06 (화) ~ 2026-10-16 (금)
+        - 2026-09-14 (월) ~ 2026-10-01 (목)
+        - 2026-08-31 (월) ~ 2026-09-11 (금)
+      stats:
+        min: '2022-03-02'
+        max: '2026-10-06'
+        unique: 100
+    - name: ETC_CHAR11
+      type: code
+      null_rate: 0.07
+      sample_values:
+        - 의원회관 1층 아트갤러리
+        - 의원회관 1층
+        - 국회의원회관 1층 아트갤러리
+      stats:
+        unique: 4
+    - name: LINK_URL
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - https://reservation.assembly.go.kr/reserve/contents/booking/contentsDetail.do?me
+        - https://reservation.assembly.go.kr/reserve/contents/booking/contentsDetail.do?me
+        - https://reservation.assembly.go.kr/reserve/contents/booking/contentsDetail.do?me
+      stats:
+        unique: 100
+    - name: OPB_FL_NM
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - DT
+cycle: default
+classification:
+  subsector_name: 의정 활동 (의원·표결·회의·청원·감사)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.627
+  brm: 공공행정 - 법제
+  sector_rule: assembly-to-law
+  why: 열린국회정보 (인증키)
+claims:
+  - id: c-15126012-01
+    kind: access
+    value: 외부 사이트 open.assembly.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15126012.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 open.assembly.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15126012-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126012-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15126012.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126012-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15126012.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15126012-06
+    kind: admin_note
+    value: "세부 부문 '의정 활동 (의원·표결·회의·청원·감사)'의 가치: 시의성 — 표결·회의 즉시. 의안과 결합해 \"누가 무엇을\""
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#assembly-activity
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15126012-07
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15126012-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15126012.json
+  stats: probe/stats/15126012.json
+  data: probe/data/15126012/
+limits: open.assembly.go.kr의 별도 인증키(KEY)가 필요하며 포털 활용신청과는 따로 받아야 한다. 공통 코드나 키가 없어 의안·의원 등 다른 의정 데이터와 기계적으로 결합하기 어렵고, 지역 단위 구분이 없는 비공간 데이터다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15126012-01
+    - c-15126012-03
+    - c-15126012-04
+  dropped_citations: 0
+status: active

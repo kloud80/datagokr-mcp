@@ -1,4 +1,3 @@
-# Dataset 15155853 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15155853'
 tier: verified
 title: 한국교통안전공단_자동차검사관리_수검이륜차통계
@@ -20,6 +19,7 @@ synonyms:
   - 배출가스 부적합
   - 관능검사 불합격
   - 검사소별 검사실적
+summary_user: 검사소별로 접수된 이륜차 검사 건수와 관능·배출가스 부적합, 부적합 합계, 2회 부적합 대수를 집계한 전국 범위 통계 파일(CSV)이다. 지역·검사소별 이륜차 검사 부적합률이 어디서 높은지, 반복 부적합이 많은 곳은 어디인지 살피려는 교통안전·배출가스 정책 분석가가 쓴다. 전역 조인 키는 없고, 이륜차 법정동 시도코드와 검사소코드를 행정구역 코드표나 같은 기관의 검사소 정보와 이름·코드로 맞춰 이어 쓴다.
 description_portal: 이 데이터는 이륜차 검사 통계를 기록한 데이터로, 각 검사소별로 접수된 이륜차의 검사 결과와 부적합 항목을 나타냅니다. 접수대수, 관능부적합, 배출부적합, 부적합합계 등의 항목을 통해 각 지역의 검사 성과를 분석할 수 있습니다. 이 정보는 이륜차 안전성 및 환경 규제 준수 현황을 파악하는 데 유용하게 사용할 수 있으며, 교통 안전 정책 수립, 배출가스 관리, 검사 효율성 개선을 위한 기초 자료로 활용될 수 있습니다. 또한, 2회 부적합 항목을 통해 반복적인 문제를 식별하고, 이를 해결하기 위한 정책 개선에 중요한 기여를 할 수 있습니다
 accrual_periodicity: 연간
 team:
@@ -45,6 +45,7 @@ schema:
         unique: 20
     - name: 검사소코드
       type: code
+      semantic_type: vhcl_insp_office_cd
       null_rate: 0.0
       sample_values:
         - '1130'
@@ -111,12 +112,23 @@ schema:
         p50: 0
         max: 1
         unique: 2
+  foreign_keys:
+    - fields:
+        - 검사소코드
+      reference:
+        key: vhcl_insp_office_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 읍면동
+grain:
+  space: sido
+  space_fields:
+    - 이륜차법정동시도코드
+  space_via: code
 cycle: default
 classification:
   subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
@@ -153,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15155853-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_insp_office_cd(검사소코드)'
     evidence:
       - type: measured
         source: probe/stats/15155853.json
@@ -218,8 +230,6 @@ verification:
   run: probe/runs/15155853.json
   stats: probe/stats/15155853.json
   data: probe/data/15155853/
-status: active
-summary_user: 검사소별로 접수된 이륜차 검사 건수와 관능·배출가스 부적합, 부적합 합계, 2회 부적합 대수를 집계한 전국 범위 통계 파일(CSV)이다. 지역·검사소별 이륜차 검사 부적합률이 어디서 높은지, 반복 부적합이 많은 곳은 어디인지 살피려는 교통안전·배출가스 정책 분석가가 쓴다. 전역 조인 키는 없고, 이륜차 법정동 시도코드와 검사소코드를 행정구역 코드표나 같은 기관의 검사소 정보와 이름·코드로 맞춰 이어 쓴다.
 limits: 차량별 건별 검사 기록이 아니라 검사소 단위 집계라 개별 차량이나 차량등록번호로는 추적할 수 없다. 다른 데이터와 공통 키가 없어 코드·이름 매핑을 거쳐야 연결된다.
 review:
   summary: draft
@@ -231,3 +241,4 @@ review:
     - c-15155853-03
     - c-15155853-04
   dropped_citations: 0
+status: active

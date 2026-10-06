@@ -1,0 +1,276 @@
+# Dataset 15105576 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15105576'
+tier: verified
+title: 한국마사회_말접종정보
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15105576/openapi.do
+synonyms:
+  - 마사
+  - 말접종
+  - 백신
+  - 접종병원
+  - 마필
+  - 경주마 백신
+  - 말 예방접종
+  - 마필 접종이력
+  - 경마 말 건강기록
+  - 마번 조회
+  - 말 백신 유효기간
+description_portal: 한국마사회에서 말에게 접종한 백신종류 및 유효기간, 접종병원등의 정보를 제공합니다.(제공정보는 마번(hrno), 마명(korHrnm), 접종일자(inocDt), 접종명(vaciNm), 영문접종명(vaciEngNm), 유효기간년도(expiryYear), 접종병원(clincNm) 자료입니다.) - 요청메세지에 마명(hrname), 마번(hrno), 접종일 검색시작일(inoc_dt_fr), 접종일 검색종료일(inoc_dt_to), 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /getvaccinehi
+    name: 말접종정보_1
+    endpoint: https://apis.data.go.kr/B551015/vaccinehi/getvaccinehi
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: hrname
+        required: false
+        example: 신탄진
+        desc: 마명
+      - name: hrno
+        required: false
+        example: '0004543'
+        desc: 마번
+      - name: inoc_dt_fr
+        required: false
+        example: '20220108'
+        desc: 접종일 검색 범위 시작일
+      - name: inoc_dt_to
+        required: false
+        example: '20220108'
+        desc: 접종일 검색 범위 종료일
+      - name: _type
+        required: false
+        example: _xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: clincNm
+      title: 접종병원
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제이엔씨동물병원
+        - 굿데이 동물병원
+        - 현동물병원
+      stats:
+        unique: 24
+    - name: expiryYear
+      title: 유효기간(년)
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: hrno
+      title: 마번
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3109054'
+        - '3109027'
+        - '1215742'
+      stats:
+        min: 12978
+        p50: 1012915
+        max: 3110136
+        unique: 513
+    - name: inocDt
+      title: 접종일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-07-03'
+        - '2026-07-02'
+        - '2026-07-01'
+      stats:
+        min: '2026-07-01'
+        max: '2026-07-04'
+        unique: 4
+    - name: korHrnm
+      title: 마명
+      type: string
+      null_rate: 0.078
+      sample_values:
+        - 레오
+        - 승필승
+        - 무패여장
+      stats:
+        unique: 471
+    - name: vaciEngNm
+      title: 영문접종명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - INFLUENZA
+        - JAPANESE  ENCEPHALITIS
+      stats:
+        unique: 2
+    - name: vaciNm
+      title: 접종명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인플루엔자
+        - 일본뇌염
+      stats:
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - inocDt
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.5096
+  brm: 농축수산 - 농업·농촌
+  why: 기관 분석 핵심 원장 — 한국마사회
+claims:
+  - id: c-15105576-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15105576.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15105576.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15105576-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105576-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15105576.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105576-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15105576.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15105576-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15105576-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15105576-08
+    kind: admin_note
+    value: wave7 · 기관 분석 · 파라미터 자동 수리
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15105576.json
+  stats: probe/stats/15105576.json
+  data: probe/data/15105576/
+status: active
+summary_user: 한국마사회가 관리하는 말에게 접종한 백신 기록을 말 한 마리·접종 한 건 단위로 담으며, 마번·마명·접종일자·백신명(국문·영문)·유효기간 연도·접종병원이 들어 있다. 마주·조교사·경마 분석가가 특정 경주마의 백신 접종 이력과 유효기간이 지났는지를 확인할 때 쓴다. 전역 조인 키는 없으므로 같은 기관의 경주마 정보 데이터와 마번(hrno)이나 마명으로 맞춰 이어 쓴다.
+limits: 마번·마명 외에 다른 기관 데이터와 직접 연결할 공통 키가 없다. 세부 부문이 농산물 유통 가격으로 분류돼 있지만 실제 내용은 말 백신 접종 기록이라 가격 분석에는 쓸 수 없다. 개발계정 호출은 하루 3,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15105576-01
+    - c-15105576-03
+    - c-15105576-04
+  dropped_citations: 0

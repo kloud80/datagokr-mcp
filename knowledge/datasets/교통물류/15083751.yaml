@@ -40,6 +40,7 @@ schema:
   fields:
     - name: 역번호
       type: number
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '3138'
@@ -61,6 +62,7 @@ schema:
         unique: 68
     - name: 노선번호
       type: code
+      semantic_type: urban_rail_line_no
       null_rate: 0.1549
       sample_values:
         - S2801
@@ -104,6 +106,7 @@ schema:
         unique: 2
     - name: 환승노선번호
       type: code
+      semantic_type: urban_rail_line_no
       null_rate: 0.8592
       sample_values:
         - S2801+I28A1
@@ -183,6 +186,21 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - 역번호
+      reference:
+        key: rail_station_cd
+      evidence: measured
+    - fields:
+        - 노선번호
+      reference:
+        key: urban_rail_line_no
+      evidence: measured
+    - fields:
+        - 환승노선번호
+      reference:
+        key: urban_rail_line_no
+      evidence: measured
+    - fields:
         - 역위도
       reference:
         key: coord
@@ -201,6 +219,15 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2026-06-30 ~ 2026-06-30
+grain:
+  space: point
+  space_fields:
+    - 역위도
+    - 역경도
+  space_via: coord
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 철도망·역·출입구·시설
@@ -241,7 +268,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15083751-03
     kind: key
-    value: '실측 조인 키: coord(역위도), coord(역경도), address(역사도로명주소)'
+    value: '실측 조인 키: rail_station_cd(역번호), urban_rail_line_no(노선번호), urban_rail_line_no(환승노선번호), coord(역위도), coord(역경도), address(역사도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15083751.json

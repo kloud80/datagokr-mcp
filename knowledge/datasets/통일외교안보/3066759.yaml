@@ -1,0 +1,292 @@
+id: '3066759'
+tier: verified
+title: 병무청_전문연구/산업기능요원 지정업체 정보
+sector: 통일외교안보/병무행정/alternative-service
+agency:
+  id: '1300000'
+  name: 병무청
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/3066759/openapi.do
+synonyms:
+  - 전문연구요원
+  - 산업기능요원
+  - 병역지정업체
+  - 병역지정업체 선정
+  - 병역일터
+  - 병역지정업체 채용
+  - 병역지정업체 업종
+  - 편입과 전직 요건
+  - 산업기능요원 업체
+  - 전문연구요원 기관
+  - 대체복무 지정업체
+  - 병역특례 업체
+description_portal: 병역지정업체 정보는 병역일터 병역지정업체 검색해서 확인할 수 있습니다. 대분류로 전문연구요원, 산업기능요원, 승선근무예비역으로 구분됩니다.산업기능요원(제조업, 정보처리 등)전문연구요원(기업부설연구소 등), 승선근무예비역(수산업, 해운업)이 근무할 지정업체는 기업별, 업종별, 소재지별, 채용공고 등록여부 등을 조건으로 검색하면 됩니다. 참고로 병역지정업체는 일정 사유가 발생 시 취소되기도 하고, 매년 병무청 고시에 따라 업종에 따라 접수기관에 신규로 선정신청을 할 수도 있습니다.
+team:
+  dept: 사회복무국 산업지원과
+services:
+  - op: /getjjEopChe
+    name: 전문/산업지정업체정보목록조회서비스
+    endpoint: https://apis.data.go.kr/1300000/jjEopChe/list2/getjjEopChe
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지 번호
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: eopcheAddr
+      title: 업체주소
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 강서구 송정동
+        - 충청남도 부여군 부여읍  725
+        - 부산광역시 영도구   대교            2가120
+      stats:
+        unique: 974
+    - name: eopcheNm
+      title: 업체명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)다다
+        - (주)우신산업
+        - (주)델타엑스 기업부설연구소
+      stats:
+        unique: 998
+    - name: eopjongGbcd
+      title: 업종구분코드
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11102'
+        - '21503'
+        - '11111'
+      stats:
+        min: 11101
+        p50: 11106
+        max: 32101
+        unique: 37
+    - name: gegyumoCd
+      title: 기업규모코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '02'
+        - '03'
+        - Z
+      stats:
+        unique: 6
+    - name: hmpgAddr
+      title: 홈페이지주소
+      type: string
+      null_rate: 0.345
+      sample_values:
+        - '***'
+        - https://www.neubility.co.kr/
+        - https://mindlogic.ai
+      stats:
+        unique: 647
+    - name: rnum
+      title: 순번
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1000
+        unique: 1000
+    - name: saeopjaDrno
+      title: 사업자번호
+      type: number
+      null_rate: 0.012
+      sample_values:
+        - '2222222222'
+        - '0000000000'
+        - '5018300020'
+      stats:
+        min: 0
+        p50: 3008354874.5
+        max: 8948700274
+        unique: 912
+    - name: seonjeongYy
+      title: 선정년도
+      type: number
+      null_rate: 0.001
+      sample_values:
+        - '2022'
+        - '2024'
+        - '1993'
+      stats:
+        min: 1974
+        p50: 2018
+        max: 2025
+        unique: 42
+    - name: yeonrakcheoNo
+      title: 연락처번호
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 415  1001
+        - 661-2000
+        - 230-9266
+      stats:
+        unique: 967
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - eopcheAddr
+  space_via: address
+  time: year
+  time_fields:
+    - seonjeongYy
+cycle: default
+classification:
+  subsector_name: 사회복무요원·병역지정업체 (복무기관·본인선택 공석·전문연구/산업기능요원 지정업체·인원배정·병역일터 채용)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8063
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 병무청
+claims:
+  - id: c-3066759-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/3066759.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/3066759.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-3066759-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-3066759-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3066759.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-3066759-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/3066759.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-3066759-06
+    kind: admin_note
+    value: "세부 부문 '사회복무요원·병역지정업체 (복무기관·본인선택 공석·전문연구/산업기능요원 지정업체·인원배정·병역일터 채용)'의 가치: 병역지정업체 = 사업자 원장(기업 축), 사회복무 공석은 시의성"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#alternative-service
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-3066759-07
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3066759-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/3066759.json
+  stats: probe/stats/3066759.json
+  data: probe/data/3066759/
+status: active
+summary_user: 병무청이 지정한 전문연구요원·산업기능요원 근무 업체를 업체 한 곳당 한 건으로 담으며, 업체명·주소·업종구분·기업규모·선정년도·사업자번호·연락처·홈페이지를 전국 범위로 제공한다. 병역 대체복무를 준비하는 사람이 '우리 지역에서 산업기능요원으로 일할 수 있는 정보처리 업종 지정업체는 어디인가'를 찾거나, 분석가가 지역·업종·기업규모별 지정업체 분포를 보는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 사업자번호(saeopjaDrno)나 업체명·주소를 매칭해 다른 기업 데이터나 같은 기관의 인원배정·채용 데이터와 이어 쓴다.
+limits: 검증된 공통 조인 키가 없어 다른 데이터와는 사업자번호·업체명 매칭에 기대야 하며, 업종구분·기업규모는 코드값이라 별도 해석이 필요하다. 개발계정 호출은 하루 10,000회로 제한된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-3066759-01
+    - c-3066759-03
+    - c-3066759-04
+    - c-3066759-06
+  dropped_citations: 0

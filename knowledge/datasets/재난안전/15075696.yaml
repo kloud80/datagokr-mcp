@@ -1,0 +1,221 @@
+# Dataset 15075696 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15075696'
+tier: verified
+title: 경기도_소방관서 1인당 담당 인구 현황
+sector: 재난안전/안전관리/fire-rescue
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15075696/fileData.do
+synonyms:
+  - 소방
+  - 1인당
+  - 소방관서
+  - 소방서비스
+  - 관할인구
+  - 소방인력
+  - 소방관 1인당 인구
+  - 소방인력 정원
+  - 소방서 관할인구
+  - 소방공무원 담당인구
+  - 소방력 지역 격차
+  - 경기도 소방서 인력
+summary_user: 경기도 시군별 소방관서(소방서)마다 정원, 관할인구, 정원 1인당 담당 인구를 한 행씩 담은 관서 단위 현황표다. 도의원·소방행정 분석가가 "우리 시군 소방서는 다른 지역보다 소방관 1인이 맡는 인구가 얼마나 많은가"를 비교해 인력 충원·재배치 근거를 찾는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 시군명(sigun_nm)이나 관서명 문자열로 시군별 인구·화재 발생·119안전센터 데이터와 이름 매칭해 이어 쓴다.
+description_portal: 이 데이터는 경기도 시군의  소방관서별 인구담당 현황을 담고 있으며, 각 관서가 담당하는 관할인구 규모와 관서 인력 정원 현황을 비교할 수 있도록 구성되어 있습니다.주요 항목은 시군명, 관서명, 정원(명), 관할인구(명), 1인당담당인구(명)으로, 각 소방관서의 정원 수와 관할 인구 수를 기반으로 한 1인당 담당 인구 수치를 포함하고 있습니다.이를 통해 지역 간 소방서비스 수요 대비 인력의 적정성 여부를 진단할 수 있으며, 향후 소방인력 재배치나 인력 충원 정책 수립에 기초자료로 활용될 수 있습니다.특히 시군별 관할 인구 규모와 소방 인력의 차이를 정량적으로 파악할 수 있어, 소방행정의 균형성과 효율성을 분석하는 데 유용합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI데이터행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sigun_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원시
+        - 용인시
+        - 성남시
+      stats:
+        unique: 31
+    - name: govofc_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수원소방서
+        - 수원남부소방서
+        - 용인소방서
+      stats:
+        unique: 36
+    - name: fnop_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '292'
+        - '297'
+        - '189'
+      stats:
+        min: 151
+        p50: 297
+        max: 560
+        unique: 33
+    - name: jurisd_popltn_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '633629'
+        - '552886'
+        - '282044'
+      stats:
+        min: 42340
+        p50: 342483.5
+        max: 989969
+        unique: 36
+    - name: perpsn_charge_popltn_cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1610'
+        - '2031'
+        - '1636'
+      stats:
+        min: 175
+        p50: 1247.5
+        max: 2628
+        unique: 35
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4989
+  rank_in_sector: 1044
+  brm: 재난안전 - 안전관리
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15075696-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15075696.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15075696-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15075696-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15075696.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15075696-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15075696.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15075696-06
+    kind: admin_note
+    value: "세부 부문 '소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)'의 가치: 화재 발생 건별·소방용수 위치 원장, 소방서별 격자"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fire-rescue
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15075696-07
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15075696-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15075696.json
+  stats: probe/stats/15075696.json
+  data: probe/data/15075696/
+limits: 표준 행정코드나 관서 코드가 없어 다른 데이터와는 시군명·관서명 이름 매핑으로만 연결되며, 위치 정보가 없어 지도 분석에는 바로 쓰지 못한다. 경기도 데이터포털(data.gg.go.kr) 인증키(KEY)가 따로 필요하고 공공데이터포털 활용신청과는 별개다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15075696-01
+    - c-15075696-03
+    - c-15075696-04
+  dropped_citations: 0
+status: active

@@ -121,6 +121,7 @@ schema:
     - name: stnCd
       title: 해당 지하철 역코드
       type: number
+      semantic_type: seoul_metro_station_cd
       null_rate: 0.0
       sample_values:
         - '0150'
@@ -132,6 +133,7 @@ schema:
     - name: stnNo
       title: 해당 지하철 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '133'
@@ -228,10 +230,25 @@ schema:
         p50: 20261001
         max: 20261001
         unique: 1
+  foreign_keys:
+    - fields:
+        - stnCd
+      reference:
+        key: seoul_metro_station_cd
+      evidence: measured
+    - fields:
+        - stnNo
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-10-01 ~ 2026-10-01
+grain:
+  time: month
+  time_fields:
+    - crtrYmd
 cycle: default
 classification:
   subsector_name: 승하차·혼잡·통행
@@ -276,7 +293,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15143845-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_cd(stnCd), seoul_metro_station_fr_cd(stnNo)'
     evidence:
       - type: measured
         source: probe/stats/15143845.json

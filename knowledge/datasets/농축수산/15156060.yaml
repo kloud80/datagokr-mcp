@@ -105,6 +105,7 @@ schema:
     - name: item_cd
       title: 품목코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '211'
@@ -118,6 +119,7 @@ schema:
     - name: vrty_cd
       title: 품종코드
       type: number
+      semantic_type: agri_item_cd
       null_rate: 0.0
       sample_values:
         - '00'
@@ -128,9 +130,25 @@ schema:
         p50: 1
         max: 10
         unique: 7
+  foreign_keys:
+    - fields:
+        - item_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
+    - fields:
+        - vrty_cd
+      reference:
+        key: agri_item_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 시군구
+grain:
+  category:
+    - hs_cd
+  category_fields:
+    - item_cd
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -174,7 +192,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15156060-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_item_cd(item_cd), agri_item_cd(vrty_cd)'
     evidence:
       - type: measured
         source: probe/stats/15156060.json

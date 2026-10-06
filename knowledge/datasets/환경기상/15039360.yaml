@@ -1,4 +1,5 @@
-# Dataset 15039360 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15039360 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15039360'
 tier: verified
 title: 한국환경산업기술원_녹색제품 분류 정보
@@ -21,6 +22,7 @@ synonyms:
   - G2B 세분류번호
   - 환경표지 제품군
   - 공공 녹색구매
+summary_user: 한국환경산업기술원의 녹색제품 분류 체계를 대·중·소분류 코드와 이름, 조달청 세분류번호(G2B), 구매분류코드로 담은 전국 단위 분류표 파일(CSV 약 204KB)이다. 공공기관 구매 담당자나 분석가가 "이 조달 품목이 어떤 녹색제품 분류에 해당하는가"를 확인하거나 구매 실적을 제품군별로 묶을 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 다른 데이터와는 세분류번호(G2B)·구매분류코드 같은 코드나 분류명을 직접 맞춰 이어 쓴다.
 description_portal: 본 데이터는 한국환경산업기술원의 녹색제품 분류 체계를 제공하는 통계형 공공데이터로, 대분류코드, 대분류명, 중분류코드, 중분류명, 소분류코드, 소분류명, 세분류번호(G2B), 구매분류코드 등의 필드를 포함합니다. 녹색제품의 체계적 분류 정보를 바탕으로 제품군별 환경성분 분석, 구 매 이력 연계, 보고서 작성, 정책 기획업무, 전자입찰 시스템 연동, 데이터베이스 구축, 분류 기준 검증, 품목별 통계 분석, 분류 체계 개선, ERP 시스템 통합 등에 활용할 수 있도록 설계되었습니다. 또한 시장 조사, 공급망 관리, 분류 오류 검출, 지속가능성 평가, 인증 프로세스 자동화, 구매 가이드 제작, 제품 검색 최적화, API 서비스 제공, 대시보드 시각화, 분류 정책 교육, 데이터 품질 모니터링 등 다양한 활용 사례를 지원합니다.
 accrual_periodicity: 수시
 team:
@@ -97,6 +99,7 @@ schema:
         unique: 172
     - name: 세분류번호(G2B)
       type: number
+      semantic_type: g2b_prdct_clsfc_no
       null_rate: 0.0241
       sample_values:
         - '56122004'
@@ -119,6 +122,12 @@ schema:
         p50: 112
         max: 206
         unique: 109
+  foreign_keys:
+    - fields:
+        - 세분류번호(G2B)
+      reference:
+        key: g2b_prdct_clsfc_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -161,7 +170,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15039360-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: g2b_prdct_clsfc_no(세분류번호(G2B))'
     evidence:
       - type: measured
         source: probe/stats/15039360.json
@@ -215,8 +224,6 @@ verification:
   run: probe/runs/15039360.json
   stats: probe/stats/15039360.json
   data: probe/data/15039360/
-status: active
-summary_user: 한국환경산업기술원의 녹색제품 분류 체계를 대·중·소분류 코드와 이름, 조달청 세분류번호(G2B), 구매분류코드로 담은 전국 단위 분류표 파일(CSV 약 204KB)이다. 공공기관 구매 담당자나 분석가가 "이 조달 품목이 어떤 녹색제품 분류에 해당하는가"를 확인하거나 구매 실적을 제품군별로 묶을 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 다른 데이터와는 세분류번호(G2B)·구매분류코드 같은 코드나 분류명을 직접 맞춰 이어 쓴다.
 limits: 개별 인증제품·업체 목록이나 구매 실적은 담지 않는 분류 체계표이다. 공간 정보가 없어 지역별 분석에는 쓸 수 없다. 표준 조인 키가 없어 다른 데이터와 연결하려면 코드·이름 매핑을 직접 해야 한다.
 review:
   summary: draft
@@ -228,3 +235,4 @@ review:
     - c-15039360-03
     - c-15039360-04
   dropped_citations: 0
+status: active

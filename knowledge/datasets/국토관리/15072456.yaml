@@ -1,4 +1,5 @@
-# Dataset 15072456 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072456 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072456'
 tier: verified
 title: 한국토지주택공사_용지(수의계약) 공고 내역
@@ -25,6 +26,7 @@ synonyms:
   - LH 토지 분양
   - 공공택지 수의계약
   - LH 토지청약
+summary_user: 한국토지주택공사가 수의계약으로 공급하는 용지의 공고를 건별로 담은 파일로, 관할 지역본부·공고 게시 시작일시·공고명·공고 상태·공고 종류(일반·정정·취소)를 기록하며 범위는 전국입니다. 토지를 매입하려는 사업자나 분석가가 "어느 지역본부에서 언제 수의계약 용지 공고가 많이 나왔고, 정정·취소된 공고는 얼마나 되나"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 LH 공고 데이터와는 지역본부 코드나 공고명을 이름으로 맞춰서만 이어 쓴다.
 description_portal: 한국토지주택공사에서 공급하는 수의계약 가능 용지 공고 내역(관할 지역본부, 공고일, 공고명 등) 정보를 제공합니다. 공고를 지역별로 살펴볼 때, 경기남부지역본부 387건(24%), 인천지역본부 283건(18%), 서울지역본부 169건(11%), 경기북부지역본부(10%)에 해당합니다. 공고종류는 일반공고가 1308건(81.7%), 정정공고가 175건(10.9%), 취소공고가 117건(7.31%)로 분류되고 있습니다. 24년이 280건 (17.5%), 2019년 193건(12.1%), 25년(11.8%)로 순으로 가장 많은 공고를 기록하고 있는 연도순입니다.
 accrual_periodicity: 연간
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 지역본부코드
       type: code
+      semantic_type: lh_region_hq_cd
       null_rate: 0.0
       sample_values:
         - 경기남부지역본부
@@ -82,12 +85,22 @@ schema:
         - 취소공고
       stats:
         unique: 3
+  foreign_keys:
+    - fields:
+        - 지역본부코드
+      reference:
+        key: lh_region_hq_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공고게시시작일시
 cycle: event
 classification:
   subsector_name: 청약·분양 공고 (청약홈·마이홈·LH 공고·경쟁률·당첨)
@@ -129,7 +142,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072456-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: lh_region_hq_cd(지역본부코드)'
     evidence:
       - type: measured
         source: probe/stats/15072456.json
@@ -224,8 +237,6 @@ verification:
   run: probe/runs/15072456.json
   stats: probe/stats/15072456.json
   data: probe/data/15072456/
-status: active
-summary_user: 한국토지주택공사가 수의계약으로 공급하는 용지의 공고를 건별로 담은 파일로, 관할 지역본부·공고 게시 시작일시·공고명·공고 상태·공고 종류(일반·정정·취소)를 기록하며 범위는 전국입니다. 토지를 매입하려는 사업자나 분석가가 "어느 지역본부에서 언제 수의계약 용지 공고가 많이 나왔고, 정정·취소된 공고는 얼마나 되나"를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어서, 다른 LH 공고 데이터와는 지역본부 코드나 공고명을 이름으로 맞춰서만 이어 쓴다.
 limits: 필지 위치·면적·가격 같은 용지 자체의 정보는 필드에 없어 공고 목록 확인에만 쓴다. 전역 조인 키가 없어 다른 데이터와 결합하려면 이름·코드 매핑이 필요하다. 명세상 갱신은 연간·이벤트 주기라 최신 공고가 바로 반영되지 않을 수 있다.
 review:
   summary: draft
@@ -238,3 +249,4 @@ review:
     - c-15072456-03
     - c-15072456-04
   dropped_citations: 0
+status: active

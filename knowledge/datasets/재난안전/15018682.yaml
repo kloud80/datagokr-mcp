@@ -1,4 +1,5 @@
-# Dataset 15018682 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15018682 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15018682'
 tier: verified
 title: 안산도시공사_경기도 안산시 도로 및 도로 시설물 현황
@@ -19,6 +20,7 @@ synonyms:
   - 노선별 도로 길이
   - 자전거도로 너비
   - 안산 도로대장
+summary_user: 안산시 도로를 노선 단위로 정리한 현황 파일로, 노선명·노선번호·도로 종류·구간·총길이·자전거도로 너비를 담으며 파일 크기는 약 1.7KB(csv)로 작습니다. 안산시 주민이나 분석가가 '안산시 각 도로 노선의 구간과 총길이, 자전거도로 폭은 얼마인가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 도로·시설물 데이터와는 노선명이나 노선번호를 이름 매핑해 잇거나 같은 기관 자료끼리만 연결한다.
 description_portal: 안산시 도로 종류 및 구간, 길이 등의 정보 현황입니다.
 accrual_periodicity: 월간
 team:
@@ -41,6 +43,7 @@ schema:
         unique: 30
     - name: 노선번호
       type: code
+      semantic_type: ansan_bike_road_route_no
       null_rate: 0.0
       sample_values:
         - 대로1-1
@@ -89,6 +92,12 @@ schema:
         p50: 1.75
         max: 4
         unique: 7
+  foreign_keys:
+    - fields:
+        - 노선번호
+      reference:
+        key: ansan_bike_road_route_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -132,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15018682-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ansan_bike_road_route_no(노선번호)'
     evidence:
       - type: measured
         source: probe/stats/15018682.json
@@ -197,8 +206,6 @@ verification:
   run: probe/runs/15018682.json
   stats: probe/stats/15018682.json
   data: probe/data/15018682/
-status: active
-summary_user: 안산시 도로를 노선 단위로 정리한 현황 파일로, 노선명·노선번호·도로 종류·구간·총길이·자전거도로 너비를 담으며 파일 크기는 약 1.7KB(csv)로 작습니다. 안산시 주민이나 분석가가 '안산시 각 도로 노선의 구간과 총길이, 자전거도로 폭은 얼마인가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 도로·시설물 데이터와는 노선명이나 노선번호를 이름 매핑해 잇거나 같은 기관 자료끼리만 연결한다.
 limits: 표준 조인 키와 좌표가 없는 비공간 자료라 지도 위 위치 분석이나 다른 데이터와의 자동 결합이 어렵다. 메타정보의 범위는 전국으로 표기돼 있으나 제목과 설명상 내용은 안산시 도로에 한정된다.
 review:
   summary: draft
@@ -210,3 +217,4 @@ review:
     - c-15018682-03
     - c-15018682-04
   dropped_citations: 0
+status: active

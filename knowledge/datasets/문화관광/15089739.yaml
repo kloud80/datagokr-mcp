@@ -1,4 +1,5 @@
-# Dataset 15089739 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15089739 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15089739'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_질병
@@ -21,6 +22,7 @@ synonyms:
   - 뉴스 메타데이터
   - 언론 보도 분석
   - 기사 키워드 빈도
+summary_user: 빅카인즈(BIGKinds)에서 모은 질병 관련 신문·방송 기사의 메타정보를 기사 한 건마다 일자·언론사·제목·분류·키워드·특성추출어로 담은 CSV 파일(약 6.5MB)이며, 범위는 전국이고 지역 단위가 없다. 연구자나 언론 분석가가 감염병·백신·만성질환 같은 주제가 시기별로 얼마나, 어떤 키워드로 보도됐는지를 살피는 데 쓴다. 전역 조인 키가 없어서 다른 데이터와는 일자나 키워드 같은 이름 매칭으로만 이어 쓴다.
 description_portal: 이 데이터는 한국언론진흥재단이 운영하는 뉴스데이터베이스 BIGKinds를 기반으로 수집·분석된 질병 관련 뉴스 메타정보 자료입니다. 질병은 개인의 건강뿐 아니라 사회·경제 전반에도 큰 영향을 미치는 주요 보건 이슈로, 감염병의 확산, 만성질환의 증가, 의료 체계의 대응, 예방 정책 등 다양한 차원에서 언론 보도의 중요한 주제로 다뤄져 왔습니다. 본 자료는 국내 주요 신문과 방송 보도에서 질병과 관련된 기사들을 분석해 주요 키워드와 빈도를 추출하고, 시기별 보도 경향과 사회적 인식 변화를 파악할 수 있도록 구성되었습니다. 이를 통해 감염병 대응, 백신 및 치료제 개발, 만성질환 관리, 의료 인프라 확충, 보건 정책의 방향성이 언론 담론에서 어떻게 다뤄졌는지를 객관적으로 확인할 수 있습니다. 또한 학술 연구, 정책 수립, 언론 분석, 교육 현장에서 활용할 수 있는 기초 자료로, 국민 건강 증진과 지속 가능한 보건 체계 마련을 위한 사회적 논의에 기여할 수 있습니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 340
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 한국경제
@@ -94,12 +97,22 @@ schema:
         - 일본,독일,홍콩,슈피겔,1백,사망자,러시아,우크라이나,1만,보건당국,지구촌,온몸,어린이들,13세,수개월내,면역성,뇌염증,스페인독감수준,독감바이러
       stats:
         unique: 5184
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15089739-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15089739.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15089739.json
   stats: probe/stats/15089739.json
   data: probe/data/15089739/
-status: active
-summary_user: 빅카인즈(BIGKinds)에서 모은 질병 관련 신문·방송 기사의 메타정보를 기사 한 건마다 일자·언론사·제목·분류·키워드·특성추출어로 담은 CSV 파일(약 6.5MB)이며, 범위는 전국이고 지역 단위가 없다. 연구자나 언론 분석가가 감염병·백신·만성질환 같은 주제가 시기별로 얼마나, 어떤 키워드로 보도됐는지를 살피는 데 쓴다. 전역 조인 키가 없어서 다른 데이터와는 일자나 키워드 같은 이름 매칭으로만 이어 쓴다.
 limits: 기사 본문이 아니라 메타정보(제목·키워드 등)만 담고, 지역 단위가 없어 지역별 보도 비교에는 쓰지 못한다. 다른 데이터와 직접 이어 붙일 공통 코드가 없다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15089739-03
     - c-15089739-04
   dropped_citations: 0
+status: active

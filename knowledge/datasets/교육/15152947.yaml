@@ -1,0 +1,223 @@
+# Dataset 15152947 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15152947'
+tier: verified
+title: 경기도_사이버도서관 목록정보
+sector: 교육/교육일반/school-registry
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15152947/fileData.do
+synonyms:
+  - 사이버도서관
+  - 서지
+  - 표제
+  - 저자
+  - 도서정보
+  - 도서메타데이터
+  - 경기도 전자도서관
+  - 도서 서지정보
+  - 장서 목록
+  - 도서관 소장자료
+  - 전자책 목록
+  - 도서 메타데이터
+summary_user: 경기도 사이버도서관에 등록된 도서의 서지 정보를 도서 한 권당 한 행으로 담은 목록이며, 서지ID(th_id), 본표제, 부표제, 저자, 출판연도, 소장 도서관 번호 묶음을 포함한다. 도서관 담당자나 분석가가 '어떤 도서를 여러 도서관이 함께 소장하고 있는지', '저자별·출판연도별로 소장 자료가 어떻게 분포하는지'를 확인하는 데 쓴다. 다른 데이터와 공통으로 쓰는 조인 키는 없어서, 도서명·저자 같은 이름 매핑이나 같은 기관(경기도) 자료와의 코드 대조로만 연결한다.
+description_portal: 이 데이터는 경기도 사이버도서관에 등록된 도서의 서지 정보 목록을 정리한 자료입니다. 각 도서는 고유의 서지ID를 가지며, 본표제(도서 제목), 부표제, 저자, 출판연도, 그리고 해당 도서를 소장한 도서관 번호(GROUP)로 구성되어 있습니다. 특히 GROUP 항목은 여러 도서관이 동일 도서를 소장하고 있는 경우를 나타내며, 각 도서관은 고유 번호로 식별됩니다. 이 데이터를 통해 도서의 메타데이터 분석, 도서관별 보유자료 비교, 저자별 혹은 출판연도별 출판 트렌드 파악 등 다양한 정보 분석이 가능합니다. 또한 도서관 서비스 개선 및 이용자 맞춤형 자료 제공 전략 수립에도 활용할 수 있습니다. 도서명이 영문과 한글이 혼용되어 있어 다양한 언어권 자료에 대한 포괄적 정보를 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: th_id
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - AB-020921225
+        - AB-020508882
+        - AB-020509301
+      stats:
+        unique: 100
+    - name: titl_cont
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Bob's secret hideaway
+        - (JPT시험 만점대책)일본어시험 JPT 필수단어 3000
+        - "Don't push the button! : a christmas adventure"
+      stats:
+        unique: 100
+    - name: sbl_cont
+      type: code
+      null_rate: 0.69
+      sample_values:
+        - a christmas adventure
+        - 대한민국 최초 WHO 사무총장
+        - 남수단 선교사제 이야기 = Abuna dengdit
+      stats:
+        unique: 31
+    - name: author_nm
+      type: string
+      null_rate: 0.02
+      sample_values:
+        - 방지나 지음
+        - written by Tom Dickinson ; illustrated by Jimothy Oliver
+        - 손숙희 저
+      stats:
+        unique: 97
+    - name: publcatn_yr
+      type: number
+      null_rate: 0.02
+      sample_values:
+        - '2023'
+        - '2022'
+        - '2008'
+      stats:
+        min: 1989
+        p50: 2011.5
+        max: 2023
+        unique: 31
+    - name: headchf_librry_group_info
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '141020'
+        - '141517'
+        - 141041 141141
+      stats:
+        unique: 93
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 학교 기본정보 (+연계 가능한 통계·재정)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.241
+  brm: 교육 - 교육일반
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15152947-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15152947.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15152947-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152947-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15152947.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152947-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15152947.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15152947-06
+    kind: admin_note
+    value: "세부 부문 '학교 기본정보 (+연계 가능한 통계·재정)'의 가치: 표준 학교코드 마스터 — 고등교육의 세 학교코드 체계를 묶는 기준. 교원·학생·학급 통계, 교육청·학교 재정은 학교/기관 키로 붙는 것만"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#school-registry
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15152947-07
+    kind: admin_note
+    value: '[교육 · 교육일반] 학교 기본정보·학구도/통학·학원/교습소·교육시설/환경만. 교원·학생 통계와 교육 행정·재정은 학교 기본정보 소속으로 연계 가능한 것만 (`edu-general-non-core`). 초중등·평생직업에 흩어진 4개 주제 178건을 모음 (`edu-core-topics-to-general`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L456
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15152947-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15152947.json
+  stats: probe/stats/15152947.json
+  data: probe/data/15152947/
+limits: 이 데이터는 포털 활용신청과 별도로 외부 사이트 data.gg.go.kr의 인증키(KEY)를 받아야 호출할 수 있다. 전역 조인 키가 없고 학교코드도 담지 않으므로, 분류된 부문(학교 기본정보)의 학교·교원·재정 데이터와 키로 직접 붙일 수 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15152947-01
+    - c-15152947-03
+    - c-15152947-06
+  dropped_citations: 0
+status: active

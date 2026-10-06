@@ -1,4 +1,5 @@
-# Dataset 15114078 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15114078 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15114078'
 tier: verified
 title: 울산시설공단_울산대공원 남문 주차장 시간대별 주차현황
@@ -22,6 +23,7 @@ synonyms:
   - 주차 혼잡도
   - 울산 공영주차장
   - 주차 수요 분석
+summary_user: 울산대공원 남문 주차장 한 곳의 입차 대수와 출차 대수를 연월일·시간대별로 담은 집계 파일로, 포털에서 활용신청 없이 csv(약 86만 바이트)로 받는다. 방문객은 '주말 오후 몇 시에 남문 주차장이 가장 붐비나'를 확인해 혼잡 시간을 피하는 데 쓰고, 운영자·분석가는 평일·주말 시간대별 이용 수요 분석에 쓴다. 실측 컬럼에 전역 조인 키가 없어 전국주차장정보표준데이터(주차장관리번호·좌표·요금·면수) 같은 원장과는 주차장명 매핑으로만 이어 쓴다.
 description_portal: 울산시설공단은 울산대공원 남문 주차장의 이용 현황을 시민들에게 투명하게 제공하기 위해, 시간대별 주차 데이터를 체계적으로 수집·공개하고 있습니다. 이 데이터는 주차장 이용 수요를 분석하고 효율적인 운영 및 시민 편의를 도모하기 위한 중요한 자료로, 제공 항목에는 주차장명, 입차 대수, 출차 대수, 연월일, 시간대 등이 포함되어 있습니다. 시민들은 이를 통해 특정 일자와 시간대에 주차장 이용이 얼마나 활발했는지를 확인할 수 있으며, 방문 계획 시 혼잡 시간을 피하는 데 유용하게 활용할 수 있습니다. 특히 연월일과 시간대별로 세분화된 정보는 주말과 평일, 시간대별 혼잡도 분석에 활용 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -35,6 +37,7 @@ schema:
   fields:
     - name: 주차장명
       type: code
+      semantic_type: uicf_parking_lot_nm
       null_rate: 0.0
       sample_values:
         - 울산대공원 남문 주차장
@@ -84,12 +87,22 @@ schema:
         - 02:00-02:59
       stats:
         unique: 24
+  foreign_keys:
+    - fields:
+        - 주차장명
+      reference:
+        key: uicf_parking_lot_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 연월일
 cycle: default
 classification:
   subsector_name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
@@ -127,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15114078-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_parking_lot_nm(주차장명)'
     evidence:
       - type: measured
         source: probe/stats/15114078.json
@@ -192,8 +205,6 @@ verification:
   run: probe/runs/15114078.json
   stats: probe/stats/15114078.json
   data: probe/data/15114078/
-status: active
-summary_user: 울산대공원 남문 주차장 한 곳의 입차 대수와 출차 대수를 연월일·시간대별로 담은 집계 파일로, 포털에서 활용신청 없이 csv(약 86만 바이트)로 받는다. 방문객은 '주말 오후 몇 시에 남문 주차장이 가장 붐비나'를 확인해 혼잡 시간을 피하는 데 쓰고, 운영자·분석가는 평일·주말 시간대별 이용 수요 분석에 쓴다. 실측 컬럼에 전역 조인 키가 없어 전국주차장정보표준데이터(주차장관리번호·좌표·요금·면수) 같은 원장과는 주차장명 매핑으로만 이어 쓴다.
 limits: 입출차 대수 기록일 뿐 주차장관리번호·좌표·면수가 없어 실시간 주차 가능 대수나 점유율을 바로 구할 수 없고, 다른 데이터와는 이름 매핑으로만 연결된다. 실시간 주차 가능 정보는 지자체·공단별 비표준 API라 이 파일과 별도 층으로 다뤄야 한다.
 review:
   summary: draft
@@ -205,3 +216,4 @@ review:
     - c-15114078-03
     - c-15114078-06
   dropped_citations: 0
+status: active

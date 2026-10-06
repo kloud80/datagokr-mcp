@@ -1,4 +1,5 @@
-# Dataset 15072896 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15072896 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072896'
 tier: verified
 title: 건강보험심사평가원_4단상병별 성별 입원외래별 건강보험 진료 통계
@@ -22,6 +23,7 @@ synonyms:
   - 성별 질병 통계
   - 심평원 진료비 통계
   - 주상병 통계
+summary_user: '진료년도별로 4단 상병코드(주상병) × 성별 × 입원·외래 구분마다 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 단위 건강보험 진료 집계 파일이다. 보건의료 분석가나 연구자가 특정 질병(예: 당뇨병 세부 상병)의 남녀별 입원·외래 환자수와 진료비 규모를 비교할 때 쓴다. 전역 조인 키는 없으므로 주상병코드를 KCD 질병분류 코드표와 맞춰 상병명을 붙이거나, 같은 심평원의 다른 상병별 진료 통계와 진료년도·상병코드로 이어 쓴다.'
 description_portal: '4단상병별 성별 입원외래별 건강보험 진료비 통계 / 진료년도 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2025년 1월~12월, 심사년월: 2025년 1월~2026년 4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외 / 양방만 포함※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대해 심사 결정한 내용을 기준으로 산출됨※ 질병은 주상병 기준이며 의료기관에서 의사가 진료 시 환자의 호소, 증세에 따라 일차적으로 진단명을 부여하여 진료비 청구가 이루어짐에 따라 실제 최종 확정된 질병과는 차이가 발생할 수 있음※ 요양급여비용총액은 요양기관에서 건강보험 환자의 진료에 소요된 비용(비급여 제외)으로 보험자부담금과 본인부담금을 합한 금액임※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있음'
 applicable_legislation:
   - law: 국민건강보험법
@@ -50,6 +52,7 @@ schema:
         unique: 1
     - name: 주상병코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - A010
@@ -133,12 +136,22 @@ schema:
         p50: 67158120
         max: 1205943521780
         unique: 30956
+  foreign_keys:
+    - fields:
+        - 주상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 진료·처방 통계 (질병·지역·연령별 진료, 처방, 산정특례)
@@ -175,7 +188,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072896-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(주상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15072896.json
@@ -253,8 +266,6 @@ verification:
   run: probe/runs/15072896.json
   stats: probe/stats/15072896.json
   data: probe/data/15072896/
-status: active
-summary_user: '진료년도별로 4단 상병코드(주상병) × 성별 × 입원·외래 구분마다 환자수, 명세서 청구건수, 입내원일수, 보험자부담금, 요양급여비용총액을 담은 전국 단위 건강보험 진료 집계 파일이다. 보건의료 분석가나 연구자가 특정 질병(예: 당뇨병 세부 상병)의 남녀별 입원·외래 환자수와 진료비 규모를 비교할 때 쓴다. 전역 조인 키는 없으므로 주상병코드를 KCD 질병분류 코드표와 맞춰 상병명을 붙이거나, 같은 심평원의 다른 상병별 진료 통계와 진료년도·상병코드로 이어 쓴다.'
 limits: 전국 단위 집계라 지역별 분석은 할 수 없고, 청구 기준인 심평원 통계는 자격 기준인 국민건강보험공단 통계와 값이 다르다. 환자수는 범주 안에서만 중복을 제거한 값이라 성별·입원외래 등 다른 범주를 단순 합산하면 중복이 생기며, 약국과 한방은 빠지고 주상병은 최초 진단명 기준이다.
 review:
   summary: draft
@@ -267,3 +278,4 @@ review:
     - c-15072896-04
     - c-15072896-06
   dropped_citations: 0
+status: active

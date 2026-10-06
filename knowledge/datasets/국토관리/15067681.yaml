@@ -1,4 +1,5 @@
-# Dataset 15067681 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067681 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067681'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_구 위성정보
@@ -23,6 +24,7 @@ synonyms:
   - 위성 센서 정보
   - 원격탐사 영상
   - 인공위성 목록
+summary_user: LANDSAT, SPOT, IKONOS, KOMPSAT 등 국토지리정보원이 보유한 과거 위성(1973~2004년 촬영분)의 위성명·센서·모드·밴드수·해상도·보유국가 같은 제원을 위성(센서·모드)별로 정리한 소규모 목록 파일(csv 약 675바이트)이다. 분석가나 연구자가 '국토지리정보원이 가진 옛 위성영상은 어떤 위성·센서·해상도로 찍혔나'를 확인하고 과거 영상을 고를 때 쓴다. 전역 조인 키가 없어 다른 항공사진·위성영상 목록과는 위성명이나 센서명을 이름으로 맞춰 이어 써야 한다.
 description_portal: 'LANDSAT, SOPT, IKONOS, KOMPSAT 등 과거 위성의 일반정보▷ 속성정보 - 해상도 : 위성촬영시 영상해상도 ex) 11x11, 60x60, 340x310- 사이즈 : 영상크기- 명칭 : 위성명칭- 센서명 : 센서이름(ex IKONOS, MSS, ETM+, OPS 등)- 모드명 : 모드이름(ex PAN, MS, HS 등)- 밴드수 : 밴드 갯수- 보유국가 : 위성보유국가- 위성종류 * 위성영상 : 지구 궤도를 도는 인공위성이 지표면을 촬영한 이미지로 지도제작 및 지형분석 등에 활용됨. - 1973-10-08 ~ 2004-09-30 범위의 과거 위성영상 보유'
 accrual_periodicity: 수시
 team:
@@ -57,6 +59,7 @@ schema:
         unique: 8
     - name: 위성일련번호
       type: number
+      semantic_type: old_satellite_seq
       null_rate: 0.0
       sample_values:
         - '4'
@@ -123,6 +126,12 @@ schema:
         - ORD
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 위성일련번호
+      reference:
+        key: old_satellite_seq
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -166,7 +175,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067681-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: old_satellite_seq(위성일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15067681.json
@@ -241,8 +250,6 @@ verification:
   run: probe/runs/15067681.json
   stats: probe/stats/15067681.json
   data: probe/data/15067681/
-status: active
-summary_user: LANDSAT, SPOT, IKONOS, KOMPSAT 등 국토지리정보원이 보유한 과거 위성(1973~2004년 촬영분)의 위성명·센서·모드·밴드수·해상도·보유국가 같은 제원을 위성(센서·모드)별로 정리한 소규모 목록 파일(csv 약 675바이트)이다. 분석가나 연구자가 '국토지리정보원이 가진 옛 위성영상은 어떤 위성·센서·해상도로 찍혔나'를 확인하고 과거 영상을 고를 때 쓴다. 전역 조인 키가 없어 다른 항공사진·위성영상 목록과는 위성명이나 센서명을 이름으로 맞춰 이어 써야 한다.
 limits: 영상 자체나 촬영 위치·일자별 목록이 아니라 위성 제원만 담은 비공간 일반정보다. 조인 키가 없어 다른 데이터와는 이름 매칭으로만 연결된다.
 review:
   summary: draft
@@ -254,3 +261,4 @@ review:
     - c-15067681-03
     - c-15067681-04
   dropped_citations: 0
+status: active

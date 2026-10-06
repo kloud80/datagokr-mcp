@@ -1,4 +1,5 @@
-# Dataset 15102904 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15102904 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15102904'
 tier: verified
 title: 한국가스공사_천연가스 공급발전소 지역본부별 구분 현황
@@ -21,6 +22,7 @@ synonyms:
   - 정압관리소
   - 가스공사 지역본부
   - 발전용 천연가스 수요처
+summary_user: 한국가스공사 지역본부(관리소)별로 천연가스를 공급받는 발전소와 그 발전사를 정리한 전국 단위 현황표로, 건별 원천이 아닌 작은 목록 파일(csv 약 2KB)이다. 발전 사업자나 에너지 분석가가 '어느 지역본부·관리소에서 어떤 발전소에 천연가스를 공급하는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전소 원장이나 가스공사 공급설비 자료와는 발전소명·관리소명 같은 이름 매칭으로만 연결한다.
 description_portal: 한국가스공사의 주요 사업인 천연가스의 안전하고 안정적인 공급사업과 관련하여, 천연가스를 공급하는 공급관리소(정압관리소)의 전국 지역별 현황자료 입니다.해당 자료를 통해 전국에 걸쳐 설치되어 있는 공급설비 현황을 파악할 수 있으며, 총 26개사 39개 관리소에서 평택LT, 목감 및 POSCO는 자체수급으로 제외 합니다.해당자료는 지역별 천연가스 공급설비를 나타낸 것으로 광역기초단위 설치현황, 수요처(발전, 도시가스) 현황, 한국가스공사에서 운영중인 지역본부별 수요처(발전, 도시가스) 현황, 지역본부별 주배관 및 기능별 관리소 현황, 주배관 구간별 가스주입 현황 등추가 자료는 공공데이터로 등록된 자료를 참고하여 확인 가능합니다.
 accrual_periodicity: 연간
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 11
     - name: 관리소
       type: code
+      semantic_type: kogas_supply_station
       null_rate: 0.0
       sample_values:
         - 청라
@@ -59,6 +62,12 @@ schema:
         - POSCO
       stats:
         unique: 53
+  foreign_keys:
+    - fields:
+        - 관리소
+      reference:
+        key: kogas_supply_station
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -101,7 +110,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15102904-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kogas_supply_station(관리소)'
     evidence:
       - type: measured
         source: probe/stats/15102904.json
@@ -166,8 +175,6 @@ verification:
   run: probe/runs/15102904.json
   stats: probe/stats/15102904.json
   data: probe/data/15102904/
-status: active
-summary_user: 한국가스공사 지역본부(관리소)별로 천연가스를 공급받는 발전소와 그 발전사를 정리한 전국 단위 현황표로, 건별 원천이 아닌 작은 목록 파일(csv 약 2KB)이다. 발전 사업자나 에너지 분석가가 '어느 지역본부·관리소에서 어떤 발전소에 천연가스를 공급하는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전소 원장이나 가스공사 공급설비 자료와는 발전소명·관리소명 같은 이름 매칭으로만 연결한다.
 limits: 발전소 코드나 주소 같은 공통 키가 없어 다른 데이터와 정확히 조인하기 어렵고, 이름 표기 차이에 주의해야 한다. 지도에 올릴 좌표가 없는 비공간 목록이며, 공급량이나 설비 용량 같은 수치는 들어 있지 않다.
 review:
   summary: draft
@@ -179,3 +186,4 @@ review:
     - c-15102904-03
     - c-15102904-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15127926 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15127926 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15127926'
 tier: verified
 title: 국민건강보험공단_특정 상병 및 수가코드 그룹별 진료환자 정보G
@@ -21,6 +22,7 @@ synonyms:
   - 분만후 출혈
   - 상병별 진료인원
   - 건강보험 진료통계
+summary_user: 혈관색전술(수가코드 M6644)을 받은 진료인원을 2018~2022년 진료년도별로 가입자 구분(건강보험·의료급여), 주상병 3개 그룹(간암 계열, 자궁근종·자궁내막증, 분만후·이상 자궁출혈), 5세 단위 연령, 성별로 나눠 집계한 전국 단위 파일이다(CSV 약 19KB). 분석가나 연구자가 '자궁근종 환자의 색전술 이용이 연령대별로 어떻게 달라졌나'처럼 특정 질환군의 색전술 이용 규모와 추이를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 주상병코드(KCD)나 수가코드(EDI)를 코드 마스터와 이름·코드로 맞춰 이어 쓴다.
 description_portal: '1. 가입자 구분: 건강보험, 의료급여2. 진료년도: 2018~2022년3. 수가코드: M6644(혈관색전술-기타혈관)4. 주상병코드: 3그룹  - 그룹1: C220(간세포암종), C221(간내담관암종), C787(간 및 간내 담관의 이차성 악성 신생물)   - 그룹2: D25(자궁의 평활근종), N800(자궁의 자궁내막증)  - 그룹3: O72(분만후 출혈), N93(기타 이상 자궁 및 질 출혈)5. 연령: 5세 단위(0~79세), 80세 이상, 연말시점6. 성별: 남자, 여자7. 진료인원: 해당 구분별 진료인원(중복제외)  - 진료일 기준(한의분류 제외, 약국 제외)  - 건강보험 및 의료급여 실적이며, 비급여는 제외  - 2023년 6월 심사분까지 반영  - 요양기관에서 환자 진료 중 진단명이 확정되지 않은 상태에서의 호소, 증세 등에 따라 일차진단명을 부여하고 청구한 내역 중     주진단명 기준으로 발췌한 것이므로 최종 확정된 질병과는 다를 수 있음※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터'
 accrual_periodicity: 수시
 team:
@@ -60,6 +62,7 @@ schema:
         unique: 3
     - name: 수가코드
       type: code
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - M6644
@@ -94,12 +97,22 @@ schema:
         p50: 48
         max: 2240
         unique: 182
+  foreign_keys:
+    - fields:
+        - 수가코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -136,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15127926-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(수가코드)'
     evidence:
       - type: measured
         source: probe/stats/15127926.json
@@ -201,8 +214,6 @@ verification:
   run: probe/runs/15127926.json
   stats: probe/stats/15127926.json
   data: probe/data/15127926/
-status: active
-summary_user: 혈관색전술(수가코드 M6644)을 받은 진료인원을 2018~2022년 진료년도별로 가입자 구분(건강보험·의료급여), 주상병 3개 그룹(간암 계열, 자궁근종·자궁내막증, 분만후·이상 자궁출혈), 5세 단위 연령, 성별로 나눠 집계한 전국 단위 파일이다(CSV 약 19KB). 분석가나 연구자가 '자궁근종 환자의 색전술 이용이 연령대별로 어떻게 달라졌나'처럼 특정 질환군의 색전술 이용 규모와 추이를 볼 때 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 주상병코드(KCD)나 수가코드(EDI)를 코드 마스터와 이름·코드로 맞춰 이어 쓴다.
 limits: 민원 신청에 따라 특정 수가코드 하나와 주상병 3개 그룹만 발췌한 집계이므로 다른 시술·질환이나 지역별 분석에는 쓸 수 없다. 공통 조인 키가 없어 다른 통계와 연결하려면 코드·이름 매핑이 필요하다.
 review:
   summary: draft
@@ -215,3 +226,4 @@ review:
     - c-15127926-04
     - c-15127926-06
   dropped_citations: 0
+status: active

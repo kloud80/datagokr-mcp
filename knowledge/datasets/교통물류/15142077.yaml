@@ -103,6 +103,7 @@ schema:
     - name: rte_id
       title: 노선ID
       type: number
+      semantic_type: tcard_route_id
       null_rate: 0.0
       sample_values:
         - '31001110'
@@ -121,6 +122,7 @@ schema:
         unique: 1
     - name: dptre_sttn_id
       type: number
+      semantic_type: busstop_sttn_id
       null_rate: 0.0
       sample_values:
         - '3100439'
@@ -139,6 +141,7 @@ schema:
         unique: 1
     - name: arvl_sttn_id
       type: number
+      semantic_type: busstop_sttn_id
       null_rate: 0.0
       sample_values:
         - '3100439'
@@ -188,6 +191,22 @@ schema:
         p50: 2.57
         max: 2.57
         unique: 1
+  foreign_keys:
+    - fields:
+        - rte_id
+      reference:
+        key: tcard_route_id
+      evidence: measured
+    - fields:
+        - dptre_sttn_id
+      reference:
+        key: busstop_sttn_id
+      evidence: measured
+    - fields:
+        - arvl_sttn_id
+      reference:
+        key: busstop_sttn_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -234,7 +253,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15142077-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: tcard_route_id(rte_id), busstop_sttn_id(dptre_sttn_id), busstop_sttn_id(arvl_sttn_id)'
     evidence:
       - type: measured
         source: probe/stats/15142077.json

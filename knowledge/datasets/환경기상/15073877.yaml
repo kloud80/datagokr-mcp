@@ -1,5 +1,3 @@
-# Dataset 15073877 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
-# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073877'
 tier: verified
 title: 한국환경공단_에어코리아_측정소정보
@@ -132,6 +130,7 @@ schema:
     - name: stationName
       title: 측정소명
       type: string
+      semantic_type: air_station_cd
       null_rate: 0.5
       sample_values:
         - 소룡동
@@ -158,9 +157,23 @@ schema:
       reference:
         key: address
       evidence: measured
+    - fields:
+        - stationName
+      reference:
+        key: air_station_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - dmX
+    - dmY
+  space_via: coord
+  time: day
+  time_fields:
+    - item
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -204,7 +217,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15073877-03
     kind: key
-    value: '실측 조인 키: address(addr)'
+    value: '실측 조인 키: address(addr), air_station_cd(stationName)'
     evidence:
       - type: measured
         source: probe/stats/15073877.json

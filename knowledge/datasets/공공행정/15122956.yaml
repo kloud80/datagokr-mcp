@@ -1,0 +1,210 @@
+# Dataset 15122956 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15122956'
+tier: verified
+title: 경기도_경기통계시스템 기관정보
+sector: 공공행정/국가통계/regional-grid
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15122956/fileData.do
+synonyms:
+  - 통계기관
+  - 통계작성
+  - 통계조직
+  - 조직정보
+  - 부서구성
+  - 표준통계
+  - 경기도 조직도
+  - 경기통계 작성기관
+  - 통계작성기관 목록
+  - 부서 코드
+  - 행정조직 위계
+  - 표준통계 작성기관
+  - 경기데이터드림
+summary_user: 경기통계시스템에 등록된 기관·부서를 조직 한 건씩 담은 목록으로, 조직번호·상위조직번호·조직명과 부서 여부, 통계 작성 여부, 표준통계 작성기관 여부를 담는다. 분석가나 행정 담당자가 '경기도에서 통계를 작성하는 기관과 부서가 어디이고, 어느 상위조직에 속하는가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 조직번호(orgnzt_no)와 상위조직번호를 이어 조직 위계를 재구성하는 내부 연결만 가능하며, 다른 데이터와는 조직명 매핑으로만 붙인다.
+description_portal: 이 데이터는 경기도 경기통계시스템에 등록된 기관 및 부서 정보를 담고 있으며, 각 조직의 고유번호, 상위조직번호, 부서 여부, 조직명, 통계 작성 여부, 표준통계 작성기관 여부 등의 항목으로 구성되어 있습니다. ‘조직번호’와 ‘상위조직번호’를 통해 기관 간 위계 관계를 파악할 수 있고, ‘부서여부’는 해당 항목이 실제 행정부서인지 여부를 구분합니다. 또한 ‘통계작성여부’ 및 ‘표준통계작성기관여부’ 항목은 통계자료를 생산하는 역할을 하는 기관 여부를 명시하여, 통계 생산 기관의 범위와 역할을 확인하는 데 활용됩니다. 이 데이터는 경기도 내 행정조직 구조를 분석하거나, 통계작성기관을 파악하여 정책기획, 행정자료 수집의 기초자료로 활용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: orgnzt_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '201002'
+        - '201003'
+        - '201004'
+      stats:
+        min: 201002
+        p50: 212000.5
+        max: 361011
+        unique: 100
+    - name: up_orgnzt_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '201'
+        - '345'
+        - '361'
+      stats:
+        min: 201
+        p50: 212
+        max: 361
+        unique: 20
+    - name: dept_yn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: orgnzt_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 기획관리실 기획관실
+        - 조사부 조사과
+      stats:
+        unique: 79
+    - name: stats_wrt_yn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+    - name: stdd_stats_wrt_inst_yn
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+      stats:
+        unique: 1
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역 격자 (읍면동 유동인구·체류 외국인·시장 물가)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2518
+  brm: 공공행정 - 국가통계
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15122956-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15122956.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15122956-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122956-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15122956.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122956-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15122956.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15122956-06
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 국가통계 (1,168건)] 통계 모음이라 SGIS 통계지리(집계구·주제도)와 읍면동 유동인구·체류 외국인·시장 물가만 남김. 부동산원 거래·임대 동향 → 주택, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L719
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15122956-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15122956.json
+  stats: probe/stats/15122956.json
+  data: probe/data/15122956/
+limits: 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 path 파라미터(KEY)로 넣어야 호출된다. 표준 기관코드 같은 전역 키가 없어 다른 통계·행정 데이터와 이으려면 이름이나 코드를 직접 맞춰야 한다. 공간 정보가 없는 비공간 목록이다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15122956-01
+    - c-15122956-03
+    - c-15122956-04
+  dropped_citations: 0
+status: active

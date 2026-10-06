@@ -1,0 +1,236 @@
+# Dataset 15108845 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15108845'
+tier: verified
+title: 한국토지주택공사_에너지 정보 제공 임대주택단지 조회 서비스
+sector: 국토관리/주택/rental
+domain: 국토관리/주택
+agency:
+  id: B552555
+  name: 한국토지주택공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15108845/openapi.do
+synonyms:
+  - 스마트홈
+  - 사회안전망
+  - 공공주택
+  - LH 임대주택 에너지
+  - 임대아파트 에너지 사용량
+  - 공공임대 단지 에너지 효율
+  - LH 단지 조회
+  - 임대주택 관리비 에너지
+  - 공공임대주택 단지 정보
+description_portal: 한국토지주택공사에서 관리하는 임대주택단지의 에너지 정보를 제공함. 건물명으로 검색하여 해당 건물의 정보를 조회 가능
+team:
+  dept: IT운영처 데이터운영팀
+services:
+  - op: /sbd
+    name: 에너지 정보 제공 임대주택단지 조회
+    endpoint: https://apis.data.go.kr/B552555/getSbd/sbd
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pg_sz
+        required: true
+        example: '1'
+        desc: 한 페이지 결과 수
+      - name: pg_no
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: sbd_nm
+        required: true
+        example: LH
+        desc: 단지명
+    approval: auto
+    traffic:
+      dev: 10000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: sbd_id
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '86'
+      stats:
+        min: 86
+        p50: 86
+        max: 86
+        unique: 1
+    - name: sbd_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 인천장수 LH
+      stats:
+        unique: 1
+    - name: ronm_adr
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '인천광역시 남동구 장수로 27(장수동,주공아파트) '
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 필지·건물
+cycle: default
+classification:
+  subsector_name: 임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6783
+  brm: 국토관리 - 주택
+  sector_rule: land-restructure-주택
+  why: 기관 분석 핵심 원장 — 한국토지주택공사
+claims:
+  - id: c-15108845-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15108845.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15108845.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15108845-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108845-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15108845.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108845-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 필지·건물
+    evidence:
+      - type: measured
+        source: probe/runs/15108845.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15108845-20
+    kind: legal_basis
+    value: "법 체계 층 '주택·부동산 시장': 부동산거래신고법(실거래)·부동산공시법(주택가격)·주택법(공급·청약)·공동주택관리법·주택임대차보호법·공공주택특별법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/주택
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:012480#1
+        detail: 부동산 거래신고 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001827#1
+        detail: 부동산 가격공시에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001809#1
+        detail: 주택법 제1조(목적)
+      - type: law
+        source: law:012345#1
+        detail: 공동주택관리법 제1조(목적)
+      - type: law
+        source: law:001248#1
+        detail: 주택임대차보호법 제1조(목적)
+      - type: law
+        source: law:009595#1
+        detail: 공공주택 특별법 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15108845-06
+    kind: admin_note
+    value: "세부 부문 '임대차·전월세·공공임대 (확정일자·등록임대·임대주택 단지)'의 가치: 전세 사기 이후 수요 급증. 전월세 실거래와 병합 관계"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#rental
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15108845-07
+    kind: admin_note
+    value: '[국토관리 - 주택 · 결정] 국토관리에서 완전히 분리. 실거래·공시가격·가격 동향/지수·공급/인허가/미분양·청약/분양·공동주택 관리·임대차/전월세까지만.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L544
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15108845-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15108845.json
+  stats: probe/stats/15108845.json
+  data: probe/data/15108845/
+status: active
+summary_user: LH가 관리하는 전국 임대주택단지의 에너지 정보를 건물(단지) 단위로 담으며, 건물명으로 검색해 단지 식별번호·단지명·도로명주소와 함께 조회하는 API다. LH 임대주택 입주를 고려하는 국민이나 공공임대 에너지 효율을 비교하는 분석가가 '이 단지의 에너지 정보는 어떤가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 데이터와는 단지명이나 도로명주소(ronm_adr)를 이름 매칭하거나 같은 기관(LH) 단지 코드로만 이어 쓴다.
+limits: 실측 컬럼에 전역 조인 키가 없어 전월세 실거래·건축물대장 등과 연결하려면 단지명·주소 문자열 매칭이 필요하다. 개발계정은 하루 10,000회로 호출이 제한되며, 필드의 명세상 의미가 비어 있어 에너지 항목 해석은 실제 응답을 확인해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15108845-01
+    - c-15108845-03
+    - c-15108845-04
+    - c-15108845-06
+  dropped_citations: 0

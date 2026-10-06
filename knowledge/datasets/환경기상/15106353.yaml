@@ -1,4 +1,5 @@
-# Dataset 15106353 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15106353 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106353'
 tier: verified
 title: 한국동서발전(주)_발전소별 폐기물 처리 현황
@@ -21,6 +22,7 @@ synonyms:
   - 발전사 자원순환
   - 폐기물 원단위
   - 동서발전 환경 데이터
+summary_user: 한국동서발전 소속 발전소별로 연도마다 발전량(GWh), 일반·지정폐기물 발생량과 재활용량(톤), 발전량당 원단위 발생량, 재활용률을 담은 집계 데이터다. 연구자나 환경 분석가가 "어느 발전소가 발전량 대비 폐기물을 많이 내고, 재활용률은 해마다 어떻게 변했나"를 비교할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소명(pwrSta)과 연도를 이름으로 맞춰 잇거나, 같은 기관(한국동서발전)의 발전량 등 다른 데이터와 묶어 쓴다.
 description_portal: 한국동서발전에서 오픈API 형태로 제공하는 발전소별 폐기물 처리 현황 데이터입니다. 이 데이터는 원단위 발생량(발전량 GWh 기준), 일반 재활용량(톤), 지정 재활용량(톤), 재활용률(%), 연도, 발전소명, 발전량(GWh), 일반 발생량(톤), 지정 발생량(톤) 등 핵심 항목으로 구성되어 있으며, 표준화된 인터페이스를 통해 다른 시스템과 쉽게 연계하고 자동화된 데이터 활용이 가능하게 설계되어 있습니다. 이러한 데이터는 학계 및 연구 기관에서 발전소별 자원순환 실태를 정량적으로 분석하고, 폐기물 재활용 효율화 방안, 발전산업의 환경영향 최소화 정책 개발, 자원순환 경제 모델 설계 등 다양한 분야에서 기초 자료로 활용될 수 있습니다.
 team:
   dept: ICT기획부
@@ -82,6 +84,7 @@ schema:
     - name: pwrSta
       title: 발전소
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 호남
@@ -164,12 +167,22 @@ schema:
         p50: 84
         max: 84
         unique: 1
+  foreign_keys:
+    - fields:
+        - pwrSta
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - year
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -213,7 +226,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15106353-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(pwrSta)'
     evidence:
       - type: measured
         source: probe/stats/15106353.json
@@ -278,8 +291,6 @@ verification:
   run: probe/runs/15106353.json
   stats: probe/stats/15106353.json
   data: probe/data/15106353/
-status: active
-summary_user: 한국동서발전 소속 발전소별로 연도마다 발전량(GWh), 일반·지정폐기물 발생량과 재활용량(톤), 발전량당 원단위 발생량, 재활용률을 담은 집계 데이터다. 연구자나 환경 분석가가 "어느 발전소가 발전량 대비 폐기물을 많이 내고, 재활용률은 해마다 어떻게 변했나"를 비교할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 발전소명(pwrSta)과 연도를 이름으로 맞춰 잇거나, 같은 기관(한국동서발전)의 발전량 등 다른 데이터와 묶어 쓴다.
 limits: 사업자번호나 표준 코드가 없어 폐기물 처리업·배출 사업장 원장과 키로 직접 연결할 수 없고, 발전소명 문자열 매칭에 의존해야 한다. 한국동서발전 발전소만 다루는 집계 통계라 전국 발전사나 건별 처리 내역은 알 수 없다. 호출에는 serviceKey가 필요하며 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -293,3 +304,4 @@ review:
     - c-15106353-06
     - c-15106353-07
   dropped_citations: 0
+status: active

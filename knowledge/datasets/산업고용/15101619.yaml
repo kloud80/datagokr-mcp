@@ -1,4 +1,5 @@
-# Dataset 15101619 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15101619 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15101619'
 tier: verified
 title: 한국수력원자력(주)_수력양수 이용률
@@ -24,6 +25,7 @@ synonyms:
   - 청평 양수
   - 발전소별 이용률 추이
   - 수력 발전 실적
+summary_user: 한국수력원자력이 운영하는 수력발전소 7곳과 양수발전소 7곳, 총 14개 발전소별로 설비용량(MW)과 2017~2025년 연도별 이용률(설비용량 대비 실제 발전에 쓰인 비율)을 담은 집계 파일입니다. 에너지 분석가나 연구자가 특정 수력·양수발전소의 이용률이 해마다 어떻게 변했는지, 양수발전이 전력계통에 얼마나 기여하는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·설비 데이터와는 발전소명을 이름으로 맞추거나 같은 기관 자료끼리만 연결한다.
 description_portal: 수력양수 이용률 데이터는 한국수력원자력(주)에서 보유하고 있는 전국에 분포한 7개 수력발전소(화천, 춘천, 의암, 청평, 팔당, 강릉 및 칠보) 및 7개 양수발전소(청평, 삼랑진, 무주, 산청, 양양, 청송 및 예천), 총 14개 발전소별로 전체 설비용량 대비 실제 발전에 사용된 비율을 나타낸 데이터입니다. 수력양수 이용률은 연간 발전소별 발전량과 실제 운전시간 데이터를 근거로 하여 산출식에 의해 계산된 관련 자료 항목을 제공합니다. 이용률 자료를 통해 수력양수발전소가 전력계통에 기여하고 있는 정도를 확인 할 수 있습니다.
 legal_basis_portal: 공식 발전운전시간 데이터 근거 수력 양수발전소 이용률 자료
 accrual_periodicity: 연간
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 발전소명
       type: code
+      semantic_type: khnp_hydro_plant
       null_rate: 0.0
       sample_values:
         - 화천수력
@@ -165,6 +168,12 @@ schema:
         p50: 14.045000000000002
         max: 39.43
         unique: 14
+  foreign_keys:
+    - fields:
+        - 발전소명
+      reference:
+        key: khnp_hydro_plant
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -207,7 +216,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15101619-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_hydro_plant(발전소명)'
     evidence:
       - type: measured
         source: probe/stats/15101619.json
@@ -282,8 +291,6 @@ verification:
   run: probe/runs/15101619.json
   stats: probe/stats/15101619.json
   data: probe/data/15101619/
-status: active
-summary_user: 한국수력원자력이 운영하는 수력발전소 7곳과 양수발전소 7곳, 총 14개 발전소별로 설비용량(MW)과 2017~2025년 연도별 이용률(설비용량 대비 실제 발전에 쓰인 비율)을 담은 집계 파일입니다. 에너지 분석가나 연구자가 특정 수력·양수발전소의 이용률이 해마다 어떻게 변했는지, 양수발전이 전력계통에 얼마나 기여하는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 발전량·설비 데이터와는 발전소명을 이름으로 맞추거나 같은 기관 자료끼리만 연결한다.
 limits: 연도별 집계라 월·일·시간 단위의 발전 현황이나 실시간 전력수급은 알 수 없다. 발전소 코드 같은 공통 키가 없어 다른 데이터와 붙일 때는 발전소명 표기를 직접 맞춰야 한다.
 review:
   summary: draft
@@ -295,3 +302,4 @@ review:
     - c-15101619-03
     - c-15101619-04
   dropped_citations: 0
+status: active

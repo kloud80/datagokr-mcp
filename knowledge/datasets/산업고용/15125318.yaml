@@ -1,4 +1,5 @@
-# Dataset 15125318 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125318 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125318'
 tier: verified
 title: 한국남부발전(주)_시간대별 태양광발전실적 정보조회 서비스_GW
@@ -24,6 +25,7 @@ synonyms:
   - 신재생 발전량
   - PV 발전 실적
   - 발전소별 발전량
+summary_user: 한국남부발전이 운영하는 태양광 발전소별·호기별로 하루 1시부터 24시까지 1시간 단위 발전량과 일 총량·평균·최대·최소를 담는 건별 실적 API다. 분석가가 '남부발전 특정 태양광 발전소의 계절별·시간대별 발전량은 어떻게 달라지나'를 따지거나 기상 자료와 엮어 날씨와 발전량의 관계를 볼 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 다른 데이터와는 발전소코드(gencd)·발전소명·날짜를 이름·코드 매핑하거나 같은 기관 자료끼리 연결해 쓴다.
 description_portal: 한국남부발전은 친환경 에너지로 미래를 밝히는 글로벌 에너지 리더를 비전으로 하는 발전 공기업입니다.해당 API는 한국남부발전(주) 시간대별 태양광발전실적 정보조회 서비스_GW 서비스입니다.해당 API를 통해 사용자는 조회를 희망하는 날짜 및 기간의 태양광 발전소를 선택하여 00시부터 24시까지 1시간 단위로 세부 발전량을 확인할 수 있습니다. 해당 내용을 바탕으로 태양광 발전량 계절별 추이 분석 등을 수행할 수 있습니다.또한, 기상정보 등과 결합하여 날씨와 태양광 발전의 상관관계 등 다양한 분석의 기초자료로 활용 가능합니다.
 team:
   dept: AI업무혁신부
@@ -88,6 +90,7 @@ schema:
     - name: gencd
       title: 발전소코드
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - 997D
@@ -96,6 +99,7 @@ schema:
     - name: ipptnm
       title: 발전소명
       type: code
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - 한국남부발전(주)_남제주소내 태양광발전실적
@@ -104,6 +108,7 @@ schema:
     - name: hogi
       title: 호기
       type: number
+      semantic_type: kospo_plant_unit
       null_rate: 0.0
       sample_values:
         - '1'
@@ -442,12 +447,32 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - gencd
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
+    - fields:
+        - ipptnm
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
+    - fields:
+        - hogi
+      reference:
+        key: kospo_plant_unit
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - ymd
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -491,7 +516,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125318-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_plant_unit(gencd), kospo_plant_unit(ipptnm), kospo_plant_unit(hogi)'
     evidence:
       - type: measured
         source: probe/stats/15125318.json
@@ -556,8 +581,6 @@ verification:
   run: probe/runs/15125318.json
   stats: probe/stats/15125318.json
   data: probe/data/15125318/
-status: active
-summary_user: 한국남부발전이 운영하는 태양광 발전소별·호기별로 하루 1시부터 24시까지 1시간 단위 발전량과 일 총량·평균·최대·최소를 담는 건별 실적 API다. 분석가가 '남부발전 특정 태양광 발전소의 계절별·시간대별 발전량은 어떻게 달라지나'를 따지거나 기상 자료와 엮어 날씨와 발전량의 관계를 볼 때 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 다른 데이터와는 발전소코드(gencd)·발전소명·날짜를 이름·코드 매핑하거나 같은 기관 자료끼리 연결해 쓴다.
 limits: 전역 조인 키가 없어 기상 관측소나 다른 발전사 자료와 붙이려면 발전소명·위치를 직접 매핑해야 한다. 범위는 전국 단위의 비공간 자료로, 좌표나 행정구역 정보가 없어 지역별 집계에는 바로 쓰기 어렵다. 개발계정 호출은 일 10,000회로 제한된다.
 review:
   summary: draft
@@ -569,3 +592,4 @@ review:
     - c-15125318-03
     - c-15125318-04
   dropped_citations: 0
+status: active

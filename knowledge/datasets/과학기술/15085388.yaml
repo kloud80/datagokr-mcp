@@ -1,4 +1,5 @@
-# Dataset 15085388 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085388 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085388'
 tier: verified
 title: 한국연구재단_KCI 학술지정보서비스
@@ -25,6 +26,7 @@ synonyms:
   - 학회지 정보
   - 한국학술지인용색인
   - 학술지 통합 분리
+summary_user: 국내 학술지별로 연구분야 코드, 등재·통합·분리 이력, 발간 현황, 등록·수정일시를 담은 학술지 단위 정보를 전국 범위로 제공하는 API입니다. 도서관·학술기관이나 분석가가 특정 학술지의 연구분야 분류와 등재 이력을 확인하거나, 분야별 학술지 발간 동향을 살펴볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 학술지 식별자(SEREID)나 연구분야 코드(STUDFIELCD)로 같은 기관(한국연구재단)의 KCI 논문·인용 데이터와 이름·코드 매핑으로만 이어 쓴다.
 description_portal: KCI 학술지정보서비스는 국내 학술지의 연구분야, 등재 이력, 통합 및 분리 이력, 발간 현황 등 학술지와 관련된 정보를 종합적으로 제공합니다. 학술지별 연구분야 코드, 등록 및 수정일시 등 다양한 정보를 포함하고 있어 학술지 평가, 연구분야 분류, 학술지 발간 동향 분석, 증명서 발급 등 행정 및 연구 목적으로 활용될 수 있습니다. 연구자, 학술기관, 도서관 등에서는 이 데이터를 활용하여 학술지를 효율적으로 관리하고, 연구 성과를 평가하거나 학술정보 서비스를 구축하는 데 유용하게 사용할 수 있습니다. 또한 학술지 간의 관계와 역사를 파악하여 학술 생태계의 변화를 이해하는 데에도 도움을 줄 수 있습니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: INSIID
       type: code
+      semantic_type: kci_insi_id
       null_rate: 0.0
       sample_values:
         - INS000000006
@@ -69,6 +72,7 @@ schema:
         unique: 8
     - name: SEREID
       type: code
+      semantic_type: kci_sere_id
       null_rate: 0.0
       sample_values:
         - '001808'
@@ -114,6 +118,17 @@ schema:
         p50: 20210529644636
         max: 20260616094313
         unique: 8
+  foreign_keys:
+    - fields:
+        - INSIID
+      reference:
+        key: kci_insi_id
+      evidence: measured
+    - fields:
+        - SEREID
+      reference:
+        key: kci_sere_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -163,7 +178,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085388-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_insi_id(INSIID), kci_sere_id(SEREID)'
     evidence:
       - type: measured
         source: probe/stats/15085388.json
@@ -228,8 +243,6 @@ verification:
   run: probe/runs/15085388.json
   stats: probe/stats/15085388.json
   data: probe/data/15085388/
-status: active
-summary_user: 국내 학술지별로 연구분야 코드, 등재·통합·분리 이력, 발간 현황, 등록·수정일시를 담은 학술지 단위 정보를 전국 범위로 제공하는 API입니다. 도서관·학술기관이나 분석가가 특정 학술지의 연구분야 분류와 등재 이력을 확인하거나, 분야별 학술지 발간 동향을 살펴볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 학술지 식별자(SEREID)나 연구분야 코드(STUDFIELCD)로 같은 기관(한국연구재단)의 KCI 논문·인용 데이터와 이름·코드 매핑으로만 이어 쓴다.
 limits: 다른 기관 데이터와 바로 연결할 공통 조인 키가 없어 학술지명이나 코드 매핑이 필요하다. 개발계정은 하루 5,000회 호출로 제한되며, 이 데이터는 학술지 메타정보라서 최신 논문·인용·연구자 정보처럼 분석 가치가 큰 내용은 담지 않는다.
 review:
   summary: draft
@@ -242,3 +255,4 @@ review:
     - c-15085388-04
     - c-15085388-06
   dropped_citations: 0
+status: active

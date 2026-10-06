@@ -1,4 +1,5 @@
-# Dataset 15151298 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15151298 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15151298'
 tier: verified
 title: 조달청_공사원가_표준시장단가
@@ -25,6 +26,7 @@ synonyms:
   - 시설공사 내역서
   - 공사비 단가
   - 재료비 노무비 경비
+summary_user: 조달청 공사원가통합관리시스템의 표준공사코드 체계에서 표준시장단가를 세부공종 단위로 담은 전국 단위 CSV 파일(약 777KB)로, 세부공종별 품명·규격·단위와 재료비·노무비·경비·합계, 적용조건, 최신발표일자를 담는다. 수요기관 설계 담당자나 건설 분야 분석가가 시설공사 내역서를 작성하거나 검토할 때 특정 세부공종의 표준시장단가가 재료비·노무비·경비로 어떻게 나뉘는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 조달 데이터와는 세부공종코드나 품명·규격을 맞춰 보는 이름·코드 매핑으로만 연결한다.
 description_portal: ○ 시설공사 원가계산에 사용하는 자료를 목록화하고, 개방형 설계내역서 자료 호환 양식인 공사원가호환규정을 수립하여, 공사원가계산을 웹에서 처리할 수 있는 시스템을 개발○ 조달청 공사원가통합관리시스템(https://npccs.g2b.go.kr)에서 제공하는  표준공사코드의 세부항목을 제공하는 서비스○ 공사원가 산정업무의 효율성과 가격의 객관성을 확보하기 위해 ‘표준공사코드’ 체계를 운영 중○ 시설자재, 노무비, 기계경비, 세부공종 등에 대해 수요기관이 공사내역 작성 시 활용할 수 있도록 표준공사코드를 제공○ 표준시장단가의 최신발표일자, 세부공종코드, 품명, 규격, 단위, 재료비, 노무비, 경비, 합계 , 적용단가 조회
 applicable_legislation:
   - law: 국가를당사자로하는계약에관한법률
@@ -51,6 +53,7 @@ schema:
         unique: 1
     - name: 세부공종코드
       type: string
+      semantic_type: cnstwk_dtl_cd
       null_rate: 0.0
       sample_values:
         - AAA162303500
@@ -141,12 +144,22 @@ schema:
         - 2025년도 하반기표준시장단가 적용 공종 및 단가집 참조
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 세부공종코드
+      reference:
+        key: cnstwk_dtl_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 최신발표일자
 cycle: default
 classification:
   subsector_name: 공공조달 (나라장터 전 과정)
@@ -184,7 +197,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15151298-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: cnstwk_dtl_cd(세부공종코드)'
     evidence:
       - type: measured
         source: probe/stats/15151298.json
@@ -270,8 +283,6 @@ verification:
   run: probe/runs/15151298.json
   stats: probe/stats/15151298.json
   data: probe/data/15151298/
-status: active
-summary_user: 조달청 공사원가통합관리시스템의 표준공사코드 체계에서 표준시장단가를 세부공종 단위로 담은 전국 단위 CSV 파일(약 777KB)로, 세부공종별 품명·규격·단위와 재료비·노무비·경비·합계, 적용조건, 최신발표일자를 담는다. 수요기관 설계 담당자나 건설 분야 분석가가 시설공사 내역서를 작성하거나 검토할 때 특정 세부공종의 표준시장단가가 재료비·노무비·경비로 어떻게 나뉘는지 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 조달 데이터와는 세부공종코드나 품명·규격을 맞춰 보는 이름·코드 매핑으로만 연결한다.
 limits: 나라장터 입찰·계약 원장과 이어 주는 통합번호 같은 전역 키가 없어 개별 조달 건과 직접 결합할 수 없다. 전국 단일 기준의 비공간 자료라 지역별 단가 차이는 이 파일로 알 수 없다.
 review:
   summary: draft
@@ -283,3 +294,4 @@ review:
     - c-15151298-03
     - c-15151298-04
   dropped_citations: 0
+status: active

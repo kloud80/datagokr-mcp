@@ -1,4 +1,5 @@
-# Dataset 3074937 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3074937 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3074937'
 tier: verified
 title: 법무부_외국인 국적 및 월별 입국자 현황
@@ -21,6 +22,7 @@ synonyms:
   - 출입국 통계
   - 방한 외국인 수
   - 출입국외국인정책본부 통계월보
+summary_user: 외국인 입국자 수를 대륙·국적·성별로 나누어 2024년 1월부터 12월까지 월별 열과 연간 총합계로 담은 전국 단위 집계표(CSV 약 29KB)이다. 출입국 정책 담당자나 관광·노동 분야 분석가가 특정 국적 외국인의 입국이 어느 달에 몰리고 전년 대비 어떻게 바뀌었는지 볼 때 쓴다. 전역 조인 키는 없어서 국적명을 다른 출입국·체류 통계의 국적 이름과 맞춰 붙여야 한다.
 description_portal: 내·외국인의 입국 및 출국상황을 파악하여 출입국관리업무와 관련된 정책판단 및 수립의 기초자료( 외국인 국적 및 월별 입국자 현황)외국인 입국자 현황을 해당연도의 월별로 구분하여 국적별로 제공함국적(지역)별 구분이며 원본 통계표는 출입국외국인정책본부 홈페이지에서 확인 가능매월 통계월보를 통해 국적별 입국자 현황을 공개하고 있으며통계연보에서 월별 자료 공개https://www.immigration.go.kr/immigration/1570/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaW1taWdyYXRpb24lMkYyMjglMkY1OTY0NjQlMkZhcnRjbFZpZXcuZG8lM0ZwYXNzd29yZCUzRCUyNnJnc0JnbmRlU3RyJTNEJTI2YmJzQ2xTZXElM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNmlzVmlld01pbmUlM0RmYWxzZSUyNnBhZ2UlM0QxJTI2YmJzT3BlbldyZFNlcSUzRCUyNnNyY2hDb2x1bW4lM0QlMjZzcmNoV3JkJTNEJTI2아래 URL에서 엑셀파일 참조입국자 통계는 누적 카운트 됨. 한명이 여러번 입국한 경우 다중 집계
 legal_basis_portal: 출입국관리
 accrual_periodicity: 연간
@@ -44,6 +46,7 @@ schema:
         unique: 7
     - name: 국적
       type: string
+      semantic_type: country_cd
       null_rate: 0.019
       sample_values:
         - 미국
@@ -216,6 +219,12 @@ schema:
         p50: 30
         max: 194959
         unique: 214
+  foreign_keys:
+    - fields:
+        - 국적
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -258,7 +267,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3074937-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적)'
     evidence:
       - type: measured
         source: probe/stats/3074937.json
@@ -333,8 +342,6 @@ verification:
   run: probe/runs/3074937.json
   stats: probe/stats/3074937.json
   data: probe/data/3074937/
-status: active
-summary_user: 외국인 입국자 수를 대륙·국적·성별로 나누어 2024년 1월부터 12월까지 월별 열과 연간 총합계로 담은 전국 단위 집계표(CSV 약 29KB)이다. 출입국 정책 담당자나 관광·노동 분야 분석가가 특정 국적 외국인의 입국이 어느 달에 몰리고 전년 대비 어떻게 바뀌었는지 볼 때 쓴다. 전역 조인 키는 없어서 국적명을 다른 출입국·체류 통계의 국적 이름과 맞춰 붙여야 한다.
 limits: 지역(시군구) 구분이 없는 전국·비공간 집계라 지역별 외국인 분석에는 바로 쓰지 못한다. 포털 설명상 입국자는 누적 카운트라서 한 사람이 여러 번 입국하면 여러 번 집계되므로 입국 인원(실인원)으로 해석하면 안 된다. 다른 데이터와 묶으려면 국적 이름을 직접 매핑해야 한다.
 review:
   summary: draft
@@ -346,3 +353,4 @@ review:
     - c-3074937-03
     - c-3074937-04
   dropped_citations: 0
+status: active

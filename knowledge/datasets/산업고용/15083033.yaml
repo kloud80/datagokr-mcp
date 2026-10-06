@@ -46,6 +46,7 @@ schema:
   fields:
     - name: 상가업소번호
       type: string
+      semantic_type: store_id
       null_rate: 0.0
       sample_values:
         - MA0106202201A0208596
@@ -109,6 +110,7 @@ schema:
         unique: 75
     - name: 상권업종소분류코드
       type: code
+      semantic_type: classification_code
       null_rate: 0.0
       sample_values:
         - I20101
@@ -127,6 +129,7 @@ schema:
         unique: 247
     - name: 표준산업분류코드
       type: code
+      semantic_type: classification_code
       null_rate: 0.0003
       sample_values:
         - I56111
@@ -443,6 +446,21 @@ schema:
         unique: 228961
   foreign_keys:
     - fields:
+        - 상가업소번호
+      reference:
+        key: store_id
+      evidence: measured
+    - fields:
+        - 상권업종소분류코드
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
+        - 표준산업분류코드
+      reference:
+        key: classification_code
+      evidence: measured
+    - fields:
         - 시도코드
       reference:
         key: admin_area_code
@@ -490,6 +508,16 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
+  category:
+    - ksic
+  category_fields:
+    - 표준산업분류코드
 cycle: default
 classification:
   subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
@@ -526,7 +554,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15083033-03
     kind: key
-    value: '실측 조인 키: admin_area_code(시도코드), sgg_cd(시군구코드), bjd_cd(법정동코드), pnu(지번코드), address(지번주소), address(도로명), address(도로명주소), coord(경도), coord(위도)'
+    value: '실측 조인 키: store_id(상가업소번호), classification_code(상권업종소분류코드), classification_code(표준산업분류코드), admin_area_code(시도코드), sgg_cd(시군구코드), bjd_cd(법정동코드), pnu(지번코드), address(지번주소), address(도로명), address(도로명주소), coord(경도), coord(위도)'
     evidence:
       - type: measured
         source: probe/stats/15083033.json

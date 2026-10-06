@@ -1,4 +1,5 @@
-# Dataset 15067670 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15067670 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067670'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_측량지구
@@ -21,6 +22,7 @@ synonyms:
   - 수치지도 제작 이력
   - 항공사진 측량사업
   - 측량지구 목록
+summary_user: 항공사진 도화(벡터지도 제작)를 위한 지상기준점 측량지구의 목록으로, 측량지구별로 지구명·측량사업명·책번호·사업구분·제작년도·제작업체·작업방식을 담은 전국 범위의 비공간 CSV 파일(약 25KB)이다. 공간정보 분석가나 측량업체가 특정 지역의 항공사진 측량이 언제, 어느 사업으로, 어느 업체에 의해 이뤄졌는지 확인하는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 없어, 측량지구명·측량사업명 같은 이름 매칭이나 같은 기관(국토지리정보원)의 측량지구코드로만 연결한다.
 description_portal: '항공사진 도화(백터지도)를 위한 지상기준점의 측량지구의 정보▷ 속성정보 : 측량지구코드, 측량지구명, 측량사업명, 측량지구책번호, 측량사업구분코드, 제작년도, 제작업체, 작업방식* 항공사진 : 항공기나 드론 등의 항공 플랫폼에서 지표면을 촬영한 사진으로, 지도 제작, 지형 분석, 도시계획, 환경 모니터링 등 다양한 분야에서 활용- 전국을 촬영하여, 국토 변화상황을 모니터링 하고 정사영상 제작 및 국가기본도 수정 등에 활용- 전국을 도시지역(해상도 12cm) 및 비도시지역(해상도 25cm)으로 구분하여 도시지역, 비도시지역 1년 주기 촬영'
 accrual_periodicity: 수시
 team:
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 측량지구코드
       type: string
+      semantic_type: survey_district_cd
       null_rate: 0.0
       sample_values:
         - '20190003'
@@ -105,12 +108,22 @@ schema:
         - SRW002
       stats:
         unique: 4
+  foreign_keys:
+    - fields:
+        - 측량지구코드
+      reference:
+        key: survey_district_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 제작년도
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -148,7 +161,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067670-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: survey_district_cd(측량지구코드)'
     evidence:
       - type: measured
         source: probe/stats/15067670.json
@@ -223,8 +236,6 @@ verification:
   run: probe/runs/15067670.json
   stats: probe/stats/15067670.json
   data: probe/data/15067670/
-status: active
-summary_user: 항공사진 도화(벡터지도 제작)를 위한 지상기준점 측량지구의 목록으로, 측량지구별로 지구명·측량사업명·책번호·사업구분·제작년도·제작업체·작업방식을 담은 전국 범위의 비공간 CSV 파일(약 25KB)이다. 공간정보 분석가나 측량업체가 특정 지역의 항공사진 측량이 언제, 어느 사업으로, 어느 업체에 의해 이뤄졌는지 확인하는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 없어, 측량지구명·측량사업명 같은 이름 매칭이나 같은 기관(국토지리정보원)의 측량지구코드로만 연결한다.
 limits: 좌표나 경계 등 공간 정보가 없는 비공간 목록이라 측량지구 위치를 지도에 바로 올릴 수 없다. 행정구역 코드 같은 전역 키가 없어 다른 기관 데이터와 붙일 때는 이름 매칭에 의존해야 한다.
 review:
   summary: draft
@@ -236,3 +247,4 @@ review:
     - c-15067670-03
     - c-15067670-04
   dropped_citations: 0
+status: active

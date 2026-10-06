@@ -1,4 +1,5 @@
-# Dataset 15066370 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15066370 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15066370'
 tier: verified
 title: 한국보훈복지의료공단_비급여정보_대구보훈병원
@@ -21,6 +22,7 @@ synonyms:
   - 비급여 항목 단가
   - 병원 비급여 비용 비교
   - 의료비 비급여 공개
+summary_user: 대구보훈병원 한 곳의 비급여 진료 항목을 항목별로 담은 파일로, 대분류·건강보험 요양급여비용 코드와 명칭·병원 수가코드와 수가명·일반단가가 들어 있다. 환자나 분석가가 '대구보훈병원에서 이 비급여 검사·처치는 얼마인가'를 확인하거나 다른 병원과 비급여 단가를 비교할 때 쓴다. 전역 조인 키는 없어서 다른 보훈병원·의료기관 비급여 자료와는 건강보험 요양급여비용코드나 항목 명칭을 맞춰 이어 쓴다.
 description_portal: 이 데이터는 한국보훈복지의료공단 산하 대구보훈병원에서 개방하는 비급여정보 데이터로, 비급여 항목의 분류와 명칭, 코드, 구분, 비용, 최저비용, 최고비용, 치료재료대 및 약제비 포함 여부, 그리고 특이사항 등이 포함된 공공데이터입니다. 이를 통해 병원 내 비급여 진료 항목의 상세 내역과 비용 구조를 파악할 수 있으며, 의료비 투명성 제고와 환자의 합리적 의료 선택을 돕는 데 활용됩니다. 또한 의료기관 간 비용 비교, 비급여 항목의 표준화 작업, 의료 서비스 품질 개선 및 보건 정책 개발에도 중요한 자료로 활용될 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -43,6 +45,7 @@ schema:
         unique: 22
     - name: 건강보험요양급여비용코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.718
       sample_values:
         - VA011
@@ -89,6 +92,12 @@ schema:
         p50: 150000
         max: 50899000
         unique: 703
+  foreign_keys:
+    - fields:
+        - 건강보험요양급여비용코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -131,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15066370-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(건강보험요양급여비용코드)'
     evidence:
       - type: measured
         source: probe/stats/15066370.json
@@ -196,8 +205,6 @@ verification:
   run: probe/runs/15066370.json
   stats: probe/stats/15066370.json
   data: probe/data/15066370/
-status: active
-summary_user: 대구보훈병원 한 곳의 비급여 진료 항목을 항목별로 담은 파일로, 대분류·건강보험 요양급여비용 코드와 명칭·병원 수가코드와 수가명·일반단가가 들어 있다. 환자나 분석가가 '대구보훈병원에서 이 비급여 검사·처치는 얼마인가'를 확인하거나 다른 병원과 비급여 단가를 비교할 때 쓴다. 전역 조인 키는 없어서 다른 보훈병원·의료기관 비급여 자료와는 건강보험 요양급여비용코드나 항목 명칭을 맞춰 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 코드·이름 매핑으로만 연결된다. 대구보훈병원 한 곳의 자료라서 공간 단위 분석에는 쓰지 못하고, 다른 병원과 비교하려면 병원별 파일을 따로 모아야 한다.
 review:
   summary: draft
@@ -210,3 +217,4 @@ review:
     - c-15066370-04
     - c-15066370-06
   dropped_citations: 0
+status: active

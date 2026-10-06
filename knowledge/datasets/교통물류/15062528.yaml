@@ -1,4 +1,5 @@
-# Dataset 15062528 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15062528 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062528'
 tier: verified
 title: 한국도로공사_공휴일 이용차량
@@ -24,6 +25,7 @@ synonyms:
   - 명절 고속도로 이용
   - 톨게이트 교통량
   - 공휴일 교통 수요
+summary_user: 고속도로 영업소별로 주요 공휴일(1월 1일, 1월 29일, 3월 1일, 5월 5일, 6월 6일, 8월 15일, 10월 3일, 10월 6일, 12월 25일) 하루의 이용 차량 대수를 날짜별 열로 나란히 담은 전국 단위 집계 파일이다. 교통 분석가나 도로 운영 담당자가 "어느 영업소가 어느 공휴일에 차량이 가장 많이 몰렸나"를 비교하거나 연휴 혼잡 대책의 기초 자료로 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 영업소 이름을 매핑해서만 이어 쓸 수 있다.
 description_portal: 본 데이터는 공휴일 기간 중 고속도로를 이용한 차량의 통행량 정보를 제공하는 공공데이터이다. 한국도로공사에서 수집한 이 자료는 고속도로 영업소별  차량이용 대수를 포함하며, 연휴 기간의 교통 특성 분석에 활용된다. 이 데이터는 혼잡 시간대 예측, 교통 수요 분산 대책 수립, 고속도로 운영 전략 마련 등에 필요한 기초자료로 활용된다. 또한 민간 기업 및 연구기관에서도 이동 경로 최적화, 서비스 개선 등의 목적으로 이용 가능하다. 공휴일별로 정리되어 시계열 분석이 가능하며, 교통행정 및 공공서비스 정책 수립에 참고할 수 있다. 국민 이동 편의 증진과 효율적인 도로 운영을 위한 기반자료로 제공된다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 영업소
       type: string
+      semantic_type: ex_tollgate
       null_rate: 0.0
       sample_values:
         - 가락
@@ -152,6 +155,12 @@ schema:
         p50: 3717
         max: 159416
         unique: 544
+  foreign_keys:
+    - fields:
+        - 영업소
+      reference:
+        key: ex_tollgate
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -194,7 +203,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15062528-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_tollgate(영업소)'
     evidence:
       - type: measured
         source: probe/stats/15062528.json
@@ -259,8 +268,6 @@ verification:
   run: probe/runs/15062528.json
   stats: probe/stats/15062528.json
   data: probe/data/15062528/
-status: active
-summary_user: 고속도로 영업소별로 주요 공휴일(1월 1일, 1월 29일, 3월 1일, 5월 5일, 6월 6일, 8월 15일, 10월 3일, 10월 6일, 12월 25일) 하루의 이용 차량 대수를 날짜별 열로 나란히 담은 전국 단위 집계 파일이다. 교통 분석가나 도로 운영 담당자가 "어느 영업소가 어느 공휴일에 차량이 가장 많이 몰렸나"를 비교하거나 연휴 혼잡 대책의 기초 자료로 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 데이터와는 영업소 이름을 매핑해서만 이어 쓸 수 있다.
 limits: 영업소 이름 외에 표준 코드가 없어 다른 고속도로·통행 데이터와 직접 조인되지 않는다. 지역 구분이 없는 전국·비공간 자료라 지도나 시군구 단위 분석에는 별도 위치 매핑이 필요하다.
 review:
   summary: draft
@@ -272,3 +279,4 @@ review:
     - c-15062528-03
     - c-15062528-04
   dropped_citations: 0
+status: active

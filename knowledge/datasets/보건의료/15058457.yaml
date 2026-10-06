@@ -1,4 +1,3 @@
-# Dataset 15058457 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15058457'
 tier: verified
 title: 식품의약품안전처_의약품 행정처분 정보
@@ -22,6 +21,7 @@ synonyms:
   - 업무정지 제약회사
   - 약사법 위반 처분
   - 식약처 처분 내역
+summary_user: 의약품 제조·수입·유통 업체에 내려진 행정처분을 건별로 담으며, 처분 일련번호·업체명·소재지·제품명·위반 법령·위반 내용·처분명·최종 확정일자 등을 전국 범위로 제공한다. 병원·약국이나 유통업체가 '이 제약사나 이 제품이 최근 어떤 위반으로 업무정지·판매정지 처분을 받았는가'를 확인할 때 쓴다. 실측상 전역 조인 키는 확인되지 않았으므로, 품목 일련번호(ITEM_SEQ)·업체 허가번호·사업자등록번호를 식약처 의약품 허가정보 등과 이름·코드 매핑으로 맞춰 이어 쓴다.
 description_portal: 식품의약품안전처 「의약품 행정처분 정보」 OpenAPI는 의약품에 대해 행정 처분이 내려진 내역을 조회할 수 있는 공공데이터입니다. 주요 제공 항목으로는 행정처분일련번호, 업체명, 업체소재지, 업허가번호, 제품명, 위반법명, 위반내용, 행정처분명, 행정처분일자(최종확정일자), 행정처분기간 등을 포함하고 있어 의약품의 관리·감독 상황을 투명하게 확인할 수 있습니다. 이를 통해 의료기관과 환자는 해당 의약품의 안전성 및 신뢰도를 파악할 수 있고, 제약사와 유통업체는 규제 준수와 품질관리 체계를 점검할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -135,6 +135,7 @@ schema:
         unique: 161
     - name: ITEM_SEQ
       type: number
+      semantic_type: drug_item_seq
       null_rate: 0.7967
       sample_values:
         - '202104669'
@@ -159,6 +160,7 @@ schema:
         unique: 186
     - name: BIZRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0055
       sample_values:
         - '1258139744'
@@ -169,6 +171,17 @@ schema:
         p50: 3433801080
         max: 9000000579
         unique: 491
+  foreign_keys:
+    - fields:
+        - ITEM_SEQ
+      reference:
+        key: drug_item_seq
+      evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -219,7 +232,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15058457-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_item_seq(ITEM_SEQ), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15058457.json
@@ -284,8 +297,6 @@ verification:
   run: probe/runs/15058457.json
   stats: probe/stats/15058457.json
   data: probe/data/15058457/
-status: active
-summary_user: 의약품 제조·수입·유통 업체에 내려진 행정처분을 건별로 담으며, 처분 일련번호·업체명·소재지·제품명·위반 법령·위반 내용·처분명·최종 확정일자 등을 전국 범위로 제공한다. 병원·약국이나 유통업체가 '이 제약사나 이 제품이 최근 어떤 위반으로 업무정지·판매정지 처분을 받았는가'를 확인할 때 쓴다. 실측상 전역 조인 키는 확인되지 않았으므로, 품목 일련번호(ITEM_SEQ)·업체 허가번호·사업자등록번호를 식약처 의약품 허가정보 등과 이름·코드 매핑으로 맞춰 이어 쓴다.
 limits: 실측 컬럼에서 다른 데이터와 바로 맞물리는 공통 키를 찾지 못해, 연계할 때는 제품명·업체명이나 식약처 내부 코드로 직접 대조해야 한다. 처분 이력만 담고 있어 해당 의약품의 현재 허가 상태나 안전성 평가를 이 데이터만으로 판단할 수는 없다.
 review:
   summary: draft
@@ -298,3 +309,9 @@ review:
     - c-15058457-04
     - c-15058457-06
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address

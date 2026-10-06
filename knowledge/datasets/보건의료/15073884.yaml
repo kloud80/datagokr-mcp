@@ -1,4 +1,5 @@
-# Dataset 15073884 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15073884 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073884'
 tier: verified
 title: 식품의약품안전처_의료기기 표준원자재정보
@@ -21,6 +22,7 @@ synonyms:
   - 의료기기 품목허가 원재료
   - 의료기기 재질 코드
   - MFDS 원자재
+summary_user: 식약처가 허가한 의료기기 품목의 원자재(원재료) 이름과 코드를 담은 표준 코드 목록으로, 원자재 코드·명칭과 상위 원자재 코드, 대표 여부를 행 단위로 제공하며 범위는 전국·비공간이다. 의료기기 품목허가를 준비하는 제조·수입 사업자가 '이 원재료를 허가 신청서에 어떤 표준 명칭과 코드로 적어야 하나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 원자재 이름·코드 매핑이나 같은 식약처 의료기기 데이터의 코드로만 이어 쓰며, 상위 원자재 코드(UPR_CMDT_CD)로 목록 안의 계층을 따라갈 수 있다.
 description_portal: 이 공공데이터는 식품의약품안전처(MFDS)에서 제공하는 의료기기 원자재(원재료) 관한 공공데이터입니다. 이 공공데이터는 식품의약품안전처에서 허가 받은 의료기기 품목의 원자재(원재료) 및 관련 코드를 한눈에 파악할 수 있습니다.의료기기 원자재(원재료)는 의료기기 품목 허가 받을 시 반드시 작성해야하는 항목 중 하나입니다.  원자재(원재료) 항목 작성에 관한 자세한 내용은 확인하고 싶다면 의료기기 허가·신고·심사 등에 관한 규정 제10조(원재료)를 참고하시면 도움을 받으실 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: CMDT_CD
       type: number
+      semantic_type: meddev_cmdt_cd
       null_rate: 0.0
       sample_values:
         - '000001'
@@ -82,6 +85,12 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - CMDT_CD
+      reference:
+        key: meddev_cmdt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -132,7 +141,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073884-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_cmdt_cd(CMDT_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073884.json
@@ -197,8 +206,6 @@ verification:
   run: probe/runs/15073884.json
   stats: probe/stats/15073884.json
   data: probe/data/15073884/
-status: active
-summary_user: 식약처가 허가한 의료기기 품목의 원자재(원재료) 이름과 코드를 담은 표준 코드 목록으로, 원자재 코드·명칭과 상위 원자재 코드, 대표 여부를 행 단위로 제공하며 범위는 전국·비공간이다. 의료기기 품목허가를 준비하는 제조·수입 사업자가 '이 원재료를 허가 신청서에 어떤 표준 명칭과 코드로 적어야 하나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 원자재 이름·코드 매핑이나 같은 식약처 의료기기 데이터의 코드로만 이어 쓰며, 상위 원자재 코드(UPR_CMDT_CD)로 목록 안의 계층을 따라갈 수 있다.
 limits: 전역 조인 키가 없어 심평원 급여 목록 등 외부 데이터와 바로 결합되지 않고, 이름·코드 매핑이 따로 필요하다. 포털 활용신청은 자동승인되며 개발계정은 일 10,000회 호출 한도가 있다.
 review:
   summary: draft
@@ -210,3 +217,4 @@ review:
     - c-15073884-03
     - c-15073884-04
   dropped_citations: 0
+status: active

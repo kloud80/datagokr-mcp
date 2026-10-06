@@ -1,4 +1,5 @@
-# Dataset 15041969 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15041969 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15041969'
 tier: verified
 title: 경기도_화성시_버스정류장현황
@@ -23,6 +24,7 @@ synonyms:
   - 버스 승강장 현황
   - 읍면동별 정류장 수
   - 대중교통 시설
+summary_user: 경기도 화성시 관내 버스정류장 수를 권역·읍면동별로 쉘터형(대기시설 있음)과 지주형(표지판만 있음)으로 나눠 집계한 표이며, 정류장별 건별 목록이 아니라 읍면동 단위 집계다(약 1KB 분량의 CSV). 화성시 주민이나 교통 분석가가 "우리 동네 읍면동은 다른 지역보다 대기시설을 갖춘 정류장이 적은가" 같은 지역 간 시설 균형을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 읍면동 이름을 매핑해야 인구·행정구역 통계나 정류장 원장 같은 다른 데이터와 이을 수 있다.
 description_portal: 데이터는 경기도 화성시 관내에 설치된 버스정류장의 현황을 권역 및 읍면동 단위로 구분하여 제공한 것이다. 정류장의 유형은 쉘터형, 지주형 등으로 분류되며, 각 유형별 설치 수량 및 분포 지역이 포함되어 있다. 쉘터형은 승객 대기시설이 마련된 형태이고, 지주형은 기본 표지판만 설치된 단순 구조물 형태를 의미한다. 권역별로 정류장의 설치 현황을 파악할 수 있어 대중교통 기반 시설의 지역별 균형성을 분석하는 데 활용 가능하다. 버스 이용 편의성 증진 및 교통 인프라 개선을 위한 기초자료로 사용될 수 있다. 데이터는 표 형식으로 구성되어 있으며, 지역과 형태별로 분류되어 사용자 활용에 적합하도록 설계되어 있다.
 accrual_periodicity: 반기
 team:
@@ -94,6 +96,11 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 읍면동
+grain:
+  space: emd
+  space_fields:
+    - 읍면동
+  space_via: name
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -196,8 +203,6 @@ verification:
   run: probe/runs/15041969.json
   stats: probe/stats/15041969.json
   data: probe/data/15041969/
-status: active
-summary_user: 경기도 화성시 관내 버스정류장 수를 권역·읍면동별로 쉘터형(대기시설 있음)과 지주형(표지판만 있음)으로 나눠 집계한 표이며, 정류장별 건별 목록이 아니라 읍면동 단위 집계다(약 1KB 분량의 CSV). 화성시 주민이나 교통 분석가가 "우리 동네 읍면동은 다른 지역보다 대기시설을 갖춘 정류장이 적은가" 같은 지역 간 시설 균형을 따질 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 읍면동 이름을 매핑해야 인구·행정구역 통계나 정류장 원장 같은 다른 데이터와 이을 수 있다.
 limits: 읍면동별 유형 집계라서 개별 정류장의 위치·이름·노선, 실시간 도착 정보는 담지 않는다. 행정동 코드 같은 공통 키가 없어 다른 데이터와 연결하려면 읍면동 이름을 직접 맞춰야 한다.
 review:
   summary: draft
@@ -209,3 +214,4 @@ review:
     - c-15041969-03
     - c-15041969-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15085323 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15085323 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085323'
 tier: verified
 title: 한국연구재단_KCI 참고문헌 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 피인용 논문
   - 학술논문 서지정보
   - 레퍼런스 조회
+summary_user: KCI에 등재된 국내 학술논문 한 편이 인용한 참고문헌을 한 건씩 담은 원천 데이터로, 참고문헌별 제목·저자·출처 저널·권호·쪽·출판사·학회명·학위·특허·URL 같은 서지 정보를 제공한다. 연구자나 도서관이 특정 국내 논문이 어떤 문헌을 인용했는지 확인하거나, 최신 국내 논문의 인용 관계를 분석할 때 쓴다. 논문 식별자(ARTIID)와 피인용 문헌의 KCI 논문 식별자(REFARTIID)로 같은 KCI 계열 논문 서비스와는 이어 쓸 수 있으나, 실측 기준으로 다른 기관 데이터와 잇는 전역 조인 키는 없다.
 description_portal: 한국학술지인용색인(KCI) 참고문헌 서비스는 국내 학술논문에 인용된 참고문헌 정보를 체계적으로 제공하여 연구자들이 논문의 인용 관계, 참고문헌의 출처, 인용 빈도 등을 쉽게 파악할 수 있도록 지원합니다. 논문별 참고문헌 목록, 저자, 저널명, 출판사, 컨퍼런스 정보, 인용일자 등 다양한 서지 정보를 포함하고 있어 학술연구, 인용분석, 연구동향 파악, 논문 작성 및 참고문헌 관리 등에 활용도가 높습니다. 연구자, 도서관, 학술기관 등에서 학술정보 서비스 및 연구성과 평가에 유용하게 사용할 수 있습니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: INSIID
       type: code
+      semantic_type: kci_insi_id
       null_rate: 0.0
       sample_values:
         - INS000000015
@@ -67,6 +70,7 @@ schema:
         unique: 1
     - name: ARTIID
       type: code
+      semantic_type: kci_arti_id
       null_rate: 0.0
       sample_values:
         - ART001945795
@@ -316,6 +320,17 @@ schema:
         - ART001061432
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - INSIID
+      reference:
+        key: kci_insi_id
+      evidence: measured
+    - fields:
+        - ARTIID
+      reference:
+        key: kci_arti_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -365,7 +380,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15085323-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_insi_id(INSIID), kci_arti_id(ARTIID)'
     evidence:
       - type: measured
         source: probe/stats/15085323.json
@@ -430,8 +445,6 @@ verification:
   run: probe/runs/15085323.json
   stats: probe/stats/15085323.json
   data: probe/data/15085323/
-status: active
-summary_user: KCI에 등재된 국내 학술논문 한 편이 인용한 참고문헌을 한 건씩 담은 원천 데이터로, 참고문헌별 제목·저자·출처 저널·권호·쪽·출판사·학회명·학위·특허·URL 같은 서지 정보를 제공한다. 연구자나 도서관이 특정 국내 논문이 어떤 문헌을 인용했는지 확인하거나, 최신 국내 논문의 인용 관계를 분석할 때 쓴다. 논문 식별자(ARTIID)와 피인용 문헌의 KCI 논문 식별자(REFARTIID)로 같은 KCI 계열 논문 서비스와는 이어 쓸 수 있으나, 실측 기준으로 다른 기관 데이터와 잇는 전역 조인 키는 없다.
 limits: 실측 컬럼에서 전역 조인 키가 확인되지 않아 기관 밖 데이터와는 제목·이름 매핑으로만 연결된다. 일반적인 학술 정보는 모델이 이미 아는 영역이라, 최신 국내 논문의 인용 정보 확인용으로 보조적으로 쓰는 것이 적절하다. 개발계정은 하루 5,000회 호출로 제한된다.
 review:
   summary: draft
@@ -443,3 +456,4 @@ review:
     - c-15085323-03
     - c-15085323-06
   dropped_citations: 0
+status: active

@@ -47,6 +47,7 @@ schema:
   fields:
     - name: OCTR_MNFT_BSSH_CD
       type: code
+      semantic_type: ovs_mnft_bssh_cd
       null_rate: 0.0
       sample_values:
         - ID000001423
@@ -75,6 +76,7 @@ schema:
         unique: 1
     - name: PRDLST_CD
       type: code
+      semantic_type: food_type_cd
       null_rate: 0.0
       sample_values:
         - B0200000000000000000
@@ -137,10 +139,26 @@ schema:
         - 농산물
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - OCTR_MNFT_BSSH_CD
+      reference:
+        key: ovs_mnft_bssh_cd
+      evidence: measured
+    - fields:
+        - PRDLST_CD
+      reference:
+        key: food_type_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2020-05-18 ~ 2021-11-24
+grain:
+  time: day
+  time_fields:
+    - PRDLST_SUSP_BGNG_DT
+    - PRDLST_SUSP_RMV_DT
 cycle: default
 classification:
   subsector_name: 수입식품 (수입신고·해외제조업소·수입업체)
@@ -185,7 +203,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15073977-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ovs_mnft_bssh_cd(OCTR_MNFT_BSSH_CD), food_type_cd(PRDLST_CD)'
     evidence:
       - type: measured
         source: probe/stats/15073977.json

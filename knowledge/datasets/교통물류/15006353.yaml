@@ -113,6 +113,7 @@ schema:
     - name: etryptCo
       title: 입항횟수
       type: number
+      semantic_type: port_call_no
       null_rate: 0.0
       sample_values:
         - '010'
@@ -141,6 +142,7 @@ schema:
     - name: vsslNltyCd
       title: 선박국가코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - BS
@@ -271,9 +273,19 @@ schema:
         unique: 0
   foreign_keys:
     - fields:
+        - etryptCo
+      reference:
+        key: port_call_no
+      evidence: measured
+    - fields:
         - clsgn
       reference:
         key: vessel_id
+      evidence: measured
+    - fields:
+        - vsslNltyCd
+      reference:
+        key: country_cd
       evidence: measured
     - fields:
         - frstDpmprtNatPrtCd
@@ -298,6 +310,10 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - etryptYear
 cycle: default
 classification:
   subsector_name: 입출항·운항 (Port-MIS 입출항·선박 위치·항로·관제·도선·예선)
@@ -342,7 +358,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15006353-03
     kind: key
-    value: '실측 조인 키: vessel_id(clsgn), port_cd(frstDpmprtNatPrtCd), port_cd(prvsDpmprtNatPrtCd), port_cd(nxlnptNatPrtCd), port_cd(dstnNatPrtCd)'
+    value: '실측 조인 키: port_call_no(etryptCo), vessel_id(clsgn), country_cd(vsslNltyCd), port_cd(frstDpmprtNatPrtCd), port_cd(prvsDpmprtNatPrtCd), port_cd(nxlnptNatPrtCd), port_cd(dstnNatPrtCd)'
     evidence:
       - type: measured
         source: probe/stats/15006353.json

@@ -76,6 +76,7 @@ schema:
     - name: psnshp_cd
       title: 여객선코드
       type: code
+      semantic_type: komsa_psnshp_cd
       null_rate: 0.0
       sample_values:
         - E62
@@ -120,6 +121,7 @@ schema:
     - name: lcns_seawy_cd
       title: 면허항로코드
       type: code
+      semantic_type: komsa_lcns_seawy_cd
       null_rate: 0.0
       sample_values:
         - E09
@@ -140,6 +142,7 @@ schema:
     - name: nvg_seawy_cd
       title: 운항항로코드
       type: number
+      semantic_type: komsa_nvg_seawy_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -219,6 +222,7 @@ schema:
     - name: portcl_cd
       title: 기항지코드
       type: code
+      semantic_type: komsa_portcl_cd
       null_rate: 0.3
       sample_values:
         - E023
@@ -265,6 +269,7 @@ schema:
     - name: vsl_no
       title: 선박번호
       type: code
+      semantic_type: vessel_id
       null_rate: 0.0
       sample_values:
         - WDR166705
@@ -272,10 +277,40 @@ schema:
         - MPR256211
       stats:
         unique: 30
+  foreign_keys:
+    - fields:
+        - psnshp_cd
+      reference:
+        key: komsa_psnshp_cd
+      evidence: measured
+    - fields:
+        - lcns_seawy_cd
+      reference:
+        key: komsa_lcns_seawy_cd
+      evidence: measured
+    - fields:
+        - nvg_seawy_cd
+      reference:
+        key: komsa_nvg_seawy_cd
+      evidence: measured
+    - fields:
+        - portcl_cd
+      reference:
+        key: komsa_portcl_cd
+      evidence: measured
+    - fields:
+        - vsl_no
+      reference:
+        key: vessel_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-10-02 ~ 2026-10-02
+grain:
+  time: day
+  time_fields:
+    - nvg_stts_chg_dt
 cycle: default
 classification:
   subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
@@ -320,7 +355,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15142304-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: komsa_psnshp_cd(psnshp_cd), komsa_lcns_seawy_cd(lcns_seawy_cd), komsa_nvg_seawy_cd(nvg_seawy_cd), komsa_portcl_cd(portcl_cd), vessel_id(vsl_no)'
     evidence:
       - type: measured
         source: probe/stats/15142304.json

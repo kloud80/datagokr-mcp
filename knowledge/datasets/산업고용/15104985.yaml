@@ -1,4 +1,5 @@
-# Dataset 15104985 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15104985 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15104985'
 tier: verified
 title: 한국동서발전(주)_울산 태양광 발전량 및 울산 일조 정보
@@ -21,6 +22,7 @@ synonyms:
   - 동서발전 태양광
   - 신재생 발전량
   - 일사량 발전량 상관
+summary_user: 한국동서발전이 울산에서 운영하는 태양광 발전기별 일일 발전량(Wh)과 같은 날의 울산 가조시간·일조시간(hr)을 날짜·발전기 단위로 담은 소규모 CSV 파일(약 7.6KB)이다. 연구자나 분석가가 '일조시간이 길었던 날 울산 태양광 발전기의 발전량이 얼마나 늘었나'처럼 일조 조건과 발전 실적의 관계를 확인하거나 발전 예측 모델을 시험하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 날짜나 발전기명을 이름으로 맞춰 잇는 방식으로만 연결된다.
 description_portal: 한국동서발전의 울산 태양광 발전량 및 일조 정보 데이터입니다. 해당 데이터는 울산 지역에서 운영되는 태양광 발전기의 일일 발전량과 지역 일조 환경에 관한 정보를 포함하며, 항목은 날짜, 발전기명, 일일 발전량(Wh), 울산 가조시간(hr), 울산 일조시간(hr)으로 구성됩니다. 이 데이터는 태양광 설비의 효율 분석, 계절별 발전량 변동 추이, 기상 조건과 발전량 간의 상관관계 분석 등에 유용합니다. 학계 및 연구기관에서는 재생에너지 효율성 평가, 태양광 발전 예측 모델링, 일조량 기반 발전 성능 분석 등의 연구에 활용 가능하며, 특히 지역 맞춤형 에너지 수급 전략 수립, 신재생에너지 확대 정책 검토 등에 필요한 정량적 기반자료로서의 활용도가 높습니다.
 applicable_legislation:
   - law: 전기사업법
@@ -51,6 +53,7 @@ schema:
         unique: 181
     - name: 발전기명
       type: code
+      semantic_type: power_plant_id
       null_rate: 0.0
       sample_values:
         - 울산태양광#1
@@ -92,12 +95,22 @@ schema:
         p50: 9.1
         max: 13.3
         unique: 88
+  foreign_keys:
+    - fields:
+        - 발전기명
+      reference:
+        key: power_plant_id
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 날짜
 cycle: default
 classification:
   subsector_name: 전력 수급·시장 (현재/오늘 전력수급·수급예보·SMP·REC·발전원별/시간별 발전량·DR)
@@ -134,7 +147,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15104985-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: power_plant_id(발전기명)'
     evidence:
       - type: measured
         source: probe/stats/15104985.json
@@ -209,8 +222,6 @@ verification:
   run: probe/runs/15104985.json
   stats: probe/stats/15104985.json
   data: probe/data/15104985/
-status: active
-summary_user: 한국동서발전이 울산에서 운영하는 태양광 발전기별 일일 발전량(Wh)과 같은 날의 울산 가조시간·일조시간(hr)을 날짜·발전기 단위로 담은 소규모 CSV 파일(약 7.6KB)이다. 연구자나 분석가가 '일조시간이 길었던 날 울산 태양광 발전기의 발전량이 얼마나 늘었나'처럼 일조 조건과 발전 실적의 관계를 확인하거나 발전 예측 모델을 시험하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 날짜나 발전기명을 이름으로 맞춰 잇는 방식으로만 연결된다.
 limits: 표준 코드 형태의 조인 키가 없어 발전소 원장이나 기상 관측 자료와는 발전기명·날짜를 직접 매핑해야 한다. 파일 데이터라 실시간 수급 정보로는 쓰지 못한다.
 review:
   summary: draft
@@ -221,3 +232,4 @@ review:
     - c-15104985-01
     - c-15104985-03
   dropped_citations: 0
+status: active

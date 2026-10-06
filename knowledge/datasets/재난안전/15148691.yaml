@@ -1,4 +1,5 @@
-# Dataset 15148691 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15148691 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15148691'
 tier: verified
 title: 국토교통부_지반정보_수압시험정보(수압시험부정보)
@@ -20,6 +21,7 @@ synonyms:
   - 시추조사 결과
   - 지반조사
   - 국토지반정보
+summary_user: 시추조사로 얻은 암반 수압시험(루전시험)의 부정보를 시추공·시험 차수 단위로 담은 파일 데이터로, 주입량·수압·루전값·투수계수·총수위 같은 측정값이 들어 있고 범위는 전국이다. 지반 설계·시공 기술자나 분석가가 특정 사업지 주변 암반의 절리·균열 정도와 투수성이 어느 수준인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 지반정보 계열의 수압시험 주정보나 시추공 정보와는 프로젝트코드·시추공코드(시추공코드) 같은 이름·코드 매핑으로만 이어 쓴다.
 description_portal: 시추조사를 통해 생산된 지반조사결과 중 수압시험의 부정보를 제공합니다. 지반조사 수압시험(Lugeon Test)은 암반층의 투수성을 파악하기 위해 시추공에 물을 가압 주입하여 그 주입량과 압력을 측정하는 현장시험입니다. 이 시험을 통해 얻는 Lugeon 값은 암반 내 절리나 균열의 정도를 나타내며, 시험 결과는 구조물 설계 및 시공에 필요한 암반의 투수성 데이터를 제공하는데, 본 데이터는 시스템에 구축된 부정보를 제공하고 있습니다.
 legal_basis_portal: 지반조사결과 전산화 및 활용에 관한 지침
 accrual_periodicity: 월간
@@ -34,6 +36,7 @@ schema:
   fields:
     - name: 프로젝트코드
       type: code
+      semantic_type: geo_project_cd
       null_rate: 0.0026
       sample_values:
         - F3227
@@ -52,6 +55,7 @@ schema:
         unique: 1495
     - name: 시추공코드
       type: string
+      semantic_type: geo_borehole_cd
       null_rate: 0.0057
       sample_values:
         - F3227TB001
@@ -176,6 +180,17 @@ schema:
         - W5357BH008W01
       stats:
         unique: 7903
+  foreign_keys:
+    - fields:
+        - 프로젝트코드
+      reference:
+        key: geo_project_cd
+      evidence: measured
+    - fields:
+        - 시추공코드
+      reference:
+        key: geo_borehole_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -218,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15148691-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: geo_project_cd(프로젝트코드), geo_borehole_cd(시추공코드)'
     evidence:
       - type: measured
         source: probe/stats/15148691.json
@@ -293,8 +308,6 @@ verification:
   run: probe/runs/15148691.json
   stats: probe/stats/15148691.json
   data: probe/data/15148691/
-status: active
-summary_user: 시추조사로 얻은 암반 수압시험(루전시험)의 부정보를 시추공·시험 차수 단위로 담은 파일 데이터로, 주입량·수압·루전값·투수계수·총수위 같은 측정값이 들어 있고 범위는 전국이다. 지반 설계·시공 기술자나 분석가가 특정 사업지 주변 암반의 절리·균열 정도와 투수성이 어느 수준인지 확인할 때 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 지반정보 계열의 수압시험 주정보나 시추공 정보와는 프로젝트코드·시추공코드(시추공코드) 같은 이름·코드 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 기관 데이터나 행정구역 단위 통계와 바로 결합하기 어렵다. 행정단위가 비공간으로 분류돼 이 파일만으로는 시추 위치를 지도에 올리거나 지역별로 집계할 수 없다.
 review:
   summary: draft
@@ -306,3 +319,4 @@ review:
     - c-15148691-03
     - c-15148691-04
   dropped_citations: 0
+status: active

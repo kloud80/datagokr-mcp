@@ -1,4 +1,5 @@
-# Dataset 15157083 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157083 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157083'
 tier: verified
 title: 기후에너지환경부 국립환경과학원_환경영향평가_동식물상정보
@@ -21,6 +22,7 @@ synonyms:
   - 훼손수목량
   - EIA 생물상
   - 식물상 포유류 조류 조사
+summary_user: 환경영향평가 사업별로 수행한 동식물상 조사의 조사지점(지점명·주소·좌표)과 조사차수, 확인된 종의 국명·학명·개체수를 담은 파일 데이터로, 포털 설명상 녹지자연도·조사범위 속성과 조사지점 shp 공간정보도 함께 제공되며 범위는 전국이다. 생태 컨설턴트나 개발사업 검토자가 '특정 개발사업 주변에서 어떤 포유류·조류·식물이 조사됐는가'를 확인하거나, 분석가가 지역별 출현종 분포를 살펴보는 데 쓴다. 전역 조인 키는 없고 파일 안의 사업코드로 같은 기관의 환경영향평가 협의 현황·사업구역 데이터와, 좌표로 생태자연도·토지피복 같은 공간 규제 데이터와 이어 쓴다.
 description_portal: 환경부 국립환경과학원의 환경영향평가 사업 중 동식물상 녹지자연도, 조사, 조사자, 조사범위의 속성정보 제공 및 공간정보(조사지점)에 대해 정보를 제공하는 서비스입니다. 조사속성에는 조사차수, 조사지점, 주소, 좌표와 함께 동식물상 정보(식물상/포유류/조류/양서파충류/곤충류/어류/저서생물(동물) 국명 목록, 식물상/포유류/조류/양서파충류/곤충류/어류/저서생물(동물) 학명 목록)를 포함하며, 조사범위속성은 조사에 대한 시물상조사유무, 포유류조사유무, 양서파충류조사유무, 곤충류조사유무, 어류조사유무, 저서생물(동물)유무정보를 제공합니다. 녹지자연도에는 사업시행전 후의 녹지자연도(면적), 녹지자연도(비율) 등급을 제공하며 훼손수목량(주), 재활용 이식수목량(주) 등의 정보를 제공합니다.조사지점에 대한 공간정보는 위치 정보를 가진 shp 파일을 제공하는 서비스입니다.
 accrual_periodicity: 수시
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 100000
     - name: 사업코드
       type: code
+      semantic_type: eia_biz_cd
       null_rate: 0.0
       sample_values:
         - YS2009I005
@@ -162,12 +165,23 @@ schema:
         - Y
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 사업코드
+      reference:
+        key: eia_biz_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 생성일
+    - 수정일
 cycle: event
 classification:
   subsector_name: 환경영향평가 (협의 현황·사업구역·항목별 평가정보·초안 공람)
@@ -209,7 +223,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157083-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: eia_biz_cd(사업코드)'
     evidence:
       - type: measured
         source: probe/stats/15157083.json
@@ -274,8 +288,6 @@ verification:
   run: probe/runs/15157083.json
   stats: probe/stats/15157083.json
   data: probe/data/15157083/
-status: active
-summary_user: 환경영향평가 사업별로 수행한 동식물상 조사의 조사지점(지점명·주소·좌표)과 조사차수, 확인된 종의 국명·학명·개체수를 담은 파일 데이터로, 포털 설명상 녹지자연도·조사범위 속성과 조사지점 shp 공간정보도 함께 제공되며 범위는 전국이다. 생태 컨설턴트나 개발사업 검토자가 '특정 개발사업 주변에서 어떤 포유류·조류·식물이 조사됐는가'를 확인하거나, 분석가가 지역별 출현종 분포를 살펴보는 데 쓴다. 전역 조인 키는 없고 파일 안의 사업코드로 같은 기관의 환경영향평가 협의 현황·사업구역 데이터와, 좌표로 생태자연도·토지피복 같은 공간 규제 데이터와 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑이나 좌표로만 연결된다. 명세상 수시·이벤트 주기로 평가 시점에 생성된 뒤 바뀌지 않는 기록이므로 현재의 생태 현황으로 해석하면 안 된다.
 review:
   summary: draft
@@ -290,3 +302,4 @@ review:
     - c-15157083-06
     - c-15157083-07
   dropped_citations: 0
+status: active

@@ -67,6 +67,7 @@ schema:
         unique: 20
     - name: 농업경영체일련번호
       type: number
+      semantic_type: agri_entity_sn
       null_rate: 0.0
       sample_values:
         - '112'
@@ -79,6 +80,7 @@ schema:
         unique: 55
     - name: 농지일련번호
       type: number
+      semantic_type: farmland_sn
       null_rate: 0.0
       sample_values:
         - '27019'
@@ -143,6 +145,7 @@ schema:
         unique: 83
     - name: 농업경영체농지일련번호
       type: number
+      semantic_type: farmland_sn
       null_rate: 0.0
       sample_values:
         - '1'
@@ -170,9 +173,29 @@ schema:
         - 딸기
       stats:
         unique: 24
+  foreign_keys:
+    - fields:
+        - 농업경영체일련번호
+      reference:
+        key: agri_entity_sn
+      evidence: measured
+    - fields:
+        - 농지일련번호
+      reference:
+        key: farmland_sn
+      evidence: measured
+    - fields:
+        - 농업경영체농지일련번호
+      reference:
+        key: farmland_sn
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  time: year
+  time_fields:
+    - 사업년도
 cycle: default
 classification:
   subsector_name: 농지 필지 정보 (농업진흥지역·농지전용·팜맵 필지·농지은행·경지)
@@ -209,7 +232,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15148409-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: agri_entity_sn(농업경영체일련번호), farmland_sn(농지일련번호), farmland_sn(농업경영체농지일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15148409.json

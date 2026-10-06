@@ -1,4 +1,5 @@
-# Dataset 15051514 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15051514 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15051514'
 tier: verified
 title: 근로복지공단_퇴직연금사업장운용현황
@@ -22,6 +23,7 @@ synonyms:
   - DC형 수익률
   - IRP 수익률 비교
   - 퇴직연금 운용현황
+summary_user: 근로복지공단 퇴직연금기록관리시스템의 사업장 운용 현황 일부를 뽑은 전국 단위 파일로, 공시수익률 기준일자와 그날의 공시수익률(%), 장기수수료할인 기본 적용 시작일자만 담은 1KB 남짓의 작은 CSV다. 퇴직연금 가입자나 분석가가 근로복지공단 퇴직연금 상품의 공시수익률 수준과 장기 수수료 할인이 언제부터 적용됐는지 확인하고, IRP·DC 사업자를 고를 때 비교 근거로 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 퇴직연금 수익률·수수료 데이터와는 기준일자나 기관명을 맞춰 수동으로 이어 붙여야 한다.
 description_portal: 이 데이터는 근로복지공단에서 운영하는 퇴직연금기록관리시스템의 핵심 정보 중 하나인 퇴직연금 사업장 운용 현황(2019년 8월 31일 기준)을 담고 있습니다.주요 필드는 특정 시점의 공시 수익률 기준 일자, 해당 일자의 공시 수익률(%) 값, 그리고 장기 수수료 할인 기본 적용 시작 일자 등으로 구성되어 있습니다. 이 정보는 사업장 단위로 가입된 퇴직연금 상품의 성과 지표와 수수료 관련 정책 변동 시점을 파악하는 데 필수적입니다. 원본 DB는 통화 코드, 국가 코드, 은행 코드 등 금융 관련 메타데이터를 포함하는 구조로, 퇴직연금 상품의 국제적 및 금융기관별 특성을 분석하는 기초 자료로 활용될 수 있습니다. 본 파일은 해당 DB의 일부 추출본이며, 퇴직연금의 수익률 및 수수료 할인 기준에 대한 심층 분석이 가능합니다.
 accrual_periodicity: 수시
 team:
@@ -72,6 +74,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 공시수익률_기준일자
+    - 장기수수료할인기본_적용시작일자
 cycle: default
 classification:
   subsector_name: 퇴직연금 (퇴직연금 기본정보·상품 금리·가입/도입 현황·사업장 운용·수익률·IRP·연금저축)
@@ -163,8 +170,6 @@ verification:
   run: probe/runs/15051514.json
   stats: probe/stats/15051514.json
   data: probe/data/15051514/
-status: active
-summary_user: 근로복지공단 퇴직연금기록관리시스템의 사업장 운용 현황 일부를 뽑은 전국 단위 파일로, 공시수익률 기준일자와 그날의 공시수익률(%), 장기수수료할인 기본 적용 시작일자만 담은 1KB 남짓의 작은 CSV다. 퇴직연금 가입자나 분석가가 근로복지공단 퇴직연금 상품의 공시수익률 수준과 장기 수수료 할인이 언제부터 적용됐는지 확인하고, IRP·DC 사업자를 고를 때 비교 근거로 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 퇴직연금 수익률·수수료 데이터와는 기준일자나 기관명을 맞춰 수동으로 이어 붙여야 한다.
 limits: 사업장·상품을 구분하는 식별 키가 없어 다른 데이터와 직접 조인할 수 없고, 날짜·기관 이름으로만 맞춰 연결할 수 있다. 내부 검토 등급이 '보조'로, 핵심 분석보다는 참고용으로 쓰는 편이 맞다.
 review:
   summary: draft
@@ -178,3 +183,4 @@ review:
     - c-15051514-06
     - c-15051514-07
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15042050 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15042050 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15042050'
 tier: verified
 title: 여수광양항만공사_광양항 배후단지 차량이동 데이터
@@ -24,6 +25,7 @@ synonyms:
   - 컨테이너 트럭 운행
   - 광양항 물류 교통량
   - 게이트 통과 시간
+summary_user: 광양항 배후단지에 드나든 컨테이너 차량의 운행을 차량 한 건씩 기록한 원천 데이터로, 진입·진출 게이트와 각 일시, 작업시간을 담고 차량번호는 마스킹돼 있다. 물류 분석가나 배후단지 입주 사업자가 어느 게이트에 어느 시간대에 차량이 몰리는지, 단지 안 체류·작업시간이 얼마인지 보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 게이트 이름이나 같은 기관(여수광양항만공사)의 자료 기준으로만 이어 쓰며, 항만코드는 입출항·물류 데이터와 연결하는 키지만 이 파일에는 들어 있지 않다.
 description_portal: 광양항 배후단지 내 컨테이너 차량의 게이트별 도로 운행 정보입니다. 차량정보(개인정보로 인한 마스킹처리), 진입게이트, 진입일시, 진출게이트, 진출일시, 작업시간으로 구성되어 있습니다. 갱신주기는 반기입니다.
 applicable_legislation:
   - law: 항만보안법
@@ -45,6 +47,7 @@ schema:
   fields:
     - name: 차량번호
       type: code
+      semantic_type: vhcl_no
       null_rate: 0.0
       sample_values:
         - 전남98사****
@@ -101,12 +104,23 @@ schema:
         - 00:48:03
       stats:
         unique: 11436
+  foreign_keys:
+    - fields:
+        - 차량번호
+      reference:
+        key: vhcl_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 진입일시
+    - 진출일시
 cycle: default
 classification:
   subsector_name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
@@ -143,7 +157,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15042050-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vhcl_no(차량번호)'
     evidence:
       - type: measured
         source: probe/stats/15042050.json
@@ -218,8 +232,6 @@ verification:
   run: probe/runs/15042050.json
   stats: probe/stats/15042050.json
   data: probe/data/15042050/
-status: active
-summary_user: 광양항 배후단지에 드나든 컨테이너 차량의 운행을 차량 한 건씩 기록한 원천 데이터로, 진입·진출 게이트와 각 일시, 작업시간을 담고 차량번호는 마스킹돼 있다. 물류 분석가나 배후단지 입주 사업자가 어느 게이트에 어느 시간대에 차량이 몰리는지, 단지 안 체류·작업시간이 얼마인지 보는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 게이트 이름이나 같은 기관(여수광양항만공사)의 자료 기준으로만 이어 쓰며, 항만코드는 입출항·물류 데이터와 연결하는 키지만 이 파일에는 들어 있지 않다.
 limits: 차량번호가 마스킹돼 있어 개별 차량을 추적하거나 다른 차량 데이터와 맞춰 볼 수 없고, 공통 조인 키도 없다. 범위가 전국·비공간으로 분류돼 있지만 실제 내용은 광양항 배후단지 게이트 기록이며 좌표 정보는 없다.
 review:
   summary: draft
@@ -232,3 +244,4 @@ review:
     - c-15042050-04
     - c-15042050-06
   dropped_citations: 0
+status: active

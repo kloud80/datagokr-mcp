@@ -1,4 +1,5 @@
-# Dataset 15043712 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15043712 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043712'
 tier: verified
 title: 한국도로공사_휴게소별 화장실 현황
@@ -24,6 +25,7 @@ synonyms:
   - 휴게소 편의시설
   - 고속도로 공중화장실
   - 화장실 인프라
+summary_user: 전국 고속도로 휴게소별 화장실 설비를 노선·시설명 단위로 남자 변기 수와 여자 변기 수로 나눠 담은 파일(csv, 약 6KB)이다. 이용자나 분석가가 "어느 노선 휴게소의 여자 화장실 변기가 상대적으로 부족한가" 같은 질문에 답하거나 확충·개보수 대상을 고를 때 쓴다. 전역 조인 키가 없어 다른 휴게소 데이터(주유소·충전소·편의시설 등)와는 노선명과 휴게소 이름을 맞춰 연결해야 한다.
 description_portal: 본 데이터는 한국도로공사가 운영하는 고속도로 휴게소에 설치된 화장실 시설 현황을 나타낸다. 주요 구성 항목은 노선, 시설명, 남자 변기수, 여자 변기수로 구성되어 있으며, 휴게소별 성별 이용자 수요에 따른 화장실 인프라 분포를 파악할 수 있다. 본 데이터는 이용자의 편의성 제고 및 휴게시설 개선을 위한 기초 자료로 활용 가능하며, 교통량 및 이용 행태 분석에 따른 맞춤형 화장실 확충이나 개보수 계획 수립에도 참고될 수 있다. 특히 남녀 변기 수를 구분하여 제공함으로써 성별에 따른 시설 수요 분석 및 정책 수립의 효율성을 높이는 데 기여한다. 본 데이터는 공공시설의 접근성과 편의성을 고려한 휴게소 운영의 투명성과 책임성을 강화하는 데 목적이 있다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 31
     - name: 시설명
       type: string
+      semantic_type: ex_rest_area
       null_rate: 0.0
       sample_values:
         - 서울(만남)
@@ -77,6 +80,12 @@ schema:
         p50: 28
         max: 169
         unique: 55
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: ex_rest_area
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -119,7 +128,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15043712-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: ex_rest_area(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15043712.json
@@ -173,8 +182,6 @@ verification:
   run: probe/runs/15043712.json
   stats: probe/stats/15043712.json
   data: probe/data/15043712/
-status: active
-summary_user: 전국 고속도로 휴게소별 화장실 설비를 노선·시설명 단위로 남자 변기 수와 여자 변기 수로 나눠 담은 파일(csv, 약 6KB)이다. 이용자나 분석가가 "어느 노선 휴게소의 여자 화장실 변기가 상대적으로 부족한가" 같은 질문에 답하거나 확충·개보수 대상을 고를 때 쓴다. 전역 조인 키가 없어 다른 휴게소 데이터(주유소·충전소·편의시설 등)와는 노선명과 휴게소 이름을 맞춰 연결해야 한다.
 limits: 휴게소 코드 같은 공통 키가 없어 이름 매핑에 의존하므로 표기 차이로 연결이 어긋날 수 있다. 위치 좌표가 없는 비공간 데이터라 지도 표시나 거리 계산에는 별도 위치 데이터가 필요하다.
 review:
   summary: draft
@@ -186,3 +193,4 @@ review:
     - c-15043712-03
     - c-15043712-04
   dropped_citations: 0
+status: active

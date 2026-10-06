@@ -1,4 +1,5 @@
-# Dataset 15156235 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15156235 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156235'
 tier: verified
 title: 한국언론진흥재단_뉴스빅데이터_메타데이터_항공사
@@ -22,6 +23,7 @@ synonyms:
   - 뉴스 키워드 개체명
   - 미디어 프레임 분석
   - BIGKinds
+summary_user: 빅카인즈(BIGKinds)에 수집된 국내 언론사의 항공사·항공 산업 관련 뉴스를 기사 한 건당 한 행으로 담은 건별 메타데이터로, 보도 일자·언론사·제목·통합분류(1~3단계)·인물·지역·기업기관 개체명·키워드·특성추출 값이 들어 있다(CSV 약 43MB). 연구자나 정책 담당자가 '특정 항공사의 사고·안전 이슈 보도가 언제 몰렸고 어떤 키워드로 다뤄졌는가'처럼 시기별 보도량과 프레임 변화를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 언론사명·기업기관 개체명·일자 같은 이름·날짜 값으로만 맞춰 이어 쓴다.
 description_portal: 본 자료는 한국언론진흥재단이 운영하는 뉴스 데이터베이스 BIGKinds를 기반으로 수집·분석된 항공사 관련 뉴스 메타정보 자료입니다. 보도 일자, 언론사, 제목, 통합분류(1~3단계), 개체명(인물·기관·기업·지역), 키워드, 특성추출 값 등 다양한 항목을 포함하고 있으며, 이를 통해 개별 기사 단위의 구조적·정량적 분석이 가능합니다.본 데이터는 국내 주요 언론사가 보도한 국내·외 항공사 및 항공 산업 전반의 이슈를 대상으로, 어떤 항공사와 공항, 노선, 항공기, 사고·안전·서비스·경영 전략 이슈가 어느 시기에 집중적으로 보도되었는지, 그리고 주요 키워드와 보도 프레임이 어떻게 형성·변화했는지를 파악하는 데 중점을 두고 있습니다.이를 통해 언론이 항공사를 교통 인프라의 핵심 주체, 글로벌 산업 및 국가 경쟁력의 요소, 혹은 안전·사고·노동·소비자 보호 논의의 대상으로 어떻게 재현하는지를 분석할 수 있으며, 항공편 운항과 노선 전략, 항공기 도입 및 정비, 항공 사고와 위기 대응, 항공 서비스 품질, 인수·합병 및 경영 이슈, 국제 정세와 항공 수요 변화 등 다양한 맥락이 어떤 관점에서 보도되는지도 확인할 수 있습니다.아울러 본 자료는 항공·물류 산업 연구자, 교통·안전 정책 담당자, 항공사 경영·전략 전문가, 언론·커뮤니케이션 연구자, 데이터 기반 정책 분석 및 미디어 리터러시 교육자 등에게 항공사 보도의 흐름과 이슈별 프레임 변화, 언론의 산업·재난·안전 이슈 재현 방식을 이해하는 데 기초 자료로 활용될 수 있으며, 항공 산업을 둘러싼 사회적 인식과 정책·시장 환경 변화 과정을 종합적으로 분석하는 데 유용한 분석 기반을 제공합니다.
 applicable_legislation:
   - law: 신문등의진흥에관한법률
@@ -52,6 +54,7 @@ schema:
         unique: 366
     - name: 언론사
       type: code
+      semantic_type: kpf_media_outlet
       null_rate: 0.0
       sample_values:
         - 매일경제
@@ -140,12 +143,22 @@ schema:
         - 인천국제공항공사,1억,멸종위기,항공사,팀장,우리나라,박경상,탑승구,인공지능,국토교통부,5조,출국심사,850m,고형석,조형물,배석주,종합시,교통부
       stats:
         unique: 18958
+  foreign_keys:
+    - fields:
+        - 언론사
+      reference:
+        key: kpf_media_outlet
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 일자
 cycle: default
 classification:
   subsector_name: 언론·출판·간행물 (신문·인터넷신문·정기간행물 등록, 출판사 신고, 빅카인즈)
@@ -182,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15156235-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kpf_media_outlet(언론사)'
     evidence:
       - type: measured
         source: probe/stats/15156235.json
@@ -257,8 +270,6 @@ verification:
   run: probe/runs/15156235.json
   stats: probe/stats/15156235.json
   data: probe/data/15156235/
-status: active
-summary_user: 빅카인즈(BIGKinds)에 수집된 국내 언론사의 항공사·항공 산업 관련 뉴스를 기사 한 건당 한 행으로 담은 건별 메타데이터로, 보도 일자·언론사·제목·통합분류(1~3단계)·인물·지역·기업기관 개체명·키워드·특성추출 값이 들어 있다(CSV 약 43MB). 연구자나 정책 담당자가 '특정 항공사의 사고·안전 이슈 보도가 언제 몰렸고 어떤 키워드로 다뤄졌는가'처럼 시기별 보도량과 프레임 변화를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 언론사명·기업기관 개체명·일자 같은 이름·날짜 값으로만 맞춰 이어 쓴다.
 limits: 기사 원문 본문은 없고 메타정보만 담으며, 다른 데이터와 코드로 연결할 공통 키가 없어 이름 매칭에 의존해야 한다. 지역 개체명은 기사에 언급된 지명일 뿐 공간 좌표가 있는 데이터가 아니다.
 review:
   summary: draft
@@ -270,3 +281,4 @@ review:
     - c-15156235-03
     - c-15156235-04
   dropped_citations: 0
+status: active

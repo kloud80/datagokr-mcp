@@ -40,6 +40,7 @@ schema:
   fields:
     - name: 상권번호
       type: number
+      semantic_type: sbiz_trade_area_no
       null_rate: 0.0
       sample_values:
         - '10000'
@@ -142,6 +143,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - 상권번호
+      reference:
+        key: sbiz_trade_area_no
+      evidence: measured
+    - fields:
         - 시도코드
       reference:
         key: admin_area_code
@@ -155,6 +161,16 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2024-01-01 ~ 2024-01-01
+grain:
+  space: sgg
+  space_fields:
+    - 시도코드
+    - 시군구코드
+    - 시군구명
+  space_via: code
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
@@ -195,7 +211,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15090955-03
     kind: key
-    value: '실측 조인 키: admin_area_code(시도코드), sgg_cd(시군구코드)'
+    value: '실측 조인 키: sbiz_trade_area_no(상권번호), admin_area_code(시도코드), sgg_cd(시군구코드)'
     evidence:
       - type: measured
         source: probe/stats/15090955.json

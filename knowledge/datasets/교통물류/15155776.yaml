@@ -1,4 +1,5 @@
-# Dataset 15155776 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15155776 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15155776'
 tier: verified
 title: 부산광역시_자율주행버스 상태 정보
@@ -20,6 +21,7 @@ synonyms:
   - 자율주행버스 운행기록
   - 배터리 잔량
   - 부산 자율주행
+summary_user: 부산광역시 자율주행버스의 운행 중 차량 상태를 단말기(terminalId)·기록 일시(logDate, 시 단위 형식) 단위로 담으며, 정차·주행 여부, 속도, 레이더·라이다·카메라 센서의 정상·장애 상태, 금일·누적 운행 거리, 배터리 잔량이 포함된다. 교통 분석가나 운영 담당자가 "특정 시간대에 센서 장애가 난 차량이 있었는가, 하루 운행 거리와 배터리 소모는 어땠는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 노선·정류장·도착 정보 등 다른 대중교통 데이터와는 단말기 ID나 같은 기관 기준의 이름 매핑으로만 느슨하게 연결한다.
 description_portal: '이 데이터는 자율주행버스 운행 중 차량의 상태 정보입니다. 주행유형(0:정차중, 1:주행중), 속도, 센서 상태(레이더, 라이다), 카메라 상태, 운행거리 정보를 포함하고 있습니다. 차량 상태 모니터링, 운행 안전 분석, 이상 이벤트 탐지 등에 활용 가능합니다.  *(참고) logDate 형식 : 2025091610'
 team:
   dept: 빅데이터과
@@ -200,6 +202,10 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: realtime
+  time_fields:
+    - logDate
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -309,8 +315,6 @@ verification:
   run: probe/runs/15155776.json
   stats: probe/stats/15155776.json
   data: probe/data/15155776/
-status: active
-summary_user: 부산광역시 자율주행버스의 운행 중 차량 상태를 단말기(terminalId)·기록 일시(logDate, 시 단위 형식) 단위로 담으며, 정차·주행 여부, 속도, 레이더·라이다·카메라 센서의 정상·장애 상태, 금일·누적 운행 거리, 배터리 잔량이 포함된다. 교통 분석가나 운영 담당자가 "특정 시간대에 센서 장애가 난 차량이 있었는가, 하루 운행 거리와 배터리 소모는 어땠는가"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 노선·정류장·도착 정보 등 다른 대중교통 데이터와는 단말기 ID나 같은 기관 기준의 이름 매핑으로만 느슨하게 연결한다.
 limits: 다른 데이터와 직접 이을 공통 키가 없어 노선·정류장·승하차 데이터와의 결합은 수작업 매핑이 필요하다. 차량 위치 좌표가 없는 비공간 데이터라 지도상 위치 분석에는 쓸 수 없다. 개발계정은 일 1,000회 호출로 제한된다.
 review:
   summary: draft
@@ -322,3 +326,4 @@ review:
     - c-15155776-03
     - c-15155776-04
   dropped_citations: 0
+status: active

@@ -1,0 +1,266 @@
+# Dataset 15060605 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15060605'
+tier: verified
+title: 금융감독원_정기보고서 주요정보_증자(감자)현황
+sector: 재정금융/금융/corporate-disclosure
+agency:
+  id: B550021
+  name: 금융감독원
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15060605/openapi.do
+synonyms:
+  - 전자공시
+  - 공시보고서
+  - 기업공시
+  - 유상증자
+  - 무상증자
+  - 감자 내역
+  - 주식 발행 현황
+  - DART 정기보고서
+  - 자본금 변동
+  - 오픈다트
+summary_user: 정기보고서(사업·분기·반기보고서)에 실린 회사별 증자·감자 내역을 담으며, 한 행은 한 회사의 주식 발행·감소 1건으로 일자(isu_dcrs_de), 형태, 주식 종류, 수량, 주당 액면가액과 발행가액, 결산기준일을 포함한다. 투자자나 분석가가 특정 상장사가 최근 몇 년간 유상증자·무상증자·감자를 언제 얼마나 했는지 확인할 때 쓴다. 실측 컬럼에서는 전역 조인 키가 확인되지 않아, 같은 기관(금감원 DART)의 고유번호(corp_code)나 접수번호(rcept_no)로 다른 DART 공시 데이터와 잇거나 회사명으로 매핑해 쓰며, 법인등록번호·사업자번호로 기업 축과 연결하려면 별도 매핑이 필요하다.
+description_portal: '정기보고서(사업, 분기, 반기보고서) 내에 증자(감자) 현황을 제공합니다.- 주요제공항목 : 주식발행 감소일자, 발행 감소 형태, 발행 감소 주식 종류 등'
+team:
+  dept: 기업공시국 전자공시팀
+services:
+  - op: irdsSttus
+    name: irdsSttus
+    endpoint: https://opendart.fss.or.kr/api/irdsSttus.json
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendart.fss.or.kr
+    params:
+      - name: corp_code
+        required: true
+        example: '00126380'
+      - name: bsns_year
+        required: true
+        example: '2025'
+      - name: reprt_code
+        required: true
+        example: '11011'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: rcept_no
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20260310002820'
+      stats:
+        min: 20260310002820
+        p50: 20260310002820
+        max: 20260310002820
+        unique: 1
+    - name: corp_cls
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: corp_code
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00126380'
+      stats:
+        min: 126380
+        p50: 126380
+        max: 126380
+        unique: 1
+    - name: corp_name
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 삼성전자
+      stats:
+        unique: 1
+    - name: isu_dcrs_de
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: isu_dcrs_stle
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: isu_dcrs_stock_knd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: isu_dcrs_qy
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: isu_dcrs_mstvdv_fval_amount
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: isu_dcrs_mstvdv_amount
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '-'
+      stats:
+        unique: 1
+    - name: stlm_dt
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-12-31'
+      stats:
+        min: '2025-12-31'
+        max: '2025-12-31'
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - stlm_dt
+cycle: event
+classification:
+  subsector_name: 기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.6586
+  rank_in_sector: 135
+  brm: 재정금융 - 재정·금융
+  sector_rule: finance-institutions-to-finance
+  why: OpenDART (인증키)
+claims:
+  - id: c-15060605-01
+    kind: access
+    value: 외부 사이트 opendart.fss.or.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15060605.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendart.fss.or.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15060605-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060605-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15060605.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060605-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15060605.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15060605-06
+    kind: admin_note
+    value: "세부 부문 '기업 공시·재무 (금감원 정기/사업/주요사항/증권신고서·지분공시, 금융위 기업기본·재무·지배구조, 개인사업자)'의 가치: 법인등록번호·사업자번호로 기업 축 전체와 연결. 주요사항보고서는 사건 단위 시의성(유상증자·합병·소송)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#corporate-disclosure
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15060605-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 금융] 증권 시장(시세·발행·권리·대차·MBS, 일별)·기업 공시/재무(금감원 DART 재게시·금융위 기업정보·개인사업자)·금융회사 원장(업권별 금융통계는 금융회사 단위라 남김)·금융상품·환율. 한국은행 ECOS 거시 통계, 주택금융공사·HUG, 우체국 금융, 교육·영상 배제 (`finance-deferred`, `finance-non-core`). 재검토 후보: 한국은행 ECOS 거시지표.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L622
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15060605-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15060605.json
+  stats: probe/stats/15060605.json
+  data: probe/data/15060605/
+limits: 인증키는 포털 활용신청과 별개로 외부 사이트(opendart.fss.or.kr)에서 따로 발급받아 호출해야 한다. 보고서가 제출될 때 생성되고 이후 바뀌지 않는 이벤트성 데이터라서, 수시로 갱신되는 시세처럼 다루면 안 된다. 전역 조인 키가 없으므로 다른 기관 데이터와는 회사명이나 코드 매핑을 거쳐야 연결된다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15060605-01
+    - c-15060605-02
+    - c-15060605-03
+    - c-15060605-06
+  dropped_citations: 0
+status: active

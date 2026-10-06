@@ -1,4 +1,5 @@
-# Dataset 15070462 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15070462 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070462'
 tier: verified
 title: 한국장학재단_대학생 청소년교육지원장학금_대학별 학생 신청기간 운영
@@ -21,6 +22,7 @@ synonyms:
   - 대학발굴형 멘토발굴형
   - 교육봉사 장학금
   - 한국장학재단 장학 일정
+summary_user: 대학생 청소년교육지원장학금 사업에 참여하는 대학별로 장학년도·학기·회차마다 업무 절차별 학생 신청기간 운영 정보를 담은 전국 단위 파일(csv, 약 29KB)이다. 대학 장학 담당자나 학생이 '우리 학교는 이번 학기 몇 회차에 어떤 모집유형(대학발굴형·멘토발굴형)으로 신청을 받는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명 이름 매칭이나 같은 재단의 장학 데이터와 연도·학기 기준으로만 이어 쓴다.
 description_portal: '대학생 청소년교육지원장학금 관련 대학별 신청기간 관리 정보: 대학명, 상품명, 장학상품유형, 장학년도, 장학학기, 장학업무절차, 기관모집유형 등의 정보를 제공데이터 제공항목은 사업 참여대학명, 사업 상품명, 사업연도, 사업참여학기, 사업참여 신청 회차, 사업 업무 절차 유형, 선발유형(대학발굴형), 선발유형(멘토발굴형)이 있습니다. 대학생 청소년교육지원장학금은 대학생이 초중고등학생 대상으로  멘토링을 지원하고, 대학생에게는 장학금을 지원하는 것을 목적으로 합니다. 대학생 청소년교육지원장학금 관련 정보는 "한국장학재단 누리집(https://www.kosaf.go.kr) > 인재육성 > 대학생지식멘토링 > 대학생 청소년교육지원장학금"에서 확인 가능'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 대학명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 한동대학교(본교) 학부
@@ -47,6 +50,7 @@ schema:
         unique: 166
     - name: 상품명
       type: code
+      semantic_type: kosaf_scholarship_product
       null_rate: 0.0
       sample_values:
         - 대학생 청소년교육지원 장학금
@@ -104,12 +108,27 @@ schema:
         - 기관모집유형(멘토발굴형)
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 대학명
+      reference:
+        key: univ_school_cd
+      evidence: measured
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_scholarship_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 장학년도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -146,7 +165,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070462-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: univ_school_cd(대학명), kosaf_scholarship_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15070462.json
@@ -210,8 +229,6 @@ verification:
   run: probe/runs/15070462.json
   stats: probe/stats/15070462.json
   data: probe/data/15070462/
-status: active
-summary_user: 대학생 청소년교육지원장학금 사업에 참여하는 대학별로 장학년도·학기·회차마다 업무 절차별 학생 신청기간 운영 정보를 담은 전국 단위 파일(csv, 약 29KB)이다. 대학 장학 담당자나 학생이 '우리 학교는 이번 학기 몇 회차에 어떤 모집유형(대학발굴형·멘토발굴형)으로 신청을 받는가'를 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 대학명 이름 매칭이나 같은 재단의 장학 데이터와 연도·학기 기준으로만 이어 쓴다.
 limits: 대학 코드 같은 표준 조인 키가 없어 대학 공시 등 다른 데이터와 결합하려면 대학명 표기를 직접 맞춰야 한다. 개별 학생의 선발·지급 결과나 멘토링 실적은 담지 않는다.
 review:
   summary: draft
@@ -223,3 +240,4 @@ review:
     - c-15070462-03
     - c-15070462-04
   dropped_citations: 0
+status: active

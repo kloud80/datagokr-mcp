@@ -58,6 +58,7 @@ schema:
         unique: 101279
     - name: 화차차량번호
       type: number
+      semantic_type: korail_wagon_no
       null_rate: 0.0
       sample_values:
         - '70542'
@@ -81,6 +82,7 @@ schema:
         unique: 108
     - name: 화통번호
       type: number
+      semantic_type: korail_waybill_no
       null_rate: 0.0
       sample_values:
         - '69916'
@@ -104,6 +106,7 @@ schema:
         unique: 114
     - name: 예약번호
       type: number
+      semantic_type: korail_freight_rsv_no
       null_rate: 0.0007
       sample_values:
         - '49912'
@@ -164,6 +167,7 @@ schema:
         unique: 11178
     - name: 품목명
       type: code
+      semantic_type: korail_freight_item
       null_rate: 0.0
       sample_values:
         - 컨20영
@@ -259,9 +263,36 @@ schema:
         min: '2025-06-01'
         max: '2025-09-16'
         unique: 13460
+  foreign_keys:
+    - fields:
+        - 화차차량번호
+      reference:
+        key: korail_wagon_no
+      evidence: measured
+    - fields:
+        - 화통번호
+      reference:
+        key: korail_waybill_no
+      evidence: measured
+    - fields:
+        - 예약번호
+      reference:
+        key: korail_freight_rsv_no
+      evidence: measured
+    - fields:
+        - 품목명
+      reference:
+        key: korail_freight_item
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 화물수탁일자
+    - 화통입력일자
+    - 예약접수일자
 cycle: default
 classification:
   subsector_name: 철도 물류·화물
@@ -298,7 +329,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15153898-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: korail_wagon_no(화차차량번호), korail_waybill_no(화통번호), korail_freight_rsv_no(예약번호), korail_freight_item(품목명)'
     evidence:
       - type: measured
         source: probe/stats/15153898.json

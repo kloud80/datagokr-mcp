@@ -1,4 +1,5 @@
-# Dataset 15103082 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15103082 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103082'
 tier: verified
 title: 한국수력원자력(주)_원자력발전소 OCTF(한 주기 무고장 운전) 현황
@@ -19,6 +20,7 @@ synonyms:
   - 원자력본부별 현황
   - 한수원 원전 안정성
   - OCTF
+summary_user: 한국수력원자력 원자력본부별로 연도(2021~2025년)마다 한 주기 무고장 운전(OCTF, 이전 계획예방정비 준공부터 다음 정비 계통 분리까지 발전소 귀책 정지 없이 운영된 주기) 현황을 담은 전국 단위 집계 파일로, 크기가 195바이트인 작은 표다. 분석가나 국민이 '원자력본부별로 무고장 운전 주기 실적이 해마다 어떻게 달라졌나'를 확인할 때 쓴다. 전역 조인 키는 없어 원자력본부 이름을 기준으로 같은 기관의 발전소·설비 자료와 이름 매핑으로만 이어 쓴다.
 description_portal: 한국수력원자력(주) 원자력발전소의 한 주기 무고장 운전 현황을 알려드립니다. 한 주기 무고장 운전 현황이란 이전 계획예방정비 준공 이후 당해 계획예방정비를 위한 계통 분리까지 발전소 귀책의 설비고장이나 인적실수에 의한 발전정지 없이 운영된 주기를 뜻합니다.
 legal_basis_portal: '한국수력원자력(주)에서 관리하고 있는 전사 원자력발전소 OCTF(한 주기 무고장 운전) 현황을 매년 현황 업데이트하고 있습니다. 무고장운전 기록관리 시스템(TFRMS: Trouble Free Record Management System)'
 accrual_periodicity: 연간
@@ -33,6 +35,7 @@ schema:
   fields:
     - name: 원자력본부
       type: code
+      semantic_type: khnp_site
       null_rate: 0.0
       sample_values:
         - 고리원자력본부
@@ -100,6 +103,12 @@ schema:
         p50: 2
         max: 11
         unique: 4
+  foreign_keys:
+    - fields:
+        - 원자력본부
+      reference:
+        key: khnp_site
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -142,7 +151,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103082-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: khnp_site(원자력본부)'
     evidence:
       - type: measured
         source: probe/stats/15103082.json
@@ -217,8 +226,6 @@ verification:
   run: probe/runs/15103082.json
   stats: probe/stats/15103082.json
   data: probe/data/15103082/
-status: active
-summary_user: 한국수력원자력 원자력본부별로 연도(2021~2025년)마다 한 주기 무고장 운전(OCTF, 이전 계획예방정비 준공부터 다음 정비 계통 분리까지 발전소 귀책 정지 없이 운영된 주기) 현황을 담은 전국 단위 집계 파일로, 크기가 195바이트인 작은 표다. 분석가나 국민이 '원자력본부별로 무고장 운전 주기 실적이 해마다 어떻게 달라졌나'를 확인할 때 쓴다. 전역 조인 키는 없어 원자력본부 이름을 기준으로 같은 기관의 발전소·설비 자료와 이름 매핑으로만 이어 쓴다.
 limits: 본부·연도 단위 집계라 개별 호기나 개별 주기의 정지 원인·일자는 알 수 없다. 공통 코드나 조인 키가 없어 다른 발전설비 데이터와 연결하려면 본부명을 직접 맞춰야 한다.
 review:
   summary: draft
@@ -230,3 +237,4 @@ review:
     - c-15103082-03
     - c-15103082-04
   dropped_citations: 0
+status: active

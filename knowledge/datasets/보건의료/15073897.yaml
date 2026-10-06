@@ -1,4 +1,3 @@
-# Dataset 15073897 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15073897'
 tier: verified
 title: 식품의약품안전처_의료기기 제조자정보
@@ -20,6 +19,7 @@ synonyms:
   - 의료기기 모델명
   - 의료기기 품목허가
   - 제조원 국가
+summary_user: 식약처가 관리하는 의료기기 품목별 제조자 정보를 품목 일련번호 단위로 담으며, 품목명·허가일자·모델명(형상)·제조국·제조원 명칭·제조자 주소가 들어 있고 범위는 전국이다. 수입 의료기기 사업자나 분석가가 '특정 의료기기 품목을 실제로 어느 나라 어느 제조사가 만드는가', '한 제조사가 국내에 허가받은 품목은 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 식약처의 의료기기 품목허가 데이터와 품목 일련번호(MDEQ_PRDLST_SN)나 품목명·제조원 명칭을 맞춰 이어 쓴다.
 description_portal: 식품의약품안전처에서 관리하는 의료기기 제조자정보 데이터는 의료기기품목일련번호, 품목명, 허가일자, 형상(모델명), 개요명, 일련번호, 제조원국가, 제조원명칭, 제조자주소1, 제조자주소2 등의 항목을 포함합니다. 이 데이터를 통해 의료기기 제조자 말고도 제조자가 생산한 의료기기 관련 다양한 정보도 같이 파악할 수 있습니다. 이 데이터 기반으로 사용자가 평소에 관심있어 하는 의료기기의 제조자별 제품 현황 및 이와 관련된 다양한 정보 등의 특성을 보다 쉽게 확인하는데 많은 도움이 될 것입니다.
 team:
   dept: 데이터혁신기획팀
@@ -43,6 +43,7 @@ schema:
   fields:
     - name: MDEQ_PRDLST_SN
       type: number
+      semantic_type: meddev_item_sn
       null_rate: 0.0
       sample_values:
         - '199901380'
@@ -135,12 +136,26 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - MDEQ_PRDLST_SN
+      reference:
+        key: meddev_item_sn
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MANUF_CLT_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - PRMSN_YMD
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -185,7 +200,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073897-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: meddev_item_sn(MDEQ_PRDLST_SN)'
     evidence:
       - type: measured
         source: probe/stats/15073897.json
@@ -250,8 +265,6 @@ verification:
   run: probe/runs/15073897.json
   stats: probe/stats/15073897.json
   data: probe/data/15073897/
-status: active
-summary_user: 식약처가 관리하는 의료기기 품목별 제조자 정보를 품목 일련번호 단위로 담으며, 품목명·허가일자·모델명(형상)·제조국·제조원 명칭·제조자 주소가 들어 있고 범위는 전국이다. 수입 의료기기 사업자나 분석가가 '특정 의료기기 품목을 실제로 어느 나라 어느 제조사가 만드는가', '한 제조사가 국내에 허가받은 품목은 무엇인가'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 같은 식약처의 의료기기 품목허가 데이터와 품목 일련번호(MDEQ_PRDLST_SN)나 품목명·제조원 명칭을 맞춰 이어 쓴다.
 limits: 다른 기관 데이터와 바로 연결할 공통 코드가 없어 이름 매칭에 기대야 하며, 표기 차이로 누락·오매칭이 생길 수 있다. 제조자 주소는 문자열로만 제공되어 위치 분석에는 별도 주소 정제가 필요하다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -263,3 +276,4 @@ review:
     - c-15073897-03
     - c-15073897-04
   dropped_citations: 0
+status: active

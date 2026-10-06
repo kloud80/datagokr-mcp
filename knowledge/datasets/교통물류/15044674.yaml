@@ -1,4 +1,5 @@
-# Dataset 15044674 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15044674 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15044674'
 tier: verified
 title: 대전교통공사_역사 자전거보관대 세부 현황
@@ -24,6 +25,7 @@ synonyms:
   - 대전 1호선 자전거
   - 역세권 자전거 연계
   - 자전거 거치대 수
+summary_user: 대전 도시철도 역사별 자전거보관대를 관리번호 단위로 담은 건별 현황 파일(csv, 약 5KB)로, 역번호·역사명·보관대수·인접 출구를 담는다. 자전거로 역에 가려는 시민이나 역세권 교통 연계를 보는 분석가가 '어느 역 몇 번 출구 근처에 보관대가 몇 대 있는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 다른 역·출입구 데이터와는 역번호나 역사명을 이름·코드 매핑해 연결해야 한다.
 description_portal: 대전 도시철도 역사의 자전거보관대 세부 현황 자료는 역 주변 자전거 이용 환경을 종합적으로 파악할 수 있도록 다양한 정보를 포함해 구성되어 있습니다. 이 데이터에는 각 역사별 역명과 부역명, 시설 식별을 위한 관리번호, 실제 이용 가능 규모를 나타내는 보관대수, 그리고 이용자가 자전거보관대에 보다 편리하게 접근할 수 있도록 안내하는 인접 출구 정보 등이 체계적으로 정리되어 있습니다. 이러한 세부 항목들은 자전거보관대의 설치 위치와 접근성 분석, 역세권 교통 연계성 평가, 향후 시설 확충 및 개선 계획 수립 등 다양한 분야에서 활용될 수 있으며, 도시철도 이용자 편의 증진과 지속 가능한 교통 환경 조성에도 중요한 기초자료로 역할합니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +39,7 @@ schema:
   fields:
     - name: 역번호
       type: number
+      semantic_type: djtc_station_no
       null_rate: 0.0
       sample_values:
         - '103'
@@ -86,6 +89,12 @@ schema:
         - 2번 출구
       stats:
         unique: 9
+  foreign_keys:
+    - fields:
+        - 역번호
+      reference:
+        key: djtc_station_no
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -128,7 +137,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15044674-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: djtc_station_no(역번호)'
     evidence:
       - type: measured
         source: probe/stats/15044674.json
@@ -193,8 +202,6 @@ verification:
   run: probe/runs/15044674.json
   stats: probe/stats/15044674.json
   data: probe/data/15044674/
-status: active
-summary_user: 대전 도시철도 역사별 자전거보관대를 관리번호 단위로 담은 건별 현황 파일(csv, 약 5KB)로, 역번호·역사명·보관대수·인접 출구를 담는다. 자전거로 역에 가려는 시민이나 역세권 교통 연계를 보는 분석가가 '어느 역 몇 번 출구 근처에 보관대가 몇 대 있는가'를 확인하는 데 쓴다. 전역 조인 키는 없어 다른 역·출입구 데이터와는 역번호나 역사명을 이름·코드 매핑해 연결해야 한다.
 limits: 표준 역 코드 같은 전역 조인 키가 없어 다른 기관 철도 데이터와 바로 붙지 않고, 역명·역번호 매핑을 따로 해야 한다. 보관대 좌표가 없는 비공간 자료라 위치는 인접 출구로만 가늠한다.
 review:
   summary: draft
@@ -207,3 +214,4 @@ review:
     - c-15044674-04
     - c-15044674-06
   dropped_citations: 0
+status: active

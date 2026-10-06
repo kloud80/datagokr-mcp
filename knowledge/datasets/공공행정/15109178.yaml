@@ -1,4 +1,5 @@
-# Dataset 15109178 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109178 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109178'
 tier: verified
 title: 행정안전부_관보_대통령공고
@@ -20,6 +21,7 @@ synonyms:
   - 관보 PDF
   - 국가 공식 기관지
   - 고시공고
+summary_user: 관보에 실린 대통령 공고를 건별로 담으며, 공고마다 제목, 발행 희망일, 발행기관, 근거법령, 편집·테마 구분, 정정 여부와 사유, 원문 PDF 경로를 제공한다. 특정 법령을 근거로 한 대통령 공고가 언제 나왔는지, 정정된 공고가 있는지 확인하려는 국민·법무 담당자·분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 다른 관보 데이터나 법령 정보와는 근거법령명(basisLawNm)·발행기관명 같은 이름을 맞춰 연결해야 한다.
 description_portal: 관보는 국가가 국민에게 널리 알릴 사항을 수록하여 발행하는 국가의 공식 기관지로 '관보'라는 제호로 발간되는 정기간행물입니다. 관보는 헌법개정, 법률, 조약, 대통령령, 총리령 및 부령의 공포와 헌법개정안, 예산 및 예산 외 국고부담계약의 공고 수단입니다. 또한, 법령 공포, 대통령·국무총리훈령 및 대통령·국무총리 지시사항, 각급 기관의 인사발령 통지 등 정부 기관간의 공문 시행을 대체하는 역할을 합니다.이 데이터는 대통령 공고 목록, 상세정보(제목, 구분, 발행일자, 편집구분, 테마구분, 발행기관, 근거법령, 정정여부 등), 원문에 대한 정보를 제공합니다.
 team:
   dept: 법무담당관실
@@ -129,6 +131,7 @@ schema:
         unique: 1
     - name: cntntSeqNo
       type: code
+      semantic_type: gazette_cntnt_seq
       null_rate: 0.0
       sample_values:
         - I0000000000000001667124229189000
@@ -170,12 +173,23 @@ schema:
         p50: 8
         max: 8
         unique: 1
+  foreign_keys:
+    - fields:
+        - cntntSeqNo
+      reference:
+        key: gazette_cntnt_seq
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - cntntSj
+    - hopePblictDt
 cycle: default
 classification:
   subsector_name: 관보·고시공고
@@ -219,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109178-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gazette_cntnt_seq(cntntSeqNo)'
     evidence:
       - type: measured
         source: probe/stats/15109178.json
@@ -273,8 +287,6 @@ verification:
   run: probe/runs/15109178.json
   stats: probe/stats/15109178.json
   data: probe/data/15109178/
-status: active
-summary_user: 관보에 실린 대통령 공고를 건별로 담으며, 공고마다 제목, 발행 희망일, 발행기관, 근거법령, 편집·테마 구분, 정정 여부와 사유, 원문 PDF 경로를 제공한다. 특정 법령을 근거로 한 대통령 공고가 언제 나왔는지, 정정된 공고가 있는지 확인하려는 국민·법무 담당자·분석가가 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못했으므로, 다른 관보 데이터나 법령 정보와는 근거법령명(basisLawNm)·발행기관명 같은 이름을 맞춰 연결해야 한다.
 limits: 공통 코드 키가 없어 다른 데이터와는 이름 매칭으로만 붙일 수 있다. 범위는 전국 단위의 비공간 데이터라 지역별 분석에는 맞지 않는다. 개발계정 호출 한도는 하루 10,000회이다.
 review:
   summary: draft
@@ -286,3 +298,4 @@ review:
     - c-15109178-03
     - c-15109178-04
   dropped_citations: 0
+status: active

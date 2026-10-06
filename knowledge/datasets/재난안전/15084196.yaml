@@ -1,4 +1,3 @@
-# Dataset 15084196 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15084196'
 tier: verified
 title: 경찰청_사이버 범죄신고 접수 관서별 주소현황
@@ -24,6 +23,7 @@ synonyms:
   - 사이버수사 접수처
   - 불법 콘텐츠 신고
   - 경찰관서 목록
+summary_user: 전국 경찰서별로 사이버범죄 신고를 받는 관서의 지역, 명칭, 주소, 전화번호, 접수방법(홈페이지 등), 신고·접수 유형(사이버범죄, 불법 콘텐츠, 상담 및 제보 등)을 관서 한 곳당 한 행으로 담은 목록 파일(csv, 약 45KB)이다. 사이버 사기나 불법 콘텐츠 피해를 입은 국민이 '우리 지역에서 사이버범죄를 어디에, 어떤 방법으로 신고하나'를 확인하거나, 분석가가 지역별 신고 접수 창구 분포를 볼 때 쓴다. 공통 조인 키는 없으므로 경찰서 이름이나 주소를 매개로 경찰관서 위치 데이터나 경찰서 단위 범죄 발생·검거 통계와 맞춰 이어 쓴다.
 description_portal: '이 데이터는  지역별, 경찰서별, 주소, 전화번호, 접수방법, 사이버 범죄 신고 접수 유형별 사이버 범죄신고 접수 현황을 제공하는 공공데이터입니다. 각 경찰서의 명칭, 주소, 전화번호, 접수방법(예: 182 사이버범죄신고전화)과 신고·접수 유형(사이버범죄, 불법 콘텐츠, 상담 및 제보 등)이 포함됩니다. 이를 통해 이용자는 가까운 경찰서의 위치와 연락처, 사이버범죄 신고 절차를 손쉽게 파악할 수 있습니다. 데이터는 국민의 범죄 신고 접근성 향상, 사이버 범죄 예방 홍보, 민원 처리 시스템 개선, 연구기관의 정책 분석 등 다양한 분야에서 활용될수 있습니다.'
 accrual_periodicity: 수시
 team:
@@ -58,6 +58,7 @@ schema:
         unique: 17
     - name: 경찰서
       type: string
+      semantic_type: police_office
       null_rate: 0.0
       sample_values:
         - 서울중부경찰서
@@ -98,6 +99,12 @@ schema:
         - 정보통신망침해 및 이용 범죄, 불법 컨텐츠 범죄와 관련된 신고, 상담 및  제보 접수
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 경찰서
+      reference:
+        key: police_office
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -140,7 +147,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15084196-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: police_office(경찰서)'
     evidence:
       - type: measured
         source: probe/stats/15084196.json
@@ -205,8 +212,6 @@ verification:
   run: probe/runs/15084196.json
   stats: probe/stats/15084196.json
   data: probe/data/15084196/
-status: active
-summary_user: 전국 경찰서별로 사이버범죄 신고를 받는 관서의 지역, 명칭, 주소, 전화번호, 접수방법(홈페이지 등), 신고·접수 유형(사이버범죄, 불법 콘텐츠, 상담 및 제보 등)을 관서 한 곳당 한 행으로 담은 목록 파일(csv, 약 45KB)이다. 사이버 사기나 불법 콘텐츠 피해를 입은 국민이 '우리 지역에서 사이버범죄를 어디에, 어떤 방법으로 신고하나'를 확인하거나, 분석가가 지역별 신고 접수 창구 분포를 볼 때 쓴다. 공통 조인 키는 없으므로 경찰서 이름이나 주소를 매개로 경찰관서 위치 데이터나 경찰서 단위 범죄 발생·검거 통계와 맞춰 이어 쓴다.
 limits: 관서별 접수 창구 안내 목록이라 실제 신고 건수나 범죄 발생 통계는 담지 않는다. 표준 기관코드 같은 전역 키가 없어 다른 데이터와 연결하려면 경찰서명·주소를 직접 맞춰야 하며, 경찰서 단위 지표는 대검찰청 처리 통계와 기준이 다르다는 점에 유의한다.
 review:
   summary: draft
@@ -219,3 +224,9 @@ review:
     - c-15084196-04
     - c-15084196-06
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address

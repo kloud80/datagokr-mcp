@@ -1,4 +1,5 @@
-# Dataset 15101607 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15101607 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15101607'
 tier: verified
 title: 관세청_신성질별 국가별 수출입실적(GW)
@@ -22,6 +23,7 @@ synonyms:
   - 관세청 무역통계
   - 수출입 실적 국가별
   - 성질별 수출입
+summary_user: 관세청 수출입 신고에서 나온 실적을 신성질별 분류(대분류~세세분류, 최하위 755개 코드)와 국가별로 묶어 기간별 금액(달러)과 중량(KG)을 담은 집계 API로, 범위는 전국입니다. 무역 분석가나 수출기업이 '특정 국가로 나가는 반도체·이차전지 같은 관심 품목군의 수출액이 기간별로 어떻게 변했나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 국가코드(statCd)·국가명이나 성질코드(godsCd)를 이름·코드로 맞춰 다른 관세청 수출입 실적과 잇고, HS코드로 넓히려면 포털의 'HSK별 신성질별_성질별 분류' 연계표를 거친다.
 description_portal: "* 신성질별 분류를 국가별 수출입질적을 집계한 데이터로, 신성질별 분류란 기존 성질별(HS Code 10단위 세번을 상품 특성에 맞게 유사한 성질을 가진 품목끼리 집계한 분류체계(수입•수출  별도)) 분류에 무역환경 변화를 반영하여 2012년 새롭게 작성한 분류체계입니다. 성질별 분류에서 이원화되어있던 수출과 수입의 분류체계를 통일하고, 사회적 관심품목에 대한 통계를 보다 쉽게 확인할 수 있도록 분류를 세분화하였습니다. * 대분류-중분류-소분류-세분류-세세분류로 이루어져 있으며, 최하위단위(세세분류) 기준 755개의 코드로 구성되어 있습니다. 의 코드로 구성되어 있습니다.* 공공데이터 포털에서 ‘HSK별 신성질별_성질별 분류’ 데이터 또는 관세청 수출입무역통계 누리집  분류수출입무역통계 → 누리집 수출입실적 → (신)성질별 통계 → (신)성질명 세부검색 및 공지사항의 ‘2022 HS 신성질별, 성질별 연계표’를 통해 각 분류에 해당하는 HS코드 확인하실 수 있습니다.* 조회기간, 수출입구분코드, 국가코드를 이용하여 관세청 수출입통계정보의 기간, 수출입구분, 국가명, 국가코드, 성질명, 성질코드 등을 조회 할 수 있는 서비스.* 강원도가 강원특별자치도로 변경('23.6.11.)됨에 따라  참고자료에 강원특별자치도의 시도코드( 51)를 추가 반영하였습니다.※ '26.7.1.자 전남광주통합,인천 지방행정체계 개편으로 수출입신고 시도코드가 변경되었으니, 수출입실적 조회 시 참고하시기 바랍니다 - '26.7.1.이후 수출입실적 조회: 전남광주통합특별시 코드 12 - '26. 7월 이전 수출입실적 조회: 광주광역시 코드 29 / 전라남도 코드 46"
 team:
   dept: 데이터담당관
@@ -79,6 +81,7 @@ schema:
     - name: godsCd
       title: 성질코드
       type: number
+      semantic_type: kcs_gods_cd
       null_rate: 0.0
       sample_values:
         - '11010101'
@@ -106,6 +109,7 @@ schema:
     - name: statCd
       title: 국가코드
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - AE
@@ -141,6 +145,17 @@ schema:
         p50: 2016.01
         max: 2016.01
         unique: 1
+  foreign_keys:
+    - fields:
+        - godsCd
+      reference:
+        key: kcs_gods_cd
+      evidence: measured
+    - fields:
+        - statCd
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -190,7 +205,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15101607-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kcs_gods_cd(godsCd), country_cd(statCd)'
     evidence:
       - type: measured
         source: probe/stats/15101607.json
@@ -255,8 +270,6 @@ verification:
   run: probe/runs/15101607.json
   stats: probe/stats/15101607.json
   data: probe/data/15101607/
-status: active
-summary_user: 관세청 수출입 신고에서 나온 실적을 신성질별 분류(대분류~세세분류, 최하위 755개 코드)와 국가별로 묶어 기간별 금액(달러)과 중량(KG)을 담은 집계 API로, 범위는 전국입니다. 무역 분석가나 수출기업이 '특정 국가로 나가는 반도체·이차전지 같은 관심 품목군의 수출액이 기간별로 어떻게 변했나'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 국가코드(statCd)·국가명이나 성질코드(godsCd)를 이름·코드로 맞춰 다른 관세청 수출입 실적과 잇고, HS코드로 넓히려면 포털의 'HSK별 신성질별_성질별 분류' 연계표를 거친다.
 limits: 신성질별로 이미 묶인 집계라 HS 10단위 품목이나 시도·시군구·세관 단위 실적은 이 데이터만으로 볼 수 없다. 공통 조인 키가 없어 다른 데이터와는 코드·이름 매핑으로만 연결된다. 호출에는 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -269,3 +282,4 @@ review:
     - c-15101607-04
     - c-15101607-06
   dropped_citations: 0
+status: active

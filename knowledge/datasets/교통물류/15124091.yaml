@@ -1,0 +1,185 @@
+# Dataset 15124091 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15124091'
+tier: verified
+title: 경기도_버스 차량 모델
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15124091/fileData.do
+synonyms:
+  - 버스운송관리시스템
+  - 버스차종
+  - 버스제조사
+  - 차종정보
+  - 버스모델
+  - 제조사
+  - 버스 차종
+  - 버스 제조사
+  - 경기 버스 모델 목록
+  - 버스 차량 종류
+  - 시내버스 차종
+  - 경기데이터드림 버스
+summary_user: 경기도에서 운행 중인 버스의 차량 모델 목록으로, 제조사명(maker_nm)과 차종명(automb_nm)을 '[에디슨모터스] SMART9.3'처럼 모델 단위로 담은 참조 목록이며 운행 차량별 원천 기록은 아니다. 교통 분석가가 경기도 버스에 어떤 제조사·모델이 쓰이는지, 예를 들어 특정 제조사 차종이 목록에 있는지 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 버스 노선·차량 데이터와는 제조사명·차종명 같은 이름 매칭으로만 이어 쓸 수 있다.
+description_portal: "이 데이터는 경기도에서 운영 중인 버스의 차량 모델 정보를 제공하며, 제조사명과 차종을 항목으로 포함합니다. 각 버스 모델은 제조사에 따라 구분되며, '[에디슨모터스] SMART9.3'과 같이 브랜드와 모델명이 함께 제공되어 식별이 용이합니다. 주요 제조사로는 에디슨모터스, 대우, 디피코, 범한자동차 등이 있으며, 일부 차량은 특수 관광용 버스(예: 트롤리버스)도 포함됩니다. 이 데이터는 차량 관리, 운행 노선별 차량 분포 분석, 친환경 차량 보급률 조사 등 다양한 교통 정책 및 운송 계획 수립에 활용될 수 있습니다. 또한, 차량 노후도 분석이나 제조사별 정비 이력 관리에도 유용하게 사용될 수 있습니다."
+accrual_periodicity: 수시
+team:
+  dept: AI미래행정과
+services:
+  - op: sheet
+    name: sheet
+    endpoint: https://data.gg.go.kr/portal/data/sheet/searchSheetData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: maker_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대우
+        - 기아
+        - 현대
+      stats:
+        unique: 22
+    - name: automb_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '[에디슨모터스] smart 11HG'
+        - '[대우] BS110CN'
+        - '[대우] BS110경유'
+      stats:
+        unique: 100
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3826
+  rank_in_sector: 3942
+  brm: 교통물류 - 도로
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15124091-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15124091.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15124091-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124091-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15124091.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124091-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15124091.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15124091-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15124091-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15124091-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15124091.json
+  stats: probe/stats/15124091.json
+  data: probe/data/15124091/
+limits: 이 목록만으로는 노선별 차량 분포나 차량 대수·노후도를 알 수 없고, 다른 데이터와 연결하려면 이름 매핑이 필요하다. 호출에는 포털 활용신청과 별개로 외부 사이트 data.gg.go.kr의 인증키(경로 파라미터 KEY)를 받아야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15124091-01
+    - c-15124091-03
+    - c-15124091-04
+  dropped_citations: 0
+status: active

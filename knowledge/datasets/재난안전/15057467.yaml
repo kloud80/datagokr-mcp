@@ -77,6 +77,7 @@ schema:
     - name: afos_fid
       title: 다발지역FID
       type: number
+      semantic_type: taas_afos_id
       null_rate: 0.0
       sample_values:
         - '6467425'
@@ -90,6 +91,7 @@ schema:
     - name: afos_id
       title: 다발지역ID
       type: number
+      semantic_type: taas_afos_id
       null_rate: 0.0
       sample_values:
         - '2018074'
@@ -115,6 +117,7 @@ schema:
     - name: spot_cd
       title: 지점코드
       type: number
+      semantic_type: taas_spot_cd
       null_rate: 0.0
       sample_values:
         - '11200001'
@@ -263,9 +266,24 @@ schema:
         unique: 3
   foreign_keys:
     - fields:
+        - afos_fid
+      reference:
+        key: taas_afos_id
+      evidence: measured
+    - fields:
+        - afos_id
+      reference:
+        key: taas_afos_id
+      evidence: measured
+    - fields:
         - bjd_cd
       reference:
         key: bjd_cd
+      evidence: measured
+    - fields:
+        - spot_cd
+      reference:
+        key: taas_spot_cd
       evidence: measured
     - fields:
         - sido_sgg_nm
@@ -285,6 +303,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lo_crd
+    - la_crd
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 사고 다발지역·지역 사고 (교통사고 다발지역·무단횡단·물놀이·해양사고 이력)
@@ -328,7 +352,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15057467-03
     kind: key
-    value: '실측 조인 키: bjd_cd(bjd_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
+    value: '실측 조인 키: taas_afos_id(afos_fid), taas_afos_id(afos_id), bjd_cd(bjd_cd), taas_spot_cd(spot_cd), admin_area_code(sido_sgg_nm), coord(lo_crd), coord(la_crd)'
     evidence:
       - type: measured
         source: probe/stats/15057467.json

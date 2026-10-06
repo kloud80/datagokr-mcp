@@ -1,4 +1,3 @@
-# Dataset 3065599 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '3065599'
 tier: verified
 title: 병무청 병역일터 채용공고
@@ -25,6 +24,7 @@ synonyms:
   - 대체복무 일자리
   - 보충역 산업기능요원
   - 병역특례 업체
+summary_user: 병역지정업체(전문연구요원·산업기능요원)의 채용공고를 공고 한 건 단위로 담는 전국 범위 원천 데이터로, 업체명·업종·근무지·요원 구분·역종·학력·경력 조건·마감일 등을 포함한다. 산업기능요원이나 전문연구요원으로 편입·전직하려는 사람이 '내 지역에서 보충역을 뽑는 IT 업종 지정업체 공고가 지금 있는가'를 찾을 때 쓰고, 분석가는 지역·업종별 병역특례 채용 수요를 볼 때 쓴다. 전역 조인 키는 없어 다른 병역지정업체 데이터와는 업체명이나 사업자등록번호(saeopjaDrno)·주소 같은 이름·코드 매핑으로 이어 쓴다.
 description_portal: 병역지정업체에 편입 및 전직을 하고자 하는 사람은 병역일터 채용공고란에서 복무형태, 기업규모, 업종, 업체명, 소재지, 역종, 전직자 채용여부 등을 확인하여 지원할 수 있습니다. 현역병입영대상자는 학력별 기술자격 등급기준에 해당하는 사람이 해당되고, 사회복무요원 소집대상 보충역, 사회복무요원 복무중단자, 현역병 복무중 보충역 편입자는기술자격 불요합니다.(단, 정보처리 직무분야 근무자는 관련학과 전공, 기술훈련과정 수료, 해당분야 근무경력 2년 이상 필요(단, 보충역은 국가기술자격(정보처리, 전자계산기조직응용, 빅데이터분석) 및 일학습병행자격(정보기술 분류 종목) 소지자인 경우 1년 이상 편입 가능)
 team:
   dept: 사회복무국 산업지원과
@@ -156,6 +156,7 @@ schema:
         unique: 339
     - name: eopjongGbcd
       type: number
+      semantic_type: mma_industry_cd
       null_rate: 0.0
       sample_values:
         - '11102'
@@ -412,6 +413,12 @@ schema:
         - (하)
       stats:
         unique: 4
+  foreign_keys:
+    - fields:
+        - eopjongGbcd
+      reference:
+        key: mma_industry_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -461,7 +468,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3065599-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: mma_industry_cd(eopjongGbcd)'
     evidence:
       - type: measured
         source: probe/stats/3065599.json
@@ -526,8 +533,6 @@ verification:
   run: probe/runs/3065599.json
   stats: probe/stats/3065599.json
   data: probe/data/3065599/
-status: active
-summary_user: 병역지정업체(전문연구요원·산업기능요원)의 채용공고를 공고 한 건 단위로 담는 전국 범위 원천 데이터로, 업체명·업종·근무지·요원 구분·역종·학력·경력 조건·마감일 등을 포함한다. 산업기능요원이나 전문연구요원으로 편입·전직하려는 사람이 '내 지역에서 보충역을 뽑는 IT 업종 지정업체 공고가 지금 있는가'를 찾을 때 쓰고, 분석가는 지역·업종별 병역특례 채용 수요를 볼 때 쓴다. 전역 조인 키는 없어 다른 병역지정업체 데이터와는 업체명이나 사업자등록번호(saeopjaDrno)·주소 같은 이름·코드 매핑으로 이어 쓴다.
 limits: 공통 조인 키가 없어 지정업체 원장·인원배정 데이터와 연결할 때는 업체명·사업자번호 매칭에 의존해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -540,3 +545,9 @@ review:
     - c-3065599-04
     - c-3065599-06
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - hmpgAddr
+  space_via: address

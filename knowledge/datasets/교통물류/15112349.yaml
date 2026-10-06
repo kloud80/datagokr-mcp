@@ -1,0 +1,217 @@
+# Dataset 15112349 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15112349'
+tier: verified
+title: 경기도_시군별 주유소 평균가격
+sector: 교통물류/도로/ev-fuel
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15112349/openapi.do
+synonyms:
+  - 주유소
+  - 휘발유
+  - 가격
+  - 평균가격
+  - 기름
+  - 오피넷
+  - 유가
+  - 기름값
+  - 휘발유 가격
+  - 경유 가격
+  - 지역별 유가
+  - LPG 가격
+  - 경기데이터드림
+summary_user: 오피넷이 게시하는 시군별 주유소 평균가격 중 경기도 시군 분을 시군·제품(휘발유·고급휘발유·경유·LPG 등)별 평균가격과 전일 대비 등락값으로 담은 집계 데이터다. 운전자나 분석가가 "오늘 우리 시군의 경유 평균가격이 인접 시군보다 비싼가, 어제보다 얼마나 올랐나"를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 다른 시군구 단위 데이터와는 시군 코드(SIGUN_CD)나 시군명을 이름·코드 매핑해 붙여 쓴다.
+description_portal: 오피넷(https://www.opinet.co.kr/user/custapi/custApiInfo.do) 에서 게시하고 있는 시군별 주유소 평균 가격 정보 중 경기도에 해당하는 데이터를 제공합니다.시군별 제품별 평균 가격 및 전일 대비 등락 값을 제공합니다.이 데이터는 경기도 내 각 시군별 주유소에서 판매되는 주요 유류 제품(B034, C004, D047, K015 등)의 평균가격과 전일 대비 등락값을 기록한 자료입니다. 주요 항목으로는 ‘시군명’, ‘제품구분’, ‘평균가격’, ‘전일대비 등락값’이 있으며, 지역별 연료 가격 비교, 에너지 시장 동향 분석, 유류세 변동 효과 파악 등 다양한 정책 및 연구 분석에 활용할 수 있습니다. 제품구분은 가솔린, 경유, LPG, 고급휘발유 등 다양한 연료유형을 나타내며, 등락값은 전일 가격 변화량을 수치로 제공하여 시계열 변화 분석에 유용합니다.특정 시군의 연료비 부담, 주유소 운영 전략, 공공 교통정책 수립 등의 데이터 기반 의사결정에 활용 가능합니다.
+team:
+  dept: AI미래행정과
+services:
+  - op: GASSTATIONAVGPRICE
+    name: GASSTATIONAVGPRICE
+    endpoint: https://openapi.gg.go.kr/GASSTATIONAVGPRICE
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SIGUN_CD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: SIGUN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기 수원시
+      stats:
+        unique: 1
+    - name: PROD_DIV
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - B027
+        - B034
+        - C004
+      stats:
+        unique: 5
+    - name: AVG_PC
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2001'
+        - '2423'
+        - '1694'
+      stats:
+        min: 1037
+        p50: 1997
+        max: 2423
+        unique: 5
+    - name: FLCTN_VL
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '-0.11'
+        - '0.51'
+      stats:
+        min: -0.11
+        p50: 0
+        max: 0.51
+        unique: 3
+    - name: DATA_STD_DE
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+coverage:
+  spatial: 시도
+  admin_unit: 시군구
+cycle: default
+classification:
+  subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.7409
+  rank_in_sector: 222
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15112349-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15112349.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15112349-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15112349-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15112349.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15112349-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15112349.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15112349-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15112349-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15112349.json
+  stats: probe/stats/15112349.json
+  data: probe/data/15112349/
+limits: 개별 주유소 가격이 아니라 시군 단위 평균이라 주유소별 비교는 하지 못하고, 범위는 경기도 시군구에 한정된다. 호출하려면 포털 활용신청과 별개로 경기데이터드림(data.gg.go.kr) 인증키를 받아 KEY 파라미터로 넣어야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15112349-01
+    - c-15112349-03
+    - c-15112349-04
+  dropped_citations: 0
+status: active

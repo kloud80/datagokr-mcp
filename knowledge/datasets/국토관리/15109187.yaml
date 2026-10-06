@@ -1,4 +1,5 @@
-# Dataset 15109187 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109187 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109187'
 tier: verified
 title: 대구광역시_가로수조회서비스
@@ -24,6 +25,7 @@ synonyms:
   - 수목 관리번호
   - 도시녹지
   - 가로수 보호틀
+summary_user: 대구광역시 가로수를 한 그루 단위로 담은 건별 원천 데이터로, 위경도 좌표 중심 반경(km) 안의 수목 목록과 수목명·관리기관·식재 도로와 주소·흉고직경·수령·보호틀 상태·간섭 시설물·이미지 정보를 조회한다. 구청이나 연구자가 '이 지점 반경 1km 안 가로수는 어떤 수종이고 보호틀 파손이나 뿌리 들림이 있는가'를 확인해 녹지 관리나 정비 대상을 고르는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 도로명·지번 주소, 행정동명, 좌표(treeLat·treeLot)로 맞춰 이어 써야 한다.
 description_portal: WGS84 위경도 좌표를 중심으로 좌표로부터 반경거리(km단위) 내에 존재하는 대구광역시 가로수의 목록과 기본정보를 조회할 수 있는 서비스입니다. 조회 항목은 기본정보(수목 관리번호, 수목명, 수목구분, 수목특성, 수목관리기관 정보 등), 도로, 위치(식재지 도로명 및 지번 주소, 행정동 등), 생육(지표면 1.2m 높이에서의 지름, 수목나이 등), 상태(보호틀 덮개 재질 및 종류, 수목과 간섭 발생 시설물 등), 이미지 정보를 제공합니다. 가로수 식재 및 생육 정보를 바탕으로 도시 녹지 관리 정책을 수립하거나, 미세먼지 저감 효과를 분석하여 도시 환경 개선, 가로수 관리 최적화, 연구 및 데이터 분석, 스마트 도시 구축 등에 활용될 수 있습니다.
 team:
   dept: 산림녹지과
@@ -394,6 +396,15 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - dongNm
+  space_via: name
+  time: day
+  time_fields:
+    - plantingYmd
+    - crtrYmd
 cycle: default
 classification:
   subsector_name: 도시·군계획시설 (결정·집행·장기미집행)
@@ -531,8 +542,6 @@ verification:
   run: probe/runs/15109187.json
   stats: probe/stats/15109187.json
   data: probe/data/15109187/
-status: active
-summary_user: 대구광역시 가로수를 한 그루 단위로 담은 건별 원천 데이터로, 위경도 좌표 중심 반경(km) 안의 수목 목록과 수목명·관리기관·식재 도로와 주소·흉고직경·수령·보호틀 상태·간섭 시설물·이미지 정보를 조회한다. 구청이나 연구자가 '이 지점 반경 1km 안 가로수는 어떤 수종이고 보호틀 파손이나 뿌리 들림이 있는가'를 확인해 녹지 관리나 정비 대상을 고르는 데 쓴다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 도로명·지번 주소, 행정동명, 좌표(treeLat·treeLot)로 맞춰 이어 써야 한다.
 limits: 상세 조회 오퍼레이션(/getRoadsideTreeItem)은 최소 파라미터로 응답이 없었고, 필수 파라미터 id는 목록 조회에서 먼저 받아 넘겨야 한다. 2026-10-04 실호출에서 두 오퍼레이션 중 하나만 성공했으며, 개발계정은 하루 1,000회로 제한된다.
 review:
   summary: draft
@@ -546,3 +555,4 @@ review:
     - c-15109187-10
     - c-15109187-11
   dropped_citations: 0
+status: active

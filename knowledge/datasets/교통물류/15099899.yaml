@@ -1,4 +1,5 @@
-# Dataset 15099899 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15099899 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099899'
 tier: verified
 title: 서울교통공사_역별 일평균 승하차인원 정보
@@ -22,6 +23,7 @@ synonyms:
   - 서울 지하철 이용량
   - 유동인구 지하철
   - 일평균 승차인원
+summary_user: 서울교통공사 관할 1~8호선 역별로 하루 평균 승차인원과 하차인원을 연 단위로 집계한 파일(CSV, 약 8KB)입니다. 필드 목록상 2007년 일평균 값이 들어 있으며, 연번·호선·역번호·역명과 함께 제공됩니다. 분석가나 사업자가 '2007년 무렵 어느 지하철역의 이용객이 많았나'처럼 역별 이용 규모를 비교하거나, 유동인구를 대신하는 지표로 상권을 가늠할 때 씁니다. 전역 조인 키가 없어서, 다른 역 단위 데이터와는 역명이나 서울교통공사 역번호를 맞춰 연결합니다.
 description_portal: 서울교통공사 1-8호선 역별 일평균 승하차인원 정보 입니다. 해당 데이터는 연번, 호선, 역번호, 역명, 연평균승차정보, 연평균 하차정보로 구성되어 있습니다. (2006년 이전데이터는 정보 부존재로 2006년 데이터 부터 게시합니다.) 수시 자료이므로, 1회로만 제공하는 데이터 입니다. 1호선의 경우에는 청량리~서울역까지가 서울교통공사 구간이며, 4호선은 남태령 이후 구간은 한국철도공사, 불암산 이후는 남양주도시공사가 관할하고 있습니다. 마지막으로, 8호선의 경우에는 암사역사공원역까지가 서울교통공사 관할이며, 나머지 구간은 구리와 남양주 도시공사가 양분하여 관할하고 있습니다.
 accrual_periodicity: 수시
 team:
@@ -59,6 +61,7 @@ schema:
         unique: 8
     - name: 역번호
       type: number
+      semantic_type: seoul_metro_station_fr_cd
       null_rate: 0.0
       sample_values:
         - '150'
@@ -102,6 +105,12 @@ schema:
         p50: 12651
         max: 100635
         unique: 262
+  foreign_keys:
+    - fields:
+        - 역번호
+      reference:
+        key: seoul_metro_station_fr_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -144,7 +153,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15099899-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: seoul_metro_station_fr_cd(역번호)'
     evidence:
       - type: measured
         source: probe/stats/15099899.json
@@ -209,8 +218,6 @@ verification:
   run: probe/runs/15099899.json
   stats: probe/stats/15099899.json
   data: probe/data/15099899/
-status: active
-summary_user: 서울교통공사 관할 1~8호선 역별로 하루 평균 승차인원과 하차인원을 연 단위로 집계한 파일(CSV, 약 8KB)입니다. 필드 목록상 2007년 일평균 값이 들어 있으며, 연번·호선·역번호·역명과 함께 제공됩니다. 분석가나 사업자가 '2007년 무렵 어느 지하철역의 이용객이 많았나'처럼 역별 이용 규모를 비교하거나, 유동인구를 대신하는 지표로 상권을 가늠할 때 씁니다. 전역 조인 키가 없어서, 다른 역 단위 데이터와는 역명이나 서울교통공사 역번호를 맞춰 연결합니다.
 limits: 연평균 일 단위 집계라 시간대별·요일별 승하차나 출발지-도착지(OD) 흐름은 알 수 없습니다. 1호선은 청량리~서울역 구간만 담고, 4호선 남태령 이후와 8호선 암사역사공원역 이후처럼 다른 기관이 관할하는 구간은 빠져 있습니다. 포털 설명상 한 번만 제공하는 수시 자료이므로 최신 연도로 갱신될 것을 전제하면 안 됩니다.
 review:
   summary: draft
@@ -222,3 +229,4 @@ review:
     - c-15099899-03
     - c-15099899-06
   dropped_citations: 0
+status: active

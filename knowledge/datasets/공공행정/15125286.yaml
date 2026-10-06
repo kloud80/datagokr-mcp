@@ -1,4 +1,5 @@
-# Dataset 15125286 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125286 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125286'
 tier: verified
 title: 재정경제부_공공기관 사업정보 조회서비스
@@ -21,6 +22,7 @@ synonyms:
   - 기관 고유사업
   - 정부 지원사업 검색
   - 공공기관 혜택
+summary_user: 공공기관이 수행하는 주요 사업과 대민서비스를 사업 단위(사업상세일련번호) 건별로 담으며, 기관명·사업명·사업분류·서비스분류·사업기간·이용대상·이용방법·생애주기·안내 사이트를 포함하고 범위는 전국·비공간이다. 국민이나 분석가가 "내 생애주기나 처지에 해당하는 공공기관 지원사업은 무엇이고 어떻게 신청하나" 같은 질문에 쓴다. 전역 조인 키는 실측에서 확인되지 않았고, 기관코드나 행정표준기관코드(pbadmsStdInstCd)를 통해 같은 기관의 다른 데이터와 이름·코드 매핑으로만 잇는다.
 description_portal: 해당 데이터는 공공기관에서 수행 중인 국가 주요 사업 및 국민 편의를 위한 각종 대민서비스 정보를 종합적으로 제공하는 서비스입니다. 이 서비스를 통해 사용자는 각 공공기관이 수행하는 사업의 목적, 대상, 운영방식 등 구체적인 정보를 확인할 수 있으며, 지역사회나 개인에게 실질적인 혜택이 되는 공공서비스를 효과적으로 탐색할 수 있습니다. 특히, 대민지원 사업, 민원 처리 서비스, 생활밀착형 정책사업 등 국민생활과 직결된 다양한 공공기관의 고유사업 정보를 포함하고 있어 행정정보 활용도를 높이고 공공서비스에 대한 국민 접근성을 향상시키는 데 기여합니다.
 team:
   dept: 경영관리과
@@ -103,6 +105,7 @@ schema:
     - name: instCd
       title: 기관코드
       type: string
+      semantic_type: alio_inst_cd
       null_rate: 0.0
       sample_values:
         - C0396
@@ -113,6 +116,7 @@ schema:
     - name: pbadmsStdInstCd
       title: 행정표준기관코드
       type: string
+      semantic_type: instt_cd
       null_rate: 0.0
       sample_values:
         - B552555
@@ -304,6 +308,17 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - instCd
+      reference:
+        key: alio_inst_cd
+      evidence: measured
+    - fields:
+        - pbadmsStdInstCd
+      reference:
+        key: instt_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -353,7 +368,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125286-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: alio_inst_cd(instCd), instt_cd(pbadmsStdInstCd)'
     evidence:
       - type: measured
         source: probe/stats/15125286.json
@@ -418,8 +433,6 @@ verification:
   run: probe/runs/15125286.json
   stats: probe/stats/15125286.json
   data: probe/data/15125286/
-status: active
-summary_user: 공공기관이 수행하는 주요 사업과 대민서비스를 사업 단위(사업상세일련번호) 건별로 담으며, 기관명·사업명·사업분류·서비스분류·사업기간·이용대상·이용방법·생애주기·안내 사이트를 포함하고 범위는 전국·비공간이다. 국민이나 분석가가 "내 생애주기나 처지에 해당하는 공공기관 지원사업은 무엇이고 어떻게 신청하나" 같은 질문에 쓴다. 전역 조인 키는 실측에서 확인되지 않았고, 기관코드나 행정표준기관코드(pbadmsStdInstCd)를 통해 같은 기관의 다른 데이터와 이름·코드 매핑으로만 잇는다.
 limits: 좌표나 시설 위치 정보가 없는 비공간 데이터라 시설 단위 지도 분석에는 쓰지 못한다. 전역 조인 키가 없어 다른 데이터와는 기관 코드·이름 매핑으로만 연결된다. 개발계정은 하루 1,000회 호출로 제한된다.
 review:
   summary: draft
@@ -431,3 +444,4 @@ review:
     - c-15125286-03
     - c-15125286-04
   dropped_citations: 0
+status: active

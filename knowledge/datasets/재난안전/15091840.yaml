@@ -1,4 +1,5 @@
-# Dataset 15091840 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15091840 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15091840'
 tier: verified
 title: 한국산업안전보건공단_민간위탁_화학_유해위험물질 취급현황
@@ -20,6 +21,7 @@ synonyms:
   - 사업장 화학물질 저장량
   - 산업안전 위탁사업
   - 업종별 유해물질
+summary_user: 한국산업안전보건공단 민간위탁 화학 분야 사업에서 조사한 사업장별 유해위험물질 취급 내역을 지원년도·업종·생산품·취급물질(카스번호·함유량)·일일취급량·최대저장량 단위로 담은 건별 파일(약 22MB CSV)이며 범위는 전국이다. 안전보건 분석가나 연구자가 '어떤 업종에서 특정 카스번호 물질을 얼마나 취급·저장하는가'처럼 업종별 화학물질 취급 실태를 파악하는 데 쓴다. 전역 조인 키는 없어 카스번호나 물질명으로 화학물질 정보 데이터와, 일선기관명·고용노동부명이나 업종명으로 같은 기관 데이터와 이름 매핑으로만 이어 쓴다.
 description_portal: 한국산업안전보건공단에서 실시 중인 민간위탁 사업 중 화학 분야(유해위험물질 취급현황)에 대한 데이터로 지원년도, 업종, 화학물질 일련번호, 취급물질, 카스번호, 함유량, 취급량 등에 대한 정보를 제공합니다
 accrual_periodicity: 수시
 team:
@@ -63,6 +65,7 @@ schema:
         unique: 51
     - name: 대업종명
       type: code
+      semantic_type: comwel_iaci_biz_type_cd
       null_rate: 0.0125
       sample_values:
         - 제조업
@@ -123,6 +126,7 @@ schema:
         unique: 17
     - name: 카스번호
       type: code
+      semantic_type: cas_no
       null_rate: 0.0
       sample_values:
         - 108-88-3
@@ -254,12 +258,27 @@ schema:
         - kg
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 대업종명
+      reference:
+        key: comwel_iaci_biz_type_cd
+      evidence: measured
+    - fields:
+        - 카스번호
+      reference:
+        key: cas_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 지원년도
 cycle: event
 classification:
   subsector_name: 재난 특보·위험지역 (재난문자·방재정보·재해위험지구·급경사지·인명피해우려지역·방사능 방재·화학사고·위험물)
@@ -300,7 +319,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15091840-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: comwel_iaci_biz_type_cd(대업종명), cas_no(카스번호)'
     evidence:
       - type: measured
         source: probe/stats/15091840.json
@@ -365,8 +384,6 @@ verification:
   run: probe/runs/15091840.json
   stats: probe/stats/15091840.json
   data: probe/data/15091840/
-status: active
-summary_user: 한국산업안전보건공단 민간위탁 화학 분야 사업에서 조사한 사업장별 유해위험물질 취급 내역을 지원년도·업종·생산품·취급물질(카스번호·함유량)·일일취급량·최대저장량 단위로 담은 건별 파일(약 22MB CSV)이며 범위는 전국이다. 안전보건 분석가나 연구자가 '어떤 업종에서 특정 카스번호 물질을 얼마나 취급·저장하는가'처럼 업종별 화학물질 취급 실태를 파악하는 데 쓴다. 전역 조인 키는 없어 카스번호나 물질명으로 화학물질 정보 데이터와, 일선기관명·고용노동부명이나 업종명으로 같은 기관 데이터와 이름 매핑으로만 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터와는 이름·코드 매핑으로만 연결되며, 비공간 데이터라 사업장 위치를 지도에 올릴 수 없다. 명세상 이벤트성으로 생성 후 고정되는 수시 자료라 정기 갱신을 전제하면 안 되고, 취급량·저장량은 단위코드 필드와 함께 해석해야 한다.
 review:
   summary: draft
@@ -379,3 +396,4 @@ review:
     - c-15091840-03
     - c-15091840-04
   dropped_citations: 0
+status: active

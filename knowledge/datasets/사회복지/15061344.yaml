@@ -1,4 +1,5 @@
-# Dataset 15061344 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15061344 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15061344'
 tier: verified
 title: 금융위원회_금융통계농업협동조합정보
@@ -23,6 +24,7 @@ synonyms:
   - 농협중앙회 통계
   - 협동조합 금융통계
   - 상호금융 통계
+summary_user: 농업협동조합(농협중앙회·단위 농협)의 일반현황, 재무상태, 주요경영지표를 기준년월(basYm)과 조합(금융회사 코드·명)별로 담는 집계형 금융통계로, 범위는 전국이며 공간 정보는 없다. 분석가나 금융·지역경제 연구자가 특정 단위 농협의 자산·부채 구조나 ROA·ROE 같은 경영성과가 시기별로 어떻게 변했는지 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 법인등록번호를 가진 기업·법인 정보나 다른 금융위원회 금융통계 데이터와 이어 쓴다.
 description_portal: '금융통계농업협동조합정보는 기준년월 및 조합명을 기준으로 농업협동조합의 일반현황, 재무상태, 경영성과 등을 제공하는 데이터입니다. 농협중앙회 및 단위 농협의 경영지표를 시계열로 분석할 수 있도록 제공합니다.이 데이터는 3개 오퍼레이션으로 구성되어 있습니다.각 오퍼레이션은 다음과 같습니다.① 농업협동조합 일반현황 조회 : 설립일자, 지역분포, 본점소재지 등 일반정보를 제공합니다.② 농업협동조합 재무현황 조회 : 자산, 부채, 자본 등 농협의 재무구조를 조회할 수 있습니다.③ 농업협동조합 주요경영지표 조회 : 순이익률, ROA, ROE 등 주요 경영성과 지표를 제공합니다.'
 team:
   dept: 금융공공데이터팀
@@ -71,6 +73,7 @@ schema:
         unique: 27
     - name: fncoCd
       type: string
+      semantic_type: fnco_cd
       null_rate: 0.0
       sample_values:
         - '0010027453817'
@@ -153,6 +156,11 @@ schema:
       reference:
         key: corp_rgst_no
       evidence: measured
+    - fields:
+        - fncoCd
+      reference:
+        key: fnco_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -203,7 +211,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15061344-03
     kind: key
-    value: '실측 조인 키: corp_rgst_no(crno)'
+    value: '실측 조인 키: corp_rgst_no(crno), fnco_cd(fncoCd)'
     evidence:
       - type: measured
         source: probe/stats/15061344.json
@@ -257,8 +265,6 @@ verification:
   run: probe/runs/15061344.json
   stats: probe/stats/15061344.json
   data: probe/data/15061344/
-status: active
-summary_user: 농업협동조합(농협중앙회·단위 농협)의 일반현황, 재무상태, 주요경영지표를 기준년월(basYm)과 조합(금융회사 코드·명)별로 담는 집계형 금융통계로, 범위는 전국이며 공간 정보는 없다. 분석가나 금융·지역경제 연구자가 특정 단위 농협의 자산·부채 구조나 ROA·ROE 같은 경영성과가 시기별로 어떻게 변했는지 확인하는 데 쓴다. 법인등록번호(crno)가 실측 조인 키여서 법인등록번호를 가진 기업·법인 정보나 다른 금융위원회 금융통계 데이터와 이어 쓴다.
 limits: 전국 단위 비공간 데이터라 지도나 행정구역별 분석에 바로 쓰기 어렵다. 실호출로 확인된 오퍼레이션은 1개뿐이어서 재무현황·경영지표 오퍼레이션의 응답 항목은 별도 확인이 필요하다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -271,3 +277,4 @@ review:
     - c-15061344-04
     - c-15061344-06
   dropped_citations: 0
+status: active

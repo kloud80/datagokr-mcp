@@ -1,4 +1,5 @@
-# Dataset 15071882 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15071882 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15071882'
 tier: verified
 title: 산림청_산림자원통합정보_매각체결정보
@@ -25,6 +26,7 @@ synonyms:
   - 임산물 입찰 계약
   - 목재 판매 계약
   - 계약보증금
+summary_user: 산림자원통합정보시스템에 기록된 국유림 등 산림자원(입목·원목) 매각사업의 계약 체결 정보를 매각사업번호 단위로 담은 전국 범위 파일(csv, 약 16KB)이며, 매각대금·계약보증금·대금 납부 기간·계약일을 포함한다. 임산물 유통업체나 분석가가 산림자원 매각 계약이 언제 얼마에 체결되었고 대금 납부 기한이 어떻게 잡혔는지 확인할 때 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키는 없어, 매각사업번호를 기준으로 같은 산림청 산림자원통합정보의 매각 관련 데이터와 이름·번호를 맞춰 연결해야 한다.
 description_portal: 산림자원통합정보시스템을 기반으로, 산림자원 매각사업과 관련된 계약 체결 현황을 기록한 데이터입니다. 이 자료는 국유림 등에서 생산된 입목 또는 원목 등 산림자원을 대상으로 한 공개입찰, 수의계약 등의 방식으로 체결된 계약 정보를 제공하며, 계약일자, 계약금액, 매수인, 매각물량, 계약번호 등이 포함되어 있습니다. 이 데이터는 산림자원 매각의 투명성 확보, 계약 이행 관리, 수익 분석, 입찰 기록 추적 등에 활용되며, 공공기관 및 관련 업체에서 사업계획 수립, 가격 동향 분석, 유통 구조 개선 등을 위해 참조합니다.
 accrual_periodicity: 수시
 team:
@@ -108,6 +110,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 매각대금납부시작일
+    - 매각대금납부종료일
+    - 계약일
 cycle: default
 classification:
   subsector_name: 산림 자원 (임상도·국가산림자원조사·수종·탄소·산림 통계·종자)
@@ -209,8 +217,6 @@ verification:
   run: probe/runs/15071882.json
   stats: probe/stats/15071882.json
   data: probe/data/15071882/
-status: active
-summary_user: 산림자원통합정보시스템에 기록된 국유림 등 산림자원(입목·원목) 매각사업의 계약 체결 정보를 매각사업번호 단위로 담은 전국 범위 파일(csv, 약 16KB)이며, 매각대금·계약보증금·대금 납부 기간·계약일을 포함한다. 임산물 유통업체나 분석가가 산림자원 매각 계약이 언제 얼마에 체결되었고 대금 납부 기한이 어떻게 잡혔는지 확인할 때 쓴다. 실측 컬럼에 다른 데이터와 공통으로 쓰는 조인 키는 없어, 매각사업번호를 기준으로 같은 산림청 산림자원통합정보의 매각 관련 데이터와 이름·번호를 맞춰 연결해야 한다.
 limits: 전역 조인 키가 없어 지역·임상·수종 데이터와 직접 결합할 수 없고, 행정단위 구분이 없는 비공간 자료라 지역별 분석에는 쓰기 어렵다. 실측 컬럼에는 매수인·매각물량이 보이지 않으므로 물량당 가격 분석은 이 파일만으로 하기 어렵다.
 review:
   summary: draft
@@ -222,3 +228,4 @@ review:
     - c-15071882-03
     - c-15071882-04
   dropped_citations: 0
+status: active

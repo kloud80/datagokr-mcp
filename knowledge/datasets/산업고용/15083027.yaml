@@ -1,4 +1,5 @@
-# Dataset 15083027 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15083027 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083027'
 tier: verified
 title: 한국에너지공단_급수처리시설 인증제품
@@ -21,6 +22,7 @@ synonyms:
   - 보일러 급수처리
   - 스케일 방지장치
   - 에너지공단 인증 모델 목록
+summary_user: 한국에너지공단이 인증한 급수처리시설 제품(이온교환처리장치, 음향처리장치 등)을 모델 단위로 한 행씩 담은 전국 범위의 파일 원장이며, 인증번호·인증일자·만료일자·업체명·기기종류·모델명·제조국·인증현황을 담는다. 보일러 급수처리 설비를 고르는 사업자나 시설 관리 기관이 '이 업체의 이 모델이 현재 유효한 인증 제품인가, 인증은 언제 만료되나'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 데이터와는 업체명·모델명 같은 이름 매칭이나 같은 기관의 인증번호 체계로만 잇는다.
 description_portal: 본 데이터는 급수처리시설 인증을 받은 제품들의 상세한 정보를 제공하여, 수처리시설의 효율적 운영과 품질 보장을 지원하기 위해 개방된 자료입니다.제공되는 급수처리시설 인증제품은 이온교환처리장치, 음향처리장치 등 주요 기기종류별로 분류되어 있으며, 제품의 인증번호, 인증일자, 인증 만료일자, 제조업체명, 모델명, 제조국 및 인증현황 등을 상세히 포함하고 있습니다.본 데이터를 통해 정부기관과 지자체는 인증받은 수처리시설 제품을 정확히 파악하여 효율적인 관리와 시설의 품질 향상을 도모할 수 있으며, 기업 및 연구기관은 시장현황 분석, 제품 비교평가, 신규 기술 개발 및 정책연구를 위한 기초자료로 활용할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -46,6 +48,7 @@ schema:
         unique: 148
     - name: 인증번호
       type: string
+      semantic_type: water_treat_cert_no
       null_rate: 0.0
       sample_values:
         - 음향 제1호
@@ -126,12 +129,23 @@ schema:
         - 인증내용변경, 2차 연장, 3차 연장
       stats:
         unique: 19
+  foreign_keys:
+    - fields:
+        - 인증번호
+      reference:
+        key: water_treat_cert_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 인증일자
+    - 만료일자
 cycle: default
 classification:
   subsector_name: 효율등급·인증 제품 (에너지소비효율·고효율기자재·자동차 연비·건축물 에너지효율등급·K-RE100)
@@ -168,7 +182,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15083027-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: water_treat_cert_no(인증번호)'
     evidence:
       - type: measured
         source: probe/stats/15083027.json
@@ -233,8 +247,6 @@ verification:
   run: probe/runs/15083027.json
   stats: probe/stats/15083027.json
   data: probe/data/15083027/
-status: active
-summary_user: 한국에너지공단이 인증한 급수처리시설 제품(이온교환처리장치, 음향처리장치 등)을 모델 단위로 한 행씩 담은 전국 범위의 파일 원장이며, 인증번호·인증일자·만료일자·업체명·기기종류·모델명·제조국·인증현황을 담는다. 보일러 급수처리 설비를 고르는 사업자나 시설 관리 기관이 '이 업체의 이 모델이 현재 유효한 인증 제품인가, 인증은 언제 만료되나'를 확인하는 데 쓴다. 전역 조인 키는 없어서 다른 데이터와는 업체명·모델명 같은 이름 매칭이나 같은 기관의 인증번호 체계로만 잇는다.
 limits: 표준 조인 키가 없어 다른 효율등급·인증 데이터와 묶으려면 업체명·모델명 문자열 매칭에 의존해야 한다. 지역 정보가 없는 전국·비공간 자료라 설치 위치나 지역별 분포 분석에는 쓸 수 없다.
 review:
   summary: draft
@@ -247,3 +259,4 @@ review:
     - c-15083027-04
     - c-15083027-06
   dropped_citations: 0
+status: active

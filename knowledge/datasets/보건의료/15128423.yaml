@@ -1,4 +1,5 @@
-# Dataset 15128423 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15128423 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15128423'
 tier: verified
 title: 건강보험심사평가원_진료행위정보서비스
@@ -20,6 +21,7 @@ synonyms:
   - 심평원 행위 통계
   - 연령별 진료행위
   - 입원 외래 진료행위
+summary_user: 건강보험 진료행위(행위코드 st5Cd)별로 연도·연령군·성별·입원외래·요양기관종별·소재지별 환자수, 총사용량, 진료금액(천 원)을 담은 전국 단위 집계 통계를 조회하는 API이다. 보건의료 분석가나 의료기관·사업자가 '특정 검사·처치 행위가 어느 연령대와 지역에서 얼마나 시행되고 진료비는 얼마인가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 행위코드·행위코드명을 기준으로 EDI 행위 코드 마스터 같은 다른 급여 코드 데이터와 이름·코드 매핑으로 이어 쓴다.
 description_portal: 건강보험심사평가원에서 관리하는 진료행위 정보 조회(연령군별·입원외래별·요양기관종별·요양기관소재지별 진료행위 통계)
 team:
   dept: 빅데이터실
@@ -401,6 +403,10 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  time: year
+  time_fields:
+    - year
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -521,8 +527,6 @@ verification:
   run: probe/runs/15128423.json
   stats: probe/stats/15128423.json
   data: probe/data/15128423/
-status: active
-summary_user: 건강보험 진료행위(행위코드 st5Cd)별로 연도·연령군·성별·입원외래·요양기관종별·소재지별 환자수, 총사용량, 진료금액(천 원)을 담은 전국 단위 집계 통계를 조회하는 API이다. 보건의료 분석가나 의료기관·사업자가 '특정 검사·처치 행위가 어느 연령대와 지역에서 얼마나 시행되고 진료비는 얼마인가'를 확인하는 데 쓴다. 전역 조인 키는 없고, 행위코드·행위코드명을 기준으로 EDI 행위 코드 마스터 같은 다른 급여 코드 데이터와 이름·코드 매핑으로 이어 쓴다.
 limits: 필수 파라미터인 행위코드(st5Cd)는 다른 데이터에서 먼저 받아 넘겨야 하므로 코드 목록 없이 단독 조회가 어렵다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 코드·이름 매핑으로만 연결된다. 개발계정은 일 10,000회 호출 제한이 있다.
 review:
   summary: draft
@@ -536,3 +540,4 @@ review:
     - c-15128423-06
     - c-15128423-10
   dropped_citations: 0
+status: active

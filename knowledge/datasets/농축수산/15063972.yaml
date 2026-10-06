@@ -1,0 +1,313 @@
+# Dataset 15063972 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15063972'
+tier: verified
+title: 한국마사회_발매금액정보
+sector: 농축수산/농업·농촌/agri-prices
+agency:
+  id: B551015
+  name: 한국마사회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15063972/openapi.do
+synonyms:
+  - 판매
+  - 발매
+  - 발매금액
+  - 발매정보
+  - 발매건수
+  - 경마 매출
+  - 마권 발매액
+  - 경마장 매출
+  - 환급금
+  - 마권 환불
+  - 장외발매소
+  - 경마 베팅 금액
+description_portal: 한국마사회 서울, 제주, 부산경남, 영천 경마장에서 시행하는 경주에 대해 발매건수와 발매금액, 환급금액, 환불건수, 환불금액 등의 정보를 제공합니다. (제공정보는 경주일자, 판매경마장, 구분, 발매소명, 발매형태, 발매건수, 발매금액, 환급금액, 환불건수, 환불금액 자료입니다.) - 요청메세지에 경주일자(rc_date), 경주년월(rc_month), 판매경마장(sale_race-01:서울 02:제주 03:부산경남 04:영천), 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows)를 이용하여 자료를 조회할 수 있습니다.※ 영천경마 시행 이후 요청메세지 경마장번호에 04를 입력시 영천경마 자료를 조회할 수 있습니다.
+team:
+  dept: 통합유지관리
+services:
+  - op: /SalesAmt_1
+    name: 발매금액정보
+    endpoint: https://apis.data.go.kr/B551015/API207_1/SalesAmt_1
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: sale_race
+        required: false
+        example: '01'
+        desc: 판매경마장(01:서울 02:제주 03:부산경남 04:영천)
+      - name: rc_month
+        required: false
+        example: '202002'
+        desc: 경주년월(YYYYMM형식)
+      - name: rc_date
+        required: false
+        example: '20200222'
+        desc: 경주일(YYYYMMDD형식)
+      - name: _type
+        required: false
+        example: xml
+        desc: 데이터형식변경
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: auto
+    traffic:
+      dev: 3000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: betplaceName
+      title: 발매소명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 놀라운지
+        - 럭키1
+        - 럭키3
+      stats:
+        unique: 47
+    - name: gubun
+      title: 구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지사
+        - 서울본장
+      stats:
+        unique: 2
+    - name: payoffValue
+      title: 환급금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1044150'
+        - '8723150'
+      stats:
+        min: 0
+        p50: 114980615
+        max: 1414093310
+        unique: 116
+    - name: raceDate
+      title: 경주일자
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20200222'
+      stats:
+        min: 20200222
+        p50: 20200222
+        max: 20200222
+        unique: 1
+    - name: refundCount
+      title: 환불건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '2'
+      stats:
+        min: 0
+        p50: 702.5
+        max: 11979
+        unique: 112
+    - name: refundValue
+      title: 환불금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '4000'
+        - '12300'
+      stats:
+        min: 0
+        p50: 5527200
+        max: 66529700
+        unique: 117
+    - name: saleCount
+      title: 발매건수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8'
+        - '4'
+        - '14'
+      stats:
+        min: 4
+        p50: 19652
+        max: 317464
+        unique: 124
+    - name: saleRacecourseName
+      title: 판매경마장
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울
+      stats:
+        unique: 1
+    - name: saleValue
+      title: 발매금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1109000'
+        - '175500'
+        - '7313600'
+      stats:
+        min: 1800
+        p50: 177056100
+        max: 2199814300
+        unique: 128
+    - name: typeName
+      title: 발매형태
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 영구계좌
+        - 일일계좌
+        - 현금
+      stats:
+        unique: 3
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.532
+  brm: 농축수산 - 임업·산촌
+  sector_rule: forestry-misfiled-agri
+  why: 기관 분석 핵심 원장 — 한국마사회
+claims:
+  - id: c-15063972-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 3,000회. 2026-10-07 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15063972.json
+        observed_at: '2026-10-07'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15063972.json
+        observed_at: '2026-10-07'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '3000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-08'
+  - id: c-15063972-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063972-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15063972.json
+        observed_at: '2026-10-07'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063972-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15063972.json
+        observed_at: '2026-10-07'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-08'
+  - id: c-15063972-06
+    kind: admin_note
+    value: "세부 부문 '농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)'의 가치: 물가 뉴스·식자재 구매·유통업의 기준, 시의성 최상. aT KAMIS는 자체 키. 품목코드가 KAMIS·도매시장·HS·KOSIS마다 달라 매핑 필요"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#agri-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15063972-07
+    kind: admin_note
+    value: '[농축수산 - 농업·농촌 · 결정] 농지 필지 정보·농업경영체·농산물 유통 가격만 우선 (`agri-deferred`, `agri-non-core`). 기술(팜맵 병해충·기상·토양)·재해·보험·직불·농촌개발·농기계/농약/종자·통계는 나중에.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L560
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15063972-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-07'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-07'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15063972.json
+  stats: probe/stats/15063972.json
+  data: probe/data/15063972/
+status: active
+summary_user: 한국마사회 서울·제주·부산경남·영천 경마장에서 시행한 경주에 대해 경주일자·판매경마장·발매소·발매형태별 발매건수, 발매금액, 환급금액, 환불건수, 환불금액을 담는다. 경마 매출 추이를 보는 분석가가 '특정 월에 경마장·발매소별 마권 매출과 환급액은 얼마였나' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 경주일자, 경마장 이름·발매소명 매핑 또는 같은 기관의 경주 데이터 기준으로만 이어 쓴다.
+limits: 전역 조인 키가 없어 외부 데이터와 직접 결합하기 어렵다. 지역 단위는 전국·비공간이라 지도·행정구역 분석에는 바로 쓰기 어렵다. 부문은 농산물 유통 가격으로 분류돼 있으나 내용은 경마 발매 실적이며, 농산물 가격이나 KAMIS 품목코드와는 관계가 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15063972-01
+    - c-15063972-03
+    - c-15063972-04
+    - c-15063972-06
+  dropped_citations: 0

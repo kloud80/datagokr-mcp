@@ -1,0 +1,216 @@
+# Dataset 15153269 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15153269'
+tier: verified
+title: 행정안전부_전염병발생현황(통계)
+sector: 농축수산/해양수산·어촌/seafood-prices
+agency:
+  id: '1741000'
+  name: 행정안전부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15153269/openapi.do
+synonyms:
+  - 감염병
+  - 보건안전
+  - 상황파악
+  - 피해조사
+  - 평가
+  - 수산생물 질병
+  - 양식 어류 전염병
+  - 수산동물 질병 발생
+  - 국립수산물품질관리원 질병통계
+  - 어류 질병 현황
+  - 재난안전데이터 공유플랫폼
+summary_user: 국립수산물품질관리원이 제공하는 전염병 발생현황 통계로, 필드명으로 보아 지역(PBADMS_RGN_NM)·질병명·품종명·연월별 발생 건수를 담는 전국 범위의 집계 자료다. 양식업자나 수산 분석가가 '어느 품종에서 어떤 질병이 어느 지역에서 언제 많이 발생했나'를 확인하는 데 쓴다. 전역 조인 키는 없어 지역명·품종명·연월을 이름으로 맞춰 위판장 경락가격 같은 수산물 유통 데이터와 이어 쓰며, 어종코드는 수협·수산과학원·HS 체계가 서로 달라 별도 매핑이 필요하다.
+description_portal: "\"행정안전부에서는 「재난 및 안전관리 기본법」에 따라 데이터 기반 재난 및 안전관리체제 확립 및 재난안전데이터 수집·연계·분석·활용·공유·공개를 위하여 재난안전데이터통합관리시스템인 '재난안전데이터 공유플랫폼' 구축·운영하여 안전분야 공공데이터를 제공하고 있습니다.- 재난안전데이터 공유플랫폼(https://www.safetydata.go.kr)과 공공데이터포털에서 연계 제공하고 있습니다.- 해당 데이터는 국립수산물품질관리원에서 제공하는 전염병발생현황 정보입니다.\""
+team:
+  dept: 재난안전데이터과
+services:
+  - op: DSSP-IF-20554
+    name: DSSP-IF-20554
+    endpoint: https://www.safetydata.go.kr/V2/api/DSSP-IF-20554
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: www.safetydata.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: PBADMS_RGN_NM
+      type: code
+      null_rate: 0.3235
+      sample_values:
+        - 전남
+        - 알수없음
+        - 경북
+      stats:
+        unique: 8
+    - name: DSS_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 흰반점병
+        - 바이러스성출혈성패혈증
+        - 급성간췌장괴사병
+      stats:
+        unique: 22
+    - name: DSS_NOCS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - 질병건수
+      stats:
+        min: 1
+        p50: 1
+        max: 3
+        unique: 4
+    - name: VRTY_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 흰다리새우
+        - 무지개송어
+        - 큰징거미새우
+      stats:
+        unique: 10
+    - name: YM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202408'
+        - '202208'
+        - '202207'
+      stats:
+        min: 201805
+        p50: 202211
+        max: 202502
+        unique: 21
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3829
+  brm: 농축수산 - 해양수산·어촌
+  why: 재난안전데이터공유플랫폼 (샘플 다운로드)
+claims:
+  - id: c-15153269-01
+    kind: access
+    value: 외부 사이트 www.safetydata.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15153269.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.safetydata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15153269-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153269-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15153269.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153269-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15153269.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15153269-06
+    kind: admin_note
+    value: "세부 부문 '수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)'의 가치: 위판장 경락 가격 = 농산물 KAMIS와 같은 물가 수요, 어종코드(수협·수산과학원·HS 상이)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#seafood-prices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15153269-07
+    kind: admin_note
+    value: '[농축수산 - 해양수산·어촌 · 결정] 해양공간 영역·어업 허가/면허·수산물 유통·해양 관측/예보만 우선 (`fishery-deferred`, `fishery-non-core`). 어촌·어항·해수욕장, 자원 관리(금어기·TAC),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L567
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15153269-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15153269.json
+  stats: probe/stats/15153269.json
+  data: probe/data/15153269/
+limits: 재난안전데이터 공유플랫폼(safetydata.go.kr)의 별도 인증키가 필요하며, 이 키는 공공데이터포털 활용신청과 별개다. 실측 컬럼에 공통 조인 키가 없고 비공간 자료여서 좌표 기반 결합은 하지 못하며, 필드 의미가 명세에 비어 있어 필드명으로 추정해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15153269-01
+    - c-15153269-03
+    - c-15153269-04
+    - c-15153269-06
+  dropped_citations: 0
+status: active

@@ -51,6 +51,7 @@ schema:
         unique: 576
     - name: 판단번호
       type: number
+      semantic_type: d2b_dcs_no
       null_rate: 0.0
       sample_values:
         - '61'
@@ -63,6 +64,7 @@ schema:
         unique: 4638
     - name: 공고번호
       type: string
+      semantic_type: bid_ntce_no
       null_rate: 0.0
       sample_values:
         - LHK0061-1
@@ -186,10 +188,25 @@ schema:
         p50: 18699592
         max: 114312332
         unique: 4232
+  foreign_keys:
+    - fields:
+        - 판단번호
+      reference:
+        key: d2b_dcs_no
+      evidence: measured
+    - fields:
+        - 공고번호
+      reference:
+        key: bid_ntce_no
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2024-11-01 ~ 2025-12-31
+grain:
+  time: day
+  time_fields:
+    - 견적서제출마감일시
 cycle: default
 classification:
   subsector_name: 군수품 조달 (입찰공고·입찰결과·조달계획·계약정보·해외입찰·시설공사·식재료 입찰)
@@ -230,7 +247,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15050918-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: d2b_dcs_no(판단번호), bid_ntce_no(공고번호)'
     evidence:
       - type: measured
         source: probe/stats/15050918.json

@@ -1,0 +1,253 @@
+# Dataset 15123073 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15123073'
+tier: verified
+title: 기상청 항공기상청_공항기상관측자료
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360496'
+  name: 기상청 항공기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15123073/openapi.do
+synonyms:
+  - AMOS
+  - 항공 기상 관측
+  - 항공 기상 통계
+  - 공항 날씨
+  - 항공기상 관측
+  - METAR
+  - 공항 풍향 풍속
+  - 공항 기온
+  - QNH 기압
+  - ICAO 공항 관측
+  - 분 단위 기상자료
+description_portal: 항공기상청에서 운영하는 공항 기상 관측 지점에서 관측한 매 분 기상관측 자료, 매 정시 관측 통계값, 일별 통계값을 제공합니다.
+team:
+  dept: 정보기술과
+services:
+  - op: getAirInfo
+    name: getAirInfo
+    endpoint: https://apihub.kma.go.kr/api/typ02/openApi/AirInfoService/getAirInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: numOfRows
+        required: true
+        example: '10'
+      - name: pageNo
+        required: true
+        example: '1'
+      - name: dataType
+        required: true
+        example: XML
+      - name: fctm
+        required: true
+        example: '202109120000'
+      - name: icaoCode
+        required: true
+        example: RKJB
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: icaoCode
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - RKJB
+      stats:
+        unique: 1
+    - name: airportName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 무안공항
+      stats:
+        unique: 1
+    - name: tmFc
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '202109120000'
+        - '202109120100'
+        - '202109120200'
+      stats:
+        min: 202109120000
+        p50: 202109120150
+        max: 202109120300
+        unique: 4
+    - name: wd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '40'
+        - '30'
+        - '50'
+      stats:
+        min: 30
+        p50: 40
+        max: 50
+        unique: 3
+    - name: ws
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '6'
+        - '7'
+      stats:
+        min: 6
+        p50: 6
+        max: 7
+        unique: 2
+    - name: ta
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '24'
+        - '16'
+        - '27'
+      stats:
+        min: 16
+        p50: 25.5
+        max: 28
+        unique: 4
+    - name: qnh
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2987'
+        - '2988'
+      stats:
+        min: 2987
+        p50: 2987
+        max: 2988
+        unique: 2
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.719
+  rank_in_sector: 83
+  brm: 과학기술 - 과학기술진흥
+  sector_rule: weather-to-environment
+  why: 공항 분 단위 관측, 공항 좌표로 연결 가능
+claims:
+  - id: c-15123073-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123073.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15123073-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15123073-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15123073.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15123073-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123073.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15123073-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123073-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123073-08
+    kind: admin_note
+    value: wave3 p3
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123073.json
+  stats: probe/stats/15123073.json
+  data: probe/data/15123073/
+status: active
+summary_user: 항공기상청이 운영하는 공항 기상 관측 지점의 매 분 관측자료와 매 정시·일별 통계값을 담으며, 공항별 풍향·풍속·기온·해면기압(QNH) 같은 관측값이 시각 단위로 들어 있다. 항공 운항 담당자나 기상 분석가가 특정 공항에서 어느 시각에 바람과 기온이 어땠는지 확인하는 데 쓰고, 기후·보험 분석의 관측 원천으로도 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았으므로, 다른 데이터와는 공항 국제코드(icaoCode)나 공항명을 이름·코드로 매핑해 잇는다.
+limits: 포털 활용신청과 별개로 외부 사이트(apihub.kma.go.kr)의 인증키를 받아 경로 파라미터로 넣어야 호출된다. 표준 행정코드 같은 공용 조인 키가 없어 지역 단위 통계와 직접 결합하기 어렵다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15123073-01
+    - c-15123073-03
+    - c-15123073-06
+  dropped_citations: 0

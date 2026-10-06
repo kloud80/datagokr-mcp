@@ -178,7 +178,7 @@ schema:
     - name: arvl_stn_cd
       title: 도착역코드
       type: number
-      semantic_type: transit_node_cd
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '3900023'
@@ -203,7 +203,7 @@ schema:
     - name: dptre_stn_cd
       title: 출발역코드
       type: number
-      semantic_type: transit_node_cd
+      semantic_type: rail_station_cd
       null_rate: 0.0
       sample_values:
         - '3900023'
@@ -240,6 +240,7 @@ schema:
     - name: trn_no
       title: 열차번호
       type: number
+      semantic_type: korail_train_no
       null_rate: 0.0
       sample_values:
         - '00001'
@@ -278,17 +279,27 @@ schema:
     - fields:
         - arvl_stn_cd
       reference:
-        key: transit_node_cd
+        key: rail_station_cd
       evidence: measured
     - fields:
         - dptre_stn_cd
       reference:
-        key: transit_node_cd
+        key: rail_station_cd
+      evidence: measured
+    - fields:
+        - trn_no
+      reference:
+        key: korail_train_no
       evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
   temporal: 2026-09-28 ~ 2026-09-30
+grain:
+  time: day
+  time_fields:
+    - trn_plan_arvl_dt
+    - trn_plan_dptre_dt
 cycle: default
 classification:
   subsector_name: 실시간 도착·시간표·운임 (조회 도구)
@@ -333,7 +344,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15125762-03
     kind: key
-    value: '실측 조인 키: transit_node_cd(arvl_stn_cd), transit_node_cd(dptre_stn_cd)'
+    value: '실측 조인 키: rail_station_cd(arvl_stn_cd), rail_station_cd(dptre_stn_cd), korail_train_no(trn_no)'
     evidence:
       - type: measured
         source: probe/stats/15125762.json

@@ -1,4 +1,5 @@
-# Dataset 15102800 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15102800 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15102800'
 tier: verified
 title: 해양수산부_수협조합창고품목별창고재고현황
@@ -23,6 +24,7 @@ synonyms:
   - 어종별 재고
   - 수산물 비축 현황
   - 조합 창고 보관량
+summary_user: 수협 조합이 보유한 이용가공 창고별로 기준일자마다 표준어종별 재고 수량을 한 행씩 담은 전국 단위 파일(CSV, 약 4MB)이다. 수산물 유통 분석가나 가공·유통 사업자가 '특정 시점에 어느 조합 창고에 멸치 같은 어종 재고가 얼마나 쌓여 있나'를 확인하는 데 쓴다. 전역 조인 키는 없어 조합코드·창고코드·표준어종코드(또는 조합명·어종명)를 같은 수협 계열 위판·경락 데이터와 이름·코드 매핑으로 이어 쓴다.
 description_portal: 수산물 수협창고 재고 정보는 수협이 보유하고 있는 창고(이용가공)에 대한 기본정보 및 해당 창고에 재고 되는 품목에 대한 정보 및 품목별 재고 정보, 그리고 해당 창고를 이용하는 매출처에 대한 기본적인 정보를 제공하는 목록입니다.조합코드,창고코드,표준어종코드,기준일자,조합명,창고명,표준어종명,수량 해당 내용을 포함하고 있는 데이터 입니다.자세한 데이터를 원하실 경우 파일 다운로드 후 확인 부탁드립니다.데이터 예시입니다"300","3000002","614401","2025-05-01","경인북부수산업협동조합","판매사업과(이용)","멸치","25979"
 accrual_periodicity: 월간
 team:
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 조합코드
       type: number
+      semantic_type: suhyup_union_cd
       null_rate: 0.0
       sample_values:
         - '339'
@@ -48,6 +51,7 @@ schema:
         unique: 51
     - name: 창고코드
       type: number
+      semantic_type: suhyup_warehouse_cd
       null_rate: 0.0
       sample_values:
         - '3390002'
@@ -60,6 +64,7 @@ schema:
         unique: 58
     - name: 표준어종코드
       type: code
+      semantic_type: fish_species_cd
       null_rate: 0.0
       sample_values:
         - '610802'
@@ -117,12 +122,32 @@ schema:
         p50: 154
         max: 252069
         unique: 4237
+  foreign_keys:
+    - fields:
+        - 조합코드
+      reference:
+        key: suhyup_union_cd
+      evidence: measured
+    - fields:
+        - 창고코드
+      reference:
+        key: suhyup_warehouse_cd
+      evidence: measured
+    - fields:
+        - 표준어종코드
+      reference:
+        key: fish_species_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준일자
 cycle: default
 classification:
   subsector_name: 수산물 유통 가격 (위판장 경락·위탁판매·도매시장 경매·입하)
@@ -159,7 +184,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15102800-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: suhyup_union_cd(조합코드), suhyup_warehouse_cd(창고코드), fish_species_cd(표준어종코드)'
     evidence:
       - type: measured
         source: probe/stats/15102800.json
@@ -224,8 +249,6 @@ verification:
   run: probe/runs/15102800.json
   stats: probe/stats/15102800.json
   data: probe/data/15102800/
-status: active
-summary_user: 수협 조합이 보유한 이용가공 창고별로 기준일자마다 표준어종별 재고 수량을 한 행씩 담은 전국 단위 파일(CSV, 약 4MB)이다. 수산물 유통 분석가나 가공·유통 사업자가 '특정 시점에 어느 조합 창고에 멸치 같은 어종 재고가 얼마나 쌓여 있나'를 확인하는 데 쓴다. 전역 조인 키는 없어 조합코드·창고코드·표준어종코드(또는 조합명·어종명)를 같은 수협 계열 위판·경락 데이터와 이름·코드 매핑으로 이어 쓴다.
 limits: 실측 컬럼에 전역 조인 키가 없어 다른 기관 데이터와는 이름·코드 매핑으로만 연결된다. 어종코드 체계가 수협·수산과학원·HS 간에 서로 달라 어종 단위 연계 시 변환이 필요하다. 행정구역 좌표가 없는 비공간 데이터라 지역별 분석은 조합명을 통해 간접적으로만 가능하다.
 review:
   summary: draft
@@ -238,3 +261,4 @@ review:
     - c-15102800-04
     - c-15102800-06
   dropped_citations: 0
+status: active

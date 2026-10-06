@@ -1,0 +1,188 @@
+# Dataset 15139439 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139439'
+tier: verified
+title: 기상청_지상기상관측 지점정보 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139439/openapi.do
+synonyms:
+  - 지상관측
+  - 지점정보
+  - 위경도
+  - 종관기상
+  - 방재기상
+  - 관측소 목록
+  - ASOS 지점
+  - AWS 지점
+  - 기상관측소 위치
+  - 관측지점번호
+  - 종관기상관측
+  - 방재기상관측
+  - 지점 메타데이터
+description_portal: 지상기상관측 지점에 대한 지점번호, 관측 시작일과 종료일, 위 · 경도 등 이력정보와 주변 환경 등에 대한 정보를 조회할수 있습니다.지상관측에는 종관기상관측지점(ASOS), 방재기상관측지점(AWS), 북한기상관측지점, 자외선관측지점을 제공하고 있습니다.종관기상관측(ASOS)는 정확하고 표준화된 기상자료를 생산하는 관측망이고, 방재기상관측(AWS)는 재난 감시를 위해 빠르고 촘촘하게 기상을 관측하는 관측망입니다. 목적 자체가 다르기 때문에 운영 방식, 장비의 정밀도, 설치 위치가 다릅니다.
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: stn_inf.php
+    name: stn_inf.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/stn_inf.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: inf
+        required: true
+        example: SFC
+      - name: stn
+        required: true
+      - name: tm
+        required: true
+        example: '202211300900'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - '   90  128.56473000   38.25085000 35100        17.53     18.73      1.70     10.'
+        - '   93  127.75443000   37.94738000 31201        95.78     96.78      1.50     10.'
+        - '   95  127.30420000   38.14787000 31110       155.48    156.98      1.80     13.'
+      stats:
+        unique: 96
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7901
+  rank_in_sector: 31
+  brm: 환경기상 - 대기
+  why: ASOS·AWS 관측지점 위경도 원장
+claims:
+  - id: c-15139439-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139439.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139439-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139439-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139439.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139439-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15139439.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139439-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139439-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139439-08
+    kind: admin_note
+    value: wave3 p1
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139439.json
+  stats: probe/stats/15139439.json
+  data: probe/data/15139439/
+status: active
+summary_user: 전국 지상기상관측 지점(종관기상관측 ASOS, 방재기상관측 AWS, 북한기상관측, 자외선관측)의 지점번호, 관측 시작·종료일, 위·경도 같은 지점 이력과 주변 환경 정보를 지점 단위로 담은 메타데이터이며, 위치는 행정구역이 아닌 개별 좌표로 표시된다. 기후·농업·보험 분석가가 "내 분석 대상지에서 가장 가까운 관측소는 어디이고 언제부터 관측했는가"를 확인해 시간·일 관측자료를 고를 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않았다. 따라서 같은 기상청 관측자료와는 관측지점번호로 맞추고, 다른 기관 데이터와는 좌표나 지점명으로 연결한다.
+limits: 관측값 자체는 없고 지점 정보만 담고 있어, 기온·강수 등 실제 기상자료는 별도 관측 API로 받아야 한다. 포털 활용신청과 별개로 apihub.kma.go.kr 인증키(경로 파라미터 KEY)를 발급받아 호출해야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139439-01
+    - c-15139439-03
+    - c-15139439-04
+    - c-15139439-06
+  dropped_citations: 0

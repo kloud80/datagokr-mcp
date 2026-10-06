@@ -1,4 +1,5 @@
-# Dataset 3075820 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3075820 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3075820'
 tier: verified
 title: 법무부_고용허가제에 대한 국가별 사증발급인정서 발급 현황
@@ -21,6 +22,7 @@ synonyms:
   - 외국인 노동자 입국
   - 국적별 외국인근로자
   - EPS
+summary_user: 고용허가제로 들어오는 외국인근로자(비전문취업 E-9)에게 법무부가 발급한 사증발급인정서 건수를 국적별·성별로 나누고, 제조업·건설업·농업·어업·서비스업 세부 업종별로 집계한 전국 단위 통계 파일이다. 노동·이민 분석가가 '어느 나라 출신 외국인근로자가 어떤 업종으로 주로 들어오는지, 성별 구성은 어떤지'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 출입국·체류 통계와는 국적 이름을 맞추는 방식으로만 이어 쓴다.
 description_portal: 0. 재외공관에서 근로계약이 체결된 외국인근로자가 별다른 절차없이 국내 입국에 필요한 사증을 받을 수 있도록 국내에서 입국을 허락한 인정서인 고용허가제에 대한 국가별 사증발급인정서 발급 현황을 국가별, 성별로 제공- 해당 통계는 연도별 통계이며 매년 10월 경 업데이트 예정입니다. -  출입국 외국인 정책본부 홈페이지의 통계연보에서도 확인하실 수 있습니다.- 출입국외국인정책본부 홈페이지 URL은 아래와 같습니다. https://www.immigration.go.kr/immigration/1570/subview.do- 우리부 사증 발급 인정서 통계이며 고용노동부의 통계와 일부 상이할 수 있습니다.
 applicable_legislation:
   - law: 출입국관리법
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 국적별
       type: code
+      semantic_type: country_cd
       null_rate: 0.0
       sample_values:
         - 네팔
@@ -113,6 +116,12 @@ schema:
         p50: 2
         max: 349
         unique: 16
+  foreign_keys:
+    - fields:
+        - 국적별
+      reference:
+        key: country_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -155,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3075820-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: country_cd(국적별)'
     evidence:
       - type: measured
         source: probe/stats/3075820.json
@@ -230,8 +239,6 @@ verification:
   run: probe/runs/3075820.json
   stats: probe/stats/3075820.json
   data: probe/data/3075820/
-status: active
-summary_user: 고용허가제로 들어오는 외국인근로자(비전문취업 E-9)에게 법무부가 발급한 사증발급인정서 건수를 국적별·성별로 나누고, 제조업·건설업·농업·어업·서비스업 세부 업종별로 집계한 전국 단위 통계 파일이다. 노동·이민 분석가가 '어느 나라 출신 외국인근로자가 어떤 업종으로 주로 들어오는지, 성별 구성은 어떤지'를 확인하는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어, 다른 출입국·체류 통계와는 국적 이름을 맞추는 방식으로만 이어 쓴다.
 limits: 전국 단위의 비공간 집계라서 시군구 같은 지역별 분포는 볼 수 없다. 국가 코드나 지역 코드 같은 조인 키가 없으므로 다른 데이터와 붙이려면 국적 이름을 직접 매핑해야 한다.
 review:
   summary: draft
@@ -242,3 +249,4 @@ review:
     - c-3075820-03
     - c-3075820-04
   dropped_citations: 0
+status: active

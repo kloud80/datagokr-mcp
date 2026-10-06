@@ -97,6 +97,7 @@ schema:
     - name: LCNS_NO
       title: 인허가번호
       type: number
+      semantic_type: food_lcns_no
       null_rate: 0.0
       sample_values:
         - '20190391503'
@@ -246,6 +247,11 @@ schema:
         unique: 98
   foreign_keys:
     - fields:
+        - LCNS_NO
+      reference:
+        key: food_lcns_no
+      evidence: measured
+    - fields:
         - ADDR
       reference:
         key: address
@@ -254,6 +260,19 @@ coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2020-09-21 ~ 2028-09-19
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - VILTCN
+    - LAST_UPDT_DTM
+  category:
+    - ksic
+  category_fields:
+    - INDUTY_CD_NM
 cycle: event
 classification:
   subsector_name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
@@ -298,7 +317,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15124560-03
     kind: key
-    value: '실측 조인 키: address(ADDR)'
+    value: '실측 조인 키: food_lcns_no(LCNS_NO), address(ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15124560.json

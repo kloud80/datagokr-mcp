@@ -1,4 +1,3 @@
-# Dataset 15127662 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15127662'
 tier: verified
 title: 서울시설공단_고척체육센터 사업장 정보
@@ -24,6 +23,7 @@ synonyms:
   - 구로구 체육센터
   - 공공체육시설 사업자정보
   - 체육센터 전화번호
+summary_user: 서울시설공단이 운영하는 고척체육센터의 사업장 기본 정보(사업장 코드, 이름, 사업자등록번호, 대표자, 업태·종목, 주소, 전화·팩스번호, 문자 발신 아이디 등)를 담은 505바이트 크기의 소형 CSV 파일이다. 고척체육센터의 공식 연락처나 소재지, 사업자 정보를 확인하려는 이용자나, 공공 체육시설 목록을 정리하는 분석가가 시설 기본 정보를 채울 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업장 이름·주소로 매칭하거나 같은 서울시설공단의 다른 체육센터 사업장 데이터와 사업장 코드로 맞춰 이어 쓴다.
 description_portal: 고척체육센터의 사업장 정보 데이터는 고척체육센터의 기본 식별 및 연락 정보를 포함하고 있으며, 사업장 코드, 아이디, 이름, 사업자등록번호, 대표자명, 업태, 종목, 우편번호, 주소, 전화번호, 팩스번호, 문자 아이디 등의 항목으로 구성되어 있습니다.사업장 코드는 고척체육센터를 고유하게 식별하기 위한 코드이며, 아이디는 내부 시스템에서 사용되는 로그인 또는 식별용 계정 정보입니다.이름은 사업장 명칭으로 고척체육센터를 나타내며, 번호는 사업자등록번호를 의미합니다.대표자는 사업장 대표자의 성명을 나타내며, 업태와 종목은 각각 사업장의 업종 분류와 세부 종목 정보를 제공합니다.또한 우편번호와 주소는 사업장 소재지를 나타내는 기본 정보이며, 전화번호와 팩스번호는 사업장 대표 연락처와 팩스번호를 나타냅니다.마지막으로 문자 아이디는 문자 발송 시 발신자명으로 사용되는 사업장 문자 서비스용 아이디를 의미합니다.
 accrual_periodicity: 연간
 team:
@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 사업장 코드
       type: number
+      semantic_type: gocheok_workplace_cd
       null_rate: 0.0
       sample_values:
         - '10001'
@@ -176,6 +177,12 @@ schema:
         p50: 30
         max: 30
         unique: 1
+  foreign_keys:
+    - fields:
+        - 사업장 코드
+      reference:
+        key: gocheok_workplace_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -219,7 +226,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15127662-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: gocheok_workplace_cd(사업장 코드)'
     evidence:
       - type: measured
         source: probe/stats/15127662.json
@@ -284,8 +291,6 @@ verification:
   run: probe/runs/15127662.json
   stats: probe/stats/15127662.json
   data: probe/data/15127662/
-status: active
-summary_user: 서울시설공단이 운영하는 고척체육센터의 사업장 기본 정보(사업장 코드, 이름, 사업자등록번호, 대표자, 업태·종목, 주소, 전화·팩스번호, 문자 발신 아이디 등)를 담은 505바이트 크기의 소형 CSV 파일이다. 고척체육센터의 공식 연락처나 소재지, 사업자 정보를 확인하려는 이용자나, 공공 체육시설 목록을 정리하는 분석가가 시설 기본 정보를 채울 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 사업장 이름·주소로 매칭하거나 같은 서울시설공단의 다른 체육센터 사업장 데이터와 사업장 코드로 맞춰 이어 쓴다.
 limits: 단일 시설의 식별·연락 정보만 담고 있어 프로그램, 예약, 대관, 이용 현황은 알 수 없다. 표준 시설코드 같은 전역 조인 키가 없어 전국 체육시설 DB 등과 연결하려면 이름·주소 기반 매칭이 필요하다.
 review:
   summary: draft
@@ -297,3 +302,9 @@ review:
     - c-15127662-03
     - c-15127662-04
   dropped_citations: 0
+status: active
+grain:
+  space: sgg
+  space_fields:
+    - 사업장 주소
+  space_via: address

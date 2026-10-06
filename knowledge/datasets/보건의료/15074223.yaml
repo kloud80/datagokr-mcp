@@ -1,4 +1,5 @@
-# Dataset 15074223 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15074223 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15074223'
 tier: verified
 title: 식품의약품안전처_마약류원료물질제조정보
@@ -21,6 +22,7 @@ synonyms:
   - 마약 원료 제조량
   - 식약처 마약류 제조 현황
   - 원료물질 취급업체
+summary_user: 마약류 원료물질의 제조·재고 내역을 업소별로 담은 API로, 보고일자·품명·업소명·업종·제조일자·제조수량·재고량을 제공하며 범위는 전국이다. 연구자나 보건안전 담당자가 '특정 원료물질이 언제, 얼마나 제조됐고 지금 재고는 얼마인가', '어떤 업종의 업체가 이를 다루는가'를 확인하거나 제조 추이를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 품명(DRUG_CPNT_KOR_NM)·업소명 같은 이름 매칭이나 식약처 내부 업종코드로만 이어 쓸 수 있다.
 description_portal: 식품의약품안전처 「마약류 원료물질 제조정보」 OpenAPI는 마약류 원료물질의 제조 및 재고 현황을 제공하는 공공데이터입니다. 제공 항목에는 보고일자, 품명, 업소명, 업종, 업종명, 제조일자, 제조수량, 재고량 정보 등이 포함됩니다. 이를 통해 사용자는 특정 마약류 원료물질이 언제 제조되었는지와 그 양, 현재 재고 상태를 파악할 수 있고, 어떤 업체가 어떤 업종으로 제조하고 있는지도 확인할 수 있습니다. 또한 개발자나 연구자는 제조 추이 분석 및 업종 분포 조사, 재고 수준 감시 등을 위한 데이터로 활용할 수 있으며, 보건안전 관련 기관은 마약류 원료물질의 공급과 사용 가능성 리스크를 모니터링 하는 기초 자료로 이용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -126,6 +128,11 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - RQST_DT
+    - MNFT_DT
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -235,8 +242,6 @@ verification:
   run: probe/runs/15074223.json
   stats: probe/stats/15074223.json
   data: probe/data/15074223/
-status: active
-summary_user: 마약류 원료물질의 제조·재고 내역을 업소별로 담은 API로, 보고일자·품명·업소명·업종·제조일자·제조수량·재고량을 제공하며 범위는 전국이다. 연구자나 보건안전 담당자가 '특정 원료물질이 언제, 얼마나 제조됐고 지금 재고는 얼마인가', '어떤 업종의 업체가 이를 다루는가'를 확인하거나 제조 추이를 살피는 데 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 품명(DRUG_CPNT_KOR_NM)·업소명 같은 이름 매칭이나 식약처 내부 업종코드로만 이어 쓸 수 있다.
 limits: 품목기준코드 같은 공통 키가 없어 심평원 약가·의약품 허가정보 등과 정확히 결합하기 어렵고 이름 매칭에 의존해야 한다. 지역 구분이 없는 전국·비공간 데이터라 지역별 분석에는 쓸 수 없으며, 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -248,3 +253,4 @@ review:
     - c-15074223-03
     - c-15074223-04
   dropped_citations: 0
+status: active

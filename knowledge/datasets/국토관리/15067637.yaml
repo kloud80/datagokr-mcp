@@ -1,4 +1,3 @@
-# Dataset 15067637 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15067637'
 tier: verified
 title: 국토교통부 국토지리정보원_항공사진_수치표고성과내역
@@ -22,6 +21,7 @@ synonyms:
   - 1:5000 도엽
   - DEM 메타데이터
   - 격자 표고
+summary_user: 전국 수치표고모델(DEM)의 1:5000 도엽별 성과정보를 한 행씩 담은 파일로, 도엽번호·도엽명, 좌하단·우상단 평면좌표, 좌표계, 격자간격, 보간방법, 표고기준, 최고·최저표고, 정확도와 원시자료 획득방법, 부속 보고서 보유 여부를 담는다. 공간분석가나 측량·설계 실무자가 '이 지역 도엽의 DEM은 어떤 격자간격과 정확도로, 어떤 원시자료로 만들어졌나'를 확인하고 필요한 도엽을 고르는 데 쓴다. 전역 조인 키는 없어 1:5000 도엽번호(도엽번호5000)나 도엽 모서리 좌표로 같은 기관의 항공사진·정사영상·수치지도 도엽 성과와 맞춰 쓴다.
 description_portal: '수치표고모델 도엽별 성과정보(도엽의 기본정보, 좌표정보, 좌표계, 표고정보 등)▷ 식별정보 : 도엽번호5000, 도엽명5000, 구축구분코드, 자료명칭, 자료형식▷ 속성정보 : 원시좌하단좌표(X,Y), 원시우상단좌표(X,Y), 원시지리좌표계,원시자료, 원시자료획득방법, 격자간격,보간방법, 지리좌표계, 원점구분, 표고기준, 최고표고, 최저표고, 정확도 등* 수치표고모델(Digital Elevation Model, DEM) : 지표면의 높이(표고)를 일정한 간격으로 수치화한 데이터로, 지도, 공간분석, 시뮬레이션 등 다양한 분야에서 활용'
 accrual_periodicity: 수시
 team:
@@ -90,6 +90,7 @@ schema:
         unique: 1
     - name: 도엽번호5000
       type: number
+      semantic_type: map_sheet_no
       null_rate: 0.0
       sample_values:
         - '37705067'
@@ -404,12 +405,28 @@ schema:
         p50: 199940
         max: 314867.75
         unique: 7667
+  foreign_keys:
+    - fields:
+        - 도엽번호5000
+      reference:
+        key: map_sheet_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 원시좌하단의평면Y좌표
+    - 원시우상단의평면X좌표
+    - 원시우상단의평면Y좌표
+  space_via: coord
+  time: year
+  time_fields:
+    - 원시자료제작년도
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -447,7 +464,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067637-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: map_sheet_no(도엽번호5000)'
     evidence:
       - type: measured
         source: probe/stats/15067637.json
@@ -522,8 +539,6 @@ verification:
   run: probe/runs/15067637.json
   stats: probe/stats/15067637.json
   data: probe/data/15067637/
-status: active
-summary_user: 전국 수치표고모델(DEM)의 1:5000 도엽별 성과정보를 한 행씩 담은 파일로, 도엽번호·도엽명, 좌하단·우상단 평면좌표, 좌표계, 격자간격, 보간방법, 표고기준, 최고·최저표고, 정확도와 원시자료 획득방법, 부속 보고서 보유 여부를 담는다. 공간분석가나 측량·설계 실무자가 '이 지역 도엽의 DEM은 어떤 격자간격과 정확도로, 어떤 원시자료로 만들어졌나'를 확인하고 필요한 도엽을 고르는 데 쓴다. 전역 조인 키는 없어 1:5000 도엽번호(도엽번호5000)나 도엽 모서리 좌표로 같은 기관의 항공사진·정사영상·수치지도 도엽 성과와 맞춰 쓴다.
 limits: 표고 격자값 자체가 아니라 도엽별 제작 메타데이터라서 이 파일만으로 특정 지점의 높이를 구할 수 없다. 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 데이터와는 도엽번호·이름 매핑이나 같은 기관 코드로만 연결된다.
 review:
   summary: draft
@@ -535,3 +550,4 @@ review:
     - c-15067637-03
     - c-15067637-04
   dropped_citations: 0
+status: active

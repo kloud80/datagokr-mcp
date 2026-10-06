@@ -1,4 +1,5 @@
-# Dataset 15149525 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15149525 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15149525'
 tier: verified
 title: 한국장학재단_푸른등대 기부장학금 지원현황
@@ -22,6 +23,7 @@ synonyms:
   - 한국장학재단 장학금 수혜
   - 대학생 장학금 지원현황
   - 대학원생 장학금
+summary_user: 한국장학재단이 기부를 받아 대학생·대학원생에게 생활비 장학금을 주는 푸른등대 기부장학금의 지원현황을 수혜연도·학기·학교·계열·학년별 지원금액(원) 단위로 담은 전국 범위의 CSV 파일이다. 장학 정책 분석가나 대학 관계자가 어느 시도·설립구분·계열의 학생에게 기부장학금이 얼마나 돌아갔는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 학교명이나 시도명을 이름으로 맞춰 이어 써야 한다.
 description_portal: 푸른등대 기부장학금은 정부 학자금지원의  사각지대를 보완하여 균등한 교육기회를 제공하기 위해, 기부를 받아 미래인재로 성장할 수 있도록 생활비 장학금을 지원하는 사업으로매년 홈페이지에서(1학기, 2학기 등) 신청을 받아 선발하고 있습니다. 본 자료는 대학생 및 대학원생의 푸른등대 기부장학금 지원현황(수혜연도, 수혜학기, 학교명, 계열,  시도별, 설립구분, 본분교구분, 학제, 학년 , 지원금액)에 대한 데이터이며,푸른등대 기부장학금 관련 상세 정보는 재단홈페이지(https://www.kosaf.go.kr/ko/scholar.do?pg=scholarship05_11_01&naviParam=JH,05,01,00)를 참고바랍니다.
 applicable_legislation:
   - law: 한국장학재단법
@@ -74,6 +76,7 @@ schema:
         unique: 2
     - name: 학교명
       type: string
+      semantic_type: univ_school_cd
       null_rate: 0.0
       sample_values:
         - 계명대학교(본교) 학부
@@ -158,12 +161,26 @@ schema:
         p50: 2000000
         max: 94000000
         unique: 43
+  foreign_keys:
+    - fields:
+        - 학교명
+      reference:
+        key: univ_school_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도별
+  space_via: name
+  time: year
+  time_fields:
+    - 수혜연도
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -200,7 +217,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15149525-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: univ_school_cd(학교명)'
     evidence:
       - type: measured
         source: probe/stats/15149525.json
@@ -264,8 +281,6 @@ verification:
   run: probe/runs/15149525.json
   stats: probe/stats/15149525.json
   data: probe/data/15149525/
-status: active
-summary_user: 한국장학재단이 기부를 받아 대학생·대학원생에게 생활비 장학금을 주는 푸른등대 기부장학금의 지원현황을 수혜연도·학기·학교·계열·학년별 지원금액(원) 단위로 담은 전국 범위의 CSV 파일이다. 장학 정책 분석가나 대학 관계자가 어느 시도·설립구분·계열의 학생에게 기부장학금이 얼마나 돌아갔는지 확인하는 데 쓴다. 전역 조인 키가 없어 다른 대학 데이터와는 학교명이나 시도명을 이름으로 맞춰 이어 써야 한다.
 limits: 표준 학교코드 같은 전역 조인 키가 없어 대학 공시·학자금 데이터와 연결하려면 학교명·시도명 매핑이 필요하다. 행정단위는 시도까지만 있어 시군구 단위 분석에는 쓰기 어렵다.
 review:
   summary: draft
@@ -277,3 +292,4 @@ review:
     - c-15149525-03
     - c-15149525-04
   dropped_citations: 0
+status: active

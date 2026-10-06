@@ -15,7 +15,7 @@ import type { OpenDataset } from './md'
 
 export type PlanTab = 'map' | 'data' | 'pipe' | 'code' | 'leads'
 
-const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', context: '참고 · 조인 없음' }
+const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', aligned: '느슨한 조인', context: '참고 · 조인 없음' }
 
 function BadgeChip({ b }: { b: Badge }) {
   if (b.tone === 'warn') return <span className="pds-warn">⚠ {b.label}</span>
@@ -150,7 +150,17 @@ export function PlanPanel(props: {
       <>
         {p.datasets.length ? <JoinMap plan={p} onSelect={(id) => { onTab('data'); onFocus(id) }} /> : null}
         <TrustLegend />
-        {p.joins.length === 0 ? <p className="pds-note">선언된 조인이 없습니다 — 각 데이터를 따로 받아 참고용으로 씁니다.</p> : null}
+        {p.joins.length === 0 && !(p.aligned ?? []).length ? <p className="pds-note">선언된 조인이 없습니다 — 각 데이터를 따로 받아 참고용으로 씁니다.</p> : null}
+        {(p.aligned ?? []).length ? (
+          <div className="pds-note">
+            <b>느슨한 조인 — 공통 단위로 집계한 뒤 결합</b>
+            <ul>{(p.aligned ?? []).map((a) => {
+              const t = (id: string) => p.datasets.find((d) => d.id === id)?.title ?? id
+              return <li key={a.left + a.right}>{t(a.left)} ~ {t(a.right)} · <b>{a.align.label}</b> <span className="pds-ev">({a.align.rules.join(', ')})</span></li>
+            })}</ul>
+            <span className="pds-ev">정확한 키가 같지 않아도 지역(PNU·법정동 앞자리)·시점·업종 단위로 맞춘다. 행 단위 결합이 아니라 집계끼리의 비교·상관용이다.</span>
+          </div>
+        ) : null}
         {p.gaps.length ? <div className="pds-note"><b>공백</b><ul>{p.gaps.map((g, i) => <li key={i}>{g}</li>)}</ul></div> : null}
         {p.not_recommended.length ? <><h3 className="pds-sec">제외한 데이터</h3>{excluded(false)}</> : null}
       </>

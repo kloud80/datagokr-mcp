@@ -1,4 +1,5 @@
-# Dataset 15084908 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15084908 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15084908'
 tier: verified
 title: 한국연구재단_KCI PDF 변환 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 한국학술지인용색인
   - KCI 논문 원문 상태
   - PDF 생성 오류
+summary_user: KCI(한국학술지인용색인) 시스템에 등록된 논문별 원문의 PDF 변환 작업 이력을 건별로 담으며, 논문ID(ARTIID)·원문파일ID·학술지ID·등록일·원문상태·변환대상구분·생성여부·오류코드와 메시지·작업일로 구성된다. 연구자나 서비스 운영·분석가가 특정 국내 논문의 원문 PDF가 생성됐는지, 변환 중 오류가 있었는지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 KCI 논문·학술지 서비스와는 논문ID·학술지ID 같은 기관 내부 식별자로만 연결한다.
 description_portal: KCI PDF 변환 조회 서비스는 국내 학술지 정보, 논문 정보 및 참고 문헌을 데이터베이스화하여 각 서지 정보, 인용 정보, 통계 자료, 논문 간 인용관계 분석 정보 등을 제공하는 한국학술지인용색인 (KCI) 시스템의 논문별 PDF 변환 관련 이력 데이터에 대한 상세정보를 조회할 수 있는 서비스입니다. 제공하는 데이터는 논문ID, 원문ID, 학술지ID, 등록일, 원문상태, 변환대상구분, 생성여부, 작업일 등으로 구성되어 있으며, 다양한 논문과 자료의 PDF 변환 이력에 대한 상세정보를 제공합니다.
 team:
   dept: 연구데이터분석팀
@@ -59,6 +61,7 @@ schema:
         unique: 10
     - name: ARTIID
       type: code
+      semantic_type: kci_arti_id
       null_rate: 0.0
       sample_values:
         - ART000850999
@@ -77,6 +80,7 @@ schema:
         unique: 10
     - name: SEREID
       type: number
+      semantic_type: kci_sere_id
       null_rate: 0.9
       sample_values:
         - '000342'
@@ -152,6 +156,17 @@ schema:
         p50: 20120322084628
         max: 20120504042127
         unique: 10
+  foreign_keys:
+    - fields:
+        - ARTIID
+      reference:
+        key: kci_arti_id
+      evidence: measured
+    - fields:
+        - SEREID
+      reference:
+        key: kci_sere_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -201,7 +216,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15084908-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_arti_id(ARTIID), kci_sere_id(SEREID)'
     evidence:
       - type: measured
         source: probe/stats/15084908.json
@@ -266,8 +281,6 @@ verification:
   run: probe/runs/15084908.json
   stats: probe/stats/15084908.json
   data: probe/data/15084908/
-status: active
-summary_user: KCI(한국학술지인용색인) 시스템에 등록된 논문별 원문의 PDF 변환 작업 이력을 건별로 담으며, 논문ID(ARTIID)·원문파일ID·학술지ID·등록일·원문상태·변환대상구분·생성여부·오류코드와 메시지·작업일로 구성된다. 연구자나 서비스 운영·분석가가 특정 국내 논문의 원문 PDF가 생성됐는지, 변환 중 오류가 있었는지를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 같은 기관의 KCI 논문·학술지 서비스와는 논문ID·학술지ID 같은 기관 내부 식별자로만 연결한다.
 limits: 논문 서지·인용 정보가 아니라 PDF 변환 작업 이력만 담으므로 논문 내용이나 인용관계 분석에는 따로 KCI 서지 데이터가 필요하다. 다른 기관 데이터와 잇는 공통 키가 없고, 개발계정은 하루 5,000회 호출로 제한된다.
 review:
   summary: draft
@@ -279,3 +292,4 @@ review:
     - c-15084908-03
     - c-15084908-04
   dropped_citations: 0
+status: active

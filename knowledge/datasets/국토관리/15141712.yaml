@@ -1,4 +1,5 @@
-# Dataset 15141712 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15141712 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15141712'
 tier: verified
 title: 기후에너지환경부 한강홍수통제소_유역별 빈도별 지방하천 하천범람 지도 침수심 통계 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 중권역 침수
   - 100년 빈도 홍수
   - 지방하천 홍수
+summary_user: 지방하천 하천범람 지도를 바탕으로 수자원단위지도 중권역별·재현빈도별(50·80·100·200년) 침수면적(km²)을 침수심 5단계(0.5m 이하부터 5.0m 초과까지)로 나눠 담은 집계 통계로, 범위는 전국이며 좌표 없는 비공간 데이터다. 지자체 방재 담당자나 분석가가 '우리 중권역에서 100년 빈도 홍수 때 지방하천이 넘치면 2m 넘게 잠기는 면적이 얼마인가'를 확인하거나 권역 간 침수 규모를 비교하는 데 쓴다. 대권역·중권역 코드(bbsnCd, sbsnCd)가 있으나 실측에서 전역 조인 키로 확인되지 않아, 다른 데이터와는 권역 이름·코드 매핑이나 같은 기관(한강홍수통제소)의 권역 코드 기준으로 맞춰 이어 쓴다.
 description_portal: 환경부 한강홍수통제소에서 제공하는 홍수위험지도 중 지방하천 하천범람 지도를 기반으로 장마철 갑작스럽게 내리는 국지적 집중호우·돌발호우 등으로 유발되는 하천범람 결과의 5단계로 이루어진 침수심별(0.5m 이하, 0.5~1.0m, 1.0~2.0m, 2.0~5.0m, 5.0m 이상) 침수면적(km² 단위) 통계 데이터를 유역별(수자원단위지도의 중권역 단위), 빈도별(50년, 80년, 100년, 200년)로 구분하여 침수면적 통계 데이터를 조회할 수 있는 서비스 입니다. 사용자는 이러한 침수면적 통계 데이터를 통해 해당 지역의 하천범람으로 인한 침수 규모의 정도를 판단할 수 있습니다.
 team:
   dept: 수자원정보센터
@@ -82,6 +84,7 @@ schema:
     - name: bbsnCd
       title: 대권역 코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '10'
@@ -93,6 +96,7 @@ schema:
     - name: sbsnCd
       title: 중권역 코드
       type: number
+      semantic_type: river_cd
       null_rate: 0.0
       sample_values:
         - '01'
@@ -167,6 +171,17 @@ schema:
         p50: 0.34
         max: 0.34
         unique: 1
+  foreign_keys:
+    - fields:
+        - bbsnCd
+      reference:
+        key: river_cd
+      evidence: measured
+    - fields:
+        - sbsnCd
+      reference:
+        key: river_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -218,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15141712-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: river_cd(bbsnCd), river_cd(sbsnCd)'
     evidence:
       - type: measured
         source: probe/stats/15141712.json
@@ -310,8 +325,6 @@ verification:
   run: probe/runs/15141712.json
   stats: probe/stats/15141712.json
   data: probe/data/15141712/
-status: active
-summary_user: 지방하천 하천범람 지도를 바탕으로 수자원단위지도 중권역별·재현빈도별(50·80·100·200년) 침수면적(km²)을 침수심 5단계(0.5m 이하부터 5.0m 초과까지)로 나눠 담은 집계 통계로, 범위는 전국이며 좌표 없는 비공간 데이터다. 지자체 방재 담당자나 분석가가 '우리 중권역에서 100년 빈도 홍수 때 지방하천이 넘치면 2m 넘게 잠기는 면적이 얼마인가'를 확인하거나 권역 간 침수 규모를 비교하는 데 쓴다. 대권역·중권역 코드(bbsnCd, sbsnCd)가 있으나 실측에서 전역 조인 키로 확인되지 않아, 다른 데이터와는 권역 이름·코드 매핑이나 같은 기관(한강홍수통제소)의 권역 코드 기준으로 맞춰 이어 쓴다.
 limits: 하천범람 지도 제작 결과를 한 번 만든 뒤 바뀌지 않는 데이터라 실시간 홍수 예보·실제 침수 실적으로 쓸 수 없고, 중권역 단위 집계라 시군구나 개별 지점의 침수 여부는 알 수 없다. 권역 코드가 전역 조인 키로 확인되지 않아 행정구역 데이터와 붙이려면 별도 매핑이 필요하다.
 review:
   summary: draft
@@ -323,3 +336,4 @@ review:
     - c-15141712-03
     - c-15141712-04
   dropped_citations: 0
+status: active

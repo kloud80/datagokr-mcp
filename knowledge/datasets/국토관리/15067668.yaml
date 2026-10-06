@@ -45,6 +45,7 @@ schema:
         unique: 48
     - name: 측량지구코드
       type: code
+      semantic_type: survey_district_cd
       null_rate: 0.0
       sample_values:
         - '20190005'
@@ -54,6 +55,7 @@ schema:
         unique: 384
     - name: 점일련번호
       type: number
+      semantic_type: survey_district_cd
       null_rate: 0.0
       sample_values:
         - '8'
@@ -612,9 +614,28 @@ schema:
         p50: 44760
         max: 50130
         unique: 248
+  foreign_keys:
+    - fields:
+        - 측량지구코드
+      reference:
+        key: survey_district_cd
+      evidence: measured
+    - fields:
+        - 점일련번호
+      reference:
+        key: survey_district_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 읍면동
+  space_via: name
+  time: day
+  time_fields:
+    - 작성일자
 cycle: default
 classification:
   subsector_name: 수치지도·지형·항공사진·정사영상
@@ -652,7 +673,7 @@ claims:
     valid_until: '2027-04-01'
   - id: c-15067668-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: survey_district_cd(측량지구코드), survey_district_cd(점일련번호)'
     evidence:
       - type: measured
         source: probe/stats/15067668.json

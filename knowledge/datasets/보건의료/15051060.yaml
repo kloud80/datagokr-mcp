@@ -1,4 +1,5 @@
-# Dataset 15051060 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15051060 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15051060'
 tier: verified
 title: 건강보험심사평가원_의료행위별 시도별 건강보험 진료 통계
@@ -22,6 +23,7 @@ synonyms:
   - 의료행위 이용량
   - 건강보험 진료비 통계
   - 심평원 행위 통계
+summary_user: 요양기관 소재지 시도별·진료년도별로 의료행위(검사·수술 등) 행위코드마다 환자수, 명세서건수, 총사용량, 청구금액을 집계한 건강보험 진료 통계로, 심사결정된 요양급여비용 명세서를 기준으로 하며 약국은 제외한다. 분석가나 의료기관 관계자가 '특정 검사·수술이 어느 시도에서 얼마나 많이 시행되고 청구금액은 얼마인가'처럼 지역별 의료행위 이용 규모를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 행위코드는 심평원 수가마스터(EDI 행위코드) 파일과 코드값으로 맞추고 시도는 이름으로 다른 지역 통계와 연결한다.
 description_portal: '요양기관 소재지 기준 지역(시도)별 진료행위(검사·수술등)별 건강보험 진료 통계 / 진료일자 기준(심사분은 각 진료년+4개월) (예) 진료년월: 2024.1월~12월, 심사년월: 2024.1월~2025.4월 / 보험자: 건강보험 / 요양기관 종별: 약국 제외※ 해당 통계는 요양기관에서 청구한 요양급여비용 명세서에 대한 심사결정한 내용을 기준으로 작성되었습니다.※ 행위코드란 환자가 의료기관에서 받은 의료행위(검사, 수술 등)을 분류한 숫자 또는 숫자+문자 분류기호로서, 의료기관에서 요양급여비용을 청구할 때 사용됩니다. 자세한 사항은 건강보험심사평가원 홈페이지(www.hira.or.kr) > 제도·정책 > 보험인정기준 > 자료실 > 수가마스터 파일에서 확인하실 수 있습니다.※ 환자수는 범주 내 동일인의 중복을 제거한 값이지만, 다른 범주와 단순합산할 경우 중복이 발생할 수 있습니다.'
 applicable_legislation:
   - law: 국민건강보험법
@@ -59,6 +61,7 @@ schema:
         unique: 17
     - name: 행위코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - '10100'
@@ -114,12 +117,26 @@ schema:
         p50: 21293110.5
         max: 1203371366709
         unique: 94923
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 시도
+grain:
+  space: sido
+  space_fields:
+    - 시도
+  space_via: name
+  time: year
+  time_fields:
+    - 진료년도
 cycle: default
 classification:
   subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
@@ -156,7 +173,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15051060-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(행위코드)'
     evidence:
       - type: measured
         source: probe/stats/15051060.json
@@ -234,8 +251,6 @@ verification:
   run: probe/runs/15051060.json
   stats: probe/stats/15051060.json
   data: probe/data/15051060/
-status: active
-summary_user: 요양기관 소재지 시도별·진료년도별로 의료행위(검사·수술 등) 행위코드마다 환자수, 명세서건수, 총사용량, 청구금액을 집계한 건강보험 진료 통계로, 심사결정된 요양급여비용 명세서를 기준으로 하며 약국은 제외한다. 분석가나 의료기관 관계자가 '특정 검사·수술이 어느 시도에서 얼마나 많이 시행되고 청구금액은 얼마인가'처럼 지역별 의료행위 이용 규모를 비교할 때 쓴다. 실측 컬럼에 전역 조인 키는 없어서, 행위코드는 심평원 수가마스터(EDI 행위코드) 파일과 코드값으로 맞추고 시도는 이름으로 다른 지역 통계와 연결한다.
 limits: 환자수는 범주 안에서만 중복을 제거한 값이어서 시도나 행위코드를 단순 합산하면 같은 사람이 중복 집계된다. 시도 단위 집계여서 시군구나 개별 요양기관 단위 분석에는 쓰지 못하고, 진료일자 기준으로 진료년 후 4개월까지의 심사분만 반영한다.
 review:
   summary: draft
@@ -247,3 +262,4 @@ review:
     - c-15051060-04
     - c-15051060-01
   dropped_citations: 0
+status: active

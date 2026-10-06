@@ -1,0 +1,230 @@
+# Dataset 15076697 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076697'
+tier: verified
+title: 한국도로공사_VMS 본부별 목록 현황
+sector: 교통물류/도로/road-network
+agency:
+  id: B500004
+  name: 한국도로공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15076697/openapi.do
+synonyms:
+  - 고속도로
+  - VMS
+  - 본부
+  - 정보표출
+  - 교통안내
+  - 장비유형
+  - 긴급알림
+  - 도로관제
+  - 도로전광표지
+  - 가변정보표지판
+  - 고속도로 전광판
+  - 도로공사 본부별 장비 목록
+  - 교통정보 표출 장비
+summary_user: 전국 고속도로에 설치된 VMS(도로전광표지) 장비를 장비 한 대 단위로 담은 목록으로, 장비 ID와 노선명·노선번호, 관리 본부(센터) 코드·이름을 포함한다. 교통정보 서비스 개발자나 분석가가 "어느 노선에 어느 본부 관할 VMS가 설치돼 있는가"를 파악하는 데 쓴다. 전역 조인 키가 없어 다른 고속도로 데이터와는 노선번호·노선명, 본부 코드·이름 같은 이름·코드 매핑이나 같은 기관(한국도로공사) 코드로만 이어 쓴다.
+description_portal: 본 데이터는 한국도로공사에서 제공하는 고속도로에 설치된 VMS(Variable Message Sign) 장비의 본부별 목록 정보를 제공하는 OpenAPI 서비스이다.전국 고속도로에 설치된 VMS의 위치, 관리 본부, 장비 유형, 노선명, 방향 등 주요 정보가 포함되며 XML 및 JSON 형식으로 제공된다.본 데이터는 교통 정보 제공, 돌발 상황 알림, 공사 및 기상 안내 등 실시간 정보 표출 기능을 수행하는 장비 현황 파악에 활용된다.VMS의 유지관리 체계 구축, 스마트 교통 시스템 연계, 교통 운영 효율성 향상 등에도 기여할 수 있다.데이터는 정기적으로 갱신되며, 공공 및 민간의 교통 정보 서비스 개발과 정책 수립에 필요한 기초 자료로 사용된다.또한 위치 기반 경고 시스템, 통합 교통 관제, 도로 이용자 안내 서비스 등 다양한 분야에서 실질적으로 활용 가능하다.
+team:
+  dept: AI데이터처
+services:
+  - op: vmsList
+    name: vmsList
+    endpoint: https://data.ex.co.kr/openapi/vms/vmsList
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.ex.co.kr
+    params:
+      - name: type
+        required: true
+        example: json
+      - name: numOfRows
+        required: true
+        example: '100'
+      - name: pageNo
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: pageNo
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: routeName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경부선
+      stats:
+        unique: 1
+    - name: routeNo
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0010'
+      stats:
+        min: 10
+        p50: 10
+        max: 10
+        unique: 1
+    - name: vmsId
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 0010VME02750
+        - 0010VME02800
+        - 0010VME02820
+      stats:
+        unique: 99
+    - name: centerCode
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200000'
+      stats:
+        min: 200000
+        p50: 200000
+        max: 200000
+        unique: 1
+    - name: centerName
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울경기본부
+      stats:
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: traffic-realtime
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.6737
+  rank_in_sector: 545
+  brm: 교통물류 - 도로
+  why: 고속도로 VMS 장비 전국 목록, 실시간 소통 부문이 제자리
+claims:
+  - id: c-15076697-01
+    kind: access
+    value: 외부 사이트 data.ex.co.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076697.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.ex.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15076697-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076697-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15076697.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076697-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076697.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15076697-06
+    kind: admin_note
+    value: "세부 부문 '실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)'의 가치: 링크별 실시간 속도·돌발 = 오늘의 사실, 이력을 쌓으면 상습 정체 분석 원장 (realtime-query + 이력 적재)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#traffic-realtime
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076697-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076697-08
+    kind: admin_note
+    value: wave3 p2 · 이동 제안 → 교통물류 - 도로 / 실시간 소통
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076697.json
+  stats: probe/stats/15076697.json
+  data: probe/data/15076697/
+limits: 포털 활용신청과 별개로 외부 사이트(data.ex.co.kr) 인증키를 받아 경로 파라미터(KEY)로 넣어야 호출된다. 전국 범위이지만 행정구역 단위 공간 정보가 아니어서 시군구 등 행정구역별 집계와 바로 연결할 수 없다. 장비 목록일 뿐이어서 VMS에 실제로 표출된 메시지 이력은 이 데이터에 없다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15076697-01
+    - c-15076697-03
+    - c-15076697-04
+  dropped_citations: 0
+status: active

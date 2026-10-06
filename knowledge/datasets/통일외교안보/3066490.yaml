@@ -1,4 +1,5 @@
-# Dataset 3066490 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 3066490 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3066490'
 tier: verified
 title: 병무청_모집병 선발배점기준
@@ -25,6 +26,7 @@ synonyms:
   - 특기병 선발 기준
   - 전공 배점
   - 출결 점수
+summary_user: 군별(육군·해군·공군·해병대)·모집특기별로 모집병 선발배점 기준을 담은 전국 단위 기준 데이터로, 자격면허(등급·특기 직접/간접 관련성), 전공(학제·학년·재학/수료), 출결(결석일수)에 따른 배점과 모집연도·차수, 접수·입영 기간이 함께 들어 있다. 입대 지원자가 '내 자격증과 전공으로 원하는 특기에 지원하면 몇 점을 받는가'를 따져 보거나, 분석가가 특기별 배점 구조를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 병무청 모집병 데이터(특기·지원가능·접수현황 등)와는 군 구분·모집특기 코드나 이름, 모집연도·차수를 맞춰 연결한다.
 description_portal: 모집병 지원 시 선발배점 기준을 확인할 수 있는 서비스입니다.군별(육군, 해군, 공군, 해병대), 모집특기별로 정보가 구분되어 있습니다.자격면허는 자격등급(기사급이상, 산업기사급, 기능사급, 일반 등) 및 특기 관련성(직접관련, 간접관련)에 따라 배점을 구분하고, 전공은 학제(2년제, 3년제, 4년제이상 등), 학년(1~4학년이상), 재학/수료여부에 따라 배점을 구분하고, 출결은 결석일수에 따라 배점을 구분합니다.병무청 누리집- 병무민원- 군지원- 내점수 미리 알아보기 메뉴에서 자격면허 및 전공학력을 입력하여 예상 점수를 확인할 수 있습니다.
 team:
   dept: 현역입영과
@@ -108,6 +110,7 @@ schema:
         unique: 51
     - name: gsteukgiCd
       type: string
+      semantic_type: military_specialty_cd
       null_rate: 0.0
       sample_values:
         - '17.01'
@@ -126,6 +129,7 @@ schema:
         unique: 95
     - name: gunGbcd
       type: number
+      semantic_type: mil_branch_cd
       null_rate: 0.0
       sample_values:
         - '1'
@@ -205,6 +209,7 @@ schema:
         unique: 23
     - name: mbteukgiNo
       type: number
+      semantic_type: recruit_specialty_no
       null_rate: 0.0
       sample_values:
         - '11496'
@@ -311,12 +316,33 @@ schema:
         p50: 34
         max: 70
         unique: 22
+  foreign_keys:
+    - fields:
+        - gsteukgiCd
+      reference:
+        key: military_specialty_cd
+      evidence: measured
+    - fields:
+        - gunGbcd
+      reference:
+        key: mil_branch_cd
+      evidence: measured
+    - fields:
+        - mbteukgiNo
+      reference:
+        key: recruit_specialty_no
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - jeopsuJrdtm
+    - jeopsuSjdtm
 cycle: event
 classification:
   subsector_name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
@@ -361,7 +387,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3066490-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: military_specialty_cd(gsteukgiCd), mil_branch_cd(gunGbcd), recruit_specialty_no(mbteukgiNo)'
     evidence:
       - type: measured
         source: probe/stats/3066490.json
@@ -415,8 +441,6 @@ verification:
   run: probe/runs/3066490.json
   stats: probe/stats/3066490.json
   data: probe/data/3066490/
-status: active
-summary_user: 군별(육군·해군·공군·해병대)·모집특기별로 모집병 선발배점 기준을 담은 전국 단위 기준 데이터로, 자격면허(등급·특기 직접/간접 관련성), 전공(학제·학년·재학/수료), 출결(결석일수)에 따른 배점과 모집연도·차수, 접수·입영 기간이 함께 들어 있다. 입대 지원자가 '내 자격증과 전공으로 원하는 특기에 지원하면 몇 점을 받는가'를 따져 보거나, 분석가가 특기별 배점 구조를 비교하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 병무청 모집병 데이터(특기·지원가능·접수현황 등)와는 군 구분·모집특기 코드나 이름, 모집연도·차수를 맞춰 연결한다.
 limits: 다른 기관 데이터와 바로 잇는 공통 키가 없어 이름·코드 매핑이나 병무청 내부 코드로만 연결된다. 모집 이벤트 때 생성된 뒤 바뀌지 않는 형태라 과거 차수 기준이 현재 모집에도 그대로 적용된다고 보면 안 되며, 개인별 실제 점수나 합격 여부는 담지 않는다.
 review:
   summary: draft
@@ -429,3 +453,4 @@ review:
     - c-3066490-04
     - c-3066490-06
   dropped_citations: 0
+status: active

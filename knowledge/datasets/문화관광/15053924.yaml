@@ -1,4 +1,3 @@
-# Dataset 15053924 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15053924'
 tier: verified
 title: 울산시설공단_종합운동장_정보
@@ -22,6 +21,7 @@ synonyms:
   - 공공체육시설 현황
   - 운동장 시설 면적
   - 울산시설공단 체육시설
+summary_user: 울산시설공단이 운영하는 종합운동장의 시설명, 상세 시설, 연면적·대지면적, 주요 시설과 기능, 연락처, 주소를 시설 단위로 담은 작은 CSV 파일(655바이트)이다. 울산 시민이나 생활체육 이용자가 종합운동장 안에 어떤 세부 시설이 있고 규모가 어느 정도인지, 어디로 연락하면 되는지를 확인할 때 쓴다. 전역 조인 키가 없어 다른 체육시설 데이터와는 시설명이나 주소를 직접 맞추거나 같은 기관(울산시설공단) 데이터끼리만 이어 쓴다.
 description_portal: 울산시설공단은 종합운동장에 대한 전반적인 정보를 제공하고 있습니다. 이 데이터는 시설명, 상세 시설, 연면적(제곱미터), 대지(부지)면적, 주요시설, 주요 기능, 연락처, 주소, 데이터 기준일자 등의 항목으로 구성되어 있습니다. 이를 통해 시민들은 각 시설의 규모와 용도, 세부적인 구성 요소들을 파악할 수 있습니다. 또한 해당 시설의 연면적과 부지면적을 비교함으로써 공간 활용도를 가늠할 수 있으며, 상세 시설 항목을 통해 이용자가 원하는 시설을 정확히 찾는 데에도 도움이 됩니다. 데이터 기준일자를 통해 정보의 최신성을 확인할 수 있습니다.
 accrual_periodicity: 연간
 team:
@@ -35,6 +35,7 @@ schema:
   fields:
     - name: 시설명
       type: code
+      semantic_type: uicf_facility_nm
       null_rate: 0.0
       sample_values:
         - 울산종합운동장
@@ -114,12 +115,26 @@ schema:
         min: '2026-05-11'
         max: '2026-05-11'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 시설명
+      reference:
+        key: uicf_facility_nm
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
+  time: day
+  time_fields:
+    - 데이터 기준일자
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -156,7 +171,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15053924-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: uicf_facility_nm(시설명)'
     evidence:
       - type: measured
         source: probe/stats/15053924.json
@@ -221,8 +236,6 @@ verification:
   run: probe/runs/15053924.json
   stats: probe/stats/15053924.json
   data: probe/data/15053924/
-status: active
-summary_user: 울산시설공단이 운영하는 종합운동장의 시설명, 상세 시설, 연면적·대지면적, 주요 시설과 기능, 연락처, 주소를 시설 단위로 담은 작은 CSV 파일(655바이트)이다. 울산 시민이나 생활체육 이용자가 종합운동장 안에 어떤 세부 시설이 있고 규모가 어느 정도인지, 어디로 연락하면 되는지를 확인할 때 쓴다. 전역 조인 키가 없어 다른 체육시설 데이터와는 시설명이나 주소를 직접 맞추거나 같은 기관(울산시설공단) 데이터끼리만 이어 쓴다.
 limits: 공통 코드나 시설 ID가 없어 전국 체육시설 DB 등과 자동으로 결합되지 않고, 이름·주소 매칭에 의존해야 한다. 예약·대관 현황이나 이용 프로그램은 담지 않고 시설 현황만 담는다.
 review:
   summary: draft
@@ -235,3 +248,4 @@ review:
     - c-15053924-04
     - c-15053924-06
   dropped_citations: 0
+status: active

@@ -54,6 +54,7 @@ schema:
   fields:
     - name: 고유번호
       type: number
+      semantic_type: pnu
       null_rate: 0.0
       sample_values:
         - '3611011200120570000'
@@ -147,6 +148,7 @@ schema:
         unique: 3
     - name: 용도지역지구코드
       type: code
+      semantic_type: zoning_cd
       null_rate: 0.0
       sample_values:
         - UMZ100
@@ -204,13 +206,32 @@ schema:
         unique: 547
   foreign_keys:
     - fields:
+        - 고유번호
+      reference:
+        key: pnu
+      evidence: measured
+    - fields:
         - 법정동코드
       reference:
         key: bjd_cd
       evidence: measured
+    - fields:
+        - 용도지역지구코드
+      reference:
+        key: zoning_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 필지·건물
+grain:
+  space: parcel
+  space_fields:
+    - 고유번호
+  space_via: code
+  time: day
+  time_fields:
+    - 등록일자
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 토지이용계획확인·토지이용규제정보 (필지별 규제·행위제한·법령)
@@ -252,7 +273,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15045900-03
     kind: key
-    value: '실측 조인 키: bjd_cd(법정동코드)'
+    value: '실측 조인 키: pnu(고유번호), bjd_cd(법정동코드), zoning_cd(용도지역지구코드)'
     evidence:
       - type: measured
         source: probe/stats/15045900.json

@@ -1,4 +1,5 @@
-# Dataset 15149740 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15149740 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15149740'
 tier: verified
 title: 성평등가족부_청소년활동 자원봉사 터전동아리 회원모집 정보
@@ -20,6 +21,7 @@ synonyms:
   - 청소년 봉사활동 모집
   - 청소년 동아리 모집공고
   - 청소년활동 자원봉사
+summary_user: 청소년 자원봉사 터전동아리가 신규 회원을 모집하는 공고를 모집 건별로 담으며, 모집 인원·모집 시작일과 종료일·모집 대상·동아리 설명·활동 내용·안내사항·안내 사이트 주소를 포함한다. 청소년이나 학부모가 지금 회원을 모집 중인 자원봉사 동아리가 어디인지, 누구를 몇 명 뽑는지 확인할 때 쓰고, 기관 담당자는 모집 현황을 점검하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 동아리 정보와는 단체동호회번호(grpClubNo)로 맞춰 보거나 동아리 이름으로 연결해야 한다.
 description_portal: 성평등가족부 청소년활동 자원봉사 터전동아리 회원모집 정보는 청소년 자원봉사 동아리에서 신규 회원을 모집하는 과정과 관련된 정보를 기록하고 관리하기 위해 제공되는 자료입니다. 모집 공고, 모집 기간, 모집 인원, 신청자 정보, 모집 상태 등 다양한 데이터를 포함하며, 기관에서는 이를 활용하여 모집 현황 관리, 참여자 안내, 프로그램 운영, 정책 평가, 참여자 기록 관리, 프로그램 개선, 홍보 전략 수립 등 다양한 목적으로 활용할 수 있습니다. 또한 회원모집 정보는 자원봉사 동아리 운영 효율성과 참여자 활성화에도 중요한 자료입니다.
 team:
   dept: 정보통계담당관실
@@ -62,6 +64,7 @@ schema:
     - name: grpClubNo
       title: 단체동호회번호
       type: number
+      semantic_type: vltr_club_no
       null_rate: 0.0
       sample_values:
         - '111284'
@@ -174,6 +177,12 @@ schema:
         - https://www.bb1318.com/notice/?uid=283&mod=document
       stats:
         unique: 205
+  foreign_keys:
+    - fields:
+        - grpClubNo
+      reference:
+        key: vltr_club_no
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -224,7 +233,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15149740-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: vltr_club_no(grpClubNo)'
     evidence:
       - type: measured
         source: probe/stats/15149740.json
@@ -278,8 +287,6 @@ verification:
   run: probe/runs/15149740.json
   stats: probe/stats/15149740.json
   data: probe/data/15149740/
-status: active
-summary_user: 청소년 자원봉사 터전동아리가 신규 회원을 모집하는 공고를 모집 건별로 담으며, 모집 인원·모집 시작일과 종료일·모집 대상·동아리 설명·활동 내용·안내사항·안내 사이트 주소를 포함한다. 청소년이나 학부모가 지금 회원을 모집 중인 자원봉사 동아리가 어디인지, 누구를 몇 명 뽑는지 확인할 때 쓰고, 기관 담당자는 모집 현황을 점검하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 찾지 못했으므로, 같은 기관의 동아리 정보와는 단체동호회번호(grpClubNo)로 맞춰 보거나 동아리 이름으로 연결해야 한다.
 limits: 다른 데이터셋과 공통으로 쓰는 조인 키가 없어 지역 통계 등과 바로 잇기 어렵고, 이름이나 같은 기관 코드로만 연결된다. 모집 공고 단위로 생성된 뒤 바뀌지 않는 이벤트성 자료로 분류되어 있어, 모집 마감 이후의 실제 가입 결과나 상태 변화는 확인할 수 없다.
 review:
   summary: draft
@@ -291,3 +298,4 @@ review:
     - c-15149740-02
     - c-15149740-03
   dropped_citations: 0
+status: active

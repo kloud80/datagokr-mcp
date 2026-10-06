@@ -1,4 +1,5 @@
-# Dataset 15105372 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15105372 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15105372'
 tier: verified
 title: 예금보험공사_예금보험공사_예금보험공사_ESG 사회적채권 발행 현황
@@ -21,6 +22,7 @@ synonyms:
   - ESG채권
   - 소셜본드
   - 저축은행 정리 재원 채권
+summary_user: 예금보험공사가 상호저축은행 특별계정의 부실저축은행 정리 재원 부족분을 메우려고 발행·차환 발행한 예금보험기금특별계정채권 가운데 사회적채권(ESG)을 채권 한 건씩 담은 파일로, 채권종류·채권번호·기금·발행일·만기일·이자율(%)·발행액·잔액(원)을 기록한다. 채권 투자자나 ESG 채권 분석가가 예금보험공사 사회적채권이 언제 얼마의 금리로 발행됐고 지금 잔액이 얼마인지 확인하는 데 쓴다. 실측 컬럼에 ISIN 같은 전역 조인 키가 없어 다른 채권 시세·발행 데이터와는 채권번호나 발행일·만기일을 이름 대조하는 방식으로만 이어 쓴다.
 description_portal: '1. 데이터 개요-상호저축은행 특별계정 관련 부실저축은행 정리 재원을 확보하는 과정에서 기존 자금만으로는 부족한 재원을 조달하기 위해 발행하거나, 기발행한 채권의 만기도래 금액 중 금융회사가 납부하는 예금보험료, 회수자금 등으로 충당하지 못하는 부족자금 조달을 위해 차환 발행한 예금보험기금특별계정채권 중 사회적채권 현황 정보를 제공하고 있습니다.-채권의 종류, 채권번호, 기금, 발행일, 만기일, 발행액, 이자율, 잔액 등의 정보를 제공하고 있습니다.2. 데이터 단위(원) : 발행액, 잔액(%) : 이자율'
 applicable_legislation:
   - law: 예금자보호법
@@ -45,6 +47,7 @@ schema:
         unique: 1
     - name: 채권번호
       type: number
+      semantic_type: kdic_bond_no
       null_rate: 0.0
       sample_values:
         - '2020002'
@@ -127,12 +130,23 @@ schema:
         p50: 0
         max: 320000000000
         unique: 11
+  foreign_keys:
+    - fields:
+        - 채권번호
+      reference:
+        key: kdic_bond_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 발행일
+    - 만기일
 cycle: default
 classification:
   subsector_name: 증권 시장 (주식·채권·파생·지수·일반상품 시세, 상장종목, 발행·배당·권리일정, 대차·REPO, MBS)
@@ -170,7 +184,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15105372-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kdic_bond_no(채권번호)'
     evidence:
       - type: measured
         source: probe/stats/15105372.json
@@ -245,8 +259,6 @@ verification:
   run: probe/runs/15105372.json
   stats: probe/stats/15105372.json
   data: probe/data/15105372/
-status: active
-summary_user: 예금보험공사가 상호저축은행 특별계정의 부실저축은행 정리 재원 부족분을 메우려고 발행·차환 발행한 예금보험기금특별계정채권 가운데 사회적채권(ESG)을 채권 한 건씩 담은 파일로, 채권종류·채권번호·기금·발행일·만기일·이자율(%)·발행액·잔액(원)을 기록한다. 채권 투자자나 ESG 채권 분석가가 예금보험공사 사회적채권이 언제 얼마의 금리로 발행됐고 지금 잔액이 얼마인지 확인하는 데 쓴다. 실측 컬럼에 ISIN 같은 전역 조인 키가 없어 다른 채권 시세·발행 데이터와는 채권번호나 발행일·만기일을 이름 대조하는 방식으로만 이어 쓴다.
 limits: 표준 종목코드가 없어 증권 시장 시세·보유 데이터와 바로 조인되지 않는다. 파일은 작은 CSV(약 2.7KB)로 활용신청 없이 받을 수 있지만, 갱신 주기는 확인되지 않았다.
 review:
   summary: draft
@@ -258,3 +270,4 @@ review:
     - c-15105372-03
     - c-15105372-04
   dropped_citations: 0
+status: active

@@ -1,4 +1,5 @@
-# Dataset 15084863 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15084863 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15084863'
 tier: verified
 title: 한국연구재단_KCI 전거데이터 조회 서비스
@@ -25,6 +26,7 @@ synonyms:
   - 한국학술지인용색인
   - 학술지 명칭 정규화
   - 단어 전거
+summary_user: KCI(한국학술지인용색인) 시스템의 학술지 전거데이터를 조회하는 API로, 학술지별 여러 명칭·약어·축약형 명칭과 학술지명에 쓰인 단어와 그 약어·순서를 학술지 식별번호(SEREID)와 전거 순번 단위로 담으며 범위는 전국·비공간이다. 연구자·도서관 담당자·서지 분석가가 "이 약어로 표기된 학술지가 KCI의 어느 학술지인가" 같은 학술지명 표기 정규화 질문에 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, KCI 논문·인용 데이터와는 학술지명이나 같은 기관(한국연구재단) 내부 학술지 식별번호를 맞춰 이어 쓴다.
 description_portal: KCI 전거데이터 조회 서비스는 국내 학술지 정보, 논문 정보 및 참고 문헌을 데이터베이스화하여 각 서지 정보, 인용 정보, 통계 자료, 논문 간 인용관계 분석 등을 제공하는 한국학술지인용색인 (KCI) 시스템의 학술지 관련 전거 데이터에 대한 상세정보를 조회할 수 있는 서비스입니다. KCI 전거데이터 조회 서비스의 주요 기능으로 학술지별 다양한 명칭을 조회하는 학술지 전거 조회, 학술지에 사용된 단어와 단어의 약어를 조회하는 단어 전거 조회, 학술지별 명칭에 대한 여러 약어 및 축약형 명칭을 조회하는 학술지명 전거 조회, 학술지별 명칭에 사용된 단어와 단어의 순서를 조회하는 학술지 단어 전거 조회 등이 포함됩니다.
 team:
   dept: 연구데이터분석팀
@@ -60,6 +62,7 @@ schema:
         unique: 10
     - name: INSIID
       type: code
+      semantic_type: kci_insi_id
       null_rate: 0.0
       sample_values:
         - INS000000016
@@ -69,6 +72,7 @@ schema:
         unique: 4
     - name: SEREID
       type: code
+      semantic_type: kci_sere_id
       null_rate: 0.0
       sample_values:
         - SER000008568
@@ -114,6 +118,17 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - INSIID
+      reference:
+        key: kci_insi_id
+      evidence: measured
+    - fields:
+        - SEREID
+      reference:
+        key: kci_sere_id
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -163,7 +178,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15084863-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kci_insi_id(INSIID), kci_sere_id(SEREID)'
     evidence:
       - type: measured
         source: probe/stats/15084863.json
@@ -228,8 +243,6 @@ verification:
   run: probe/runs/15084863.json
   stats: probe/stats/15084863.json
   data: probe/data/15084863/
-status: active
-summary_user: KCI(한국학술지인용색인) 시스템의 학술지 전거데이터를 조회하는 API로, 학술지별 여러 명칭·약어·축약형 명칭과 학술지명에 쓰인 단어와 그 약어·순서를 학술지 식별번호(SEREID)와 전거 순번 단위로 담으며 범위는 전국·비공간이다. 연구자·도서관 담당자·서지 분석가가 "이 약어로 표기된 학술지가 KCI의 어느 학술지인가" 같은 학술지명 표기 정규화 질문에 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, KCI 논문·인용 데이터와는 학술지명이나 같은 기관(한국연구재단) 내부 학술지 식별번호를 맞춰 이어 쓴다.
 limits: 다른 데이터셋과 바로 연결되는 공통 조인 키가 확인되지 않아 이름·코드 매핑이 필요하다. 개발계정은 하루 5,000회 호출로 제한되고 serviceKey를 쿼리로 넘겨야 한다. 학술지 명칭 전거만 다루며 논문 본문·인용 수치는 담지 않는다.
 review:
   summary: draft
@@ -241,3 +254,4 @@ review:
     - c-15084863-03
     - c-15084863-04
   dropped_citations: 0
+status: active

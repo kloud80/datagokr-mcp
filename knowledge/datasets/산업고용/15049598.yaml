@@ -1,4 +1,5 @@
-# Dataset 15049598 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15049598 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15049598'
 tier: verified
 title: 고용노동부_산재요양신청서 상병코드
@@ -25,6 +26,7 @@ synonyms:
   - 요양급여 상병
   - KCD 상병코드
   - 산업재해 질병명
+summary_user: 산재요양신청서에 기재하는 상병(질병)의 코드와 상병명을 짝지어 담은 전국 단위 코드 목록 파일입니다(약 836KB CSV). 산재 요양 신청서를 작성하는 재해자·의료기관이나 산재 통계를 보는 분석가가 'E134 같은 상병코드가 어떤 질병을 뜻하는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 산재 데이터와는 상병코드나 상병명 문자열을 맞춰 매핑하는 방식으로만 이어 쓴다.
 description_portal: '산재요양신청서에서는 재해자의 산업재해로 인해 발생한 상병(질병)의 상병명과 코드를 작하며 산업재해로 인한 치료가 필요한 질병을 분류하고 있습니다.상병코드는 산재 요양 신청 시 재해로 인해 발생한 질병의 성격과 범위를 명확히 하기 위해 사용되며, 고용노동부, 근로복지공단 등은 이 정보를 바탕으로 요양급여 승인 여부를 판단하고, 질병 유형별 통계 작성, 산재 다빈도 질환 분석, 치료비 지급 기준 설정 등에 활용됩니다.상병코드 예: E134, E135 등상병명 예 : 예: ‘신경학적 합병증을 동반한 기타 명시된 당뇨병’ 등'
 accrual_periodicity: 수시
 team:
@@ -38,6 +40,7 @@ schema:
   fields:
     - name: 상병코드
       type: string
+      semantic_type: drug_cd
       null_rate: 0.0
       sample_values:
         - E134
@@ -54,6 +57,12 @@ schema:
         - 혈액  알콜  농도
       stats:
         unique: 19994
+  foreign_keys:
+    - fields:
+        - 상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -96,7 +105,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15049598-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: drug_cd(상병코드)'
     evidence:
       - type: measured
         source: probe/stats/15049598.json
@@ -150,8 +159,6 @@ verification:
   run: probe/runs/15049598.json
   stats: probe/stats/15049598.json
   data: probe/data/15049598/
-status: active
-summary_user: 산재요양신청서에 기재하는 상병(질병)의 코드와 상병명을 짝지어 담은 전국 단위 코드 목록 파일입니다(약 836KB CSV). 산재 요양 신청서를 작성하는 재해자·의료기관이나 산재 통계를 보는 분석가가 'E134 같은 상병코드가 어떤 질병을 뜻하는가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 산재 데이터와는 상병코드나 상병명 문자열을 맞춰 매핑하는 방식으로만 이어 쓴다.
 limits: 코드와 명칭만 있는 마스터 목록이라 재해 건수, 요양 승인 여부, 치료비 같은 실적 정보는 담겨 있지 않다. 공통 조인 키가 없어 다른 데이터와 연결하려면 상병코드 값을 직접 대조해야 한다.
 review:
   summary: draft
@@ -163,3 +170,4 @@ review:
     - c-15049598-03
     - c-15049598-04
   dropped_citations: 0
+status: active

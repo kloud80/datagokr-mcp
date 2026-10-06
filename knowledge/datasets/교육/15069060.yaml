@@ -1,4 +1,5 @@
-# Dataset 15069060 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15069060 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15069060'
 tier: verified
 title: 한국장학재단_학자금대출 연체잔액 현황
@@ -24,6 +25,7 @@ synonyms:
   - 생활비 대출 연체
   - 은행대출보증 연체
   - 일반상환 학자금대출
+summary_user: 한국장학재단 학자금대출 가운데 연체 1개월 이상 6개월 미만 계좌의 대출잔액을 기준년월 시점에서 대출년도·대출학기·상품(일반 상환 학자금대출, 은행대출보증)별로 집계해 등록금잔액과 생활비용잔액(원)으로 나누어 담은 전국 단위 집계 파일이다. 교육정책 분석가나 연구자가 "어느 실행년도·학기에 나간 학자금대출에서 단기 연체잔액이 많이 남아 있는가"를 상품별로 비교할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 다른 학자금대출 현황 자료와 기준년월·대출년도·대출학기·상품명을 이름 그대로 맞춰 잇는 방식으로만 연결한다.
 description_portal: '기준 시점 학자금대출 실행년도(학기)별, 상품(일반 상환 학자금대출, 은행대출보증)별 연체 1개월 ~ 연체 6개월 미만 계좌의 대출잔액(연체잔액) 관련 내용을 제공합니다.상세 정보는 한국장학재단 홈페이지(https://www.kosaf.go.kr/ko/tuition.do?pf=tuition_main)를 참고바랍니다.※ 단위: 등록금잔액(원), 생활비용잔액(원)※ 대출학기 3학기: 특정 학교의 3학기제※ 취업 후 상환 학자금대출은 대출시점부터 대출원리금에 대한 상환의무를 부담하여 발생소득이 상환기준소득을 초과할 때까지 상환이 유예되어서 연체금액이 없습니다.'
 applicable_legislation:
   - law: 한국장학재단 설립 등에 관한 법률
@@ -52,6 +54,7 @@ schema:
         unique: 1
     - name: 상품명
       type: code
+      semantic_type: kosaf_loan_product
       null_rate: 0.0
       sample_values:
         - 일반상환학자금대출
@@ -105,12 +108,22 @@ schema:
         p50: 299513991
         max: 3604630187
         unique: 34
+  foreign_keys:
+    - fields:
+        - 상품명
+      reference:
+        key: kosaf_loan_product
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 기준년월
 cycle: default
 classification:
   subsector_name: 장학·학자금
@@ -147,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15069060-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kosaf_loan_product(상품명)'
     evidence:
       - type: measured
         source: probe/stats/15069060.json
@@ -211,8 +224,6 @@ verification:
   run: probe/runs/15069060.json
   stats: probe/stats/15069060.json
   data: probe/data/15069060/
-status: active
-summary_user: 한국장학재단 학자금대출 가운데 연체 1개월 이상 6개월 미만 계좌의 대출잔액을 기준년월 시점에서 대출년도·대출학기·상품(일반 상환 학자금대출, 은행대출보증)별로 집계해 등록금잔액과 생활비용잔액(원)으로 나누어 담은 전국 단위 집계 파일이다. 교육정책 분석가나 연구자가 "어느 실행년도·학기에 나간 학자금대출에서 단기 연체잔액이 많이 남아 있는가"를 상품별로 비교할 때 쓴다. 전역 조인 키는 없고, 같은 기관의 다른 학자금대출 현황 자료와 기준년월·대출년도·대출학기·상품명을 이름 그대로 맞춰 잇는 방식으로만 연결한다.
 limits: 전국 합계만 있어 지역·학교·개인 단위로 나눠 볼 수 없고 공간 정보도 없다. 취업 후 상환 학자금대출은 소득 기준 초과 전까지 상환이 유예돼 연체금액이 없으므로 이 자료에 나타나지 않으며, 6개월 이상 장기 연체도 범위 밖이다.
 review:
   summary: draft
@@ -224,3 +235,4 @@ review:
     - c-15069060-03
     - c-15069060-04
   dropped_citations: 0
+status: active

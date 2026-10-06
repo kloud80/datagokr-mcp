@@ -1,4 +1,5 @@
-# Dataset 15056183 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15056183 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056183'
 tier: verified
 title: 제주특별자치도_노인의료복지시설(요양시설)현황
@@ -23,6 +24,7 @@ synonyms:
   - 장기요양시설
   - 제주 요양원 목록
   - 노인시설 정원 현원
+summary_user: 제주특별자치도에 있는 노인의료복지시설(요양시설)을 시설 한 곳당 한 행으로 담은 파일로, 읍면동·시설명·소재지·전화번호와 함께 정원·현원·종사자 수, 설치일을 시설별 개별 단위로 제공한다. 제주에서 부모를 모실 요양원을 찾는 가족이나 지역별 요양시설 정원 대비 입소 현황을 보려는 분석가가 '어느 읍면동에 빈자리가 있는 요양시설이 있는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키나 시설코드가 없어 건강보험 장기요양기관 목록 등과는 시설명·소재지 주소 매칭으로만 이어 쓰고, 읍면동 이름으로 지역 통계와 연결한다.
 description_portal: '제주특별자치도 내 소재하는 노인의료복지시설 현황 데이터를 제공합니다.항목: 시설명, 소재지, 전화번호 등*치매ㆍ중풍등 노인성 질환등으로 심신에 상당한 장애가 발생하여 도움을 필요로 하는 노인을 입소시켜 급식ㆍ요양과 그 밖에 일상생활에 필요한 편의를 제공함*대상 : 장기요양 1~2등급자, 기초생활수급자, 부양의무자로부터 적절한 부양을 받지 못하는 65세 이상 노인 등 자세한 사항은 제주도청 홈페이지에서 확인하시기 바랍니다.https://www.jeju.go.kr/open/open/iopenboard.htm?category=1623'
 accrual_periodicity: 연간
 team:
@@ -132,6 +134,15 @@ facets:
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 읍면동
+  space_via: name
+  time: day
+  time_fields:
+    - 설치일
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
@@ -233,8 +244,6 @@ verification:
   run: probe/runs/15056183.json
   stats: probe/stats/15056183.json
   data: probe/data/15056183/
-status: active
-summary_user: 제주특별자치도에 있는 노인의료복지시설(요양시설)을 시설 한 곳당 한 행으로 담은 파일로, 읍면동·시설명·소재지·전화번호와 함께 정원·현원·종사자 수, 설치일을 시설별 개별 단위로 제공한다. 제주에서 부모를 모실 요양원을 찾는 가족이나 지역별 요양시설 정원 대비 입소 현황을 보려는 분석가가 '어느 읍면동에 빈자리가 있는 요양시설이 있는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키나 시설코드가 없어 건강보험 장기요양기관 목록 등과는 시설명·소재지 주소 매칭으로만 이어 쓰고, 읍면동 이름으로 지역 통계와 연결한다.
 limits: 시설코드 같은 공통 키가 없어 다른 기관 데이터와 붙이려면 시설명·주소를 직접 맞춰야 하며, 표기 차이로 매칭이 어긋날 수 있다. 범위는 제주특별자치도 한 곳뿐이라 다른 시도와 비교하려면 별도 데이터가 필요하다.
 review:
   summary: draft
@@ -247,3 +256,4 @@ review:
     - c-15056183-04
     - c-15056183-06
   dropped_citations: 0
+status: active

@@ -131,6 +131,7 @@ schema:
     - name: chgstnId
       title: 충전소ID
       type: code
+      semantic_type: fuel_station_id
       null_rate: 0.0
       sample_values:
         - ME19E180
@@ -139,6 +140,7 @@ schema:
     - name: chrgrId
       title: 충전기ID
       type: number
+      semantic_type: ev_charger_id
       null_rate: 0.0
       sample_values:
         - '01'
@@ -248,10 +250,29 @@ schema:
       reference:
         key: address
       evidence: measured
+    - fields:
+        - chgstnId
+      reference:
+        key: fuel_station_id
+      evidence: measured
+    - fields:
+        - chrgrId
+      reference:
+        key: ev_charger_id
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
   temporal: 2025-12-03 ~ 2025-12-03
+grain:
+  space: sgg
+  space_fields:
+    - sggNm
+    - roadNmAddr
+  space_via: name
+  time: year
+  time_fields:
+    - rlvtYr
 cycle: default
 classification:
   subsector_name: 충전소·주유소·세차장·휴게소 (차량 서비스 시설)
@@ -297,7 +318,7 @@ claims:
     valid_until: '2027-04-03'
   - id: c-15156662-03
     kind: key
-    value: '실측 조인 키: address(roadNmAddr)'
+    value: '실측 조인 키: address(roadNmAddr), fuel_station_id(chgstnId), ev_charger_id(chrgrId)'
     evidence:
       - type: measured
         source: probe/stats/15156662.json

@@ -1,4 +1,3 @@
-# Dataset 15126873 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
 id: '15126873'
 tier: verified
 title: 소상공인시장진흥공단_천안시  상권 영역 현황
@@ -24,6 +23,7 @@ synonyms:
   - 천안시 상권 지도
   - 전통시장 상권 범위
   - 소상공인 상권정보
+summary_user: 충청남도 천안시 안의 전통시장·근린상권 등 주요 상권을 상권 단위로 한 행씩 담고, 상권번호·상권명과 경계를 이루는 좌표 목록(상권좌표)과 좌표 개수를 함께 싣는 공간 파일이다. 창업 예정자나 지역 상권 분석가가 '천안시에서 이 위치가 어느 상권 경계 안에 드는가', '상권별 경계를 지도에 어떻게 그리는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 시도코드·시군구코드나 상권명 매칭으로 같은 기관의 상가업소·상권 데이터와 이어 쓴다.
 description_portal: 천안시 상권 영역 현황 데이터는 충청남도 천안시 내 전통시장 및 근린상권을 포함한 주요 상권들의 공간 정보를 기반으로 상권코드, 점포수, 상권형태, 시도명, 시군구명, 그리고 상세한 좌표값을 제공합니다. 이 데이터는 지역 내 상권의 경계와 규모를 시각화하거나, 위치 기반 분석 및 도시 상권 정책 수립에 매우 유용하게 활용됩니다. 특히 상권별 점포 밀집도와 경계 구분을 바탕으로 소비 흐름과 접근성 등을 종합적으로 분석할 수 있어, 상권 리모델링, 상점가 육성, 창업 입지 전략 수립 등의 기반자료로 활용할 수 있습니다.
 accrual_periodicity: 수시
 team:
@@ -37,6 +37,7 @@ schema:
   fields:
     - name: 상권번호
       type: number
+      semantic_type: sbiz_trade_area_no
       null_rate: 0.0
       sample_values:
         - '10204'
@@ -120,12 +121,27 @@ schema:
         min: '2024-02-22'
         max: '2024-02-22'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 상권번호
+      reference:
+        key: sbiz_trade_area_no
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 시군구코드
+    - 시군구명
+  space_via: code
+  time: day
+  time_fields:
+    - 데이터기준일자
 cycle: default
 classification:
   subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
@@ -162,7 +178,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15126873-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: sbiz_trade_area_no(상권번호)'
     evidence:
       - type: measured
         source: probe/stats/15126873.json
@@ -227,8 +243,6 @@ verification:
   run: probe/runs/15126873.json
   stats: probe/stats/15126873.json
   data: probe/data/15126873/
-status: active
-summary_user: 충청남도 천안시 안의 전통시장·근린상권 등 주요 상권을 상권 단위로 한 행씩 담고, 상권번호·상권명과 경계를 이루는 좌표 목록(상권좌표)과 좌표 개수를 함께 싣는 공간 파일이다. 창업 예정자나 지역 상권 분석가가 '천안시에서 이 위치가 어느 상권 경계 안에 드는가', '상권별 경계를 지도에 어떻게 그리는가' 같은 질문에 쓴다. 실측 컬럼에 전역 조인 키는 없으며, 시도코드·시군구코드나 상권명 매칭으로 같은 기관의 상가업소·상권 데이터와 이어 쓴다.
 limits: 전역 조인 키가 없어 다른 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 파일은 활용신청 없이 내려받는 CSV(약 26KB)로 규모가 작고, 상가업소 단위 정보는 담지 않는다.
 review:
   summary: draft
@@ -241,3 +255,4 @@ review:
     - c-15126873-04
     - c-15126873-06
   dropped_citations: 0
+status: active

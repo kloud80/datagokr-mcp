@@ -1,4 +1,5 @@
-# Dataset 15125339 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15125339 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125339'
 tier: verified
 title: 한국남부발전(주)_폐수배출 및 수질오염 물질 배출량 현황_GW
@@ -24,6 +25,7 @@ synonyms:
   - 발전소 방류량
   - 폐수 재이용량
   - 발전소 수질오염 배출
+summary_user: 한국남부발전 빛드림본부별(하동, 안동, 부산, 남제주, 영월 등) 종합폐수의 발생량·처리량·재이용량·방류량을 월 단위로 담은 발전소별 집계 데이터다. 분석가나 지역 주민이 '하동 발전소의 월별 폐수 방류량과 재이용 비율이 어떻게 변해 왔나'를 확인하거나 발전소 간 폐수 관리 수준을 비교하는 데 쓴다. 전역 조인 키는 없어서 발전소명(orgNm)과 년월(ym)을 기준으로 같은 기관의 대기오염물질·석탄재 배출 데이터나 주변 기상 측정 자료와 이름 매핑으로 이어 쓴다.
 description_portal: 한국남부발전(주)은 친환경 에너지로 미래를 밝히는 글로벌 에너지 리더를 비전으로 하는 발전공기업입니다. 본 API는 한국남부발전(주)의 폐수배출 및 수질오염 물질 배출량 현황_GW 입니다.사용자는 한국남부발전(주)의 발전소별(하동, 안동, 부산, 남제주, 영월 등 빛드림본부별)로 월별 종합폐수처리량 정보를 조회할 수 있습니다.해당 데이터를 개방함으로서 발전소 운영에 대한 이해도를 높이고 환경 정보에 대한 접근성을 높이고 있습니다.또한 공개된 데이터를 활용하여 합리적인 환경 정책 수립 및 평가의 기초 자료로 활용할 수 있습니다.
 team:
   dept: AI업무혁신부
@@ -74,6 +76,7 @@ schema:
     - name: orgNm
       title: 발전소명
       type: code
+      semantic_type: kospo_saupso_cd
       null_rate: 0.0
       sample_values:
         - 하동
@@ -133,12 +136,22 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - orgNm
+      reference:
+        key: kospo_saupso_cd
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - ym
 cycle: default
 classification:
   subsector_name: 발전소 배출·주변 측정 (대기오염물질·수질·석탄재·주변 기상)
@@ -182,7 +195,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125339-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: kospo_saupso_cd(orgNm)'
     evidence:
       - type: measured
         source: probe/stats/15125339.json
@@ -247,8 +260,6 @@ verification:
   run: probe/runs/15125339.json
   stats: probe/stats/15125339.json
   data: probe/data/15125339/
-status: active
-summary_user: 한국남부발전 빛드림본부별(하동, 안동, 부산, 남제주, 영월 등) 종합폐수의 발생량·처리량·재이용량·방류량을 월 단위로 담은 발전소별 집계 데이터다. 분석가나 지역 주민이 '하동 발전소의 월별 폐수 방류량과 재이용 비율이 어떻게 변해 왔나'를 확인하거나 발전소 간 폐수 관리 수준을 비교하는 데 쓴다. 전역 조인 키는 없어서 발전소명(orgNm)과 년월(ym)을 기준으로 같은 기관의 대기오염물질·석탄재 배출 데이터나 주변 기상 측정 자료와 이름 매핑으로 이어 쓴다.
 limits: 표준 시설 코드나 행정구역 코드 같은 공통 조인 키가 없어 다른 기관 데이터와 붙일 때는 발전소 이름을 직접 맞춰야 한다. 발전소 단위 월 집계라서 개별 오염물질 농도나 배출구별 측정값은 담지 않는다.
 review:
   summary: draft
@@ -260,3 +271,4 @@ review:
     - c-15125339-04
     - c-15125339-06
   dropped_citations: 0
+status: active

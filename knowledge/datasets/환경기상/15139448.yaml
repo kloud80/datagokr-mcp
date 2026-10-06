@@ -1,0 +1,194 @@
+# Dataset 15139448 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+id: '15139448'
+tier: verified
+title: 기상청_레이더 사이트 조회서비스
+sector: 환경기상/대기/weather-observation
+agency:
+  id: '1360000'
+  name: 기상청
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15139448/openapi.do
+synonyms:
+  - 레이더
+  - 사이트
+  - 지점
+  - 반사도
+  - 스펙트럼폭폭
+  - 기상레이더
+  - 레이더 반사도
+  - 시선속도
+  - 레이더 관측자료
+  - 강수 에코
+  - 레이더 영상
+  - 기상청 API허브
+description_portal: '사이트별 레이더로부터 관측된 반사도, 시선속도, 스펙트럼폭 등을 제공합니다.생산주기: 분(5,10분 주기)보유기간: - 관악산, 오성산, 구덕산, 고산, 강릉: 1998년 ~ 현재- 백령도, 진도, 인천공항: 2001년 ~ 현재- 광덕산: 2003년 ~ 현재- 면봉산: 2005년 ~ 현재- 성산: 2006년 ~ 현재(참고) 기상청은 전국에 현업용 기상레이더관측소 10개소(백령도, 관악산, 광덕산, 강릉, 오성산, 진도, 면봉산, 구덕산, 고산, 성산), 기술개발용 레이더 테스트베드(용인) 1개소, 소형 기상레이더 3개소(수리산, 덕적도, 망일산) 및 인천공항 기상레이더 1개소를 설치하여 운영하고 있습니다. 기상청은 독자적인 기상레이더자료 품질관리, 강수량 추정, 강수실황 예측기술을 개발하여 고품질의 기상레이더 정보를 홈페이지와 모바일 앱을 통해 국민에게 제공하고 있습니다.'
+team:
+  dept: 국가기후데이터센터
+services:
+  - op: rdr_uf_list.php
+    name: rdr_uf_list.php
+    endpoint: https://apihub.kma.go.kr/api/typ01/url/rdr_uf_list.php
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: apihub.kma.go.kr
+    params:
+      - name: tm
+        required: true
+        example: '201008020920'
+      - name: dtm
+        required: true
+        example: '60'
+      - name: stn
+        required: true
+        example: KWK
+      - name: qcd
+        required: true
+        example: '1'
+      - name: disp
+        required: true
+        example: '1'
+      - name: help
+        required: true
+        example: '1'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: line
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 01008020920.   KWK    159133    RDR_KWK_QCD_201008020920.uf
+        - 01008020910.   KWK    163750    RDR_KWK_QCD_201008020910.uf
+        - 01008020900.   KWK    169843    RDR_KWK_QCD_201008020900.uf
+      stats:
+        unique: 6
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.6774
+  rank_in_sector: 128
+  brm: 환경기상 - 대기
+  why: 레이더 사이트별 관측, 레이더 자료와 연계
+claims:
+  - id: c-15139448-01
+    kind: access
+    value: 외부 사이트 apihub.kma.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-06 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15139448.json
+        observed_at: '2026-10-06'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 apihub.kma.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-07'
+  - id: c-15139448-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139448-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15139448.json
+        observed_at: '2026-10-06'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139448-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15139448.json
+        observed_at: '2026-10-06'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-07'
+  - id: c-15139448-06
+    kind: admin_note
+    value: "세부 부문 '기상 관측 (ASOS·AWS·레이더·위성·고층·해양기상 부이·낙뢰·항공기상)'의 가치: 관측지점번호 기준 시간·일 자료 — 기후·농업·보험 분석 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#weather-observation
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15139448-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 대기] 기상 예보·특보 · 대기질 실시간(에어코리아) · 실내공기질 · 기상 관측(ASOS·AWS·레이더·위성) · 대기 배출원·자동차 환경. 기상청 224건은 weather-to-environment로 이미 여기.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L681
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15139448-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-06'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-06'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15139448.json
+  stats: probe/stats/15139448.json
+  data: probe/data/15139448/
+status: active
+summary_user: 기상청 현업 레이더 사이트별로 관측한 반사도·시선속도·스펙트럼폭 등 레이더 원천 관측자료를 5~10분 주기로 담으며, 범위는 전국이고 사이트에 따라 1998년 이후 자료를 보유한다. 기상·방재 분석가가 '특정 시각에 어느 레이더 사이트에서 강수 에코가 얼마나 강하게 잡혔는가'를 확인하거나 강수 추정·사례 분석의 원천으로 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 기상 관측자료(ASOS·AWS 등)와는 레이더 사이트 이름이나 같은 기관 코드 매핑으로만 이어 쓴다.
+limits: 포털 활용신청과 별개로 기상청 API허브(apihub.kma.go.kr) 인증키가 필요하다. 공통 조인 키가 없어 행정구역이나 관측지점번호 기반 자료와 바로 결합하지 못하며, 자료는 비공간·전국 단위로 분류되어 있다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-07'
+  batch: sync
+  cited_claims:
+    - c-15139448-01
+    - c-15139448-03
+    - c-15139448-04
+    - c-15139448-06
+  dropped_citations: 0

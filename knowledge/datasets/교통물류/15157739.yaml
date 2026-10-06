@@ -1,4 +1,5 @@
-# Dataset 15157739 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15157739 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157739'
 tier: verified
 title: 인천항만공사_인천항여객터미널 운영정보 조회 서비스
@@ -24,6 +25,7 @@ synonyms:
   - 인천 섬 여객선
   - 선박 목록
   - 여객터미널 선사 연락처
+summary_user: 인천항 여객터미널에서 운영하는 선사(선사코드·선사명·전화번호·홈페이지·소개·활성 여부), 선박(선박코드·선명·소속 선사코드), 항로(항로코드·출발지·종착지·편도 여부·주변 볼거리) 같은 기본 운영정보를 건별 목록으로 담는 API다. 인천항에서 어느 선사가 어떤 배로 어느 섬 항로를 다니는지, 선사 연락처는 무엇인지 확인하려는 여행객·도서 주민과 고객 안내 시스템을 만드는 운영사가 쓴다. 전역 조인 키는 없다. 오퍼레이션끼리는 선사코드(wtorcmpCode)로 선사와 선박을 잇고, 다른 연안여객 데이터와는 선사명·항로명 같은 이름 매칭이나 같은 기관 코드로만 연결된다.
 description_portal: 해당 자료는 인천항만공사에서 운영하는 인천항 여객터미널에 대한 기본 운영정보를 제공하는 Open API 설명 자료로, 각 선사의 명칭, 개장일시, 최근 운영일자, 전화번호, 회사코드 등 선사 운영 관련 정보를 포함합니다. REST 방식의 API로 XML 포맷 데이터를 제공하며, 페이지 단위로 호출 가능하고, 터미널 운영사 및 여객 운송기관에서 선사 관리, 고객 안내, 서비스 연계 등에 활용될 수 있습니다. 또한 여객터미널 운영 효율화, 선사별 입출항 정보 연계, 민원 응대 시스템 구축 등에서도 적용 가능하며, 해양교통 서비스 품질 제고 및 여객 운송 데이터 기반 분석에도 기여할 수 있습니다.
 team:
   dept: 항만정보화실
@@ -526,6 +528,12 @@ facets:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: realtime
+  time_fields:
+    - frstOperDate
+    - lastOperDate
+    - frstOperDate
 cycle: default
 classification:
   subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
@@ -646,8 +654,6 @@ verification:
   run: probe/runs/15157739.json
   stats: probe/stats/15157739.json
   data: probe/data/15157739/
-status: active
-summary_user: 인천항 여객터미널에서 운영하는 선사(선사코드·선사명·전화번호·홈페이지·소개·활성 여부), 선박(선박코드·선명·소속 선사코드), 항로(항로코드·출발지·종착지·편도 여부·주변 볼거리) 같은 기본 운영정보를 건별 목록으로 담는 API다. 인천항에서 어느 선사가 어떤 배로 어느 섬 항로를 다니는지, 선사 연락처는 무엇인지 확인하려는 여행객·도서 주민과 고객 안내 시스템을 만드는 운영사가 쓴다. 전역 조인 키는 없다. 오퍼레이션끼리는 선사코드(wtorcmpCode)로 선사와 선박을 잇고, 다른 연안여객 데이터와는 선사명·항로명 같은 이름 매칭이나 같은 기관 코드로만 연결된다.
 limits: 필수 파라미터(searchDt, searchNm)에는 다른 데이터의 코드 값을 넣어야 하므로 먼저 해당 값을 받아 와야 한다. 결항 여부 같은 실시간 운항 상태는 이 데이터의 대표 수요가 아니며, 해양교통안전공단 운항상태·운항예보 데이터를 함께 봐야 한다. 개발계정 호출 한도는 하루 10,000회다.
 review:
   summary: draft
@@ -660,3 +666,4 @@ review:
     - c-15157739-06
     - c-15157739-10
   dropped_citations: 0
+status: active

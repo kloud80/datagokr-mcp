@@ -1,4 +1,5 @@
-# Dataset 15153838 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15153838 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15153838'
 tier: verified
 title: 여수광양항만공사_항만시설사용 정보
@@ -25,6 +26,7 @@ synonyms:
   - 하역사 작업 내역
   - 선석 가동률
   - 항만시설 사용신고
+summary_user: 여수광양항만공사 관할 항만에서 선박이 선석에 접안·작업·이안한 기록을 건별로 담은 파일로, 선석·부두 코드, 계선주 번호, 선박명·길이·총톤수·재화중량톤, 접안·작업시작·이안 일시, 대리점·화주·하역사명, 최초신고·최종수정 일시가 들어 있다(받은 csv는 5,299바이트 규모). 항만 운영 분석가가 특정 선석이 얼마나 오래 점유됐는지, 선박이 접안 후 작업을 시작하기까지 얼마나 기다렸는지 같은 선석 가동률·처리 효율 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 입출항·항만 시설 원장 데이터와는 선박명이나 선석부두코드를 이름·코드 매핑으로 맞추거나 같은 기관 코드로만 연결한다.
 description_portal: 이 데이터는 여수광양항만공사의 항만시설 사용 내역을 상세 기록한 운영 데이터셋으로, 선박이 특정 선석에서 접안·하역·이안하는 전 과정의 정보를 포함하고 있습니다. 주요 정보로는 선박명, 총톤수(GT), 재화중량톤수(DWT), 접안일시, 이안일시, 작업 시작 시각, 그리고 하역사, 화주사, 대리점명 등 항만운영에 필요한 모든 핵심 항목이 포함되어 있습니다.또한 각 기록에는 최초 등록일(FRST_REG_DT) 및 **최종 수정일(LAST_MDFCN_DT)**이 포함되어 있어, 항만시설 사용 기록의 변경 이력 추적도 가능합니다.전체적으로 항만운영 실적 분석, 선석 가동률 계산, 선박 처리 효율 평가 등에 활용할 수 있는 정형화된 데이터 구조를 가지고 있습니다.
 applicable_legislation:
   - law: 항만공사법
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: 선석부두코드
       type: code
+      semantic_type: port_facility_cd
       null_rate: 0.0
       sample_values:
         - W1
@@ -283,12 +286,24 @@ schema:
         min: '2024-10-25'
         max: '2024-12-31'
         unique: 20
+  foreign_keys:
+    - fields:
+        - 선석부두코드
+      reference:
+        key: port_facility_cd
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 접안일
+    - 작업시작일
+    - 이안일
 cycle: default
 classification:
   subsector_name: 항만 시설 원장 (항만 목록·부두·선석·하역능력·배후단지·마리나·항만코드)
@@ -325,7 +340,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15153838-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: port_facility_cd(선석부두코드)'
     evidence:
       - type: measured
         source: probe/stats/15153838.json
@@ -400,8 +415,6 @@ verification:
   run: probe/runs/15153838.json
   stats: probe/stats/15153838.json
   data: probe/data/15153838/
-status: active
-summary_user: 여수광양항만공사 관할 항만에서 선박이 선석에 접안·작업·이안한 기록을 건별로 담은 파일로, 선석·부두 코드, 계선주 번호, 선박명·길이·총톤수·재화중량톤, 접안·작업시작·이안 일시, 대리점·화주·하역사명, 최초신고·최종수정 일시가 들어 있다(받은 csv는 5,299바이트 규모). 항만 운영 분석가가 특정 선석이 얼마나 오래 점유됐는지, 선박이 접안 후 작업을 시작하기까지 얼마나 기다렸는지 같은 선석 가동률·처리 효율 질문에 쓴다. 실측 컬럼에 전역 조인 키가 없어 입출항·항만 시설 원장 데이터와는 선박명이나 선석부두코드를 이름·코드 매핑으로 맞추거나 같은 기관 코드로만 연결한다.
 limits: 표준 항만코드(UN/LOCODE 등)나 선박 고유번호가 없어 다른 기관의 입출항·물류 데이터와 바로 붙이기 어렵고, 항만코드 연계에는 별도 매핑표가 필요하다. 받은 파일 크기가 작아 전체 운영 기간을 담은 이력이라기보다 일부 기간 기록일 수 있으므로 기간 범위를 먼저 확인해야 한다.
 review:
   summary: draft
@@ -413,3 +426,4 @@ review:
     - c-15153838-03
     - c-15153838-06
   dropped_citations: 0
+status: active

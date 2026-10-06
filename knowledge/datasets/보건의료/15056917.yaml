@@ -1,0 +1,203 @@
+# Dataset 15056917 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15056917'
+tier: verified
+title: 경기도_전문병원 현황
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '6410000'
+  name: 경기도
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15056917/openapi.do
+synonyms:
+  - 진료분야
+  - 의료기관
+  - 전문병원
+  - 병원종류
+  - 보건정책
+  - 의료시설
+  - 경기도 전문병원
+  - 전문병원 지정 현황
+  - 진료분야별 전문병원
+  - 수지접합 병원
+  - 재활 전문병원
+  - 병원 위치 좌표
+  - 경기 의료기관 목록
+summary_user: 경기도 내 진료분야별 전문병원을 병원 한 곳씩 담은 현황 목록으로, 병원 명칭(INST_NM)·전문 분야(산부인과·안과·수지접합·재활의학과 등)·병원 종류와 함께 시군, 지번·도로명 주소, 우편번호, 위경도(WGS84)를 담는다. 주민이나 분석가가 "우리 시군에서 수지접합이나 재활 전문병원은 어디에 있나", "분야별 전문병원이 경기도 안에서 어느 지역에 몰려 있나"를 확인하는 데 쓴다. 실측 컬럼에는 다른 데이터와 공통으로 쓰는 조인 키가 없어, 병원 이름·주소를 맞추거나 같은 기관(경기도) 데이터의 시군명으로만 이어 쓴다.
+description_portal: 이 데이터는 경기도 내 다양한 진료분야별 전문병원 현황을 제공하며, 병원의 명칭, 분야, 시군 위치, 병원 종류, 지번주소 및 도로명주소, 우편번호, 위도(WGS84 기준)와 경도 정보를 포함하고 있습니다. 분야명에는 산부인과, 안과, 수지접합, 재활의학과 등 다양한 전문 진료과목이 포함되어 있으며, 이는 지역별 특화 진료 역량 분석과 공공의료 자원 분포 파악에 유용한 정보를 제공합니다. 본 데이터는 전문 진료 서비스 접근성 분석, 보건의료 정책 수립, 응급환자 이송체계 구축, 위치 기반 의료정보 제공 서비스 등에 활용될 수 있습니다.
+team:
+  dept: AI미래행정과
+services:
+  - op: HosptlSpecltyM
+    name: HosptlSpecltyM
+    endpoint: https://openapi.gg.go.kr/HosptlSpecltyM
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.gg.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FIELD_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 관절
+        - 알코올
+        - 한방척추
+      stats:
+        unique: 3
+    - name: INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 카프성모병원
+        - 일산자생한방병원
+        - 의료법인 장산의료재단 이춘택병원
+      stats:
+        unique: 5
+    - name: FACLT_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 병원
+        - 정신병원
+        - 한방병원
+      stats:
+        unique: 3
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.6538
+  rank_in_sector: 334
+  brm: 보건의료 - 보건의료
+  why: 경기데이터드림 (경기도 자체 개방 포털)
+claims:
+  - id: c-15056917-01
+    kind: access
+    value: 외부 사이트 data.gg.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-05 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15056917.json
+        observed_at: '2026-10-05'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.gg.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-06'
+  - id: c-15056917-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056917-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15056917.json
+        observed_at: '2026-10-05'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056917-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15056917.json
+        observed_at: '2026-10-05'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-06'
+  - id: c-15056917-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15056917-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15056917-08
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-05'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-05'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15056917.json
+  stats: probe/stats/15056917.json
+  data: probe/data/15056917/
+limits: 경기도 공공데이터 사이트(data.gg.go.kr)에서 별도로 받은 인증키가 있어야 호출되며, 공공데이터포털 활용신청과는 별개다. 전역 조인 키가 없어 건강보험·인허가 등 다른 의료기관 데이터와 붙이려면 이름·주소 매칭에 기대야 한다.
+review:
+  summary: draft
+  by: llm:claude-opus-5-5
+  at: '2026-10-06'
+  batch: sync
+  cited_claims:
+    - c-15056917-01
+    - c-15056917-03
+  dropped_citations: 0
+status: active
