@@ -1,3 +1,5 @@
+# Dataset 15095346 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095346'
 tier: verified
 title: 천안도시공사_종량제판매소 현황
@@ -64,6 +66,7 @@ schema:
         unique: 5
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 천안시 동남구 목천읍 신계1길 41 (신계리, 동우아파트)
@@ -71,12 +74,23 @@ schema:
         - 천안시 동남구 봉명8길 61 (봉명동, 성욱빌딩)
       stats:
         unique: 882
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 법정동
+  space_via: name
 cycle: default
 classification:
   subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
@@ -113,7 +127,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15095346-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15095346.json
@@ -201,8 +215,3 @@ review:
     - c-15095346-06
   dropped_citations: 0
 status: active
-grain:
-  space: emd
-  space_fields:
-    - 법정동
-  space_via: name

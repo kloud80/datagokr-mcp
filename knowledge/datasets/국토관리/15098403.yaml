@@ -1,3 +1,5 @@
+# Dataset 15098403 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15098403'
 tier: verified
 title: 세종특별자치시_세종특별자치시 상수도 기반시설 현황 조회 서비스
@@ -51,6 +53,7 @@ schema:
         unique: 20
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 연기면연기리67-6
@@ -88,12 +91,23 @@ schema:
         - 3대1조(송수가압)
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)
@@ -138,7 +152,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15098403-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15098403.json
@@ -242,8 +256,3 @@ review:
     - c-15098403-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address

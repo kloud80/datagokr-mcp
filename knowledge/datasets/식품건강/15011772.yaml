@@ -1,3 +1,5 @@
+# Dataset 15011772 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15011772'
 tier: verified
 title: 서울특별시 동대문구_식품위생업소현황
@@ -79,6 +81,7 @@ schema:
         unique: 7532
     - name: 소재지(도로명)
       type: string
+      semantic_type: address
       null_rate: 0.0126
       sample_values:
         - 서울특별시 동대문구 왕산로 214, 청량리역,롯데백화점 지하2층 (전농동)
@@ -88,6 +91,7 @@ schema:
         unique: 7017
     - name: 소재지(지번)
       type: string
+      semantic_type: address
       null_rate: 0.0007
       sample_values:
         - '서울특별시 동대문구 제기동 1019 경동시장 '
@@ -127,6 +131,17 @@ schema:
         min: '2026-02-25'
         max: '2026-02-25'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 소재지(도로명)
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 소재지(지번)
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -179,7 +194,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15011772-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지(도로명)), address(소재지(지번))'
     evidence:
       - type: measured
         source: probe/stats/15011772.json

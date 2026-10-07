@@ -1,3 +1,5 @@
+# Dataset 15087265 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15087265'
 tier: verified
 title: 경기도_국제결혼중개업소 현황
@@ -62,6 +64,7 @@ schema:
         unique: 91
     - name: locplc_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 수원시 장안구 수성로 356, 3층(영화동)
@@ -88,9 +91,20 @@ schema:
         - 영업
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - locplc_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - locplc_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
@@ -130,7 +144,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15087265-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(locplc_addr)'
     evidence:
       - type: measured
         source: probe/stats/15087265.json
@@ -196,8 +210,3 @@ review:
     - c-15087265-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - locplc_addr
-  space_via: address

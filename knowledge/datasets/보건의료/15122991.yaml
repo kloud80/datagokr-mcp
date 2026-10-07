@@ -1,3 +1,5 @@
+# Dataset 15122991 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15122991'
 tier: verified
 title: 경기도_임시선별검사소 설치 현황
@@ -63,6 +65,7 @@ schema:
         unique: 4
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시 분당구 성남대로 903
@@ -72,6 +75,7 @@ schema:
         unique: 4
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.25
       sample_values:
         - 경기도 안산시 단원구 초지동 666-8번지
@@ -98,9 +102,26 @@ schema:
         p50: 20230403
         max: 20230403
         unique: 1
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - refine_road_nm_addr
+    - refine_lotno_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -140,7 +161,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15122991-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15122991.json
@@ -217,9 +238,3 @@ review:
     - c-15122991-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - refine_road_nm_addr
-    - refine_lotno_addr
-  space_via: address

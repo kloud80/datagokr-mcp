@@ -1,3 +1,5 @@
+# Dataset 15021282 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15021282'
 tier: verified
 title: 울산광역시 남구_담배소매업 정보
@@ -55,6 +57,7 @@ schema:
         unique: 4
     - name: 업소지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0764
       sample_values:
         - 울산광역시 남구 달동 830-1 롯데마트울산점
@@ -64,6 +67,7 @@ schema:
         unique: 1078
     - name: 업소도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.2462
       sample_values:
         - 울산광역시 남구 삼산로 74. 롯데마트울산점 (달동)
@@ -71,12 +75,29 @@ schema:
         - 울산광역시 남구 왕생로62번길 1. 1층 (달동)
       stats:
         unique: 883
+  foreign_keys:
+    - fields:
+        - 업소지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 업소도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 업소지번주소
+    - 업소도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -113,7 +134,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15021282-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(업소지번주소), address(업소도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15021282.json
@@ -192,9 +213,3 @@ review:
     - c-15021282-07
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 업소지번주소
-    - 업소도로명주소
-  space_via: address

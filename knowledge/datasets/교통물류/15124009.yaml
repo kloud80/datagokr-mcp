@@ -1,3 +1,5 @@
+# Dataset 15124009 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124009'
 tier: verified
 title: 경기도_버스 카드데이터 기준 정류소 정보
@@ -91,6 +93,7 @@ schema:
         unique: 10
     - name: legaldong_cd
       type: number
+      semantic_type: bjd_cd
       null_rate: 0.06
       sample_values:
         - '4119000000'
@@ -201,9 +204,21 @@ schema:
       reference:
         key: busstop_sttn_id
       evidence: measured
+    - fields:
+        - legaldong_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - ycrd
+    - xcrd
+    - region_xcrd
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -244,7 +259,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15124009-03
     kind: key
-    value: '실측 조인 키: busstop_sttn_id(sttn_id)'
+    value: '실측 조인 키: busstop_sttn_id(sttn_id), bjd_cd(legaldong_cd)'
     evidence:
       - type: measured
         source: probe/stats/15124009.json
@@ -321,10 +336,3 @@ review:
     - c-15124009-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - ycrd
-    - xcrd
-    - region_xcrd
-  space_via: coord

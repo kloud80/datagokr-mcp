@@ -1,3 +1,5 @@
+# Dataset 15145962 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15145962'
 tier: verified
 title: 국민건강보험공단_치매관련급여 제공 장기요양기관 현황
@@ -66,6 +68,7 @@ schema:
         unique: 13293
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0001
       sample_values:
         - 경기도 성남시 분당구 성남대로916번길  11 501호 (야탑동  글라스타워)
@@ -145,9 +148,19 @@ schema:
       reference:
         key: ltc_instt_cd
       evidence: measured
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -183,7 +196,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15145962-03
     kind: key
-    value: '실측 조인 키: ltc_instt_cd(장기요양기관기호)'
+    value: '실측 조인 키: ltc_instt_cd(장기요양기관기호), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15145962.json
@@ -260,8 +273,3 @@ review:
     - c-15145962-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

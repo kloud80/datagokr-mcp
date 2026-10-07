@@ -1,3 +1,5 @@
+# Dataset 15120791 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15120791'
 tier: verified
 title: 한국산업인력공단_외국인근로자 취업교육 교육장 안내
@@ -20,6 +22,7 @@ synonyms:
   - E-9 취업교육
   - 외국인력 교육장 주소
   - 외국인근로자 교육 연락처
+summary_user: 한국산업인력공단이 외국인근로자 취업교육을 실시하는 교육장의 이름, 운영 기관명, 전화·팩스번호, 주소를 교육장 한 곳당 한 건으로 담으며 범위는 전국이다. 외국인근로자를 고용한 사업주나 지원 기관이 '가까운 취업교육 교육장이 어디이고 어디로 연락하면 되는가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관이름(orgHanNm)이나 주소를 기준으로 이름·주소 매칭을 해서 이어 써야 한다.
 description_portal: 한국산업인력공단에서 실시하며, 외국인 근로자에게 한국산업인력공단에서 시행하는 취업교육 교육장 정보를 제공하는 데이터 입니다. 한국산업인력공단에서 제공중인 데이터 입니다.
 team:
   dept: 정보화사업부
@@ -102,6 +105,7 @@ schema:
     - name: addr
       title: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 수원시 권선구 호매실로 46-68 (탑동 906)한국산업인력공단 경인지역본부 지하1층
@@ -109,9 +113,20 @@ schema:
         - 부산광역시 북구 금곡대로441번길 26 (금곡동 1877)한국산업인력공단 부산지역본부 9층
       stats:
         unique: 7
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 학교 기본정보 (+연계 가능한 통계·재정)
@@ -154,7 +169,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15120791-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15120791.json
@@ -219,8 +234,6 @@ verification:
   run: probe/runs/15120791.json
   stats: probe/stats/15120791.json
   data: probe/data/15120791/
-status: active
-summary_user: 한국산업인력공단이 외국인근로자 취업교육을 실시하는 교육장의 이름, 운영 기관명, 전화·팩스번호, 주소를 교육장 한 곳당 한 건으로 담으며 범위는 전국이다. 외국인근로자를 고용한 사업주나 지원 기관이 '가까운 취업교육 교육장이 어디이고 어디로 연락하면 되는가'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 기관이름(orgHanNm)이나 주소를 기준으로 이름·주소 매칭을 해서 이어 써야 한다.
 limits: 학교코드 같은 공통 식별 키가 없어 학교 기본정보나 교육 통계와 키로 바로 붙일 수 없고, 연결은 이름·주소 매칭에 의존한다. 위치는 개별 주소 단위로 제공된다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하며, 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -232,8 +245,4 @@ review:
     - c-15120791-03
     - c-15120791-04
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address
+status: active

@@ -1,3 +1,5 @@
+# Dataset 15124211 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124211'
 tier: verified
 title: 서울특별시_보행자 신호등 분포도
@@ -110,6 +112,7 @@ schema:
         unique: 1361
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 강남구 수서동 산10-1임
@@ -117,9 +120,21 @@ schema:
         - 강남구 포이동 660-3 대
       stats:
         unique: 786
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - X좌표
+    - Y좌표
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)
@@ -156,7 +171,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15124211-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15124211.json
@@ -233,9 +248,3 @@ review:
     - c-15124211-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - X좌표
-    - Y좌표
-  space_via: coord

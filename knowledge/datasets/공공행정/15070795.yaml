@@ -1,3 +1,5 @@
+# Dataset 15070795 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070795'
 tier: verified
 title: 부산광역시 해운대구_공중화장실 정보조회 서비스
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: address
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 우2동 1494 (1494, U-dong, Haeundae-gu)
@@ -96,12 +99,24 @@ schema:
         p50: 35.17827
         max: 35.22118
         unique: 49
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lng
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
@@ -145,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070795-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(address)'
     evidence:
       - type: measured
         source: probe/stats/15070795.json
@@ -223,9 +238,3 @@ review:
     - c-15070795-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lng
-    - lat
-  space_via: coord

@@ -1,3 +1,5 @@
+# Dataset 15080729 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080729'
 tier: verified
 title: 대전도시공사_청년임대주택 현황
@@ -147,6 +149,7 @@ schema:
         unique: 385
     - name: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대전광역시 유성구 궁동로 71  (궁동)
@@ -154,9 +157,20 @@ schema:
         - 대전광역시 서구 계룡로 568  (괴정동, 삼영빌딩)
       stats:
         unique: 14
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: rental
@@ -194,7 +208,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15080729-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15080729.json
@@ -302,8 +316,3 @@ review:
     - c-15080729-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 3081033 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3081033'
 tier: verified
 title: 인천광역시 연수구_담배소매인 지정 현황
@@ -65,6 +67,7 @@ schema:
         unique: 630
     - name: 업소지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0016
       sample_values:
         - 인천광역시 연수구 송도동 12-1 인천대학교
@@ -74,6 +77,7 @@ schema:
         unique: 552
     - name: 업소도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0172
       sample_values:
         - 인천광역시 연수구 송도국제대로 165. 홈플러스 복합쇼핑몰(송도점) (송도동)
@@ -81,12 +85,29 @@ schema:
         - 인천광역시 연수구 송도문화로28번길 27. 상가2동 104호 (송도동. 송도글로벌파크베르디움)
       stats:
         unique: 630
+  foreign_keys:
+    - fields:
+        - 업소지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 업소도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 업소지번주소
+    - 업소도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 미분류 (재구성 후 잔여)
@@ -122,7 +143,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3081033-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(업소지번주소), address(업소도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/3081033.json
@@ -200,9 +221,3 @@ review:
     - c-3081033-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 업소지번주소
-    - 업소도로명주소
-  space_via: address

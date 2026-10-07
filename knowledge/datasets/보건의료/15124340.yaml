@@ -1,3 +1,5 @@
+# Dataset 15124340 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124340'
 tier: verified
 title: 대전광역시 서구_치과기공소 현황_파일
@@ -62,6 +64,7 @@ schema:
         unique: 1
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 공란
@@ -71,6 +74,7 @@ schema:
         unique: 63
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대전광역시 서구 조달청길 104, 2층 (도마동)
@@ -87,12 +91,29 @@ schema:
         - 070-8221-2804
       stats:
         unique: 51
+  foreign_keys:
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 지번주소
+    - 도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -129,7 +150,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15124340-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(지번주소), address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15124340.json
@@ -206,9 +227,3 @@ review:
     - c-15124340-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 지번주소
-    - 도로명주소
-  space_via: address

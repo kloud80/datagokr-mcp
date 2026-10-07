@@ -1,3 +1,5 @@
+# Dataset 15099881 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15099881'
 tier: verified
 title: 국세청_세무서별 관할구역
@@ -47,6 +49,7 @@ schema:
         unique: 140
     - name: 도로명 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 종로구 종로5길 86(수송동)
@@ -120,6 +123,11 @@ schema:
         unique: 140
   foreign_keys:
     - fields:
+        - 도로명 주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - 세무서코드
       reference:
         key: tax_office_cd
@@ -127,6 +135,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 도로명 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
@@ -163,7 +176,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15099881-03
     kind: key
-    value: '실측 조인 키: tax_office_cd(세무서코드)'
+    value: '실측 조인 키: address(도로명 주소), tax_office_cd(세무서코드)'
     evidence:
       - type: measured
         source: probe/stats/15099881.json
@@ -251,8 +264,3 @@ review:
     - c-15099881-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 도로명 주소
-  space_via: address

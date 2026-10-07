@@ -1,3 +1,5 @@
+# Dataset 15080607 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15080607'
 tier: verified
 title: 농림축산식품부 국립농산물품질관리원_농산물우수관리(GAP) 관리시설정보 OpenAPI
@@ -146,6 +148,7 @@ schema:
         unique: 5
     - name: RN_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경상북도 의성군 다인면 서부로
@@ -167,6 +170,7 @@ schema:
         unique: 5
     - name: LEGALDONG_CD
       type: number
+      semantic_type: bjd_cd
       null_rate: 0.0
       sample_values:
         - '4773044048'
@@ -211,6 +215,17 @@ schema:
         - ' 애호박'
       stats:
         unique: 5
+  foreign_keys:
+    - fields:
+        - RN_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - LEGALDONG_CD
+      reference:
+        key: bjd_cd
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -258,7 +273,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15080607-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(RN_ADDR), bjd_cd(LEGALDONG_CD)'
     evidence:
       - type: measured
         source: probe/stats/15080607.json

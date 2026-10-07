@@ -1,3 +1,5 @@
+# Dataset 15109846 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109846'
 tier: verified
 title: 대구광역시 북구_전통시장 현황정보 및 상점정보
@@ -431,6 +433,7 @@ schema:
         unique: 92
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 팔달로 179-3
@@ -441,6 +444,7 @@ schema:
         unique: 31
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 노원동2가 1
@@ -593,6 +597,7 @@ schema:
         unique: 428
     - name: roadNmAddr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 팔달로33길
@@ -603,6 +608,7 @@ schema:
         unique: 135
     - name: lotnoAddr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 노원동3가 750
@@ -757,6 +763,7 @@ schema:
         unique: 117
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 대동로1길 34 (라동)
@@ -767,6 +774,7 @@ schema:
         unique: 17
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 산격동 1258
@@ -919,6 +927,7 @@ schema:
         unique: 47
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 대현로20길 30
@@ -929,6 +938,7 @@ schema:
         unique: 13
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 대현동 390
@@ -1074,6 +1084,7 @@ schema:
         unique: 48
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 칠곡중앙대로 526
@@ -1084,6 +1095,7 @@ schema:
         unique: 35
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 읍내동 1201-1
@@ -1240,6 +1252,7 @@ schema:
         unique: 41
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 태전로 15 (세종찌짐이)
@@ -1250,6 +1263,7 @@ schema:
         unique: 34
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 북구 태전동 156-1
@@ -1374,12 +1388,30 @@ schema:
       op: /viewStoreListInTaejeonMarket
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lotnoAddr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lat
+    - lat
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
@@ -1423,7 +1455,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109846-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(roadNmAddr), address(lotnoAddr)'
     evidence:
       - type: measured
         source: probe/stats/15109846.json
@@ -1500,10 +1532,3 @@ review:
     - c-15109846-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-    - lat
-    - lat
-  space_via: coord

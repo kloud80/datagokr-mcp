@@ -1,3 +1,5 @@
+# Dataset 15156872 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15156872'
 tier: verified
 title: 행정안전부 한국지역정보개발원_(전국 통합데이터) 민원실 이용 현황 실시간 정보
@@ -24,6 +26,7 @@ synonyms:
   - 주민센터 민원 대기
   - 야간 민원실
   - 주말 민원실 운영
+summary_user: 전국 자치단체 공공 민원실의 기본정보(주소·위도/경도·평일 운영시각·야간/주말 운영 여부)와 민원 창구별 현재 발권 대기인수·호출번호를 민원실·업무 단위로 실시간 제공하는 API로, 오퍼레이션은 기본정보와 창구별 대기현황 두 개다. 시민이 "지금 가까운 시청 민원실의 여권발급 창구에 몇 명이 기다리는지, 이번 주 야간·주말에 여는지"를 확인하거나, 분석가가 민원실 혼잡 시간대를 살피는 데 쓴다. 두 오퍼레이션은 민원실일련번호(csoSn)와 지자체 코드(stdgCd)로 서로 연결하고, 다른 데이터와는 전역 조인 키가 확인되지 않아 지자체 코드·민원실명 매핑이나 좌표 기반 근접 결합으로 잇는다.
 description_portal: 대국민 민원처리를 위해 자치단에에서 운영되고 있는 공공 민원실의 효과적인 운영을 목적으로 공공민원실의 기본정보를 비롯해 공공민원실의 민원 창구별 발권기 현황에 대한 실시간 정보를 제공 합니다. 제공되는 정보는 민원실의 주소 및 위도/경도를 포함한 지리적 위치 및 공공 민원실 연락처, 운영시간, 휴일운영여부 등 민원실의 기본적인 운영 정보인 "민원실 기본정보"를 비롯하여 자치단체별로 운영중인 공공 민원실의 민원 창구별 현재 발권기 대기현황에 대한 실시간 정보를 담은 "민원실 창구별 대기현황" 정보를 제공 합니다.
 team:
   dept: 인공지능데이터활용부
@@ -250,6 +253,7 @@ schema:
     - name: lotnoAddr
       title: 지번주소(경기도 광주시 송정동 570 광주시청)
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 광주광역시 서구 치평동 1200
@@ -259,6 +263,7 @@ schema:
     - name: roadNmAddr
       title: 도로명주소(경기도 광주시 행정타운로 50)
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 광주광역시 서구 내방로 111 광주광역시청
@@ -359,6 +364,17 @@ schema:
         p50: 20251224
         max: 20251224
         unique: 1
+  foreign_keys:
+    - fields:
+        - lotnoAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -413,7 +429,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15156872-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(lotnoAddr), address(roadNmAddr)'
     evidence:
       - type: measured
         source: probe/stats/15156872.json
@@ -478,8 +494,6 @@ verification:
   run: probe/runs/15156872.json
   stats: probe/stats/15156872.json
   data: probe/data/15156872/
-status: active
-summary_user: 전국 자치단체 공공 민원실의 기본정보(주소·위도/경도·평일 운영시각·야간/주말 운영 여부)와 민원 창구별 현재 발권 대기인수·호출번호를 민원실·업무 단위로 실시간 제공하는 API로, 오퍼레이션은 기본정보와 창구별 대기현황 두 개다. 시민이 "지금 가까운 시청 민원실의 여권발급 창구에 몇 명이 기다리는지, 이번 주 야간·주말에 여는지"를 확인하거나, 분석가가 민원실 혼잡 시간대를 살피는 데 쓴다. 두 오퍼레이션은 민원실일련번호(csoSn)와 지자체 코드(stdgCd)로 서로 연결하고, 다른 데이터와는 전역 조인 키가 확인되지 않아 지자체 코드·민원실명 매핑이나 좌표 기반 근접 결합으로 잇는다.
 limits: 실측 컬럼에서 전역 조인 키를 찾지 못해 다른 시설·행정 데이터와는 이름·코드 매핑이나 같은 기관 코드로만 연결된다. 개발계정은 하루 5,000회 호출로 제한되므로 실시간 대기현황을 자주 폴링하는 용도에는 호출량을 고려해야 한다.
 review:
   summary: draft
@@ -491,3 +505,4 @@ review:
     - c-15156872-03
     - c-15156872-04
   dropped_citations: 0
+status: active

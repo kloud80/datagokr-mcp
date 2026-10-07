@@ -1,3 +1,5 @@
+# Dataset 15072023 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15072023'
 tier: verified
 title: 인천광역시 미추홀구_폐수배출업소 현황
@@ -56,6 +58,7 @@ schema:
         unique: 135
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 인하로 100(용현동)
@@ -108,6 +111,11 @@ schema:
         unique: 134
   foreign_keys:
     - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - 사업자등록번호
       reference:
         key: bizno
@@ -118,6 +126,12 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 수질 오염원 (폐수배출시설·비점오염·공공폐수처리시설)
@@ -155,7 +169,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15072023-03
     kind: key
-    value: '실측 조인 키: bizno(사업자등록번호)'
+    value: '실측 조인 키: address(도로명주소), bizno(사업자등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15072023.json
@@ -221,9 +235,3 @@ review:
     - c-15072023-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

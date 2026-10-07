@@ -1,3 +1,5 @@
+# Dataset 15104446 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15104446'
 tier: verified
 title: 한국수자원공사_지하수 측정망 제원 조회
@@ -52,6 +54,7 @@ schema:
         unique: 1866
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 예산군 신암면 오산리 390-25
@@ -59,9 +62,20 @@ schema:
         - 경상남도 함안군 칠원면 예곡리 832-10
       stats:
         unique: 1679
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 지하수 (관정·지하수 수위/수질·먹는샘물·약수터 수질검사)
@@ -98,7 +112,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15104446-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15104446.json
@@ -176,8 +190,3 @@ review:
     - c-15104446-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

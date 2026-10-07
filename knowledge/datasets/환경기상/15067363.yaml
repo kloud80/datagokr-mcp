@@ -1,3 +1,5 @@
+# Dataset 15067363 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15067363'
 tier: verified
 title: 경기도 구리시_사업장폐기물현황
@@ -52,6 +54,7 @@ schema:
         unique: 702
     - name: 사업장지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '경기도 구리시 수택동 89 '
@@ -71,6 +74,11 @@ schema:
         unique: 585
   foreign_keys:
     - fields:
+        - 사업장지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - 사업자등록번호
       reference:
         key: bizno
@@ -81,6 +89,11 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 사업장지번주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -117,7 +130,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15067363-03
     kind: key
-    value: '실측 조인 키: bizno(사업자등록번호)'
+    value: '실측 조인 키: address(사업장지번주소), bizno(사업자등록번호)'
     evidence:
       - type: measured
         source: probe/stats/15067363.json
@@ -206,8 +219,3 @@ review:
     - c-15067363-07
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 사업장지번주소
-  space_via: address

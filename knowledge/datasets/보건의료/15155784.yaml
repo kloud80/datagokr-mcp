@@ -1,3 +1,5 @@
+# Dataset 15155784 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15155784'
 tier: verified
 title: 서울특별시 중구_공공심야약국
@@ -45,6 +47,7 @@ schema:
         unique: 2
     - name: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 중구 동호로11길 43(약수역 8번 출구 근처)
@@ -103,12 +106,24 @@ schema:
         - 중구보건소 의약과
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 가족판
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)
@@ -146,7 +161,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15155784-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15155784.json
@@ -223,9 +238,3 @@ review:
     - c-15155784-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

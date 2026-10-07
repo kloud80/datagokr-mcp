@@ -1,3 +1,5 @@
+# Dataset 15057899 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057899'
 tier: verified
 title: 식품의약품안전처_의약품 생산수입공급중단정보
@@ -116,6 +118,7 @@ schema:
         unique: 251
     - name: REPORT_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 화성시
@@ -308,6 +311,7 @@ schema:
         unique: 2
     - name: BIZRNO
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '1188102477'
@@ -325,6 +329,11 @@ schema:
         key: drug_entp_seq
       evidence: measured
     - fields:
+        - REPORT_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - ITEM_SEQ
       reference:
         key: drug_item_seq
@@ -334,12 +343,22 @@ schema:
       reference:
         key: drug_cd
       evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - REPORT_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -384,7 +403,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15057899-03
     kind: key
-    value: '실측 조인 키: drug_entp_seq(ENTP_SEQ), drug_item_seq(ITEM_SEQ), drug_cd(EDI_CODE)'
+    value: '실측 조인 키: drug_entp_seq(ENTP_SEQ), address(REPORT_ADDR), drug_item_seq(ITEM_SEQ), drug_cd(EDI_CODE), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15057899.json
@@ -462,8 +481,3 @@ review:
     - c-15057899-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - REPORT_ADDR
-  space_via: address

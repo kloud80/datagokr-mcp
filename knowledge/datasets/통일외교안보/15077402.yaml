@@ -1,3 +1,5 @@
+# Dataset 15077402 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15077402'
 tier: verified
 title: 대전광역시_법정보훈단체 현황
@@ -51,6 +53,7 @@ schema:
         unique: 5
     - name: 소재지
       type: code
+      semantic_type: address
       null_rate: 0.0909
       sample_values:
         - '서구 갈마로 309 '
@@ -70,12 +73,23 @@ schema:
         p50: 1968
         max: 302304
         unique: 11
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
 cycle: default
 classification:
   subsector_name: 보훈시설·단체·병원 (현충시설·보훈단체 표준·보훈병원 병상/비급여/진료수가·위탁병원)
@@ -112,7 +126,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15077402-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15077402.json
@@ -189,8 +203,3 @@ review:
     - c-15077402-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지
-  space_via: address

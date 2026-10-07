@@ -1,3 +1,5 @@
+# Dataset 15114518 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15114518'
 tier: verified
 title: 세종특별자치시시설관리공단_종량제봉투판매소
@@ -70,6 +72,7 @@ schema:
         unique: 187
     - name: 사업장 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 조치원읍 서창리 140-9
@@ -79,6 +82,7 @@ schema:
         unique: 636
     - name: 사업장 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0016
       sample_values:
         - 조치원읍 봉산로 11 (서창리)
@@ -86,12 +90,29 @@ schema:
         - 조치원읍 새내12길 54, 2층 214호 (오피스밸리) (원리)
       stats:
         unique: 637
+  foreign_keys:
+    - fields:
+        - 사업장 지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 사업장 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 행정동
+    - 법정동
+  space_via: name
 cycle: default
 classification:
   subsector_name: 생활폐기물 배출·수거 지점 (대형폐기물 품목·수거함·종량제 판매소·음식물·재활용 정거장)
@@ -128,7 +149,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15114518-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(사업장 지번주소), address(사업장 도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15114518.json
@@ -205,9 +226,3 @@ review:
     - c-15114518-07
   dropped_citations: 0
 status: active
-grain:
-  space: emd
-  space_fields:
-    - 행정동
-    - 법정동
-  space_via: name

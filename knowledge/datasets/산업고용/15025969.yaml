@@ -1,3 +1,5 @@
+# Dataset 15025969 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15025969'
 tier: verified
 title: 부산광역시_동래구_액화석유가스판매업소현황
@@ -60,6 +62,7 @@ schema:
         unique: 15
     - name: 소재지주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 부산광역시 동래구 온천천로319번길 13(수안동)
@@ -76,12 +79,23 @@ schema:
         - 051-552-1625
       stats:
         unique: 15
+  foreign_keys:
+    - fields:
+        - 소재지주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
@@ -119,7 +133,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15025969-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지주소)'
     evidence:
       - type: measured
         source: probe/stats/15025969.json
@@ -206,8 +220,3 @@ review:
     - c-15025969-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지주소
-  space_via: address

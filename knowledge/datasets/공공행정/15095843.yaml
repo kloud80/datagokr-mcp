@@ -1,3 +1,5 @@
+# Dataset 15095843 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095843'
 tier: verified
 title: 충청북도 충주시_시장_점포별 상품판매현황
@@ -104,6 +106,7 @@ schema:
         unique: 1
     - name: road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충북 충주시 공설시장길 26
@@ -166,6 +169,7 @@ schema:
         unique: 8
     - name: old_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충북 충주시 충의동 92
@@ -188,6 +192,17 @@ schema:
         - 연중무휴
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - old_addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -247,7 +262,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15095843-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(road_nm_addr), address(old_addr)'
     evidence:
       - type: measured
         source: probe/stats/15095843.json

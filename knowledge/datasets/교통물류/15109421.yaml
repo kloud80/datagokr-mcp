@@ -1,3 +1,5 @@
+# Dataset 15109421 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109421'
 tier: verified
 title: 대구광역시_부설주차장운영및개방공유정보
@@ -86,6 +88,7 @@ schema:
         unique: 3
     - name: 소재지도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.1113
       sample_values:
         - 대구광역시 남구 현충로48길 33
@@ -95,6 +98,7 @@ schema:
         unique: 4742
     - name: 소재지지번주소
       type: string
+      semantic_type: address
       null_rate: 0.1113
       sample_values:
         - 대구광역시 중구 삼덕동2가 188-1번지
@@ -452,6 +456,17 @@ schema:
         min: '2024-08-20'
         max: '2024-08-20'
         unique: 1
+  foreign_keys:
+    - fields:
+        - 소재지도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 소재지지번주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
@@ -500,7 +515,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15109421-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지도로명주소), address(소재지지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15109421.json

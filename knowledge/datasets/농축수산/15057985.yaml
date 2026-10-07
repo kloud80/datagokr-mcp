@@ -1,3 +1,5 @@
+# Dataset 15057985 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057985'
 tier: verified
 title: 한국마사회 마필종합 상세정보
@@ -21,6 +23,7 @@ synonyms:
   - 경주마 경매 낙찰가
   - 씨수말 씨암말
   - 경주마 성적
+summary_user: 한국마사회에 등록된 말 한 마리 단위로 마명·출생일·성별·품종·혈통(부마·모마), 소유자·생산자·생산목장, 혈통·번식·경주마 등록 이력, 경매 낙찰 정보, 상금·평균우승거리 같은 경주 성적을 담는 건별 상세정보이며, 범위는 전국이다. 경마 분석가나 마주·생산자가 특정 말의 혈통과 경매 낙찰가, 소속 이력, 누적 성적을 확인하는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 없어 마번(hr_no)·마명이나 한국마사회 내부 번호(생산자·소유자·소재지 번호)로만 같은 기관의 경주·마필 데이터와 연결한다.
 description_portal: 한국마사회 마필에 대한 상세정보를 제공합니다. (제공자료는 마번, 마명, 영문마명, 출생일, 성별, 모색, 연령, 생산국, 수입국, 원마명, 품종, 부마 모마 외조부마 관련정보, 용도, 소유자 정보, 조교사, 소재지 정보, 혈통 정보, 번식 정보, 경주마 등록 정보, 경주마 불용정보, 경주마 입사정보, 경주마 퇴사정보, 최종 휴양정보 및 경주 성적정보 등의 자료입니다). - 요청메세지에 페이지 번호(pageNo)와 페이지 당 표출될 건수(numOfRows), 마명(hr_name), 마번(hr_no)을 이용하여 자료를 조회하실 수 있습니다.
 team:
   dept: 통합유지관리
@@ -355,6 +358,7 @@ schema:
     - name: brNo
       title: 생산자번호
       type: code
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '-'
@@ -2262,6 +2266,12 @@ schema:
         p50: 0
         max: 50
         unique: 3
+  foreign_keys:
+    - fields:
+        - brNo
+      reference:
+        key: bizno
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -2320,7 +2330,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15057985-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bizno(brNo)'
     evidence:
       - type: measured
         source: probe/stats/15057985.json
@@ -2385,8 +2395,6 @@ verification:
   run: probe/runs/15057985.json
   stats: probe/stats/15057985.json
   data: probe/data/15057985/
-status: active
-summary_user: 한국마사회에 등록된 말 한 마리 단위로 마명·출생일·성별·품종·혈통(부마·모마), 소유자·생산자·생산목장, 혈통·번식·경주마 등록 이력, 경매 낙찰 정보, 상금·평균우승거리 같은 경주 성적을 담는 건별 상세정보이며, 범위는 전국이다. 경마 분석가나 마주·생산자가 특정 말의 혈통과 경매 낙찰가, 소속 이력, 누적 성적을 확인하는 데 쓴다. 다른 데이터와 공통으로 쓰는 전역 조인 키는 없어 마번(hr_no)·마명이나 한국마사회 내부 번호(생산자·소유자·소재지 번호)로만 같은 기관의 경주·마필 데이터와 연결한다.
 limits: 마번·마명으로 개별 마필을 조회하는 구조라 전체 목록을 한 번에 받기 어렵고, 개발계정은 하루 3,000회로 호출이 제한된다. 농산물 유통 가격 부문으로 분류돼 있으나 KAMIS 품목코드 같은 가격 데이터와 이어 쓸 키는 없다.
 review:
   summary: draft
@@ -2399,3 +2407,4 @@ review:
     - c-15057985-04
     - c-15057985-06
   dropped_citations: 0
+status: active

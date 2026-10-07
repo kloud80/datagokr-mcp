@@ -1,3 +1,5 @@
+# Dataset 15151442 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15151442'
 tier: verified
 title: 경기도_가맹사업 프랜차이즈 정보
@@ -97,6 +99,7 @@ schema:
         unique: 4
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.18
       sample_values:
         - 서울특별시 용산구 이태원동 119-17
@@ -278,9 +281,20 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -320,7 +334,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15151442-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15151442.json
@@ -398,8 +412,3 @@ review:
     - c-15151442-07
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address

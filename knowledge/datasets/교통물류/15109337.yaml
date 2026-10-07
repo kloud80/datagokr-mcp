@@ -1,3 +1,5 @@
+# Dataset 15109337 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109337'
 tier: verified
 title: 광주교통공사_역 인근 주차장 현황
@@ -179,6 +181,7 @@ schema:
         unique: 3
     - name: 소재지도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 광주광역시 서구 경열로 127
@@ -237,12 +240,23 @@ schema:
       reference:
         key: parking_lot_id
       evidence: measured
+    - fields:
+        - 소재지도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
@@ -279,7 +293,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15109337-03
     kind: key
-    value: '실측 조인 키: parking_lot_id(주차장관리번호)'
+    value: '실측 조인 키: parking_lot_id(주차장관리번호), address(소재지도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15109337.json
@@ -357,9 +371,3 @@ review:
     - c-15109337-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

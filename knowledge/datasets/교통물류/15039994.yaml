@@ -1,3 +1,5 @@
+# Dataset 15039994 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15039994'
 tier: verified
 title: 전남광주통합특별시 여수시_시민여객선 기항지 정보
@@ -93,6 +95,7 @@ schema:
         unique: 62
     - name: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 전남 여수시 화정면 개도리
@@ -131,12 +134,24 @@ schema:
         p50: 127.6628755
         max: 127.803314
         unique: 61
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 경도
+    - 위도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 해상 여객 (연안여객선 항로·선사·운임·스케줄·실시간 운항 여부·여객터미널)
@@ -173,7 +188,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15039994-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15039994.json
@@ -251,9 +266,3 @@ review:
     - c-15039994-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 경도
-    - 위도
-  space_via: coord

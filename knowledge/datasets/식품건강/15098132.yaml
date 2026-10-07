@@ -1,3 +1,5 @@
+# Dataset 15098132 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15098132'
 tier: verified
 title: 식품의약품안전처_수입식품 고유제품 상세정보
@@ -129,6 +131,7 @@ schema:
         unique: 251
     - name: OCTR_MNFT_BSSH_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.578
       sample_values:
         - '-'
@@ -143,6 +146,7 @@ schema:
         unique: 0
     - name: OCTR_WKSH_ADDR
       type: code
+      semantic_type: address
       null_rate: 1.0
       stats:
         unique: 0
@@ -157,6 +161,7 @@ schema:
         unique: 5
     - name: PCKLOC_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.422
       sample_values:
         - SOUTH AUSTRALIA
@@ -175,6 +180,7 @@ schema:
         unique: 468
     - name: EXPRT_ENTP_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '-'
@@ -207,9 +213,36 @@ schema:
       reference:
         key: country_cd
       evidence: measured
+    - fields:
+        - OCTR_MNFT_BSSH_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - OCTR_WKSH_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - PCKLOC_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - EXPRT_ENTP_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - OCTR_MNFT_BSSH_ADDR
+    - PCKLOC_ADDR
+    - EXPRT_ENTP_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 수입식품 (수입신고·해외제조업소·수입업체)
@@ -253,7 +286,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15098132-03
     kind: key
-    value: '실측 조인 키: iprt_food_mng_no(IPRT_FOOD_MNG_NO), country_cd(NTNCD)'
+    value: '실측 조인 키: iprt_food_mng_no(IPRT_FOOD_MNG_NO), country_cd(NTNCD), address(OCTR_MNFT_BSSH_ADDR), address(OCTR_WKSH_ADDR), address(PCKLOC_ADDR), address(EXPRT_ENTP_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15098132.json
@@ -319,10 +352,3 @@ review:
     - c-15098132-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - OCTR_MNFT_BSSH_ADDR
-    - PCKLOC_ADDR
-    - EXPRT_ENTP_ADDR
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 15065521 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15065521'
 tier: verified
 title: 경기도_안심식당 정보
@@ -81,6 +83,7 @@ schema:
         unique: 100
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.16
       sample_values:
         - 경기도 수원시 영통구 광교중앙로 124
@@ -90,6 +93,7 @@ schema:
         unique: 46
     - name: refine_lotno_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 수원시 영통구 하동 1017-2번지
@@ -111,6 +115,7 @@ schema:
         unique: 44
     - name: detail_addr
       type: code
+      semantic_type: address
       null_rate: 0.32
       sample_values:
         - 광교 갤러리아백화점 9층
@@ -200,6 +205,22 @@ schema:
         p50: 127.0452849
         max: 127.0752963
         unique: 50
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - detail_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
@@ -247,7 +268,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15065521-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr), address(detail_addr)'
     evidence:
       - type: measured
         source: probe/stats/15065521.json

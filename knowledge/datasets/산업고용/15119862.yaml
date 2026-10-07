@@ -1,3 +1,5 @@
+# Dataset 15119862 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119862'
 tier: verified
 title: 경기도_채석신고 현황
@@ -175,6 +177,7 @@ schema:
         unique: 3
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.6316
       sample_values:
         - 경기도 광주시 퇴촌면 정영로 492
@@ -184,6 +187,7 @@ schema:
         unique: 6
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 광주시 퇴촌면 도수리 산39-1번지
@@ -236,9 +240,25 @@ schema:
         p50: 20240306
         max: 20250808
         unique: 5
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 광업·토석채취 (광업권·토석채취허가·채석단지·골재·폐광산)
@@ -280,7 +300,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15119862-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15119862.json
@@ -358,8 +378,3 @@ review:
     - c-15119862-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

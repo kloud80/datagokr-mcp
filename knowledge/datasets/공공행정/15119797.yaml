@@ -1,3 +1,5 @@
+# Dataset 15119797 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15119797'
 tier: verified
 title: 경기도_건설엔지니어링업 행정처분 현황
@@ -102,6 +104,7 @@ schema:
         unique: 27
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 고양시 일산동구 백석동 1324번지 동문타워II
@@ -111,6 +114,7 @@ schema:
         unique: 32
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 고양시 일산동구 호수로 358-25
@@ -142,9 +146,25 @@ schema:
         p50: 126.9698549
         max: 127.404562
         unique: 45
+  foreign_keys:
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
@@ -184,7 +204,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15119797-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_lotno_addr), address(refine_road_nm_addr)'
     evidence:
       - type: measured
         source: probe/stats/15119797.json
@@ -261,8 +281,3 @@ review:
     - c-15119797-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

@@ -1,3 +1,5 @@
+# Dataset 15111379 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15111379'
 tier: verified
 title: 대전광역시_미세먼지 측정소
@@ -92,6 +94,7 @@ schema:
         unique: 66
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대전 서구 관저동 1905
@@ -123,9 +126,21 @@ schema:
         p50: 1815857.23
         max: 1827552.98
         unique: 474
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 좌표X
+    - 좌표Y
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -162,7 +177,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15111379-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15111379.json
@@ -239,9 +254,3 @@ review:
     - c-15111379-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 좌표X
-    - 좌표Y
-  space_via: coord

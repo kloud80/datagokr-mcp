@@ -1,3 +1,5 @@
+# Dataset 15057683 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057683'
 tier: verified
 title: 한국사회보장정보원_사회서비스 제공기관 정보 검색
@@ -20,6 +22,7 @@ synonyms:
   - 아동 돌봄 서비스 기관
   - 사회서비스 기관 찾기
   - 전자바우처 제공기관
+summary_user: 장애인·산모·아동 등에게 사회서비스를 제공하는 기관을 한 건씩 담은 API로, 전국 범위에서 기관명·대표자·제공 서비스와 유형·시도와 시군구·지번과 도로명 주소·연락처를 기관 단위로 돌려준다. 이용자나 가족이 "우리 시군구에서 산모·신생아 돌봄이나 장애인 활동지원 같은 서비스를 제공하는 기관이 어디이고 연락처가 무엇인가"를 찾을 때 쓰고, 분석가는 지역별 제공기관 분포를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구 이름이나 주소, 기관명 매칭으로 잇고, 기관 고유 식별자(providerId)는 같은 기관(한국사회보장정보원) 데이터 안에서만 연결 키로 쓴다.
 description_portal: 장애인, 산모, 아동 등 사회서비스를 필요로 하는 수요자에게 서비스를 제공하는 기관의 정보를 제공
 team:
   dept: 전자바우처정보부
@@ -43,6 +46,7 @@ schema:
   fields:
     - name: address
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 천안시 서북구
@@ -185,9 +189,22 @@ schema:
         p50: 24399
         max: 63627
         unique: 377
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - address
+    - addressDetail
+    - loadAddress
+  space_via: address
 cycle: default
 classification:
   subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
@@ -230,7 +247,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15057683-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(address)'
     evidence:
       - type: measured
         source: probe/stats/15057683.json
@@ -284,8 +301,6 @@ verification:
   run: probe/runs/15057683.json
   stats: probe/stats/15057683.json
   data: probe/data/15057683/
-status: active
-summary_user: 장애인·산모·아동 등에게 사회서비스를 제공하는 기관을 한 건씩 담은 API로, 전국 범위에서 기관명·대표자·제공 서비스와 유형·시도와 시군구·지번과 도로명 주소·연락처를 기관 단위로 돌려준다. 이용자나 가족이 "우리 시군구에서 산모·신생아 돌봄이나 장애인 활동지원 같은 서비스를 제공하는 기관이 어디이고 연락처가 무엇인가"를 찾을 때 쓰고, 분석가는 지역별 제공기관 분포를 볼 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 시도·시군구 이름이나 주소, 기관명 매칭으로 잇고, 기관 고유 식별자(providerId)는 같은 기관(한국사회보장정보원) 데이터 안에서만 연결 키로 쓴다.
 limits: 사업자번호나 사회적기업 인증번호 같은 공통 키가 실측 컬럼에 없어, 기업 데이터와 이을 때는 이름·주소 매칭에 의존해야 하고 오매칭 위험이 있다. 개발계정은 하루 100회로 호출이 제한된다.
 review:
   summary: draft
@@ -298,10 +313,4 @@ review:
     - c-15057683-04
     - c-15057683-06
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - address
-    - addressDetail
-    - loadAddress
-  space_via: address
+status: active

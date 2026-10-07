@@ -26,6 +26,7 @@ import networkx as nx
 from pds import config
 from pds.schema import GROUNDED
 from pds.service import index as sindex
+from pds.strategy import fit
 from pds.strategy import badges as bdg
 from pds.strategy import region as rgn
 
@@ -166,8 +167,20 @@ def select(goal: str, rerank: bool = False) -> dict:
         base = 0.5 * hits[0][1]
         hits = [(d, max(s, base) if d["id"] in pinned else s) for d, s in hits]
         hits += [(ix.datasets[i], base) for i in sorted(pinned - have) if i in ix.datasets and ix.datasets[i]["tier"] == "verified"]
-    hits = [(d, s * _region_weight(d, region) * GRADE_WEIGHT.get(((d.get("facets") or {}).get("grade") or [""])[0], 1.0))
-            for d, s in hits]
+    # 실측 메타 적합도 — 제목이 비슷해도 실측 필드·단위가 질문과 어긋나면 내린다 (pds/strategy/fit.py)
+    hits = [(d, s * _region_weight(d, region) * GRADE_WEIGHT.get(((d.get("facets") or {}).get("grade") or [""])[0], 1.0)) for d, s in hits]
+    raw = {d["id"]: s * (1.6 if d["id"] in members else 1.0) for d, s in hits}  # 풀에 남길지는 메타 보정 전 관련도로 — 순서만 메타로 바꾼다
+    # 맥락이 데이터 단위로 고른 멤버는 적힌 순서가 곧 사람 검토의 우선순위다 (앞 멤버 ×1.4 → 끝 멤버 ×1.0)
+    order = {}
+    for c in ctxs:
+        ms = [m["dataset"] for m in c["members"] if m.get("dataset")]
+        for k, i in enumerate(ms):
+            order.setdefault(i, 1.0 + 0.4 * (1 - k / max(len(ms) - 1, 1)))
+    mw = {d["id"]: fit.meta_weight(sem_q, d) for d, _ in hits}
+    hits = [(d, s * (max(mw[d["id"]], 1.0) if d["id"] in pinned else mw[d["id"]])) for d, s in hits]
+    if order:  # 맥락이 질문과 맞으면 그 멤버끼리는 글자 관련도가 아니라 적힌 순서 × 실측 메타 적합도로
+        mtop = max((s for d, s in hits if d["id"] in order), default=0)   # ('상장 기업 재무제표'처럼 대상을 짚으면 그 멤버가 앞선다)
+        hits = [(d, mtop * order[d["id"]] * mw[d["id"]] if d["id"] in order else s) for d, s in hits]
     scored = sorted(((d, s * (1.6 if d["id"] in members else 1.0)) for d, s in hits), key=lambda x: -x[1])
     excluded, kept = [], []
     for d, s in scored:  # 지역이 어긋나면 주제가 맞아도 쓰지 않는다 — 상위권이었던 것만 사유와 함께 남긴다
@@ -179,7 +192,8 @@ def select(goal: str, rerank: bool = False) -> dict:
     scored = kept
     if scored:  # 1순위 대비 REL_MIN 미만은 관련이 약하다 — 허브(PNU·법정동)로 아무거나 이어 붙이지 않게
         top = scored[0][1]
-        keep = [(d, s) for d, s in scored if s >= REL_MIN * top]
+        rtop = max((raw.get(d["id"], 0) for d, _ in scored), default=0)
+        keep = [(d, s) for d, s in scored if s >= REL_MIN * top or raw.get(d["id"], 0) >= REL_MIN * rtop]
         scored = keep[:POOL_MAX] + [(d, s) for d, s in keep[POOL_MAX:] if d["id"] in pinned]  # 맥락이 지정한 데이터는 상한에 밀리지 않게
     reranked = None
     if rerank and scored:

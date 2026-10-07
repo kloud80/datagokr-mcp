@@ -1,3 +1,5 @@
+# Dataset 15077293 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15077293'
 tier: verified
 title: 경기도_우리민족 근대사 관련 사적지 탐방 리스트
@@ -131,6 +133,7 @@ schema:
         unique: 1
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.87
       sample_values:
         - 경기도 구리시 아차산로 67
@@ -140,6 +143,7 @@ schema:
         unique: 10
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 광주시 퇴촌면 원당리 65
@@ -183,9 +187,25 @@ schema:
         p50: 126.9357366
         max: 127.3406189
         unique: 28
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 유산 지정·등록 (국가·시도지정·등록 유산 목록·상세·세계유산)
@@ -226,7 +246,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15077293-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15077293.json
@@ -303,8 +323,3 @@ review:
     - c-15077293-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

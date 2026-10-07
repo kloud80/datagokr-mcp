@@ -1,3 +1,5 @@
+# Dataset 15059492 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059492'
 tier: verified
 title: 식품의약품안전처_인체조직은행 정보
@@ -20,6 +22,7 @@ synonyms:
   - 뼈 연골 피부 조직은행
   - 인체조직안전 관리
   - 조직은행 허가갱신
+summary_user: "식품의약품안전처가 허가한 인체조직은행을 은행 한 곳당 한 건으로 담으며, 허가번호, 은행 명칭, 소재지 주소, 최초 허가일자, 다음 허가갱신일자, 폐업일자, 취급 조직 유형(뼈·연골·피부 등)을 전국 범위로 제공한다. 병원·연구자·정책 담당자가 '특정 조직(예: 뼈, 피부)을 취급하도록 허가받은 조직은행이 어디에 있고 허가가 아직 유효한가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 은행 명칭·주소 매칭이나 같은 기관(식약처) 자료와의 코드 대응으로만 이을 수 있으며, 식품 품목 DB의 품목제조보고번호·바코드 같은 제품 단위 키는 이 데이터에 없다."
 description_portal: 식품의약품안전처에서 관리하는 인체조직은행 관련 정보를 제공하고 있습니다.「인체조직안전 및 관리 등에 관한 법률」 에 따른 인체조직을 취급하려는 경우 같은 법 제13조에 따른 조직은행허가를 받아야 합니다. 동 서비스는 조직은행설립허가 시 조직은행이 받은 허가번호, 최초허가일자, 조직은행의 명칭 및 소재지, 폐업일자, 취급조직유형(뼈, 연골, 피부 등 11종), 다음 허가갱신일자 등 조직은행설립허가 정보를 제공하고 있습니다. 이 데이터를 통해 인체조직은행과 관련된 정책 수립에 활용할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -100,6 +103,7 @@ schema:
         unique: 168
     - name: ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 강남구
@@ -128,9 +132,20 @@ schema:
         p50: 20160916.5
         max: 20260731
         unique: 173
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -173,7 +188,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15059492-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15059492.json
@@ -238,8 +253,6 @@ verification:
   run: probe/runs/15059492.json
   stats: probe/stats/15059492.json
   data: probe/data/15059492/
-status: active
-summary_user: "식품의약품안전처가 허가한 인체조직은행을 은행 한 곳당 한 건으로 담으며, 허가번호, 은행 명칭, 소재지 주소, 최초 허가일자, 다음 허가갱신일자, 폐업일자, 취급 조직 유형(뼈·연골·피부 등)을 전국 범위로 제공한다. 병원·연구자·정책 담당자가 '특정 조직(예: 뼈, 피부)을 취급하도록 허가받은 조직은행이 어디에 있고 허가가 아직 유효한가'를 확인할 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 은행 명칭·주소 매칭이나 같은 기관(식약처) 자료와의 코드 대응으로만 이을 수 있으며, 식품 품목 DB의 품목제조보고번호·바코드 같은 제품 단위 키는 이 데이터에 없다."
 limits: 전역 조인 키가 없어 다른 데이터와 붙이려면 명칭·주소를 직접 맞춰야 한다. 허가 정보만 담으므로 조직 분배량, 이식 실적, 품질 점검 결과는 이 데이터로 알 수 없다. 폐업일자(CLOSE_DATE)가 있는 은행도 함께 나오므로 현재 운영 중인 곳만 보려면 폐업 여부를 걸러야 한다.
 review:
   summary: draft
@@ -252,8 +265,4 @@ review:
     - c-15059492-04
     - c-15059492-06
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - ADDR
-  space_via: address
+status: active

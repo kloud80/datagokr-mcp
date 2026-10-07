@@ -1,3 +1,5 @@
+# Dataset 15115522 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15115522'
 tier: verified
 title: 충청남도_일반화물자동차운송사업자 업체 현황
@@ -72,6 +74,7 @@ schema:
         unique: 2
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0447
       sample_values:
         - (330-080)충남 천안시 동남구 구룡동
@@ -79,12 +82,23 @@ schema:
         - (31710)충청남도 당진시 가곡로
       stats:
         unique: 1633
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 화물운송업 (운송·주선·가맹·이사·용달·국제물류주선, 화물통관)
@@ -121,7 +135,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15115522-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15115522.json
@@ -199,8 +213,3 @@ review:
     - c-15115522-08
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

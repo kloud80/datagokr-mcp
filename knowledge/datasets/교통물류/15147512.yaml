@@ -1,3 +1,5 @@
+# Dataset 15147512 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15147512'
 tier: verified
 title: 서울특별시 강서구_불법주정차 위반 단속 CCTV 위치정보
@@ -44,6 +46,7 @@ schema:
   fields:
     - name: FIX_CCTV_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 강서구 방화동 886
@@ -98,12 +101,23 @@ schema:
         - 불법주정차구역
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - FIX_CCTV_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
@@ -145,7 +159,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15147512-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(FIX_CCTV_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15147512.json
@@ -222,8 +236,3 @@ review:
     - c-15147512-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - LAT
-  space_via: coord

@@ -1,3 +1,5 @@
+# Dataset 15104778 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15104778'
 tier: verified
 title: 충청남도 예산군_착한가격업소 현황
@@ -71,6 +73,7 @@ schema:
         unique: 3
     - name: 소재지도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 예산군 예산읍 신례원로 32
@@ -87,12 +90,23 @@ schema:
         - 041-335-2053
       stats:
         unique: 13
+  foreign_keys:
+    - fields:
+        - 소재지도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: emd
+  space_fields:
+    - 행정동
+  space_via: name
 cycle: default
 classification:
   subsector_name: 미분류 (재구성 후 잔여)
@@ -128,7 +142,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15104778-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15104778.json
@@ -206,8 +220,3 @@ review:
     - c-15104778-04
   dropped_citations: 0
 status: active
-grain:
-  space: emd
-  space_fields:
-    - 행정동
-  space_via: name

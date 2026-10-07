@@ -1,3 +1,5 @@
+# Dataset 15125773 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125773'
 tier: verified
 title: 한국철도공사_임대매장정보
@@ -115,6 +117,7 @@ schema:
     - name: addr
       title: 주소
       type: string
+      semantic_type: address
       null_rate: 0.107
       sample_values:
         - 대구광역시 동구 동대구로 550 (신암동, 동대구역)
@@ -388,6 +391,11 @@ schema:
         unique: 988
   foreign_keys:
     - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - stn_cd
       reference:
         key: rail_station_cd
@@ -395,6 +403,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: rail-network
@@ -437,7 +450,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15125773-03
     kind: key
-    value: '실측 조인 키: rail_station_cd(stn_cd)'
+    value: '실측 조인 키: address(addr), rail_station_cd(stn_cd)'
     evidence:
       - type: measured
         source: probe/stats/15125773.json
@@ -515,8 +528,3 @@ review:
     - c-15125773-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address

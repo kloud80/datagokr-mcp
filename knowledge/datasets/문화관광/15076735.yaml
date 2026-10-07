@@ -1,3 +1,5 @@
+# Dataset 15076735 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15076735'
 tier: verified
 title: 전북특별자치도 전주시_음식점기본정보
@@ -55,6 +57,7 @@ schema:
         unique: 11948
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0136
       sample_values:
         - 전북특별자치도 전주시 완산구 온고을로 2, 지하1층 (서신동)
@@ -64,6 +67,7 @@ schema:
         unique: 11081
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0001
       sample_values:
         - '전북특별자치도 전주시 완산구 서신동 971 롯데백화점 '
@@ -129,9 +133,26 @@ schema:
         - 운영중
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 식당위도
+    - 식당경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -168,7 +189,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15076735-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소), address(지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15076735.json
@@ -245,9 +266,3 @@ review:
     - c-15076735-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 식당위도
-    - 식당경도
-  space_via: coord

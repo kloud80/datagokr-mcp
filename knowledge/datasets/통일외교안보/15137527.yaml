@@ -1,3 +1,5 @@
+# Dataset 15137527 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15137527'
 tier: verified
 title: 병무청_상담지원기관 목록
@@ -77,6 +79,7 @@ schema:
         unique: 600
     - name: GIBON_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 강원특별자치도 춘천시
@@ -86,6 +89,7 @@ schema:
         unique: 347
     - name: SANGSE_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0077
       sample_values:
         - 군청로 1
@@ -93,9 +97,26 @@ schema:
         - 대청로 33 (신장동) 현대베스코아 1001, 1002호
       stats:
         unique: 637
+  foreign_keys:
+    - fields:
+        - GIBON_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - SANGSE_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - GIBON_ADDR
+    - SANGSE_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
@@ -131,7 +152,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15137527-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(GIBON_ADDR), address(SANGSE_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15137527.json
@@ -197,9 +218,3 @@ review:
     - c-15137527-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - GIBON_ADDR
-    - SANGSE_ADDR
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 15095481 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095481'
 tier: verified
 title: 경기도_피해자 지원 상담 데이터
@@ -78,6 +80,7 @@ schema:
         unique: 2
     - name: locplc_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시
@@ -94,9 +97,20 @@ schema:
         - 살인/살인미수
       stats:
         unique: 15
+  foreign_keys:
+    - fields:
+        - locplc_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - locplc_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -136,7 +150,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15095481-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(locplc_addr)'
     evidence:
       - type: measured
         source: probe/stats/15095481.json
@@ -203,8 +217,3 @@ review:
     - c-15095481-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - locplc_addr
-  space_via: address

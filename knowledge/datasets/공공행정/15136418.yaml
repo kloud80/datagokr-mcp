@@ -1,3 +1,5 @@
+# Dataset 15136418 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15136418'
 tier: verified
 title: 경기도_경기공유서비스 자원정보
@@ -131,6 +133,7 @@ schema:
         unique: 99
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 화성시 수노을2로 150 송린이음터 1-2층
@@ -140,6 +143,7 @@ schema:
         unique: 28
     - name: detail_addr
       type: code
+      semantic_type: address
       null_rate: 0.27
       sample_values:
         - 시립 반석산 에코스쿨
@@ -358,9 +362,25 @@ schema:
         p50: 20240124
         max: 20241231
         unique: 37
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - detail_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 공공자원 개방·대관 (공유누리)
@@ -401,7 +421,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15136418-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr), address(detail_addr)'
     evidence:
       - type: measured
         source: probe/stats/15136418.json
@@ -467,8 +487,3 @@ review:
     - c-15136418-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-  space_via: coord

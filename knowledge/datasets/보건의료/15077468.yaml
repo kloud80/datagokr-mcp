@@ -1,3 +1,5 @@
+# Dataset 15077468 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15077468'
 tier: verified
 title: 대전광역시_약국 및 안전상비의약품판매업소 및 의약품도매상 현황
@@ -62,6 +64,7 @@ schema:
         unique: 2127
     - name: 소재지
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대전광역시 동구 동서대로 1689 (용전동)
@@ -78,12 +81,23 @@ schema:
         - 042-622-4346
       stats:
         unique: 1047
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -121,7 +135,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15077468-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15077468.json
@@ -198,8 +212,3 @@ review:
     - c-15077468-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지
-  space_via: address

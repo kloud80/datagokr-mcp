@@ -1,3 +1,5 @@
+# Dataset 15058937 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058937'
 tier: verified
 title: 경기도_청소년관련중앙부처복지서비스 현황
@@ -75,6 +77,7 @@ schema:
         unique: 5
     - name: HMPG_ADDR
       type: number
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '003'
@@ -138,9 +141,20 @@ schema:
         p50: 2025
         max: 2025
         unique: 1
+  foreign_keys:
+    - fields:
+        - HMPG_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - HMPG_ADDR
+  space_via: address
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -182,7 +196,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15058937-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(HMPG_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15058937.json
@@ -248,8 +262,3 @@ review:
     - c-15058937-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - HMPG_ADDR
-  space_via: address

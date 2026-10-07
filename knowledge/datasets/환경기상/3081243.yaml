@@ -1,3 +1,5 @@
+# Dataset 3081243 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3081243'
 tier: verified
 title: 인천광역시 미추홀구_특정토양오염관리대상 현황
@@ -56,6 +58,7 @@ schema:
         unique: 35
     - name: 도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 경원대로 813-9
@@ -99,6 +102,11 @@ schema:
         unique: 34
   foreign_keys:
     - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - 사업자등록번호
       reference:
         key: bizno
@@ -109,6 +117,12 @@ facets:
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 환경 공간 규제·주제도 (상수원보호구역·생태자연도·토지피복·특정토양오염·환경주제도)
@@ -145,7 +159,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3081243-03
     kind: key
-    value: '실측 조인 키: bizno(사업자등록번호)'
+    value: '실측 조인 키: address(도로명주소), bizno(사업자등록번호)'
     evidence:
       - type: measured
         source: probe/stats/3081243.json
@@ -223,9 +237,3 @@ review:
     - c-3081243-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

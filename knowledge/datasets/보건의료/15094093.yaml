@@ -1,3 +1,5 @@
+# Dataset 15094093 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15094093'
 tier: verified
 title: 건강보험심사평가원_병원평가정보서비스
@@ -21,6 +23,7 @@ synonyms:
   - 혈액투석 평가
   - 의료기관 평가
   - 좋은 병원 찾기
+summary_user: 전국 요양기관별로 혈액투석·항생제 처방률·주사제 처방률·약품목수·만성폐쇄성폐질환·폐렴·중환자실 등 평가항목별 병원평가등급(1~5등급 또는 등급제외)을 기관 단위로 담고, 기관명·종별·주소도 함께 제공한다. 환자나 보호자가 "우리 동네에서 항생제 처방률 평가가 좋은 의원은 어디인가", "혈액투석 1등급 병원은 어디인가" 같은 질문을 확인하는 데 쓴다. 암호화된 요양기호(ykiho)를 키로 심평원 병원정보서비스의 병원기본목록 등 요양기관 API와 연결해 진료과·병상·인력·진료시간 정보와 함께 본다.
 description_portal: "건강보험심사평가원에서 제공하는 요양기관의 평가항목별 병원평가결과를 조회하는 서비스- 평가항목: 급성기뇌졸중, 혈액투석, 의료급여정신과, 관상동맥우회술, 급성상기도감염 항생제 처방률, 주사제 처방률, 약품목수, 요양병원, 고혈압·당뇨병, 천식, 만성폐쇄성폐질환 등- 요양기호는 1:1로 매칭한 암호화된 요양기호로 제공하고 있으며, 별도의 복호화 방법 또는 요양기호는 제공하고 있지 않습니다.    · 암호화된 요양기호는 건강보험심사평가원 '병원정보서비스' Open API > 병원기본목록에서 확인 가능합니다."
 team:
   dept: 빅데이터실
@@ -63,6 +66,7 @@ schema:
     - name: addr
       title: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 동대문구 무학로 124, (용두동)
@@ -191,6 +195,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - ykiho
       reference:
         key: ykiho
@@ -198,6 +207,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
@@ -240,7 +254,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15094093-03
     kind: key
-    value: '실측 조인 키: ykiho(ykiho)'
+    value: '실측 조인 키: address(addr), ykiho(ykiho)'
     evidence:
       - type: measured
         source: probe/stats/15094093.json
@@ -305,8 +319,6 @@ verification:
   run: probe/runs/15094093.json
   stats: probe/stats/15094093.json
   data: probe/data/15094093/
-status: active
-summary_user: 전국 요양기관별로 혈액투석·항생제 처방률·주사제 처방률·약품목수·만성폐쇄성폐질환·폐렴·중환자실 등 평가항목별 병원평가등급(1~5등급 또는 등급제외)을 기관 단위로 담고, 기관명·종별·주소도 함께 제공한다. 환자나 보호자가 "우리 동네에서 항생제 처방률 평가가 좋은 의원은 어디인가", "혈액투석 1등급 병원은 어디인가" 같은 질문을 확인하는 데 쓴다. 암호화된 요양기호(ykiho)를 키로 심평원 병원정보서비스의 병원기본목록 등 요양기관 API와 연결해 진료과·병상·인력·진료시간 정보와 함께 본다.
 limits: 요양기호는 1:1로 암호화된 값만 제공되고 복호화 방법이나 원래 요양기호는 제공되지 않으므로, 다른 기관 데이터와 연결하려면 심평원 API의 ykiho를 거쳐야 한다. 평가 등급만 담고 있어 등급 산출에 쓰인 세부 지표값은 이 필드 목록으로 확인할 수 없다. 개발계정은 일 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -319,8 +331,4 @@ review:
     - c-15094093-04
     - c-15094093-06
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address
+status: active

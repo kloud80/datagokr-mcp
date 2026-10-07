@@ -1,3 +1,5 @@
+# Dataset 15130793 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15130793'
 tier: verified
 title: 경기도_경기부동산포털 옥외대피장소 정보
@@ -105,6 +107,7 @@ schema:
         unique: 52
     - name: legaldong_cd
       type: number
+      semantic_type: bjd_cd
       null_rate: 0.47
       sample_values:
         - '4136037021'
@@ -129,6 +132,7 @@ schema:
         unique: 28
     - name: detail_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 남양주시 평내로 37(평내동)
@@ -184,6 +188,17 @@ schema:
         p50: 4136011200161449984
         max: 4136036024107599872
         unique: 100
+  foreign_keys:
+    - fields:
+        - legaldong_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - detail_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
@@ -231,7 +246,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15130793-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bjd_cd(legaldong_cd), address(detail_addr)'
     evidence:
       - type: measured
         source: probe/stats/15130793.json

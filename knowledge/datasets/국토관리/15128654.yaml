@@ -1,3 +1,5 @@
+# Dataset 15128654 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15128654'
 tier: verified
 title: 경상북도 영천시_담배
@@ -52,6 +54,7 @@ schema:
         unique: 357
     - name: 업소지번주소
       type: string
+      semantic_type: address
       null_rate: 0.1575
       sample_values:
         - 경상북도 영천시 신녕면 화남리 918-2
@@ -61,6 +64,7 @@ schema:
         unique: 337
     - name: 업소도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.1825
       sample_values:
         - 경상북도 영천시 역전로 5  (완산동)
@@ -79,6 +83,17 @@ schema:
         min: '1989-03-17'
         max: '2024-06-03'
         unique: 350
+  foreign_keys:
+    - fields:
+        - 업소지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 업소도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
@@ -129,7 +144,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15128654-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(업소지번주소), address(업소도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15128654.json

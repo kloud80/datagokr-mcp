@@ -1,3 +1,5 @@
+# Dataset 15137985 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15137985'
 tier: verified
 title: 전남광주통합특별시 여수시_실시간 CCTV 영상주소 조회 서비스
@@ -105,6 +107,7 @@ schema:
     - name: istl_lctn_addr
       title: 설치 위치 주소
       type: code
+      semantic_type: address
       null_rate: 0.84
       sample_values:
         - 미평동 591-1
@@ -115,6 +118,7 @@ schema:
     - name: strm_http_addr
       title: 스트리밍 HTTP 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - https://itsstream.yeosu.go.kr:443/live/camera01.stream/playlist.m3u8
@@ -122,12 +126,29 @@ schema:
         - https://itsstream.yeosu.go.kr:443/live/camera03.stream/playlist.m3u8
       stats:
         unique: 100
+  foreign_keys:
+    - fields:
+        - istl_lctn_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - strm_http_addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - istl_lctn_addr
+    - strm_http_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 실시간 소통 (링크 속도·통행시간·돌발상황·CCTV·VMS)
@@ -171,7 +192,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15137985-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(istl_lctn_addr), address(strm_http_addr)'
     evidence:
       - type: measured
         source: probe/stats/15137985.json
@@ -249,9 +270,3 @@ review:
     - c-15137985-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - istl_lctn_addr
-    - strm_http_addr
-  space_via: address

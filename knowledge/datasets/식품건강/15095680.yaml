@@ -1,3 +1,5 @@
+# Dataset 15095680 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095680'
 tier: verified
 title: 식품의약품안전처_기능성화장품 보고품목정보
@@ -20,6 +22,7 @@ synonyms:
   - 미백 주름개선 화장품
   - 화장품 품목 조회
   - 식약처 화장품 업체
+summary_user: 기능성화장품 보고품목과 관련 업체 정보를 전국 단위로 업체·품목 건별로 담는 API로, 명세상 필드는 업체명, 업종, 업체허가번호, 허가/신고 구분, 관할 식약청, 공장주소, 업체허가일자, 사업자등록번호 등입니다. 소비자나 업계 분석가가 '이 기능성화장품을 만든 제조업자·책임판매업자는 어디이고, 언제 허가받았는가'를 확인하는 데 쓴다. 실측 컬럼에서는 전역 조인 키가 확인되지 않아, 다른 식약처 화장품·업체 데이터와는 업체명이나 업체허가번호, 같은 기관 코드(관할 식약청 코드 등)를 맞춰 연결한다.
 description_portal: 식품의약품안전처에서는 다양한 공공데이터 사용자가 기능성화장품의 품목명, 제조업자 및 책임판매업자 현황, 책임판매업등록번호 등의 보고품목정보 및 보고일련번호, 보고일 등의 보고정보 등 기능성화장품 보고품목정보를 신속하게 확인하고 파악할 수 있도록 정보를 제공하고 있습니다. 기능성화장품 보고품목 정보는 소비자가 보다 안전하고 검증된 제품을 선택할 수 있도록 활용할 수 있으며, 소비자 보호 및 국민 보건 향상에 실직적으로 기여할 수 있습니다. 또한 보고된 품목 정보를 기반으로 화장품 시장에 유통되는 기능성화장품의 전반적인 현황을 파악하고 화장품 업계의 제품 정보 등을 확인하여 효율적인 시장 관리 및 건전성을 유지, 품질관리 등에 활용할 수 있습니다. 또한, 개방 데이터는 기능성화장품 산업의 투명성 확보, 제품 신뢰도 향상, 소비자 보호 등 다층적인 기대효과를 창출하는데 기여할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -210,6 +213,7 @@ schema:
     - name: FACTORY_ADDR
       title: 공장주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 화성시 만세구
@@ -233,6 +237,7 @@ schema:
     - name: BIZRNO
       title: 사업자등록번호
       type: number
+      semantic_type: bizno
       null_rate: 0.183
       sample_values:
         - '1188102477'
@@ -243,6 +248,17 @@ schema:
         p50: 1388104858
         max: 8698700472
         unique: 610
+  foreign_keys:
+    - fields:
+        - FACTORY_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -297,7 +313,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15095680-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(FACTORY_ADDR), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15095680.json
@@ -374,8 +390,6 @@ verification:
   run: probe/runs/15095680.json
   stats: probe/stats/15095680.json
   data: probe/data/15095680/
-status: active
-summary_user: 기능성화장품 보고품목과 관련 업체 정보를 전국 단위로 업체·품목 건별로 담는 API로, 명세상 필드는 업체명, 업종, 업체허가번호, 허가/신고 구분, 관할 식약청, 공장주소, 업체허가일자, 사업자등록번호 등입니다. 소비자나 업계 분석가가 '이 기능성화장품을 만든 제조업자·책임판매업자는 어디이고, 언제 허가받았는가'를 확인하는 데 쓴다. 실측 컬럼에서는 전역 조인 키가 확인되지 않아, 다른 식약처 화장품·업체 데이터와는 업체명이나 업체허가번호, 같은 기관 코드(관할 식약청 코드 등)를 맞춰 연결한다.
 limits: 두 오퍼레이션 중 보고품목 조회(/getRptPrdlstInq01)는 최소 파라미터로 호출했을 때 응답이 없었으므로, 필요한 조회 조건을 확인한 뒤 호출해야 한다. 전역 조인 키가 없어 다른 데이터와의 결합은 이름·코드 매핑에 의존한다. 개발계정은 하루 10,000회까지 호출할 수 있다.
 review:
   summary: draft
@@ -388,3 +402,4 @@ review:
     - c-15095680-04
     - c-15095680-10
   dropped_citations: 0
+status: active

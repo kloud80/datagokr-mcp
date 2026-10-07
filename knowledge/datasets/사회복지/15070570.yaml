@@ -1,3 +1,5 @@
+# Dataset 15070570 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15070570'
 tier: verified
 title: 인천광역시 미추홀구_아동복지시설 현황
@@ -53,6 +55,7 @@ schema:
         unique: 6
     - name: 도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 인하로91번길 15 (용현동)
@@ -93,12 +96,24 @@ schema:
         p50: 126.671356
         max: 126.671697
         unique: 3
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
@@ -135,7 +150,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15070570-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15070570.json
@@ -202,9 +217,3 @@ review:
     - c-15070570-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

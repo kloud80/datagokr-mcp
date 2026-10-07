@@ -1,3 +1,5 @@
+# Dataset 15104164 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15104164'
 tier: verified
 title: 인천광역시 부평구_청년창업기업 현황
@@ -82,6 +84,7 @@ schema:
         unique: 59
     - name: 소재지
       type: code
+      semantic_type: address
       null_rate: 0.3934
       sample_values:
         - 인천광역시 부평구 충선로209번길 41(삼산동)
@@ -98,12 +101,23 @@ schema:
         - https://smartstore.naver.com/lotusrootshop
       stats:
         unique: 22
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
 cycle: default
 classification:
   subsector_name: 기업 확인·인증 (벤처·이노비즈·창업기업·공공구매 인증서·유망/우수기업·창업보육센터)
@@ -140,7 +154,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15104164-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15104164.json
@@ -218,8 +232,3 @@ review:
     - c-15104164-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지
-  space_via: address

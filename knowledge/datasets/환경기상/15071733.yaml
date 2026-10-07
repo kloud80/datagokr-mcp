@@ -1,3 +1,5 @@
+# Dataset 15071733 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15071733'
 tier: verified
 title: 서울특별시_대기오염 측정소 정보
@@ -65,6 +67,7 @@ schema:
         unique: 25
     - name: MSRSTN_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울 종로구 종로35가길 19 종로5,6가 동 주민센터
@@ -96,12 +99,23 @@ schema:
         p50: 111212
         max: 111311
         unique: 25
+  foreign_keys:
+    - fields:
+        - MSRSTN_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - MSRSTN_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 대기질 실시간 (에어코리아 측정소·미세먼지·오존·황사·대기오염 경보·지자체 측정망)
@@ -142,7 +156,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15071733-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(MSRSTN_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15071733.json
@@ -220,8 +234,3 @@ review:
     - c-15071733-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - MSRSTN_ADDR
-  space_via: address

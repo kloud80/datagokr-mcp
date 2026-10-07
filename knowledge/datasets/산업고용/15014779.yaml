@@ -1,3 +1,5 @@
+# Dataset 15014779 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15014779'
 tier: verified
 title: 한국장애인고용공단_장애인 고용의무 불이행 명단공표 사업체 정보
@@ -65,6 +67,7 @@ schema:
         unique: 18
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 송파구 송파대로 570(신천동)
@@ -129,9 +132,20 @@ schema:
         - 경기동부지사
       stats:
         unique: 22
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 직업·직무 사전 (직업사전·직업정보·직업전망·직무데이터·NCS·고용직업분류·학과정보)
@@ -167,7 +181,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15014779-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15014779.json
@@ -254,8 +268,3 @@ review:
     - c-15014779-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

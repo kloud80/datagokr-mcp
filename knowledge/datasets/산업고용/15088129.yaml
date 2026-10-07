@@ -1,3 +1,5 @@
+# Dataset 15088129 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088129'
 tier: verified
 title: 창업진흥원_예비창업패키지 주관기관 현황
@@ -63,6 +65,7 @@ schema:
         unique: 2
     - name: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '강원도 강릉시 범일로 579번길 24 '
@@ -70,12 +73,23 @@ schema:
         - '경기도 수원시 영통구 광교산로 154-42 '
       stats:
         unique: 27
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: event
 classification:
   subsector_name: 중소기업·창업 지원사업 공고 (K-Startup·중소벤처24·기업마당·지자체 지원시책)
@@ -116,7 +130,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088129-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15088129.json
@@ -194,8 +208,3 @@ review:
     - c-15088129-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

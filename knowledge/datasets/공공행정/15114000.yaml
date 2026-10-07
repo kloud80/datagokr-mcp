@@ -1,3 +1,5 @@
+# Dataset 15114000 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15114000'
 tier: verified
 title: 경상북도 영덕군_수해대피장소 데이터
@@ -59,6 +61,7 @@ schema:
         unique: 240
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.004
       sample_values:
         - '경상북도 영덕군 창수면 신리길 8-29 '
@@ -68,6 +71,7 @@ schema:
         unique: 239
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경상북도 영덕군 창수면 신리리 321-2
@@ -132,12 +136,29 @@ schema:
         p50: 129.3721310505606
         max: 129.449762
         unique: 246
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 오분류(타 부문 성격)
@@ -173,7 +194,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15114000-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소), address(지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15114000.json
@@ -239,9 +260,3 @@ review:
     - c-15114000-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

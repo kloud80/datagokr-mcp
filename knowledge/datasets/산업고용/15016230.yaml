@@ -1,3 +1,5 @@
+# Dataset 15016230 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15016230'
 tier: verified
 title: 인천광역시 미추홀구_가스사업자 현황
@@ -66,6 +68,7 @@ schema:
         unique: 36
     - name: 도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 방축로 332(주안동)
@@ -106,12 +109,24 @@ schema:
         p50: 126.6638896
         max: 126.6911639
         unique: 34
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 에너지 업종 인허가 (석유판매·고압가스·LPG·도시가스·전력기술·가스용품)
@@ -149,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15016230-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15016230.json
@@ -227,9 +242,3 @@ review:
     - c-15016230-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

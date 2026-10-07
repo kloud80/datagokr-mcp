@@ -1,3 +1,5 @@
+# Dataset 3081362 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3081362'
 tier: verified
 title: 전북특별자치도_병원현황
@@ -88,6 +90,7 @@ schema:
         unique: 166
     - name: 소재지주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 전라북도 김제시 금구면 낙산1길 74-1 ()
@@ -95,12 +98,23 @@ schema:
         - 전라북도 전주시 완산구 어은로 46 (중화산동2가)
       stats:
         unique: 199
+  foreign_keys:
+    - fields:
+        - 소재지주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -137,7 +151,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3081362-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지주소)'
     evidence:
       - type: measured
         source: probe/stats/3081362.json
@@ -215,8 +229,3 @@ review:
     - c-3081362-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지주소
-  space_via: address

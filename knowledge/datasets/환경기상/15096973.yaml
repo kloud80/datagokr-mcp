@@ -1,3 +1,5 @@
+# Dataset 15096973 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15096973'
 tier: verified
 title: 제주특별자치도_비점오염원 신고 시설 현황
@@ -56,6 +58,7 @@ schema:
         unique: 30
     - name: 소재지
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서귀포시 안덕면 한창로 746-31
@@ -82,9 +85,20 @@ schema:
         p50: 20200413
         max: 20200413
         unique: 1
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
 cycle: default
 classification:
   subsector_name: 수질 오염원 (폐수배출시설·비점오염·공공폐수처리시설)
@@ -126,7 +140,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15096973-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15096973.json
@@ -192,8 +206,3 @@ review:
     - c-15096973-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지
-  space_via: address

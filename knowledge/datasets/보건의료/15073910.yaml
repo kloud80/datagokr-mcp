@@ -1,3 +1,5 @@
+# Dataset 15073910 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15073910'
 tier: verified
 title: 식품의약품안전처_의료기기 GMP 대체교부품목
@@ -157,6 +159,7 @@ schema:
         unique: 113
     - name: MNUFTR_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.594
       sample_values:
         - Rosowek 43, 72-001 Kolbaskowo, Poland
@@ -194,12 +197,22 @@ schema:
       reference:
         key: country_cd
       evidence: measured
+    - fields:
+        - MNUFTR_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - MNUFTR_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
@@ -244,7 +257,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15073910-03
     kind: key
-    value: '실측 조인 키: meddev_prdgr_cd(PRDGR_CD), meddev_clsf_no(MDEQ_CLSF_NO), meddev_item_sn(MDEQ_PRDLST_SN), country_cd(MANUF_NATN_CD)'
+    value: '실측 조인 키: meddev_prdgr_cd(PRDGR_CD), meddev_clsf_no(MDEQ_CLSF_NO), meddev_item_sn(MDEQ_PRDLST_SN), country_cd(MANUF_NATN_CD), address(MNUFTR_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15073910.json
@@ -321,8 +334,3 @@ review:
     - c-15073910-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - MNUFTR_ADDR
-  space_via: address

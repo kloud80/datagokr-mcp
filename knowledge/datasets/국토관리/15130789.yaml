@@ -1,3 +1,5 @@
+# Dataset 15130789 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15130789'
 tier: verified
 title: 경기도_부동산포털 학교정보
@@ -179,6 +181,7 @@ schema:
         unique: 100
     - name: school_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 파주시 적성면 솥뒤로33번길 60(적성면)
@@ -188,6 +191,7 @@ schema:
         unique: 100
     - name: hmpg_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - https://jeokseong-h.goepj.kr
@@ -197,6 +201,7 @@ schema:
         unique: 100
     - name: school_guid_hmpg_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - http://www.schoolinfo.go.kr/ei/ss/Pneiss_b01_s0.do?HG_CD=J100000784
@@ -489,9 +494,32 @@ schema:
         p50: 4128510600110624768
         max: 4183039521105529856
         unique: 98
+  foreign_keys:
+    - fields:
+        - school_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - hmpg_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - school_guid_hmpg_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - lat
+    - ycrd
+    - xcrd
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 기타 (재검토)
@@ -531,7 +559,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15130789-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(school_addr), address(hmpg_addr), address(school_guid_hmpg_addr)'
     evidence:
       - type: measured
         source: probe/stats/15130789.json
@@ -626,10 +654,3 @@ review:
     - c-15130789-03
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-    - ycrd
-    - xcrd
-  space_via: coord

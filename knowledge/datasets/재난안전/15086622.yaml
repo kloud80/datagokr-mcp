@@ -1,3 +1,5 @@
+# Dataset 15086622 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15086622'
 tier: verified
 title: 한국전기안전공사_건물별 정기검사 일정
@@ -46,6 +48,7 @@ schema:
         unique: 4726
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0012
       sample_values:
         - 전라북도 순창군 팔덕면 장안리 산16
@@ -65,9 +68,20 @@ schema:
         p50: 20201111
         max: 20201231
         unique: 61
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 시설 안전 원장 (승강기·시설물 안전등급·점검 결과·기계설비 성능점검·전기/가스 안전·지반정보·자율안전확인)
@@ -104,7 +118,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15086622-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15086622.json
@@ -181,8 +195,3 @@ review:
     - c-15086622-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

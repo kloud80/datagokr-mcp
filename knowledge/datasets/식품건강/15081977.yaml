@@ -1,3 +1,5 @@
+# Dataset 15081977 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15081977'
 tier: verified
 title: 인천광역시 미추홀구_소독의무대상시설현황_식품접객업소
@@ -56,6 +58,7 @@ schema:
         unique: 122
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 매소홀로 618 (문학동, 1동주경기장 3층)
@@ -99,12 +102,24 @@ schema:
         p50: 126.67859845
         max: 126.7015187
         unique: 105
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
@@ -141,7 +156,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15081977-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15081977.json
@@ -218,9 +233,3 @@ review:
     - c-15081977-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

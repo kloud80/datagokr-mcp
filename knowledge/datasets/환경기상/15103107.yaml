@@ -1,3 +1,5 @@
+# Dataset 15103107 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15103107'
 tier: verified
 title: 인천광역시_자동차공회전제한지역지정현황
@@ -82,6 +84,7 @@ schema:
         unique: 623
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 방축로83번길 23 (송림동)
@@ -94,12 +97,23 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 대기 배출원·자동차 환경 (배출시설 사업장·굴뚝 TMS·비산먼지·석면·온실가스 배출·자동차 배출가스/환경인증)
@@ -136,7 +150,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15103107-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15103107.json
@@ -223,8 +237,3 @@ review:
     - c-15103107-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

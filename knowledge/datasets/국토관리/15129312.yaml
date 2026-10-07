@@ -1,3 +1,5 @@
+# Dataset 15129312 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15129312'
 tier: verified
 title: 경기도_데이터분석 실거래가 정보 연립빌라 전월세 원천 기본정보
@@ -58,6 +60,7 @@ schema:
         unique: 100
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 안산상록구 사동
@@ -215,9 +218,22 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 필지·건물
+grain:
+  space: sgg
+  space_fields:
+    - addr
+    - addr_origno_hno
+    - addr_viceno_hno
+  space_via: address
 cycle: default
 classification:
   subsector_name: 실거래 (매매·전월세·분양권·상업업무용·토지·공장창고, 13종)
@@ -259,7 +275,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15129312-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15129312.json
@@ -367,10 +383,3 @@ review:
     - c-15129312-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-    - addr_origno_hno
-    - addr_viceno_hno
-  space_via: address

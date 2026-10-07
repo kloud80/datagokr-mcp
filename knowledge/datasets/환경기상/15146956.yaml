@@ -1,3 +1,5 @@
+# Dataset 15146956 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15146956'
 tier: verified
 title: 서울특별시 강서구_지하수정화업체 인허가 정보
@@ -122,6 +124,7 @@ schema:
         unique: 2
     - name: LOTNO_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 강서구 마곡동 769 원그로브
@@ -130,6 +133,7 @@ schema:
         unique: 2
     - name: ROAD_NM_ADDR
       type: date
+      semantic_type: address
       null_rate: 0.5
       sample_values:
         - 서울특별시 강서구 양천로 401, B동 507-2호 (가양동, 강서한강자이타워)
@@ -230,6 +234,17 @@ schema:
         p50: 0
         max: 0
         unique: 1
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -287,7 +302,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15146956-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15146956.json

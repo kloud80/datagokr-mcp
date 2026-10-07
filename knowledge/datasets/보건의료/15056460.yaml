@@ -1,3 +1,5 @@
+# Dataset 15056460 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056460'
 tier: verified
 title: 전남광주통합특별시_24시간 응급의료기관 현황
@@ -45,6 +47,7 @@ schema:
         unique: 21
     - name: 소재지도로명주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 전남광주통합특별시 동구 제봉로 42
@@ -69,12 +72,23 @@ schema:
         - 권역센터
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - 소재지도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 응급의료 (응급의료기관·실시간 병상·야간/휴일 진료·달빛어린이병원·AED)
@@ -111,7 +125,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15056460-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15056460.json
@@ -199,8 +213,3 @@ review:
     - c-15056460-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지도로명주소
-  space_via: address

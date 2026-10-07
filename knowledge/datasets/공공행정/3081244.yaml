@@ -1,3 +1,5 @@
+# Dataset 3081244 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3081244'
 tier: verified
 title: 인천광역시 미추홀구_착한가격업소
@@ -65,6 +67,7 @@ schema:
         unique: 63
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 석정로 372 (주안동) 1층
@@ -105,12 +108,24 @@ schema:
         p50: 126.6631731
         max: 126.6966793
         unique: 63
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 상권·유동인구·지역 인허가 (상권 변화·점포 이력·유동/생활인구·착한가격·지역화폐·모범음식점)
@@ -147,7 +162,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3081244-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/3081244.json
@@ -225,9 +240,3 @@ review:
     - c-3081244-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

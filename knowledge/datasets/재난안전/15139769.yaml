@@ -1,3 +1,5 @@
+# Dataset 15139769 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15139769'
 tier: verified
 title: 행정안전부_공유플랫폼_폭염저감시설
@@ -262,6 +264,7 @@ schema:
         unique: 2
     - name: ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 주소
@@ -269,9 +272,20 @@ schema:
         - 서울특별시 동대문구 안암로 132 고대 앞 사거리 제자교회 앞 교통섬 (제기동)
       stats:
         unique: 101
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 제외 대상
@@ -310,7 +324,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15139769-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15139769.json
@@ -377,8 +391,3 @@ review:
     - c-15139769-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - LAT
-  space_via: coord

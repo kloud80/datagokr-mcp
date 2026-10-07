@@ -1,3 +1,5 @@
+# Dataset 15147984 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15147984'
 tier: verified
 title: 행정안전부_약국_POI
@@ -56,6 +58,7 @@ schema:
         unique: 101
     - name: ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 주소
@@ -399,9 +402,20 @@ schema:
         - POINT(14141288.29575409 4513040.6434432706)
       stats:
         unique: 100
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -442,7 +456,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15147984-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15147984.json
@@ -520,8 +534,3 @@ review:
     - c-15147984-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - LAT
-  space_via: coord

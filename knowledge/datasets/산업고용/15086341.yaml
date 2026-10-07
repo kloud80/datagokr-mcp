@@ -1,3 +1,5 @@
+# Dataset 15086341 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15086341'
 tier: verified
 title: 경상남도 하동군_옥외광고업 현황
@@ -62,6 +64,7 @@ schema:
         unique: 17
     - name: 도로명 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 하동읍 송림1길 14
@@ -69,12 +72,23 @@ schema:
         - 하동읍 향교1길 13
       stats:
         unique: 16
+  foreign_keys:
+    - fields:
+        - 도로명 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 도로명 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -111,7 +125,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15086341-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명 주소)'
     evidence:
       - type: measured
         source: probe/stats/15086341.json
@@ -189,8 +203,3 @@ review:
     - c-15086341-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 도로명 주소
-  space_via: address

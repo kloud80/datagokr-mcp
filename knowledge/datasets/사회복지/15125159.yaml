@@ -1,3 +1,5 @@
+# Dataset 15125159 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125159'
 tier: verified
 title: 성평등가족부_청소년 자기도전포상제 기관신청서 정보 서비스
@@ -135,6 +137,7 @@ schema:
     - name: addr
       title: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 하남시 미사강변중앙로7번안길 25 (풍산동)
@@ -148,12 +151,23 @@ schema:
         - 유테크밸리 C동 311호
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: event
 classification:
   subsector_name: 청소년 시설·활동 (수련시설·문화의집·유스호스텔·활동 프로그램 인증)
@@ -198,7 +212,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15125159-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15125159.json
@@ -265,8 +279,3 @@ review:
     - c-15125159-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address

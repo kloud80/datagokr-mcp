@@ -1,3 +1,5 @@
+# Dataset 15075924 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15075924'
 tier: verified
 title: 경기도_판교테크노밸리_입주기업현황
@@ -130,6 +132,7 @@ schema:
         unique: 2
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시 분당구 대왕판교로 645번길 12
@@ -139,6 +142,7 @@ schema:
         unique: 36
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시 분당구 삼평동 696-1 판교테크노밸리 글로벌 R&D센터, 1층
@@ -189,9 +193,26 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - refine_road_nm_addr
+    - refine_lotno_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 입주기업 (산단·농공단지·테크노밸리 입주업체)
@@ -232,7 +253,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15075924-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15075924.json
@@ -340,9 +361,3 @@ review:
     - c-15075924-07
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - refine_road_nm_addr
-    - refine_lotno_addr
-  space_via: address

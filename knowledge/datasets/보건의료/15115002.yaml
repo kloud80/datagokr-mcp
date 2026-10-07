@@ -1,3 +1,5 @@
+# Dataset 15115002 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15115002'
 tier: verified
 title: 서울특별시 송파구_의원 인허가 정보
@@ -155,6 +157,7 @@ schema:
         unique: 18
     - name: SITEWHLADDR
       type: string
+      semantic_type: address
       null_rate: 0.23
       sample_values:
         - 서울특별시 송파구 신천동 17-6
@@ -164,6 +167,7 @@ schema:
         unique: 68
     - name: RDNWHLADDR
       type: string
+      semantic_type: address
       null_rate: 0.26
       sample_values:
         - 서울특별시 송파구 위례광장로 193, 3층 304호 (장지동, 대길프라자)
@@ -330,6 +334,17 @@ schema:
         - 정형외과, 신경외과, 마취통증의학과, 재활의학과
       stats:
         unique: 41
+  foreign_keys:
+    - fields:
+        - SITEWHLADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - RDNWHLADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 가족판
@@ -387,7 +402,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15115002-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(SITEWHLADDR), address(RDNWHLADDR)'
     evidence:
       - type: measured
         source: probe/stats/15115002.json

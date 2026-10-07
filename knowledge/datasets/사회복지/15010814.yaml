@@ -1,3 +1,5 @@
+# Dataset 15010814 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15010814'
 tier: verified
 title: 국민연금공단_지사 및 상담센터 현황
@@ -71,6 +73,7 @@ schema:
         unique: 137
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '서울특별시 강남구 도산대로 128, 3층(논현동) '
@@ -102,9 +105,19 @@ schema:
       reference:
         key: nps_branch_cd
       evidence: measured
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 국민연금 가입·급여 통계 (가입현황·수급현황·지역가입자·급여 실적)
@@ -140,7 +153,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15010814-03
     kind: key
-    value: '실측 조인 키: nps_branch_cd(지사(센터)명)'
+    value: '실측 조인 키: nps_branch_cd(지사(센터)명), address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15010814.json
@@ -207,8 +220,3 @@ review:
     - c-15010814-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 15107783 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15107783'
 tier: verified
 title: 서울올림픽기념국민체육진흥공단_스포츠강좌이용권 등록시설 정보_GW
@@ -168,6 +170,7 @@ schema:
         unique: 338
     - name: road_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 남동구 석산로 125
@@ -247,6 +250,11 @@ schema:
         key: sports_voucher_facil_sn
       evidence: measured
     - fields:
+        - road_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - brno
       reference:
         key: bizno
@@ -254,6 +262,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - faci_daddr
+    - road_addr
+  space_via: address
 cycle: event
 classification:
   subsector_name: 생활체육 프로그램 (강좌·국민체력100·스포츠강좌이용권)
@@ -299,7 +313,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15107783-03
     kind: key
-    value: '실측 조인 키: sports_voucher_facil_sn(facil_sn), bizno(brno)'
+    value: '실측 조인 키: sports_voucher_facil_sn(facil_sn), address(road_addr), bizno(brno)'
     evidence:
       - type: measured
         source: probe/stats/15107783.json
@@ -367,9 +381,3 @@ review:
     - c-15107783-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - faci_daddr
-    - road_addr
-  space_via: address

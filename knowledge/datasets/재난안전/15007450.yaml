@@ -1,3 +1,5 @@
+# Dataset 15007450 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15007450'
 tier: verified
 title: 경찰청 충청북도경찰청_지구대 파출소 현황
@@ -88,6 +90,7 @@ schema:
         unique: 81
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충북 청주시 흥덕구 진재로 16
@@ -104,12 +107,23 @@ schema:
         - 043-270-3705
       stats:
         unique: 82
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 경찰관서 (경찰서·지구대·파출소·치안센터 위치)
@@ -146,7 +160,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15007450-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15007450.json
@@ -223,8 +237,3 @@ review:
     - c-15007450-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 15029079 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15029079'
 tier: verified
 title: 경기도 이천시_담배소매인 지정 현황
@@ -58,6 +60,7 @@ schema:
         unique: 689
     - name: 업소지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 이천시 대포동 3번지
@@ -67,6 +70,7 @@ schema:
         unique: 677
     - name: 업소도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.3685
       sample_values:
         - 경기도 이천시 부발읍 경충대로2050번길 15-87
@@ -98,12 +102,29 @@ schema:
         p50: 127.4491437
         max: 127.6323436
         unique: 494
+  foreign_keys:
+    - fields:
+        - 업소지번주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 업소도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -140,7 +161,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15029079-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(업소지번주소), address(업소도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15029079.json
@@ -218,9 +239,3 @@ review:
     - c-15029079-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

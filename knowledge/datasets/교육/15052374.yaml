@@ -1,3 +1,5 @@
+# Dataset 15052374 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15052374'
 tier: verified
 title: 서울특별시_중학교 정보
@@ -132,6 +134,7 @@ schema:
         unique: 96
     - name: ROAD_NM_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 광진구 광나루로36길 47
@@ -159,6 +162,7 @@ schema:
         unique: 100
     - name: HMPG_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - https://garam.sen.ms.kr
@@ -259,12 +263,30 @@ schema:
         p50: 20260423
         max: 20260423
         unique: 1
+  foreign_keys:
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - HMPG_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ROAD_NM_ADDR
+    - DADDR
+    - HMPG_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 학교 기본정보 (+연계 가능한 통계·재정)
@@ -305,7 +327,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15052374-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ROAD_NM_ADDR), address(HMPG_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15052374.json
@@ -382,10 +404,3 @@ review:
     - c-15052374-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - ROAD_NM_ADDR
-    - DADDR
-    - HMPG_ADDR
-  space_via: address

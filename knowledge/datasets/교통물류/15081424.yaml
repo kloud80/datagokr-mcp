@@ -1,3 +1,5 @@
+# Dataset 15081424 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15081424'
 tier: verified
 title: 경기도_화물자동차운송주선사업 허가업체 현황
@@ -96,6 +98,7 @@ schema:
         unique: 99
     - name: roadnm_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 남양주시 경춘로 1350번길 35
@@ -105,6 +108,7 @@ schema:
         unique: 98
     - name: lotno_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 남양주시 평내동 140
@@ -158,9 +162,25 @@ schema:
         p50: 127.2033309178
         max: 127.3715777754
         unique: 84
+  foreign_keys:
+    - fields:
+        - roadnm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 화물운송업 (운송·주선·가맹·이사·용달·국제물류주선, 화물통관)
@@ -201,7 +221,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15081424-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(roadnm_addr), address(lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15081424.json
@@ -278,8 +298,3 @@ review:
     - c-15081424-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

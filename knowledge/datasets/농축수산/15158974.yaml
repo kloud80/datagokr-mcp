@@ -1,3 +1,5 @@
+# Dataset 15158974 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15158974'
 tier: verified
 title: 산림청_산림사업법인 정보_GW
@@ -24,6 +26,7 @@ synonyms:
   - 산림법인 시정조치
   - 산림사업 입찰 업체
   - 사방사업 법인
+summary_user: 전국 산림사업법인을 법인별로 담은 등록 원천 목록으로, 상호·대표자·소재지 주소, 등록번호와 등록일, 산림사업의 종류, 기술능력, 시정조치·지체상금·등록취소 같은 상벌·처분 이력을 담는다. 산림사업 발주 기관이나 입찰 참여 업체가 '이 법인이 해당 산림사업 종류로 등록돼 있고 최근 시정조치나 등록취소 이력이 없는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 법인등록번호(coraddno)·상호·주소 같은 이름·값 매핑으로만 잇는다.
 description_portal: 산림사업법인 관리 데이터는 연도별·시도별 등록 현황을 바탕으로 숲가꾸기, 산림병해충 방제, 임도 및 사방사업, 도시숲 조성, 산림복원 등 국가 산림 경영의 핵심 분야를 포괄하는 종합 지식 베이스입니다. 이 데이터에는 법인의 고유 등록번호, 대표자 정보, 상세 소재지뿐만 아니라 산림공학 및 녹지조경 기술 인력의 등급별 보유 현황과 장비 수준 등 구체적인 기술능력이 명시되어 있어 법인의 실질적인 사업 수행 역량을 정밀하게 진단할 수 있습니다. 특히 과거의 상벌 이력과 영업정지, 시정조치 내역까지 투명하게 공개함으로써 공공 입찰의 공정성을 확보하고 부실 업체를 선별하는 필터링 기능을 수행하며, 정기적인 최신화 과정을 통해 산림 정책 수립과 통계 분석의 신뢰도를 높입니다. 결과적으로 이러한 체계적인 데이터 관리는 산림 산업 내의 건강한 경쟁을 유도하고 시공 품질을 향상시키며, 기후 위기 대응을 위한 탄소 흡수원 확충 및 산림 재난 방지 시스템의 효율성을 제고하는 데 결정적인 역할을 합니다.
 team:
   dept: 산림청 기획조정관 산림빅데이터팀
@@ -66,6 +69,7 @@ schema:
     - name: address
       title: 주소(소재지)
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 전라남도 보성군 보성읍 갱맹골길 167
@@ -288,6 +292,12 @@ schema:
         p50: 200944
         max: 790838
         unique: 544
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -341,7 +351,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15158974-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(address)'
     evidence:
       - type: measured
         source: probe/stats/15158974.json
@@ -406,8 +416,6 @@ verification:
   run: probe/runs/15158974.json
   stats: probe/stats/15158974.json
   data: probe/data/15158974/
-status: active
-summary_user: 전국 산림사업법인을 법인별로 담은 등록 원천 목록으로, 상호·대표자·소재지 주소, 등록번호와 등록일, 산림사업의 종류, 기술능력, 시정조치·지체상금·등록취소 같은 상벌·처분 이력을 담는다. 산림사업 발주 기관이나 입찰 참여 업체가 '이 법인이 해당 산림사업 종류로 등록돼 있고 최근 시정조치나 등록취소 이력이 없는가'를 확인하는 데 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 법인등록번호(coraddno)·상호·주소 같은 이름·값 매핑으로만 잇는다.
 limits: 표준 조인 키가 없어 다른 법인·사업장 데이터와 연결하려면 법인등록번호나 상호를 직접 맞춰야 한다. 개발계정은 하루 1,000회로 호출이 제한된다. 세부 부문이 농산물 유통 가격(KAMIS)으로 분류돼 있지만 필드에는 가격·품목코드가 없어 농산물 가격 분석에는 쓰지 않는다.
 review:
   summary: draft
@@ -420,3 +428,4 @@ review:
     - c-15158974-04
     - c-15158974-06
   dropped_citations: 0
+status: active

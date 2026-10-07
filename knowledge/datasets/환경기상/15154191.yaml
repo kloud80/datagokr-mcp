@@ -1,3 +1,5 @@
+# Dataset 15154191 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15154191'
 tier: verified
 title: 경기도_물놀이형 수경시설 설치운영 신고현황
@@ -72,6 +74,7 @@ schema:
         unique: 9
     - name: wtrcultr_faclt_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 수원시 영통구 광교호수로 57
@@ -181,9 +184,20 @@ schema:
         - 염소계
       stats:
         unique: 14
+  foreign_keys:
+    - fields:
+        - wtrcultr_faclt_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - wtrcultr_faclt_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 공중화장실 (전국 표준·개방화장실)
@@ -223,7 +237,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15154191-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(wtrcultr_faclt_addr)'
     evidence:
       - type: measured
         source: probe/stats/15154191.json
@@ -300,8 +314,3 @@ review:
     - c-15154191-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - wtrcultr_faclt_addr
-  space_via: address

@@ -159,6 +159,15 @@ def _key_fields() -> dict:
     return out
 
 
+# 이름 패턴 — 실측 합성(synth)이 없는 외부 사이트 데이터도 흔한 키는 잡는다 (정확한 이름·합성 판정이 없을 때만)
+NAME_PATTERN = [(re.compile(r"(^pnu$|_pnu$|필지고유번호)", re.I), "pnu"),
+                (re.compile(r"(법정동_?코드|^bjdong_?cd$|^ldong_?cd$|^legaldong_?cd$)", re.I), "bjd_cd"),
+                (re.compile(r"(사업자_?등록_?번호|^bizrno$|^brno$|^bzmn_?no$|^bsnm_?no$|_bizrno$)", re.I), "bizno"),
+                (re.compile(r"(법인_?등록_?번호|^jurirno$|^crno$|^corp_?rgst_?no$)", re.I), "corp_rgst_no"),
+                (re.compile(r"(^(rdnwhl|sitewhl|refine_road_?nm|refine_lotno|road_?nm|lotno|rdnmadr|lnmadr)_?addr$|^addr$|_addr$|^address$|"
+                            r"^(소재지)?(도로명|지번)?\s*주소$|^소재지\s*\((도로명|지번)\)$|^소재지$|도로명주소$|지번주소$)", re.I), "address")]
+
+
 def _semantic(col: str, synth_keys: dict, dsid: str | None = None) -> str | None:
     kf = _key_fields()
     if (dsid, col) in kf:
@@ -174,6 +183,8 @@ def _semantic(col: str, synth_keys: dict, dsid: str | None = None) -> str | None
             continue
         if k in SYNTH_KEY:
             return SYNTH_KEY[k]
+    if not synth_keys.get(col):
+        return next((k for rx, k in NAME_PATTERN if rx.search(col)), None)
     return None
 
 

@@ -1,3 +1,5 @@
+# Dataset 15059253 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15059253'
 tier: verified
 title: 경기도_자율점검 업소지정 현황
@@ -125,6 +127,7 @@ schema:
         unique: 2
     - name: REFINE_LOTNO_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 화성시 장안면 금의리 761-6번지
@@ -134,6 +137,7 @@ schema:
         unique: 5
     - name: REFINE_ROADNM_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 화성시 장안면 장안공단6길 46
@@ -182,9 +186,25 @@ schema:
       null_rate: 1.0
       stats:
         unique: 0
+  foreign_keys:
+    - fields:
+        - REFINE_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - REFINE_ROADNM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - REFINE_WGS84_LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 오염원·화학물질 사업장 (배출시설·가축분뇨·소음진동·석면·유해화학물질 취급·PRTR)
@@ -225,7 +245,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15059253-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(REFINE_LOTNO_ADDR), address(REFINE_ROADNM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15059253.json
@@ -303,8 +323,3 @@ review:
     - c-15059253-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - REFINE_WGS84_LAT
-  space_via: coord

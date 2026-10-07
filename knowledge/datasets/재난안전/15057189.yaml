@@ -1,3 +1,5 @@
+# Dataset 15057189 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057189'
 tier: verified
 title: 경기도_유해화학물질사고현황
@@ -107,6 +109,7 @@ schema:
         unique: 1
     - name: REFINE_LOTNO_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 용인시 기흥구 청덕동 556번지
@@ -116,6 +119,7 @@ schema:
         unique: 5
     - name: REFINE_ROADNM_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 용인시 기흥구 구성로 357
@@ -159,9 +163,25 @@ schema:
         p50: 37.2913537558
         max: 37.329089491
         unique: 5
+  foreign_keys:
+    - fields:
+        - REFINE_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - REFINE_ROADNM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - REFINE_WGS84_LAT
+  space_via: coord
 cycle: event
 classification:
   subsector_name: 재난 특보·위험지역 (재난문자·방재정보·재해위험지구·급경사지·인명피해우려지역·방사능 방재·화학사고·위험물)
@@ -203,7 +223,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15057189-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(REFINE_LOTNO_ADDR), address(REFINE_ROADNM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15057189.json
@@ -281,8 +301,3 @@ review:
     - c-15057189-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - REFINE_WGS84_LAT
-  space_via: coord

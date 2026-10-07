@@ -1,3 +1,5 @@
+# Dataset 15122912 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15122912'
 tier: verified
 title: 경기도_경기농정통합시스템 먹거리관련 시민단체
@@ -64,6 +66,7 @@ schema:
         unique: 20
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.08
       sample_values:
         - 경기안산시단원구고잔동69811
@@ -73,6 +76,7 @@ schema:
         unique: 49
     - name: detail_addr
       type: code
+      semantic_type: address
       null_rate: 0.4
       sample_values:
         - 1층두레생협
@@ -155,9 +159,26 @@ schema:
         p50: 1583296774000
         max: 1658990167000
         unique: 58
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - detail_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - addr
+    - detail_addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 농산물 유통 가격 (KAMIS 소매·도매·경락·산지·반입물량·품목코드)
@@ -197,7 +218,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15122912-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr), address(detail_addr)'
     evidence:
       - type: measured
         source: probe/stats/15122912.json
@@ -275,9 +296,3 @@ review:
     - c-15122912-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-    - detail_addr
-  space_via: address

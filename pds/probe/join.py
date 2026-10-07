@@ -221,6 +221,20 @@ def _spatial(rec: dict, lv: pd.DataFrame, kind: str) -> dict:
             "n": tried, "examples": ex[:3]}
 
 
+def _resume(e: dict) -> dict | None:
+    """오늘 같은 edge(id·src·dst 일치)를 이미 잰 결과가 있으면 그대로 쓴다 (판정 보류 포함) — 오류였던 건 다시 잰다."""
+    f = OUT / f"{e['id']}.json"
+    if not f.exists():
+        return None
+    try:
+        r = json.loads(f.read_text(encoding="utf-8"))
+    except ValueError:
+        return None
+    if r.get("at") == TODAY and r.get("src") == e.get("src") and r.get("dst") == e.get("dst") and "error" not in r:
+        return r
+    return None
+
+
 def run(only_unverified: bool = True) -> dict:
     keys = {k["id"]: k for k in store.load("key")}
     edges = store.load("edge")
@@ -229,14 +243,16 @@ def run(only_unverified: bool = True) -> dict:
     for e in edges:
         if only_unverified and e.get("verified"):
             continue
-        try:
-            r = measure(e, keys)
-        except Exception as ex:  # noqa: BLE001
-            r = {"edge": e["id"], "error": repr(ex)[:200], "match_rate": None}
+        r = _resume(e)  # 중단된 실행이 오늘 남긴 결과는 다시 재지 않는다
         if r is None:
-            skipped += 1
-            continue
-        (OUT / f"{e['id']}.json").write_text(json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            try:
+                r = measure(e, keys)
+            except Exception as ex:  # noqa: BLE001
+                r = {"edge": e["id"], "error": repr(ex)[:200], "match_rate": None}
+            if r is None:
+                skipped += 1
+                continue
+            (OUT / f"{e['id']}.json").write_text(json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         if r.get("match_rate") is not None:
             e["verified"] = {"by": "measured", "run": f"probe/joins/{e['id']}.json", "match_rate": float(r["match_rate"]), "at": TODAY}
             if e.get("source") == "auto":  # 실측으로 신뢰도 보정: 선언 신뢰도와 매칭률의 평균

@@ -1,3 +1,5 @@
+# Dataset 15020628 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15020628'
 tier: verified
 title: 식품의약품안전처_화장품 관련 정보
@@ -20,6 +22,7 @@ synonyms:
   - 화장품 허가 업체
   - 기능성화장품
   - 화장품 판매업체 주소
+summary_user: 화장품 관련 업체를 한 곳씩 담은 건별 데이터로, 업종(제조업·책임판매업 등), 업체명, 허가일자, 본사주소, 사업자등록번호를 전국 범위에서 제공한다. 소비자나 유통업자가 특정 화장품 업체가 언제 허가를 받았고 본사가 어디인지 확인하거나, 분석가가 지역별 화장품 제조·판매업체 분포를 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 업체명이나 사업자등록번호(BIZRNO) 매핑, 같은 기관의 업체번호로 연결한다.
 description_portal: 식품의약품안전처에서는 다양한 데이터 사용자가 화장품 안전성과 품질에 대한 신뢰성 있는 정보를 확인 및 확보하고 시장 동향 등을 파악하는데 활용할 수 있도록 화장품(심사품목,보고품목,제조업, 책임판매업등)의 관련 정보를 제공하고 있습니다. 기능성화장품 심사, 보고 품목과 화장품제조업, 화장품책임판매업 정보 등을 확인하여 화장품과 관련한 안전하고 합리적인 소비를 할 수 있도록 하는 등 소비자 안전성을 강화하고 다양한 분야에서 실질적인 활용과 사회적 가치 창출에 기여할 수 있습니다.
 team:
   dept: 데이터혁신기획팀
@@ -112,6 +115,7 @@ schema:
     - name: FACTORY_ADDR
       title: 본사주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 계양구
@@ -120,6 +124,7 @@ schema:
     - name: BIZRNO
       title: 사업자등록번호
       type: number
+      semantic_type: bizno
       null_rate: 0.0
       sample_values:
         - '1020463371'
@@ -128,9 +133,25 @@ schema:
         p50: 1020463371
         max: 1020463371
         unique: 1
+  foreign_keys:
+    - fields:
+        - FACTORY_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - BIZRNO
+      reference:
+        key: bizno
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - FACTORY_ADDR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 식품 제품·품목 DB (품목제조보고·바코드·영양성분·원재료·첨가물·기준규격·건강기능식품 품목·레시피)
@@ -173,7 +194,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15020628-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(FACTORY_ADDR), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15020628.json
@@ -238,8 +259,6 @@ verification:
   run: probe/runs/15020628.json
   stats: probe/stats/15020628.json
   data: probe/data/15020628/
-status: active
-summary_user: 화장품 관련 업체를 한 곳씩 담은 건별 데이터로, 업종(제조업·책임판매업 등), 업체명, 허가일자, 본사주소, 사업자등록번호를 전국 범위에서 제공한다. 소비자나 유통업자가 특정 화장품 업체가 언제 허가를 받았고 본사가 어디인지 확인하거나, 분석가가 지역별 화장품 제조·판매업체 분포를 볼 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 업체명이나 사업자등록번호(BIZRNO) 매핑, 같은 기관의 업체번호로 연결한다.
 limits: 검증된 오퍼레이션은 1개이며 필드는 업체 단위 정보뿐이라, 포털 설명에 있는 기능성화장품 심사·보고 품목 정보는 이 필드 목록으로 확인되지 않는다. 식품 품목 DB로 분류되어 있지만 품목제조보고번호·바코드 같은 제품 단위 키는 없다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -252,8 +271,4 @@ review:
     - c-15020628-04
     - c-15020628-06
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - FACTORY_ADDR
-  space_via: address
+status: active

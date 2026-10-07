@@ -1,3 +1,5 @@
+# Dataset 15157808 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157808'
 tier: verified
 title: 경상북도 영천시_캠핑장현황
@@ -84,6 +86,7 @@ schema:
     - name: addr
       title: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경상북도 영천시 화북면 정각길 150
@@ -101,12 +104,23 @@ schema:
         - 054-331-5583
       stats:
         unique: 9
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
 cycle: default
 classification:
   subsector_name: 관광 산업 (여행업·관광숙박업·유원시설·관광편의시설 등록, 호텔 등급, 야영장, 관광종사원)
@@ -150,7 +164,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15157808-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15157808.json
@@ -228,8 +242,3 @@ review:
     - c-15157808-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - addr
-  space_via: address

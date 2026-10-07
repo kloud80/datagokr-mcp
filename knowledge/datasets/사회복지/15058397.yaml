@@ -1,3 +1,5 @@
+# Dataset 15058397 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058397'
 tier: verified
 title: 한국노인인력개발원_사회참여 자원조회
@@ -20,6 +22,7 @@ synonyms:
   - 노인 사회참여
   - 노인일자리 수행기관
   - 어르신 일자리
+summary_user: 노인 일자리·사회활동 관련 사회참여 자원을 건별로 담은 API로, 시도·시군구 코드와 조회 기간을 넣으면 해당 지역·기간의 자원별 기관명, 주소, 서비스 분류, 모집기간·모집정원·모집연령, 참여기간, 등록기관을 돌려준다(범위 전국). 노인 사회참여 기관 담당자나 연구자가 "우리 시군구에서 올해 모집하는 노인 사회활동 자원은 어떤 분류에 몇 명 정원인가"처럼 지역·서비스별 공급 현황과 모집 시기를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시도·시군구명(sidoname, gunguname)이나 행정구역 코드, 기관명 같은 이름·코드 매핑으로만 잇는다.
 description_portal: 한국노인인력개발원에서 제공하는 「사회참여 자원조회」 오픈API로, 노인 일자리 및 사회활동 지원 관련 정보를 체계적으로 조회할 수 있는 데이터입니다. API는 시도/시군구 코드와 기간(조회 시작일, 종료일)을 입력값으로 받아 해당 지역과 기간 내 사회참여 자원 정보를 반환합니다. 출력 데이터에는 행정구역 코드, 시군구명, 기관명, 서비스 분류코드 및 명칭, 참여기간, 모집유형, 모집정원, 등록기관, 자원정보 코드와 명칭, 일련번호, 지역본부 등의 세부 항목이 포함됩니다. 이를 통해 기관 및 연구자는 노인 사회활동 참여 현황을 지역별, 서비스별로 분석할 수 있으며, 정책 수립이나 현장 운영 시 참고자료로 활용 가능합니다. 특히 모집정원, 모집일자, 참여기간과 같은 항목을 통해 자원 운영의 시기적 특성을 파악할 수 있어, 지역사회 내 노인 일자리 및 복지서비스 공급·수요 균형을 진단하는 데 기여할 수 있습니다.
 team:
   dept: 정보화전략부
@@ -43,6 +46,7 @@ schema:
   fields:
     - name: address
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '광주광역시 동구 서남로 1 (서석동) '
@@ -227,6 +231,12 @@ schema:
         - 부울경
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -282,7 +292,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15058397-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(address)'
     evidence:
       - type: measured
         source: probe/stats/15058397.json
@@ -336,8 +346,6 @@ verification:
   run: probe/runs/15058397.json
   stats: probe/stats/15058397.json
   data: probe/data/15058397/
-status: active
-summary_user: 노인 일자리·사회활동 관련 사회참여 자원을 건별로 담은 API로, 시도·시군구 코드와 조회 기간을 넣으면 해당 지역·기간의 자원별 기관명, 주소, 서비스 분류, 모집기간·모집정원·모집연령, 참여기간, 등록기관을 돌려준다(범위 전국). 노인 사회참여 기관 담당자나 연구자가 "우리 시군구에서 올해 모집하는 노인 사회활동 자원은 어떤 분류에 몇 명 정원인가"처럼 지역·서비스별 공급 현황과 모집 시기를 살필 때 쓴다. 실측 컬럼에 전역 조인 키가 없어 다른 데이터와는 시도·시군구명(sidoname, gunguname)이나 행정구역 코드, 기관명 같은 이름·코드 매핑으로만 잇는다.
 limits: 사업자번호·인증번호 같은 공통 키가 없어 사회적기업·협동조합 등 기업 데이터와 바로 결합되지 않고, 기관명·지역명 매칭에 의존해야 한다. 개발계정은 하루 10,000회로 호출이 제한된다.
 review:
   summary: draft
@@ -350,3 +358,4 @@ review:
     - c-15058397-04
     - c-15058397-06
   dropped_citations: 0
+status: active

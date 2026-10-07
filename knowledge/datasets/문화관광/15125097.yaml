@@ -1,3 +1,5 @@
+# Dataset 15125097 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125097'
 tier: verified
 title: 한국문화정보원_전국문화기반시설총람 정보 조회서비스
@@ -23,6 +25,7 @@ synonyms:
   - 공공도서관 현황
   - 문화기반시설 방문객
   - 지역 문화자원
+summary_user: 전국 문화기반시설 총람을 시설 한 곳당 한 건으로 담으며, 실호출로 확인된 응답에는 문학관별 기준연도·발간연도, 국공립 구분과 설립주체, 소장자료·프로그램·연간 방문인원, 정규직·비정규직 운영인력, 대지·시설면적, 주소·전화·홈페이지가 들어 있다. 지역 문화자원을 조사하는 분석가나 정책 담당자가 '우리 시군구 문학관의 연간 방문객과 운영 인력은 어느 정도인가'를 확인하는 데 쓴다. 시군구코드(sggCd)로 다른 시군구 단위 통계와 잇고, 주소(addr)로 위치 기반 자료와 맞춰 쓴다.
 description_portal: 이 데이터셋은 전국 문화기반시설 총람의 정보를 제공하며, 문화체육관광부가 매년 수집·발간하는 자료를 기반으로 합니다. 주요 컬럼에는 시설명, 소재지, 연락처, 홈페이지, 개관일정, 관람료, 시설규모, 소장자료, 이용현황, 주요 프로그램, 운영인력 등이 포함되어 있습니다. 이를 통해 도서관, 박물관, 미술관, 생활문화센터 등 다양한 문화시설의 세부 정보를 확인할 수 있습니다. 문화정책 수립, 지역 문화자원 조사, 문화시설 안내 서비스 등 다양한 분야에서 활용할 수 있으며, 데이터는 정기적으로 갱신됩니다.
 team:
   dept: 문화진흥팀
@@ -641,6 +644,7 @@ schema:
     - name: addr
       title: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경남 창원시 진해구 소사로 59번길 13
@@ -678,6 +682,11 @@ schema:
         - sggCd
       reference:
         key: sgg_cd
+      evidence: measured
+    - fields:
+        - addr
+      reference:
+        key: address
       evidence: measured
 coverage:
   spatial: 전국
@@ -734,7 +743,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15125097-03
     kind: key
-    value: '실측 조인 키: sgg_cd(sggCd)'
+    value: '실측 조인 키: sgg_cd(sggCd), address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15125097.json
@@ -823,8 +832,6 @@ verification:
   run: probe/runs/15125097.json
   stats: probe/stats/15125097.json
   data: probe/data/15125097/
-status: active
-summary_user: 전국 문화기반시설 총람을 시설 한 곳당 한 건으로 담으며, 실호출로 확인된 응답에는 문학관별 기준연도·발간연도, 국공립 구분과 설립주체, 소장자료·프로그램·연간 방문인원, 정규직·비정규직 운영인력, 대지·시설면적, 주소·전화·홈페이지가 들어 있다. 지역 문화자원을 조사하는 분석가나 정책 담당자가 '우리 시군구 문학관의 연간 방문객과 운영 인력은 어느 정도인가'를 확인하는 데 쓴다. 시군구코드(sggCd)로 다른 시군구 단위 통계와 잇고, 주소(addr)로 위치 기반 자료와 맞춰 쓴다.
 limits: 6개 오퍼레이션 중 실호출에 성공한 것은 1개뿐이며, 박물관·미술관·생활문화센터·국립도서관 계열(/clifMsmv1, /clifArglv1, /clifClcnv1, /clifNtnLbrryv1 등)은 최소 파라미터로 호출하면 응답이 없었다. 필수 파라미터 기관명(instNm)은 다른 데이터에서 먼저 받아 넘겨야 한다.
 review:
   summary: draft
@@ -838,3 +845,4 @@ review:
     - c-15125097-10
     - c-15125097-11
   dropped_citations: 0
+status: active

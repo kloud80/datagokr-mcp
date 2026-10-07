@@ -1,3 +1,5 @@
+# Dataset 15106975 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15106975'
 tier: verified
 title: 식품의약품안전처_한약(생약)제제 회수·판매중지 정보
@@ -84,6 +86,7 @@ schema:
         unique: 56
     - name: ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 동대문구 약령중앙로 62.
@@ -211,6 +214,11 @@ schema:
         unique: 56
   foreign_keys:
     - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - BIZRNO
       reference:
         key: bizno
@@ -218,6 +226,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address
 cycle: event
 classification:
   subsector_name: 회수·판매중지·행정처분·부적합·방사능/잔류농약 검사 결과·식중독
@@ -262,7 +275,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15106975-03
     kind: key
-    value: '실측 조인 키: bizno(BIZRNO)'
+    value: '실측 조인 키: address(ADDR), bizno(BIZRNO)'
     evidence:
       - type: measured
         source: probe/stats/15106975.json
@@ -343,8 +356,3 @@ review:
     - c-15106975-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - ADDR
-  space_via: address

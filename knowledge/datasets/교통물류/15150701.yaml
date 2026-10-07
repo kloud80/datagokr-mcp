@@ -1,3 +1,5 @@
+# Dataset 15150701 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150701'
 tier: verified
 title: 행정안전부_교통안전정보(노인보호구역)
@@ -142,6 +144,7 @@ schema:
         unique: 3
     - name: LCTN_ROAD_NM_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 동대문구 답십리로48길 54 (답십리동) 답십리동36-31
@@ -151,6 +154,7 @@ schema:
         unique: 73
     - name: LCTN_LOTNO_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 동대문구 답십리동 36-31 답십리동36-31
@@ -261,6 +265,17 @@ schema:
         - 지오메트리
       stats:
         unique: 99
+  foreign_keys:
+    - fields:
+        - LCTN_ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - LCTN_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
@@ -310,7 +325,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15150701-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(LCTN_ROAD_NM_ADDR), address(LCTN_LOTNO_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15150701.json

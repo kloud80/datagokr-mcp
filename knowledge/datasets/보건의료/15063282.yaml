@@ -1,3 +1,5 @@
+# Dataset 15063282 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15063282'
 tier: verified
 title: 대전광역시_한방병원(병원급 이상) 현황
@@ -44,6 +46,7 @@ schema:
         unique: 16
     - name: 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대전광역시 동구 옥천로 153-0 (판암동, 1동 (판암동,고래한방병원2층5흥6층))
@@ -96,12 +99,23 @@ schema:
         p50: 18
         max: 79
         unique: 10
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -138,7 +152,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15063282-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15063282.json
@@ -216,8 +230,3 @@ review:
     - c-15063282-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

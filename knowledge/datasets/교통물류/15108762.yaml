@@ -1,3 +1,5 @@
+# Dataset 15108762 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15108762'
 tier: verified
 title: 대구광역시_부설주차장운영및개방공유정보조회서비스
@@ -140,6 +142,7 @@ schema:
         unique: 3
     - name: st_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 남구 현충로48길 33
@@ -150,6 +153,7 @@ schema:
         unique: 996
     - name: nb_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 중구 삼덕동2가 188-1번지
@@ -589,6 +593,7 @@ schema:
         unique: 1
     - name: st_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 남구 성당로50길 33
@@ -597,6 +602,7 @@ schema:
         unique: 1
     - name: nb_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 대구광역시 남구 대명동 2288번지
@@ -866,6 +872,17 @@ schema:
         min: '2022-07-26'
         max: '2022-07-26'
         unique: 1
+  foreign_keys:
+    - fields:
+        - st_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - nb_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
@@ -923,7 +940,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15108762-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(st_addr), address(nb_addr)'
     evidence:
       - type: measured
         source: probe/stats/15108762.json

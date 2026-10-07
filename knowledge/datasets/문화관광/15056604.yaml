@@ -1,3 +1,5 @@
+# Dataset 15056604 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15056604'
 tier: verified
 title: 경기도_공공체육시설 현황(테니스)
@@ -238,6 +240,7 @@ schema:
         unique: 83
     - name: refine_lotno_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 김포시 마산동 642-1
@@ -247,6 +250,7 @@ schema:
         unique: 96
     - name: refine_road_nm_addr
       type: string
+      semantic_type: address
       null_rate: 0.42
       sample_values:
         - 경기도 남양주시 경춘로1209번길 190-1
@@ -278,9 +282,25 @@ schema:
         p50: 126.90645304165
         max: 127.364091318
         unique: 86
+  foreign_keys:
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -321,7 +341,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15056604-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_lotno_addr), address(refine_road_nm_addr)'
     evidence:
       - type: measured
         source: probe/stats/15056604.json
@@ -399,8 +419,3 @@ review:
     - c-15056604-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

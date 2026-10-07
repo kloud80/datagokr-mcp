@@ -1,3 +1,5 @@
+# Dataset 15081142 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15081142'
 tier: verified
 title: 경기도 시흥시_사업장폐기물배출신고현황
@@ -66,6 +68,7 @@ schema:
         unique: 330
     - name: 사업장도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0401
       sample_values:
         - 경기도 시흥시 공단1대로 204 (정왕동)
@@ -75,6 +78,7 @@ schema:
         unique: 1408
     - name: 사업장지번주소
       type: string
+      semantic_type: address
       null_rate: 0.1634
       sample_values:
         - '경기도 시흥시 정왕동 1364 시화공단2다401 39/304 '
@@ -82,12 +86,29 @@ schema:
         - '경기도 시흥시 장곡동 260-21 '
       stats:
         unique: 1142
+  foreign_keys:
+    - fields:
+        - 사업장도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 사업장지번주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 사업장도로명주소
+    - 사업장지번주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -124,7 +145,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15081142-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(사업장도로명주소), address(사업장지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15081142.json
@@ -201,9 +222,3 @@ review:
     - c-15081142-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 사업장도로명주소
-    - 사업장지번주소
-  space_via: address

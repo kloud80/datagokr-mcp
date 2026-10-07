@@ -1,4 +1,5 @@
-# Dataset 15109784 — KNOWLEDGE-SPEC §3.1. summary_user·limits는 LLM 초안(review.summary=draft) — 승인 전
+# Dataset 15109784 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109784'
 tier: verified
 title: 성평등가족부_가족친화인증기관
@@ -22,6 +23,7 @@ synonyms:
   - 일·가정 양립 인증
   - 가족친화 인증 현황
   - 가족친화기관 위치
+summary_user: 가족친화인증을 받은 전국 기업·공공기관을 기관 한 곳당 한 건으로 담는 API 데이터로, 시설명·대표자·도로명/지번 주소·위도·경도·연락처와 신규 인증연도, 인증 유효기간(시작·종료일자)이 들어 있다. 구직자가 우리 지역의 가족친화인증 기업을 찾거나, 분석가가 시도·시군구별 인증기관 분포와 인증 유지 현황을 지도로 보려 할 때 쓴다. 전역 조인 키는 없어서 시도명·시군구명이나 주소·좌표, 기관명 매칭으로 다른 행정·기업 데이터와 이어야 한다.
 description_portal: 가족친화제도를 모범적으로 운영하는 기업 및 공공기관의 시설 정보를 제공하는 오픈 API형 데이터입니다.  해당 개방데이터는 가족친화인증기관의 주소, 위도, 경도 등의 POI 정보와 대표 전화번호, 홈페이지 주소, 대표 연락처, 신규 인증연도, 인증 기준 일자, 시설명, 대표자명을 확인할 수 있습니다.  가족친화적 문화를 조성하고 있는 기관의 분포를 시각화하거나 분석하는 데 활용할 수 있으며, 정책 홍보, 기업 컨설팅, 가족친화 인증제도 활성화 등 다양한 행정 및 민간 활용 방안에 기여할 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -129,12 +131,14 @@ schema:
     - name: roadNmAddr
       title: 도로명주소
       type: code
+      semantic_type: address
       null_rate: 1.0
       stats:
         unique: 0
     - name: lotnoAddr
       title: 지번주소
       type: code
+      semantic_type: address
       null_rate: 1.0
       stats:
         unique: 0
@@ -224,6 +228,17 @@ schema:
         p50: 260708
         max: 260708
         unique: 1
+  foreign_keys:
+    - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lotnoAddr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
@@ -277,7 +292,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15109784-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(roadNmAddr), address(lotnoAddr)'
     evidence:
       - type: measured
         source: probe/stats/15109784.json
@@ -331,8 +346,6 @@ verification:
   run: probe/runs/15109784.json
   stats: probe/stats/15109784.json
   data: probe/data/15109784/
-status: active
-summary_user: 가족친화인증을 받은 전국 기업·공공기관을 기관 한 곳당 한 건으로 담는 API 데이터로, 시설명·대표자·도로명/지번 주소·위도·경도·연락처와 신규 인증연도, 인증 유효기간(시작·종료일자)이 들어 있다. 구직자가 우리 지역의 가족친화인증 기업을 찾거나, 분석가가 시도·시군구별 인증기관 분포와 인증 유지 현황을 지도로 보려 할 때 쓴다. 전역 조인 키는 없어서 시도명·시군구명이나 주소·좌표, 기관명 매칭으로 다른 행정·기업 데이터와 이어야 한다.
 limits: 공통 기관 코드가 없어 다른 데이터와는 이름·주소 매칭으로만 연결되므로 동명 기관이나 표기 차이에 주의해야 한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -344,3 +357,4 @@ review:
     - c-15109784-03
     - c-15109784-04
   dropped_citations: 0
+status: active

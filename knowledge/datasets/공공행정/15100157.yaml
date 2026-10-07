@@ -1,3 +1,5 @@
+# Dataset 15100157 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15100157'
 tier: verified
 title: 경상북도 성주군_공유재산 관리 현황
@@ -57,6 +59,7 @@ schema:
         unique: 1
     - name: 소재지
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경상북도 성주군 벽진면 용암리 205-1
@@ -94,12 +97,23 @@ schema:
         - 새마을녹지과
       stats:
         unique: 22
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 가족판
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
 cycle: default
 classification:
   subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
@@ -136,7 +150,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15100157-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지)'
     evidence:
       - type: measured
         source: probe/stats/15100157.json
@@ -213,8 +227,3 @@ review:
     - c-15100157-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지
-  space_via: address

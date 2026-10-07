@@ -1,3 +1,5 @@
+# Dataset 15057729 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15057729'
 tier: verified
 title: 경기도_부인과한방병원 현황
@@ -253,6 +255,7 @@ schema:
         unique: 1
     - name: REFINE_LOTNO_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 하남시 망월동 1099 하남미사 롯데캐슬 스타
@@ -262,6 +265,7 @@ schema:
         unique: 5
     - name: REFINE_ROADNM_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 하남시 미사강변중앙로 190, 하남미사 롯데캐슬 스타 323~346호,348호,367~387호 (망월동)
@@ -305,6 +309,17 @@ schema:
         p50: 37.3256923
         max: 37.5638044
         unique: 5
+  foreign_keys:
+    - fields:
+        - REFINE_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - REFINE_ROADNM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
@@ -356,7 +371,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15057729-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(REFINE_LOTNO_ADDR), address(REFINE_ROADNM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15057729.json

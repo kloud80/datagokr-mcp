@@ -1,3 +1,5 @@
+# Dataset 15083717 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15083717'
 tier: verified
 title: 대전광역시_실시간 주차장 정보
@@ -78,6 +80,7 @@ schema:
         unique: 50
     - name: address
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 유성구 봉명동 549-11
@@ -269,9 +272,21 @@ schema:
         - 평일
       stats:
         unique: 2
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lat
+    - lon
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
@@ -316,7 +331,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15083717-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(address)'
     evidence:
       - type: measured
         source: probe/stats/15083717.json
@@ -394,9 +409,3 @@ review:
     - c-15083717-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-    - lon
-  space_via: coord

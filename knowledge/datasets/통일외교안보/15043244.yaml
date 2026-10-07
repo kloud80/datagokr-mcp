@@ -1,3 +1,5 @@
+# Dataset 15043244 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15043244'
 tier: verified
 title: 경기도_보훈단체 정보
@@ -62,6 +64,7 @@ schema:
         unique: 27
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 시흥시 능곡로 140
@@ -71,6 +74,7 @@ schema:
         unique: 44
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 시흥시 능곡동 710번지 4층
@@ -140,9 +144,25 @@ schema:
         p50: 20240306
         max: 20260211
         unique: 26
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 보훈시설·단체·병원 (현충시설·보훈단체 표준·보훈병원 병상/비급여/진료수가·위탁병원)
@@ -183,7 +203,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15043244-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/15043244.json
@@ -261,8 +281,3 @@ review:
     - c-15043244-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

@@ -1,3 +1,5 @@
+# Dataset 15124089 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15124089'
 tier: verified
 title: 경기도_버스 차고지 및 부대시설 이력
@@ -133,6 +135,7 @@ schema:
         unique: 32
     - name: legaldong_cd
       type: number
+      semantic_type: bjd_cd
       null_rate: 0.0
       sample_values:
         - '4128000000'
@@ -187,6 +190,7 @@ schema:
         unique: 71
     - name: prmry_addr
       type: code
+      semantic_type: address
       null_rate: 0.02
       sample_values:
         - '경기 의정부시 가능동 '
@@ -331,6 +335,7 @@ schema:
         unique: 1
     - name: secnd_addr
       type: code
+      semantic_type: address
       null_rate: 0.02
       sample_values:
         - 69-7
@@ -418,9 +423,30 @@ schema:
         - 기타
       stats:
         unique: 6
+  foreign_keys:
+    - fields:
+        - legaldong_cd
+      reference:
+        key: bjd_cd
+      evidence: measured
+    - fields:
+        - prmry_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - secnd_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: bjd
+  space_fields:
+    - legaldong_cd
+  space_via: code
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -461,7 +487,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15124089-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: bjd_cd(legaldong_cd), address(prmry_addr), address(secnd_addr)'
     evidence:
       - type: measured
         source: probe/stats/15124089.json
@@ -538,8 +564,3 @@ review:
     - c-15124089-04
   dropped_citations: 0
 status: active
-grain:
-  space: bjd
-  space_fields:
-    - legaldong_cd
-  space_via: code

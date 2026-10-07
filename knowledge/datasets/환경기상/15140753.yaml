@@ -1,3 +1,5 @@
+# Dataset 15140753 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15140753'
 tier: verified
 title: 서울특별시 은평구_쓰레기종량제봉투판매업 인허가 정보
@@ -151,6 +153,7 @@ schema:
         unique: 7
     - name: LOTNO_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 은평구 증산동 210-14
@@ -160,6 +163,7 @@ schema:
         unique: 68
     - name: ROAD_NM_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.9855
       sample_values:
         - 서울특별시 은평구 은평터널로 125  (신사동)
@@ -254,6 +258,17 @@ schema:
         - 관급봉투
       stats:
         unique: 1
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -311,7 +326,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15140753-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15140753.json

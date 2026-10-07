@@ -1,3 +1,5 @@
+# Dataset 15154902 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15154902'
 tier: verified
 title: 행정안전부_문화_음반물배급업 조회서비스
@@ -293,6 +295,7 @@ schema:
     - name: LOTNO_ADDR
       title: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 부산광역시 연제구 연산동 ****번지 *호
@@ -327,6 +330,7 @@ schema:
     - name: ROAD_NM_ADDR
       title: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.2195
       sample_values:
         - 대전광역시 유성구 계룡로***번길 **-**, *층 ***호 (봉명동,W성공비즈니스센터)
@@ -387,9 +391,19 @@ schema:
         unique: 38
   foreign_keys:
     - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - MNG_NO
       reference:
         key: localdata_license_no
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
       evidence: measured
 facets:
   grade:
@@ -451,7 +465,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15154902-03
     kind: key
-    value: '실측 조인 키: localdata_license_no(MNG_NO)'
+    value: '실측 조인 키: address(LOTNO_ADDR), localdata_license_no(MNG_NO), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15154902.json

@@ -1,3 +1,5 @@
+# Dataset 15157673 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15157673'
 tier: verified
 title: 한국수력원자력(주)_자체 재생설비 발전 현황
@@ -19,6 +21,7 @@ synonyms:
   - 태양광 발전량
   - 발전소 기상정보
   - KHNP 재생설비
+summary_user: 한국수력원자력이 자체 운영하는 재생에너지 발전기별로 일일 판매량과 기온·습도 같은 기상정보를 담은 건별 API이며, 발전기코드·발전기명·발전원·설비용량·지역을 함께 준다. 분석가가 "한수원 태양광·풍력 발전기의 하루 판매량이 기온·습도에 따라 어떻게 달라지는가"를 살필 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 발전기코드(kpxGenid)나 발전기명·지역 이름을 매핑하는 방식으로만 잇는다.
 description_portal: “자체 재생설비 발전현황” API는 한국수력원자력㈜이 제공하는 공공데이터 서비스입니다. 이 API는 한국수력원자력 자체 재생설비 발전기별 일일 판매량 및 기상정보를 XML 형식으로 제공합니다. 요청 시 서비스키(ServiceKey)를 통해 발전기코드, 발전기명, 발전원(resourceType), 설비용량, 지역, 기온, 습도 등의 상세 정보를 조회할 수 있습니다. 매일 오전 5시 전일 데이터를 갱신합니다. 개발계정은 10,000회 호출이 가능하며, 운영계정은 활용사례 등록으로 트래픽 증가가 가능합니다.
 team:
   dept: AI혁신처 데이터혁신부
@@ -169,6 +172,11 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - pageNo
+  space_via: address
 cycle: default
 classification:
   subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
@@ -288,8 +296,6 @@ verification:
   run: probe/runs/15157673.json
   stats: probe/stats/15157673.json
   data: probe/data/15157673/
-status: active
-summary_user: 한국수력원자력이 자체 운영하는 재생에너지 발전기별로 일일 판매량과 기온·습도 같은 기상정보를 담은 건별 API이며, 발전기코드·발전기명·발전원·설비용량·지역을 함께 준다. 분석가가 "한수원 태양광·풍력 발전기의 하루 판매량이 기온·습도에 따라 어떻게 달라지는가"를 살필 때 쓴다. 실측 컬럼에서 전역 조인 키는 확인되지 않아, 다른 데이터와는 발전기코드(kpxGenid)나 발전기명·지역 이름을 매핑하는 방식으로만 잇는다.
 limits: 조회 때 시작일·종료일과 발전기코드(kpx_genid)가 필수인데, 발전기코드는 다른 데이터의 코드라 먼저 목록을 받아서 넘겨야 한다. 범위는 전국이지만 공간 좌표가 없는 비공간 데이터라 지도 단위 분석에는 바로 쓰지 못한다. 개발계정은 하루 10,000회까지 호출한다.
 review:
   summary: draft
@@ -302,8 +308,4 @@ review:
     - c-15157673-04
     - c-15157673-10
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - pageNo
-  space_via: address
+status: active

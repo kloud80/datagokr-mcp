@@ -1,3 +1,5 @@
+# Dataset 15038895 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15038895'
 tier: verified
 title: 중소기업기술정보진흥원_스마트공장 공급기업 정보
@@ -56,6 +58,7 @@ schema:
         unique: 2180
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0004
       sample_values:
         - '대구광역시 달서구 성서서로 233 (신당동) 수테크 '
@@ -90,12 +93,23 @@ schema:
         - 기타 기계 및 장비 제조업, 산업용 기계 및 장비 수리업
       stats:
         unique: 1603
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 공장 등록 (팩토리온 공장등록·필지·생산정보, 시군구 공장등록 현황)
@@ -133,7 +147,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15038895-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15038895.json
@@ -240,8 +254,3 @@ review:
     - c-15038895-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

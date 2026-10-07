@@ -1,3 +1,5 @@
+# Dataset 3072849 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3072849'
 tier: verified
 title: 전남광주통합특별시 순천시_식품제조가공업 현황
@@ -50,6 +52,7 @@ schema:
         unique: 165
     - name: 소재지(도로명)
       type: string
+      semantic_type: address
       null_rate: 0.0182
       sample_values:
         - 전라남도 순천시 서면 산단1길 16
@@ -59,6 +62,7 @@ schema:
         unique: 162
     - name: 소재지(지번)
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '전라남도 순천시 서면 선평리 292 '
@@ -75,12 +79,29 @@ schema:
         - ' 061- 744-4772'
       stats:
         unique: 98
+  foreign_keys:
+    - fields:
+        - 소재지(도로명)
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 소재지(지번)
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - 소재지(도로명)
+    - 소재지(지번)
+  space_via: address
 cycle: default
 classification:
   subsector_name: 식품 인허가 업소 (일반/휴게음식점·제과점·집단급식소·제조가공·즉석판매·판매·운반·축산물·건강기능식품 판매)
@@ -117,7 +138,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-3072849-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(소재지(도로명)), address(소재지(지번))'
     evidence:
       - type: measured
         source: probe/stats/3072849.json
@@ -195,9 +216,3 @@ review:
     - c-3072849-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 소재지(도로명)
-    - 소재지(지번)
-  space_via: address

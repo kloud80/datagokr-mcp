@@ -1,3 +1,5 @@
+# Dataset 15095452 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15095452'
 tier: verified
 title: 인천광역시 미추홀구_신재생에너지 확대기반 조성사업 추진 현황
@@ -58,6 +60,7 @@ schema:
         unique: 68
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 인천광역시 미추홀구 미추홀대로578번길 7
@@ -97,12 +100,23 @@ schema:
         p50: 10
         max: 10
         unique: 2
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
@@ -139,7 +153,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15095452-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15095452.json
@@ -227,8 +241,3 @@ review:
     - c-15095452-06
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 도로명주소
-  space_via: address

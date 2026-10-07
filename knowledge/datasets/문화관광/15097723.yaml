@@ -1,3 +1,5 @@
+# Dataset 15097723 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15097723'
 tier: verified
 title: 재단법인경상남도관광재단_마이스 회의 및 인프라시설 기본정보
@@ -63,6 +65,7 @@ schema:
         unique: 12
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0054
       sample_values:
         - 경상남도 통영시 운하1길 46
@@ -72,6 +75,7 @@ schema:
         unique: 19193
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0001
       sample_values:
         - 경상남도 통영시 미수동 1-12
@@ -142,12 +146,29 @@ schema:
         - '"시골밥상"은 한식을 전문으로 하는 매장입니다. 경상남도 김해시에 위치해 있습니다.'
       stats:
         unique: 22146
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - 시설위도
+    - 시설경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -184,7 +205,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15097723-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소), address(지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15097723.json
@@ -261,9 +282,3 @@ review:
     - c-15097723-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 시설위도
-    - 시설경도
-  space_via: coord

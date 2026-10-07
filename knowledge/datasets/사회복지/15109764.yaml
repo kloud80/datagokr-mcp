@@ -1,3 +1,5 @@
+# Dataset 15109764 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15109764'
 tier: verified
 title: 성평등가족부_국내결혼중개업
@@ -20,6 +22,7 @@ synonyms:
   - 중매업체 목록
   - 결혼중개업 행정처분
   - 결혼중개업체 위치
+summary_user: 전국 국내 결혼중개업체를 업체 한 곳당 한 건으로 담으며, 업체명·대표자·회사형태, 시도·시군구와 도로명·지번 주소, 위도·경도, 등록일자·사업종료일자, 운영 여부, 행정처분 내용과 일자를 포함한다. 결혼중개업체를 고르려는 국민이 "우리 동네 업체가 정식 등록돼 지금 영업 중이고 처분 이력은 없는가"를 확인하거나, 분석가가 시군구별 업체 분포를 볼 때 쓴다. 사업자등록번호(brno)로 사업자 정보 데이터와 잇고, 시도명·시군구명이나 좌표로 시군구 단위 인구·시설 통계와 붙여 지역별 현황을 비교한다.
 description_portal: 국내 결혼중개업의 시설 정보를 제공하는 오픈 API형 데이터입니다. 해당 개방데이터는 국내 결혼중개업체의 POI정보(도로명주소, 지번주소, 위도, 경도), 전화번호, 운영 여부, 결혼중개업 등록일자, 사업 종료일자, 대표자명, 업체명, 처분 내용, 회사 형태, 홈페이지 주소, 이메일 주소, 결혼중개업 등록 내용 등을 확인할 수 있습니다.  국내 결혼중개업체의 분포 및 운영 현황을 한눈에 파악할 수 있어, 이용자 보호를 위한 제도적 기반 마련과 건전한 결혼중개문화 조성에 기여합니다. 또한 정책 수립, 지역별 현황 분석 등 다양한 행정 및 연구 목적으로 활용될 수 있습니다.
 team:
   dept: 정보통계담당관실
@@ -120,6 +123,7 @@ schema:
     - name: roadNmAddr
       title: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 마포구 마포대로 109 (공덕동) 26층
@@ -130,6 +134,7 @@ schema:
     - name: lotnoAddr
       title: 지번주소
       type: code
+      semantic_type: address
       null_rate: 1.0
       stats:
         unique: 0
@@ -264,6 +269,16 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lotnoAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - brno
       reference:
         key: bizno
@@ -319,7 +334,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15109764-03
     kind: key
-    value: '실측 조인 키: bizno(brno)'
+    value: '실측 조인 키: address(roadNmAddr), address(lotnoAddr), bizno(brno)'
     evidence:
       - type: measured
         source: probe/stats/15109764.json
@@ -384,8 +399,6 @@ verification:
   run: probe/runs/15109764.json
   stats: probe/stats/15109764.json
   data: probe/data/15109764/
-status: active
-summary_user: 전국 국내 결혼중개업체를 업체 한 곳당 한 건으로 담으며, 업체명·대표자·회사형태, 시도·시군구와 도로명·지번 주소, 위도·경도, 등록일자·사업종료일자, 운영 여부, 행정처분 내용과 일자를 포함한다. 결혼중개업체를 고르려는 국민이 "우리 동네 업체가 정식 등록돼 지금 영업 중이고 처분 이력은 없는가"를 확인하거나, 분석가가 시군구별 업체 분포를 볼 때 쓴다. 사업자등록번호(brno)로 사업자 정보 데이터와 잇고, 시도명·시군구명이나 좌표로 시군구 단위 인구·시설 통계와 붙여 지역별 현황을 비교한다.
 limits: 개별 업체 목록이라 지역별 집계값은 시도·시군구명으로 직접 묶어 계산해야 하며, 행정구역 코드 필드가 없어 다른 통계와는 이름 기준으로 맞춰야 한다. 호출에는 포털 활용신청으로 받은 serviceKey가 필요하고 개발계정은 하루 10,000회로 제한된다.
 review:
   summary: draft
@@ -398,3 +411,4 @@ review:
     - c-15109764-04
     - c-15109764-06
   dropped_citations: 0
+status: active

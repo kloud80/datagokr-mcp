@@ -1,3 +1,5 @@
+# Dataset 15084331 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15084331'
 tier: verified
 title: 경상북도 영천시_동네체육시설 현황
@@ -43,6 +45,7 @@ schema:
         unique: 308
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.4396
       sample_values:
         - '경상북도 영천시 대전길 121(대전동)  '
@@ -52,6 +55,7 @@ schema:
         unique: 174
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '경상북도 영천시 북안면  '
@@ -83,12 +87,29 @@ schema:
         p50: 128.93688
         max: 129.1124
         unique: 285
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 공공 체육시설 (시설 현황·야외운동기구·예약·대관)
@@ -125,7 +146,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15084331-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소), address(지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15084331.json
@@ -203,9 +224,3 @@ review:
     - c-15084331-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

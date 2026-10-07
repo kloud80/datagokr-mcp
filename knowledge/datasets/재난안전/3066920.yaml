@@ -1,3 +1,5 @@
+# Dataset 3066920 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3066920'
 tier: verified
 title: 경기도_소방서 현황 및 관할구역 정보
@@ -103,6 +105,7 @@ schema:
         unique: 36
     - name: refine_lotno_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 가평군 가평읍 대곡리 213-5번지
@@ -112,6 +115,7 @@ schema:
         unique: 36
     - name: refine_road_nm_addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 가평군 가평읍 가화로 36
@@ -143,9 +147,25 @@ schema:
         p50: 127.05797715
         max: 127.6258193
         unique: 36
+  foreign_keys:
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 소방 (화재 발생·소방용수·비상소화장치·119안전센터·특정소방대상물)
@@ -187,7 +207,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-3066920-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_lotno_addr), address(refine_road_nm_addr)'
     evidence:
       - type: measured
         source: probe/stats/3066920.json
@@ -264,8 +284,3 @@ review:
     - c-3066920-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

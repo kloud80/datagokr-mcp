@@ -1,3 +1,5 @@
+# Dataset 15058983 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15058983'
 tier: verified
 title: 경기도_특수 의료장비 현황(CTㆍMRI)
@@ -260,6 +262,7 @@ schema:
         unique: 0
     - name: REFINE_LOTNO_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시 분당구 구미동 30번지 Well Park 301~330호. 337~341호
@@ -269,6 +272,7 @@ schema:
         unique: 4
     - name: REFINE_ROADNM_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시 분당구 미금일로90번길 32, 301~330호. 337~341호 (구미동, Well Park)
@@ -312,9 +316,25 @@ schema:
         p50: 37.4103073368
         max: 37.4402681325
         unique: 4
+  foreign_keys:
+    - fields:
+        - REFINE_LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - REFINE_ROADNM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - REFINE_WGS84_LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
@@ -355,7 +375,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15058983-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(REFINE_LOTNO_ADDR), address(REFINE_ROADNM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15058983.json
@@ -433,8 +453,3 @@ review:
     - c-15058983-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - REFINE_WGS84_LAT
-  space_via: coord

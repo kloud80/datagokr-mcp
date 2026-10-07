@@ -1,3 +1,5 @@
+# Dataset 15088845 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15088845'
 tier: verified
 title: 한국산림복지진흥원_산림복지전문업지원시스템 전문가 양성기관 정보
@@ -61,6 +63,7 @@ schema:
         unique: 79
     - name: 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 서울특별시 영등포구 국회대로 62길 9
@@ -77,12 +80,23 @@ schema:
         - 064-741-7439
       stats:
         unique: 76
+  foreign_keys:
+    - fields:
+        - 주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 산림 복지·휴양 (휴양림·치유의숲·수목원·등산로·숲길·산 정보)
@@ -119,7 +133,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15088845-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(주소)'
     evidence:
       - type: measured
         source: probe/stats/15088845.json
@@ -196,8 +210,3 @@ review:
     - c-15088845-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 주소
-  space_via: address

@@ -1,3 +1,5 @@
+# Dataset 15150664 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150664'
 tier: verified
 title: 행정안전부_공통POI
@@ -86,6 +88,7 @@ schema:
         unique: 91
     - name: ADDR
       type: code
+      semantic_type: address
       null_rate: 0.8119
       sample_values:
         - 주소
@@ -95,6 +98,7 @@ schema:
         unique: 19
     - name: ROAD_NM_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 도로명주소
@@ -191,9 +195,27 @@ schema:
         - POINT(14134709.8112 4513917.7166999904)
       stats:
         unique: 101
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+    - ROAD_NM_ADDR
+    - STDG_SGG_CD
+  space_via: address
 cycle: default
 classification:
   subsector_name: 오분류(타 부문 성격)
@@ -233,7 +255,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15150664-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ADDR), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15150664.json
@@ -299,10 +321,3 @@ review:
     - c-15150664-04
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - ADDR
-    - ROAD_NM_ADDR
-    - STDG_SGG_CD
-  space_via: address

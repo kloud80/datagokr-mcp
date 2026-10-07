@@ -1,3 +1,5 @@
+# Dataset 15151613 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15151613'
 tier: verified
 title: 경기도_데이터분석 관광지점 목록
@@ -85,6 +87,7 @@ schema:
         unique: 9
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.53
       sample_values:
         - 경기 김포시 월곶면 성동리 산362
@@ -177,9 +180,20 @@ schema:
         - POINT (126.6766616 37.16408409)
       stats:
         unique: 100
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -220,7 +234,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15151613-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15151613.json
@@ -297,8 +311,3 @@ review:
     - c-15151613-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-  space_via: coord

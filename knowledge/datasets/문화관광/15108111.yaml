@@ -1,3 +1,5 @@
+# Dataset 15108111 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15108111'
 tier: verified
 title: 충청남도 서천군_서천군 관광지정보 조회 서비스
@@ -181,6 +183,7 @@ schema:
         unique: 15
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 서천군 마서면 장산로 916
@@ -190,6 +193,7 @@ schema:
         unique: 18
     - name: lotnoAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 서천군 마서면 도삼리 751-1
@@ -239,12 +243,28 @@ schema:
         - 1.5도의 완만한 경사와 얕은 수심, 잔잔한 파도 등 해수욕을 즐기기에 천혜의 조건을 갖춘 해수욕장이다. 갯벌과 소나무·아카시아 숲 등 청정 자
       stats:
         unique: 20
+  foreign_keys:
+    - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - lotnoAddr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
@@ -288,7 +308,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15108111-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(roadNmAddr), address(lotnoAddr)'
     evidence:
       - type: measured
         source: probe/stats/15108111.json
@@ -365,8 +385,3 @@ review:
     - c-15108111-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - lat
-  space_via: coord

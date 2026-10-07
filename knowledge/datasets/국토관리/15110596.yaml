@@ -1,3 +1,5 @@
+# Dataset 15110596 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15110596'
 tier: verified
 title: 전남광주통합특별시 장성군_상수도 원격검침기 좌표
@@ -36,6 +38,7 @@ schema:
   fields:
     - name: 도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0419
       sample_values:
         - 전라남도 장성군 진원면 노사로 489-5
@@ -45,6 +48,7 @@ schema:
         unique: 5617
     - name: 지번주소
       type: string
+      semantic_type: address
       null_rate: 0.0057
       sample_values:
         - 전라남도 장성군 진원면 선적리 121
@@ -76,12 +80,29 @@ schema:
         p50: 126.79499935135
         max: 126.8763687577
         unique: 5831
+  foreign_keys:
+    - fields:
+        - 도로명주소
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - 지번주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - 위도
+    - 경도
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 상수도 (정수장·취수장·급수구역·수돗물 수질검사·요금·스마트 검침)
@@ -119,7 +140,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15110596-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(도로명주소), address(지번주소)'
     evidence:
       - type: measured
         source: probe/stats/15110596.json
@@ -223,9 +244,3 @@ review:
     - c-15110596-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - 위도
-    - 경도
-  space_via: coord

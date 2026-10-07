@@ -1,3 +1,5 @@
+# Dataset 15071826 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15071826'
 tier: verified
 title: 서울특별시_환경측정대행업 인허가 정보
@@ -164,6 +166,7 @@ schema:
         unique: 2
     - name: LOTNO_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.05
       sample_values:
         - 서울특별시 관악구 봉천동 1729-1 그린빌딩 3~6층
@@ -173,6 +176,7 @@ schema:
         unique: 84
     - name: ROAD_NM_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.04
       sample_values:
         - 서울특별시 관악구 청림3길 9, 3~6층 (봉천동)
@@ -364,6 +368,7 @@ schema:
         unique: 0
     - name: LAB_SPCL_ADDR
       type: code
+      semantic_type: address
       null_rate: 0.46
       sample_values:
         - 그린빌딩
@@ -435,6 +440,7 @@ schema:
         unique: 59
     - name: LAB_RDN_SPCL_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.06
       sample_values:
         - 그린빌딩 (봉천동)
@@ -488,6 +494,27 @@ schema:
         p50: 7547
         max: 137893
         unique: 40
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - LAB_SPCL_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - LAB_RDN_SPCL_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -545,7 +572,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15071826-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR), address(LAB_SPCL_ADDR), address(LAB_RDN_SPCL_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15071826.json

@@ -1,3 +1,5 @@
+# Dataset 15150756 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15150756'
 tier: verified
 title: 행정안전부_교통안전정보(위험요소)-보행자별:기타(유흥밀집-주취자)
@@ -69,6 +71,7 @@ schema:
         unique: 101
     - name: LOTNO_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 전북 완주군 상관면 죽림리 779
@@ -102,6 +105,7 @@ schema:
         unique: 101
     - name: ROAD_NM_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 울산광역시 울주군 청량면 웅촌로 455 웅촌경찰초소
@@ -175,9 +179,25 @@ schema:
         - 차:보행자
       stats:
         unique: 67
+  foreign_keys:
+    - fields:
+        - LOTNO_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 전국
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - LAT
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 규제·단속 (단속카메라·제한속도·보호구역·주정차 금지·신호·횡단보도)
@@ -218,7 +238,7 @@ claims:
     valid_until: '2027-04-07'
   - id: c-15150756-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(LOTNO_ADDR), address(ROAD_NM_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15150756.json
@@ -295,8 +315,3 @@ review:
     - c-15150756-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - LAT
-  space_via: coord

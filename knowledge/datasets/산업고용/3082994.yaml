@@ -1,3 +1,5 @@
+# Dataset 3082994 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '3082994'
 tier: verified
 title: 경기도_건축사사무소 현황
@@ -102,6 +104,7 @@ schema:
         unique: 18
     - name: refine_road_nm_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 김포시 태장로 751
@@ -111,6 +114,7 @@ schema:
         unique: 52
     - name: refine_lotno_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 김포시 구래동 6877-5번지 1056호
@@ -151,9 +155,25 @@ schema:
         p50: 126.715073
         max: 126.733714
         unique: 52
+  foreign_keys:
+    - fields:
+        - refine_road_nm_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - refine_lotno_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: default
 classification:
   subsector_name: '업종 인허가 (LOCALDATA: 담배소매·행정사·대부업·옥외광고·건축사·세탁업·승강기·계량기·건설업 등)'
@@ -194,7 +214,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-3082994-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(refine_road_nm_addr), address(refine_lotno_addr)'
     evidence:
       - type: measured
         source: probe/stats/3082994.json
@@ -271,8 +291,3 @@ review:
     - c-3082994-06
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

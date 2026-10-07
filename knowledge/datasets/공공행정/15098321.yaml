@@ -1,3 +1,5 @@
+# Dataset 15098321 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15098321'
 tier: verified
 title: 세종특별자치시_세종특별자치 공공기관현황 조회 서비스
@@ -51,6 +53,7 @@ schema:
         unique: 20
     - name: roadNmAddr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 세종특별자치시 한누리대로 2130
@@ -60,6 +63,7 @@ schema:
         unique: 20
     - name: addr
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 세종특별자치시 보람동 663
@@ -109,12 +113,29 @@ schema:
         - https://www.sejong.go.kr/health.do
       stats:
         unique: 20
+  foreign_keys:
+    - fields:
+        - roadNmAddr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - la
+    - lo
+  space_via: coord
 cycle: default
 classification:
   subsector_name: 행정표준코드·정부조직
@@ -158,7 +179,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15098321-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(roadNmAddr), address(addr)'
     evidence:
       - type: measured
         source: probe/stats/15098321.json
@@ -224,9 +245,3 @@ review:
     - c-15098321-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - la
-    - lo
-  space_via: coord

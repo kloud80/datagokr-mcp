@@ -1,3 +1,5 @@
+# Dataset 15085521 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15085521'
 tier: verified
 title: 경기도_고시원 현황
@@ -56,6 +58,7 @@ schema:
         unique: 96
     - name: locplc_lotno_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 김포시 사우동 1115번지 2층
@@ -65,6 +68,7 @@ schema:
         unique: 100
     - name: locplc_roadnm_addr
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 김포시 경기도 김포시 사우동 1115번지 2층경기도 김포시
@@ -106,9 +110,25 @@ schema:
         p50: 127.11273405
         max: 127.3283201
         unique: 92
+  foreign_keys:
+    - fields:
+        - locplc_lotno_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - locplc_roadnm_addr
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - refine_wgs84_lat
+  space_via: coord
 cycle: event
 classification:
   subsector_name: 도시·군관리계획 결정·고시 (UPIS 결정조서·고시·입안·도시계획위원회)
@@ -154,7 +174,7 @@ claims:
     valid_until: '2027-04-06'
   - id: c-15085521-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(locplc_lotno_addr), address(locplc_roadnm_addr)'
     evidence:
       - type: measured
         source: probe/stats/15085521.json
@@ -247,8 +267,3 @@ review:
     - c-15085521-04
   dropped_citations: 0
 status: active
-grain:
-  space: point
-  space_fields:
-    - refine_wgs84_lat
-  space_via: coord

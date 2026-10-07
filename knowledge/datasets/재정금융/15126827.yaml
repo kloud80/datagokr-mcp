@@ -1,3 +1,5 @@
+# Dataset 15126827 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15126827'
 tier: verified
 title: 한국자산관리공사_중소기업 정상화 지원을 위한 협업기관 현황 조회서비스
@@ -20,6 +22,7 @@ synonyms:
   - 기업 정상화 지원기관
   - 캠코 협약기관
   - 중소기업 구조조정 지원
+summary_user: 한국자산관리공사의 중소기업 정상화 지원 관련 현황을 기준일자별 건별 목록으로 담고, 필드 명세상 각 건은 중소기업명·업종명·소재지형태·소재지주소이며 범위는 전국, 위치는 개별 주소 단위다. 정책 분석가나 지원기관 담당자가 '정상화 지원 대상 중소기업은 어느 지역, 어떤 업종에 몰려 있나'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 기업명 매칭이나 소재지주소(LCTN_ADR)를 행정구역·좌표로 변환해 지역 단위로 붙이는 방식으로만 잇는다.
 description_portal: '한국자산관리공사의 중소기업 정상화 지원을 위한 협업기관 현황 정보를 조회하는 서비스입니다.(기관 분류명, 협약 체결일자)ㅇ 주요 기관 예시 - 국책은행 : IBK기업은행, 한국산업은행, 한국수출입은행 등 - 공공기관 : 기술보증기금, 중소벤처기업진흥공단, 신용보증기금, 한국해양진흥공사, 연구개발특구진흥재단 등 - 금융기관 : 국민은행, 농협은행, 수협은행, 신한은행, 우리은행, 부산은행, 경남은행, 한국성장금융투자운용, SGI서울보증 등 - 지자체 : 부산광역시, 울산광역시, 경상북도, 충청남도, 전라북도 등'
 team:
   dept: AI데이터팀
@@ -126,6 +129,12 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - LCTN_SHAP_NM
+    - LCTN_ADR
+  space_via: address
 cycle: default
 classification:
   subsector_name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
@@ -222,8 +231,6 @@ verification:
   run: probe/runs/15126827.json
   stats: probe/stats/15126827.json
   data: probe/data/15126827/
-status: active
-summary_user: 한국자산관리공사의 중소기업 정상화 지원 관련 현황을 기준일자별 건별 목록으로 담고, 필드 명세상 각 건은 중소기업명·업종명·소재지형태·소재지주소이며 범위는 전국, 위치는 개별 주소 단위다. 정책 분석가나 지원기관 담당자가 '정상화 지원 대상 중소기업은 어느 지역, 어떤 업종에 몰려 있나'를 확인할 때 쓴다. 전역 조인 키가 없어 다른 데이터와는 기업명 매칭이나 소재지주소(LCTN_ADR)를 행정구역·좌표로 변환해 지역 단위로 붙이는 방식으로만 잇는다.
 limits: 포털 설명은 협업기관의 분류명과 협약 체결일자를 조회한다고 하지만 필드 명세는 중소기업명·업종·소재지로 되어 있다. 따라서 실제 응답이 어느 쪽인지 호출해 확인한 뒤 해석해야 한다. 사업자번호 같은 공통 키가 없어 기업 단위 결합은 이름 매칭에 의존하므로 동명 기업 오매칭에 주의한다.
 review:
   summary: draft
@@ -235,9 +242,4 @@ review:
     - c-15126827-03
     - c-15126827-04
   dropped_citations: 0
-grain:
-  space: sgg
-  space_fields:
-    - LCTN_SHAP_NM
-    - LCTN_ADR
-  space_via: address
+status: active

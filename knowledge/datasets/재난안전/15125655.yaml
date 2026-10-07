@@ -1,3 +1,5 @@
+# Dataset 15125655 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125655'
 tier: verified
 title: 행정안전부_재난배상책임보험 사업장 정보
@@ -20,6 +22,7 @@ synonyms:
   - 다중이용시설 보험
   - 재난배상보험 갱신대상
   - 보험가입 제외 시설물
+summary_user: 재난배상책임보험 가입 대상 사업장을 시설물 단위로 담은 전국 건별 데이터로, 시설 정보와 신규·갱신 가입 대상, 가입 제외, 미가입 시설물을 주소·좌표와 함께 제공한다. 지자체 담당자나 분석가가 '우리 지역 음식점·숙박업소 중 재난배상책임보험에 아직 가입하지 않은 곳은 어디인가'처럼 업종별·지역별 의무보험 가입 현황을 확인하는 데 쓴다. 사업자등록번호(brno)와 법인등록번호(crno)로 사업자·법인 데이터와 잇고, 법정동코드로 행정구역 통계와, EPSG:5179 좌표로 대피시설·소방 등 다른 재난안전 공간 데이터와 겹쳐 쓴다.
 description_portal: '재난배상책임보험사업장의 시설정보, 신규가입대상시설물정보, 갱신가입대상시설물정보, 가입제외시설물정보, 미가입시설물정보 등 데이터 사용시 참고바랍니다. 가. 시설물업종구분코드(tpbiz_se_cd):지하상가 : 01,주유소 : 02,장례식장 : 03,여객자동차터미널 : 04,음식점 : 05,숙박업 : 06,물류창고 : 07공동주택 : 08,박물관 : 09,도서관 : 10,국제회의시설 : 11,경마장 : 12,경륜장 : 13,관광숙박업 : 14과학관 : 15,미술관 : 16,경정장 : 17,장외매장 : 18,전시시설 : 19,장외발매소 : 20,농어촌민박 : 21나. 휴폐업상태코드(biz_stts_cd): 사업자등록번호 수집 중으로 휴폐업상태 정보가 누락된 데이터가 있을 수 있습니다.계속사업자 : 01휴업자 : 02폐업자 : 03다. 좌표데이터(epsg_x, epsg_y):  도로명주소에서 사용하는 EPSG:5179 좌표계라. 모든 정보는 행정청 인허가 절차에 따라 실제 데이터와 1~2일 차이가 있을 수 있습니다.'
 team:
   dept: 재난복구지원국 재난보험과
@@ -301,6 +304,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '충청남도 보령시 '
@@ -426,6 +430,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '경상남도 창원시진해구 '
@@ -563,6 +568,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 보령시 장터중앙길 164
@@ -717,6 +723,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: code
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - '울산광역시 울주군 '
@@ -842,6 +849,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 경기도 성남시분당구 263
@@ -976,6 +984,7 @@ schema:
     - name: bplc_addr
       title: 시설물 전체 주소
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - 충청남도 보령시 장터중앙길 164
@@ -1059,6 +1068,11 @@ schema:
         unique: 1
   foreign_keys:
     - fields:
+        - bplc_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
         - brno
       reference:
         key: bizno
@@ -1071,6 +1085,13 @@ schema:
 coverage:
   spatial: 전국
   admin_unit: 개별(주소·좌표)
+grain:
+  space: bjd
+  space_fields:
+    - stdg_cd
+    - stdg_cd
+    - stdg_cd
+  space_via: code
 cycle: default
 classification:
   subsector_name: 제외 대상
@@ -1112,7 +1133,7 @@ claims:
     valid_until: '2027-04-08'
   - id: c-15125655-03
     kind: key
-    value: '실측 조인 키: bizno(brno), corp_rgst_no(crno)'
+    value: '실측 조인 키: address(bplc_addr), bizno(brno), corp_rgst_no(crno)'
     evidence:
       - type: measured
         source: probe/stats/15125655.json
@@ -1166,8 +1187,6 @@ verification:
   run: probe/runs/15125655.json
   stats: probe/stats/15125655.json
   data: probe/data/15125655/
-status: active
-summary_user: 재난배상책임보험 가입 대상 사업장을 시설물 단위로 담은 전국 건별 데이터로, 시설 정보와 신규·갱신 가입 대상, 가입 제외, 미가입 시설물을 주소·좌표와 함께 제공한다. 지자체 담당자나 분석가가 '우리 지역 음식점·숙박업소 중 재난배상책임보험에 아직 가입하지 않은 곳은 어디인가'처럼 업종별·지역별 의무보험 가입 현황을 확인하는 데 쓴다. 사업자등록번호(brno)와 법인등록번호(crno)로 사업자·법인 데이터와 잇고, 법정동코드로 행정구역 통계와, EPSG:5179 좌표로 대피시설·소방 등 다른 재난안전 공간 데이터와 겹쳐 쓴다.
 limits: 주소·좌표 단위의 개별 시설 정보라서 집계 통계는 직접 계산해야 하며, 좌표는 도로명주소 체계의 EPSG:5179이므로 위경도 지도에 올리려면 변환이 필요하다. 포털 설명에 따르면 사업자등록번호를 수집하는 중이어서 휴폐업 상태가 빠진 건이 있고, 인허가 절차상 실제 현황과 1~2일 차이가 날 수 있다. 개발계정 호출 한도는 하루 10,000회다.
 review:
   summary: draft
@@ -1180,10 +1199,4 @@ review:
     - c-15125655-04
     - c-15125655-06
   dropped_citations: 0
-grain:
-  space: bjd
-  space_fields:
-    - stdg_cd
-    - stdg_cd
-    - stdg_cd
-  space_via: code
+status: active

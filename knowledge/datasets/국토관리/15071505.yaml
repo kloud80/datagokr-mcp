@@ -154,6 +154,7 @@ schema:
         unique: 50
     - name: ATCH_FILE_URL_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.0
       sample_values:
         - http://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=422196&fileTv=A
@@ -161,6 +162,12 @@ schema:
         - http://seoulboard.seoul.go.kr/comm/getFile?srvcId=BBSTY1&upperNo=422190&fileTv=A
       stats:
         unique: 100
+  foreign_keys:
+    - fields:
+        - ATCH_FILE_URL_ADDR
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 3순위
@@ -168,6 +175,10 @@ coverage:
   spatial: 시도
   admin_unit: 전국·비공간
 grain:
+  space: sgg
+  space_fields:
+    - ATCH_FILE_URL_ADDR
+  space_via: address
   time: day
   time_fields:
     - HDMT_YMD
@@ -216,7 +227,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15071505-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(ATCH_FILE_URL_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15071505.json

@@ -1,3 +1,5 @@
+# Dataset 15125770 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15125770'
 tier: verified
 title: 서울특별시_자전거 편의시설
@@ -115,6 +117,7 @@ schema:
         unique: 61
     - name: NEW_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.03
       sample_values:
         - 서울특별시 강남구 개포로 420
@@ -145,6 +148,7 @@ schema:
         unique: 96
     - name: OLD_ADDR
       type: string
+      semantic_type: address
       null_rate: 0.01
       sample_values:
         - 서울특별시 강남구 개포동 182-4
@@ -424,6 +428,17 @@ schema:
         - 학교|
       stats:
         unique: 21
+  foreign_keys:
+    - fields:
+        - NEW_ADDR
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - OLD_ADDR
+      reference:
+        key: address
+      evidence: measured
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
@@ -477,7 +492,7 @@ claims:
     valid_until: '2027-04-04'
   - id: c-15125770-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(NEW_ADDR), address(OLD_ADDR)'
     evidence:
       - type: measured
         source: probe/stats/15125770.json

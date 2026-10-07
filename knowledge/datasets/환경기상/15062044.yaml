@@ -1,3 +1,5 @@
+# Dataset 15062044 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15062044'
 tier: verified
 title: 경상남도 함안군_사업장폐기물
@@ -58,6 +60,7 @@ schema:
         unique: 2
     - name: 사업장도로명주소
       type: string
+      semantic_type: address
       null_rate: 0.0173
       sample_values:
         - 경상남도 함안군 법수면 윤외공단길 26-99 (주)서진인바이러테크
@@ -65,12 +68,23 @@ schema:
         - 경상남도 함안군 칠서면 대부로 551
       stats:
         unique: 389
+  foreign_keys:
+    - fields:
+        - 사업장도로명주소
+      reference:
+        key: address
+      evidence: measured
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시군구
   admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 사업장도로명주소
+  space_via: address
 cycle: default
 classification:
   subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
@@ -107,7 +121,7 @@ claims:
     valid_until: '2027-04-05'
   - id: c-15062044-03
     kind: key
-    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    value: '실측 조인 키: address(사업장도로명주소)'
     evidence:
       - type: measured
         source: probe/stats/15062044.json
@@ -185,8 +199,3 @@ review:
     - c-15062044-07
   dropped_citations: 0
 status: active
-grain:
-  space: sgg
-  space_fields:
-    - 사업장도로명주소
-  space_via: address
