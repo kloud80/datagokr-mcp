@@ -8,12 +8,12 @@ import {
   AgentSegmentedControl,
   AgentTabs,
 } from '@bv-ds/ui'
-import type { Badge, Plan, PlanDataset } from './api'
+import type { Badge, HeadPick, Plan, PlanDataset, PlanHead } from './api'
 import { JoinMap, fmtCount, shortTitle } from './JoinMap'
 import { TrustIcon, TrustLegend } from './Trust'
 import type { OpenDataset } from './md'
 
-export type PlanTab = 'map' | 'data' | 'pipe' | 'code' | 'leads'
+export type PlanTab = 'heads' | 'map' | 'data' | 'pipe' | 'code' | 'leads'
 
 const ROLE_LABEL: Record<string, string> = { primary: '핵심', join: '조인', lookup: '코드 조회', aligned: '느슨한 조인', context: '참고 · 조인 없음' }
 
@@ -65,6 +65,66 @@ function DataCard({ d, plan, focus, open }: { d: PlanDataset; plan: Plan; focus:
         />
       ) : null}
     </article>
+  )
+}
+
+const TIER_LABEL: Record<HeadPick['tier'], string> = { verified: '검증', candidate: '선정·미검증', catalog: '포털 목록·미검증' }
+const LINK_LABEL: Record<string, string> = { edge: '조인', key: '같은 키', aligned: '단위 집계', none: '연결 없음' }
+
+function PickRow({ x, rep, open, portal }: { x: HeadPick; rep: boolean; open: OpenDataset; portal?: string }) {
+  const trust = x.tier === 'verified' ? 'verified' : 'lead'
+  return (
+    <li className={`pds-pick${rep ? ' pds-pick--rep' : ''}`}>
+      <div className="pds-card-name">
+        <TrustIcon trust={trust} />
+        {rep ? <AgentChip variant="new">대표</AgentChip> : null}
+        <span className={`pds-score pds-score--${x.score}`} title="이 주제에 대한 관련도 (0~3)">{x.score}</span>
+        {x.tier === 'catalog' && portal
+          ? <a href={portal} target="_blank" rel="noreferrer">{x.title}</a>
+          : <button type="button" className="pds-card-title" onClick={() => open(x.id)}>{x.title}</button>}
+      </div>
+      <span className="pds-ev">
+        {TIER_LABEL[x.tier]}{x.agency ? ` · ${x.agency}` : ''}{x.unit ? ` · 단위 ${x.unit}${x.unit_estimated ? '(추정)' : ''}` : ''} · {x.why}
+        {x.excluded_by ? ' · 검증 순서 뒤(제외 규칙)' : ''}
+      </span>
+      {x.links.length ? (
+        <span className="pds-ev">{x.links.map((l) => `↔ ${l.head}: ${l.label}`).join(' · ')}</span>
+      ) : null}
+    </li>
+  )
+}
+
+function HeadsView({ p, open }: { p: Plan; open: OpenDataset }) {
+  const heads = p.heads ?? []
+  const repTitle = (h: PlanHead) => h.picks.find((x) => x.id === h.rep)?.title ?? h.rep
+  const url = (id: string) => p.unverified_leads.find((l) => l.id === id)?.portal_url ?? `https://www.data.go.kr/data/${id}/openapi.do`
+  return (
+    <>
+      <p className="pds-note">질문을 주제로 나눠 주제마다 따로 찾고 다시 줄 세웠습니다. 대표는 관련도와 다른 주제와의 연결 가능성으로 고릅니다.</p>
+      {heads.map((h) => (
+        <section key={h.name} className="pds-head">
+          <h3 className="pds-sec">{h.name} {h.must ? null : <AgentChip variant="neutral">보조</AgentChip>}
+            {h.rep ? null : <AgentChip variant="hot">대표 없음</AgentChip>}</h3>
+          <p className="pds-ev">한 행: {h.need}</p>
+          <ul className="pds-picks">{h.picks.map((x) => <PickRow key={x.id} x={x} rep={x.id === h.rep} open={open} portal={url(x.id)} />)}</ul>
+        </section>
+      ))}
+      {(p.head_links ?? []).length ? (
+        <div className="pds-note">
+          <b>주제 대표끼리 잇는 법</b>
+          <ul>{(p.head_links ?? []).map((l) => {
+            const h = (n: string) => heads.find((x) => x.name === n)
+            return (
+              <li key={l.left + l.right}>
+                {l.heads[0]}({shortTitle(repTitle(h(l.heads[0])!) ?? '', 18)}) ↔ {l.heads[1]}({shortTitle(repTitle(h(l.heads[1])!) ?? '', 18)}) ·{' '}
+                <b>{LINK_LABEL[l.kind]}</b> — {l.label}
+                {l.alt ? <span className="pds-ev"> · 대안: {shortTitle(l.alt.left_title, 18)} ↔ {shortTitle(l.alt.right_title, 18)} — {l.alt.label}</span> : null}
+              </li>
+            )
+          })}</ul>
+        </div>
+      ) : null}
+    </>
   )
 }
 
@@ -145,7 +205,9 @@ export function PlanPanel(props: {
   ))
 
   let content: ReactNode
-  if (tab === 'map') {
+  if (tab === 'heads' && p.heads?.length) {
+    content = <HeadsView p={p} open={open} />
+  } else if (tab === 'map' || tab === 'heads') {
     content = (
       <>
         {p.datasets.length ? <JoinMap plan={p} onSelect={(id) => { onTab('data'); onFocus(id) }} /> : null}
@@ -250,6 +312,7 @@ export function PlanPanel(props: {
           value={tab}
           onChange={(t) => onTab(t as PlanTab)}
           items={[
+            ...(p.heads?.length ? [{ id: 'heads', label: `주제별 ${p.heads.length}` }] : []),
             { id: 'map', label: '조인 지도' },
             { id: 'data', label: `데이터 ${p.datasets.length}` },
             { id: 'pipe', label: `단계 ${p.pipeline.length}` },

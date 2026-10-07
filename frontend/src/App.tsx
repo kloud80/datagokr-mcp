@@ -48,6 +48,7 @@ function trustOf(p: Plan | undefined, id: string): Trust | null {
   if (p.datasets.some((d) => d.id === id)) return 'verified'
   if (p.not_recommended.some((x) => x.id === id)) return 'excluded'
   if (p.unverified_leads.some((x) => x.id === id) || p.candidates.some((x) => x.id === id)) return 'lead'
+  if ((p.heads ?? []).some((h) => h.picks.some((x) => x.id === id))) return 'lead'
   return null
 }
 
@@ -99,7 +100,7 @@ export function App() {
             return ps.map((p) => (p.version === ver ? { ...e.plan, version: ver } : p)) // 같은 답 안의 갱신(제외 등)은 같은 버전
           })
           setVersion((v) => ver ?? v)
-          setTab('map')
+          setTab(e.plan.heads?.length ? 'heads' : 'map')
           setFocusId(null)
         } else if (e.type === 'done') {
           patch((t) => ({ ...t, content: e.reply, status: 'done', usage: e.usage, elapsed: e.elapsed_s, turnId: e.turn_id }))

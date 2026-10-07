@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import os
 import re
 import subprocess
 import time
@@ -221,13 +222,18 @@ def _region_weight(d: dict, region: dict) -> float:
 Progress = Callable[[str, str, str], None]
 
 
+HEADS = os.environ.get("PDS_HEADS", "1") != "0"  # 멀티헤드 전략 (pds/strategy/multihead.py) — LLM 키가 없거나 실패하면 기존 검색으로
+
+
 def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progress | None = None, rerank: bool = False,
-         max_refs: int = 8) -> dict:
+         max_refs: int = 8, heads: bool | None = None) -> dict:
     ix = sindex.get()
     t0 = time.time()
     say = progress or (lambda *_: None)
+    heads = HEADS if heads is None else heads
+    mh = None
     say("context", "running", "")
-    sel = select(goal, rerank=rerank)
+    sel = select(goal, rerank=rerank and not heads)
     say("context", "done", sel["ctx"]["id"] if sel["ctx"] else "맥락 없음 — 검색만")
     n_ex = len(sel["excluded"])
     say("candidates", "done", f"검증 후보 {len(sel['scored'])}개" + (" · LLM 재순위" if sel.get("reranked") else "")
@@ -242,6 +248,9 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
         chosen = list(dict.fromkeys(x["id"] for x in r["datasets"]))[:max_datasets + 2]
         join_ids = [j for j in r["joins"] if all(n in chosen or n in HUBS for n in (edges[j]["src"], edges[j]["dst"]))]
         source = f"recipe:{r['id']} ({r.get('status')})"
+    elif heads and (mh := _run_heads(goal, sel, say)) is not None:
+        chosen, join_ids, gaps = _compose_heads(mh, max_datasets, max_refs)
+        source = "heads"
     else:
         cands = [d["id"] for d, _ in sel["scored"]]
         if not cands:
@@ -308,17 +317,22 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
                                  (f" ({j['on']['transform']})" if j["on"].get("transform") else "")})
     known = {x["id"] for x in datasets}
     q = sel["q"]
-    cand = [{"id": d["id"], "tier": "candidate", "title": d["title"], "sector": d["sector"],
-             "status": (d.get("verification") or {}).get("verdict"), "why_maybe": _why_rule(d, "candidate"),
-             "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None)}
-            for d, s in _cand_hits(q) if not rgn.mismatch(d, sel["region"])]
+    if mh:  # 헤드별 대표·상위 후보 — 데이터 카드에 어느 주제 몫인지 붙인다
+        for x in datasets:
+            x["heads"] = [h["name"] for h in mh["heads"] if any(p["id"] == x["id"] for p in h["picks"])]
+            x["head_rep"] = any(h["rep"] == x["id"] for h in mh["heads"])
+        cand = [_cand_entry(ix.datasets[p["id"]], p) for p in _head_picks(mh, "candidate") if p["id"] not in known][:6]
+    else:
+        cand = [_cand_entry(d) for d, s in _cand_hits(q) if not rgn.mismatch(d, sel["region"])]
     gaps += [f"{g['name']}: {g['reason'][:120]}" for g, s in ix.search_gaps(q) if s > 6]
     rates = [j["match_rate"] if j["match_rate"] is not None else j["confidence"] or 0.5 for j in joins]
     conf = round(min(0.95, 0.35 + 0.1 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0)
                      + (0.1 if sel["ctx"] else 0)), 2)
     out = {"goal": goal, "context": sel["ctx"]["id"] if sel["ctx"] else None, "summary": None, "datasets": datasets, "joins": joins,
            "aligned": aligned,
-           "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand, "unverified_leads": _leads(q, known | {c["id"] for c in cand}, sel["region"]),
+           "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand,
+           "unverified_leads": _head_leads(mh) if mh else _leads(q, known | {c["id"] for c in cand}, sel["region"]),
+           "heads": _heads_view(mh) if mh else None, "head_links": mh["links"] if mh else None,
            "not_recommended": sel["excluded"] + _not_recommended(chosen),
            "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)},
            "region": {"names": sel["region"]["names"], "sido": sorted(sel["region"]["sido"])},
@@ -334,6 +348,129 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     from pds.strategy.codegen import render as codegen
     out["code"] = codegen(out)
     return validate(out)
+
+
+def _cand_entry(d: dict, pick: dict | None = None) -> dict:
+    out = {"id": d["id"], "tier": "candidate", "title": d["title"], "sector": d["sector"],
+           "status": (d.get("verification") or {}).get("verdict"), "why_maybe": pick["why"] if pick else _why_rule(d, "candidate"),
+           "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None)}
+    if pick:
+        out["head"] = pick["head"]
+    return out
+
+
+# ─────────────────────────── 멀티헤드 (pds/strategy/multihead.py) → 플래너 출력
+def _run_heads(goal: str, sel: dict, say: Progress) -> dict | None:
+    from pds.strategy import multihead
+    mh = multihead.run(goal, sel["region"], say, whole=[d["id"] for d, _ in sel["scored"][:15]])
+    if mh is None or not any(h["rep"] or h["picks"] for h in mh["heads"]):
+        return None
+    return mh
+
+
+def _head_picks(mh: dict, tier: str, min_score: int = 2) -> list[dict]:
+    """헤드를 돌아가며 그 층의 후보를 하나씩 — 대표 먼저, 한 주제가 목록을 독차지하지 않게."""
+    per = [[{**p, "head": h["name"], "rep": p["id"] == h["rep"]}
+            for p in sorted(h["picks"], key=lambda p: (p["id"] != h["rep"], -p["fit"]))
+            if p["tier"] == tier and p["score"] >= min_score] for h in mh["heads"]]
+    out, seen = [], set()
+    for k in range(max((len(x) for x in per), default=0)):
+        for x in per:
+            if k < len(x) and x[k]["id"] not in seen:
+                seen.add(x[k]["id"])
+                out.append(x[k])
+    return out
+
+
+def _compose_heads(mh: dict, max_datasets: int, max_refs: int) -> tuple[list[str], list[str], list[str]]:
+    """헤드별 검증 대표(대표가 목록·선정이면 그 헤드의 검증 1위)를 핵심으로, 대표끼리 선언된 조인 경로를 잇고, 나머지 검증 상위는 참고로."""
+    ix = sindex.get()
+    g = _graph()
+    core = []
+
+    def head_fit(h):
+        r = next((p for p in h["picks"] if p["id"] == h["rep"]), None)
+        return r["fit"] if r else 0.0
+    for h in sorted(mh["heads"], key=lambda h: (not h["must"], -head_fit(h))):
+        # 핵심 = 헤드 대표가 검증이면 그것, 아니면 그 헤드의 검증 3점짜리 (2점 대안은 핵심이 아니라 참고로)
+        vs = sorted((p for p in h["picks"] if p["tier"] == "verified" and (p["id"] == h["rep"] or p["score"] >= 3)),
+                    key=lambda p: (p["id"] != h["rep"], -p["fit"]))
+        if vs and vs[0]["id"] not in core:
+            core.append(vs[0]["id"])
+    chosen, join_ids = list(core), []
+    for k, a in enumerate(core):
+        for b in core[k + 1:]:
+            if a not in g or b not in g:
+                continue
+
+            def cost(u, v, d, ends=(a, b)):
+                return d["weight"] + (0.0 if v in HUBS or v in ends or v in core else 0.8)
+            try:
+                path = nx.shortest_path(g, a, b, weight=cost)
+            except nx.NetworkXNoPath:
+                continue
+            if len(path) > 4:
+                continue
+            for mid in path[1:-1]:
+                if mid not in HUBS and mid not in chosen and len(chosen) < max_datasets:
+                    chosen.append(mid)
+            for x, y in zip(path, path[1:]):
+                if g[x][y]["edge"] not in join_ids:
+                    join_ids.append(g[x][y]["edge"])
+    # 핵심과 선언된 조인(직접 또는 PNU·법정동 허브 경유)으로 이어지는 검증 후보 — 실측 매칭률이 있는 조인을 주제 분리로 잃지 않게
+    for p in _head_picks(mh, "verified"):
+        if len(chosen) >= max_datasets or p["id"] in chosen or p["id"] not in g:
+            continue
+        best = None
+        for c in list(chosen):
+            if c not in g:
+                continue
+            try:
+                path = nx.shortest_path(g, c, p["id"], weight="weight")
+            except nx.NetworkXNoPath:
+                continue
+            if len(path) == 2 or (len(path) == 3 and path[1] in HUBS):
+                w = sum(g[x][y]["weight"] for x, y in zip(path, path[1:]))
+                if best is None or w < best[0]:
+                    best = (w, path)
+        if best:
+            chosen.append(p["id"])
+            for x, y in zip(best[1], best[1][1:]):
+                if g[x][y]["edge"] not in join_ids:
+                    join_ids.append(g[x][y]["edge"])
+    refs = [p["id"] for p in _head_picks(mh, "verified") if p["id"] not in chosen]
+    chosen += refs[:max(0, min(max_refs, max_datasets + 4 - len(chosen)))]
+    gaps = []
+    for h in mh["heads"]:
+        if not h["rep"]:
+            gaps.append(f"주제 '{h['name']}'({h['need'][:40]})에 맞는 데이터를 찾지 못했다" + (" — 필수 주제" if h["must"] else ""))
+        elif ix.datasets.get(h["rep"], {}).get("tier") != "verified":
+            r = next(p for p in h["picks"] if p["id"] == h["rep"])
+            gaps.append(f"주제 '{h['name']}'의 대표 데이터 '{r['title'][:40]}'는 미검증(포털 목록) — 직접 확인 후 사용")
+    for lk in mh["links"]:
+        if lk["kind"] == "none" and not lk.get("alt"):
+            gaps.append(f"'{lk['heads'][0]}'와 '{lk['heads'][1]}' 대표 데이터는 공통 키·단위가 없어 따로 분석해야 한다")
+    return chosen, join_ids, gaps
+
+
+def _head_leads(mh: dict) -> list[dict]:
+    out = []
+    for p in _head_picks(mh, "catalog")[:MAX_LEADS]:
+        it = mh["items"][p["id"]]
+        out.append({"id": p["id"], "tier": "catalog", "title": it["title"], "agency": it.get("agency_name"),
+                    "kind": it.get("api_type") or it.get("list_type"), "portal_url": it.get("url"), "similarity": round(p["score"] / 3, 2),
+                    "head": p["head"], "rep": p["rep"], "score": p["score"], "unit": p.get("unit"),
+                    "why_maybe": f"[{p['head']}] {p['why']}" + (f" — 프로젝트 제외 규칙 {p['excluded_by']}(검증 순서만 뒤)" if p.get("excluded_by") else ""),
+                    "what_to_check": ["활용신청 승인유형", "응답 필드로 추정한 연결 단위(" + (p.get("unit") or "없음") + ")가 실제로 맞는지",
+                                      "최근 수정일·갱신 주기"],
+                    "note": "미검증 — 직접 확인 후 판단"})
+    return out
+
+
+def _heads_view(mh: dict) -> list[dict]:
+    keep = ("id", "tier", "title", "agency", "score", "why", "unit", "unit_estimated", "excluded_by", "links")
+    return [{"name": h["name"], "need": h["need"], "must": h["must"], "rep": h["rep"], "queries": h["queries"],
+             "picks": [{k: p.get(k) for k in keep} for p in h["picks"][:6]]} for h in mh["heads"]]
 
 
 def _cand_hits(q: str) -> list[tuple[dict, float]]:

@@ -111,20 +111,31 @@ CHAT_SYSTEM = """당신은 data.go.kr 공공데이터 전략 도우미입니다.
 지식 체계는 세 층입니다: verified(실제 호출·다운로드로 검증) · candidate(선정됐으나 미검증) · catalog(포털 전체 목록, 단서일 뿐).
 화면 오른쪽 패널에 전략(데이터 카드·조인 지도·단계·코드)이 그대로 나옵니다. 답은 그 전략을 읽어 주는 설명입니다.
 
+전략은 질문을 주제(heads)로 나눠 주제마다 따로 찾고 다시 줄 세운 결과입니다. heads[]마다 rep(대표)·picks(상위 후보, 점수 0~3·층·단위·다른 주제와의 연결),
+head_links는 주제 대표끼리 잇는 방법(edge=선언된 조인, key=같은 키, aligned=같은 단위로 집계, none=연결 없음, estimated=필드명으로 추정)입니다.
+
 규칙
 - 목표가 나오면 plan_strategy를 먼저 부르고, 그 결과만 바탕으로 답합니다. 데이터·조인을 스스로 지어내지 않습니다.
+- 답은 주제별로 씁니다: 주제마다 대표 데이터 1개(+있으면 대안 1~2개)와 무엇이 들어 있는지(한 행·단위) 한 구절.
+  대표가 catalog(미검증)이어도 질문의 핵심 대상이면 대표로 소개하고 "미검증 — 포털에서 확인 필요"라고 붙입니다. 검증된 우회 데이터를 앞세우지 않습니다.
+- 이어서 주제끼리 어떻게 잇는지 head_links로 설명합니다 (어느 필드·어느 단위로). 추정 연결은 추정이라고 말합니다.
+  대표끼리 연결이 없거나 약한데 alt(다른 후보 쌍의 연결)가 있으면 그 대안을 함께 말합니다. joins에 있는 선언된 조인(실측 매칭률)은 빠짐없이 씁니다.
+- 검증 데이터는 claims의 실측 한계(검증 때 받은 행 수가 적음, 마지막 갱신이 오래됨, 0행 응답, 필수 파라미터)를 대표 데이터마다 한 구절로 밝힙니다.
+- 대표가 없거나 약한 주제(gaps)가 있으면 search_datasets(tier=catalog)로 다른 표현을 한두 번 더 찾아보고, 그래도 없으면 없다고 말합니다.
 - 전략과 다른 말을 하지 않습니다. 고른 데이터가 목표에 맞지 않으면(지역·대상·시점 불일치) 답에서만 빼지 말고
   exclude_dataset으로 전략에서 빼고 사유를 한 줄로 말합니다. not_recommended에 있는 데이터는 그 사유를 그대로 전합니다.
 - 데이터는 반드시 [[목록키]] 형식으로 언급합니다 (예: 일반음식점 인허가 [[15154916]]). 화면이 카드 링크로 바꿉니다. 괄호 속 숫자로 쓰지 않습니다.
 - candidate·catalog는 "미검증 단서"라고 분명히 말합니다.
 - 조인은 plan_strategy가 준 선언된 Edge만 말합니다. 경로가 없으면 없다고 말합니다.
 - 코드값 뜻이나 지역 코드가 필요하면 find_code_list·lookup_code로 확인합니다.
-- 답은 한국어로 짧게 — 패널에 세부가 다 있으므로 핵심만 8~14줄. 순서: ①핵심 데이터와 역할 ②어떻게 잇나 ③주의점 ④다음에 할 일.
+- 답은 한국어로 짧게 — 패널에 세부가 다 있으므로 핵심만 10~18줄. 순서: ①주제별 대표 데이터 ②어떻게 잇나 ③주의점 ④다음에 할 일.
+- 내부 식별자(e-12345 같은 Edge id, R-13 같은 규칙 번호, claim id)는 답에 쓰지 않습니다. 사람이 읽는 말(예: "주소를 좌표로 바꿔 필지로 잇기")로 풀어 씁니다.
 - 키(인증키)를 요구받으면: 포털 데이터는 data.go.kr 활용신청, 외부 사이트는 해당 사이트 발급이라고 안내합니다. 키 값을 묻거나 다루지 않습니다."""
 
 TOOL_LABEL = {"plan_strategy": "전략 계산", "exclude_dataset": "전략에서 제외", "search_datasets": "데이터 검색",
               "get_dataset": "데이터 상세 조회", "find_code_list": "코드표 찾기", "lookup_code": "코드값 조회"}
-STAGE_LABEL = {"context": "맥락 찾기", "candidates": "데이터 후보", "joins": "조인 경로"}
+STAGE_LABEL = {"context": "맥락 찾기", "candidates": "데이터 후보", "heads": "주제 나누기", "rerank": "주제별 재순위", "links": "주제 간 연결",
+               "joins": "조인 경로"}
 
 Emit = Callable[[dict], None]
 
@@ -137,7 +148,13 @@ def _slim(p: dict) -> str:
     slim["joins"] = [{k: j[k] for k in ("edge", "left", "right", "on", "relationship", "via_mapping", "match_rate", "hub")} for j in p["joins"]]
     slim["not_recommended"] = [{k: x.get(k) for k in ("id", "title", "reason")} for x in p["not_recommended"]]
     slim["candidates"] = [{k: c[k] for k in ("id", "title", "status")} for c in p["candidates"]]
-    slim["unverified_leads"] = [{k: x[k] for k in ("id", "title", "agency")} for x in p["unverified_leads"]]
+    slim["unverified_leads"] = [{k: x.get(k) for k in ("id", "title", "agency", "head", "rep")} for x in p["unverified_leads"]]
+    if p.get("heads"):
+        slim["heads"] = [{"name": h["name"], "need": h["need"], "must": h["must"], "rep": h["rep"],
+                          "picks": [{k: x.get(k) for k in ("id", "tier", "title", "score", "why", "unit")}
+                                    | {"links": [f"{l['head']}:{l['kind']}" for l in x.get("links") or []]} for x in h["picks"][:5]]}
+                         for h in p["heads"]]
+        slim["head_links"] = [{k: l.get(k) for k in ("heads", "left", "right", "kind", "label", "estimated", "alt")} for l in p.get("head_links") or []]
     slim["claims"] = {d["id"]: [c["value"][:160] for c in ix.grounded_claims(d["id"])][:8] for d in p["datasets"]}
     return json.dumps(slim, ensure_ascii=False, default=str)
 

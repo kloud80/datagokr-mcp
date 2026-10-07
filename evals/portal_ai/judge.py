@@ -41,8 +41,13 @@ JSON만 출력: {"A": {"relevance":n,"coverage":n,"actionable":n,"honesty":n}, "
 
 
 def _json(text: str) -> dict:
-    m = re.search(r"\{.*\}", text, re.S)
-    return json.loads(m.group(0)) if m else {}
+    k = text.find("{")  # 첫 JSON 객체만 (뒤에 덧붙은 설명은 버린다)
+    if k < 0:
+        return {}
+    try:
+        return json.JSONDecoder().raw_decode(text[k:])[0]
+    except ValueError:
+        return {}
 
 
 def _ask(system: str, user: str) -> dict:

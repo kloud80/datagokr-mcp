@@ -211,7 +211,7 @@ def cmd_mcp(args):
 
 def cmd_eval_plan(args):
     from pds.strategy.evalplan import run
-    run(rerank=args.rerank, show=args.show)
+    run(rerank=args.rerank, show=args.show, heads=args.heads)
 
 
 def cmd_setup(args):
@@ -283,6 +283,7 @@ def main(argv=None):
     sub.add_parser("data-pack").set_defaults(fn=cmd_data_pack)
     ev = sub.add_parser("eval-plan", help="정답표(evals/plan_recall.yaml)로 전략 플래너 재현율 평가")
     ev.add_argument("--rerank", action="store_true", help="LLM 재순위까지 (API 비용)")
+    ev.add_argument("--heads", action="store_true", help="멀티헤드 전략 (LLM, 질문당 15~30초)")
     ev.add_argument("--show", action="store_true", help="맞힌 질문도 출력")
     ev.set_defaults(fn=cmd_eval_plan)
     bk = sub.add_parser("db-backup", help="DB의 pds_* 테이블만 parquet로 백업")

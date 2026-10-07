@@ -160,12 +160,14 @@ def build() -> Index:
     ix.mappings = {m["id"]: m for m in store.load("mapping")}
     cat = config.PROCESSED / "catalog.parquet"
     if cat.exists():
-        c = pd.read_parquet(cat, columns=["id", "title", "agency_name", "keywords", "description", "url", "api_type", "list_type"])
+        c = pd.read_parquet(cat, columns=["id", "title", "agency_name", "keywords", "description", "url", "api_type", "list_type",
+                                         "output_cols", "request_vars"])
         cls = pd.read_parquet(config.PROCESSED / "class.parquet", columns=["id", "excluded_by", "sector"])
         c = c.merge(cls, on="id")
         ix.catalog = c.reset_index(drop=True)
+        # 응답 필드(output_cols)까지 — '10a당수량'·'등숙비율'처럼 제목엔 없고 필드에만 있는 대상어로도 찾게 (멀티헤드 검색)
         ix.cat_bm25 = BM25((c["title"].fillna("") + " " + c["title"].fillna("") + " " + c["keywords"].fillna("") + " "
-                            + c["description"].fillna("").str[:200]).tolist())
+                            + c["description"].fillna("").str[:400] + " " + c["output_cols"].fillna("").str[:400]).tolist())
     return ix
 
 

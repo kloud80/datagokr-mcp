@@ -67,10 +67,33 @@ export interface Lead {
   similarity: number
   why_maybe: string
   kind?: string | null
+  head?: string
+  rep?: boolean
+}
+
+export interface HeadLink { head: string; id: string; kind: 'edge' | 'key' | 'aligned'; label: string; estimated?: boolean }
+export interface HeadPick {
+  id: string
+  tier: 'verified' | 'candidate' | 'catalog'
+  title: string
+  agency?: string | null
+  score: number
+  why: string
+  unit?: string | null
+  unit_estimated?: boolean
+  excluded_by?: string | null
+  links: HeadLink[]
+}
+export interface PlanHead { name: string; need: string; must: boolean; rep: string | null; queries: string[]; picks: HeadPick[] }
+export interface PlanHeadLink {
+  heads: [string, string]; left: string; right: string; kind: 'edge' | 'key' | 'aligned' | 'none'; label: string; estimated?: boolean
+  alt?: { left: string; left_title: string; right: string; right_title: string; kind: string; label: string }
 }
 
 export interface Plan {
   version?: number
+  heads?: PlanHead[] | null
+  head_links?: PlanHeadLink[] | null
   goal: string
   context?: string | null
   summary: string

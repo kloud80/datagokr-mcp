@@ -108,6 +108,7 @@ const TIMELINE: { d: string; t: string; s: string }[] = [
   { d: '2026-10-05', t: '6차 확대 — 검증 2만', s: '새 검토 없이 기존 판정을 넓혀 18,792건 검증: 가족판(같은 형식 시군구판) · 3순위 · 보조(미룸 판정 점수 상위). 포털 파일 13,647 · API 1,573(활용신청 2,098) · 링크 1,257 → 검증 4,444 → 20,921. 등급(facets.grade)으로 보조 자료는 전략 점수를 낮춰 핵심을 밀어내지 않게. 조인 24,800.' },
   { d: '2026-10-06', t: '기관 분석 · 사이트 가입 — 검증 2만 5천', s: '공공기관 1,115곳을 엔티티로 등록하고 상위 150곳은 Opus로 분석(시스템 1,596 · 고유 키 824 · 빠진 핵심 원장 1,410). 사용자가 가입한 사이트(경기데이터드림 · 열린국회정보 · 문화공공데이터광장 · OpenDART · 기상청 API허브 · 제주데이터허브 · 고용24 등)별 검증기를 만들어 링크형을 확인. 검증 20,921 → 25,155.' },
   { d: '2026-10-07', t: '포털 핵심 원장 · 느슨한 조인', s: '기관 분석이 찾은 포털 핵심 원장 API 219건 활용신청(저장 세션은 SSO 교환을 한 번 거쳐야 신청 폼이 열린다) → 158건 검증(파라미터 수리 11 포함) → 25,305. 키가 정확히 같지 않아도 공통 단위(필지·법정동·시군구 × 일·월·분기·연 × 업종)로 집계해 잇는 느슨한 조인(R-20~R-23)을 정의 — 데이터마다 실측 필드로 단위(grain)를 기록(공간 단위 13,281건)하고 전략·코드에서 정확한 조인과 따로 보인다.' },
+  { d: '2026-10-07', t: '멀티헤드 전략 — 주제별 검색·재순위·연결', s: '질문을 주제(헤드)로 나눠(LLM) 주제마다 검증·선정·포털 목록 9.6만(응답 필드 포함)을 따로 넓게 찾고, 주제마다 Sonnet이 다시 줄 세운 뒤, 주제 사이 연결 가능성(선언된 조인 > 같은 키 > 같은 단위로 집계, 목록은 필드명으로 추정)으로 대표를 다시 고른다. 제외 규칙에 걸린 목록 데이터도 단서로 나온다(벼·맥류·두류 작황 성적 등). 포털 AI 비교 45문항: 상위 5개 중 핵심 55%(포털) · 40%(기존) → 72%, 무관 10% · 19% → 2%, 답 판정 포털 대비 45:0 · 기존 답 대비 33:12. 화면에 ‘주제별’ 탭.' },
   { d: '2026-10-03', t: '원격 MCP · 사용 통계', s: '이 서버의 /mcp로 원격 MCP를 열고(읽기 전용·인증 없음) 연결 가이드를 만들었다. Google Analytics 4로 방문·질문 수를 수집한다.' },
 ]
 
@@ -154,7 +155,7 @@ export function Docs() {
     { id: 'core', x: 310, y: 210, w: 340, h: 60, label: 'knowledge/ — YAML 원본', sub: 'Dataset · Claim · Edge · Key · Code · Context · Recipe', tone: 'core', detail: '지식의 원본. git으로 이력·리뷰. 모든 파일은 pydantic 스키마로 검증된다(python -m pds validate).' },
     { id: 'val', x: 20, y: 320, label: '스키마 검증', sub: 'pydantic · JSON Schema', tone: 'derived', detail: '참조 무결성, 근거 규칙(사실 = 실측·법령·검토), 승격 조건(근거 3+ · Edge 1+), 선언되지 않은 Edge 사용 금지.' },
     { id: 'db', x: 250, y: 320, label: 'Postgres', sub: 'pds_* 테이블 (파생)', tone: 'derived', detail: '목록·분류·점수·지식 엔티티·지식 그래프를 적재한 파생 인덱스. 서비스는 DB 없이도 돈다. pds_* 테이블만 백업·복원.' },
-    { id: 'idx', x: 480, y: 320, label: '검색 색인', sub: 'BM25 + 의미 임베딩', tone: 'derived', detail: '글자 겹침(BM25 한글 2-gram)과 뜻(multilingual-e5 임베딩)을 합친 관련도로 넓게 찾고, 기준값으로 자른다. 채팅은 LLM 재순위까지. 지식 파일이 바뀌면 다시 만든다.' },
+    { id: 'idx', x: 480, y: 320, label: '검색 색인', sub: 'BM25 + 의미 임베딩', tone: 'derived', detail: '글자 겹침(BM25 한글 2-gram, 포털 목록은 응답 필드까지)과 뜻(multilingual-e5 임베딩)으로 넓게 찾는다. 전략은 질문을 주제로 나눠 주제마다 따로 찾고 LLM이 다시 줄 세운 뒤 주제 간 연결로 대표를 고른다(멀티헤드). 지식 파일이 바뀌면 다시 만든다.' },
     { id: 'dossier', x: 710, y: 320, label: '설명서', sub: 'Markdown 1,632개', tone: 'derived', detail: '데이터마다 한 줄 요약·호출 방법·필드·키·근거·주의점을 담은 설명서 (docs/dossiers, 화면의 상세 서랍).' },
     { id: 'plan', x: 150, y: 420, label: '전략 플래너', sub: 'networkx · 선언 Edge만', tone: 'service', detail: '목표 → 맥락 매칭 → 검증 데이터 검색(지역 필터·가중치) → 선언된 Edge로 최단 조인 경로 → 파이프라인 → 검사(§4 규칙).' },
     { id: 'code', x: 400, y: 420, label: '코드 생성기', sub: 'requests + pandas', tone: 'service', detail: '검증 때 성공한 호출(주소·필수 파라미터·형식·실제 페이지 크기)을 다시 꾸며, 이 저장소 없이 돌아가는 Python을 만든다.' },
@@ -239,7 +240,7 @@ export function Docs() {
                   { key: 1, layer: '지식 원본', tech: 'YAML · pydantic 스키마 · JSON Schema', where: 'knowledge/ · pds/schema' },
                   { key: 2, layer: '수집·검증', tech: 'httpx · Playwright(활용신청·다운로드) · pandas 셀 통계', where: 'pds/probe · pds/ingest' },
                   { key: 3, layer: '관계', tech: '선언 Edge · 변환 규칙 함수 · 매핑표 · 실측 매칭률', where: 'knowledge/edges.yaml · pds/rules · pds/mapping' },
-                  { key: 4, layer: '검색·전략', tech: 'BM25(한글 2-gram) + e5 임베딩(fastembed) · LLM 재순위 · networkx 최단 경로 · 지역 판정', where: 'pds/service/index.py · pds/strategy' },
+                  { key: 4, layer: '검색·전략', tech: 'BM25(한글 2-gram) + e5 임베딩(fastembed) · 멀티헤드(주제 분해·주제별 재순위, Sonnet) · networkx 최단 경로 · 지역 판정', where: 'pds/service/index.py · pds/strategy' },
                   { key: 5, layer: '설명', tech: 'Claude Sonnet 5.5 (도구 사용 · 구조화 출력 · 서버 폴백)', where: 'pds/service/llm.py' },
                   { key: 6, layer: '서비스', tech: 'FastAPI · SSE · MCP(mcp 2.x)', where: 'pds/service/app.py · pds/mcp' },
                   { key: 7, layer: '화면', tech: 'React 19 · Vite · BigValue 디자인 시스템(@bv-ds/ui Agent)', where: 'frontend/ → web/dist' },
