@@ -118,13 +118,13 @@ function Home({ query, facets }: { query: URLSearchParams; facets: WikiFacets | 
         <ul className="wiki-facet">
           <li><button type="button" className={!p.sector ? 'on' : ''} onClick={() => set({ sector: '' })}>전체</button></li>
           {facets?.sectors.map(([s, c]) => (
-            <li key={s}><button type="button" className={p.sector === s ? 'on' : ''} onClick={() => set({ sector: s })}>{s}<span>{n(c)}</span></button></li>
+            <li key={s}><button type="button" className={p.sector === s ? 'on' : ''} onClick={() => set({ sector: s })}><em>{s}</em><span>{n(c)}</span></button></li>
           ))}
         </ul>
         <p className="doc-toc-h">많이 쓰이는 키</p>
         <ul className="wiki-facet">
           {facets?.keys.slice(0, 16).map(([key, c]) => (
-            <li key={key}><a href={keyHref(key)}>{key}<span>{n(c)}</span></a></li>
+            <li key={key}><a href={keyHref(key)} title={key}><em>{key}</em><span>{n(c)}</span></a></li>
           ))}
         </ul>
       </nav>
