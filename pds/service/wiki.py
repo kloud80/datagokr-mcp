@@ -1,6 +1,6 @@
 """위키 — knowledge/datasets yaml을 사람이 찾아 읽고, 관계를 따라 옮겨 다니고, 수정을 제안하는 화면의 서버 쪽.
 
-  탐색   search() 글자 검색(색인 BM25) + 부문·기관·등급·연결 여부 거르기 · facets() 거르기 목록
+  탐색   search() 글자 검색(색인 BM25) + 부문·기관·등급·연결 여부 필터 · facets() 필터 목록
   문서   page()   데이터셋 yaml 전체 + 관계(Edge, 상대 이름 풀어서) + 같은 키를 쓰는 데이터 + 설명서 + 이 데이터에 온 제안
          key_page() 키(사업자번호·PNU·법정동 코드…) 하나를 쓰는 데이터 목록
   제안   propose() 누구나 — DB(pds_wiki_proposal, sql/008)에 pending으로 쌓는다. yaml은 건드리지 않는다.

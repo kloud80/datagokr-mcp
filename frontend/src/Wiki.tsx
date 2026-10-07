@@ -165,10 +165,10 @@ function Home({ query, facets }: { query: URLSearchParams; facets: WikiFacets | 
               .filter((o, i, a) => a.findIndex((x) => x.label === o.label) === i)} />
           <AgentCheckbox label="실측된 관계가 있는 것만" checked={!!p.linked} onChange={(e) => set({ linked: e.target.checked })} />
         </div>
-        {p.key ? <p className="doc-small">키 <a href={keyHref(p.key)}>{p.key}</a>를 쓰는 데이터만 <button type="button" className="wiki-x" onClick={() => set({ key: '' })}>거르기 해제</button></p> : null}
+        {p.key ? <p className="doc-small">키 <a href={keyHref(p.key)}>{p.key}</a>를 쓰는 데이터만 <button type="button" className="wiki-x" onClick={() => set({ key: '' })}>필터 해제</button></p> : null}
         {err ? <AgentAlert tone="error" title="불러오지 못했습니다">{err}</AgentAlert>
           : !res ? <AgentSkeleton variant="text" lines={10} />
-          : !res.rows.length ? <AgentEmptyState title="찾은 데이터가 없습니다" description="다른 낱말로 찾거나 거르기를 풀어 보세요." />
+          : !res.rows.length ? <AgentEmptyState title="찾은 데이터가 없습니다" description="다른 검색어로 찾거나 필터를 해제해 보세요." />
           : (<>
             <p className="doc-small">{p.q ? `‘${p.q}’ ` : ''}{n(res.total)}건{p.q && res.total >= 600 ? ' (관련도 상위 600건)' : ''}</p>
             <ul className="wiki-list">{res.rows.map((r) => <RowCard key={r.id} r={r} />)}</ul>
@@ -367,7 +367,7 @@ function Relations({ d, onPropose }: { d: WikiPageOut; onPropose: Propose }) {
       <div className="wiki-filters">
         <AgentSegmentedControl size="sm" label="종류" value={rel} onChange={setRel}
           options={[{ value: 'all', label: '전체' }, ...Object.entries(d.relation_totals).map(([k, c]) => ({ value: k, label: `${REL_LABEL[k] ?? k} ${n(c)}` }))]} />
-        <AgentTextField size="sm" search aria-label="관계 거르기" placeholder="상대 데이터·필드로 거르기" value={q} onChange={(e) => setQ(e.target.value)} />
+        <AgentTextField size="sm" search aria-label="관계 필터" placeholder="상대 데이터·필드로 필터" value={q} onChange={(e) => setQ(e.target.value)} />
         <AgentButton size="sm" variant="secondary" onClick={() => onPropose({ kind: 'relation' })}>관계 제안</AgentButton>
       </div>
       {hints.length ? (<>
@@ -449,7 +449,7 @@ function ProposeModal({ d, kinds, initial, onClose, onSent }: {
   const K = kinds ?? { summary: '설명 고쳐 쓰기', synonym: '검색어 추가', limit: '주의사항 추가', field: '필드 설명', relation: '다른 데이터와의 관계', note: '그 밖의 사실·의견' }
   const hint: Record<string, string> = {
     summary: '누가 무엇을 확인하는 데 쓰는지, 무엇이 한 행인지, 무엇으로 다른 데이터와 잇는지를 쓰면 좋습니다.',
-    synonym: '사람들이 이 데이터를 찾을 때 쓸 낱말을 쉼표로 나눠 적어 주세요.',
+    synonym: '사람들이 이 데이터를 찾을 때 쓸 검색어를 쉼표로 나눠 적어 주세요.',
     limit: '써 보며 겪은 함정 — 빠진 지역·기간, 바뀐 코드, 늦은 갱신 같은 것.',
     field: '이 필드에 실제로 무엇이 들어 있는지, 코드라면 어떤 코드표인지.',
     relation: '어떤 필드끼리 맞추면 이어지는지, 확인해 본 예시 값이 있으면 함께.',
@@ -661,7 +661,7 @@ function KeyPage({ keyId, page }: { keyId: string; page: number }) {
       {d.codes.length ? (<><h3 className="doc-h3">코드표</h3>
         <ul className="wiki-chips">{d.codes.map((c) => <li key={c.id}><a className="wiki-key wiki-key--code" href={codeHref(c.id)}>{c.name}</a><span className="doc-small"> {n(c.rows)}개 값</span></li>)}</ul></>) : null}
       <h3 className="doc-h3">이 키를 가진 데이터 {n(d.total)}건</h3>
-      <p className="doc-small">같은 키를 쓰는 데이터끼리는 조인 후보가 됩니다. 실측된 관계가 많은 순입니다. <a href={`#/wiki?key=${encodeURIComponent(k.id)}`}>검색·거르기와 함께 보기</a></p>
+      <p className="doc-small">같은 키를 쓰는 데이터끼리는 조인 후보가 됩니다. 실측된 관계가 많은 순입니다. <a href={`#/wiki?key=${encodeURIComponent(k.id)}`}>데이터셋 목록에서 필터로 보기</a></p>
       <ul className="wiki-list">{d.rows.map((r) => <RowCard key={r.id} r={r} fields={r.fields} />)}</ul>
       {pages > 1 ? <AgentPagination page={page} pageCount={pages} onChange={(pg) => go(`/wiki/k/${encodeURIComponent(keyId)}?page=${pg}`)} label="키 데이터 페이지" /> : null}
       <p className="doc-small wiki-file">원본: <code>{d.file}</code></p>
