@@ -26,6 +26,7 @@ export function Mcp() {
         <a className="doc-back" href="#/">← 공공데이터 전략 도우미</a>
         <h1 className="doc-title">MCP</h1>
         <a className="doc-small" href="#/docs">Docs</a>
+        <a className="doc-small" href="#/wiki">Wiki</a>
       </header>
       <div className="doc-single">
         <section className="doc-section">

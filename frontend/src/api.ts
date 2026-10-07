@@ -265,3 +265,141 @@ export interface SiteCoverage {
   summary: { catalog: number; portal_direct: number; link_total: number; sites: number; api_sites: number; by_key: Record<string, { sites: number; datasets: number }> }
   sites: SiteRow[]
 }
+
+// ── Wiki (/api/wiki/*) — pds/service/wiki.py
+export interface WikiRow {
+  id: string
+  title: string
+  agency: string
+  sector: string
+  tier: string
+  kind: string
+  grade: string
+  summary: string
+  edges: number
+  measured: number
+  keys: string[]
+}
+
+export interface WikiFacets {
+  sectors: [string, number][]
+  agencies: [string, number][]
+  grades: [string, number][]
+  keys: [string, number][]
+  kinds: Record<string, string>
+}
+
+export interface WikiRelation {
+  edge: string
+  rel: 'joinable' | 'lookup' | 'related_to'
+  dir: 'in' | 'out'
+  other: string
+  other_title?: string | null
+  other_known: boolean
+  other_sector?: string | null
+  other_agency?: string | null
+  left?: string[] | null
+  right?: string[] | null
+  transform?: string | null
+  via_mapping?: string | null
+  relationship?: string | null
+  confidence?: number | null
+  source?: string | null
+  note?: string | null
+  match_rate?: number | null
+  measured_at?: string | null
+}
+
+export interface WikiField {
+  name: string
+  title?: string | null
+  type?: string
+  semantic_type?: string | null
+  null_rate?: number | null
+  sample_values?: unknown[]
+  description?: string | null
+}
+
+export interface WikiEvidence { type: string; source: string; by?: string | null; at?: string | null; observed_at?: string | null; detail?: string | null }
+export interface WikiClaim { id: string; kind: string; value: string; evidence: WikiEvidence[]; qualifiers?: Record<string, unknown>; rank?: string }
+
+export interface WikiDataset {
+  id: string
+  tier: string
+  title: string
+  family?: string | null
+  sector: string
+  agency: { id?: string; name: string }
+  kind: string
+  channel: string
+  portal_url?: string | null
+  synonyms?: string[]
+  summary_user?: string | null
+  description_portal?: string | null
+  accrual_periodicity?: string | null
+  limits?: string | null
+  team?: { dept?: string | null } | null
+  schema?: { fields?: WikiField[]; foreign_keys?: { fields: string[]; reference: { key?: string } }[] }
+  facets?: Record<string, string[]>
+  coverage?: Record<string, unknown> | null
+  grain?: Record<string, unknown> | null
+  classification?: { subsector_name?: string | null; why?: string | null } | null
+  claims?: WikiClaim[]
+  edges_hint?: string[]
+  status?: string
+  distributions?: { title?: string; url?: string; format?: string }[]
+  services?: { name?: string; endpoint?: string; approval?: string }[]
+}
+
+export interface WikiPageOut {
+  dataset: WikiDataset
+  relations: WikiRelation[]
+  relation_totals: Record<string, number>
+  keys: { id: string; name: string; datasets: number }[]
+  family: { id: string; title: string; agency: string }[]
+  dossier_md?: string | null
+  file: string
+}
+
+export interface WikiProposal {
+  id: number
+  dataset_id: string
+  kind: string
+  target?: string | null
+  current_value?: string | null
+  proposed_value: string
+  reason?: string | null
+  author?: string | null
+  status: 'pending' | 'approved' | 'rejected'
+  reviewer?: string | null
+  review_note?: string | null
+  reviewed_at?: string | null
+  applied?: { file?: string; field?: string; claim?: string } | null
+  created_at: string
+}
+
+export interface WikiSearchParams { q?: string; sector?: string; agency?: string; grade?: string; key?: string; linked?: boolean; sort?: string; page?: number }
+
+function wikiToken(): string {
+  try { return localStorage.getItem('pds-wiki-token') || '' } catch { return '' }
+}
+
+const qs = (o: Record<string, unknown>) =>
+  new URLSearchParams(Object.entries(o).filter(([, v]) => v !== undefined && v !== '' && v !== false).map(([k, v]) => [k, String(v)])).toString()
+
+export const wikiApi = {
+  facets: () => fetch('/api/wiki/facets').then((r) => json<WikiFacets>(r)),
+  search: (p: WikiSearchParams) => fetch(`/api/wiki/search?${qs({ ...p })}`).then((r) => json<{ total: number; page: number; size: number; rows: WikiRow[] }>(r)),
+  page: (id: string) => fetch(`/api/wiki/datasets/${encodeURIComponent(id)}`).then((r) => json<WikiPageOut>(r)),
+  key: (key: string, page = 1) => fetch(`/api/wiki/keys/${encodeURIComponent(key)}?page=${page}`)
+    .then((r) => json<{ key: { id: string; name: string; format?: string; notes?: string; type?: string }; total: number; page: number; rows: WikiRow[] }>(r)),
+  proposals: (p: { dataset?: string; status?: string }) => fetch(`/api/wiki/proposals?${qs(p)}`)
+    .then((r) => json<{ rows: WikiProposal[]; counts: Record<string, number> }>(r)),
+  propose: (body: { dataset_id: string; kind: string; proposed_value: string; target?: string; reason?: string; author?: string }) =>
+    fetch('/api/wiki/proposals', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => json<WikiProposal>(r)),
+  me: (token = wikiToken()) => fetch('/api/wiki/me', { headers: { 'x-wiki-token': token } }).then((r) => json<{ reviewer: string | null }>(r)),
+  review: (id: number, decision: 'approve' | 'reject', note?: string) =>
+    fetch(`/api/wiki/proposals/${id}/review`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-wiki-token': wikiToken() },
+      body: JSON.stringify({ decision, note }) }).then((r) => json<WikiProposal>(r)),
+  setToken: (t: string) => { try { if (t) localStorage.setItem('pds-wiki-token', t); else localStorage.removeItem('pds-wiki-token') } catch { /* 저장이 막힌 브라우저 */ } },
+}

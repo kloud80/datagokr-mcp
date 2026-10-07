@@ -142,6 +142,7 @@ export function App() {
           <div className="pds-brand-row">
             <h1 className="pds-brand">공공데이터 전략 도우미</h1>
             <a className="pds-docs-link" href="#/docs">Docs</a>
+            <a className="pds-docs-link" href="#/wiki">Wiki</a>
             <a className="pds-docs-link" href="#/mcp">MCP</a>
           </div>
           <AgentTooltip content={statsText} position="bottom">

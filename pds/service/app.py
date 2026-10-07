@@ -10,6 +10,7 @@
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지·데이터별 표)
+  GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys/{key} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
 from __future__ import annotations
@@ -237,6 +238,94 @@ def api_docs():
     """Docs 화면 — 지식 체계 규모·관계·커버리지 집계와 데이터별 표 (pds/service/docs.py)."""
     from pds.service import docs
     return docs.build()
+
+
+# ── 위키 (pds/service/wiki.py) — 데이터셋 yaml 탐색·관계 따라가기·수정 제안과 승인
+class ProposalIn(BaseModel):
+    dataset_id: str
+    kind: str
+    proposed_value: str
+    target: str | None = None
+    reason: str | None = None
+    author: str | None = None
+
+
+class ReviewIn(BaseModel):
+    decision: str  # approve · reject
+    note: str | None = None
+
+
+def _db_call(fn, *a, **kw):
+    if not config.DATABASE_URL:
+        raise HTTPException(503, "제안 저장소(DB)가 설정되지 않았다")
+    try:
+        return fn(*a, **kw)
+    except (ValueError, LookupError) as e:
+        raise HTTPException(404 if isinstance(e, LookupError) else 400, str(e)) from e
+
+
+def _reviewer(req: Request) -> str:
+    from pds.service import wiki
+    name = wiki.reviewer_of(req.headers.get("x-wiki-token"))
+    if not name:
+        raise HTTPException(403, "승인 권한이 없다 — 승인권자 토큰이 필요하다")
+    return name
+
+
+@app.get("/api/wiki/facets")
+def api_wiki_facets():
+    from pds.service import wiki
+    return {**wiki.facets(sindex.get()), "kinds": wiki.KINDS}
+
+
+@app.get("/api/wiki/search")
+def api_wiki_search(q: str = "", sector: str = "", agency: str = "", grade: str = "", key: str = "", linked: bool = False,
+                    sort: str = "relevance", page: int = 1, size: int = 30):
+    from pds.service import wiki
+    return jsonable(wiki.search(sindex.get(), q, sector, agency, grade, key, linked, sort, page, size))
+
+
+@app.get("/api/wiki/datasets/{dsid}")
+def api_wiki_page(dsid: str):
+    from pds.service import wiki
+    out = wiki.page(sindex.get(), dsid)
+    if not out:
+        raise HTTPException(404, "지식 체계에 없는 id")
+    return jsonable(out)
+
+
+@app.get("/api/wiki/keys/{key}")
+def api_wiki_key(key: str, page: int = 1):
+    from pds.service import wiki
+    out = wiki.key_page(sindex.get(), key, page)
+    if not out:
+        raise HTTPException(404, "없는 키")
+    return jsonable(out)
+
+
+@app.get("/api/wiki/proposals")
+def api_wiki_proposals(dataset: str | None = None, status: str | None = None):
+    from pds.service import wiki
+    return {"rows": _db_call(wiki.proposals, dataset, status), "counts": _db_call(wiki.counts)}
+
+
+@app.post("/api/wiki/proposals")
+def api_wiki_propose(body: ProposalIn, req: Request):
+    from pds.service import wiki
+    return _db_call(wiki.propose, sindex.get(), body.dataset_id, body.kind, body.proposed_value, body.target, body.reason,
+                    body.author, _who(req))
+
+
+@app.get("/api/wiki/me")
+def api_wiki_me(req: Request):
+    from pds.service import wiki
+    return {"reviewer": wiki.reviewer_of(req.headers.get("x-wiki-token"))}
+
+
+@app.post("/api/wiki/proposals/{pid}/review")
+def api_wiki_review(pid: int, body: ReviewIn, req: Request):
+    from pds.service import wiki
+    return _db_call(wiki.review, sindex.get(), pid, body.decision, _reviewer(req), body.note)
 
 
 @app.get("/api/stats")

@@ -198,6 +198,7 @@ export function Docs() {
         <a className="doc-back" href="#/">← 공공데이터 전략 도우미</a>
         <h1 className="doc-title">Docs</h1>
         <a className="doc-small" href="#/mcp">MCP</a>
+        <a className="doc-small" href="#/wiki">Wiki</a>
         <span className="doc-small">{d ? `지식 버전 ${d.knowledge_version} · 실시간 집계` : '불러오는 중…'}</span>
       </header>
       <div className="doc-layout">

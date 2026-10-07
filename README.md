@@ -316,6 +316,14 @@ python -m pds data-pack                    # 스냅샷 zip (Release에 올리는
 | `POST /api/plan` | `{goal}` → 전략 응답 ([KNOWLEDGE-SPEC §4](KNOWLEDGE-SPEC.md)) — 근거·조인 규칙을 서버가 검사 |
 | `GET /api/search?q=&tier=` | 세 층 검색 |
 | `GET /api/datasets/{id}` · `/api/codes/{id}?q=` | 상세·설명서 · 코드 조회 |
+| `/#/wiki` | 데이터 위키 — 데이터셋 yaml 검색·거르기(분야·기관·등급·키), 데이터 문서(개요·필드·관계·사실과 근거·설명서), 키 문서 |
+| `GET /api/wiki/*` | 위키 API — `search` · `facets` · `datasets/{id}` · `keys/{key}` · `proposals` |
+| `POST /api/wiki/proposals` · `…/{id}/review` | 수정 제안(누구나) · 승인/반려(승인권자 — 헤더 `x-wiki-token`) |
+
+**위키 수정 제안과 승인** — 누구나 데이터 문서에 설명·검색어·주의사항·필드 설명·관계·의견을 제안할 수 있다. 제안은 Postgres
+`pds_wiki_proposal`(sql/008)에 쌓이고 yaml은 건드리지 않는다. 승인권자는 `.env`의 `WIKI_ADMIN_TOKENS="이름:토큰,이름:토큰"`으로
+정하며, 승인자 이름은 토큰에서 정해진다. 승인하면 데이터셋 yaml의 사람 필드(`summary_user`·`synonyms`·`limits`·`edges_hint`)나
+`admin_review` claim(근거 `wiki:proposal/{id}`, 승인자·날짜)으로 들어가고, `gen-dataset`을 다시 돌려도 보존된다. 반려도 이유와 함께 남는다.
 
 **웹 화면**은 빌드된 결과(`web/dist`)가 저장소에 들어 있어 받자마자 뜬다. 원본은 `frontend/`(React 19 + Vite,
 BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시스템 레지스트리가 사내 전용이라 외부에서는 다시 빌드할 수 없다.
