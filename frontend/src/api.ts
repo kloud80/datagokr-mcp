@@ -282,6 +282,7 @@ export interface WikiRow {
 }
 
 export interface WikiFacets {
+  counts: { datasets: number; keys: number; codes: number }
   sectors: [string, number][]
   agencies: [string, number][]
   grades: [string, number][]
@@ -315,6 +316,7 @@ export interface WikiField {
   title?: string | null
   type?: string
   semantic_type?: string | null
+  code_list?: string | null
   null_rate?: number | null
   sample_values?: unknown[]
   description?: string | null
@@ -378,6 +380,52 @@ export interface WikiProposal {
   created_at: string
 }
 
+export interface WikiKeyRow {
+  id: string
+  name: string
+  type?: string | null
+  scope?: string | null
+  issuer?: string | null
+  agency?: string | null
+  datasets: number
+  masters: number
+  mappings: number
+  codes: number
+}
+
+export interface WikiDsRef { id: string; title?: string | null; known: boolean; agency?: string | null; fields?: string[] }
+
+export interface WikiKeyPage {
+  key: {
+    id: string; name: string; type?: string; scope?: string; format?: string | null; pattern?: string | null; issuer?: string | null
+    agency?: string | null; notes?: string | null; shape_names?: string[]
+  }
+  total: number
+  page: number
+  size: number
+  rows: (WikiRow & { fields: string[] })[]
+  masters: WikiDsRef[]
+  composed_of: { key: string; name?: string | null }[]
+  related: { key: string; relation: string; note?: string | null; name?: string | null }[]
+  mappings: { id: string; left: { key: string; system: string }; right: { key: string; system: string }; method?: string; rows?: number; match_rate?: number; notes?: string | null }[]
+  codes: { id: string; name: string; rows: number }[]
+  file: string
+}
+
+export interface WikiCodeRow { id: string; name: string; key?: string | null; completeness: string; rows: number; aliases: string[]; datasets: number }
+
+export interface WikiCodePage {
+  code: {
+    id: string; name: string; key?: string | null; key_name?: string | null; completeness: string; completeness_label: string; rows: number
+    aliases?: string[]; notes?: string | null; evidence: WikiEvidence[]; file?: string | null
+  }
+  used_by: WikiDsRef[]
+  values: Record<string, unknown>[]
+  values_shown: number
+  q?: string | null
+  file: string
+}
+
 export interface WikiSearchParams { q?: string; sector?: string; agency?: string; grade?: string; key?: string; linked?: boolean; sort?: string; page?: number }
 
 function wikiToken(): string {
@@ -391,8 +439,10 @@ export const wikiApi = {
   facets: () => fetch('/api/wiki/facets').then((r) => json<WikiFacets>(r)),
   search: (p: WikiSearchParams) => fetch(`/api/wiki/search?${qs({ ...p })}`).then((r) => json<{ total: number; page: number; size: number; rows: WikiRow[] }>(r)),
   page: (id: string) => fetch(`/api/wiki/datasets/${encodeURIComponent(id)}`).then((r) => json<WikiPageOut>(r)),
-  key: (key: string, page = 1) => fetch(`/api/wiki/keys/${encodeURIComponent(key)}?page=${page}`)
-    .then((r) => json<{ key: { id: string; name: string; format?: string; notes?: string; type?: string }; total: number; page: number; rows: WikiRow[] }>(r)),
+  keys: (q = '') => fetch(`/api/wiki/keys?${qs({ q })}`).then((r) => json<WikiKeyRow[]>(r)),
+  key: (key: string, page = 1) => fetch(`/api/wiki/keys/${encodeURIComponent(key)}?page=${page}`).then((r) => json<WikiKeyPage>(r)),
+  codes: (q = '') => fetch(`/api/wiki/codes?${qs({ q })}`).then((r) => json<WikiCodeRow[]>(r)),
+  code: (id: string, q = '') => fetch(`/api/wiki/codes/${encodeURIComponent(id)}?${qs({ q })}`).then((r) => json<WikiCodePage>(r)),
   proposals: (p: { dataset?: string; status?: string }) => fetch(`/api/wiki/proposals?${qs(p)}`)
     .then((r) => json<{ rows: WikiProposal[]; counts: Record<string, number> }>(r)),
   propose: (body: { dataset_id: string; kind: string; proposed_value: string; target?: string; reason?: string; author?: string }) =>

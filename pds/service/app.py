@@ -10,7 +10,7 @@
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지·데이터별 표)
-  GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys/{key} · proposals (제안 POST, 승인 POST …/{id}/review)
+  GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys · keys/{key} · codes · codes/{id} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
 from __future__ import annotations
@@ -291,6 +291,27 @@ def api_wiki_page(dsid: str):
     out = wiki.page(sindex.get(), dsid)
     if not out:
         raise HTTPException(404, "지식 체계에 없는 id")
+    return jsonable(out)
+
+
+@app.get("/api/wiki/keys")
+def api_wiki_keys(q: str = ""):
+    from pds.service import wiki
+    return wiki.keys_list(sindex.get(), q)
+
+
+@app.get("/api/wiki/codes")
+def api_wiki_codes(q: str = ""):
+    from pds.service import wiki
+    return wiki.codes_list(sindex.get(), q)
+
+
+@app.get("/api/wiki/codes/{cid}")
+def api_wiki_code(cid: str, q: str | None = None, limit: int = 300):
+    from pds.service import wiki
+    out = wiki.code_page(sindex.get(), cid, q, min(max(limit, 10), 2000))
+    if not out:
+        raise HTTPException(404, "없는 코드표")
     return jsonable(out)
 
 

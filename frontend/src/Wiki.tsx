@@ -19,7 +19,12 @@ import {
 import {
   wikiApi,
   type WikiClaim,
+  type WikiCodePage,
+  type WikiCodeRow,
+  type WikiDsRef,
   type WikiFacets,
+  type WikiKeyPage,
+  type WikiKeyRow,
   type WikiPageOut,
   type WikiProposal,
   type WikiRelation,
@@ -30,7 +35,8 @@ import { Markdown } from './md'
 import { Credit } from './Credit'
 
 // Wiki — knowledge/datasets의 yaml을 찾아 읽고, 관계·키를 따라 옮겨 다니고, 수정을 제안한다.
-// 경로: #/wiki?q=… 탐색 · #/wiki/d/{id} 데이터 문서 · #/wiki/k/{key} 키 문서 · #/wiki/review 제안 검토(승인권자)
+// 경로: #/wiki?q=… 데이터셋 탐색 · #/wiki/d/{id} 데이터 문서 · #/wiki/keys 키 목록 · #/wiki/k/{key} 키 문서
+//       #/wiki/codes 코드표 목록 · #/wiki/c/{id} 코드표 문서 · #/wiki/review 제안 검토(승인권자)
 // 제안은 바로 반영되지 않는다 — 승인권자가 승인하면 yaml에 admin_review 근거로 들어간다.
 
 const n = (v?: number | null) => (v ?? 0).toLocaleString()
@@ -38,6 +44,10 @@ const pct = (v?: number | null) => (v == null ? null : `${Math.round(v * 1000) /
 const go = (path: string) => { window.location.hash = path }
 const dsHref = (id: string) => `#/wiki/d/${encodeURIComponent(id)}`
 const keyHref = (k: string) => `#/wiki/k/${encodeURIComponent(k)}`
+const codeHref = (c: string) => `#/wiki/c/${encodeURIComponent(c)}`
+type Section = 'datasets' | 'keys' | 'codes' | 'review'
+const sectionOf = (route: string): Section =>
+  route === 'keys' || route === 'k' ? 'keys' : route === 'codes' || route === 'c' ? 'codes' : route === 'review' ? 'review' : 'datasets'
 const portal = (id: string) => `https://www.data.go.kr/data/${id}/openapi.do`
 
 const REL_LABEL: Record<string, string> = { joinable: '조인', lookup: '조회(lookup)', related_to: '관련' }
@@ -65,13 +75,23 @@ export function Wiki({ hash }: { hash: string }) {
       <header className="doc-top wiki-top">
         <a className="doc-back" href="#/">← 공공데이터 전략 도우미</a>
         <h1 className="doc-title"><a href="#/wiki" className="wiki-home">Wiki</a></h1>
-        <TopSearch initial={route === '' ? query.get('q') ?? '' : ''} />
+        <TopSearch section={sectionOf(route)} initial={['', 'keys', 'codes'].includes(route) ? query.get('q') ?? '' : ''} />
         <a className="doc-small" href="#/docs">Docs</a>
         <a className="doc-small" href="#/mcp">MCP</a>
         <a className="doc-small wiki-review-link" href="#/wiki/review">제안 검토{pending ? <b>{n(pending)}</b> : null}</a>
       </header>
+      <nav className="wiki-sections" aria-label="위키 구분">
+        {([['datasets', '#/wiki', '데이터셋', facets?.counts.datasets], ['keys', '#/wiki/keys', '키', facets?.counts.keys],
+          ['codes', '#/wiki/codes', '코드표', facets?.counts.codes]] as [Section, string, string, number | undefined][]).map(([k, href, label, c]) => (
+          <a key={k} href={href} className={sectionOf(route) === k ? 'on' : ''} aria-current={sectionOf(route) === k ? 'page' : undefined}>
+            {label}{c != null ? <span>{n(c)}</span> : null}</a>
+        ))}
+      </nav>
       {route === 'd' ? <DatasetPage id={arg} facets={facets} />
         : route === 'k' ? <KeyPage keyId={arg} page={Number(query.get('page') || 1)} />
+        : route === 'keys' ? <KeysList q={query.get('q') ?? ''} />
+        : route === 'c' ? <CodePage codeId={arg} />
+        : route === 'codes' ? <CodesList q={query.get('q') ?? ''} />
         : route === 'review' ? <ReviewPage />
         : <Home query={query} facets={facets} />}
       <div className="wiki-credit"><Credit /></div>
@@ -79,12 +99,18 @@ export function Wiki({ hash }: { hash: string }) {
   )
 }
 
-function TopSearch({ initial }: { initial: string }) {
+const SEARCH: Record<Section, [string, string]> = {
+  datasets: ['/wiki', '데이터 이름·기관·필드·포털 ID로 찾기'], review: ['/wiki', '데이터 이름·기관·필드·포털 ID로 찾기'],
+  keys: ['/wiki/keys', '키 이름·id·발급 기관으로 찾기 (예: 사업자, pnu)'], codes: ['/wiki/codes', '코드표 이름·id·컬럼 이름으로 찾기 (예: 법정동, 업종)'],
+}
+
+function TopSearch({ section, initial }: { section: Section; initial: string }) {
   const [q, setQ] = useState(initial)
   useEffect(() => setQ(initial), [initial])
+  const [path, ph] = SEARCH[section]
   return (
-    <form className="wiki-topsearch" role="search" onSubmit={(e) => { e.preventDefault(); go(`/wiki?q=${encodeURIComponent(q.trim())}`) }}>
-      <AgentTextField search size="sm" aria-label="데이터 검색" placeholder="데이터 이름·기관·필드·포털 ID로 찾기" value={q} onChange={(e) => setQ(e.target.value)} />
+    <form className="wiki-topsearch" role="search" onSubmit={(e) => { e.preventDefault(); go(q.trim() ? `${path}?q=${encodeURIComponent(q.trim())}` : path) }}>
+      <AgentTextField search size="sm" aria-label="위키 검색" placeholder={ph} value={q} onChange={(e) => setQ(e.target.value)} />
     </form>
   )
 }
@@ -121,7 +147,7 @@ function Home({ query, facets }: { query: URLSearchParams; facets: WikiFacets | 
             <li key={s}><button type="button" className={p.sector === s ? 'on' : ''} onClick={() => set({ sector: s })}><em>{s}</em><span>{n(c)}</span></button></li>
           ))}
         </ul>
-        <p className="doc-toc-h">많이 쓰이는 키</p>
+        <p className="doc-toc-h">많이 쓰이는 키 <a href="#/wiki/keys" className="wiki-x">전체 보기</a></p>
         <ul className="wiki-facet">
           {facets?.keys.slice(0, 16).map(([key, c]) => (
             <li key={key}><a href={keyHref(key)} title={key}><em>{key}</em><span>{n(c)}</span></a></li>
@@ -153,7 +179,7 @@ function Home({ query, facets }: { query: URLSearchParams; facets: WikiFacets | 
   )
 }
 
-function RowCard({ r }: { r: WikiRow }) {
+function RowCard({ r, fields }: { r: WikiRow; fields?: string[] }) {
   return (
     <li className="wiki-card">
       <div className="wiki-card-h">
@@ -168,6 +194,7 @@ function RowCard({ r }: { r: WikiRow }) {
       {r.summary ? <p className="wiki-sum">{r.summary}</p> : null}
       <div className="wiki-meta">
         <span>관계 {n(r.edges)} · 실측 {n(r.measured)}</span>
+        {fields?.length ? <span>필드 {fields.join(', ')}</span> : null}
         {r.keys.slice(0, 5).map((k) => <a key={k} className="wiki-key" href={keyHref(k)}>{k}</a>)}
       </div>
     </li>
@@ -278,6 +305,7 @@ function About({ d, onPropose }: { d: WikiPageOut; onPropose: Propose }) {
       {d.keys.length ? (
         <ul className="wiki-chips">{d.keys.map((k) => <li key={k.id}><a className="wiki-key" href={keyHref(k.id)}>{k.name}</a><span className="doc-small"> {n(k.datasets)}건이 함께 씀</span></li>)}</ul>
       ) : <p className="doc-small">실측된 전역 조인 키가 없습니다.</p>}
+      <CodeLinks fields={ds.schema?.fields ?? []} />
       <h3 className="doc-h3">검색어 <button type="button" className="wiki-x" onClick={() => onPropose({ kind: 'synonym' })}>검색어 추가 제안</button></h3>
       <ul className="wiki-chips">{(ds.synonyms ?? []).map((s) => <li key={s}><AgentChip variant="neutral">{s}</AgentChip></li>)}</ul>
       {d.family.length ? (<>
@@ -286,6 +314,15 @@ function About({ d, onPropose }: { d: WikiPageOut; onPropose: Propose }) {
       </>) : null}
     </div>
   )
+}
+
+function CodeLinks({ fields }: { fields: { name: string; code_list?: string | null }[] }) {
+  const cl = fields.filter((f) => f.code_list)
+  if (!cl.length) return null
+  return (<>
+    <h3 className="doc-h3">코드값의 뜻 — 코드표</h3>
+    <ul className="wiki-chips">{cl.map((f) => <li key={f.name}><a className="wiki-key wiki-key--code" href={codeHref(f.code_list!)}>{f.code_list}</a><span className="doc-small"> ← {f.name}</span></li>)}</ul>
+  </>)
 }
 
 function Fields({ d, onPropose }: { d: WikiPageOut; onPropose: Propose }) {
@@ -301,13 +338,14 @@ function Fields({ d, onPropose }: { d: WikiPageOut; onPropose: Propose }) {
   if (!fields.length) return <AgentEmptyState compact title="실측 필드가 없습니다" description="아직 표본을 내려받지 못한 데이터입니다." />
   return (
     <div className="wiki-sec">
-      <AgentTable caption="필드 (실측 표본 기준)" columns={[{ key: 'name', label: '필드' }, { key: 'type', label: '형식' }, { key: 'skey', label: '키' },
+      <AgentTable caption="필드 (실측 표본 기준)" columns={[{ key: 'name', label: '필드' }, { key: 'type', label: '형식' }, { key: 'skey', label: '키·코드표' },
         { key: 'null', label: '빈 값', numeric: true }, { key: 'sample', label: '표본 값' }, { key: 'note', label: '설명' }]}
         rows={fields.map((f) => ({
           key: f.name,
           name: <span><b>{f.name}</b>{f.title && f.title !== f.name ? <span className="doc-small"> {f.title}</span> : null}</span>,
           type: f.type ?? '',
-          skey: f.semantic_type ? <a className="wiki-key" href={keyHref(f.semantic_type)}>{f.semantic_type}</a> : '',
+          skey: <span className="wiki-chips">{f.semantic_type ? <a className="wiki-key" href={keyHref(f.semantic_type)}>{f.semantic_type}</a> : null}
+            {f.code_list ? <a className="wiki-key wiki-key--code" href={codeHref(f.code_list)}>{f.code_list}</a> : null}</span>,
           null: f.null_rate == null ? '' : pct(f.null_rate),
           sample: <span className="wiki-sample">{(f.sample_values ?? []).slice(0, 3).map(String).join(' · ')}</span>,
           note: <span>{[f.description, ...(notes[f.name] ?? [])].filter(Boolean).join(' / ')}{' '}
@@ -527,23 +565,181 @@ function ReviewPage() {
   )
 }
 
-// ─────────── 키 문서
+// ─────────── 키
+const KEY_TYPE: Record<string, string> = { primary: '기본 키', foreign: '외래 키', natural: '자연 키', unique: '고유 키' }
+const KEY_SCOPE: Record<string, string> = { global: '전역', family: '가족 안' }
+const PAGE = 100
+
+function useList<T>(load: () => Promise<T[]>, dep: string) {
+  const [rows, setRows] = useState<T[] | null>(null)
+  const [err, setErr] = useState<string | null>(null)
+  useEffect(() => { setRows(null); setErr(null); load().then(setRows).catch((e: Error) => setErr(e.message)) }, [dep]) // eslint-disable-line react-hooks/exhaustive-deps
+  return { rows, err }
+}
+
+function ListShell({ title, lead, q, total, err, children, page, pageCount, onPage }: {
+  title: string; lead: ReactNode; q: string; total?: number; err: string | null; children: ReactNode; page: number; pageCount: number; onPage: (p: number) => void
+}) {
+  return (
+    <div className="doc-single wiki-doc">
+      <AgentBreadcrumb label="위치" items={[{ label: 'Wiki', href: '#/wiki' }, { label: title }]} />
+      <h2 className="wiki-h">{title}</h2>
+      <p className="doc-p">{lead}</p>
+      {total != null ? <p className="doc-small">{q ? `‘${q}’ ` : ''}{n(total)}개</p> : null}
+      {err ? <AgentAlert tone="error" title="불러오지 못했습니다">{err}</AgentAlert> : children}
+      {pageCount > 1 ? <AgentPagination page={page} pageCount={pageCount} onChange={onPage} label={`${title} 페이지`} /> : null}
+    </div>
+  )
+}
+
+function KeysList({ q }: { q: string }) {
+  const { rows, err } = useList<WikiKeyRow>(() => wikiApi.keys(q), q)
+  const [page, setPage] = useState(1)
+  useEffect(() => setPage(1), [q])
+  const shown = (rows ?? []).slice((page - 1) * PAGE, page * PAGE)
+  return (
+    <ListShell title="키" q={q} total={rows?.length} err={err} page={page} pageCount={Math.ceil((rows?.length ?? 0) / PAGE)} onPage={setPage}
+      lead={<>데이터와 데이터를 잇는 식별자입니다 — 사업자등록번호·필지(PNU)·법정동 코드처럼 여러 기관이 함께 쓰는 <b>전역 키</b>와 한 기관 안에서만 통하는 <b>기관 고유 키</b>가 있습니다. 같은 키를 가진 데이터끼리는 조인 후보가 됩니다.</>}>
+      {!rows ? <AgentSkeleton variant="text" lines={12} /> : !rows.length ? <AgentEmptyState title="찾은 키가 없습니다" /> : (
+        <AgentTable caption="키 목록 — 쓰는 데이터가 많은 순" columns={[{ key: 'name', label: '키' }, { key: 'kind', label: '종류' }, { key: 'issuer', label: '발급' },
+          { key: 'ds', label: '쓰는 데이터', numeric: true }, { key: 'more', label: '원장·매핑·코드표' }]}
+          rows={shown.map((k) => ({
+            key: k.id,
+            name: <span><a href={keyHref(k.id)}><b>{k.name}</b></a> <span className="wiki-id">{k.id}</span></span>,
+            kind: `${KEY_TYPE[k.type ?? ''] ?? k.type ?? ''}${k.scope ? ` · ${KEY_SCOPE[k.scope] ?? k.scope}` : ''}`,
+            issuer: k.issuer ?? (k.agency ? `기관 ${k.agency}` : ''),
+            ds: n(k.datasets),
+            more: [k.masters ? `원장 ${k.masters}` : '', k.mappings ? `매핑 ${k.mappings}` : '', k.codes ? `코드표 ${k.codes}` : ''].filter(Boolean).join(' · '),
+          }))} />
+      )}
+    </ListShell>
+  )
+}
+
+function DsRefLink({ r }: { r: WikiDsRef }) {
+  return (
+    <>
+      {r.known ? <a href={dsHref(r.id)}>{r.title ?? r.id}</a> : <a href={portal(r.id)} target="_blank" rel="noreferrer">{r.title ?? r.id} ↗</a>}
+      <span className="wiki-id"> {r.id}</span>{r.agency ? <span className="doc-small"> · {r.agency}</span> : null}
+      {r.fields?.length ? <span className="doc-small"> · 필드 <code>{r.fields.join(', ')}</code></span> : null}
+    </>
+  )
+}
+
 function KeyPage({ keyId, page }: { keyId: string; page: number }) {
-  const [d, setD] = useState<Awaited<ReturnType<typeof wikiApi.key>> | null>(null)
+  const [d, setD] = useState<WikiKeyPage | null>(null)
   const [err, setErr] = useState<string | null>(null)
   useEffect(() => { setD(null); setErr(null); wikiApi.key(keyId, page).then(setD).catch((e: Error) => setErr(e.message)) }, [keyId, page])
   if (err) return <div className="doc-single"><AgentAlert tone="error" title="키를 찾지 못했습니다">{err}</AgentAlert></div>
   if (!d) return <div className="doc-single"><AgentSkeleton variant="text" lines={10} /></div>
-  const pages = Math.max(1, Math.ceil(d.total / 50))
+  const k = d.key
+  const pages = Math.max(1, Math.ceil(d.total / d.size))
   return (
     <div className="doc-single wiki-doc">
-      <AgentBreadcrumb label="위치" items={[{ label: 'Wiki', href: '#/wiki' }, { label: '키' }, { label: d.key.name }]} />
-      <h2 className="wiki-h">{d.key.name} <span className="wiki-id">{d.key.id}</span></h2>
-      <KV rows={[['형식', d.key.format], ['종류', d.key.type], ['메모', d.key.notes]]} />
-      <p className="doc-p">이 키를 필드로 가진 데이터 {n(d.total)}건 — 같은 키를 쓰는 데이터끼리는 조인 후보가 됩니다. 실측된 관계가 많은 순입니다.
-        {' '}<a href={`#/wiki?key=${encodeURIComponent(d.key.id)}`}>검색·거르기와 함께 보기</a></p>
-      <ul className="wiki-list">{d.rows.map((r) => <RowCard key={r.id} r={r} />)}</ul>
+      <AgentBreadcrumb label="위치" items={[{ label: 'Wiki', href: '#/wiki' }, { label: '키', href: '#/wiki/keys' }, { label: k.name }]} />
+      <header className="wiki-head">
+        <h2 className="wiki-h">{k.name}</h2>
+        <div className="wiki-meta">
+          <span className="wiki-id">{k.id}</span>
+          {k.type ? <AgentChip variant="neutral">{KEY_TYPE[k.type] ?? k.type}</AgentChip> : null}
+          {k.scope ? <AgentChip variant={k.scope === 'global' ? 'primary' : 'neutral'}>{KEY_SCOPE[k.scope] ?? k.scope}</AgentChip> : null}
+        </div>
+      </header>
+      <KV rows={[['형식', k.format], ['검증 정규식', k.pattern ? <code>{k.pattern}</code> : null], ['발급', k.issuer], ['운영 기관', k.agency],
+        ['다른 이름', (k.shape_names ?? []).join(', ')], ['메모', k.notes]]} />
+      {d.masters.length ? (<><h3 className="doc-h3">원장 — 이 키의 전체 값을 가진 데이터</h3>
+        <ul className="wiki-links">{d.masters.map((m) => <li key={m.id}><DsRefLink r={m} /></li>)}</ul></>) : null}
+      {d.composed_of.length || d.related.length ? (<><h3 className="doc-h3">관련 키</h3>
+        <ul className="wiki-links">
+          {d.composed_of.map((c) => <li key={`c-${c.key}`}>구성 요소 <a href={keyHref(c.key)}>{c.name ?? c.key}</a> <span className="wiki-id">{c.key}</span></li>)}
+          {d.related.map((r, i) => <li key={`r-${i}`}>{r.relation} <a href={keyHref(r.key)}>{r.name ?? r.key}</a> <span className="wiki-id">{r.key}</span>{r.note ? <span className="doc-small"> · {r.note}</span> : null}</li>)}
+        </ul></>) : null}
+      {d.mappings.length ? (<><h3 className="doc-h3">매핑 — 다른 코드 체계로 바꾸는 표</h3>
+        <AgentTable caption="매핑" columns={[{ key: 'm', label: '매핑' }, { key: 'how', label: '방법' }, { key: 'rows', label: '행', numeric: true }, { key: 'rate', label: '매칭률', numeric: true }]}
+          rows={d.mappings.map((m) => ({ key: m.id, m: <span><a href={keyHref(m.left.key)}>{m.left.key}</a> ({m.left.system}) → <a href={keyHref(m.right.key)}>{m.right.key}</a> ({m.right.system})</span>,
+            how: m.method ?? '', rows: n(m.rows), rate: pct(m.match_rate) ?? '' }))} /></>) : null}
+      {d.codes.length ? (<><h3 className="doc-h3">코드표</h3>
+        <ul className="wiki-chips">{d.codes.map((c) => <li key={c.id}><a className="wiki-key wiki-key--code" href={codeHref(c.id)}>{c.name}</a><span className="doc-small"> {n(c.rows)}개 값</span></li>)}</ul></>) : null}
+      <h3 className="doc-h3">이 키를 가진 데이터 {n(d.total)}건</h3>
+      <p className="doc-small">같은 키를 쓰는 데이터끼리는 조인 후보가 됩니다. 실측된 관계가 많은 순입니다. <a href={`#/wiki?key=${encodeURIComponent(k.id)}`}>검색·거르기와 함께 보기</a></p>
+      <ul className="wiki-list">{d.rows.map((r) => <RowCard key={r.id} r={r} fields={r.fields} />)}</ul>
       {pages > 1 ? <AgentPagination page={page} pageCount={pages} onChange={(pg) => go(`/wiki/k/${encodeURIComponent(keyId)}?page=${pg}`)} label="키 데이터 페이지" /> : null}
+      <p className="doc-small wiki-file">원본: <code>{d.file}</code></p>
+    </div>
+  )
+}
+
+// ─────────── 코드표
+const COMPLETE_TONE: Record<string, 'primary' | 'secondary' | 'neutral'> = { complete: 'primary', master_scan: 'secondary', observed: 'neutral' }
+const COMPLETE_SHORT: Record<string, string> = { complete: '전체', master_scan: '원장 전수', observed: '표본' }
+
+function CodesList({ q }: { q: string }) {
+  const { rows, err } = useList<WikiCodeRow>(() => wikiApi.codes(q), q)
+  const [page, setPage] = useState(1)
+  useEffect(() => setPage(1), [q])
+  const shown = (rows ?? []).slice((page - 1) * PAGE, page * PAGE)
+  return (
+    <ListShell title="코드표" q={q} total={rows?.length} err={err} page={page} pageCount={Math.ceil((rows?.length ?? 0) / PAGE)} onPage={setPage}
+      lead={<>코드값 → 이름 표입니다. 응답에 <code>clCd=31</code>처럼 코드만 오는 필드를 사람 말로 풀고, 조회 파라미터에 정확한 코드를 넣을 때 씁니다.
+        <b> 전체</b>는 공식 원천 전체, <b>원장 전수</b>는 전수 원장에서 실제로 쓰이는 값 전부, <b>표본</b>은 표본에서 본 값만입니다.</>}>
+      {!rows ? <AgentSkeleton variant="text" lines={12} /> : !rows.length ? <AgentEmptyState title="찾은 코드표가 없습니다" /> : (
+        <AgentTable caption="코드표 목록 — 쓰는 데이터가 많은 순" columns={[{ key: 'name', label: '코드표' }, { key: 'c', label: '범위' }, { key: 'rows', label: '값', numeric: true },
+          { key: 'key_', label: '키' }, { key: 'ds', label: '쓰는 데이터', numeric: true }, { key: 'al', label: '실리는 컬럼' }]}
+          rows={shown.map((c) => ({
+            key: c.id,
+            name: <span><a href={codeHref(c.id)}><b>{c.name}</b></a> <span className="wiki-id">{c.id}</span></span>,
+            c: <AgentChip variant={COMPLETE_TONE[c.completeness] ?? 'neutral'}>{COMPLETE_SHORT[c.completeness] ?? c.completeness}</AgentChip>,
+            rows: n(c.rows),
+            key_: c.key ? <a className="wiki-key" href={keyHref(c.key)}>{c.key}</a> : '',
+            ds: n(c.datasets),
+            al: <span className="wiki-sample">{c.aliases.slice(0, 4).join(', ')}</span>,
+          }))} />
+      )}
+    </ListShell>
+  )
+}
+
+function CodePage({ codeId }: { codeId: string }) {
+  const [d, setD] = useState<WikiCodePage | null>(null)
+  const [err, setErr] = useState<string | null>(null)
+  const [q, setQ] = useState('')
+  const [applied, setApplied] = useState('')
+  useEffect(() => { setQ(''); setApplied('') }, [codeId])
+  useEffect(() => { setErr(null); wikiApi.code(codeId, applied).then(setD).catch((e: Error) => setErr(e.message)) }, [codeId, applied])
+  if (err) return <div className="doc-single"><AgentAlert tone="error" title="코드표를 찾지 못했습니다">{err}</AgentAlert></div>
+  if (!d || d.code.id !== codeId) return <div className="doc-single"><AgentSkeleton variant="text" lines={10} /></div>
+  const c = d.code
+  const cols = [...new Set(d.values.flatMap((v) => Object.keys(v)))].filter((k) => !['code', 'name'].includes(k)).slice(0, 4)
+  return (
+    <div className="doc-single wiki-doc">
+      <AgentBreadcrumb label="위치" items={[{ label: 'Wiki', href: '#/wiki' }, { label: '코드표', href: '#/wiki/codes' }, { label: c.name }]} />
+      <header className="wiki-head">
+        <h2 className="wiki-h">{c.name}</h2>
+        <div className="wiki-meta">
+          <span className="wiki-id">{c.id}</span>
+          <AgentChip variant={COMPLETE_TONE[c.completeness] ?? 'neutral'}>{c.completeness_label}</AgentChip>
+          <span>값 {n(c.rows)}개</span>
+          {c.key ? <span>키 <a className="wiki-key" href={keyHref(c.key)}>{c.key_name ?? c.key}</a></span> : null}
+        </div>
+      </header>
+      <KV rows={[['실리는 컬럼', (c.aliases ?? []).join(', ')], ['메모', c.notes],
+        ['근거', c.evidence.map((e, i) => <span key={i} className="wiki-ev">{EVIDENCE_LABEL[e.type] ?? e.type} · {e.source}{e.observed_at || e.at ? ` · ${e.observed_at ?? e.at}` : ''}{e.detail ? ` · ${e.detail}` : ''}</span>)]]} />
+      <h3 className="doc-h3">이 코드를 쓰는 데이터 {n(d.used_by.length)}건</h3>
+      {d.used_by.length ? <ul className="wiki-links">{d.used_by.map((u) => <li key={u.id}><DsRefLink r={u} /></li>)}</ul>
+        : <p className="doc-small">아직 필드와 연결된 데이터가 없습니다.</p>}
+      <h3 className="doc-h3">코드값</h3>
+      <form className="wiki-filters" onSubmit={(e) => { e.preventDefault(); setApplied(q.trim()) }}>
+        <AgentTextField size="sm" search aria-label="코드값 찾기" placeholder="코드나 이름으로 찾기" value={q} onChange={(e) => setQ(e.target.value)} />
+        <AgentButton size="sm" variant="secondary" type="submit">찾기</AgentButton>
+        {applied ? <button type="button" className="wiki-x" onClick={() => { setQ(''); setApplied('') }}>전체 보기</button> : null}
+      </form>
+      <p className="doc-small">{applied ? `‘${applied}’ ${n(d.values_shown)}개` : `앞에서 ${n(d.values_shown)}개`}{c.rows > d.values_shown && !applied ? ` (전체 ${n(c.rows)}개 — 찾기로 좁혀 보세요)` : ''}</p>
+      {d.values.length ? (
+        <AgentTable caption="코드값" columns={[{ key: 'code', label: '코드' }, { key: 'name', label: '이름' }, ...cols.map((k) => ({ key: `x_${k}`, label: k }))]}
+          rows={d.values.map((v, i) => ({ key: `${String(v.code)}-${i}`, code: <code>{String(v.code ?? '')}</code>, name: String(v.name ?? ''),
+            ...Object.fromEntries(cols.map((k) => [`x_${k}`, v[k] == null ? '' : String(v[k])])) }))} />
+      ) : <AgentEmptyState compact title="해당하는 코드값이 없습니다" />}
+      <p className="doc-small wiki-file">원본: <code>{d.file}</code>{c.file ? <> · 값 <code>knowledge/{c.file}</code></> : null}</p>
     </div>
   )
 }

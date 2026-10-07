@@ -54,3 +54,18 @@ def test_reviewer_token(monkeypatch):
     monkeypatch.setenv("WIKI_ADMIN_TOKENS", "구름:abc, 대표:xyz")
     assert wiki.reviewer_of("xyz") == "대표"
     assert wiki.reviewer_of("nope") is None and wiki.reviewer_of(None) is None
+
+
+def test_keys_codes_pages():
+    """실제 색인 — 키·코드표 목록과 문서가 서로 이어진다."""
+    from pds.service import index
+    ix = index.get()
+    keys = {k["id"]: k for k in wiki.keys_list(ix)}
+    assert len(keys) == len(ix.keys) and keys["bizno"]["datasets"] > 0
+    kp = wiki.key_page(ix, "bizno")
+    assert kp["total"] == keys["bizno"]["datasets"] and all("fields" in r for r in kp["rows"])
+    codes = {c["id"]: c for c in wiki.codes_list(ix)}
+    assert len(codes) == len(ix.codes)
+    cp = wiki.code_page(ix, "hira_cl_cd")
+    assert any(u["id"] == "15001698" and "clCd" in u["fields"] for u in cp["used_by"]) and cp["values"]
+    assert wiki.code_page(ix, "없는코드") is None

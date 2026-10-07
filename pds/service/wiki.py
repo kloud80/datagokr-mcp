@@ -40,17 +40,43 @@ def _derived(ix) -> dict:
             if e.get("verified"):
                 measured[s] += 1
     by_key: dict[str, set[str]] = defaultdict(set)
+    key_field: dict[tuple[str, str], list[str]] = defaultdict(list)  # (키, 데이터) → 그 키를 담은 필드 이름
+    code_users: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))  # 코드표 → 데이터 → 필드
     for d in ix.datasets.values():
         for k in _keys_of(d):
             by_key[k].add(d["id"])
+        sch = d.get("schema") or {}
+        for f in sch.get("fields") or []:
+            if f.get("semantic_type"):
+                key_field[(f["semantic_type"], d["id"])].append(f["name"])
+            if f.get("code_list"):
+                code_users[f["code_list"]][d["id"]].append(f["name"])
+        for fk in sch.get("foreign_keys") or []:
+            k = (fk.get("reference") or {}).get("key")
+            for name in fk.get("fields") or []:
+                if k and name not in key_field[(k, d["id"])]:
+                    key_field[(k, d["id"])].append(name)
+    for k in ix.keys.values():  # 기관 고유 키처럼 필드 이름이 데이터마다 다른 키 (Key.fields)
+        for kf in k.get("fields") or []:
+            for dsid in kf.get("datasets") or []:
+                if dsid in ix.datasets:
+                    by_key[k["id"]].add(dsid)
+                    for name in kf.get("names") or []:
+                        if name not in key_field[(k["id"], dsid)]:
+                            key_field[(k["id"], dsid)].append(name)
+    for c in ix.codes.values():
+        for u in c.get("used_by") or []:
+            if u.get("dataset") in ix.datasets and u.get("field") not in code_users[c["id"]][u["dataset"]]:
+                code_users[c["id"]][u["dataset"]].append(u["field"])
     cat = {}
     if ix.catalog is not None:
         cat = dict(zip(ix.catalog["id"].astype(str), ix.catalog["title"].fillna("")))
     sectors = Counter(d["sector"].split("/")[0] for d in ix.datasets.values())
     agencies = Counter(d["agency"]["name"] for d in ix.datasets.values())
     grades = Counter(((d.get("facets") or {}).get("grade") or ["핵심"])[0] for d in ix.datasets.values())
-    c = {"degree": degree, "measured": measured, "by_key": by_key, "catalog_title": cat,
-         "facets": {"sectors": sectors.most_common(), "agencies": agencies.most_common(400), "grades": grades.most_common(),
+    c = {"degree": degree, "measured": measured, "by_key": by_key, "key_field": key_field, "code_users": code_users, "catalog_title": cat,
+         "facets": {"counts": {"datasets": len(ix.datasets), "keys": len(ix.keys), "codes": len(ix.codes)},
+                    "sectors": sectors.most_common(), "agencies": agencies.most_common(400), "grades": grades.most_common(),
                     "keys": sorted(((k, len(v)) for k, v in by_key.items()), key=lambda x: -x[1])}}
     _CACHE.clear()
     _CACHE[id(ix)] = c
@@ -154,15 +180,80 @@ def page(ix, dsid: str) -> dict | None:
             "file": str(store.dataset_path(d["sector"], dsid).relative_to(config.ROOT)).replace("\\", "/")}
 
 
+def _ds_ref(ix, x: dict, dsid: str) -> dict:
+    t, known = _title(ix, x, dsid)
+    d = ix.datasets.get(dsid) or {}
+    return {"id": dsid, "title": t, "known": known, "agency": (d.get("agency") or {}).get("name")}
+
+
+def keys_list(ix, q: str = "") -> list[dict]:
+    """키 전체 (knowledge/keys) — 쓰는 데이터 수 · 원장 · 매핑 · 코드표."""
+    x = _derived(ix)
+    maps = Counter(s["key"] for m in ix.mappings.values() for s in (m["left"], m["right"]))
+    codes = Counter(c.get("key") for c in ix.codes.values() if c.get("key"))
+    ql = (q or "").strip().lower()
+    out = []
+    for k in ix.keys.values():
+        if ql and ql not in " ".join(str(v) for v in (k["id"], k.get("name"), k.get("notes"), k.get("issuer"), " ".join(k.get("shape_names") or []))).lower():
+            continue
+        out.append({"id": k["id"], "name": k.get("name"), "type": k.get("type"), "scope": k.get("scope"), "issuer": k.get("issuer"),
+                    "agency": k.get("agency"), "datasets": len(x["by_key"].get(k["id"], ())), "masters": len(k.get("master_datasets") or []),
+                    "mappings": maps.get(k["id"], 0), "codes": codes.get(k["id"], 0)})
+    out.sort(key=lambda r: (-r["datasets"], r["id"]))
+    return out
+
+
 def key_page(ix, key: str, page_no: int = 1, size: int = 50) -> dict | None:
     x = _derived(ix)
     ids = x["by_key"].get(key)
     meta = ix.keys.get(key)
     if not ids and not meta:
         return None
+    meta = meta or {"id": key, "name": key}
     ds = sorted((ix.datasets[i] for i in ids or ()), key=lambda d: (-x["measured"].get(d["id"], 0), d["title"]))
-    return {"key": meta or {"id": key, "name": key}, "total": len(ds), "page": page_no,
-            "rows": [_row(d, x) for d in ds[(page_no - 1) * size: page_no * size]]}
+    rows = [{**_row(d, x), "fields": x["key_field"].get((key, d["id"]), [])} for d in ds[(page_no - 1) * size: page_no * size]]
+    mappings = [{"id": m["id"], "left": m["left"], "right": m["right"], "method": m.get("method"), "rows": m.get("rows"),
+                 "match_rate": m.get("match_rate"), "notes": m.get("notes")}
+                for m in ix.mappings.values() if key in (m["left"]["key"], m["right"]["key"])]
+    related = [{**r, "name": (ix.keys.get(r["key"]) or {}).get("name")} for r in meta.get("related_keys") or []]
+    related += [{"key": k["id"], "relation": f"{r['relation']} (상대 쪽)", "note": r.get("note"), "name": k.get("name")}
+                for k in ix.keys.values() for r in k.get("related_keys") or [] if r["key"] == key]
+    return {"key": {k: v for k, v in meta.items() if k != "fields"}, "total": len(ds), "page": page_no, "size": size, "rows": rows,
+            "masters": [_ds_ref(ix, x, i) for i in meta.get("master_datasets") or []],
+            "composed_of": [{"key": k, "name": (ix.keys.get(k) or {}).get("name")} for k in meta.get("composed_of") or []],
+            "related": related, "mappings": mappings,
+            "codes": [{"id": c["id"], "name": c["name"], "rows": c["rows"]} for c in ix.codes.values() if c.get("key") == key],
+            "file": f"knowledge/keys/{key}.yaml"}
+
+
+COMPLETENESS = {"complete": "공식 원천 전체", "master_scan": "전수 원장에서 쓰이는 값 전부", "observed": "표본에서 본 값만"}
+
+
+def codes_list(ix, q: str = "") -> list[dict]:
+    x = _derived(ix)
+    ql = (q or "").strip().lower()
+    out = []
+    for c in ix.codes.values():
+        if ql and ql not in " ".join(str(v) for v in (c["id"], c["name"], c.get("notes"), " ".join(c.get("aliases") or []))).lower():
+            continue
+        out.append({"id": c["id"], "name": c["name"], "key": c.get("key"), "completeness": c["completeness"], "rows": c["rows"],
+                    "aliases": c.get("aliases") or [], "datasets": len(x["code_users"].get(c["id"], {}))})
+    out.sort(key=lambda r: (-r["datasets"], r["id"]))
+    return out
+
+
+def code_page(ix, cid: str, q: str | None = None, limit: int = 300) -> dict | None:
+    c = ix.codes.get(cid)
+    if not c:
+        return None
+    x = _derived(ix)
+    users = x["code_users"].get(cid, {})
+    used = sorted(({**_ds_ref(ix, x, i), "fields": f} for i, f in users.items()), key=lambda r: r["title"] or "")
+    vals = ix.code_values(cid, q, limit)
+    return {"code": {**c, "completeness_label": COMPLETENESS.get(c["completeness"], c["completeness"]),
+                     "key_name": (ix.keys.get(c.get("key") or "") or {}).get("name")},
+            "used_by": used, "values": vals, "values_shown": len(vals), "q": q,
+            "file": f"knowledge/codes/{cid}.yaml"}
 
 
 # ─────────── 제안·승인 (Postgres pds_wiki_proposal)
