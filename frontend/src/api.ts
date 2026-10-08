@@ -390,6 +390,7 @@ export interface WikiPageOut {
   keys: { id: string; name: string; datasets: number }[]
   family: { id: string; title: string; agency: string }[]
   dossier_md?: string | null
+  signup?: Signup | null
   file: string
 }
 

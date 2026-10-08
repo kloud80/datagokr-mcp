@@ -255,6 +255,7 @@ function DatasetPage({ id, facets }: { id: string; facets: WikiFacets | null }) 
           <AgentButton size="sm" variant="secondary" onClick={() => setDraft({ kind: 'summary' })}>수정 제안</AgentButton>
         </div>
       </header>
+      {d.signup?.required ? <AgentAlert tone="warning" title={`외부 가입 필요 — ${d.signup.site}`}>{d.signup.text}</AgentAlert> : null}
       {sent ? <AgentAlert tone="success" title={`제안 #${sent}을 받았습니다`}>승인권자가 검토한 뒤 반영 여부를 정합니다. ‘제안’ 탭에서 진행 상황을 볼 수 있습니다.</AgentAlert> : null}
 
       <AgentTabs label="문서 구획" value={tab} onChange={(v) => setTab(v as Tab)} items={[

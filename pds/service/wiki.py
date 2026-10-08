@@ -20,6 +20,7 @@ from collections import Counter, defaultdict
 
 from pds import config
 from pds.schema import store
+from pds.strategy import signup
 
 KINDS = {"summary": "설명 고쳐 쓰기", "synonym": "검색어 추가", "limit": "주의사항 추가", "field": "필드 설명",
          "relation": "다른 데이터와의 관계", "note": "그 밖의 사실·의견"}
@@ -175,7 +176,9 @@ def page(ix, dsid: str) -> dict | None:
         family = [{"id": o["id"], "title": o["title"], "agency": o["agency"]["name"]} for o in ix.datasets.values()
                   if o.get("family") == d["family"] and o["id"] != dsid][:50]
     md = config.ROOT / "docs" / "dossiers" / f"{d.get('family') or dsid}.md"
-    return {"dataset": d, "relations": shown, "relation_totals": totals, "keys": keys, "family": family,
+    sec = ((d.get("services") or [{}])[0].get("security") or {})
+    note = signup.note(dsid, d.get("channel") == "external", sec.get("issuer"), (d.get("agency") or {}).get("name"))
+    return {"dataset": d, "signup": note, "relations": shown, "relation_totals": totals, "keys": keys, "family": family,
             "dossier_md": md.read_text(encoding="utf-8") if md.exists() else None,
             "file": str(store.dataset_path(d["sector"], dsid).relative_to(config.ROOT)).replace("\\", "/")}
 
