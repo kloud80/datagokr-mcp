@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>포털 AI 비교 1천 문항</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #e4e4e0;
+  --ours: #2563eb; --ours-soft: #dbe7fd; --portal: #d97706; --portal-soft: #fcebd2; --tie: #9ca3af;
+  --good: #15803d; --bad: #b91c1c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131315; --panel: #1c1c1f; --ink: #ececee; --muted: #9a9aa2; --line: #2e2e33;
+    --ours: #6b9cff; --ours-soft: #1e2b47; --portal: #f0a43a; --portal-soft: #3d2c12; --tie: #6b7280;
+    --good: #4ade80; --bad: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131315; --panel: #1c1c1f; --ink: #ececee; --muted: #9a9aa2; --line: #2e2e33;
+  --ours: #6b9cff; --ours-soft: #1e2b47; --portal: #f0a43a; --portal-soft: #3d2c12; --tie: #6b7280;
+  --good: #4ade80; --bad: #f87171;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
+h2 { font-size: 19px; margin: 44px 0 12px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 20px 0 8px; }
+p { margin: 6px 0; }
+.sub { color: var(--muted); font-size: 13.5px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 18px; }
+.kpi .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.kpi .l { color: var(--muted); font-size: 13px; }
+.ours { color: var(--ours); } .portal { color: var(--portal); }
+.bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--line); }
+.bar span { display: block; height: 100%; }
+.bar .o { background: var(--ours); } .bar .p { background: var(--portal); } .bar .t { background: var(--tie); }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); margin: 8px 0 0; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { color: var(--muted); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.barcell { width: 38%; min-width: 140px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } td.barcell { min-width: 90px; } }
+.crit-row { display: grid; grid-template-columns: 90px 1fr 44px; gap: 8px; align-items: center; font-size: 13.5px; margin: 6px 0; }
+.crit-row .track { background: var(--line); height: 9px; border-radius: 5px; overflow: hidden; }
+.crit-row .fill { height: 100%; border-radius: 5px; }
+.note { border-left: 3px solid var(--ours); padding: 2px 0 2px 12px; margin: 10px 0; }
+.note.warn { border-color: var(--portal); }
+ul.find { padding-left: 1.2em; margin: 6px 0; } ul.find li { margin: 4px 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.filters input, .filters select { font: inherit; font-size: 13.5px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink); }
+.filters input { flex: 1 1 220px; min-width: 0; }
+.qrow { border-bottom: 1px solid var(--line); }
+.qrow summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; padding: 8px 4px; align-items: baseline; }
+.qrow summary::-webkit-details-marker { display: none; }
+.qid { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.chip { display: inline-block; font-size: 11.5px; padding: 1px 7px; border-radius: 10px; white-space: nowrap; }
+.chip.ours { background: var(--ours-soft); color: var(--ours); } .chip.portal { background: var(--portal-soft); color: var(--portal); }
+.chip.tie { background: var(--line); color: var(--muted); }
+.meta { color: var(--muted); font-size: 12px; }
+.qbody { padding: 4px 4px 14px 64px; font-size: 13.5px; }
+@media (max-width: 720px) { .qbody { padding-left: 4px; } .qrow summary { grid-template-columns: 46px 1fr; } .qrow summary .chip { grid-column: 2; justify-self: start; } }
+.lists { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+@media (max-width: 720px) { .lists { grid-template-columns: 1fr; } }
+.lists ol { margin: 4px 0; padding-left: 1.4em; } .lists li { margin: 2px 0; }
+.s2 { color: var(--good); font-weight: 600; } .s1 { color: var(--muted); } .s0 { color: var(--bad); }
+a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 2px; }
+.more { margin: 12px 0; text-align: center; }
+.more button { font: inherit; font-size: 13.5px; padding: 7px 16px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.method li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>공공데이터포털 AI 검색 vs 우리 서비스 — 1천 문항 비교</h1>
+  <p class="sub">생성 __GENERATED__ · 질문 1,000개(16개 분야 + 분야 넘나듦, 5가지 질문 유형) · 같은 질문을 두 서비스에 묻고 Opus가 출처를 숨긴 채 판정</p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>요약</h2>
+  <div class="panel" id="headline"></div>
+
+  <h2>답 전체 비교</h2>
+  <div class="pair">
+    <div class="panel"><h3 style="margin-top:0">승패</h3><div id="winbar"></div></div>
+    <div class="panel"><h3 style="margin-top:0">기준별 평균 (1~5)</h3><div id="crit"></div></div>
+  </div>
+
+  <h2>데이터 고르기 정밀도</h2>
+  <p class="sub">질문마다 각 서비스가 앞에 내놓은 데이터 5개를 0~2점으로 판정했습니다. 2점 = 질문의 핵심 대상을 직접 담음, 0점 = 관련 없음.</p>
+  <div class="panel tbl-wrap"><table id="prec"></table></div>
+
+  <h2>분야별</h2>
+  <div class="panel tbl-wrap"><table id="bysector"></table></div>
+
+  <h2>질문 유형별</h2>
+  <div class="panel tbl-wrap"><table id="bytype"></table></div>
+
+  <h2>발견한 점</h2>
+  <div class="panel" id="findings"></div>
+
+  <h2>질문 1,000개 살펴보기</h2>
+  <div class="filters">
+    <input id="f-q" type="search" placeholder="질문·데이터 이름 검색">
+    <select id="f-sector"><option value="">전체 분야</option></select>
+    <select id="f-type"><option value="">전체 유형</option></select>
+    <select id="f-win"><option value="">전체 결과</option><option value="ours">우리 승</option><option value="portal">포털 승</option><option value="tie">무승부</option></select>
+  </div>
+  <p class="sub" id="f-count"></p>
+  <div class="panel" style="padding:4px 12px" id="qlist"></div>
+  <div class="more"><button id="more" type="button">더 보기</button></div>
+
+  <h2>방법</h2>
+  <div class="panel"><ul class="method" id="method"></ul></div>
+</main>
+<script>
+const D = /*__DATA__*/null;
+const S = D.summary, R = D.rows, N = D.notes || {};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pct = (x) => (x * 100).toFixed(0) + '%';
+const sectorLabel = (s) => s;
+const typeLabel = (t) => D.type_name[t] || t || '—';
+
+function winBar(w) {
+  const n = Math.max(w.n, 1);
+  return `<div class="bar" title="우리 ${w.ours} · 포털 ${w.portal} · 무승부 ${w.tie}"><span class="o" style="width:${w.ours / n * 100}%"></span><span class="p" style="width:${w.portal / n * 100}%"></span><span class="t" style="width:${w.tie / n * 100}%"></span></div>`;
+}
+const legend = `<div class="legend"><span><i style="background:var(--ours)"></i>우리</span><span><i style="background:var(--portal)"></i>포털</span><span><i style="background:var(--tie)"></i>무승부</span></div>`;
+
+const P = S.precision;
+$('kpis').innerHTML = [
+  [`<span class="ours">${S.overall.ours}</span> : <span class="portal">${S.overall.portal}</span>`, `답 전체 승패 (무승부 ${S.overall.tie}) · 판정 ${S.n_judged}문항`],
+  [`<span class="ours">${pct(P.ours_top5.core)}</span> / <span class="portal">${pct(P.portal_top5.core)}</span>`, '상위 5개 중 핵심(2점) — 우리 / 포털'],
+  [`<span class="ours">${pct(P.ours_top5.irrelevant)}</span> / <span class="portal">${pct(P.portal_top5.irrelevant)}</span>`, '상위 5개 중 무관(0점) — 우리 / 포털'],
+  [`<span class="ours">${S.time.ours_mean}s</span> / <span class="portal">${S.time.portal_mean}s</span>`, '질문당 평균 응답 시간 — 우리 / 포털'],
+].map(([v, l]) => `<div class="panel kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+
+$('headline').innerHTML = (N.headline || []).map((t) => `<p>${t}</p>`).join('') || '<p class="sub">요약 없음</p>';
+
+$('winbar').innerHTML = winBar(S.overall) + legend +
+  `<p class="sub" style="margin-top:10px">우리 ${S.overall.ours} (${pct(S.overall.ours_rate)}) · 포털 ${S.overall.portal} · 무승부 ${S.overall.tie}</p>`;
+
+$('crit').innerHTML = Object.entries(D.crit).map(([k, name]) => {
+  const o = S.criteria.ours[k], p = S.criteria.portal[k];
+  return `<div class="crit-row"><span>${name}</span><div><div class="track"><div class="fill" style="width:${o / 5 * 100}%;background:var(--ours)"></div></div><div class="track" style="margin-top:3px"><div class="fill" style="width:${p / 5 * 100}%;background:var(--portal)"></div></div></div><span class="num" style="font-size:12.5px"><span class="ours">${o.toFixed(2)}</span><br><span class="portal">${p.toFixed(2)}</span></span></div>`;
+}).join('') + legend.replace('<span><i style="background:var(--tie)"></i>무승부</span>', '');
+
+$('prec').innerHTML = `<tr><th>목록</th><th class="num">판정 데이터 수</th><th class="num">핵심(2점)</th><th class="num">무관(0점)</th></tr>` +
+  [['포털 상위 5 (추천 카드 → 추천데이터)', P.portal_top5], ['우리 상위 5 (주제별 대표 → 후보)', P.ours_top5], ['우리 채팅 답이 인용한 데이터', P.ours_cited]]
+    .map(([n, x]) => `<tr><td>${n}</td><td class="num">${x.n.toLocaleString()}</td><td class="num">${pct(x.core)}</td><td class="num">${pct(x.irrelevant)}</td></tr>`).join('');
+
+function groupTable(obj, label, extra) {
+  return `<tr><th>${label}</th><th class="num">문항</th><th class="num">우리</th><th class="num">포털</th><th class="num">무</th><th>승패</th>${extra ? '<th class="num">핵심 우리</th><th class="num">핵심 포털</th>' : ''}</tr>` +
+    Object.entries(obj).map(([k, w]) => {
+      const pr = extra ? S.by_sector_prec[k] : null;
+      return `<tr><td>${esc(extra ? sectorLabel(k) : typeLabel(k))}</td><td class="num">${w.n}</td><td class="num ours">${w.ours}</td><td class="num portal">${w.portal}</td><td class="num">${w.tie}</td><td class="barcell">${winBar(w)}</td>${pr ? `<td class="num">${pct(pr.ours.core)}</td><td class="num">${pct(pr.portal.core)}</td>` : ''}</tr>`;
+    }).join('');
+}
+$('bysector').innerHTML = groupTable(S.by_sector, '분야', true);
+$('bytype').innerHTML = groupTable(S.by_type, '유형', false) +
+  Object.entries(S.by_hard).map(([k, w]) => `<tr><td>${k === 'true' ? '공공데이터로 답하기 어려운 질문' : '일반 질문'}</td><td class="num">${w.n}</td><td class="num ours">${w.ours}</td><td class="num portal">${w.portal}</td><td class="num">${w.tie}</td><td class="barcell">${winBar(w)}</td></tr>`).join('');
+
+$('findings').innerHTML = (N.findings || []).map((sec) =>
+  `<div class="note ${sec.tone === 'warn' ? 'warn' : ''}"><b>${sec.title}</b><ul class="find">${sec.items.map((x) => `<li>${x}</li>`).join('')}</ul></div>`).join('') || '<p class="sub">없음</p>';
+
+$('method').innerHTML = (N.method || []).map((x) => `<li>${x}</li>`).join('');
+
+// 질문 탐색
+const sectors = [...new Set(R.map((r) => r.sector))];
+$('f-sector').innerHTML += sectors.map((s) => `<option>${esc(s)}</option>`).join('');
+$('f-type').innerHTML += Object.entries(D.type_name).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+const WIN = { ours: ['ours', '우리 승'], portal: ['portal', '포털 승'], tie: ['tie', '무승부'] };
+const link = (id) => `https://www.data.go.kr/data/${id}/openapi.do`;
+function list(r, key, title) {
+  const ids = r.lists[key] || [];
+  if (!ids.length) return `<div><b>${title}</b><p class="sub">없음</p></div>`;
+  return `<div><b>${title}</b><ol>${ids.map((i) => { const s = r.rel[i]; return `<li><span class="s${s ?? 1}">${s ?? '–'}</span> <a href="${link(i)}" target="_blank" rel="noreferrer">${esc(r.titles[i] || i)}</a></li>`; }).join('')}</ol></div>`;
+}
+function row(r) {
+  const w = WIN[r.winner] || WIN.tie;
+  const sc = (x) => Object.keys(D.crit).map((k) => x[k] ?? '–').join('·');
+  return `<details class="qrow"><summary><span class="qid">${r.id}</span><span>${esc(r.q)}<br><span class="meta">${esc(r.sector)} · ${typeLabel(r.type)}${r.hard ? ' · 어려운 질문' : ''}</span></span><span class="chip ${w[0]}">${w[1]}</span></summary>
+  <div class="qbody"><p>${esc(r.why)}</p>
+  <p class="meta">점수(관련성·포괄·실행·정직) — 우리 ${sc(r.s_ours)} / 포털 ${sc(r.s_portal)} · 시간 우리 ${r.ours_secs ?? '–'}s / 포털 ${r.portal_secs ?? '–'}s</p>
+  ${r.ours_missing ? `<p class="meta">우리가 놓친 것: ${esc(r.ours_missing)}</p>` : ''}${r.portal_missing ? `<p class="meta">포털이 놓친 것: ${esc(r.portal_missing)}</p>` : ''}
+  <div class="lists">${list(r, 'ours_top5', '우리 상위 5')}${list(r, 'portal_top5', '포털 상위 5')}</div></div></details>`;
+}
+let shown = 60, cur = R;
+function apply() {
+  const q = $('f-q').value.trim().toLowerCase(), s = $('f-sector').value, t = $('f-type').value, w = $('f-win').value;
+  cur = R.filter((r) => (!s || r.sector === s) && (!t || r.type === t) && (!w || r.winner === w) &&
+    (!q || r.q.toLowerCase().includes(q) || Object.values(r.titles).some((x) => x.toLowerCase().includes(q))));
+  shown = 60; draw();
+}
+function draw() {
+  $('qlist').innerHTML = cur.slice(0, shown).map(row).join('') || '<p class="sub">맞는 질문이 없습니다.</p>';
+  $('f-count').textContent = `${cur.length.toLocaleString()}개 중 ${Math.min(shown, cur.length)}개 표시 · 줄을 누르면 판정 이유와 두 서비스의 상위 5개 데이터가 열립니다.`;
+  $('more').style.display = shown < cur.length ? '' : 'none';
+}
+['f-q', 'f-sector', 'f-type', 'f-win'].forEach((id) => $(id).addEventListener('input', apply));
+$('more').addEventListener('click', () => { shown += 100; draw(); });
+apply();
+</script>
+</body>
+</html>
