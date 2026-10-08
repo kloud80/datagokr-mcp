@@ -87,6 +87,7 @@ function PickRow({ x, rep, open, portal }: { x: HeadPick; rep: boolean; open: Op
         {TIER_LABEL[x.tier]}{x.agency ? ` · ${x.agency}` : ''}{x.unit ? ` · 단위 ${x.unit}${x.unit_estimated ? '(추정)' : ''}` : ''} · {x.why}
         {x.excluded_by ? ' · 검증 순서 뒤(제외 규칙)' : ''}
       </span>
+      {x.signup ? <span className="pds-ev pds-signup">{x.signup}</span> : null}
       {x.links.length ? (
         <span className="pds-ev">{x.links.map((l) => `↔ ${l.head}: ${l.label}`).join(' · ')}</span>
       ) : null}
@@ -101,6 +102,7 @@ function HeadsView({ p, open }: { p: Plan; open: OpenDataset }) {
   return (
     <>
       <p className="pds-note">질문을 주제로 나눠 주제마다 따로 찾고 다시 줄 세웠습니다. 대표는 관련도와 다른 주제와의 연결 가능성으로 고릅니다.</p>
+      <SignupNote p={p} />
       {heads.map((h) => (
         <section key={h.name} className="pds-head">
           <h3 className="pds-sec">{h.name} {h.must ? null : <AgentChip variant="neutral">보조</AgentChip>}
@@ -160,6 +162,18 @@ function keysNeeded(p: Plan) {
     portal.length ? `data.go.kr 서비스키 1개로 ${portal.length}개 호출${auto ? ' (전부 자동승인)' : ' (일부 심의승인)'} — DATA_GO_KR_SERVICE_KEY` : '',
     ext.length ? `외부 키: ${ext.join(', ')}` : '',
   ].filter(Boolean).join(' · ')
+}
+
+/** 외부 사이트 가입이 따로 필요한 데이터 — 사이트별로 (검증·후보·단서 전부) */
+function SignupNote({ p }: { p: Plan }) {
+  const g = p.external_signup ?? []
+  if (!g.length) return null
+  return (
+    <div className="pds-note pds-signup">
+      <b>외부 가입 필요</b> — data.go.kr 활용신청만으로는 받을 수 없는 데이터가 있습니다.
+      <ul>{g.map((s) => <li key={s.site}><b>{s.site}</b> ({s.datasets.length}건): {s.how}</li>)}</ul>
+    </div>
+  )
 }
 
 export function PlanPanel(props: {
@@ -256,6 +270,7 @@ export function PlanPanel(props: {
     content = (
       <>
         <p className="pds-note">필요한 키: {keysNeeded(p) || '없음'}</p>
+        <SignupNote p={p} />
         <pre className="pds-pre">{p.code}</pre>
       </>
     )
@@ -268,6 +283,7 @@ export function PlanPanel(props: {
             <div className="pds-card-name"><TrustIcon trust="lead" /><AgentChip variant="neutral">후보</AgentChip>
               <button type="button" className="pds-card-title" onClick={() => open(c.id)}>{c.title}</button></div>
             <span className="pds-ev">{[c.status, c.blocked_by].filter(Boolean).join(' · ')}</span>
+            {c.access?.signup ? <span className="pds-ev pds-signup">{c.access.signup.text}</span> : null}
           </div>
         ))}
         {p.unverified_leads.map((l) => (
@@ -275,7 +291,8 @@ export function PlanPanel(props: {
             <div className="pds-card-name"><TrustIcon trust="lead" />
               <a href={l.portal_url} target="_blank" rel="noreferrer">{l.title}</a></div>
             <span className="pds-ev">{l.agency}{l.kind ? ` · ${l.kind}` : ''} · 유사도 {l.similarity}</span>
-            <span className="pds-ev">확인할 것: 활용신청 승인유형 · 조인 키(법정동·PNU·사업자번호) · 최근 수정일</span>
+            {l.access?.signup ? <span className="pds-ev pds-signup">{l.access.signup.text}</span> : null}
+            <span className="pds-ev">확인할 것: {l.access?.signup ? '' : '활용신청 승인유형 · '}조인 키(법정동·PNU·사업자번호) · 최근 수정일</span>
           </div>
         ))}
       </>

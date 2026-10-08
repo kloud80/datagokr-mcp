@@ -30,6 +30,7 @@ from pds.service import index as sindex
 from pds.strategy import fit
 from pds.strategy import badges as bdg
 from pds.strategy import region as rgn
+from pds.strategy import signup
 
 HUBS = {"15123287": "법정동 코드표", "15123899": "연속지적도(PNU)"}
 ROLE_KINDS = ("access", "key", "cadence", "coverage", "legal_basis", "admin_note")
@@ -72,7 +73,13 @@ def _access(d: dict) -> dict:
     return {"channel": d["channel"], "issuer": sec.get("issuer") or ("data.go.kr" if d["channel"] == "portal" else None),
             "scheme": f"{sec.get('scheme', 'apiKey')}:{sec.get('in', 'query')}:{sec.get('name', 'serviceKey')}" if sec else "file",
             "approval": s.get("approval"), "daily_limit": (s.get("traffic") or {}).get("dev"),
-            "latency_ms": (d.get("verification") or {}).get("latency_ms")}
+            "latency_ms": (d.get("verification") or {}).get("latency_ms"),
+            "signup": signup.note(d["id"], d["channel"] == "external", sec.get("issuer"), (d.get("agency") or {}).get("name"))}
+
+
+def _lead_access(row: dict) -> dict:
+    ext = signup.catalog_external(row)
+    return {"channel": "external" if ext else "portal", "signup": signup.note(str(row["id"]), ext, agency=row.get("agency_name"))}
 
 
 def _fetch(d: dict) -> dict:
@@ -338,6 +345,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
            "region": {"names": sel["region"]["names"], "sido": sorted(sel["region"]["sido"])},
            "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
            "source": source, "generated_at": dt.datetime.now().isoformat(timespec="seconds")}
+    out["external_signup"] = signup.summarize(out)
     out["summary"] = _summary_rule(out)
     if use_llm:
         from pds.service import llm
@@ -353,7 +361,8 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
 def _cand_entry(d: dict, pick: dict | None = None) -> dict:
     out = {"id": d["id"], "tier": "candidate", "title": d["title"], "sector": d["sector"],
            "status": (d.get("verification") or {}).get("verdict"), "why_maybe": pick["why"] if pick else _why_rule(d, "candidate"),
-           "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None)}
+           "blocked_by": next((c["value"] for c in d.get("claims") or [] if c["kind"] == "pitfall"), None),
+           "access": {"channel": d["channel"], "signup": _access(d)["signup"]}}
     if pick:
         out["head"] = pick["head"]
     return out
@@ -461,16 +470,23 @@ def _head_leads(mh: dict) -> list[dict]:
                     "kind": it.get("api_type") or it.get("list_type"), "portal_url": it.get("url"), "similarity": round(p["score"] / 3, 2),
                     "head": p["head"], "rep": p["rep"], "score": p["score"], "unit": p.get("unit"),
                     "why_maybe": f"[{p['head']}] {p['why']}" + (f" — 프로젝트 제외 규칙 {p['excluded_by']}(검증 순서만 뒤)" if p.get("excluded_by") else ""),
-                    "what_to_check": ["활용신청 승인유형", "응답 필드로 추정한 연결 단위(" + (p.get("unit") or "없음") + ")가 실제로 맞는지",
-                                      "최근 수정일·갱신 주기"],
+                    "access": (acc := _lead_access(it)),
+                    "what_to_check": [acc["signup"]["text"] if acc["signup"] else "활용신청 승인유형",
+                                      "응답 필드로 추정한 연결 단위(" + (p.get("unit") or "없음") + ")가 실제로 맞는지", "최근 수정일·갱신 주기"],
                     "note": "미검증 — 직접 확인 후 판단"})
     return out
 
 
 def _heads_view(mh: dict) -> list[dict]:
     keep = ("id", "tier", "title", "agency", "score", "why", "unit", "unit_estimated", "excluded_by", "links")
+    ix = sindex.get()
+
+    def signup_of(p: dict) -> str | None:  # 외부 사이트 가입이 따로 필요한지 — 카드마다 한 줄
+        d = ix.datasets.get(p["id"]) if p["tier"] != "catalog" else None
+        n = _access(d)["signup"] if d else _lead_access(mh["items"][p["id"]])["signup"]
+        return n["text"] if n else None
     return [{"name": h["name"], "need": h["need"], "must": h["must"], "rep": h["rep"], "queries": h["queries"],
-             "picks": [{k: p.get(k) for k in keep} for p in h["picks"][:6]]} for h in mh["heads"]]
+             "picks": [{k: p.get(k) for k in keep} | {"signup": signup_of(p)} for p in h["picks"][:6]]} for h in mh["heads"]]
 
 
 def _cand_hits(q: str) -> list[tuple[dict, float]]:
@@ -562,7 +578,9 @@ def _summary_rule(p: dict) -> str:
     ctx = f"맥락 '{p['context']}' 기준으로 " if p.get("context") else ""
     al = len(p.get("aligned") or [])
     return (f"{ctx}검증된 데이터 {n}개를 선언된 조인 {j}개로 잇는다." + (f" {al}개는 공통 단위(지역·시점)로 집계해 느슨하게 잇는다." if al else "")
-            + (" 일부는 조인 경로가 없어 참고용이다." if p["gaps"] else ""))
+            + (" 일부는 조인 경로가 없어 참고용이다." if p["gaps"] else "")
+            + (" 외부 사이트 가입이 따로 필요한 데이터가 있다: " + ", ".join(g["site"] for g in p["external_signup"]) + "."
+               if p.get("external_signup") else ""))
 
 
 def _schedule(datasets: list[dict]) -> dict | None:
@@ -587,7 +605,9 @@ def _leads(goal: str, known: set[str], region: dict | None = None) -> list[dict]
         out.append({"id": r["id"], "tier": "catalog", "title": r["title"], "agency": r["agency_name"], "kind": r.get("api_type") or r.get("list_type"),
                     "portal_url": r.get("url"), "similarity": round(s / top, 2),
                     "why_maybe": "제목·설명이 목표와 비슷함" + (f" — 프로젝트 제외 규칙 {r['excluded_by']}" if isinstance(r.get("excluded_by"), str) else ""),
-                    "what_to_check": ["활용신청 승인유형", "출력 컬럼에 조인 키(법정동·PNU·사업자번호) 존재 여부", "최근 수정일·갱신 주기"],
+                    "access": (acc := _lead_access(r)),
+                    "what_to_check": [acc["signup"]["text"] if acc["signup"] else "활용신청 승인유형",
+                                      "출력 컬럼에 조인 키(법정동·PNU·사업자번호) 존재 여부", "최근 수정일·갱신 주기"],
                     "note": "미검증 — 직접 확인 후 판단"})
     return out
 

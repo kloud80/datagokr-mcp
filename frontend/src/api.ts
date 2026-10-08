@@ -5,7 +5,11 @@ export interface Access {
   issuer?: string | null
   approval?: string | null
   daily_limit?: number | null
+  signup?: Signup | null
 }
+
+/** 외부 사이트 가입 안내 — data.go.kr 활용신청과 별개 (pds/strategy/signup.py) */
+export interface Signup { site: string; host?: string | null; how: string; required: boolean; estimated?: boolean; text: string }
 
 export type Tone = 'ok' | 'inf' | 'key' | 'warn' | 'neutral'
 
@@ -69,6 +73,7 @@ export interface Lead {
   kind?: string | null
   head?: string
   rep?: boolean
+  access?: { channel: 'portal' | 'external'; signup?: Signup | null }
 }
 
 export interface HeadLink { head: string; id: string; kind: 'edge' | 'key' | 'aligned'; label: string; estimated?: boolean }
@@ -79,6 +84,7 @@ export interface HeadPick {
   agency?: string | null
   score: number
   why: string
+  signup?: string | null
   unit?: string | null
   unit_estimated?: boolean
   excluded_by?: string | null
@@ -102,8 +108,9 @@ export interface Plan {
   aligned?: { kind: 'aligned'; left: string; right: string; align: { space?: string; time?: string; category?: string; rules: string[]; label: string }; note: string }[]
   pipeline: { step: number; do: string; dataset?: string; edge?: string; note?: string }[]
   schedule?: { reason: string } | null
-  candidates: { id: string; title: string; status?: string | null; blocked_by?: string | null }[]
+  candidates: { id: string; title: string; status?: string | null; blocked_by?: string | null; access?: { channel: string; signup?: Signup | null } }[]
   unverified_leads: Lead[]
+  external_signup?: { site: string; how: string; datasets: { id: string; title: string; tier: string }[] }[]
   not_recommended: Excluded[]
   hubs: Record<string, string>
   gaps: string[]

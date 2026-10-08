@@ -130,6 +130,7 @@ head_links는 주제 대표끼리 잇는 방법(edge=선언된 조인, key=같�
 - 코드값 뜻이나 지역 코드가 필요하면 find_code_list·lookup_code로 확인합니다.
 - 답은 한국어로 짧게 — 패널에 세부가 다 있으므로 핵심만 10~18줄. 순서: ①주제별 대표 데이터 ②어떻게 잇나 ③주의점 ④다음에 할 일.
 - 내부 식별자(e-12345 같은 Edge id, R-13 같은 규칙 번호, claim id)는 답에 쓰지 않습니다. 사람이 읽는 말(예: "주소를 좌표로 바꿔 필지로 잇기")로 풀어 씁니다.
+- external_signup에 있는 데이터를 소개할 때는 "외부 가입 필요 — 사이트 이름"과 가입 절차를 한 구절로 꼭 밝힙니다 (data.go.kr 활용신청만으로는 못 받음).
 - 키(인증키)를 요구받으면: 포털 데이터는 data.go.kr 활용신청, 외부 사이트는 해당 사이트 발급이라고 안내합니다. 키 값을 묻거나 다루지 않습니다."""
 
 TOOL_LABEL = {"plan_strategy": "전략 계산", "exclude_dataset": "전략에서 제외", "search_datasets": "데이터 검색",
@@ -149,6 +150,7 @@ def _slim(p: dict) -> str:
     slim["not_recommended"] = [{k: x.get(k) for k in ("id", "title", "reason")} for x in p["not_recommended"]]
     slim["candidates"] = [{k: c[k] for k in ("id", "title", "status")} for c in p["candidates"]]
     slim["unverified_leads"] = [{k: x.get(k) for k in ("id", "title", "agency", "head", "rep")} for x in p["unverified_leads"]]
+    slim["external_signup"] = [{"site": g["site"], "how": g["how"], "ids": [x["id"] for x in g["datasets"]]} for g in p.get("external_signup") or []]
     if p.get("heads"):
         slim["heads"] = [{"name": h["name"], "need": h["need"], "must": h["must"], "rep": h["rep"],
                           "picks": [{k: x.get(k) for k in ("id", "tier", "title", "score", "why", "unit")}

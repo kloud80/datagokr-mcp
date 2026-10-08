@@ -1,7 +1,7 @@
 """MCP 서버 (KNOWLEDGE-SPEC §4, BUILD-PLAN Phase 4 `pds-strategy`) — `python -m pds mcp` (stdio) 또는 `--http`.
 
 도구
-  plan_public_data_strategy(goal)  목표 → 전략 응답 (datasets·joins·pipeline·code·candidates·unverified_leads·gaps)
+  plan_public_data_strategy(goal)  목표 → 전략 응답 (datasets·joins·pipeline·code·candidates·unverified_leads·gaps·external_signup — 외부 사이트 가입이 따로 필요한 데이터)
   search_datasets(query, tier)     verified · candidate · catalog 검색
   get_dataset(id)                   상세 (호출 방법·필드·근거 claim·Edge)
   list_code_lists(keyword)          코드표 찾기 · lookup_code(code_list, q) 코드 조회
@@ -23,7 +23,7 @@ server = MCPServer(name="datagokr-mcp", title="공공데이터 전략 (data.go.k
                                 "verified=검증, candidate=선정·미검증, catalog=단서(직접 확인).")
 
 
-@server.tool(description="목표(자연어)에 맞는 공공데이터 조합·조인 경로·파이프라인·실행 코드를 만든다. explain=true면 LLM이 근거 claim을 인용해 이유를 쓴다.")
+@server.tool(description="목표(자연어)에 맞는 공공데이터 조합·조인 경로·파이프라인·실행 코드를 만든다. 외부 사이트 가입이 따로 필요한 데이터는 external_signup(사이트·가입 절차)과 각 데이터 access.signup으로 알린다. explain=true면 LLM이 근거 claim을 인용해 이유를 쓴다.")
 def plan_public_data_strategy(goal: str, explain: bool = False) -> str:
     import os
 
