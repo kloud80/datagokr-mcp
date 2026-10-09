@@ -106,6 +106,10 @@ a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 2
   <h2>발견한 점</h2>
   <div class="panel" id="findings"></div>
 
+  <h2>추천 질문</h2>
+  <p class="sub" id="showcase-intro"></p>
+  <div class="panel" style="padding:4px 12px" id="showcase"></div>
+
   <h2>질문 1,000개 살펴보기</h2>
   <div class="filters">
     <input id="f-q" type="search" placeholder="질문·데이터 이름 검색">
@@ -193,6 +197,14 @@ function row(r) {
   ${r.ours_missing ? `<p class="meta">우리가 놓친 것: ${esc(r.ours_missing)}</p>` : ''}${r.portal_missing ? `<p class="meta">포털이 놓친 것: ${esc(r.portal_missing)}</p>` : ''}
   <div class="lists">${list(r, 'ours_top5', '우리 상위 5')}${list(r, 'portal_top5', '포털 상위 5')}</div></div></details>`;
 }
+$('showcase-intro').innerHTML = N.showcase_intro || '';
+$('showcase').innerHTML = (N.showcase || []).map((x) => {
+  const r = R.find((y) => y.id === x.id);
+  if (!r) return '';
+  const core = (k) => (r.lists[k] || []).filter((i) => r.rel[i] === 2).length;
+  return row({ ...r, q: (x.chat ? '★ ' : '') + r.q }).replace('<div class="qbody">',
+    `<div class="qbody"><p><b>왜 좋은 예시인가</b> — ${x.why} <span class="meta">(핵심 데이터 우리 ${core('ours_top5')} · 포털 ${core('portal_top5')})</span></p>`);
+}).join('') || '<p class="sub">없음</p>';
 let shown = 60, cur = R;
 function apply() {
   const q = $('f-q').value.trim().toLowerCase(), s = $('f-sector').value, t = $('f-type').value, w = $('f-win').value;
