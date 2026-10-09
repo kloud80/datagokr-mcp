@@ -17,9 +17,11 @@ import re
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import networkx as nx
 
+from pds import config
 from pds.service import index as sindex
 from pds.strategy import region as rgn
 
@@ -320,8 +322,38 @@ def _region_w(it: dict, region: dict) -> float:
     return 0.6 if not region["sido"] else (1.1 if r in region["sido"] else 1.0)
 
 
-# ─────────────────────────── 전체
+# ─────────────────────────── 캐시 — 같은 목표·같은 지식 버전이면 같은 답 (LLM 분해·재순위가 호출마다 달라지지 않게, 비용도 줄인다)
+CACHE = config.ROOT / "data" / "cache" / "heads"
+USE_CACHE = os.environ.get("PDS_HEADS_CACHE", "1") != "0"
+
+
+def _cache_file(goal: str, region: dict, whole: list[str] | None) -> Path:
+    import hashlib
+
+    from pds.strategy.plan import _commit
+    key = json.dumps([" ".join(goal.split()), sorted(region.get("names") or []), whole or [], MODEL, _commit()], ensure_ascii=False)
+    return CACHE / f"{hashlib.sha256(key.encode()).hexdigest()[:24]}.json"
+
+
 def run(goal: str, region: dict, say=lambda *_: None, whole: list[str] | None = None) -> dict | None:
+    f = _cache_file(goal, region, whole) if USE_CACHE else None
+    if f is not None and f.exists():
+        try:
+            mh = json.loads(f.read_text(encoding="utf-8"))
+            say("heads", "done", " · ".join(h["name"] for h in mh["heads"]) + " (저장된 분해)")
+            say("rerank", "done", "저장된 재순위")
+            return mh
+        except (ValueError, KeyError):
+            pass
+    mh = _run(goal, region, say, whole)
+    if f is not None and mh is not None:
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(json.dumps(mh, ensure_ascii=False, default=str), encoding="utf-8")
+    return mh
+
+
+# ─────────────────────────── 전체
+def _run(goal: str, region: dict, say=lambda *_: None, whole: list[str] | None = None) -> dict | None:
     from pds.strategy.plan import HUBS, _graph
     t0 = time.time()
     ix = sindex.get()

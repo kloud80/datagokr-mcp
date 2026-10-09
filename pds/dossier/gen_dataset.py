@@ -42,6 +42,15 @@ EXTERNAL = {
 }
 
 
+
+KEY_PARAM = re.compile(r"((?:service_?key|api_?key|authkey|crtfc_key)=)[^&\s\"']+", re.I)
+
+
+def _mask_keys(v: str) -> str:
+    """표본값 속 URL의 인증키 파라미터를 가린다 (예: 이미지 URL의 serviceKey=…) — 지식 파일에 키 모양 문자열을 남기지 않게."""
+    return KEY_PARAM.sub(r"\1***", v)
+
+
 def _j(sub: str, dsid: str):
     f = P / sub / f"{dsid}.json"
     return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
@@ -224,7 +233,7 @@ def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
             f = {"name": str(name), "title": desc.get(str(name).lower()), "type": _field_type(s.get("type")),
                  "semantic_type": _semantic(str(name), kc, dsid),
                  "null_rate": round(float(s["null_rate"]), 4) if isinstance(s.get("null_rate"), (int, float)) else None,
-                 "sample_values": [re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", str(k))[:80] for k in list((s.get("top") or {}).keys())[:3]],
+                 "sample_values": [_mask_keys(re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", str(k)))[:80] for k in list((s.get("top") or {}).keys())[:3]],
                  "op": op if multi else None, "code_list": _code_index().get((dsid, str(name)))}
             if s.get("min") is not None or s.get("unique") is not None:
                 f["stats"] = {k: _num(s.get(k)) for k in ("min", "p50", "max") if s.get(k) is not None} | (

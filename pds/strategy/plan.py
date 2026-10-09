@@ -37,7 +37,6 @@ ROLE_KINDS = ("access", "key", "cadence", "coverage", "legal_basis", "admin_note
 
 
 @lru_cache
-@lru_cache
 def _commit() -> str:
     """지식 버전 = knowledge/를 마지막으로 바꾼 커밋 (설명서 머리말과 같은 기준 — 코드만 바뀐 커밋으로 어긋나지 않게)."""
     return subprocess.run(["git", "log", "-1", "--format=%h", "--", "knowledge"], capture_output=True, text=True,
@@ -700,6 +699,10 @@ def exclude(p: dict, dsid: str, reason: str) -> dict:
                               "note": f"{j['left']} ⋈ {j['right']}" + (f" via {j['hub']}" if j.get("hub") else "")})
     p["hubs"] = {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in p["joins"])}
     p["join_counts"] = join_counts(p["joins"])
+    p["gaps"] = [g for g in p.get("gaps") or [] if f"({dsid})" not in g]  # 뺀 데이터에 대한 공백(단위 불일치 등)은 지운다
+    if not p["datasets"]:
+        p["gaps"].append("남은 검증 데이터가 없다 — 미검증 단서를 포털에서 직접 확인해야 한다")
+    p["confidence"] = _confidence(p["datasets"], p["joins"], p["join_counts"], p["gaps"], p.get("context"))
     p["summary"] = _summary_rule(p)
     from pds.strategy.codegen import render as codegen
     p["code"] = codegen(p)

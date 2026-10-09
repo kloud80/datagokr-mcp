@@ -116,3 +116,80 @@ def test_ratelimit():
         assert ratelimit.check("t-ip") and ratelimit.check("other-ip") is None
     finally:
         del os.environ["PDS_RATE_PER_HOUR"]
+
+
+# ─────────────────────────── 2차 리뷰 (2026-10-10)
+def test_grounded_excludes_portal_meta():
+    from pds.mcp import server
+    from pds.schema import GROUNDED
+    assert server.GROUNDED is GROUNDED and "portal_meta" not in GROUNDED
+
+
+@needs_catalog
+def test_mcp_claims_portal_meta_not_grounded():
+    from pds.mcp.server import get_dataset
+    from pds.service import index
+    ix = index.get()
+    did = next(i for i, d in ix.datasets.items()
+               if any(c["evidence"] and all(e["type"] == "portal_meta" for e in c["evidence"]) for c in d.get("claims") or []))
+    d = json.loads(get_dataset(id=did, max_fields=1))
+    raw = {c["value"][:240]: c for c in ix.datasets[did]["claims"]}
+    for c in d["claims"]:
+        src = raw[c["value"]]
+        if all(e["type"] == "portal_meta" for e in src["evidence"]):
+            assert c["grounded"] is False
+
+
+def test_tools_return_text_only():
+    """문자열 응답이 structuredContent로 한 번 더 실리지 않게."""
+    import asyncio
+
+    from pds.mcp.server import server
+    tools = asyncio.run(server.list_tools())
+    assert all(not getattr(t, "output_schema", None) and not getattr(t, "outputSchema", None) for t in tools)
+
+
+def test_forwarded_for_not_trusted_by_default():
+    from pds.service import app
+    assert app._client_ip("1.2.3.4", "9.9.9.9") == "9.9.9.9"
+    app.TRUST_PROXY = True
+    try:
+        assert app._client_ip("6.6.6.6, 1.2.3.4", "10.0.0.1") == "1.2.3.4"
+    finally:
+        app.TRUST_PROXY = False
+
+
+@needs_catalog
+def test_search_national_first_without_region():
+    from pds.mcp.server import search_datasets
+    res = json.loads(search_datasets(query="일반음식점 인허가", limit=10))
+    regions = [r["region"] for r in res]
+    assert regions[0] == "전국" and regions == sorted(regions, key=lambda x: x != "전국")
+    loc = json.loads(search_datasets(query="경기도 일반음식점", limit=5))
+    assert any(r["region"] == "경기도" for r in loc)
+
+
+@needs_catalog
+def test_exclude_recomputes_gaps_and_confidence():
+    from pds.strategy.plan import exclude, plan
+    p = plan("성수동 상권 변화를 월 단위로 추적하고 싶다", use_llm=False)
+    unit = [g for g in p["gaps"] if g.startswith("단위 불일치")]
+    if not unit:
+        pytest.skip("단위 불일치 공백 없음")
+    dsid = unit[0].rsplit("(", 1)[1].split(")")[0]
+    q = exclude(json.loads(json.dumps(p)), dsid, "테스트")
+    assert not any(f"({dsid})" in g for g in q["gaps"])
+    assert q["confidence"] != p["confidence"] or len(q["gaps"]) < len(p["gaps"])
+
+
+def test_heads_cache_key_stable(tmp_path, monkeypatch):
+    from pds.strategy import multihead
+    region = {"names": ["성수동"], "sido": {"서울특별시"}}
+    a = multihead._cache_file("성수동  상권 변화", region, ["1", "2"])
+    b = multihead._cache_file("성수동 상권 변화", region, ["1", "2"])
+    c = multihead._cache_file("성수동 상권 추이", region, ["1", "2"])
+    assert a == b and a != c
+    monkeypatch.setattr(multihead, "CACHE", tmp_path)
+    calls = []
+    monkeypatch.setattr(multihead, "_run", lambda *a, **k: calls.append(1) or {"heads": [{"name": "x"}], "links": []})
+    assert multihead.run("목표", region) == multihead.run("목표", region) and len(calls) == 1

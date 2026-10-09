@@ -74,8 +74,17 @@ class FeedbackIn(BaseModel):
     session: str | None = None
 
 
+TRUST_PROXY = os.environ.get("PDS_TRUST_PROXY", "0") == "1"  # 리버스 프록시 뒤에서만 X-Forwarded-For를 믿는다 (아니면 호출마다 바꿔 제한을 피할 수 있다)
+
+
+def _client_ip(xff: str | None, peer: str | None) -> str:
+    if TRUST_PROXY and xff:
+        return xff.split(",")[-1].strip()  # 프록시가 붙인 마지막 값 — 앞쪽은 클라이언트가 꾸밀 수 있다
+    return peer or ""
+
+
 def _ip(req: Request) -> str:
-    return (req.headers.get("x-forwarded-for") or "").split(",")[0].strip() or (req.client.host if req.client else "")
+    return _client_ip(req.headers.get("x-forwarded-for"), req.client.host if req.client else None)
 
 
 def _who(req: Request) -> str:
@@ -417,7 +426,7 @@ class _McpUsage:
                 if isinstance(m, dict) and m.get("method") == "tools/call":
                     from pds.service.usage import client_hash, record
                     h = dict((k.decode(), v.decode()) for k, v in scope.get("headers") or [])
-                    ip = (h.get("x-forwarded-for") or "").split(",")[0].strip() or (scope.get("client") or ("",))[0]
+                    ip = _scope_ip(scope)
                     who = client_hash(ip, h.get("user-agent"))
                     name = (m.get("params") or {}).get("name")
                     record("mcp", ga=("mcp_tool_call", {"tool": name}), session=who, client_hash=who, question=name,
@@ -428,7 +437,7 @@ class _McpUsage:
 
 def _scope_ip(scope) -> str:
     h = dict((k.decode(), v.decode()) for k, v in scope.get("headers") or [])
-    return (h.get("x-forwarded-for") or "").split(",")[0].strip() or (scope.get("client") or ("",))[0]
+    return _client_ip(h.get("x-forwarded-for"), (scope.get("client") or ("",))[0])
 
 
 def _mcp_limited(scope, body: bytes) -> dict | None:

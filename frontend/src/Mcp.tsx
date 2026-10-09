@@ -83,7 +83,7 @@ pip install -e . && python -m pds setup --no-db
           <AgentTable caption="MCP 도구" columns={[{ key: 'n', label: '도구' }, { key: 'a', label: '인자' }, { key: 'd', label: '하는 일' }]}
             rows={[
               { key: 1, n: <code className="pds-code">plan_public_data_strategy</code>, a: 'goal, detail=summary|full, include_code=false', d: '목표 → 검증 데이터·역할·근거, 선언된 조인(실측률), 파이프라인, 주제별 후보, 공백, 미검증 단서. 기본은 요약판(약 2만 자), 실행 코드는 include_code, 전체는 detail=full. join_counts는 데이터끼리 직접 조인과 코드표·지적도 정규화를 나눠 셉니다' },
-              { key: 2, n: <code className="pds-code">search_datasets</code>, a: 'query, tier, limit=10, sector, agency, scope=any|national|regional', d: '세 층 검색(verified·candidate·catalog). 기관·필드 요약·실측 행 수·검증일 포함. scope=national이면 지자체·지역판을 뺍니다' },
+              { key: 2, n: <code className="pds-code">search_datasets</code>, a: 'query, tier, limit=10, sector, agency, scope=any|national|regional', d: '세 층 검색(verified·candidate·catalog). 기관·필드 요약·실측 행 수·검증일 포함. 검색어에 지역이 없으면 전국 데이터를 앞에 두고, scope=national이면 지자체·지역판을 뺍니다' },
               { key: 3, n: <code className="pds-code">get_dataset</code>, a: 'id, max_fields=60', d: '호출 방법, 실측 필드(빈 값 비율·유니크 수·값 범위·표본값), 검증 결과(행 수·검증일·최신 데이터일), 집계 단위(grain), 조인 키, 근거 claim, 연결된 Edge' },
               { key: 4, n: <code className="pds-code">list_code_lists</code>, a: 'keyword', d: '코드표 찾기 (지목·용도지역·법정동·기관코드·HS…)' },
               { key: 5, n: <code className="pds-code">lookup_code</code>, a: 'code_list, q', d: '코드값 ↔ 이름 (예: bjd_cd, 성수동)' },
@@ -106,6 +106,7 @@ pip install -e . && python -m pds setup --no-db
           </AgentAlert>
           <ul className="doc-facts">
             <li>전략 도구는 주제 분해·재순위에 LLM을 쓰므로 <b>IP당 시간당 60회</b>로 제한합니다(넘으면 도구 오류로 알림). 테스트 서버라 가용성은 보장하지 않습니다.</li>
+            <li>주제 분해 결과는 목표 문장·지식 버전별로 저장해 둡니다 — 같은 질문은 같은 답을 받고, 두 번째부터는 빠릅니다.</li>
             <li>서비스 개선을 위해 도구 호출(도구 이름·인자·시간)을 서버에 기록하고 사용 통계(GA4)로 집계합니다. IP는 해시로만 남깁니다.</li>
             <li>설명(explain=true)과 채팅 화면의 LLM 답변이 필요하면 저장소를 받아 내 Claude 키로 실행하세요.</li>
             <li>HTTP(비암호화) 주소라 일부 클라이언트는 https만 허용합니다 — 그때는 mcp-remote의 <code className="pds-code">--allow-http</code> 또는 내 컴퓨터(stdio) 방식을 쓰세요.</li>

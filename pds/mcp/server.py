@@ -21,6 +21,7 @@ from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from pds import config
+from pds.schema import GROUNDED  # 실측·법령·검토결정만 근거 — 포털 등록값(portal_meta)만 있는 진술은 grounded가 아니다
 from pds.service import index as sindex
 
 server = MCPServer(name="datagokr-mcp", title="공공데이터 전략 (data.go.kr)", version="0.2.0",
@@ -29,7 +30,6 @@ server = MCPServer(name="datagokr-mcp", title="공공데이터 전략 (data.go.k
                                 "먼저 plan_public_data_strategy로 조합을 받고, 데이터 한 건의 실측 필드는 get_dataset으로 본다.")
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
-GROUNDED = {"measured", "law", "admin_review", "portal_meta"}
 
 
 def _dump(x) -> str:
@@ -37,7 +37,7 @@ def _dump(x) -> str:
 
 
 # ─────────────────────────── 전략
-@server.tool(title="공공데이터 전략 짜기", annotations=READ_ONLY,
+@server.tool(title="공공데이터 전략 짜기", annotations=READ_ONLY, structured_output=False,
              description="목표(자연어)에 맞는 공공데이터 조합·조인 경로·파이프라인을 만든다. 기본(detail=summary)은 요약판 "
                          "(데이터·조인·주제별 상위 후보·근거·공백, 약 1~2만 자). include_code=true면 실행 코드, detail=full이면 데이터 카드·후보 전체. "
                          "join_counts는 데이터끼리 직접 조인과 코드표·지적도(허브) 정규화를 나눠 센다. gaps는 목표 중 채우지 못한 부분(단위 불일치 포함). "
@@ -77,9 +77,10 @@ def _field_brief(d: dict, k: int = 12) -> list[str]:
     return [f.get("title") or f.get("name") for f in ((d.get("schema") or {}).get("fields") or [])[:k]]
 
 
-@server.tool(title="데이터셋 검색", annotations=READ_ONLY,
+@server.tool(title="데이터셋 검색", annotations=READ_ONLY, structured_output=False,
              description="데이터셋을 키워드로 찾는다. tier=verified(검증)·candidate(선정·미검증)·catalog(포털 목록 단서). "
-                         "scope=national이면 전국 데이터만, regional이면 지자체·지역판만. 결과에 기관·필드 요약·실측 행 수·검증일이 붙는다.")
+                         "query에 지역 이름이 없으면 전국 데이터를 앞에 둔다. scope=national이면 전국 데이터만, regional이면 지자체·지역판만. "
+                         "결과에 기관·지역·필드 요약·실측 행 수·검증일이 붙는다.")
 def search_datasets(
     query: Annotated[str, Field(description="찾을 말 (예: 음식점 인허가, 버스 도착, 아파트 실거래)")],
     tier: Annotated[Literal["verified", "candidate", "catalog"], Field(description="verified=검증, candidate=선정·미검증, catalog=포털 목록 단서")] = "verified",
@@ -102,7 +103,8 @@ def search_datasets(
                 return False
         return True
 
-    pool = limit * 6 if (sector or agency or scope != "any") else limit
+    national_first = scope == "any" and not rgn.goal_regions(query)["sido"]  # 지역을 말하지 않았으면 전국 데이터를 앞에 — 지역판이 상위를 채우지 않게
+    pool = limit * 6 if (sector or agency or scope != "any" or national_first) else limit
     res = []
     if tier == "catalog":
         for r, _ in ix.search_catalog(query, pool):
@@ -124,6 +126,9 @@ def search_datasets(
                         "region": rgn.dataset_region(d) or "전국", "summary": (d.get("summary_user") or "")[:200],
                         "fields": _field_brief(d), "grain": d.get("grain"),
                         "verified": {"rows": v.get("rows"), "probed_at": v.get("probed_at"), "verdict": v.get("verdict")} if v else None})
+    if national_first:
+        res.sort(key=lambda r: r.get("region") not in (None, "전국") or (r["tier"] == "catalog" and rgn.dataset_region(
+            {"agency_name": r.get("agency"), "title": r.get("title")}) is not None))  # 안정 정렬 — 같은 무리 안에서는 검색 순위 유지
     return _dump(res[:limit])
 
 
@@ -142,7 +147,7 @@ def _field_view(f: dict) -> dict:
     return out
 
 
-@server.tool(title="데이터셋 상세", annotations=READ_ONLY,
+@server.tool(title="데이터셋 상세", annotations=READ_ONLY, structured_output=False,
              description="데이터셋 한 건 상세 — 호출 방법·실측 필드(빈 값 비율 null_rate·유니크 수·값 범위·표본값)·검증 결과(받은 행 수·검증일·최신 데이터일)·"
                          "집계 단위(grain)·커버리지·조인 키(foreign_keys)·근거 claim·연결 Edge. catalog id는 포털 메타만 준다.")
 def get_dataset(
@@ -177,7 +182,7 @@ def get_dataset(
 
 
 # ─────────────────────────── 코드표
-@server.tool(title="코드표 찾기", annotations=READ_ONLY,
+@server.tool(title="코드표 찾기", annotations=READ_ONLY, structured_output=False,
              description="코드표 찾기 (지목·용도지역·법정동·기관코드·국가·통화·항구·HS·NCS …). 결과의 id를 lookup_code의 code_list로 쓴다.")
 def list_code_lists(keyword: Annotated[str, Field(description="코드표 이름이나 별칭의 일부 (예: 법정동, 지목, 통화)")]) -> str:
     kw = keyword.strip().lower()
@@ -189,7 +194,7 @@ def list_code_lists(keyword: Annotated[str, Field(description="코드표 이름�
     return _dump(res[:10])
 
 
-@server.tool(title="코드값 조회", annotations=READ_ONLY,
+@server.tool(title="코드값 조회", annotations=READ_ONLY, structured_output=False,
              description="코드표에서 코드값 또는 이름으로 찾기 (예: code_list=bjd_cd, q=성수동). 없는 코드표는 오류.")
 def lookup_code(
     code_list: Annotated[str, Field(description="코드표 id — list_code_lists 결과의 id (예: bjd_cd)")],
