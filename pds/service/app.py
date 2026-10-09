@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import json
+import os
 import queue
 import threading
 import time
@@ -51,7 +52,9 @@ async def lifespan(_app):
 
 app = FastAPI(title="datagokr-mcp", version="0.1.0", description="data.go.kr 공공데이터 전략 시스템 — 목표 → 데이터·조인·코드",
               lifespan=lifespan, docs_url="/api/reference", redoc_url=None, openapi_url="/api/openapi.json")  # 화면의 #/docs와 겹치지 않게
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+_CORS = [o.strip() for o in os.environ.get("PDS_CORS_ORIGINS", "").split(",") if o.strip()]
+if _CORS:  # 화면은 같은 출처에서 서빙하므로 기본은 CORS를 열지 않는다 — 다른 출처에서 부를 때만 PDS_CORS_ORIGINS로 지정
+    app.add_middleware(CORSMiddleware, allow_origins=_CORS, allow_methods=["GET", "POST"], allow_headers=["*"])
 app.add_middleware(GZipMiddleware, minimum_size=2000)  # Docs 집계(수백 KB)를 압축해서
 WEB = config.ROOT / "web"
 DIST = WEB / "dist"  # cd frontend && npm run build
@@ -71,10 +74,21 @@ class FeedbackIn(BaseModel):
     session: str | None = None
 
 
+def _ip(req: Request) -> str:
+    return (req.headers.get("x-forwarded-for") or "").split(",")[0].strip() or (req.client.host if req.client else "")
+
+
 def _who(req: Request) -> str:
     from pds.service.usage import client_hash
-    ip = (req.headers.get("x-forwarded-for") or "").split(",")[0].strip() or (req.client.host if req.client else "")
-    return client_hash(ip, req.headers.get("user-agent"))
+    return client_hash(_ip(req), req.headers.get("user-agent"))
+
+
+def _limit(req: Request) -> None:
+    """LLM 비용이 드는 호출의 시간당 한도 (IP 기준) — pds/service/ratelimit.py."""
+    from pds.service import ratelimit
+    why = ratelimit.check(_ip(req))
+    if why:
+        raise HTTPException(429, why)
 
 
 def _log_chat(out: dict, msgs: list[dict], turn_id: str, session: str | None, who: str, status: str = "ok", error: str | None = None) -> None:
@@ -118,6 +132,7 @@ def api_chat(body: ChatIn, req: Request):
     msgs = [m for m in body.messages if m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str)][-20:]
     if not msgs or msgs[-1]["role"] != "user":
         raise HTTPException(400, "마지막 메시지는 user여야 한다")
+    _limit(req)
     out = llm.chat(msgs)
     out["elapsed_s"] = round(time.time() - t0, 1)
     out["turn_id"] = uuid.uuid4().hex
@@ -132,6 +147,7 @@ def api_chat_stream(body: ChatIn, req: Request):
     msgs = [m for m in body.messages if m.get("role") in ("user", "assistant") and isinstance(m.get("content"), str)][-20:]
     if not msgs or msgs[-1]["role"] != "user":
         raise HTTPException(400, "마지막 메시지는 user여야 한다")
+    _limit(req)
     q: queue.Queue = queue.Queue()
     t0 = time.time()
     turn_id, who = uuid.uuid4().hex, _who(req)
@@ -179,8 +195,11 @@ def api_feedback(body: FeedbackIn, req: Request):
 def api_plan(body: PlanIn, req: Request):
     from pds.service.usage import record
     from pds.strategy.plan import plan
+    if len(body.goal.strip()) < 2:
+        raise HTTPException(400, "goal이 비었다")
+    _limit(req)
     t0 = time.time()
-    p = plan(body.goal, use_llm=False)  # 공개 서버에선 LLM 설명을 끈다 (비용)
+    p = plan(body.goal.strip(), use_llm=False)  # 공개 서버에선 LLM 설명을 끈다 (비용)
     record("plan", ga=("api_plan", {"datasets": len(p["datasets"])}), client_hash=_who(req), question=body.goal,
            plan_ids={"datasets": [d["id"] for d in p["datasets"]]}, elapsed_s=round(time.time() - t0, 2), status="ok")
     return p
@@ -378,6 +397,9 @@ class _McpUsage:
             chunks.append(msg.get("body", b""))
             more = msg.get("more_body", False)
         body = b"".join(chunks)
+        blocked = _mcp_limited(scope, body)
+        if blocked:
+            return await _send_json(send, blocked)
         sent = False
 
         async def replay():
@@ -402,6 +424,33 @@ class _McpUsage:
                            args=(m.get("params") or {}).get("arguments"), elapsed_s=round(time.time() - t0, 2), status="ok")
         except Exception:  # noqa: BLE001 — 기록 실패가 응답을 막지 않게
             pass
+
+
+def _scope_ip(scope) -> str:
+    h = dict((k.decode(), v.decode()) for k, v in scope.get("headers") or [])
+    return (h.get("x-forwarded-for") or "").split(",")[0].strip() or (scope.get("client") or ("",))[0]
+
+
+def _mcp_limited(scope, body: bytes) -> dict | None:
+    """전략 도구(주제 분해·재순위에 LLM을 쓴다)만 시간당 한도를 건다. 막히면 도구 오류(isError) 응답 본문."""
+    try:
+        m = json.loads(body or b"null")
+    except ValueError:
+        return None
+    if not (isinstance(m, dict) and m.get("method") == "tools/call" and (m.get("params") or {}).get("name") == "plan_public_data_strategy"):
+        return None
+    from pds.service import ratelimit
+    why = ratelimit.check(_scope_ip(scope))
+    if not why:
+        return None
+    return {"jsonrpc": "2.0", "id": m.get("id"), "result": {"content": [{"type": "text", "text": why}], "isError": True}}
+
+
+async def _send_json(send, obj: dict) -> None:
+    data = json.dumps(obj, ensure_ascii=False).encode()
+    await send({"type": "http.response.start", "status": 200,
+                "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(data)).encode())]})
+    await send({"type": "http.response.body", "body": data})
 
 
 def _mount_mcp() -> None:

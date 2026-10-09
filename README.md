@@ -334,7 +334,15 @@ BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시�
 개발 중에는 `npm run dev`(5173, `/api`는 9001로 프록시).
 
 **MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `get_dataset` ·
-`list_code_lists` · `lookup_code`, 리소스 `dataset://{id}`.
+`list_code_lists` · `lookup_code`(모두 읽기 전용), 리소스 `dataset://{id}`, 프롬프트 `plan_with_public_data`.
+
+- 전략은 기본 요약판(약 2만 자)을 준다. 실행 코드는 `include_code=true`, 데이터 카드·후보 전체는 `detail="full"`.
+  `join_counts`는 데이터끼리 직접 조인과 코드표·지적도(허브) 정규화를 나눠 세고, `gaps`에 시간 단위 불일치(월 요청 → 분기 데이터)도 적는다.
+- `get_dataset`은 실측 필드(빈 값 비율·유니크 수·값 범위·표본값)와 검증 결과(행 수·검증일·최신 데이터일)·집계 단위(grain)를 준다.
+- `search_datasets`는 `limit`(1~30)·`sector`·`agency`·`scope`(national이면 지자체·지역판 제외)로 거른다.
+- 없는 id·코드표, 빈 목표, 잘못된 tier는 오류(isError)로 돌려준다.
+- 원격 `/mcp`의 전략 도구와 웹 채팅·`/api/plan`은 IP당 시간당 60회(`PDS_RATE_PER_HOUR`), 전체 2,000회(`PDS_RATE_GLOBAL_PER_HOUR`)로 제한한다.
+  CORS는 기본으로 열지 않는다 — 다른 출처에서 부를 때만 `PDS_CORS_ORIGINS`.
 
 ```json
 { "mcpServers": { "datagokr": { "command": ".../.venv/Scripts/python.exe", "args": ["-m", "pds", "mcp"], "cwd": ".../datagokr-mcp" } } }

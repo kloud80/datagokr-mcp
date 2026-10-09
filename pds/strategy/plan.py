@@ -37,8 +37,11 @@ ROLE_KINDS = ("access", "key", "cadence", "coverage", "legal_basis", "admin_note
 
 
 @lru_cache
+@lru_cache
 def _commit() -> str:
-    return subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=config.ROOT).stdout.strip()
+    """지식 버전 = knowledge/를 마지막으로 바꾼 커밋 (설명서 머리말과 같은 기준 — 코드만 바뀐 커밋으로 어긋나지 않게)."""
+    return subprocess.run(["git", "log", "-1", "--format=%h", "--", "knowledge"], capture_output=True, text=True,
+                          cwd=config.ROOT).stdout.strip()
 
 
 @lru_cache
@@ -332,9 +335,9 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
     else:
         cand = [_cand_entry(d) for d, s in _cand_hits(q) if not rgn.mismatch(d, sel["region"])]
     gaps += [f"{g['name']}: {g['reason'][:120]}" for g, s in ix.search_gaps(q) if s > 6]
-    rates = [j["match_rate"] if j["match_rate"] is not None else j["confidence"] or 0.5 for j in joins]
-    conf = round(min(0.95, 0.35 + 0.1 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0)
-                     + (0.1 if sel["ctx"] else 0)), 2)
+    gaps += unit_gaps(goal, datasets)
+    counts = join_counts(joins)
+    conf = _confidence(datasets, joins, counts, gaps, sel["ctx"])
     out = {"goal": goal, "context": sel["ctx"]["id"] if sel["ctx"] else None, "summary": None, "datasets": datasets, "joins": joins,
            "aligned": aligned,
            "pipeline": pipeline, "schedule": _schedule(datasets), "candidates": cand,
@@ -343,7 +346,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
            "not_recommended": sel["excluded"] + _not_recommended(chosen),
            "hubs": {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in joins)},
            "region": {"names": sel["region"]["names"], "sido": sorted(sel["region"]["sido"])},
-           "gaps": gaps, "confidence": conf, "knowledge_version": _commit(),
+           "gaps": gaps, "confidence": conf, "join_counts": counts, "knowledge_version": _commit(),
            "source": source, "generated_at": dt.datetime.now().isoformat(timespec="seconds")}
     out["external_signup"] = signup.summarize(out)
     out["summary"] = _summary_rule(out)
@@ -572,13 +575,59 @@ def _aligned_joins(datasets: list[dict], joins: list[dict]) -> list[dict]:
     return out
 
 
+TIME_ORDER = ["realtime", "day", "month", "quarter", "year"]
+TIME_KO = {"realtime": "실시간", "day": "일", "month": "월", "quarter": "분기", "year": "연"}
+TIME_ASK = [("realtime", r"실시간"), ("day", r"일별|일 단위|일단위|매일|하루 단위|일자별"),
+            ("month", r"월별|월 단위|월단위|매월|월간|달마다"), ("quarter", r"분기"), ("year", r"연도별|연 단위|연단위|연간|매년|해마다")]
+
+
+def unit_gaps(goal: str, datasets: list[dict]) -> list[str]:
+    """목표가 시간 단위를 요구하는데 고른 데이터가 그보다 거칠면 공백으로 밝힌다 (예: 월 단위 요청 → 분기 데이터)."""
+    want = next((u for u, pat in TIME_ASK if re.search(pat, goal)), None)
+    if not want:
+        return []
+    ix = sindex.get()
+    out = []
+    for x in datasets:
+        have = ((ix.datasets.get(x["id"]) or {}).get("grain") or {}).get("time")
+        if have in TIME_ORDER and TIME_ORDER.index(have) > TIME_ORDER.index(want):
+            out.append(f"단위 불일치 — 목표는 {TIME_KO[want]} 단위인데 {x['title'][:30]}({x['id']})는 {TIME_KO[have]} 단위다")
+    return out
+
+
+def join_counts(joins: list[dict]) -> dict:
+    """조인을 데이터끼리 직접 잇는 것과 코드표·지적도(허브)로 정규화하는 것으로 나눠 센다 — 허브 연결만으로 '조인 n개'가 부풀지 않게."""
+    hub = sum(1 for j in joins if j["left"] in HUBS or j["right"] in HUBS)
+    return {"dataset_to_dataset": len(joins) - hub, "via_hub": hub}
+
+
+def _confidence(datasets: list, joins: list, counts: dict, gaps: list, ctx) -> float:
+    """0~0.95. 검증 데이터 수·데이터끼리 조인의 실측 매칭률·맥락에서 올리고, 공백(gaps)·데이터 간 직접 조인 부재에서 깎는다."""
+    if not datasets:
+        return 0.0
+    direct = [j for j in joins if not (j["left"] in HUBS or j["right"] in HUBS)]
+    rates = [j["match_rate"] if j["match_rate"] is not None else j["confidence"] or 0.5 for j in direct]
+    c = 0.3 + 0.08 * min(len(datasets), 4) + (0.25 * (sum(rates) / len(rates)) if rates else 0) + (0.08 if ctx else 0)
+    if len(datasets) > 1 and not direct:
+        c -= 0.1  # 데이터끼리 직접 잇는 조인이 없다 — 허브 정규화나 느슨한 결합에 기댄다
+    c -= min(0.3, 0.08 * len(gaps))
+    return round(max(0.05, min(0.95, c)), 2)
+
+
 def _summary_rule(p: dict) -> str:
     n = len(p["datasets"])
-    j = len(p["joins"])
     ctx = f"맥락 '{p['context']}' 기준으로 " if p.get("context") else ""
+    if not n:
+        lead = len(p.get("unverified_leads") or []) + len(p.get("candidates") or [])
+        return ("목표에 맞는 검증 데이터를 찾지 못했다." + (f" 미검증 단서 {lead}개를 포털에서 직접 확인해야 한다." if lead else "")
+                + (f" 공백: {len(p['gaps'])}건." if p.get("gaps") else ""))
+    jc = p.get("join_counts") or join_counts(p["joins"])
     al = len(p.get("aligned") or [])
-    return (f"{ctx}검증된 데이터 {n}개를 선언된 조인 {j}개로 잇는다." + (f" {al}개는 공통 단위(지역·시점)로 집계해 느슨하게 잇는다." if al else "")
-            + (" 일부는 조인 경로가 없어 참고용이다." if p["gaps"] else "")
+    d, h = jc["dataset_to_dataset"], jc["via_hub"]
+    hub = f"코드표·지적도로 정규화하는 연결 {h}개" if h else ""
+    link = (f"데이터끼리 직접 조인 {d}개" + (f", {hub}" if hub else "")) if d else (f"데이터끼리 직접 잇는 조인은 없고 {hub}" if hub else "데이터끼리 직접 잇는 조인은 없다")
+    return (f"{ctx}검증된 데이터 {n}개 — {link}." + (f" {al}개는 공통 단위(지역·시점)로 집계해 느슨하게 잇는다." if al else "")
+            + (f" 공백 {len(p['gaps'])}건 — 목표의 일부는 이 조합으로 채우지 못한다." if p["gaps"] else "")
             + (" 외부 사이트 가입이 따로 필요한 데이터가 있다: " + ", ".join(g["site"] for g in p["external_signup"]) + "."
                if p.get("external_signup") else ""))
 
@@ -650,6 +699,7 @@ def exclude(p: dict, dsid: str, reason: str) -> dict:
         p["pipeline"].append({"step": len(p["pipeline"]) + 1, "do": "join", "edge": j["edge"],
                               "note": f"{j['left']} ⋈ {j['right']}" + (f" via {j['hub']}" if j.get("hub") else "")})
     p["hubs"] = {h: n for h, n in HUBS.items() if any(h in (j["left"], j["right"]) for j in p["joins"])}
+    p["join_counts"] = join_counts(p["joins"])
     p["summary"] = _summary_rule(p)
     from pds.strategy.codegen import render as codegen
     p["code"] = codegen(p)

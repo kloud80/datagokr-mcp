@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import datetime as dt
-import subprocess
 from collections import defaultdict
 from functools import lru_cache
 
@@ -83,7 +82,8 @@ def _env():
 def render_all() -> dict:
     env = _env()
     tpl = env.get_template("dossier.md.j2")
-    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=config.ROOT).stdout.strip()
+    from pds.strategy.plan import _commit
+    commit = _commit()  # 전략 응답의 knowledge_version과 같은 기준
     groups = defaultdict(list)
     from pds.schema import Dataset
     for raw, _ in store.iter_raw("dataset"):

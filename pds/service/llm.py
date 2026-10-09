@@ -142,8 +142,13 @@ Emit = Callable[[dict], None]
 
 
 def _slim(p: dict) -> str:
+    return json.dumps(slim_plan(p), ensure_ascii=False, default=str)
+
+
+def slim_plan(p: dict) -> dict:
+    """전략 응답의 요약판 — 채팅 LLM과 MCP 기본 응답이 같이 쓴다 (코드·데이터 카드 전체·후보 상세는 뺀다)."""
     ix = sindex.get()
-    slim = {k: p[k] for k in ("goal", "context", "summary", "confidence", "gaps")}
+    slim = {k: p.get(k) for k in ("goal", "context", "summary", "confidence", "join_counts", "gaps")}
     slim["datasets"] = [{k: d[k] for k in ("id", "role", "title", "agency", "why")} | {"access": d["access"], "rows": d.get("rows")}
                         for d in p["datasets"]]
     slim["joins"] = [{k: j[k] for k in ("edge", "left", "right", "on", "relationship", "via_mapping", "match_rate", "hub")} for j in p["joins"]]
@@ -158,7 +163,7 @@ def _slim(p: dict) -> str:
                          for h in p["heads"]]
         slim["head_links"] = [{k: l.get(k) for k in ("heads", "left", "right", "kind", "label", "estimated", "alt")} for l in p.get("head_links") or []]
     slim["claims"] = {d["id"]: [c["value"][:160] for c in ix.grounded_claims(d["id"])][:8] for d in p["datasets"]}
-    return json.dumps(slim, ensure_ascii=False, default=str)
+    return slim
 
 
 def run_tool(name: str, args: dict, plans: list, emit: Emit | None = None, t0: float = 0.0) -> str:

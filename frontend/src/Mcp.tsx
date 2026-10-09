@@ -33,8 +33,9 @@ export function Mcp() {
           <h2 className="doc-h2"><span className="doc-num">M</span>MCP로 쓰기</h2>
           <p className="doc-lead">
             이 시스템의 지식(검증된 공공데이터·선언된 조인·코드표)을 Claude·Cursor 같은 AI 도구에서 직접 쓸 수 있습니다.
-            AI가 목표를 받으면 <b>plan_public_data_strategy</b>로 데이터 조합·조인 경로·실행 코드를 받아 답하고,
-            필요하면 데이터 상세나 코드값을 조회합니다. 조인은 선언·실측된 것만 돌려줍니다.
+            AI가 목표를 받으면 <b>plan_public_data_strategy</b>로 데이터 조합·조인 경로를 받아 답하고,
+            핵심 데이터는 <b>get_dataset</b>으로 실측 필드(빈 값 비율·유니크 수·표본값)와 검증 행 수·검증일을 확인합니다.
+            조인은 선언·실측된 것만 돌려주고, 채우지 못한 부분(공백·시간 단위 불일치)은 gaps로 밝힙니다.
           </p>
           <div className="doc-cards-stack">
             <div className="doc-card"><AgentChip variant="live">원격</AgentChip><b className="doc-mono">{MCP_URL}</b><p>Streamable HTTP · 상태 없음 · JSON 응답. 설치 없이 주소만 넣으면 됩니다.</p></div>
@@ -73,7 +74,7 @@ pip install -e . && python -m pds setup --no-db
     "args": ["-m", "pds", "mcp"], "cwd": "<경로>/datagokr-mcp" } } }`}</Code> },
             { id: 'curl', label: 'curl로 시험', content: <Code lang="bash">{`curl -s -X POST ${MCP_URL} \\
   -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \\
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_datasets","arguments":{"query":"응급실","tier":"verified"}}}'`}</Code> },
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_datasets","arguments":{"query":"응급실","tier":"verified","limit":5,"scope":"national"}}}'`}</Code> },
           ]} />
         </section>
 
@@ -81,13 +82,14 @@ pip install -e . && python -m pds setup --no-db
           <h2 className="doc-h2"><span className="doc-num">2</span>도구</h2>
           <AgentTable caption="MCP 도구" columns={[{ key: 'n', label: '도구' }, { key: 'a', label: '인자' }, { key: 'd', label: '하는 일' }]}
             rows={[
-              { key: 1, n: <code className="pds-code">plan_public_data_strategy</code>, a: 'goal, explain=false', d: '목표 → 검증 데이터·역할·근거, 선언된 조인(실측률), 파이프라인, 실행 코드, 지역 불일치 제외, 미검증 단서' },
-              { key: 2, n: <code className="pds-code">search_datasets</code>, a: 'query, tier=verified|candidate|catalog', d: '세 층 검색. catalog는 포털 목록(단서)' },
-              { key: 3, n: <code className="pds-code">get_dataset</code>, a: 'id', d: '호출 방법·필드·조인 키·근거 claim·연결된 Edge' },
+              { key: 1, n: <code className="pds-code">plan_public_data_strategy</code>, a: 'goal, detail=summary|full, include_code=false', d: '목표 → 검증 데이터·역할·근거, 선언된 조인(실측률), 파이프라인, 주제별 후보, 공백, 미검증 단서. 기본은 요약판(약 2만 자), 실행 코드는 include_code, 전체는 detail=full. join_counts는 데이터끼리 직접 조인과 코드표·지적도 정규화를 나눠 셉니다' },
+              { key: 2, n: <code className="pds-code">search_datasets</code>, a: 'query, tier, limit=10, sector, agency, scope=any|national|regional', d: '세 층 검색(verified·candidate·catalog). 기관·필드 요약·실측 행 수·검증일 포함. scope=national이면 지자체·지역판을 뺍니다' },
+              { key: 3, n: <code className="pds-code">get_dataset</code>, a: 'id, max_fields=60', d: '호출 방법, 실측 필드(빈 값 비율·유니크 수·값 범위·표본값), 검증 결과(행 수·검증일·최신 데이터일), 집계 단위(grain), 조인 키, 근거 claim, 연결된 Edge' },
               { key: 4, n: <code className="pds-code">list_code_lists</code>, a: 'keyword', d: '코드표 찾기 (지목·용도지역·법정동·기관코드·HS…)' },
               { key: 5, n: <code className="pds-code">lookup_code</code>, a: 'code_list, q', d: '코드값 ↔ 이름 (예: bjd_cd, 성수동)' },
             ]} />
-          <p className="doc-p">리소스 <code className="pds-code">dataset://{'{id}'}</code> 는 데이터 설명서(Markdown)입니다.</p>
+          <p className="doc-p">리소스 <code className="pds-code">dataset://{'{id}'}</code> 는 데이터 설명서(Markdown), 프롬프트 <code className="pds-code">plan_with_public_data</code>는 전략 → 상세 확인 → 공백까지 밝히는 답의 순서를 안내합니다.
+            도구는 모두 읽기 전용(readOnlyHint)으로 표시되고, 없는 id·코드표나 빈 목표처럼 잘못 부르면 빈 결과가 아니라 <b>오류(isError)</b>로 돌려줍니다.</p>
           <h3 className="doc-h3">이렇게 물어보세요</h3>
           <ul className="doc-facts">
             <li>"datagokr로 성수동 상권 변화를 월 단위로 추적하는 방법 찾아줘"</li>
@@ -103,7 +105,7 @@ pip install -e . && python -m pds setup --no-db
             실제 데이터 호출은 생성된 코드를 <b>각자의 data.go.kr 키</b>로 실행합니다.
           </AgentAlert>
           <ul className="doc-facts">
-            <li>테스트 서버라 사용량 제한·가용성을 보장하지 않습니다. 남용이 보이면 토큰 인증이나 요청 제한을 붙입니다.</li>
+            <li>전략 도구는 주제 분해·재순위에 LLM을 쓰므로 <b>IP당 시간당 60회</b>로 제한합니다(넘으면 도구 오류로 알림). 테스트 서버라 가용성은 보장하지 않습니다.</li>
             <li>서비스 개선을 위해 도구 호출(도구 이름·인자·시간)을 서버에 기록하고 사용 통계(GA4)로 집계합니다. IP는 해시로만 남깁니다.</li>
             <li>설명(explain=true)과 채팅 화면의 LLM 답변이 필요하면 저장소를 받아 내 Claude 키로 실행하세요.</li>
             <li>HTTP(비암호화) 주소라 일부 클라이언트는 https만 허용합니다 — 그때는 mcp-remote의 <code className="pds-code">--allow-http</code> 또는 내 컴퓨터(stdio) 방식을 쓰세요.</li>

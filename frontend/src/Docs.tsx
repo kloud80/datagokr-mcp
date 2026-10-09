@@ -164,7 +164,7 @@ export function Docs() {
     { id: 'llm', x: 650, y: 420, label: 'LLM 설명', sub: 'Claude Sonnet 5.5', tone: 'service', detail: '고른 전략을 설명만 한다. 데이터는 [[id]]로 인용, 맞지 않는 데이터는 제외 도구로 전략에서 뺀다. 10문항 비교로 Haiku 대신 Sonnet을 기본으로.' },
     { id: 'api', x: 150, y: 516, label: 'REST API', sub: 'FastAPI · SSE', tone: 'use', detail: '/api/chat(/stream) · /api/plan · /api/search · /api/datasets · /api/codes · /api/stats · /api/docs' },
     { id: 'web', x: 400, y: 516, label: '웹 화면', sub: 'React + BV 디자인 시스템', tone: 'use', detail: '2열 화면: 대화(진행 단계 실시간) + 전략 패널(조인 지도·데이터 카드·단계·코드·단서). 지금 보고 있는 Docs도 여기.' },
-    { id: 'mcp', x: 650, y: 516, label: 'MCP 서버', sub: 'Claude Desktop 등', tone: 'use', detail: 'plan_public_data_strategy · search_datasets · get_dataset · list_code_lists · lookup_code 도구와 dataset:// 리소스.' },
+    { id: 'mcp', x: 650, y: 516, label: 'MCP 서버', sub: 'Claude Desktop 등', tone: 'use', detail: 'plan_public_data_strategy · search_datasets · get_dataset(실측 필드·검증 결과) · list_code_lists · lookup_code 도구(읽기 전용), dataset:// 리소스, plan_with_public_data 프롬프트.' },
   ]
   const archLinks: DLink[] = [
     { from: 'portal', to: 'rank' }, { from: 'portal', to: 'review' }, { from: 'portal', to: 'probe' }, { from: 'ext', to: 'probe' }, { from: 'ext', to: 'master' },
