@@ -50,7 +50,7 @@ async def lifespan(_app):
         yield
 
 
-app = FastAPI(title="datagokr-mcp", version="0.1.0", description="data.go.kr 공공데이터 전략 시스템 — 목표 → 데이터·조인·코드",
+app = FastAPI(title="bigvalue-opendata", version="0.2.0", description="data.go.kr 공공데이터 전략 시스템 — 목표 → 데이터·조인·코드",
               lifespan=lifespan, docs_url="/api/reference", redoc_url=None, openapi_url="/api/openapi.json")  # 화면의 #/docs와 겹치지 않게
 _CORS = [o.strip() for o in os.environ.get("PDS_CORS_ORIGINS", "").split(",") if o.strip()]
 if _CORS:  # 화면은 같은 출처에서 서빙하므로 기본은 CORS를 열지 않는다 — 다른 출처에서 부를 때만 PDS_CORS_ORIGINS로 지정

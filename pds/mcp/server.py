@@ -7,7 +7,8 @@
   list_code_lists(keyword) · lookup_code(code_list, q)   코드표
 잘못 부르면(없는 id·코드표, 빈 목표) 오류(isError)로 돌려준다 — '결과 없음'(빈 배열)과 구분된다.
 리소스  dataset://{id}  설명서 markdown · 프롬프트  plan_with_public_data
-키 서버(Phase 6 pds-keys)와 분리 — 이 서버는 사용자 키를 보지 않는다.
+키 서버(Phase 6 pds-keys)와 분리 — 이 서버는 사용자 키를 보지 않는다. 대신 전략 응답의 credentials로
+필요한 키와 .env 견본을 알려, 에이전트가 사용자에게 키를 요청하고 .env를 채우게 한다 (instructions의 키 규약).
 """
 from __future__ import annotations
 
@@ -24,10 +25,13 @@ from pds import config
 from pds.schema import GROUNDED  # 실측·법령·검토결정만 근거 — 포털 등록값(portal_meta)만 있는 진술은 grounded가 아니다
 from pds.service import index as sindex
 
-server = MCPServer(name="datagokr-mcp", title="공공데이터 전략 (data.go.kr)", version="0.2.0",
+server = MCPServer(name="bigvalue-opendata", title="BigValue 공공데이터 (data.go.kr)", version="0.2.0",
                    instructions="data.go.kr 공공데이터를 목표에 맞게 고르고 잇는 전략 도구. 조인은 선언·실측된 것만 돌려준다. "
                                 "verified=검증(실제 호출로 행·필드를 실측), candidate=선정·미검증, catalog=포털 목록 단서(직접 확인). "
-                                "먼저 plan_public_data_strategy로 조합을 받고, 데이터 한 건의 실측 필드는 get_dataset으로 본다.")
+                                "먼저 plan_public_data_strategy로 조합을 받고, 데이터 한 건의 실측 필드는 get_dataset으로 본다. "
+                                "키 규약: 응답의 credentials.required가 true면(데이터를 받는 데 API 키·계정이 필요) 데이터를 받기 전에 "
+                                "사용자에게 키가 필요하다고 알리고, credentials.env_sample로 프로젝트에 .env 파일을 만들어(값은 비움) "
+                                "사용자에게 직접 채워 달라고 요청한다. 키를 지어내거나 대화·코드에 키 값을 적지 않는다.")
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
@@ -41,7 +45,9 @@ def _dump(x) -> str:
              description="목표(자연어)에 맞는 공공데이터 조합·조인 경로·파이프라인을 만든다. 기본(detail=summary)은 요약판 "
                          "(데이터·조인·주제별 상위 후보·근거·공백, 약 1~2만 자). include_code=true면 실행 코드, detail=full이면 데이터 카드·후보 전체. "
                          "join_counts는 데이터끼리 직접 조인과 코드표·지적도(허브) 정규화를 나눠 센다. gaps는 목표 중 채우지 못한 부분(단위 불일치 포함). "
-                         "외부 사이트 가입이 따로 필요한 데이터는 external_signup으로 알린다.")
+                         "외부 사이트 가입이 따로 필요한 데이터는 external_signup으로 알린다. "
+                         "credentials는 고른 데이터를 받는 데 필요한 키(.env 변수 이름·발급 절차·대상 데이터)와 .env 견본(env_sample), "
+                         "에이전트가 따를 절차(agent_protocol: 사용자에게 키 요청 → .env 견본 작성 → 사용자가 채움)다.")
 def plan_public_data_strategy(
     goal: Annotated[str, Field(description="하고 싶은 일을 자연어로. 지역·대상·시간 단위를 적을수록 정확하다 (예: 성수동 카페 개폐업을 월 단위로 보고 싶다)")],
     detail: Annotated[Literal["summary", "full"], Field(description="summary=요약판(기본), full=전략 응답 전체(데이터 카드·후보·코드 포함, 5~6만 자)")] = "summary",
@@ -223,7 +229,9 @@ def plan_with_public_data(goal: str) -> str:
             "1. plan_public_data_strategy로 조합을 받는다.\n"
             "2. 핵심 데이터는 get_dataset으로 실측 필드(빈 값 비율·표본값)와 검증 행 수·검증일을 확인한다.\n"
             "3. 답에는 gaps(채우지 못한 부분·단위 불일치)와 join_counts(데이터끼리 직접 조인 수와 코드표 정규화 수)를 그대로 밝힌다.\n"
-            "4. candidate·catalog는 미검증 단서라고 말하고, external_signup이 있으면 가입 절차를 알린다.")
+            "4. candidate·catalog는 미검증 단서라고 말하고, external_signup이 있으면 가입 절차를 알린다.\n"
+            "5. credentials.required가 true면 데이터를 받기 전에 사용자에게 필요한 키(사이트·발급 절차)를 알리고, "
+            "credentials.env_sample로 .env 파일을 만들어(값은 비움) 사용자에게 채워 달라고 요청한다. 키를 지어내지 않는다.")
 
 
 def main(http: bool = False, port: int = 8766) -> None:

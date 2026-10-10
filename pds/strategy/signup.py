@@ -122,3 +122,52 @@ def summarize(p: dict) -> list[dict]:
             g = by.setdefault(n["site"], {"site": n["site"], "host": n["host"], "how": n["how"], "required": n["required"], "datasets": []})
             g["datasets"].append({"id": x["id"], "title": x["title"], "tier": x.get("tier", "verified")})
     return list(by.values())
+
+
+# ─────────────────────────── 키 요청 절차 (에이전트 규약)
+ENV_BY_HOST = {  # .env.example과 같은 이름 — 없는 사이트는 호스트에서 만든다
+    "data.go.kr": "DATA_GO_KR_SERVICE_KEY", "vworld.kr": "VWORLD_API_KEY", "api.vworld.kr": "VWORLD_API_KEY",
+    "data.seoul.go.kr": "DATA_SEOUL_API_KEY", "openapi.seoul.go.kr": "DATA_SEOUL_API_KEY",
+    "open.neis.go.kr": "OPEN_NEIS_API_KEY", "open.law.go.kr": "OPEN_LAW_GO_KR_API_KEY", "law.go.kr": "OPEN_LAW_GO_KR_API_KEY",
+}
+PORTAL_HOW = "data.go.kr 로그인 → 데이터마다 '활용신청'(대부분 자동승인) → 마이페이지 '일반 인증키(Decoding)'"
+AGENT_PROTOCOL = [
+    "credentials.required가 true면 데이터를 받기 전에 사용자에게 키가 필요하다고 먼저 알린다 — 키 없이 호출하거나 키를 지어내지 않는다.",
+    "env 항목마다 사이트·발급 절차(how)·해당 데이터(datasets)를 사용자에게 보여 준다.",
+    "프로젝트 폴더에 .env 파일을 env_sample 내용으로 만들어(이미 있으면 빠진 줄만 덧붙여) 값은 비워 두고, 사용자에게 직접 채워 달라고 요청한다.",
+    "사용자가 채웠다고 하면 .env에서 읽어 쓴다. 키 값을 대화·코드·로그에 그대로 옮겨 적지 않고, .env는 .gitignore에 넣는다.",
+]
+
+
+def env_name(host: str | None) -> str:
+    bare = (host or "").lower().split(":")[0].removeprefix("www.")
+    if bare in ENV_BY_HOST:
+        return ENV_BY_HOST[bare]
+    import re
+    stem = re.sub(r"^(api|openapi|open)\.", "", bare) or "external"
+    return re.sub(r"[^A-Z0-9]+", "_", stem.upper()).strip("_") + "_API_KEY"
+
+
+def credentials(p: dict) -> dict:
+    """전략에 쓰인 데이터(datasets)를 받는 데 필요한 키 — 사이트별 .env 변수·발급 절차·대상 데이터, .env 견본, 에이전트 절차.
+    후보·미검증 단서는 고르기 전이라 넣지 않는다 (external_signup에 따로 있다)."""
+    by: dict[str, dict] = {}
+
+    def add(var: str, site: str, how: str, ds: dict | None):
+        e = by.setdefault(var, {"name": var, "site": site, "how": how, "datasets": []})
+        if ds and ds["id"] not in e["datasets"]:
+            e["datasets"].append(ds["id"])
+    for d in p.get("datasets") or []:
+        acc = d.get("access") or {}
+        n = acc.get("signup")
+        if acc.get("channel") == "portal" and str(acc.get("scheme") or "file") != "file":
+            add("DATA_GO_KR_SERVICE_KEY", "공공데이터포털 (data.go.kr)", PORTAL_HOW, d)
+        elif n and n.get("required"):
+            add(env_name(n.get("host")), n["site"], n["how"], d)
+    if any((j.get("on") or {}).get("transform") in ("R-12", "R-13") for j in p.get("joins") or []):  # 좌표·주소 → 필지(PNU)
+        add("VWORLD_API_KEY", "브이월드 (국토부 공간정보 오픈플랫폼)", GUIDE["vworld.kr"][1] + " — 좌표·주소를 필지(PNU)로 바꿀 때", None)
+    env = list(by.values())
+    sample = "\n".join(["# 공공데이터 키 — 값을 채워 저장한다. 이 파일은 git에 올리지 않는다 (.gitignore에 .env)"]
+                       + [f"# {e['site']}: {e['how']}" + (f" · 데이터 {', '.join(e['datasets'][:6])}" if e["datasets"] else "")
+                          + f"\n{e['name']}=" + ("\nVWORLD_DOMAIN=  # 키에 등록한 서비스 URL" if e["name"] == "VWORLD_API_KEY" else "") for e in env]) + "\n" if env else ""
+    return {"required": bool(env), "env": env, "env_sample": sample, "agent_protocol": AGENT_PROTOCOL if env else []}

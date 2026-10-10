@@ -155,6 +155,7 @@ def slim_plan(p: dict) -> dict:
     slim["not_recommended"] = [{k: x.get(k) for k in ("id", "title", "reason")} for x in p["not_recommended"]]
     slim["candidates"] = [{k: c[k] for k in ("id", "title", "status")} for c in p["candidates"]]
     slim["unverified_leads"] = [{k: x.get(k) for k in ("id", "title", "agency", "head", "rep")} for x in p["unverified_leads"]]
+    slim["credentials"] = p.get("credentials")
     slim["external_signup"] = [{"site": g["site"], "how": g["how"], "ids": [x["id"] for x in g["datasets"]]} for g in p.get("external_signup") or []]
     if p.get("heads"):
         slim["heads"] = [{"name": h["name"], "need": h["need"], "must": h["must"], "rep": h["rep"],

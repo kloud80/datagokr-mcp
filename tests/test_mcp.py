@@ -193,3 +193,24 @@ def test_heads_cache_key_stable(tmp_path, monkeypatch):
     calls = []
     monkeypatch.setattr(multihead, "_run", lambda *a, **k: calls.append(1) or {"heads": [{"name": "x"}], "links": []})
     assert multihead.run("목표", region) == multihead.run("목표", region) and len(calls) == 1
+
+
+# ─────────────────────────── 키 규약 (2026-10-10)
+def test_credentials_env_sample():
+    from pds.strategy.signup import credentials, env_name
+    p = {"datasets": [{"id": "A", "access": {"channel": "portal", "scheme": "apiKey:query:serviceKey"}},
+                      {"id": "B", "access": {"channel": "portal", "scheme": "file"}},
+                      {"id": "C", "access": {"channel": "external", "signup": {"required": True, "site": "서울", "host": "data.seoul.go.kr", "how": "가입"}}}],
+         "joins": [{"on": {"transform": "R-12"}}]}
+    c = credentials(p)
+    assert c["required"] and c["agent_protocol"]
+    assert {e["name"]: e["datasets"] for e in c["env"]} == {"DATA_GO_KR_SERVICE_KEY": ["A"], "DATA_SEOUL_API_KEY": ["C"], "VWORLD_API_KEY": []}
+    assert "DATA_GO_KR_SERVICE_KEY=\n" in c["env_sample"] and "VWORLD_DOMAIN=" in c["env_sample"]
+    assert credentials({"datasets": [p["datasets"][1]], "joins": []}) == {"required": False, "env": [], "env_sample": "", "agent_protocol": []}
+    assert env_name("apihub.kma.go.kr") == "APIHUB_KMA_GO_KR_API_KEY"
+
+
+def test_mcp_instructions_mention_key_protocol():
+    from pds.mcp.server import plan_with_public_data, server
+    assert "credentials" in server.instructions and ".env" in server.instructions
+    assert "env_sample" in plan_with_public_data("x")

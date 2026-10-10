@@ -46,15 +46,16 @@ export function Mcp() {
 
         <section className="doc-section">
           <h2 className="doc-h2"><span className="doc-num">1</span>연결하기</h2>
+          <p className="doc-p">서버 이름은 <code className="pds-code">bigvalue-opendata</code>입니다. 예전 이름(<code className="pds-code">datagokr</code>)으로 등록했어도 주소가 같아 그대로 동작합니다.</p>
           <AgentTabs label="클라이언트별 설정" items={[
-            { id: 'cc', label: 'Claude Code', content: <Code lang="bash">{`claude mcp add --transport http datagokr ${MCP_URL}
+            { id: 'cc', label: 'Claude Code', content: <Code lang="bash">{`claude mcp add --transport http bigvalue-opendata ${MCP_URL}
 # 확인
 claude mcp list`}</Code> },
             { id: 'desktop', label: 'Claude Desktop', content: <>
               <p className="doc-p">Claude Desktop 설정 파일(<code className="pds-code">claude_desktop_config.json</code>)에 넣습니다. 원격 주소는 <code className="pds-code">mcp-remote</code>로 잇습니다(Node 필요).</p>
               <Code lang="json">{`{
   "mcpServers": {
-    "datagokr": {
+    "bigvalue-opendata": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "${MCP_URL}", "--allow-http"]
     }
@@ -63,14 +64,14 @@ claude mcp list`}</Code> },
             { id: 'cursor', label: 'Cursor · VS Code', content: <Code lang="json">{`// Cursor: ~/.cursor/mcp.json  ·  VS Code: .vscode/mcp.json ("servers" 키)
 {
   "mcpServers": {
-    "datagokr": { "url": "${MCP_URL}" }
+    "bigvalue-opendata": { "url": "${MCP_URL}" }
   }
 }`}</Code> },
             { id: 'local', label: '내 컴퓨터(stdio)', content: <Code lang="bash">{`git clone https://github.com/kloud80/datagokr-mcp && cd datagokr-mcp
 python -m venv .venv && .venv/Scripts/activate   # macOS·Linux: source .venv/bin/activate
 pip install -e . && python -m pds setup --no-db
 # Claude Desktop 설정
-{ "mcpServers": { "datagokr": { "command": "<경로>/.venv/Scripts/python.exe",
+{ "mcpServers": { "bigvalue-opendata": { "command": "<경로>/.venv/Scripts/python.exe",
     "args": ["-m", "pds", "mcp"], "cwd": "<경로>/datagokr-mcp" } } }`}</Code> },
             { id: 'curl', label: 'curl로 시험', content: <Code lang="bash">{`curl -s -X POST ${MCP_URL} \\
   -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \\
@@ -90,9 +91,12 @@ pip install -e . && python -m pds setup --no-db
             ]} />
           <p className="doc-p">리소스 <code className="pds-code">dataset://{'{id}'}</code> 는 데이터 설명서(Markdown), 프롬프트 <code className="pds-code">plan_with_public_data</code>는 전략 → 상세 확인 → 공백까지 밝히는 답의 순서를 안내합니다.
             도구는 모두 읽기 전용(readOnlyHint)으로 표시되고, 없는 id·코드표나 빈 목표처럼 잘못 부르면 빈 결과가 아니라 <b>오류(isError)</b>로 돌려줍니다.</p>
+          <h3 className="doc-h3">API 키 규약</h3>
+          <p className="doc-p">이 서버는 사용자 키를 받지 않습니다. 대신 전략 응답의 <code className="pds-code">credentials</code>에 고른 데이터를 받는 데 필요한 키(.env 변수 이름·발급 사이트·절차·대상 데이터)와 <code className="pds-code">.env</code> 견본(<code className="pds-code">env_sample</code>)을 담고,
+            서버 안내문(instructions)으로 에이전트에게 다음 절차를 지시합니다: <b>키가 필요하면 데이터를 받기 전에 사용자에게 알린다 → 프로젝트에 .env를 견본대로 만든다(값은 비움) → 사용자가 직접 채우게 요청한다.</b> 에이전트는 키를 지어내거나 대화·코드에 키 값을 적지 않습니다.</p>
           <h3 className="doc-h3">이렇게 물어보세요</h3>
           <ul className="doc-facts">
-            <li>"datagokr로 성수동 상권 변화를 월 단위로 추적하는 방법 찾아줘"</li>
+            <li>"BigValue 공공데이터로 성수동 상권 변화를 월 단위로 추적하는 방법 찾아줘"</li>
             <li>"아파트 실거래가와 공시지가를 필지 단위로 비교하는 파이썬 코드 만들어줘"</li>
             <li>"응급실 병상 실시간 데이터 호출 방법과 필수 파라미터 알려줘"</li>
           </ul>

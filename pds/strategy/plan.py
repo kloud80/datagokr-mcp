@@ -348,6 +348,7 @@ def plan(goal: str, use_llm: bool = True, max_datasets: int = 6, progress: Progr
            "gaps": gaps, "confidence": conf, "join_counts": counts, "knowledge_version": _commit(),
            "source": source, "generated_at": dt.datetime.now().isoformat(timespec="seconds")}
     out["external_signup"] = signup.summarize(out)
+    out["credentials"] = signup.credentials(out)  # 받는 데 필요한 키 — 에이전트가 사용자에게 .env를 채워 달라고 요청하는 근거
     out["summary"] = _summary_rule(out)
     if use_llm:
         from pds.service import llm
@@ -703,6 +704,7 @@ def exclude(p: dict, dsid: str, reason: str) -> dict:
     if not p["datasets"]:
         p["gaps"].append("남은 검증 데이터가 없다 — 미검증 단서를 포털에서 직접 확인해야 한다")
     p["confidence"] = _confidence(p["datasets"], p["joins"], p["join_counts"], p["gaps"], p.get("context"))
+    p["credentials"] = signup.credentials(p)
     p["summary"] = _summary_rule(p)
     from pds.strategy.codegen import render as codegen
     p["code"] = codegen(p)

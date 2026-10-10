@@ -258,7 +258,7 @@ export function Docs() {
 cp .env.example .env          # CLAUDE_API_KEY만 있어도 채팅이 된다
 python -m pds setup           # 지식 검증 → 목록 스냅샷 → 설명서 → (DB) → 색인
 python -m pds serve --port 8765`}</Code> },
-                { id: 'mcp', label: 'MCP', content: <Code lang="json">{`{ "mcpServers": { "datagokr": {
+                { id: 'mcp', label: 'MCP', content: <Code lang="json">{`{ "mcpServers": { "bigvalue-opendata": {
     "command": ".../.venv/Scripts/python.exe",
     "args": ["-m", "pds", "mcp"], "cwd": ".../datagokr-mcp" } } }`}</Code> },
                 { id: 'gen', label: '생성 코드', content: <Code lang="python">{`# 검증 때 성공한 호출을 그대로 — 지역은 목표에서(성수동 → 성동구 3030000)

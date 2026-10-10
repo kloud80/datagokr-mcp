@@ -21,7 +21,7 @@
 | REST API · 레퍼런스(Swagger) | `http://bv.bigvalue.co.kr:9001/api/…` · http://bv.bigvalue.co.kr:9001/api/reference |
 
 ```bash
-claude mcp add --transport http datagokr http://bv.bigvalue.co.kr:9001/mcp     # Claude Code에 MCP 연결
+claude mcp add --transport http bigvalue-opendata http://bv.bigvalue.co.kr:9001/mcp     # Claude Code에 MCP 연결
 curl -s -X POST http://bv.bigvalue.co.kr:9001/api/plan -H 'Content-Type: application/json' \
   -d '{"goal": "성수동 상권 변화를 월 단위로 추적하고 싶어", "use_llm": false}'    # 전략 API
 ```
@@ -348,7 +348,7 @@ BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시�
   `X-Forwarded-For`는 리버스 프록시 뒤에서 `PDS_TRUST_PROXY=1`일 때만 믿는다(마지막 값) — 아니면 접속 IP로 센다.
 
 ```json
-{ "mcpServers": { "datagokr": { "command": ".../.venv/Scripts/python.exe", "args": ["-m", "pds", "mcp"], "cwd": ".../datagokr-mcp" } } }
+{ "mcpServers": { "bigvalue-opendata": { "command": ".../.venv/Scripts/python.exe", "args": ["-m", "pds", "mcp"], "cwd": ".../datagokr-mcp" } } }
 ```
 
 **지식을 더 쌓는 명령**: `gen-dataset`(데이터셋·claim) · `pds.probe.fullpull`(전수 원장) · `pds.mapping.build_*`(매핑) ·
@@ -367,6 +367,7 @@ BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시�
 - **검색**은 글자 단위 BM25와 의미 임베딩(multilingual-e5, 선택 설치 `pip install -e .[semantic]`)을 합친 관련도다. 포털 목록은 응답 필드 이름까지 색인한다.
 - **전략(멀티헤드, 기본)**: ① LLM이 질문을 주제(헤드)로 나누고 주제마다 검색어·필드어를 적는다 ② 주제마다 검증·선정·포털 목록을 따로 넓게 찾는다(질문 전체 검색 상위도 함께) ③ 주제마다 Sonnet이 0~3점으로 다시 줄 세운다 ④ 주제 사이 후보 쌍의 연결을 규칙으로 잰다 — 선언된 조인(실측) > 같은 키 > 같은 단위로 집계(검증은 실측 grain, 목록은 응답 필드명으로 추정) ⑤ 관련도 × 연결 × 층(검증 우선) × 지역(목표에 지역이 없으면 한 지역 데이터는 뒤로)으로 주제마다 대표를 고른다 ⑥ 검증 대표는 `datasets`·`joins`, 목록 대표는 `unverified_leads`, 전부 `heads`·`head_links`로. 제외 규칙에 걸린 목록 데이터도 단서로 나온다(제외는 검증 순서일 뿐). LLM 키가 없거나 실패하면 기존 규칙 검색. 끄기: `PDS_HEADS=0`.
 - **외부 가입 안내**: data.go.kr 활용신청만으로 받을 수 없는 데이터(제공처 사이트 가입·인증키 필요)는 데이터마다 `access.signup`(사이트·가입 절차), 응답 전체는 `external_signup`(사이트별 묶음)과 요약 문장으로 알린다 — MCP·API·채팅·화면 공통 (`pds/strategy/signup.py`). 목록 데이터는 포털 '바로가기'(LINK)면 외부로 보고, 제공처 주소를 모르면 같은 기관의 검증 사례로 추정해 '추정'을 붙인다.
+- **API 키 규약**: 전략 응답의 `credentials`는 고른 데이터(`datasets`)를 받는 데 필요한 키를 사이트별로 묶는다 — `.env` 변수 이름(`DATA_GO_KR_SERVICE_KEY`, `DATA_SEOUL_API_KEY`, `VWORLD_API_KEY` …)·발급 절차·대상 데이터, `.env` 견본(`env_sample`, 값은 비움), 에이전트 절차(`agent_protocol`). MCP 서버 안내문(instructions)과 프롬프트가 에이전트에게 "키가 필요하면 데이터를 받기 전에 사용자에게 알리고, `.env`를 견본대로 만들어 사용자가 직접 채우게 요청하라 — 키를 지어내거나 대화·코드에 적지 말라"고 지시한다. 서버는 사용자 키를 받지 않는다.
 - 평가: `python -m pds eval-plan [--heads]` (정답표 `evals/plan_recall.yaml`) · 포털 AI 비교 `evals/portal_ai/` (`judge_heads.py`).
 - **매핑의 한계**: 복지시설(주소 없는 두 목록)과 정류장(좌표 없는 표준 목록, 길 양쪽 같은 이름)은 매칭률이 낮다 — 낮은 대로 기록했다.
 - **코드표**: 기관 고유 코드 150여 개는 명세서 첨부 문서에만 있다. 표준산업분류(KSIC)·세관부호는 포털에 원천이 없다.

@@ -1,6 +1,6 @@
 @echo off
 rem ---------------------------------------------------------------
-rem  datagokr-mcp server launcher (web chat + API + /mcp)
+rem  bigvalue-opendata server launcher (web chat + API + /mcp)
 rem  usage : run_server.bat [port] [host]
 rem          default port 9001, host 0.0.0.0
 rem  ASCII only - do not add non-ASCII characters to this file.
