@@ -20,7 +20,7 @@ import type { Trust } from './Trust'
 // 답마다 '전략 vN' 카드가 붙고, 오른쪽은 고른 버전을 보여준다. 좁은 화면은 대화/전략 전환.
 
 const EXAMPLES = [  // 포털 AI 비교 1천 문항에서 고른 질문 (evals/portal_1k/notes.json showcase의 ★)
-  '성수동 카페 인허가 추이랑 성수역 승하차 인원 비교',
+  '초등학교 위치랑 어린이보호구역 교통사고 데이터 겹쳐서 보고 싶어요',
   '위생등급 지정 업소와 행정처분 이력 겹치는 곳 찾기',
   '낚시어선 사고 기록이랑 당시 기상특보 발효 여부 연결 가능해?',
   '지역별 도시가스 공급량을 기온 데이터랑 합쳐서 수요 예측하고 싶어요',
@@ -228,7 +228,7 @@ export function App() {
             onValueChange={setDraft}
             onSubmit={(v) => void send(v)}
             disabled={busy}
-            placeholder={busy ? '답을 만드는 중…' : '예) 성수동 상권 변화를 월 단위로 추적하고 싶어'}
+            placeholder={busy ? '답을 만드는 중…' : '예) 세종시 읍면동별 주민등록 인구 월별 추이 보고 싶어요'}
           />
           <span className="pds-ev">Enter로 보내기 · Shift+Enter로 줄바꿈 — 답변에는 직접 불러 보거나 법령·검토로 확인된 내용만 씁니다</span>
           <span className="pds-ev">대화 내용은 서비스 개선을 위해 서버에 저장됩니다 (개인 식별 정보는 남기지 않습니다).</span>
