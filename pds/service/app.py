@@ -415,6 +415,23 @@ def api_stats():
 #   상태 없는(stateless) JSON 응답. 도구는 지식 체계 읽기만 하고 사용자 키를 다루지 않는다.
 #   LLM 비용이 드는 설명(explain=true)은 PDS_MCP_ALLOW_LLM=1일 때만 (기본 꺼짐).
 #   모든 경로를 받는 마운트라 맨 끝에 둔다 — 위의 라우트가 먼저 처리된다.
+async def _mcp_get(scope, send) -> None:
+    """GET /mcp — 상태 없는 서버라 서버→클라이언트 스트림(SSE)을 열지 않는다. 열어 두면 클라이언트·프록시가 시간 초과까지 기다린다.
+    MCP 클라이언트(Accept: text/event-stream)·DELETE에는 405(규약상 '스트림 없음'), 브라우저·웹 가져오기에는 안내문."""
+    h = dict((k.decode().lower(), v.decode()) for k, v in scope.get("headers") or [])
+    if scope["method"] == "DELETE" or "text/event-stream" in h.get("accept", ""):
+        await send({"type": "http.response.start", "status": 405, "headers": [(b"allow", b"POST"), (b"content-length", b"0")]})
+        await send({"type": "http.response.body", "body": b""})
+        return
+    base = PUBLIC_URL or ""
+    body = ("BigValue 공공데이터 MCP 서버 (Streamable HTTP, 상태 없음)\n"
+            f"이 주소({base}/mcp)에 JSON-RPC를 POST로 보낸다. 브라우저로 여는 주소가 아니다.\n"
+            f"연결 방법: {base}/#/mcp · 에이전트 안내: {base}/llms.txt\n").encode("utf-8")
+    await send({"type": "http.response.start", "status": 200,
+                "headers": [(b"content-type", b"text/plain; charset=utf-8"), (b"content-length", str(len(body)).encode())]})
+    await send({"type": "http.response.body", "body": b"" if scope["method"] == "HEAD" else body})
+
+
 class _McpUsage:
     """원격 MCP 요청을 엿보아 tools/call을 기록한다 (본문을 읽은 뒤 그대로 다시 흘려보낸다)."""
 
@@ -422,6 +439,10 @@ class _McpUsage:
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope.get("path") == "/mcp/":  # 끝 '/'를 리다이렉트하지 않는다 — 프록시 뒤에서 http로 돌려보내 POST가 GET으로 바뀌던 것
+            scope = dict(scope, path="/mcp", raw_path=b"/mcp")
+        if scope["type"] == "http" and scope.get("path") == "/mcp" and scope.get("method") in ("GET", "HEAD", "DELETE"):
+            return await _mcp_get(scope, send)
         if scope["type"] != "http" or scope.get("method") != "POST" or not scope.get("path", "").startswith("/mcp"):
             return await self.inner(scope, receive, send)
         chunks, more = [], True

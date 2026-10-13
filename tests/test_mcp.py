@@ -235,3 +235,18 @@ def test_forwarded_for_trusted_only_from_listed_proxy():
         assert app._client_ip("1.2.3.4", "9.9.9.9") == "9.9.9.9"
     finally:
         app.TRUSTED_PROXIES = set()
+
+
+def test_mcp_get_does_not_hang_and_slash_not_redirected():
+    """GET /mcp는 바로 끝나고(SSE를 열어 두지 않음), /mcp/는 http로 리다이렉트하지 않는다."""
+    from fastapi.testclient import TestClient
+
+    from pds.service.app import app
+    with TestClient(app) as c:
+        assert c.get("/mcp", headers={"Accept": "text/event-stream"}).status_code == 405
+        r = c.get("/mcp")
+        assert r.status_code == 200 and "POST" in r.text
+        init = {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                "params": {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}}
+        r = c.post("/mcp/", json=init, headers={"Accept": "application/json, text/event-stream"}, follow_redirects=False)
+        assert r.status_code == 200 and r.json()["result"]["serverInfo"]["name"] == "bigvalue-opendata"

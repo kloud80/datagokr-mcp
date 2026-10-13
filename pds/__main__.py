@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from pathlib import Path
@@ -201,7 +202,9 @@ def cmd_gen_dataset(args):
 
 def cmd_serve(args):
     import uvicorn
-    uvicorn.run("pds.service.app:app", host=args.host, port=args.port, reload=False)
+    proxies = os.environ.get("PDS_TRUSTED_PROXIES", "").strip()  # 프록시가 알려 준 https·접속 IP를 믿는다 (지정한 프록시에서 온 연결만)
+    uvicorn.run("pds.service.app:app", host=args.host, port=args.port, reload=False,
+                proxy_headers=True, forwarded_allow_ips=",".join(x for x in ["127.0.0.1", proxies] if x))
 
 
 def cmd_mcp(args):
