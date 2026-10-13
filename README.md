@@ -313,13 +313,19 @@ python -m pds data-pack                    # 스냅샷 zip (Release에 올리는
 | 경로 | 내용 |
 |---|---|
 | `/` | 웹 채팅 — 대화 + 진행 요약·출처 + 전략 패널(데이터·조인·순서·실행 코드·단서) + 데이터 설명서 서랍 |
-| `POST /api/chat` | 대화 (도구: 전략 수립·검색·상세·코드표) |
+| `POST /api/chat` | 대화 (도구: 전략 수립·검색·상세·코드표) — **화면 전용** |
 | `POST /api/plan` | `{goal}` → 전략 응답 ([KNOWLEDGE-SPEC §4](KNOWLEDGE-SPEC.md)) — 근거·조인 규칙을 서버가 검사 |
 | `GET /api/search?q=&tier=` | 세 층 검색 |
 | `GET /api/datasets/{id}` · `/api/codes/{id}?q=` | 상세·설명서 · 코드 조회 |
 | `/#/wiki` | 데이터 위키 — 데이터셋 · 키 · 코드표 세 갈래. 데이터셋 검색·필터(분야·기관·등급·키)와 문서(개요·필드·관계·사실과 근거·설명서), 키 목록·문서(형식·발급·원장·관련 키·매핑·쓰는 데이터), 코드표 목록·문서(범위·근거·쓰는 데이터·코드값 찾기). 필드 → 키·코드표, 키 → 원장·코드표, 코드표 → 쓰는 데이터로 서로 이어진다 |
-| `GET /api/wiki/*` | 위키 API — `search` · `facets` · `datasets/{id}` · `keys` · `keys/{key}` · `codes` · `codes/{id}?q=` · `proposals` |
-| `POST /api/wiki/proposals` · `…/{id}/review` | 수정 제안(누구나) · 승인/반려(승인권자 — 헤더 `x-wiki-token`) |
+| `GET /api/wiki/*` | **화면 전용** 위키 API — `search` · `facets` · `datasets/{id}` · `keys` · `keys/{key}` · `codes` · `codes/{id}?q=` · `proposals` |
+| `POST /api/wiki/proposals` · `…/{id}/review` | **화면 전용** — 수정 제안(누구나) · 승인/반려(승인권자 — 헤더 `x-wiki-token`) |
+
+**공개 API와 화면 전용 API** — 외부에 공개하는 것은 `/api/plan` · `/api/search` · `/api/datasets/{id}`(`/dossier`) · `/api/codes`(`/{id}`)와 `/mcp`뿐이고, 명세(`/api/reference`)에도 이것만 싣는다.
+채팅(`/api/chat*`)·피드백·위키(`/api/wiki/*`)·Docs 집계(`/api/docs`)·통계(`/api/stats`)는 이 사이트 화면 전용이다 — 화면(`/`)을 열 때
+서명된 쿠키(`pds_ui`, HttpOnly·SameSite=Strict, 7일)를 주고, 화면 전용 API는 그 쿠키와 같은 출처 요청만 받는다(아니면 403).
+서명 키는 `PDS_UI_SECRET` 또는 `data/cache/ui_secret`(자동 생성). 다른 사이트에서 끌어 쓰거나 명세를 보고 바로 부르는 것을 막는 장치이고,
+화면을 흉내 내는 스크립트까지 막지는 못한다 — 그쪽은 호출 제한(IP당 시간당 60회)이 맡는다.
 
 **위키 수정 제안과 승인** — 누구나 데이터 문서에 설명·검색어·주의사항·필드 설명·관계·의견을 제안할 수 있다. 제안은 Postgres
 `pds_wiki_proposal`(sql/008)에 쌓이고 yaml은 건드리지 않는다. 승인권자는 `.env`의 `WIKI_ADMIN_TOKENS="이름:토큰,이름:토큰"`으로

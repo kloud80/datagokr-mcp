@@ -39,6 +39,7 @@ def test_api_endpoints():
     from fastapi.testclient import TestClient
     from pds.service.app import app
     c = TestClient(app)
+    c.get("/")  # 화면 전용 API(/api/stats)는 화면이 준 쿠키가 있어야 한다
     s = c.get("/api/stats").json()
     assert s["datasets"]["verified"] > 200 and s["code_lists"] > 100
     assert c.get("/api/codes/land_category", params={"q": "대"}).json()["values"]

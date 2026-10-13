@@ -27,7 +27,7 @@ import uuid
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -55,7 +55,62 @@ app = FastAPI(title="bigvalue-opendata", version="0.2.0", description="data.go.k
 _CORS = [o.strip() for o in os.environ.get("PDS_CORS_ORIGINS", "").split(",") if o.strip()]
 if _CORS:  # 화면은 같은 출처에서 서빙하므로 기본은 CORS를 열지 않는다 — 다른 출처에서 부를 때만 PDS_CORS_ORIGINS로 지정
     app.add_middleware(CORSMiddleware, allow_origins=_CORS, allow_methods=["GET", "POST"], allow_headers=["*"])
-app.add_middleware(GZipMiddleware, minimum_size=2000)  # Docs 집계(수백 KB)를 압축해서
+app.add_middleware(GZipMiddleware, minimum_size=2000)
+
+# ── 화면 전용 API — 채팅·피드백·위키·Docs 집계·통계는 이 사이트 화면에서만 부른다 (외부 공개 API가 아니다)
+#   화면(/)을 열 때 서명된 쿠키를 주고, 화면 전용 API는 그 쿠키 + 같은 출처 요청만 받는다. 명세(/api/reference)에도 싣지 않는다.
+#   공개 API는 /api/plan · /api/search · /api/datasets/{id}(/dossier) · /api/codes(/{id}) 와 /mcp.
+UI_ONLY = ("/api/chat", "/api/feedback", "/api/docs", "/api/stats", "/api/wiki/")
+UI_COOKIE = "pds_ui"
+UI_TTL = 7 * 24 * 3600
+
+
+def _ui_secret() -> bytes:
+    if os.environ.get("PDS_UI_SECRET"):
+        return os.environ["PDS_UI_SECRET"].encode()
+    f = config.ROOT / "data" / "cache" / "ui_secret"  # 재시작해도 열린 화면의 쿠키가 살아 있게 파일로 (git 밖)
+    if not f.exists():
+        import secrets
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(secrets.token_hex(32), encoding="utf-8")
+    return f.read_text(encoding="utf-8").strip().encode()
+
+
+def _ui_token(ts: int | None = None) -> str:
+    import hashlib
+    import hmac
+    ts = ts or int(time.time())
+    return f"{ts}.{hmac.new(_ui_secret(), str(ts).encode(), hashlib.sha256).hexdigest()[:32]}"
+
+
+def _ui_ok(token: str | None) -> bool:
+    import hmac
+    try:
+        ts = int((token or "").split(".", 1)[0])
+    except ValueError:
+        return False
+    return 0 <= time.time() - ts <= UI_TTL and hmac.compare_digest(_ui_token(ts), token or "")
+
+
+def _issue_ui_cookie(req: Request, res) -> None:
+    https = req.url.scheme == "https" or req.headers.get("x-forwarded-proto") == "https"
+    res.set_cookie(UI_COOKIE, _ui_token(), max_age=UI_TTL, httponly=True, samesite="strict", secure=https, path="/api")
+
+
+def _same_origin(req: Request) -> bool:
+    site = req.headers.get("sec-fetch-site")
+    if site and site not in ("same-origin", "none"):
+        return False
+    origin = req.headers.get("origin")
+    return not origin or origin.split("://", 1)[-1] == req.headers.get("host", "")
+
+
+@app.middleware("http")
+async def _ui_only_gate(req: Request, call_next):
+    if req.url.path.startswith(UI_ONLY) and not (_ui_ok(req.cookies.get(UI_COOKIE)) and _same_origin(req)):
+        return JSONResponse({"detail": "이 경로는 웹 화면 전용이다 — 공개 API는 /api/reference, MCP는 /mcp"}, status_code=403)
+    return await call_next(req)
+  # Docs 집계(수백 KB)를 압축해서
 WEB = config.ROOT / "web"
 DIST = WEB / "dist"  # cd frontend && npm run build
 if (DIST / "assets").is_dir():
@@ -120,12 +175,14 @@ class PlanIn(BaseModel):
     use_llm: bool = True
 
 
-@app.get("/")
-def home():
+@app.get("/", include_in_schema=False)
+def home(req: Request):
     built = DIST / "index.html"
     if not built.exists():
         return PlainTextResponse("웹 화면이 빌드되지 않았습니다 — cd frontend && npm install && npm run build", status_code=503)
-    return FileResponse(built)
+    res = FileResponse(built)
+    _issue_ui_cookie(req, res)
+    return res
 
 
 @app.get("/robots.txt", include_in_schema=False, response_class=PlainTextResponse)
@@ -158,7 +215,7 @@ def favicon():
     return FileResponse(f, media_type="image/x-icon")
 
 
-@app.post("/api/chat")
+@app.post("/api/chat", include_in_schema=False)
 def api_chat(body: ChatIn, req: Request):
     from pds.service import llm
     t0 = time.time()
@@ -173,7 +230,7 @@ def api_chat(body: ChatIn, req: Request):
     return jsonable(out)
 
 
-@app.post("/api/chat/stream")
+@app.post("/api/chat/stream", include_in_schema=False)
 def api_chat_stream(body: ChatIn, req: Request):
     """채팅을 스레드에서 돌리며 진행 이벤트를 SSE로 흘린다 — 25초 동안 스피너 대신 단계와 전략 카드가 먼저 보이게."""
     from pds.service import llm
@@ -213,7 +270,7 @@ def api_chat_stream(body: ChatIn, req: Request):
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
-@app.post("/api/feedback")
+@app.post("/api/feedback", include_in_schema=False)
 def api_feedback(body: FeedbackIn, req: Request):
     """답에 대한 👍/👎 — 개선용 기록 (pds_usage_log kind=feedback)."""
     from pds.service.usage import record
@@ -285,7 +342,7 @@ def api_code(cid: str, q: str | None = None, limit: int = 50):
     return {"code_list": ix.codes[cid], "values": ix.code_values(cid, q, limit)}
 
 
-@app.get("/api/docs")
+@app.get("/api/docs", include_in_schema=False)
 def api_docs():
     """Docs 화면 — 지식 체계 규모·관계·커버리지 집계와 데이터별 표 (pds/service/docs.py)."""
     from pds.service import docs
@@ -324,20 +381,20 @@ def _reviewer(req: Request) -> str:
     return name
 
 
-@app.get("/api/wiki/facets")
+@app.get("/api/wiki/facets", include_in_schema=False)
 def api_wiki_facets():
     from pds.service import wiki
     return {**wiki.facets(sindex.get()), "kinds": wiki.KINDS}
 
 
-@app.get("/api/wiki/search")
+@app.get("/api/wiki/search", include_in_schema=False)
 def api_wiki_search(q: str = "", sector: str = "", agency: str = "", grade: str = "", key: str = "", linked: bool = False,
                     sort: str = "relevance", page: int = 1, size: int = 30):
     from pds.service import wiki
     return jsonable(wiki.search(sindex.get(), q, sector, agency, grade, key, linked, sort, page, size))
 
 
-@app.get("/api/wiki/datasets/{dsid}")
+@app.get("/api/wiki/datasets/{dsid}", include_in_schema=False)
 def api_wiki_page(dsid: str):
     from pds.service import wiki
     out = wiki.page(sindex.get(), dsid)
@@ -346,19 +403,19 @@ def api_wiki_page(dsid: str):
     return jsonable(out)
 
 
-@app.get("/api/wiki/keys")
+@app.get("/api/wiki/keys", include_in_schema=False)
 def api_wiki_keys(q: str = ""):
     from pds.service import wiki
     return wiki.keys_list(sindex.get(), q)
 
 
-@app.get("/api/wiki/codes")
+@app.get("/api/wiki/codes", include_in_schema=False)
 def api_wiki_codes(q: str = ""):
     from pds.service import wiki
     return wiki.codes_list(sindex.get(), q)
 
 
-@app.get("/api/wiki/codes/{cid}")
+@app.get("/api/wiki/codes/{cid}", include_in_schema=False)
 def api_wiki_code(cid: str, q: str | None = None, limit: int = 300):
     from pds.service import wiki
     out = wiki.code_page(sindex.get(), cid, q, min(max(limit, 10), 2000))
@@ -367,7 +424,7 @@ def api_wiki_code(cid: str, q: str | None = None, limit: int = 300):
     return jsonable(out)
 
 
-@app.get("/api/wiki/keys/{key}")
+@app.get("/api/wiki/keys/{key}", include_in_schema=False)
 def api_wiki_key(key: str, page: int = 1):
     from pds.service import wiki
     out = wiki.key_page(sindex.get(), key, page)
@@ -376,32 +433,32 @@ def api_wiki_key(key: str, page: int = 1):
     return jsonable(out)
 
 
-@app.get("/api/wiki/proposals")
+@app.get("/api/wiki/proposals", include_in_schema=False)
 def api_wiki_proposals(dataset: str | None = None, status: str | None = None):
     from pds.service import wiki
     return {"rows": _db_call(wiki.proposals, dataset, status), "counts": _db_call(wiki.counts)}
 
 
-@app.post("/api/wiki/proposals")
+@app.post("/api/wiki/proposals", include_in_schema=False)
 def api_wiki_propose(body: ProposalIn, req: Request):
     from pds.service import wiki
     return _db_call(wiki.propose, sindex.get(), body.dataset_id, body.kind, body.proposed_value, body.target, body.reason,
                     body.author, _who(req))
 
 
-@app.get("/api/wiki/me")
+@app.get("/api/wiki/me", include_in_schema=False)
 def api_wiki_me(req: Request):
     from pds.service import wiki
     return {"reviewer": wiki.reviewer_of(req.headers.get("x-wiki-token"))}
 
 
-@app.post("/api/wiki/proposals/{pid}/review")
+@app.post("/api/wiki/proposals/{pid}/review", include_in_schema=False)
 def api_wiki_review(pid: int, body: ReviewIn, req: Request):
     from pds.service import wiki
     return _db_call(wiki.review, sindex.get(), pid, body.decision, _reviewer(req), body.note)
 
 
-@app.get("/api/stats")
+@app.get("/api/stats", include_in_schema=False)
 def api_stats():
     ix = sindex.get()
     from collections import Counter

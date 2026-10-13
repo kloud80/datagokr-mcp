@@ -163,7 +163,7 @@ export function Docs() {
     { id: 'plan', x: 150, y: 420, label: '전략 플래너', sub: 'networkx · 선언 Edge만', tone: 'service', detail: '목표 → 맥락 매칭 → 검증 데이터 검색(지역 필터·가중치) → 선언된 Edge로 최단 조인 경로 → 파이프라인 → 검사(§4 규칙).' },
     { id: 'code', x: 400, y: 420, label: '코드 생성기', sub: 'requests + pandas', tone: 'service', detail: '검증 때 성공한 호출(주소·필수 파라미터·형식·실제 페이지 크기)을 다시 꾸며, 이 저장소 없이 돌아가는 Python을 만든다.' },
     { id: 'llm', x: 650, y: 420, label: 'LLM 설명', sub: 'Claude Sonnet 5.5', tone: 'service', detail: '고른 전략을 설명만 한다. 데이터는 [[id]]로 인용, 맞지 않는 데이터는 제외 도구로 전략에서 뺀다. 10문항 비교로 Haiku 대신 Sonnet을 기본으로.' },
-    { id: 'api', x: 150, y: 516, label: 'REST API', sub: 'FastAPI · SSE', tone: 'use', detail: '/api/chat(/stream) · /api/plan · /api/search · /api/datasets · /api/codes · /api/stats · /api/docs' },
+    { id: 'api', x: 150, y: 516, label: 'REST API', sub: 'FastAPI · SSE', tone: 'use', detail: '공개: /api/plan · /api/search · /api/datasets · /api/codes (명세 /api/reference). 화면 전용(화면 쿠키·같은 출처만): /api/chat(/stream) · /api/wiki · /api/docs · /api/stats' },
     { id: 'web', x: 400, y: 516, label: '웹 화면', sub: 'React + BV 디자인 시스템', tone: 'use', detail: '2열 화면: 대화(진행 단계 실시간) + 전략 패널(조인 지도·데이터 카드·단계·코드·단서). 지금 보고 있는 Docs도 여기.' },
     { id: 'mcp', x: 650, y: 516, label: 'MCP 서버', sub: 'Claude Desktop 등', tone: 'use', detail: 'plan_public_data_strategy · search_datasets · get_dataset(실측 필드·검증 결과) · list_code_lists · lookup_code 도구(읽기 전용), dataset:// 리소스, plan_with_public_data 프롬프트.' },
   ]

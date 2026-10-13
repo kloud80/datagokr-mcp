@@ -250,3 +250,22 @@ def test_mcp_get_does_not_hang_and_slash_not_redirected():
                 "params": {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}}
         r = c.post("/mcp/", json=init, headers={"Accept": "application/json, text/event-stream"}, follow_redirects=False)
         assert r.status_code == 200 and r.json()["result"]["serverInfo"]["name"] == "bigvalue-opendata"
+
+
+def test_ui_only_routes_hidden_and_gated():
+    """채팅·위키·Docs 집계·통계는 명세에 없고, 화면 쿠키·같은 출처 없이 부르면 403. 공개 API는 그대로."""
+    from fastapi.testclient import TestClient
+
+    from pds.service.app import app
+    c = TestClient(app)
+    paths = c.get("/api/openapi.json").json()["paths"]
+    assert "/api/plan" in paths and "/api/search" in paths
+    assert not [p for p in paths if p.startswith(("/api/chat", "/api/wiki", "/api/docs", "/api/stats", "/api/feedback"))]
+    assert c.get("/api/stats").status_code == 403
+    assert c.post("/api/chat", json={"messages": []}).status_code == 403
+    assert c.get("/api/wiki/facets").status_code == 403
+    c.get("/")
+    assert c.get("/api/stats").status_code == 200
+    assert c.get("/api/stats", headers={"Sec-Fetch-Site": "cross-site"}).status_code == 403
+    assert c.get("/api/stats", headers={"Origin": "https://evil.example"}).status_code == 403
+    assert TestClient(app).get("/api/stats", cookies={"pds_ui": "1.forged"}).status_code == 403
