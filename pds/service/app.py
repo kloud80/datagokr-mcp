@@ -75,10 +75,12 @@ class FeedbackIn(BaseModel):
 
 
 TRUST_PROXY = os.environ.get("PDS_TRUST_PROXY", "0") == "1"  # 리버스 프록시 뒤에서만 X-Forwarded-For를 믿는다 (아니면 호출마다 바꿔 제한을 피할 수 있다)
+TRUSTED_PROXIES = {x.strip() for x in os.environ.get("PDS_TRUSTED_PROXIES", "").split(",") if x.strip()}  # 이 IP에서 온 연결만 XFF를 믿는다 (포트가 직접도 열려 있을 때)
+PUBLIC_URL = os.environ.get("PDS_PUBLIC_URL", "").rstrip("/")  # 프록시 뒤 공개 주소 (예: https://labs.ai.bigvalue.co.kr) — 안내문의 주소
 
 
 def _client_ip(xff: str | None, peer: str | None) -> str:
-    if TRUST_PROXY and xff:
+    if xff and (TRUST_PROXY or (peer and peer in TRUSTED_PROXIES)):
         return xff.split(",")[-1].strip()  # 프록시가 붙인 마지막 값 — 앞쪽은 클라이언트가 꾸밀 수 있다
     return peer or ""
 
@@ -129,14 +131,14 @@ def home():
 @app.get("/robots.txt", include_in_schema=False, response_class=PlainTextResponse)
 def robots(req: Request):
     """AI 에이전트의 웹 가져오기(robots.txt 확인)가 막히지 않게 — 화면·API·문서 모두 허용 (채팅·전략은 호출 제한이 따로 있다)."""
-    base = str(req.base_url).rstrip("/")
+    base = PUBLIC_URL or str(req.base_url).rstrip("/")
     return f"User-agent: *\nAllow: /\n\n# 에이전트용 안내: {base}/llms.txt\n"
 
 
 @app.get("/llms.txt", include_in_schema=False, response_class=PlainTextResponse)
 def llms(req: Request):
     """에이전트가 처음 읽을 안내 — MCP 주소, REST 엔드포인트, 키 규약."""
-    b = str(req.base_url).rstrip("/")
+    b = PUBLIC_URL or str(req.base_url).rstrip("/")
     return (f"# BigValue 공공데이터 (data.go.kr) — 목표에 맞는 공공데이터 조합·조인·코드\n\n"
             f"- MCP (Streamable HTTP): {b}/mcp — 서버 이름 bigvalue-opendata\n"
             f"- 전략: POST {b}/api/plan  body {{\"goal\": \"하고 싶은 일\", \"use_llm\": false}}\n"

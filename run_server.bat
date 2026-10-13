@@ -2,7 +2,7 @@
 rem ---------------------------------------------------------------
 rem  bigvalue-opendata server launcher (web chat + API + /mcp)
 rem  usage : run_server.bat [port] [host]
-rem          default port 9001, host 0.0.0.0
+rem          default port 9050, host 0.0.0.0 (https://labs.ai.bigvalue.co.kr proxies to 9050)
 rem  ASCII only - do not add non-ASCII characters to this file.
 rem ---------------------------------------------------------------
 setlocal
@@ -10,7 +10,7 @@ setlocal
 cd /d "%~dp0"
 
 set "PORT=%~1"
-if "%PORT%"=="" set "PORT=9001"
+if "%PORT%"=="" set "PORT=9050"
 set "HOST=%~2"
 if "%HOST%"=="" set "HOST=0.0.0.0"
 

@@ -10,19 +10,19 @@
 어떤 데이터가 실제로 호출되는가, 지금도 갱신되는가, 무엇과 무엇이 이어지는가, 이 코드값은 무슨 뜻인가.
 이 판단을 사람이 매번 다시 하지 않도록, 그리고 AI가 그럴듯하게 지어내지 않도록, **검증된 지식으로 쌓아 두고 꺼내 쓰는 것**이 이 프로젝트다.
 
-### 바로 써 보기 — 테스트 서버 `http://bv.bigvalue.co.kr:9001`
+### 바로 써 보기 — 테스트 서버 `https://labs.ai.bigvalue.co.kr`
 
 | 무엇 | 주소 |
 |---|---|
-| 웹 채팅 (목표를 말하면 데이터·조인·실행 코드) | http://bv.bigvalue.co.kr:9001 |
-| Docs (사상·구성·관계·커버리지, 실시간 집계) | http://bv.bigvalue.co.kr:9001/#/docs |
-| MCP 가이드 | http://bv.bigvalue.co.kr:9001/#/mcp |
-| 원격 MCP (Streamable HTTP) | `http://bv.bigvalue.co.kr:9001/mcp` |
-| REST API · 레퍼런스(Swagger) | `http://bv.bigvalue.co.kr:9001/api/…` · http://bv.bigvalue.co.kr:9001/api/reference |
+| 웹 채팅 (목표를 말하면 데이터·조인·실행 코드) | https://labs.ai.bigvalue.co.kr |
+| Docs (사상·구성·관계·커버리지, 실시간 집계) | https://labs.ai.bigvalue.co.kr/#/docs |
+| MCP 가이드 | https://labs.ai.bigvalue.co.kr/#/mcp |
+| 원격 MCP (Streamable HTTP) | `https://labs.ai.bigvalue.co.kr/mcp` |
+| REST API · 레퍼런스(Swagger) | `https://labs.ai.bigvalue.co.kr/api/…` · https://labs.ai.bigvalue.co.kr/api/reference |
 
 ```bash
-claude mcp add --transport http bigvalue-opendata http://bv.bigvalue.co.kr:9001/mcp     # Claude Code에 MCP 연결
-curl -s -X POST http://bv.bigvalue.co.kr:9001/api/plan -H 'Content-Type: application/json' \
+claude mcp add --transport http bigvalue-opendata https://labs.ai.bigvalue.co.kr/mcp     # Claude Code에 MCP 연결
+curl -s -X POST https://labs.ai.bigvalue.co.kr/api/plan -H 'Content-Type: application/json' \
   -d '{"goal": "성수동 상권 변화를 월 단위로 추적하고 싶어", "use_llm": false}'    # 전략 API
 ```
 
@@ -50,7 +50,7 @@ curl -s -X POST http://bv.bigvalue.co.kr:9001/api/plan -H 'Content-Type: applica
 → **5차 나머지 부문 전부**(20,096단위 Opus 검토 → 1,716건) +1,077, 택지정보시스템 +15, 포털 API(활용신청 311) +271 = 4,444
 → **6차 검증 2만**(기존 판정을 넓혀 가족판·3순위·보조 18,792건 → 파일 13,647 · API 1,573 · 링크 1,257) +16,477 = 20,921
 → **기관 분석·사이트 가입**(기관 150곳 분석 → 빠진 핵심 원장 · 가입 사이트별 검증기) = 25,155
-→ **포털 핵심 원장 API**(활용신청 219 → 158건) = **25,305**. 실시간 집계는 [Docs](http://bv.bigvalue.co.kr:9001/#/docs).
+→ **포털 핵심 원장 API**(활용신청 219 → 158건) = **25,305**. 실시간 집계는 [Docs](https://labs.ai.bigvalue.co.kr/#/docs).
 
 테스트 서버는 가용성·사용량을 보장하지 않는다. 원격 MCP는 읽기 전용이라 인증이 없고, LLM 비용이 드는 설명(explain)은 꺼 두었다.
 
@@ -331,7 +331,7 @@ BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시�
 다시 빌드하려면(사내):
 `cd frontend && npm install && npm run build` → `web/dist`를 서버가 `/`에서 서빙한다. `@bv-ds/*`는 사내 레지스트리
 패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다. API(`/api/*`)는 빌드 없이도 동작한다.
-개발 중에는 `npm run dev`(5173, `/api`는 9001로 프록시).
+개발 중에는 `npm run dev`(5173, `/api`는 9050으로 프록시).
 
 **MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `get_dataset` ·
 `list_code_lists` · `lookup_code`(모두 읽기 전용), 리소스 `dataset://{id}`, 프롬프트 `plan_with_public_data`.

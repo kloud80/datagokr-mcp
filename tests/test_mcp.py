@@ -225,3 +225,13 @@ def test_robots_and_llms_txt():
     assert r.status_code == 200 and "Allow: /" in r.text
     t = c.get("/llms.txt").text
     assert "/mcp" in t and "/api/plan" in t and "credentials" in t
+
+
+def test_forwarded_for_trusted_only_from_listed_proxy():
+    from pds.service import app
+    app.TRUSTED_PROXIES = {"3.3.3.3"}
+    try:
+        assert app._client_ip("6.6.6.6, 1.2.3.4", "3.3.3.3") == "1.2.3.4"
+        assert app._client_ip("1.2.3.4", "9.9.9.9") == "9.9.9.9"
+    finally:
+        app.TRUSTED_PROXIES = set()

@@ -4,7 +4,7 @@ import { CopyIcon, useCopy } from './copy'
 
 // MCP 가이드 — 원격(이 서버의 /mcp)과 내 컴퓨터(stdio) 두 가지로 붙는 법, 도구, 인증 정책.
 
-const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'http://bv.bigvalue.co.kr:9001'
+const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://labs.ai.bigvalue.co.kr'
 const MCP_URL = `${ORIGIN}/mcp`
 const API_ENDPOINTS: [string, string, string][] = [
   ['POST', '/api/plan', '목표 → 전략 (body: {"goal": "…"})'],
@@ -59,6 +59,9 @@ export function Mcp() {
           <h2 className="doc-h2"><span className="doc-num">1</span>연결하기</h2>
           <p className="doc-p">서버 이름은 <code className="pds-code">bigvalue-opendata</code>입니다. 예전 이름(<code className="pds-code">datagokr</code>)으로 등록했어도 주소가 같아 그대로 동작합니다.</p>
           <AgentTabs label="클라이언트별 설정" items={[
+            { id: 'claude', label: 'Claude (웹·앱)', content: <>
+              <p className="doc-p">claude.ai 또는 Claude 데스크톱 앱에서 <b>설정 → 커넥터 → 커스텀 커넥터 추가</b>를 누르고 아래 주소를 넣습니다. 인증은 필요 없습니다.</p>
+              <Code lang="url">{MCP_URL}</Code></> },
             { id: 'cc', label: 'Claude Code', content: <Code lang="bash">{`claude mcp add --transport http bigvalue-opendata ${MCP_URL}
 # 확인
 claude mcp list`}</Code> },
@@ -68,7 +71,7 @@ claude mcp list`}</Code> },
   "mcpServers": {
     "bigvalue-opendata": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "${MCP_URL}", "--allow-http"]
+      "args": ["-y", "mcp-remote", "${MCP_URL}"]
     }
   }
 }`}</Code></> },
@@ -124,7 +127,6 @@ pip install -e . && python -m pds setup --no-db
             <li>주제 분해 결과는 목표 문장·지식 버전별로 저장해 둡니다 — 같은 질문은 같은 답을 받고, 두 번째부터는 빠릅니다.</li>
             <li>서비스 개선을 위해 도구 호출(도구 이름·인자·시간)을 서버에 기록하고 사용 통계(GA4)로 집계합니다. IP는 해시로만 남깁니다.</li>
             <li>설명(explain=true)과 채팅 화면의 LLM 답변이 필요하면 저장소를 받아 내 Claude 키로 실행하세요.</li>
-            <li>HTTP(비암호화) 주소라 일부 클라이언트는 https만 허용합니다 — 그때는 mcp-remote의 <code className="pds-code">--allow-http</code> 또는 내 컴퓨터(stdio) 방식을 쓰세요.</li>
           </ul>
         </section>
         <Credit />

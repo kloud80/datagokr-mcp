@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-// 클립보드 API는 https·localhost에서만 열린다 — http(bv.bigvalue.co.kr:9001)에서는 선택 후 복사로 대신한다
+// 클립보드 API는 https·localhost에서만 열린다 — http 주소(내부망·개발 서버)에서는 선택 후 복사로 대신한다
 export async function copyText(text: string): Promise<boolean> {
   if (window.isSecureContext && navigator.clipboard) {
     try {
