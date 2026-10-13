@@ -126,6 +126,28 @@ def home():
     return FileResponse(built)
 
 
+@app.get("/robots.txt", include_in_schema=False, response_class=PlainTextResponse)
+def robots(req: Request):
+    """AI 에이전트의 웹 가져오기(robots.txt 확인)가 막히지 않게 — 화면·API·문서 모두 허용 (채팅·전략은 호출 제한이 따로 있다)."""
+    base = str(req.base_url).rstrip("/")
+    return f"User-agent: *\nAllow: /\n\n# 에이전트용 안내: {base}/llms.txt\n"
+
+
+@app.get("/llms.txt", include_in_schema=False, response_class=PlainTextResponse)
+def llms(req: Request):
+    """에이전트가 처음 읽을 안내 — MCP 주소, REST 엔드포인트, 키 규약."""
+    b = str(req.base_url).rstrip("/")
+    return (f"# BigValue 공공데이터 (data.go.kr) — 목표에 맞는 공공데이터 조합·조인·코드\n\n"
+            f"- MCP (Streamable HTTP): {b}/mcp — 서버 이름 bigvalue-opendata\n"
+            f"- 전략: POST {b}/api/plan  body {{\"goal\": \"하고 싶은 일\", \"use_llm\": false}}\n"
+            f"- 검색: GET {b}/api/search?q=검색어\n"
+            f"- 데이터 상세: GET {b}/api/datasets/{{id}} · 설명서: GET {b}/api/datasets/{{id}}/dossier\n"
+            f"- 코드표: GET {b}/api/codes · {b}/api/codes/{{id}}\n"
+            f"- API 레퍼런스: {b}/api/reference · MCP 가이드: {b}/#/mcp\n\n"
+            "전략 응답의 credentials.required가 true면 데이터를 받기 전에 사용자에게 키가 필요하다고 알리고, "
+            "credentials.env_sample로 .env를 만들어(값은 비움) 사용자가 채우게 한다. 키를 지어내지 않는다.\n")
+
+
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
     f = DIST / "favicon.ico"

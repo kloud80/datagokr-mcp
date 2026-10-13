@@ -1,18 +1,24 @@
-import { useState } from 'react'
 import { AgentAlert, AgentChip, AgentTable, AgentTabs } from '@bv-ds/ui'
 import { Credit } from './Credit'
+import { CopyIcon, useCopy } from './copy'
 
 // MCP 가이드 — 원격(이 서버의 /mcp)과 내 컴퓨터(stdio) 두 가지로 붙는 법, 도구, 인증 정책.
 
 const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'http://bv.bigvalue.co.kr:9001'
 const MCP_URL = `${ORIGIN}/mcp`
+const API_ENDPOINTS: [string, string, string][] = [
+  ['POST', '/api/plan', '목표 → 전략 (body: {"goal": "…"})'],
+  ['GET', '/api/search?q=', '데이터 검색'],
+  ['GET', '/api/datasets/{id}', '데이터 상세'],
+  ['GET', '/api/codes', '코드표 목록'],
+]
 
 function Code({ children, lang }: { children: string; lang?: string }) {
-  const [ok, setOk] = useState(false)
+  const [ok, copy] = useCopy()
   return (
     <div className="doc-code">
       <div className="doc-code-bar"><span>{lang}</span>
-        <button type="button" onClick={() => { void navigator.clipboard?.writeText(children).then(() => { setOk(true); setTimeout(() => setOk(false), 1200) }) }}>{ok ? '복사됨' : '복사'}</button>
+        <button type="button" onClick={() => copy(children)}>{ok ? '복사됨' : '복사'}</button>
       </div>
       <pre>{children}</pre>
     </div>
@@ -38,9 +44,14 @@ export function Mcp() {
             조인은 선언·실측된 것만 돌려주고, 채우지 못한 부분(공백·시간 단위 불일치)은 gaps로 밝힙니다.
           </p>
           <div className="doc-cards-stack">
-            <div className="doc-card"><AgentChip variant="live">원격</AgentChip><b className="doc-mono">{MCP_URL}</b><p>Streamable HTTP · 상태 없음 · JSON 응답. 설치 없이 주소만 넣으면 됩니다.</p></div>
+            <div className="doc-card"><AgentChip variant="live">원격</AgentChip><b className="doc-mono">{MCP_URL} <CopyIcon text={MCP_URL} label="MCP 주소" /></b><p>Streamable HTTP · 상태 없음 · JSON 응답. 설치 없이 주소만 넣으면 됩니다.</p></div>
             <div className="doc-card"><AgentChip variant="primary">내 컴퓨터</AgentChip><b className="doc-mono">python -m pds mcp</b><p>저장소를 받아 stdio로 실행. 설명(explain)까지 쓰려면 이쪽 + 내 Claude 키.</p></div>
-            <div className="doc-card"><AgentChip variant="neutral">REST API</AgentChip><b className="doc-mono">{ORIGIN}/api/…</b><p>MCP가 아닌 일반 HTTP. 레퍼런스: <a href="/api/reference" target="_blank" rel="noreferrer">/api/reference</a></p></div>
+            <div className="doc-card"><AgentChip variant="neutral">REST API</AgentChip><b className="doc-mono">{ORIGIN}/api <CopyIcon text={`${ORIGIN}/api`} label="API 주소" /></b><p>MCP가 아닌 일반 HTTP. 레퍼런스: <a href="/api/reference" target="_blank" rel="noreferrer">/api/reference</a></p>
+              <ul className="doc-endpoints">
+                {API_ENDPOINTS.map(([m, path, d]) => (
+                  <li key={path}><span className="doc-endpoint-m">{m}</span><code className="pds-code">{ORIGIN}{path}</code><CopyIcon text={`${ORIGIN}${path}`} label={path} /><span className="doc-endpoint-d">{d}</span></li>
+                ))}
+              </ul></div>
           </div>
         </section>
 

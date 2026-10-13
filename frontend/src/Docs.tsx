@@ -20,6 +20,7 @@ import { AgencyTable } from './docs/AgencyTable'
 import { fmtCount } from './JoinMap'
 import { TrustLegend } from './Trust'
 import { Credit } from './Credit'
+import { useCopy } from './copy'
 
 // Docs — 이 시스템을 설명하는 문서. 숫자는 /api/docs에서 실시간으로 (지식 체계가 늘면 같이 바뀐다).
 
@@ -51,11 +52,11 @@ function Section({ id, n: num, title, lead, children }: { id: string; n: number;
 }
 
 function Code({ children, lang }: { children: string; lang?: string }) {
-  const [ok, setOk] = useState(false)
+  const [ok, copy] = useCopy()
   return (
     <div className="doc-code">
       <div className="doc-code-bar"><span>{lang}</span>
-        <button type="button" onClick={() => { void navigator.clipboard?.writeText(children).then(() => { setOk(true); setTimeout(() => setOk(false), 1200) }) }}>{ok ? '복사됨' : '복사'}</button>
+        <button type="button" onClick={() => copy(children)}>{ok ? '복사됨' : '복사'}</button>
       </div>
       <pre>{children}</pre>
     </div>

@@ -214,3 +214,14 @@ def test_mcp_instructions_mention_key_protocol():
     from pds.mcp.server import plan_with_public_data, server
     assert "credentials" in server.instructions and ".env" in server.instructions
     assert "env_sample" in plan_with_public_data("x")
+
+
+def test_robots_and_llms_txt():
+    from fastapi.testclient import TestClient
+
+    from pds.service.app import app
+    c = TestClient(app)
+    r = c.get("/robots.txt")
+    assert r.status_code == 200 and "Allow: /" in r.text
+    t = c.get("/llms.txt").text
+    assert "/mcp" in t and "/api/plan" in t and "credentials" in t

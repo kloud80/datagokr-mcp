@@ -12,6 +12,7 @@ import type { Badge, HeadPick, Plan, PlanDataset, PlanHead } from './api'
 import { JoinMap, fmtCount, shortTitle } from './JoinMap'
 import { TrustIcon, TrustLegend } from './Trust'
 import type { OpenDataset } from './md'
+import { copyText } from './copy'
 
 export type PlanTab = 'heads' | 'map' | 'data' | 'pipe' | 'code' | 'leads'
 
@@ -128,30 +129,6 @@ function HeadsView({ p, open }: { p: Plan; open: OpenDataset }) {
       ) : null}
     </>
   )
-}
-
-// 클립보드 API는 https·localhost에서만 열린다 — http(bv.bigvalue.co.kr:9001)에서는 선택 후 복사로 대신한다
-async function copyText(text: string): Promise<boolean> {
-  if (window.isSecureContext && navigator.clipboard) {
-    try {
-      await navigator.clipboard.writeText(text)
-      return true
-    } catch { /* 아래 방식으로 */ }
-  }
-  const ta = document.createElement('textarea')
-  ta.value = text
-  ta.setAttribute('readonly', '')
-  ta.style.position = 'fixed'
-  ta.style.opacity = '0'
-  document.body.appendChild(ta)
-  ta.select()
-  let ok = false
-  try {
-    ok = document.execCommand('copy')
-  } finally {
-    document.body.removeChild(ta)
-  }
-  return ok
 }
 
 function keysNeeded(p: Plan) {
