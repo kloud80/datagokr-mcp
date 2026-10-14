@@ -207,7 +207,7 @@ def test_credentials_env_sample():
     assert {e["name"]: e["datasets"] for e in c["env"]} == {"DATA_GO_KR_SERVICE_KEY": ["A"], "DATA_SEOUL_API_KEY": ["C"], "VWORLD_API_KEY": []}
     assert "DATA_GO_KR_SERVICE_KEY=\n" in c["env_sample"] and "VWORLD_DOMAIN=" in c["env_sample"]
     assert credentials({"datasets": [p["datasets"][1]], "joins": []}) == {"required": False, "env": [], "env_sample": "", "agent_protocol": []}
-    assert env_name("apihub.kma.go.kr") == "APIHUB_KMA_GO_KR_API_KEY"
+    assert env_name("apihub.kma.go.kr") == "KMA_APIHUB_API_KEY" and env_name("open.example.go.kr") == "EXAMPLE_GO_KR_API_KEY"
 
 
 def test_mcp_instructions_mention_key_protocol():

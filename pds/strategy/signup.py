@@ -129,6 +129,14 @@ ENV_BY_HOST = {  # .env.example과 같은 이름 — 없는 사이트는 호스�
     "data.go.kr": "DATA_GO_KR_SERVICE_KEY", "vworld.kr": "VWORLD_API_KEY", "api.vworld.kr": "VWORLD_API_KEY",
     "data.seoul.go.kr": "DATA_SEOUL_API_KEY", "openapi.seoul.go.kr": "DATA_SEOUL_API_KEY",
     "open.neis.go.kr": "OPEN_NEIS_API_KEY", "open.law.go.kr": "OPEN_LAW_GO_KR_API_KEY", "law.go.kr": "OPEN_LAW_GO_KR_API_KEY",
+    # 키 미보유 상위 사이트 (2026-10-14 가입 목록) — .env.example과 같은 이름
+    "reb.or.kr": "REB_API_KEY", "kosis.kr": "KOSIS_API_KEY", "plus.kipris.or.kr": "KIPRIS_API_KEY", "opendata.mnd.go.kr": "MND_API_KEY",
+    "sgis.kostat.go.kr": "SGIS_CONSUMER_KEY", "calspia.go.kr": "CALS_API_KEY", "nfqs.go.kr": "NFQS_API_KEY",
+    "openfiscaldata.go.kr": "OPENFISCAL_API_KEY", "ecvam.neins.go.kr": "NEINS_API_KEY", "nie-ecobank.kr": "ECOBANK_API_KEY",
+    "map.ngii.go.kr": "NGII_API_KEY", "bigdata.kepco.co.kr": "KEPCO_API_KEY", "info.childcare.go.kr": "CHILDCARE_API_KEY",
+    "opinet.co.kr": "OPINET_API_KEY", "khoa.go.kr": "KHOA_API_KEY", "ecos.bok.or.kr": "ECOS_API_KEY", "data.kric.go.kr": "KRIC_API_KEY",
+    "garak.co.kr": "GARAK_API_KEY", "safemap.go.kr": "SAFEMAP_API_KEY", "apihub.kma.go.kr": "KMA_APIHUB_API_KEY",
+    "nongsaro.go.kr": "NONGSARO_API_KEY",
 }
 PORTAL_HOW = "data.go.kr 로그인 → 데이터마다 '활용신청'(대부분 자동승인) → 마이페이지 '일반 인증키(Decoding)'"
 AGENT_PROTOCOL = [
