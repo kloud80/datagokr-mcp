@@ -12,6 +12,7 @@
     exact_ksic10   정규화 이름 == KSIC 10차 항목명 → 연계표로 11차                                  1.0 (1:N이면 1/N)
     sbiz_measured  정규화 이름 == 상권업종소분류명 → 상가정보 실측 최빈 KSIC                          그 업종에서 최빈 KSIC 비율
     curated        knowledge/expansion/industry_dict.yaml entries — 인허가 업종 어휘를 Opus가 판정 (구름 검토 전)  사전의 confidence
+                   confidence < HOLD(0.65)인 항목은 붙이지 않고 보류 — industry_review.csv 로 검토를 기다린다
     curated_pattern  같은 사전의 patterns (어업 종류처럼 변형이 많은 이름 규칙)                       사전의 confidence
   값이 '일반미용업, 네일미용업'처럼 여러 업종을 쉼표로 묶었으면 낱말마다 붙이고 confidence를 나눈다.
 어휘 원천: 검증 데이터(tier=verified) 중 업종 이름 필드(FIELD_RX)가 있는 것의 실측 표본(probe/data) 값 전부.
@@ -33,6 +34,7 @@ from pds.schema import store
 DICT = config.KNOWLEDGE / "expansion" / "industry_dict.yaml"
 P = config.ROOT / "probe" / "data"
 FIELD_RX = re.compile(r"^(업종명|업종|업태명|업태구분명|업종구분|업종분류|UPTAENM|SNTUPTAENM|CULPHYEDCOBNM|BFGAMEOCPTECTCOBNM|uptaeNm|indutyNm)$", re.I)
+HOLD = 0.65  # 사전 판정이 이보다 낮으면 매핑에 안 쓰고 검토 목록으로 (구름 결정 2026-10-15)
 JUNK = {"", "nan", "none", "null", "-", "기타", "해당없음", "미분류"}
 
 
@@ -134,10 +136,11 @@ def skipped() -> set[str]:
     return {nz(v) for vs in (_dict().get("skip") or {}).values() for v in vs}
 
 
-def curated(codes: dict[str, str]) -> dict[str, list[tuple[str, float]]]:
-    """사전: nz(이름) → [(KSIC 11차, confidence)]. aliases도 같은 답. codes = KSIC 11차 {코드: 이름} — 없는 코드·이름은 오류."""
+def curated(codes: dict[str, str]) -> tuple[dict[str, list[tuple[str, float]]], dict[str, dict]]:
+    """사전: nz(이름) → [(KSIC 11차, confidence)]. aliases도 같은 답. codes = KSIC 11차 {코드: 이름} — 없는 코드·이름은 오류.
+    confidence < HOLD 항목은 둘째 반환값(nz(이름) → 사전 항목)으로 따로 — 매핑에 안 쓴다."""
     by_name = {nz(n): c for c, n in sorted(codes.items(), key=lambda x: (x[0].isdigit(), len(x[0])))}
-    out, bad = {}, []
+    out, held, bad = {}, {}, []
     for e in _dict()["entries"]:
         if "ksic_name" in e:
             ks = [by_name.get(nz(e["ksic_name"]))]
@@ -148,10 +151,13 @@ def curated(codes: dict[str, str]) -> dict[str, list[tuple[str, float]]]:
             continue
         conf = float(e.get("confidence", 0.8))
         for name in [e["name"], *e.get("aliases", [])]:
-            out[nz(name)] = [(k, round(conf / len(ks), 3)) for k in ks]
+            if conf < HOLD:
+                held[nz(name)] = {**e, "ksic": ks}
+            else:
+                out[nz(name)] = [(k, round(conf / len(ks), 3)) for k in ks]
     if bad:
         raise ValueError("사전의 KSIC 코드·이름이 11차에 없음: " + " · ".join(bad))
-    return out
+    return out, held
 
 
 def patterns(codes: dict[str, str]) -> list[tuple[re.Pattern, list[tuple[str, float]]]]:
@@ -174,7 +180,7 @@ def resolver():
     by10 = {nz(n): c for c, n in zip(k10["code"], k10["name"]) if len(c) == 5}
     sb = sbiz()
     bysb = {nz(n): list(g[["right_value", "confidence"]].itertuples(index=False, name=None)) for n, g in sb.groupby("left_kind")}
-    cur = curated(dict(zip(k11["code"], k11["name"])))
+    cur, held = curated(dict(zip(k11["code"], k11["name"])))
     pats = patterns(dict(zip(k11["code"], k11["name"])))
 
     name11, name10 = dict(zip(k11["code"], k11["name"])), dict(zip(k10["code"], k10["name"]))
@@ -228,12 +234,12 @@ def resolver():
         tg = [(t, round(c / len(parts), 3)) for _, ts in got for t, c in ts]
         return "split:" + "+".join(sorted({m for m, _ in got})), tg
 
-    return resolve, sb
+    return resolve, sb, held
 
 
 def build() -> dict:
     links = build_links()
-    resolve, sb = resolver()
+    resolve, sb, held = resolver()
     sb_rec = write("sbiz_inds__ksic", {"key": "sbiz_inds", "system": "소상공인 상권업종 소분류 코드 (상가정보 15083033)"},
                    {"key": "ksic", "system": "KSIC 11차 세세분류"}, "exact", sb, "keep_left", ["15083033", "15159305"],
                    f"상가정보 {len(_latest('15083033')):,}행 실측 — 소분류마다 가장 많이 붙은 10차 코드를 11차로. confidence = 그 소분류 안 최빈 비율 "
@@ -243,10 +249,17 @@ def build() -> dict:
     skip = skipped()
     n_skip = int(v["value"].map(nz).isin(skip).sum())
     v = v[~v["value"].map(nz).isin(skip)]
-    rows, miss = [], []
+    rows, miss, review = [], [], defaultdict(lambda: {"datasets": 0, "rows": 0, "values": []})
     for r in v.itertuples():
         got = resolve(r.value)
         if not got:
+            for part in [r.value, *re.split(r"\s*[,+]\s*", r.value)]:  # 보류 항목에 걸린 값은 검토 목록에 모은다
+                if nz(part) in held:
+                    h = review[held[nz(part)]["name"]]
+                    h["datasets"] += r.datasets
+                    h["rows"] += r.rows
+                    h["values"].append(r.value)
+                    break
             miss.append(r)
             rows.append({"left_value": r.value, "right_value": None, "confidence": 0.0, "method": "unmatched", "left_kind": f"{r.datasets}건"})
             continue
@@ -254,17 +267,25 @@ def build() -> dict:
         for t, c in ts:
             rows.append({"left_value": r.value, "right_value": t, "confidence": c, "method": m, "left_kind": f"{r.datasets}건"})
     t = pd.DataFrame(rows)
+    ent = {e["name"]: e for e in held.values()}
     hit = v.set_index("value").join(t.groupby("left_value")["right_value"].apply(lambda s: s.notna().any()).rename("hit"))
     w_ds = (hit["datasets"] * hit["hit"]).sum() / hit["datasets"].sum()
     w_rows = (hit["rows"] * hit["hit"]).sum() / hit["rows"].sum()
     rec = write("industry_nm__ksic", {"key": "industry_nm", "system": "업종·업태 이름 (인허가·공장등록·점포 현황 등 검증 데이터 실측값)"},
                 {"key": "ksic", "system": "KSIC 11차 세세분류"}, "composite", t, "keep_left", ["15159306", "15159305", "15083033"],
                 f"검증 데이터 {n_ds:,}건의 업종 필드 실측값 {len(v):,}개 (업종이 아닌 값 {n_skip:,}개 제외). 데이터 수 가중 일치 {w_ds:.1%} · 행 수 가중 {w_rows:.1%}. "
-                f"curated는 Opus 판정(구름 검토 전) — left_kind = 그 이름이 나온 데이터 수")
+                f"curated는 Opus 판정(구름 검토 전), confidence {HOLD} 미만 {len(ent)}항목은 보류(industry_review.csv) — left_kind = 그 이름이 나온 데이터 수")
+    pd.DataFrame([{"name": n, "proposed_ksic": " ".join(ent[n]["ksic"]), "confidence": ent[n]["confidence"], "note": ent[n].get("note", ""),
+                   "datasets": h["datasets"], "rows": h["rows"], "values": " | ".join(sorted(set(h["values"]))[:10])}
+                  for n, h in review.items()] +
+                 [{"name": n, "proposed_ksic": " ".join(e["ksic"]), "confidence": e["confidence"], "note": e.get("note", ""), "datasets": 0, "rows": 0,
+                   "values": ""} for n, e in ent.items() if n not in review]
+                 ).sort_values(["datasets", "name"], ascending=[False, True]).to_csv(
+        config.KNOWLEDGE / "expansion" / "industry_review.csv", index=False, encoding="utf-8-sig")
     pd.DataFrame(miss).sort_values("datasets", ascending=False).to_csv(config.KNOWLEDGE / "expansion" / "industry_unmatched.csv",
                                                                         index=False, encoding="utf-8-sig")
     return {"links": [x["rows"] for x in links], "sbiz": sb_rec["rows"], "industry_nm": rec["rows"], "match_rate": rec["match_rate"],
-            "w_datasets": round(float(w_ds), 4), "w_rows": round(float(w_rows), 4)}
+            "w_datasets": round(float(w_ds), 4), "w_rows": round(float(w_rows), 4), "held": len(ent)}
 
 
 if __name__ == "__main__":

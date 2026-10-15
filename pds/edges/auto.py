@@ -27,6 +27,11 @@ CADASTRE = "15123899"   # 연속지적도 (PNU 폴리곤) — 공간 조인 허�
 BJD_MASTER = "15123287"  # 법정동코드 파일
 AREA_KEYS = {"bjd_cd", "sgg_cd", "admin_area_code"}
 WEAK_KEYS = {"address", "coord"}
+# 분류 키 — 같은 값끼리는 업종 단위 many_to_many. 매핑(M)은 오른쪽 키의 대표 데이터 하나로만 (L×3 폭증 방지)
+CLASS_KEYS = {"ksic", "ksic10", "ksic9", "industry_nm", "sbiz_inds"}
+NAME_ONLY_KEYS = {"industry_nm"}  # 이름 텍스트 — 같은 키(K)로 바로 잇지 않고 매핑으로만
+# 분류 키의 대표 데이터 — 점수 최고가 아니라 가장 세밀(세세분류 5자리)·전국인 것. 상가정보(ksic10)는 점수로 이미 뽑힌다
+CLASS_HUB = {"ksic": "15087611"}  # 한국산업단지공단 공장등록생산정보 — 대표업종코드 11차 5자리
 # 호출 파라미터 이름 → Key (lookup 후보)
 PARAM_KEY = {"ykiho": "ykiho", "kaptCode": "apt_complex_cd", "pnu": "pnu", "LAWD_CD": "sgg_cd", "bjdCode": "bjd_cd",
              "sigunguCode": "sgg_cd", "ATPT_OFCDC_SC_CODE": "neis_school_cd", "SD_SCHUL_CODE": "neis_school_cd", "hpid": "hpid",
@@ -73,8 +78,9 @@ def candidates() -> list[dict]:
     for i, fk in fks.items():
         for k in fk:
             by_key[k].append(i)
+    hubs = {}
     for k, members in by_key.items():
-        if k in WEAK_KEYS:
+        if k in WEAK_KEYS or k in NAME_ONLY_KEYS:
             continue
         if k in AREA_KEYS:
             for i in members:
@@ -83,23 +89,27 @@ def candidates() -> list[dict]:
                         conf=0.6, note=f"지역 키 {k} — 지역 단위로 집계한 뒤 결합")
             continue
         masters = [m for m in keys.get(k, {}).get("master_datasets", []) if m in ds]
-        hub = masters[0] if masters else max(members, key=lambda x: score[x])
+        hub = hubs[k] = masters[0] if masters else CLASS_HUB[k] if CLASS_HUB.get(k) in members else max(members, key=lambda x: score[x])
         for i in members:
             if i == hub:
                 continue
             rfield = fks[hub][k][:1] if hub in fks and k in fks[hub] else [k]
             add(i, hub, "joinable", fks[i][k][:1], rfield, "many_to_one" if masters else "many_to_many", conf=0.7 if masters else 0.5,
-                note=f"같은 키 {k}" + (" (키 원장으로)" if masters else " (대표 데이터로 — 원장 미지정)"))
+                note=f"같은 키 {k}" + (" (키 원장으로)" if masters else " (대표 데이터로 — 원장 미지정)")
+                + (" — 분류 키: 업종 단위로 집계한 뒤 결합" if k in CLASS_KEYS else ""))
 
     # M 매핑
     for m, _ in store.iter_raw("mapping"):
         lk, rk = m["left"]["key"], m["right"]["key"]
         L = [i for i in by_key.get(lk, [])] or [s for s in m.get("sources", [])[:1] if s in ds]
         R = [i for i in by_key.get(rk, [])] or [s for s in m.get("sources", [])[1:2] if s in ds]
+        if rk in CLASS_KEYS and rk in hubs:
+            R = [hubs[rk]]
         for a in L:
             for b in R[:3]:
-                add(a, b, "joinable", fks.get(a, {}).get(lk, [lk])[:1], fks.get(b, {}).get(rk, [rk])[:1], "many_to_one",
-                    via=m["id"], conf=min(0.9, 0.4 + m["match_rate"] / 2), note=f"매핑 {m['id']} (매칭률 {m['match_rate']:.0%})")
+                add(a, b, "joinable", fks.get(a, {}).get(lk, [lk])[:1], fks.get(b, {}).get(rk, [rk])[:1],
+                    "many_to_many" if rk in CLASS_KEYS else "many_to_one", via=m["id"], conf=min(0.9, 0.4 + m["match_rate"] / 2),
+                    note=f"매핑 {m['id']} (매칭률 {m['match_rate']:.0%})" + (" — 업종 단위로 집계한 뒤 결합" if rk in CLASS_KEYS else ""))
 
     # S 공간
     for i, fk in fks.items():
