@@ -298,6 +298,43 @@ def ncs() -> dict:
                    "notes": "분류번호 = 대(2)·중(2)·소(2)·세(2)… 필드가 단계별로 나뉘면(ncsLclasCd…) 앞에서부터 이어 붙여 읽는다"}, t)
 
 
+KSIC_LEVEL = {1: "대분류", 2: "중분류", 3: "소분류", 4: "세분류", 5: "세세분류"}
+
+
+def _ksic_table(code: pd.Series, name: pd.Series) -> pd.DataFrame:
+    """KSIC 코드 → 단계(대분류 문자 1 · 중 2 · 소 3 · 세 4 · 세세 5자리)와 상위 코드. 대분류 문자는 중분류 범위로 이어진다."""
+    t = pd.DataFrame({"code": code.astype(str).str.strip(), "name": name.astype(str).str.strip()}).drop_duplicates("code")
+    lv = t["code"].map(lambda c: 1 if c.isalpha() else len(c))
+    t["note"] = lv.map(KSIC_LEVEL) + lv.map(lambda n: "" if n <= 2 else " · 상위 ") + t["code"].map(lambda c: c[:-1] if len(c) > 2 and not c.isalpha() else "")
+    return t.sort_values("code", key=lambda s: s.map(lambda c: (c.isdigit(), c)))
+
+
+def ksic() -> dict:
+    """한국표준산업분류 11차 전체 — 국가데이터처 산업직업분류 파일(15159306)의 '산업' 행."""
+    d = _latest("15159306")
+    d = d[d["분류"].astype(str).str.strip() == "산업"]
+    t = _ksic_table(d["코드값"], d["상세설명"])
+    cnt = t["note"].str.split(" ").str[0].value_counts().to_dict()
+    return _write({"id": "ksic", "name": "한국표준산업분류 (KSIC 11차, 2024.7 시행)", "key": "ksic", "completeness": "complete",
+                   "evidence": [{"type": "measured", "source": "probe/data/15159306/ (국가데이터처_산업직업분류 파일)", "observed_at": TODAY,
+                                 "detail": " · ".join(f"{k} {cnt.get(k, 0):,}" for k in KSIC_LEVEL.values())}],
+                   "aliases": [_plan_entry("ksic")["fields"]],
+                   "notes": "대분류 A~U 문자 · 중분류 2 · 소분류 3 · 세분류 4 · 세세분류 5자리 숫자 (앞자리가 상위 분류, R-23). "
+                            "'I56221'처럼 대분류 문자를 앞에 붙인 필드는 문자를 떼고 읽는다. 10차·9차 코드는 ksic10 코드표와 ksic10__ksic 매핑으로 읽는다"}, t)
+
+
+def ksic10() -> dict:
+    """KSIC 10차(2017~2024.6) — 11차 연계표(15159305)의 구분류 쪽. 상가정보(15083033) 등 아직 10차를 쓰는 데이터 해석용."""
+    d = _latest("15159305")
+    d = d[(d["분류종류"] == "KSIC") & (d["분류차순정보"].astype(str) == "11")]
+    t = _ksic_table(d["구분류코드"], d["구분류항목명"])
+    return _write({"id": "ksic10", "name": "한국표준산업분류 (KSIC 10차, 2017.7~2024.6)", "key": "ksic10", "completeness": "complete",
+                   "evidence": [{"type": "measured", "source": "probe/data/15159305/ (국가데이터처_산업직업분류 연계표 — 11차의 구분류)",
+                                 "observed_at": TODAY, "detail": f"{len(t):,}개 코드"}],
+                   "aliases": ["^(표준산업분류코드|ksicCd|indsCd10)$"],
+                   "notes": "11차로 옮길 때는 매핑 ksic10__ksic (1:N이면 confidence = 1/N). 대분류 이름에 '(01~03)' 같은 중분류 범위가 붙어 있다"}, t)
+
+
 SPEC_PAIR = re.compile(r"(?:^|[\s,(/;])([A-Za-z0-9]{1,6})\s*[:=]\s*([^,/;:=()]{1,30}?)(?=\s*(?:[,/;)]|\s[A-Za-z0-9]{1,6}\s*[:=]|$))")
 
 
@@ -387,7 +424,7 @@ def link_by_plan() -> int:
 
 def build_planned() -> dict:
     res = {}
-    for fn in (country_iso, port_locode, hs_cd, ncs, currency_iso, instt_cd):
+    for fn in (country_iso, port_locode, hs_cd, ncs, currency_iso, instt_cd, ksic, ksic10):
         try:
             res[fn.__name__] = fn()["rows"]
         except (IndexError, FileNotFoundError) as e:

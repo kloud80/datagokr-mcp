@@ -1,0 +1,286 @@
+# 업종 이름 → KSIC 11차 사전 — pds/mapping/build_industry.py 의 curated 단계 입력 (사람·Opus가 쓰는 원본)
+# 상태: 초안 (2026-10-15, Opus 판정) — 구름 검토 전. 검토 뒤 confidence·코드를 고치고 review 기록을 남긴다.
+# 대상: 검증 데이터 업종 필드 실측값 중 KSIC 이름·10차 이름·상권업종 이름과 자동으로 안 맞은 것 (주로 인허가 업종 어휘).
+#   ksic       KSIC 11차 코드 하나 또는 목록 (상위 단계 코드 가능 — 4자리 '5611' = 한식 음식점업 전체). 목록이면 confidence를 나눈다
+#   ksic_name  코드 대신 KSIC 11차 항목명 (빌더가 코드로 바꾼다 — 옛 차수 제조업 이름처럼 글자만 다른 것)
+#   confidence 이 이름의 업소가 그 코드에 속할 가능성에 대한 판정 (1.0 = 법령 업종 정의와 KSIC 정의가 같음)
+#   law        업종 정의 근거 법령 (식품위생법 시행령 제21조 등)
+#   note       판정 이유
+entries:
+  # ───────────── 식품위생법 시행령 제21조 식품접객업·제조업 (LOCALDATA)
+  - {name: 일반음식점, ksic: '561', confidence: 0.7, law: 식품위생법 시행령 제21조 8호 라목, note: '음식류 조리·판매 + 음주 허용. 한식·외국식·치킨 등 음식점업 전체 — 일부는 실제로 주점(5621)'}
+  - {name: 휴게음식점, ksic: ['5622', '5619'], confidence: 0.8, law: 식품위생법 시행령 제21조 8호 가목, note: 음주 불가 — 다류·아이스크림(5622) · 패스트푸드·분식(5619). 커피 전문점이 다수}
+  - {name: 기타 휴게음식점, aliases: [일반조리판매], ksic: '5619', confidence: 0.6}
+  - {name: 제과점영업, aliases: [제과점, 과자점, 베이커리, 제과], ksic: '56150', confidence: 0.9, law: 식품위생법 시행령 제21조 8호 바목}
+  - {name: 단란주점, ksic: '5621', confidence: 0.85, law: 식품위생법 시행령 제21조 8호 다목, note: 노래 가능·접객원 없음 — 일반 유흥(56211)과 기타 주점(56219) 사이}
+  - {name: 유흥주점영업, aliases: [유흥주점, 룸살롱, 요정, 비어(바)살롱, 스텐드바, 노래클럽], ksic: '56211', confidence: 0.85, law: 식품위생법 시행령 제21조 8호 라목}
+  - {name: 카바레, aliases: [고고(디스코)클럽, 관광호텔나이트(디스코), 관광호텔나이트(카바레), 관광극장유흥업, 감성주점, 극장식당], ksic: '56212', confidence: 0.75, note: 춤을 추는 주점 = 무도 유흥 주점업. 감성주점·극장식당은 일반음식점 허가로 영업하기도 함}
+  - {name: 간이주점, aliases: [정종/대포집/소주방, 라이브카페], ksic: '56219', confidence: 0.8}
+  - {name: 호프/통닭, ksic: ['56213', '56162'], confidence: 0.85}
+  - {name: 위탁급식영업, ksic: '56130', confidence: 0.85, law: 식품위생법 시행령 제21조 8호 마목}
+  - {name: 집단급식소, ksic: '56130', confidence: 0.75, law: 식품위생법 제2조 12호, note: 기관이 직접 운영하는 구내식당 — 운영 주체의 산업은 따로}
+  - {name: 출장조리, ksic: '56141', confidence: 0.9}
+  - {name: 푸드트럭, ksic: '56142', confidence: 0.9}
+  - {name: 한식, ksic: '5611', confidence: 0.9}
+  - {name: 식육(숯불구이), ksic: '56113', confidence: 0.9}
+  - {name: 냉면집, ksic: '56112', confidence: 0.9}
+  - {name: 횟집, aliases: [복어취급], ksic: '56114', confidence: 0.85}
+  - {name: 탕류(보신용), ksic: '5611', confidence: 0.8}
+  - {name: 중식, aliases: [중국식], ksic: '56121', confidence: 0.95}
+  - {name: 일식, ksic: '56122', confidence: 0.95}
+  - {name: 경양식, aliases: [양식, 패밀리레스트랑], ksic: '56123', confidence: 0.85}
+  - {name: '외국음식전문점(인도,태국등)', ksic: '56129', confidence: 0.9}
+  - {name: 분식, aliases: [김밥(도시락)], ksic: '56191', confidence: 0.85}
+  - {name: 패스트푸드, ksic: '56161', confidence: 0.85}
+  - {name: 통닭(치킨), ksic: '56162', confidence: 0.9}
+  - {name: 뷔페식, ksic: '561', confidence: 0.7}
+  - {name: 커피숍, aliases: [까페, 카페, 떡카페], ksic: '56221', confidence: 0.85}
+  - {name: 다방, ksic: '56221', confidence: 0.7}
+  - {name: 전통찻집, aliases: [아이스크림], ksic: '56229', confidence: 0.85}
+  - {name: 키즈카페, ksic: '91299', confidence: 0.6, note: 휴게음식점 허가지만 실제 사업은 실내 놀이시설}
+  - {name: 음식점, aliases: [음식업, 식당, 식당/음식, 음식, 기타요식업, 관광식당업], ksic: '561', confidence: 0.75}
+  - {name: 식품접객업, ksic: '56', confidence: 0.8}
+  - {name: 식품제조가공업, aliases: [식품제조업, 식품제조, 기타 식품제조가공업], ksic: '10', confidence: 0.85, law: 식품위생법 시행령 제21조 1호}
+  - {name: 즉석판매제조가공업, ksic: ['47223', '1060'], confidence: 0.6, law: 식품위생법 시행령 제21조 2호, note: 반찬·떡·빵을 만들어 그 자리에서 파는 가게}
+  - {name: 식품소분업, ksic: '75994', confidence: 0.6, law: 식품위생법 시행령 제21조 5호 가목}
+  - {name: 기타식품판매업, ksic: '4712', confidence: 0.6, law: 식품위생법 시행령 제21조 5호 나목, note: 매장 300㎡ 이상 식품 판매 — 대부분 슈퍼·마트 식품부}
+  - {name: 식품자동판매기영업, ksic: '47991', confidence: 0.95}
+  - {name: 식품운반업, ksic: '4930', confidence: 0.8}
+  - {name: 유통전문판매업, aliases: [건강기능식품유통전문판매업, 집단급식소 식품판매업], ksic: '463', confidence: 0.6, note: 제조를 맡기고 자기 상표로 파는 식품 판매 — 도매로 본다}
+  - {name: 건강기능식품일반판매업, aliases: [기타 건강기능식품일반판매업], ksic: '47222', confidence: 0.9}
+  - {name: 식용얼음판매업, ksic: '46332', confidence: 0.5}
+  - {name: 식품냉동.냉장업, ksic: '52102', confidence: 0.9}
+  - {name: 식품첨가물제조업, ksic: '1083', confidence: 0.9}
+  - {name: 용기.포장지제조업, ksic: 'C', confidence: 0.5, note: 식품용 기구·용기 — 재질(플라스틱·종이·금속)에 따라 갈린다}
+  - {name: 식육가공업, aliases: [기타 육류 가공 및 저장처리업, 기타육지동물고기가공및저장처리업], ksic: '1012', confidence: 0.9, law: 축산물 위생관리법}
+  - {name: 유가공업, ksic: '1042', confidence: 0.9}
+  - {name: 알가공업, ksic: '1089', confidence: 0.7}
+
+  # ───────────── 공중위생관리법 (숙박·목욕·이용·미용·세탁·위생관리)
+  - {name: 숙박업(일반), aliases: [숙박업, 숙박, 숙박업 기타, 숙박시설], ksic: '5510', confidence: 0.85, law: 공중위생관리법 시행령 제4조}
+  - {name: 숙박업(생활), ksic: '55109', confidence: 0.8, note: 생활숙박시설(레지던스)}
+  - {name: 여인숙업, ksic: '55102', confidence: 0.9}
+  - {name: 미용업, aliases: [종합미용업, 이미용업], ksic: '9611', confidence: 0.85}
+  - {name: 일반미용업, ksic: '96112', confidence: 0.95}
+  - {name: 네일미용업, aliases: [네일아트업, 화장ㆍ분장 미용업, 메이크업업], ksic: '96119', confidence: 0.9}
+  - {name: 일반이용업, aliases: [이용업 기타], ksic: '96111', confidence: 0.95}
+  - {name: 목욕장업, aliases: [목욕업, 공동탕업, 한증막업, 찜질시설서비스영업, 공동탕업+찜질시설서비스영업, 목욕장업 기타], ksic: '96121', confidence: 0.9}
+  - {name: 건물위생관리업, ksic: '74211', confidence: 0.9}
+
+  # ───────────── 관광진흥법 (숙박·여행·유원)
+  - {name: 관광숙박업, aliases: [관광호텔, 관광호텔업, 일반호텔], ksic: '55101', confidence: 0.9}
+  - {name: 외국인관광 도시민박업, aliases: [민박, 관광펜션업], ksic: '55104', confidence: 0.85}
+  - {name: 한옥체험업, ksic: '55104', confidence: 0.7}
+  - {name: 휴양콘도미니엄업, ksic: '55103', confidence: 0.95}
+  - {name: 일반야영장업, aliases: [자동차야영장업], ksic: '55105', confidence: 0.95}
+  - {name: 고시원업, ksic: '55901', confidence: 0.9}
+  - {name: 종합여행업, aliases: [국내외여행업, 국내여행업], ksic: '75210', confidence: 0.95}
+  - {name: 국제회의기획업, ksic: '75992', confidence: 0.9}
+  - {name: 허가테마파크업, ksic: '91210', confidence: 0.9}
+  - {name: 기타유원시설업, ksic: '9121', confidence: 0.75}
+
+  # ───────────── 체육시설법
+  - {name: 체력단련장업, ksic: '91132', confidence: 0.95}
+  - {name: 골프연습장업, ksic: '91136', confidence: 0.95}
+  - {name: 당구장업, ksic: '91135', confidence: 0.95}
+  - {name: 수영장업, ksic: '91133', confidence: 0.95}
+  - {name: 종합체육시설업, ksic: '91131', confidence: 0.95}
+  - {name: 체육도장업, aliases: [태권도, 합기도, 유도, 검도, 우슈, 권투, 레슬링], ksic: '85611', confidence: 0.85}
+  - {name: 체육교습업, ksic: '85612', confidence: 0.85}
+  - {name: 무도학원업, ksic: '85613', confidence: 0.6}
+  - {name: 무도장업, ksic: '91291', confidence: 0.95}
+  - {name: 가상체험 체육시설업, aliases: [인공암벽장업, 승마장업, 빙상장업, 썰매장업, 야구장업], ksic: '91139', confidence: 0.75}
+  - {name: 체육시설, ksic: '911', confidence: 0.7}
+
+  # ───────────── 게임산업법·음악산업법·영화비디오법
+  - {name: 인터넷컴퓨터게임시설제공업, ksic: '91222', confidence: 0.95}
+  - {name: 청소년게임제공업, aliases: [일반게임제공업, 게임제공업], ksic: '91221', confidence: 0.9}
+  - {name: 복합유통게임제공업, ksic: '9122', confidence: 0.85}
+  - {name: 게임물제작업, ksic: '5821', confidence: 0.7}
+  - {name: 게임물배급업, ksic: '58219', confidence: 0.5}
+  - {name: 노래연습장업, aliases: [노래연습장], ksic: '91223', confidence: 0.95}
+  - {name: 비디오물감상실업, ksic: '59142', confidence: 0.95}
+  - {name: 영화상영업, aliases: [영화상영관], ksic: '59141', confidence: 0.95}
+  - {name: 영화배급업, ksic: '59130', confidence: 0.9}
+  - {name: 비디오물제작업, ksic: '5911', confidence: 0.8}
+
+  # ───────────── 의료·복지·교육
+  - {name: 요양병원(일반요양병원), ksic: '86105', confidence: 0.95}
+  - {name: 정신병원, ksic: '86102', confidence: 0.8}
+  - {name: 산후조리원, ksic: '96993', confidence: 0.6, note: 개인 간병 및 유사 서비스업으로 봄 — 확인 필요}
+  - {name: 어린이집, ksic: '87210', confidence: 0.95}
+  - {name: 학원, ksic: ['855', '856'], confidence: 0.8}
+  - {name: 의료업, ksic: '86', confidence: 0.8}
+
+  # ───────────── 건설산업기본법 전문공사업
+  - {name: 실내건축공사업, ksic: '424', confidence: 0.9}
+  - {name: 구조물해체ㆍ비계공사업, ksic: ['42110', '42195'], confidence: 0.9}
+  - {name: 도장ㆍ습식ㆍ방수ㆍ석공사업, ksic: ['42411', '42491', '42191'], confidence: 0.9}
+  - {name: 상ㆍ하수도설비공사업, ksic: '42201', confidence: 0.6}
+  - {name: 지반조성ㆍ포장공사업, ksic: ['4212', '42192'], confidence: 0.9}
+  - {name: 금속ㆍ창호ㆍ지붕ㆍ건축물조립공사업, ksic: ['42420', '42196', '42492'], confidence: 0.9}
+  - {name: 철근ㆍ콘크리트공사업, ksic: '42132', confidence: 0.95}
+  - {name: 조경식재ㆍ시설물공사업, ksic: '41226', confidence: 0.8}
+  - {name: 가스난방공사업, aliases: [가스ㆍ난방공사업], ksic: '42201', confidence: 0.9}
+  - {name: 기계가스설비공사업, aliases: [기계설비ㆍ가스공사업], ksic: ['42202', '42201'], confidence: 0.85}
+  - {name: 철강구조물공사업, ksic: '42131', confidence: 0.95}
+  - {name: 승강기ㆍ삭도공사업, ksic: '42203', confidence: 0.9}
+  - {name: 수중ㆍ준설공사업, ksic: '42194', confidence: 0.85}
+  - {name: 건축공사업, ksic: '411', confidence: 0.85}
+  - {name: 공사업, ksic: 'F', confidence: 0.6}
+  - {name: 방염업, ksic: '42204', confidence: 0.6}
+
+  # ───────────── 폐기물관리법·수도
+  - {name: 폐기물처리업, aliases: [폐기물중간처리업], ksic: '382', confidence: 0.85}
+  - {name: 폐기물종합재활용업, aliases: [종합재활용업, 폐기물중간재활용업], ksic: '383', confidence: 0.8}
+  - {name: 건설폐기물중간처리업, ksic: '38230', confidence: 0.9}
+  - {name: 폐기물수집운반업, ksic: '381', confidence: 0.95}
+  - {name: 비금속원료 재생업, aliases: [비금속원료재생업, 재생용비금속가공원료생산업], ksic: '38322', confidence: 0.85}
+  - {name: 금속원료재생업, ksic: '38312', confidence: 0.85}
+  - {name: 수도사업, ksic: '36010', confidence: 0.8}
+
+  # ───────────── 자동차관리법·운수·연료
+  - {name: 자동차정비업, aliases: [자동차정비, 자동차 수리업, 자동차수리업], ksic: '9521', confidence: 0.9}
+  - {name: 자동차종합정비업, ksic: '95211', confidence: 0.95}
+  - {name: 세차업, aliases: [세차, 세차장], ksic: '95213', confidence: 0.95}
+  - {name: 자동차 수리 및 세차업, ksic: '952', confidence: 0.9}
+  - {name: 주유소, aliases: [주유소 운영업, 차량용 주유소 운영업], ksic: '47711', confidence: 0.95}
+  - {name: 차량용 가스 충전업, ksic: '47713', confidence: 0.9}
+  - {name: 운수업, ksic: 'H', confidence: 0.7}
+  - {name: 일반화물, aliases: [이사화물], ksic: '4930', confidence: 0.8}
+  - {name: 택시, ksic: '49231', confidence: 0.9}
+
+  # ───────────── 유통산업발전법·전자상거래법·방문판매법
+  - {name: 편의점, ksic: '47122', confidence: 0.95}
+  - {name: 그 밖의 대규모점포, ksic: '4711', confidence: 0.7}
+  - {name: 복합쇼핑몰, aliases: [쇼핑센터], ksic: '47119', confidence: 0.8}
+  - {name: 마트, ksic: '4712', confidence: 0.6}
+  - {name: 전자상거래(통신판매업), aliases: [전자상거래업, 통신판매], ksic: '4791', confidence: 0.9}
+  - {name: 방문판매, ksic: '47993', confidence: 0.95}
+  - {name: 다단계판매, ksic: '47993', confidence: 0.6}
+  - {name: 전화권유판매, ksic: '47919', confidence: 0.7}
+  - {name: 안경점, ksic: '47822', confidence: 0.95}
+  - {name: 도소매업, aliases: [도소매], ksic: 'G', confidence: 0.9}
+  - {name: 도매업(유통), ksic: '46', confidence: 0.8}
+  - {name: 소매업, ksic: '47', confidence: 0.9}
+  - {name: 인쇄사, aliases: [인쇄업], ksic: '181', confidence: 0.9}
+  - {name: 출판사, ksic: '581', confidence: 0.8}
+
+  # ───────────── 산업 대분류를 줄여 쓴 이름
+  - {name: 제조업, aliases: [제조], ksic: 'C', confidence: 0.9}
+  - {name: 금융업, ksic: 'K', confidence: 0.85}
+  - {name: 숙박 및 음식점업, ksic: 'I', confidence: 1.0}
+  - {name: '농업, 어업 및 임업', ksic: 'A', confidence: 1.0}
+  - {name: '전기, 가스, 증기 및 수도사업', ksic: ['D', 'E'], confidence: 0.9, note: 9차 대분류 이름}
+  - {name: '출판, 영상, 방송통신 및 정보서비스업', ksic: 'J', confidence: 0.9, note: 9차 대분류 이름}
+  - {name: '하수, 폐기물 처리, 원료재생 및 환경 복원업', ksic: 'E', confidence: 0.9}
+  - {name: 사업서비스업, aliases: [사업시설관리 및 사업지원 서비스업], ksic: 'N', confidence: 0.8}
+  - {name: 부동산업 및 임대업, ksic: ['L', 'N'], confidence: 0.9, note: 9차 대분류 이름 — 임대는 10차부터 N(76)}
+  - {name: 보건업 및 사회복지서비스업, ksic: 'Q', confidence: 1.0}
+  - {name: 협회 및 단체 수리 및 기타 개인 서비스업, ksic: 'S', confidence: 1.0}
+  - {name: '공공행정, 국방 및 사회보장 행정', aliases: [일반 공공 행정], ksic: 'O', confidence: 0.95}
+  - {name: 연구개발업, ksic: '70', confidence: 0.9}
+  - {name: 감리업, aliases: [설계업], ksic: '721', confidence: 0.7}
+  - {name: 임대업, ksic: '76', confidence: 0.6}
+  - {name: 통신업, ksic: '612', confidence: 0.8}
+  - {name: 전기업, ksic: '351', confidence: 0.8}
+
+  # ───────────── 옛 차수 제조업 이름 (글자만 다른 것 — ksic_name으로 코드를 찾는다)
+  - {name: 기타자동차부품제조업, aliases: [그외 기타 자동차 부품 제조업, 자동차부품제조업, 자동차 부품 제조업, 자동차부품제조, 자동차부품 제조업, 자동차부품], ksic_name: 자동차 신품 부품 제조업, confidence: 0.85}
+  - {name: 금속 조립구조재 제조업, aliases: [금속조립구조재제조업, 구조용 금속제품 제조업, 구조용 금속판제품 및 금속공작물 제조업], ksic_name: 구조용 금속제품 제조업, confidence: 0.85}
+  - {name: 아스콘제조업, aliases: [아스콘 제조업], ksic_name: 아스팔트 콘크리트 및 혼합제품 제조업, confidence: 0.95}
+  - {name: 동물용 사료 및 조제식품 제조업, aliases: [사료제조업], ksic: '1090', confidence: 0.95}
+  - {name: 기타 비료 및 질소화합물 제조업, ksic: '2031', confidence: 0.85, note: '10차 이름 — 11차는 질소 화합물·화학비료(20311)와 복합·기타 비료(20312)'}
+  - {name: 기계장비 조립용 플라스틱제품 제조업, aliases: [기계장비조립용플라스틱제품제조업], ksic_name: 기계장비 조립용 플라스틱 제품 제조업, confidence: 0.95}
+  - {name: 포장용판지상자및기타종이용기제조업, ksic: '172', confidence: 0.85, note: 9차 이름 — 골판지·종이 상자·종이 용기 전체}
+  - {name: 골판지 및 골판지상자 제조업, ksic: '1721', confidence: 0.9}
+  - {name: 자동차 차체용 부품 제조업, ksic_name: 자동차 차체용 신품 부품 제조업, confidence: 0.9}
+  - {name: 자동차 엔진용 부품 제조업, aliases: [자동차엔진용부품제조업], ksic_name: 자동차 엔진용 신품 부품 제조업, confidence: 0.9}
+  - {name: 자동차용 동력전달장치 제조업, ksic_name: 자동차용 신품 동력 전달장치 제조업, confidence: 0.9}
+  - {name: 자동차용 전기장치 제조업, ksic_name: 자동차용 신품 전기장치 제조업, confidence: 0.9}
+  - {name: 컴퓨터입·출력장치및기타주변기기제조업, ksic: '2632', confidence: 0.75}
+  - {name: '방송수신기및기타영상,음향기기제조업', ksic: '265', confidence: 0.85, note: 9차 이름 — 영상 및 음향 기기 제조업}
+  - {name: 절단가공및표면처리강재생산업, ksic: '24199', confidence: 0.6}
+  - {name: '플라스틱 필름, 시트 및 판 제조업', ksic: '2221', confidence: 0.85, note: 11차에서 필름(22212)·시트·판으로 나뉨}
+  - {name: 가공 및 재생 플라스틱원료 생산업, aliases: [가공및재생플라스틱원료생산업], ksic_name: 혼성 및 재생 플라스틱 소재 물질 제조업, confidence: 0.85}
+  - {name: 플라스틱 발포 성형제품 제조업, aliases: [플라스틱발포성형제품제조업], ksic_name: 플라스틱 발포 성형제품 제조업, confidence: 0.95}
+  - {name: 금속압형제품 제조업, aliases: [금속압형제품제조업], ksic: ['25913', '25914'], confidence: 0.9, note: 9차 이름 — 자동차용·그 외로 나뉨}
+  - {name: 판유리 가공품 제조업, ksic: '23119', confidence: 0.9}
+  - {name: 전자집적회로 제조업, ksic_name: 전자집적회로 제조업, confidence: 0.95}
+  - {name: 엘리베이터및컨베이어장치제조업, ksic: '2916', confidence: 0.85}
+  - {name: 인쇄회로판제조업, ksic: '2622', confidence: 0.85}
+  - {name: 가정용전열기기제조업, ksic: '2851', confidence: 0.6}
+  - {name: 토목공사 및 유사용 기계장비 제조업, ksic_name: 건설 및 채광용 기계장비 제조업, confidence: 0.85}
+  - {name: 설치용 금속탱크 및 저장용기 제조업, ksic: '2512', confidence: 0.8}
+  - {name: 과실 및 채소 절임식품 제조업, ksic: '10302', confidence: 0.85, note: 11차는 김치(10301)를 따로 둔다}
+  - {name: 기타채소가공및저장처리업, ksic_name: 기타 과실·채소 가공 및 저장 처리업, confidence: 0.85}
+  - {name: 도시락 및 식사용 조리식품 제조업, ksic: '1070', confidence: 1.0}
+  - {name: 기타 비알콜음료 제조업, ksic_name: 기타 비알코올 음료 제조업, confidence: 0.95}
+  - {name: 석재성형가공품제조업, ksic: '2391', confidence: 0.8}
+  - {name: 고무제품제조업, ksic: '221', confidence: 0.85}
+  - {name: 고무 및 플라스틱제품 제조업, ksic: '22', confidence: 1.0}
+  - {name: 플라스틱제품제조업, aliases: [플라스틱제품제조], ksic: '222', confidence: 0.9}
+  - {name: 비금속광물제품 제조업, aliases: [비금속광물제품제조업, 비금속 광물제품 제조업, 비금속광물제품제조, 기타 비금속 광물제품 제조업, 기타내화요업제품제조업], ksic: '23', confidence: 0.85}
+  - {name: 금속가공제품제조업, aliases: [금속제품제조, 조립금속제품제조, 조립금속제품제조업], ksic: '25', confidence: 0.85}
+  - {name: 기타 화학제품 제조업, aliases: [기타화학제품제조업, 기타화학제품제조], ksic: '204', confidence: 0.8}
+  - {name: 기타 기계 및 장비 제조업, ksic: '29', confidence: 0.8}
+  - {name: 그외기타분류안된특수목적용기계제조업, ksic_name: 그 외 기타 특수목적용 기계 제조업, confidence: 0.9}
+  - {name: 제재 및 목재 가공업, ksic: '161', confidence: 0.9}
+  - {name: 기타 식품 제조업, ksic: '108', confidence: 0.9}
+
+  # ───────────── 10차 이름 변형·기타 (행 수가 많은 미일치 값)
+  - {name: 비알콜 음료점업, ksic: '5622', confidence: 1.0}
+  - {name: 빵 및 과자류 소매업, ksic: '47221', confidence: 1.0}
+  - {name: 과실 및 채소 소매업, ksic: '47215', confidence: 1.0}
+  - {name: 스포츠 및 레크레이션 용품 임대업, ksic: '76210', confidence: 1.0}
+  - {name: 관광 민예품 및 선물용품 소매업, ksic: '47842', confidence: 1.0}
+  - {name: 화장품 및 방향제 소매업, ksic: '47813', confidence: 1.0}
+  - {name: 전시 및 행사 대행업, ksic: '75992', confidence: 1.0}
+  - {name: 인터넷컴퓨터게임시설제공업(PC방), ksic: '91222', confidence: 0.95}
+  - {name: 퀵서비스업, ksic: '49402', confidence: 0.95}
+  - {name: 음식 및 숙박업, aliases: [음식및숙박업], ksic: 'I', confidence: 1.0}
+  - {name: 병의원, ksic: ['861', '862'], confidence: 0.95}
+  - {name: 도.소매 및 소비자용품수리업, aliases: [도.소매및소비자용품수리업], ksic: ['G', '95'], confidence: 0.9, note: 8차 대분류 이름}
+  - {name: 보건 및 사회복지사업, aliases: [보건및사회복지사업], ksic: 'Q', confidence: 1.0}
+  - {name: 부동산, aliases: [부동산중개업], ksic: '68', confidence: 0.8}
+  - {name: 개인화물자동차운송사업, ksic: '49302', confidence: 0.95}
+  - {name: 일반화물자동차운송사업, ksic: '49301', confidence: 0.95}
+  - {name: 폐기물수집및운반업, ksic: '381', confidence: 0.95}
+  - {name: 가상체험체육시설(스크린골프연습장), aliases: [스크린골프], ksic: '91136', confidence: 0.7}
+  - {name: 안전상비의약품판매업, ksic: '47122', confidence: 0.7, note: 약사법 — 대부분 편의점}
+  - {name: 건물 등의 종합관리사업, ksic: '74100', confidence: 0.85}
+  - {name: 수입업, aliases: [수입], ksic: '46', confidence: 0.6, note: 수입식품 등 수입판매업 — 도매로 본다}
+  - {name: 어업서비스업, ksic: '03220', confidence: 0.95}
+  - {name: 연구 및 개발업, ksic: '70', confidence: 1.0}
+  - {name: 요양병원(노인병원), ksic: '86105', confidence: 0.95}
+  - {name: 농어촌민박, aliases: [호스텔업], ksic: '55104', confidence: 0.8}
+  - {name: 목욕탕, aliases: [목욕], ksic: '96121', confidence: 0.9}
+  - {name: 안마시술소, ksic: '96122', confidence: 0.85}
+  - {name: 영화관, ksic: '59141', confidence: 0.95}
+  - {name: 골프장, ksic: '91121', confidence: 0.9}
+  - {name: 창고업, ksic: '521', confidence: 0.9}
+  - {name: 화물주선업, ksic: '52992', confidence: 0.9}
+  - {name: 토목건축공사업, aliases: [건축건설공사], ksic: '41', confidence: 0.85}
+  - {name: 토목공사업, ksic: '412', confidence: 0.9}
+  - {name: 조경공사업, ksic: '41226', confidence: 0.85}
+  - {name: 휴게음식, aliases: [식품접객업(휴게음식점)], ksic: ['5622', '5619'], confidence: 0.8}
+  - {name: 한식_일반, ksic: '56111', confidence: 0.95}
+  - {name: 한식_육류, ksic: '56113', confidence: 0.95}
+  - {name: 식육판매업, ksic: '47212', confidence: 0.9}
+  - {name: 주유업, ksic: '47711', confidence: 0.9}
+  - {name: 일반종합도매, ksic: '46800', confidence: 0.9}
+  - {name: 일반측량, ksic: '7212', confidence: 0.7}
+
+# 이름 규칙 — entries에 없을 때 위에서부터 처음 맞는 규칙 (수산업법 어업 종류처럼 변형이 많은 것)
+patterns:
+  - {rx: '내수면.*양식', ksic: '03212', confidence: 0.9}
+  - {rx: '(양식|가두리).*어업|양식\(', ksic: '0321', confidence: 0.85, note: 해수면·내수면 구분 없음}
+  - {rx: '^원양.*어업$|^참치연승어업$|^모선식', ksic: '03111', confidence: 0.9}
+  - {rx: '^내수면.*어업$', ksic: '03120', confidence: 0.9}
+  - {rx: '^(?!.*(웨어|제어|용품)).*(망|낚기|낚시|통발|연승|구획|채취|나잠|맨손|마을|트롤|저인망|선망|잠수기|단지|근해|연안)어업$', ksic: '03112', confidence: 0.85, note: 수산업법 연근해 어업 종류}
+
+# 업종이 아닌 값 — 어휘에서 빼고 일치율 분모에도 넣지 않는다 (이유별)
+skip:
+  용도_구분: [가정용, 일반용, 산업용, 대중탕용, 욕탕용, 전용공업용, 저장소, 구분없음, 일반, 기타(복합 등), 영업장판매, 판매, 전문점]
+  설치_장소: [학교, 산업체, 병원시설, 공공기관, 군부대, 관공서, 사회복지시설, 의료시설, 교육연구시설, 종교시설, 철도역구내, 아파트, 시장, 공연장, 극장]
+  품목군_너무_넓음: [서비스업, 서비스, 기타비요식업, 식품, 금속, 기계, 섬유, 화공, 전기, 전자, 식료, 비금속광물, 가구, 신발, 음료, 의류, 잡화, 생활용품, 주방용품, 화장품, 수산물, 축산물, 통신기기, 건축자재, 전기전자, 정보, 유통, 관리업]
