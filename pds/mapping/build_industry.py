@@ -231,8 +231,11 @@ def resolver():
         got = [one(p) for p in parts]
         if not all(got):
             return None
-        tg = [(t, round(c / len(parts), 3)) for _, ts in got for t, c in ts]
-        return "split:" + "+".join(sorted({m for m, _ in got})), tg
+        tg = defaultdict(float)  # '실내건축공사업 +실내건축공사업'처럼 같은 업종이 겹치면 한 줄로 합친다
+        for _, ts in got:
+            for t, c in ts:
+                tg[t] += c / len(parts)
+        return "split:" + "+".join(sorted({m for m, _ in got})), [(t, round(c, 3)) for t, c in tg.items()]
 
     return resolve, sb, held
 

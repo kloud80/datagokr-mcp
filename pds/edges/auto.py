@@ -30,8 +30,9 @@ WEAK_KEYS = {"address", "coord"}
 # 분류 키 — 같은 값끼리는 업종 단위 many_to_many. 매핑(M)은 오른쪽 키의 대표 데이터 하나로만 (L×3 폭증 방지)
 CLASS_KEYS = {"ksic", "ksic10", "ksic9", "industry_nm", "sbiz_inds"}
 NAME_ONLY_KEYS = {"industry_nm"}  # 이름 텍스트 — 같은 키(K)로 바로 잇지 않고 매핑으로만
-# 분류 키의 대표 데이터 — 점수 최고가 아니라 가장 세밀(세세분류 5자리)·전국인 것. 상가정보(ksic10)는 점수로 이미 뽑힌다
-CLASS_HUB = {"ksic": "15087611"}  # 한국산업단지공단 공장등록생산정보 — 대표업종코드 11차 5자리
+# 분류 키의 대표 데이터 — 점수 최고가 아니라 업종 범위가 가장 넓고 세세분류 5자리인 것 (실측 hub_overlap으로 고름).
+# 공장등록(15087611)은 제조업만이라 가맹점·보증 데이터와 겹침 10% 안팎 → 전 산업 60개 중분류인 신용보증기금 보증 이용 기업명세
+CLASS_HUB = {"ksic": "15064645"}  # 상가정보(ksic10)는 점수로 이미 뽑힌다
 # 호출 파라미터 이름 → Key (lookup 후보)
 PARAM_KEY = {"ykiho": "ykiho", "kaptCode": "apt_complex_cd", "pnu": "pnu", "LAWD_CD": "sgg_cd", "bjdCode": "bjd_cd",
              "sigunguCode": "sgg_cd", "ATPT_OFCDC_SC_CODE": "neis_school_cd", "SD_SCHUL_CODE": "neis_school_cd", "hpid": "hpid",

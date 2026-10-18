@@ -5,8 +5,10 @@ KSIC 코드 열은 이름만으로 정하지 않는다. 검증 데이터의 실�
 매핑(ksic9__ksic10 · ksic10__ksic)을 거친다.
   일치율   칸을 , / + 로 나눈 낱말 중 9·10·11차 어느 코드표에든 있는 비율 (서로 다른 값 기준). RATE 이상이면 KSIC 열
   차수     그 차수에만 있는 코드 개수가 가장 많은 차수. 모두 0이면(공통 코드뿐) 11차
-업종 이름 열(industry_nm)은 build_industry.FIELD_RX 그대로 — 값은 industry_nm__ksic 매핑으로 KSIC에 붙는다.
-실행: python -m pds.mapping.ksic_keys  (그 뒤 gen-dataset → pds.edges.auto)
+업종 이름 열(industry_nm)도 이름(build_industry.FIELD_RX)만으로 정하지 않는다 — 상하수도 요금의 '업종'(가정용·일반용)이나
+소방 조사대상의 '업종'(근린생활·업무시설)은 용도라서. 행 기준으로 industry_nm__ksic에 붙거나 보류 목록(industry_review.csv)에
+걸리는 값이 NM_RATE 이상인 열만 키로 둔다 (보류는 검토 뒤 붙을 값이라 포함).
+실행: python -m pds.mapping.ksic_keys  (그 뒤 gen-dataset → pds.edges.auto → python -m pds.mapping.ksic_keys remeasure)
 """
 from __future__ import annotations
 
@@ -17,12 +19,13 @@ from collections import defaultdict
 import pandas as pd
 
 from pds import config
-from pds.mapping.build_industry import FIELD_RX, _codes
+from pds.mapping.build_industry import FIELD_RX, JUNK, _codes
 from pds.schema import store
 
 P = config.ROOT / "probe" / "data"
 K = config.KNOWLEDGE / "keys"
 RATE = 0.8
+NM_RATE = 0.3
 CAND = re.compile(r"^(산업분류코드|표준산업분류코드|KSIC_CD|ksic_cd|ksic|최종업종코드|indutype_cd|indutype_cd_info|indutyNo|업종코드|indutyCode|"
                   r"induty_code|INDUTY_CODE|INDUTY_CD|업종분류코드|indutyCd|rprsntvIndutyCode)$", re.I)
 SBIZ = ["상권업종소분류코드"]
@@ -34,18 +37,36 @@ def _ksic9() -> set[str]:
     return set(pd.read_parquet(config.KNOWLEDGE / "mappings" / "ksic9__ksic10.parquet")["left_value"].astype(str))
 
 
-def measure() -> list[dict]:
-    """검증 데이터의 코드 열마다 일치율·차수."""
+def _name_hits() -> set[str]:
+    m = pd.read_parquet(config.KNOWLEDGE / "mappings" / "industry_nm__ksic.parquet")
+    rv = config.KNOWLEDGE / "expansion" / "industry_review.csv"
+    held = {v.strip() for vs in pd.read_csv(rv)["values"].dropna() for v in str(vs).split(" | ")} if rv.exists() else set()
+    return set(m.loc[m["right_value"].notna(), "left_value"].astype(str)) | held
+
+
+def measure() -> tuple[list[dict], list[dict]]:
+    """검증 데이터의 코드 열마다 일치율·차수, 업종 이름 열마다 KSIC에 붙는 행 비율."""
     k11, k10, k9 = set(_codes("ksic")["code"]), set(_codes("ksic10")["code"]), _ksic9()
-    out = []
+    names = _name_hits()
+    out, nm = [], []
     for d, _ in store.iter_raw("dataset"):
         if d.get("tier") != "verified" or d["id"] in EXCLUDE:
             continue
-        hit = [f["name"] for f in (d.get("schema") or {}).get("fields") or [] if CAND.match(f["name"])]
-        files = sorted(glob.glob(str(P / d["id"] / "*.parquet"))) if hit else []
+        fs = [f["name"] for f in (d.get("schema") or {}).get("fields") or []]
+        hit = [n for n in fs if CAND.match(n)]
+        nmf = [n for n in fs if FIELD_RX.match(str(n))]
+        files = sorted(glob.glob(str(P / d["id"] / "*.parquet"))) if hit or nmf else []
         if not files:
             continue
-        df = pd.read_parquet(files[-1])
+        try:
+            df = pd.read_parquet(files[-1])
+        except Exception:  # noqa: BLE001
+            continue
+        for n in nmf:
+            s = df[n].astype(str).str.strip() if n in df else pd.Series(dtype=str)
+            s = s[~s.str.lower().isin(JUNK)]
+            if len(s):
+                nm.append({"ds": d["id"], "field": n, "rate": round(float(s.isin(names).mean()), 3)})
         for n in hit:
             if n not in df:
                 continue
@@ -61,7 +82,7 @@ def measure() -> list[dict]:
             key = max(only, key=lambda k: (only[k], k == "ksic")) if any(only.values()) else "ksic"
             out.append({"ds": d["id"], "field": n, "rate": round(rate, 3), "key": key, "only": only,
                         "multi": bool(tok.size > df[n].notna().sum())})
-    return out
+    return out, nm
 
 
 def _fields(rows: list[dict]) -> list[dict]:
@@ -72,10 +93,11 @@ def _fields(rows: list[dict]) -> list[dict]:
 
 
 def write() -> dict:
-    rows = [r for r in measure() if r["rate"] >= RATE]
+    codes, nm = measure()
+    rows = [r for r in codes if r["rate"] >= RATE]
+    nm_ok = [r for r in nm if r["rate"] >= NM_RATE]
     multi = sorted({r["ds"] for r in rows if r["multi"]})
     sbiz_ds = [d["id"] for d, _ in store.iter_raw("dataset") if d.get("tier") == "verified" and d["id"] == "15083033"]
-    names = re.findall(r"[^|()^$]+", FIELD_RX.pattern)
     common = {"type": "natural", "scope": "global", "issuer": "국가데이터처 (한국표준산업분류)"}
     keys = [
         {"id": "ksic", "name": "한국표준산업분류 코드 (KSIC 11차, 2024.7 시행)", **common,
@@ -96,7 +118,7 @@ def write() -> dict:
         {"id": "industry_nm", "name": "업종·업태 이름 (인허가·공장등록·점포 현황)", "type": "natural", "scope": "global",
          "format": "자유 텍스트 — 일반음식점·식품제조가공업·'도금업(25922)'처럼 법령 업종·KSIC 항목명·코드 병기가 섞임",
          "related_keys": [{"key": "ksic", "relation": "maps_to", "note": "industry_nm__ksic"}],
-         "fields": [{"names": names}]},
+         "fields": _fields(nm_ok)},
         {"id": "sbiz_inds", "name": "상권업종 소분류 코드 (소상공인시장진흥공단, 2023 개편 체계)", "type": "natural", "scope": "global",
          "issuer": "소상공인시장진흥공단", "format": "'I21001'처럼 영문 1 + 숫자 5", "pattern": r"^[A-Z]\d{5}$",
          "master_datasets": sbiz_ds,
@@ -110,7 +132,8 @@ def write() -> dict:
         "ksic10": "값에 10차에만 있는 코드가 가장 많은 열 (상가정보 표준산업분류코드 등) — 11차 통계와는 ksic10__ksic로 잇는다. 코드표 knowledge/codes/ksic10.yaml",
         "ksic9": "값에 9차에만 있는 코드(예: 17201·33310·51463)가 가장 많은 열 — ksic9__ksic10 → ksic10__ksic 두 번 거친다",
         "industry_nm": "이름 그대로 데이터끼리 잇지 않는다(Edge 자동 생성에서 같은 키 연결 제외) — industry_nm__ksic로 KSIC에 붙인 뒤 업종 단위로 결합. "
-                       "필드 이름은 pds/mapping/build_industry.FIELD_RX",
+                       f"이름(build_industry.FIELD_RX)이 맞는 열 {len(nm):,}개 중 KSIC에 붙거나 보류 목록에 걸리는 행이 {NM_RATE:.0%} 이상인 "
+                       f"{len(nm_ok):,}개만 — 나머지 {len(nm) - len(nm_ok):,}개는 용도(가정용·일반용)·건축물 용도·상품군 열",
         "sbiz_inds": "2023 개편 체계만 (상가정보 15083033). 옛 체계('D05A03'·'S01B10', 15111532·15069540)는 다른 코드 — 이 키가 아니다",
     }
     for k in keys:
@@ -120,5 +143,35 @@ def write() -> dict:
     return {k["id"]: sum(len(f.get("datasets") or []) for f in k["fields"]) for k in keys}
 
 
+CLASS_EDGE = re.compile(r"같은 키 (ksic|ksic10|ksic9)\b|매핑 (industry_nm|ksic9|ksic10|sbiz_inds)__")
+
+
+def remeasure() -> dict:
+    """산업분류 Edge를 전부 다시 잰다 (매핑·사전이 바뀌면 예전 측정값이 낡는다) — pds.edges.auto 다음에.
+    신뢰도는 자동 신뢰도와 새 매칭률의 평균 한 번만 (다시 잰 Edge가 두 번 평균되지 않게)."""
+    import statistics
+
+    from pds.edges.auto import _sig, candidates
+    from pds.probe import join
+    ids = {e["id"] for e in store.load("edge") if CLASS_EDGE.search(e.get("note") or "")}
+    for i in ids:
+        (join.OUT / f"{i}.json").unlink(missing_ok=True)
+    join.run(only_unverified=False, ids=ids)
+    base = {_sig(e): e["confidence"] for e in candidates()}
+    edges = store.load("edge")
+    rates = defaultdict(list)
+    for e in edges:
+        m = CLASS_EDGE.search(e.get("note") or "")
+        if not m or not e.get("verified"):
+            continue
+        if _sig(e) in base:
+            e["confidence"] = round((base[_sig(e)] + e["verified"]["match_rate"]) / 2, 3)
+        rates[m.group(1) or m.group(2)].append(e["verified"]["match_rate"])
+    store.dump(edges, store.PATHS["edge"], header="데이터셋 사이 조인·lookup 선언 (KNOWLEDGE-SPEC §3.4). source: auto는 pds/edges/auto.py가 다시 쓴다 —\n"
+                                                  "확정한 Edge는 source: admin으로 바꾸면 보존된다. verified는 pds/probe/join.py 실측.")
+    return {k: {"n": len(v), "median": round(statistics.median(v), 3), "under_0.3": sum(x < 0.3 for x in v)} for k, v in rates.items()}
+
+
 if __name__ == "__main__":
-    print(write())
+    import sys
+    print(remeasure() if sys.argv[1:] == ["remeasure"] else write())

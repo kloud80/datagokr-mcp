@@ -58,6 +58,37 @@ def _clean(s: pd.Series) -> pd.Series:
     return s[~s.isin(["", "nan", "None", "-", "null"])]
 
 
+CLASS_KEYS = {"ksic", "ksic10", "ksic9"}  # 산업분류 — 값이 'I56111'·'27211, 27212'·'22213_11' 꼴로 섞여 온다
+
+
+def _ksic_tokens(s: pd.Series) -> pd.Series:
+    """KSIC 칸 → 코드 낱말: , / + 로 나누고 대분류 문자 접두·'.0'·차수 접미('_11')를 뗀다."""
+    t = _clean(s).str.split(r"\s*[,/+]\s*").explode().dropna().astype(str).str.strip()
+    return t[t != ""].str.replace(r"^[A-U](?=\d)", "", regex=True).str.replace(r"(\.0|_\d{1,2})$", "", regex=True)
+
+
+def _ksic_codes(key: str) -> set[str]:
+    if key == "ksic9":
+        return set(pd.read_parquet(config.KNOWLEDGE / "mappings" / "ksic9__ksic10.parquet")["left_value"].astype(str))
+    return {str(v["code"]) for v in store.read(config.KNOWLEDGE / "codes" / f"{key}.yaml").get("values") or []}
+
+
+def _ksic_same_key(rec: dict, key: str, lv: pd.Series, e: dict) -> dict:
+    """같은 분류 키: 코드표 포함률(match_rate) + 대표 데이터와 같은 업종이 있는 비율(상하위 단계 포함 — 집계해서 잇기 때문)."""
+    v = _ksic_tokens(lv).drop_duplicates()
+    codes = _ksic_codes(key)
+    rv = _values(e["dst"], (e.get("on") or {}).get("right") or [])
+    r = set(_ksic_tokens(rv[rv.columns[0]])) if len(rv.columns) else set()
+    ok = v[v.isin(codes)]
+    other = {k: round(v[~v.isin(codes)].isin(_ksic_codes(k)).sum() / max(1, len(v)), 4) for k in sorted(CLASS_KEYS - {key})}
+    hub = ok.map(lambda c: c in r or any(x.startswith(c) or c.startswith(x) for x in r)) if r else pd.Series(dtype=bool)
+    return {**rec, "method": f"KSIC 코드표 포함률 ({key})", "match_rate": round(v.isin(codes).mean(), 4) if len(v) else None,
+            "n": int(len(v)), "hub_overlap": round(hub.mean(), 4) if len(hub) else None,
+            "other_version": other,  # 이 차수 코드표에는 없고 다른 차수에 있는 비율 — 등록 시점이 다른 기록이 섞인 것
+            "levels": sorted({len(c) for c in ok}), "hub_levels": sorted({len(c) for c in r & codes}),
+            "bad_examples": v[~v.isin(codes)].head(5).tolist()}
+
+
 def _bjd_codes() -> set[str]:
     t = pd.read_parquet(config.KNOWLEDGE / "codes" / "bjd_cd.parquet")
     return set(t["code"].astype(str))
@@ -86,11 +117,14 @@ def measure(e: dict, keys: dict) -> dict | None:
         return _spatial(rec, _all_columns(e["src"]), "coord")
     if on.get("transform") == "R-13":
         return _spatial(rec, lv, "address")
+    ck = re.search(r"같은 키 (\w+)", e.get("note") or "")
+    if ck and ck.group(1) in CLASS_KEYS:
+        return _ksic_same_key(rec, ck.group(1), lv[col], e)
     if on.get("via_mapping"):
         m = pd.read_parquet(config.KNOWLEDGE / "mappings" / f"{on['via_mapping']}.parquet")
         known = set(m["left_value"].astype(str))
         hit = set(m.loc[m["right_value"].notna(), "left_value"].astype(str))
-        norm = vals.map(_norm)
+        norm = _ksic_tokens(lv[col]).drop_duplicates() if on["via_mapping"].split("__")[0] in CLASS_KEYS else vals.map(_norm)
         inmap = norm[norm.isin(known)]
         if not len(inmap):  # 표본 값이 매핑표 범위 밖 (예: 2015년 거래 표본 vs 최근 6개월 매핑) — 판정 보류
             return {**rec, "method": f"mapping {on['via_mapping']}", "match_rate": None, "n": int(len(norm)),
@@ -235,13 +269,13 @@ def _resume(e: dict) -> dict | None:
     return None
 
 
-def run(only_unverified: bool = True) -> dict:
+def run(only_unverified: bool = True, ids: set[str] | None = None) -> dict:
     keys = {k["id"]: k for k in store.load("key")}
     edges = store.load("edge")
     OUT.mkdir(parents=True, exist_ok=True)
     done, skipped = 0, 0
     for e in edges:
-        if only_unverified and e.get("verified"):
+        if only_unverified and e.get("verified") or ids is not None and e["id"] not in ids:
             continue
         r = _resume(e)  # 중단된 실행이 오늘 남긴 결과는 다시 재지 않는다
         if r is None:
