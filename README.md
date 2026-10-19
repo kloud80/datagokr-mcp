@@ -1,6 +1,26 @@
+<div align="center">
+
 # datagokr-mcp
 
+### 공공데이터를 목표에 맞게 고르고 잇는 MCP
+
 **공공데이터를 "찾아 주는" 시스템이 아니라, 목표에 맞게 "고르고 잇는 방법"을 근거와 함께 알려 주는 시스템.**
+
+[![version](https://img.shields.io/badge/version-0.1.0-2f81f7?style=flat-square)](pyproject.toml)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
+[![MCP](https://img.shields.io/badge/MCP-Streamable_HTTP-5c4ee5?style=flat-square)](https://labs.ai.bigvalue.co.kr/#/mcp)
+[![verified datasets](https://img.shields.io/badge/검증_데이터-25%2C305-2ea44f?style=flat-square)](#지금까지-쌓은-것-2026-10-07-기준-정확한-수치)
+[![edges](https://img.shields.io/badge/조인_Edge-30%2C435-0e8a16?style=flat-square)](#3-지식은-어떤-모양인가)
+[![data.go.kr](https://img.shields.io/badge/data.go.kr-96%2C110_목록-0b5cad?style=flat-square)](https://www.data.go.kr)
+[![MIT license](https://img.shields.io/badge/license-MIT-f4c430?style=flat-square)](LICENSE)
+
+**[테스트 서버](https://labs.ai.bigvalue.co.kr) · [Docs](https://labs.ai.bigvalue.co.kr/#/docs) · [MCP 가이드](https://labs.ai.bigvalue.co.kr/#/mcp) · [API 레퍼런스](https://labs.ai.bigvalue.co.kr/api/reference)**
+
+[왜 만들었나](#1-왜-만들었나--문제의식) · [설계 사상](#2-설계-사상--열두-가지-원칙) · [지식의 모양](#3-지식은-어떤-모양인가) · [쌓은 과정](#4-어떻게-쌓았나--과정과-숫자) · [써 보기](#5-써-보기) · [한계](#6-한계와-다음-단계)
+
+<code>claude mcp add --transport http bigvalue-opendata https://labs.ai.bigvalue.co.kr/mcp</code>
+
+</div>
 
 > "성수동 상권 변화를 월 단위로 추적하고 싶다" →
 > 주제별(점포·유동인구·매출 등) 검증 데이터와 그 근거(실측한 행 수·갱신일·필드) · 데이터끼리 직접 잇는 조인과 코드표·지적도를 거치는 연결의 구분 ·
