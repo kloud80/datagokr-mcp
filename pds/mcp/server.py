@@ -26,7 +26,7 @@ from pds.schema import GROUNDED  # 실측·법령·검토결정만 근거 — �
 from pds.service import index as sindex
 
 server = MCPServer(name="bigvalue-opendata", title="BigValue 공공데이터 (data.go.kr)", version="0.2.0",
-                   instructions="data.go.kr 공공데이터를 목표에 맞게 고르고 잇는 전략 도구. 조인은 선언·실측된 것만 돌려준다. "
+                   instructions="data.go.kr 공공데이터를 목표에 맞게 고르고 연결하는 전략 도구. 조인은 선언·실측된 것만 돌려준다. "
                                 "verified=검증(실제 호출로 행·필드를 실측), candidate=선정·미검증, catalog=포털 목록 단서(직접 확인). "
                                 "먼저 plan_public_data_strategy로 조합을 받고, 데이터 한 건의 실측 필드는 get_dataset으로 본다. "
                                 "키 규약: 응답의 credentials.required가 true면(데이터를 받는 데 API 키·계정이 필요) 데이터를 받기 전에 "

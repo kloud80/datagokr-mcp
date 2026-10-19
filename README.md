@@ -2,9 +2,9 @@
 
 # datagokr-mcp
 
-### 공공데이터를 목표에 맞게 고르고 잇는 MCP
+### 공공데이터를 목표에 맞게 고르고 연결하는 MCP
 
-**공공데이터를 "찾아 주는" 시스템이 아니라, 목표에 맞게 "고르고 잇는 방법"을 근거와 함께 알려 주는 시스템.**
+**공공데이터를 "찾아 주는" 시스템이 아니라, 목표에 맞게 "고르고 연결하는 방법"을 근거와 함께 알려 주는 시스템.**
 
 [![version](https://img.shields.io/badge/version-0.1.0-2f81f7?style=flat-square)](pyproject.toml)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776ab?style=flat-square&logo=python&logoColor=white)](pyproject.toml)
