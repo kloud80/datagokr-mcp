@@ -498,7 +498,7 @@ def write(dsid: str) -> tuple[str, list[str]]:
         auto = [c for c in rec.get("claims") or []]
         if keep or auto:
             rec["claims"] = keep + auto
-    g = re.search(r"등급:(\S+)", (_targets().get(dsid) or {}).get("note") or "")  # 6차 확대 등급 (가족판·3순위·보조) — 플래너 가중치
+    g = re.search(r"등급:(\S+)", (_targets().get(dsid) or {}).get("note") or "")  # 6·7차 확대 등급 (가족판·3순위·보조·전수) — 플래너 가중치
     if g:
         rec["facets"] = {**(rec.get("facets") or {}), "grade": [g.group(1)]}
     order = list(Dataset.model_fields)

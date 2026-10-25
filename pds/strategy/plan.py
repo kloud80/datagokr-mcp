@@ -124,7 +124,7 @@ REL_MIN = 0.42       # 1위 관련도 대비 이 비율 미만은 풀에서 뺀�
 REF_MIN = 0.5        # 조인 없이 '참고'로 넣으려면 1위 대비 이 비율 이상
 W_SEM = 0.6          # 관련도 = (1-W_SEM)·BM25 + W_SEM·의미 (의미 검색이 없으면 BM25만)
 MAX_LEADS = 10
-GRADE_WEIGHT = {"보조": 0.6, "3순위": 0.85, "가족판": 0.9}  # 6차 확대 등급 (facets.grade) — 보조 자료가 핵심 원장을 밀어내지 않게
+GRADE_WEIGHT = {"보조": 0.6, "전수": 0.6, "3순위": 0.85, "가족판": 0.9}  # 6·7차 확대 등급 (facets.grade) — 보조 자료가 핵심 원장을 밀어내지 않게
 
 
 def _relevance(q: str, sem_q: str) -> list[tuple[dict, float]]:

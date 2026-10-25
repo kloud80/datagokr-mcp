@@ -10,13 +10,13 @@ from pds.probe.files import run_files
 
 sys.stdout.reconfigure(encoding="utf-8")
 t = json.loads((config.ROOT / "logs" / os.environ.get("PDS_TARGETS_LOG", "wave4_targets.json")).read_text(encoding="utf-8"))
-today = dt.date.today().isoformat()
+today = os.environ.get("PDS_SINCE") or dt.date.today().isoformat()  # 이 날짜 이후에 받은 것은 건너뛴다 — 자정을 넘겨도 다시 받지 않게
 todo = []
 for x in t:
     if x["kind"] not in ("FILE", "STD"):
         continue
     p = config.ROOT / "probe" / "runs" / f"{x['id']}.json"
-    if p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "").startswith(today):
+    if p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "") >= today:
         continue
     todo.append((x["id"], x["url"]))
 shard = os.environ.get("PDS_SHARD")  # "i/k" — 여러 프로세스로 나눠 받기
@@ -29,7 +29,7 @@ print(f"파일 {len(todo)}건", flush=True)
 B = 25
 def _done(dsid):
     p = config.ROOT / "probe" / "runs" / f"{dsid}.json"
-    return p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "").startswith(today)
+    return p.exists() and json.loads(p.read_text(encoding="utf-8")).get("started_at", "") >= today
 
 
 for i in range(0, len(todo), B):
