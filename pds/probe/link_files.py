@@ -34,6 +34,26 @@ BTN = re.compile(r"다운로드|내려받기|첨부|csv|엑셀|xlsx?|파일받�
 MAX_TRY = 4
 BOARD = re.compile(r"제목|작성자|조회|첨부|등록일|글쓴이|게시")
 TIMEOUT = 45000
+BIG = 150 * 2**20  # 이보다 큰 파일은 앞 10만 행만 읽는다 (CSV) — 통째로 읽으면 메모리를 수 GB 쓴다
+
+
+async def _accept(d) -> None:
+    try:
+        await d.accept()
+    except Exception:  # noqa: BLE001 — 페이지가 이미 닫혔다
+        pass
+
+
+def _read_capped(raw: bytes, name: str) -> pd.DataFrame:
+    if len(raw) <= BIG:
+        return _read(raw, name)
+    if name.lower().endswith((".csv", ".txt")):
+        for enc in ("utf-8-sig", "cp949"):
+            try:
+                return pd.read_csv(io.BytesIO(raw), dtype=str, encoding=enc, nrows=100000, low_memory=False)
+            except (UnicodeDecodeError, pd.errors.ParserError):
+                continue
+    raise ValueError(f"파일이 너무 큼({len(raw) >> 20}MB) — CSV가 아니라 앞부분만 읽을 수 없다")
 
 
 def _ok(df: pd.DataFrame | None) -> bool:
@@ -121,7 +141,7 @@ async def run_one(page, dsid: str, link: str) -> dict:
         if EXT.search(link):  # 링크 자체가 파일
             r = await page.context.request.get(link, timeout=TIMEOUT)
             raw, name = await r.body(), link.split("?")[0].rsplit("/", 1)[-1]
-            return _save(run, _read(raw, name), name, raw, "download", link)
+            return _save(run, _read_capped(raw, name), name, raw, "download", link)
         await page.goto(link, wait_until="domcontentloaded", timeout=TIMEOUT)
         try:
             await page.wait_for_load_state("networkidle", timeout=15000)
@@ -134,7 +154,7 @@ async def run_one(page, dsid: str, link: str) -> dict:
                 if not got:
                     continue
                 raw, name = got
-                df = _read(raw, name)
+                df = _read_capped(raw, name)
                 if _ok(df):
                     method = "download"
                     break
@@ -239,7 +259,7 @@ async def main(log: str) -> None:
         b = await p.chromium.launch(channel="chrome", headless=True)
         ctx = await b.new_context(accept_downloads=True, ignore_https_errors=True, locale="ko-KR")
         page = await ctx.new_page()
-        page.on("dialog", lambda d: asyncio.ensure_future(d.accept()))
+        page.on("dialog", lambda d: asyncio.ensure_future(_accept(d)))
         for n, (dsid, link) in enumerate(todo, 1):
             try:
                 r = await asyncio.wait_for(run_one(page, dsid, link), timeout=180)
@@ -251,7 +271,7 @@ async def main(log: str) -> None:
                 except Exception:  # noqa: BLE001
                     pass
                 page = await ctx.new_page()
-                page.on("dialog", lambda d: asyncio.ensure_future(d.accept()))
+                page.on("dialog", lambda d: asyncio.ensure_future(_accept(d)))
             ok += bool(r.get("ok_ops"))
             if n % 25 == 0:
                 print(f"  {n}/{len(todo)} 성공 {ok}", flush=True)

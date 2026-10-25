@@ -1,4 +1,6 @@
-"""4차 확대 파일 검증 — logs/wave4_targets.json의 FILE·STD를 받아 셀 통계까지 (이미 오늘 받은 것은 건너뛴다, 보안문자 한도면 멈춤)."""
+"""확대 파일 검증 — logs/$PDS_TARGETS_LOG(기본 wave4_targets.json)의 FILE·STD를 받아 셀 통계까지 (PDS_SINCE 이후 받은 것은 건너뛴다, 보안문자 한도면 멈춤).
+
+PDS_HTTP=1이면 파일데이터(fileData.do)는 브라우저 없이 세션 쿠키로 받는다 — 건당 0.5초 안팎 (브라우저는 6~15초)."""
 import asyncio
 import datetime as dt
 import json
@@ -6,7 +8,7 @@ import os
 import sys
 
 from pds import config
-from pds.probe.files import run_files
+from pds.probe.files import run_files, run_files_http
 
 sys.stdout.reconfigure(encoding="utf-8")
 t = json.loads((config.ROOT / "logs" / os.environ.get("PDS_TARGETS_LOG", "wave4_targets.json")).read_text(encoding="utf-8"))
@@ -37,7 +39,12 @@ for i in range(0, len(todo), B):
     if not batch:
         print("  남은 것 없음 — 다른 프로세스가 받았다", flush=True)
         break
-    r = asyncio.run(run_files(batch))
+    if os.environ.get("PDS_HTTP"):  # 브라우저 없이 (fileData.do) — 표준데이터만 브라우저로
+        fd = [x for x in batch if "fileData.do" in x[1]]
+        rest = [x for x in batch if "fileData.do" not in x[1]]
+        r = run_files_http(fd) + (asyncio.run(run_files(rest)) if rest else [])
+    else:
+        r = asyncio.run(run_files(batch))
     ok = sum(1 for x in r if x.get("ok_ops"))
     print(f"  {i + len(r)}/{len(todo)} 성공 {ok}/{len(r)}", flush=True)
     if any(x.get("captcha") for x in r):

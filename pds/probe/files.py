@@ -53,7 +53,7 @@ async def download_filedata(page, dsid: str, url: str) -> tuple[bytes, str]:
     """fileData.do: 파일 정보 조회(selectFileDataDownload) → 한도 확인(check-limit) → fileDownload. 세션 쿠키로 요청."""
     import re as _re
     from urllib.parse import quote
-    await page.goto(url, wait_until="networkidle")
+    await page.goto(url, wait_until="domcontentloaded", timeout=60000)  # 다운로드 함수 인자는 HTML에 있다 — 화면 요청이 다 끝날 때까지 기다리지 않는다
     html = await page.content()
     m = _re.search(r"fn_fileDataDown\('(\d+)',\s*'([^']+)',\s*'([^']*)',\s*'(\d+)',\s*'(\d+)'\)", html)
     if not m:
@@ -135,4 +135,92 @@ async def run_files(items: list[tuple[str, str]]) -> list[dict]:
             (P / "runs" / f"{dsid}.json").write_text(json.dumps(run, ensure_ascii=False, indent=1), encoding="utf-8")
             out.append(run)
         await b.close()
+    return out
+
+
+# ── 브라우저 없이 받기 (7차 확대) ─────────────────────────────────────────────
+# fileData.do 화면 HTML은 로그인 없이 보이고, 다운로드 세 단계(정보 조회 → 한도 확인 → 받기)는 세션 쿠키만 있으면 된다.
+# 브라우저로 화면을 여는 데 건당 6~15초, 띄우는 데 수십 초가 들던 것이 0.5초 안팎으로 준다. 표준데이터(standard.do)는 단추를 눌러야 해서 브라우저로.
+BIG = 150 * 2**20  # 이보다 큰 CSV는 앞 10만 행만 읽는다 — 통째로 읽으면 메모리를 수 GB 쓴다
+
+
+def read_capped(raw: bytes, name: str) -> pd.DataFrame:
+    if len(raw) <= BIG:
+        return _read(raw, name)
+    if name.lower().endswith((".csv", ".txt")):
+        for enc in ("utf-8-sig", "cp949"):
+            try:
+                return pd.read_csv(io.BytesIO(raw), dtype=str, encoding=enc, nrows=100000, low_memory=False)
+            except (UnicodeDecodeError, pd.errors.ParserError):
+                continue
+    raise ValueError(f"파일이 너무 큼({len(raw) >> 20}MB) — CSV가 아니라 앞부분만 읽을 수 없다")
+
+
+def http_client():
+    import httpx
+    jar = httpx.Cookies()
+    for c in json.loads(STATE.read_text(encoding="utf-8"))["cookies"]:
+        jar.set(c["name"], c["value"], domain=c["domain"], path=c["path"])
+    return httpx.Client(cookies=jar, timeout=180, follow_redirects=True, headers={"User-Agent": "Mozilla/5.0 (pds-probe)"})
+
+
+def download_http(c, dsid: str, url: str) -> tuple[bytes, str]:
+    import re as _re
+    html = c.get(url).text
+    m = _re.search(r"fn_fileDataDown\('(\d+)',\s*'([^']+)',\s*'([^']*)',\s*'(\d+)',\s*'(\d+)'\)", html)
+    if not m:
+        raise ValueError("다운로드 버튼(fn_fileDataDown) 없음")
+    pk, detail_pk, atch, sn, _ = m.groups()
+    info = c.post("https://www.data.go.kr/tcs/dss/selectFileDataDownload.do", data={
+        "publicDataDetailPk": detail_pk, "publicDataPk": pk, "atchFileId": atch, "fileDetailSn": sn, "publicDataTyCode": "PR0051"}).json()
+    if not info.get("status"):
+        raise ValueError(f"파일 정보 조회 실패: {info.get('error')}")
+    atch, sn = info["atchFileId"], info["fileDetailSn"]
+    name = (info.get("dataSetFileDetailInfo") or {}).get("dataNm") or dsid
+    lim = c.post("https://www.data.go.kr/cmm/cmm/check-limit.json", data={"atchFileId": atch, "fileDetailSn": str(sn)})
+    if lim.status_code == 403 or (lim.is_success and lim.json().get("needCaptcha")):
+        raise CaptchaRequired("다운로드 한도 — 보안문자 필요")
+    f = c.get("https://www.data.go.kr/cmm/cmm/fileDownload.do", params={"atchFileId": atch, "fileDetailSn": sn, "dataNm": name})
+    f.raise_for_status()
+    from urllib.parse import unquote
+    fm = _re.search(r"filename\*?=(?:UTF-8'')?\"?([^\";]+)", f.headers.get("content-disposition", ""))
+    fname = unquote(fm.group(1)) if fm else name
+    try:
+        fname = fname.encode("latin1").decode("utf-8")
+    except UnicodeError:
+        pass
+    raw = f.content
+    tmp = P / "data" / dsid / f"_raw_{_re.sub(r'[\/:*?\"<>|]', '_', fname)}"
+    tmp.parent.mkdir(parents=True, exist_ok=True)
+    tmp.write_bytes(raw)
+    return raw, fname
+
+
+def run_files_http(items: list[tuple[str, str]]) -> list[dict]:
+    """fileData.do만 — 기록 모양은 run_files와 같다. 한도(보안문자)에 걸리면 멈춘다."""
+    out = []
+    with http_client() as c:
+        for dsid, url in items:
+            run = {"id": dsid, "kind": "file", "url": url, "started_at": dt.datetime.now().isoformat(timespec="seconds")}
+            try:
+                raw, name = download_http(c, dsid, url)
+                df = read_capped(raw, name)
+                run.update({"file": name, "bytes": len(raw), "rows": len(df), "columns": list(map(str, df.columns)), "ok_ops": 1})
+                sample = df.head(100000)
+                sample.astype(str).to_parquet(P / "data" / dsid / f"file_{dt.date.today():%Y%m%d}.parquet")
+                (P / "stats").mkdir(parents=True, exist_ok=True)
+                (P / "stats" / f"{dsid}.json").write_text(json.dumps({"file": col_stats(sample)}, ensure_ascii=False, indent=1, default=str),
+                                                          encoding="utf-8")
+                run["ops"] = [{"op": "file", "ok": True, "rows": len(df), "total_count": len(df), "columns": run["columns"],
+                               "attempts": [{"bytes": len(raw)}]}]
+            except CaptchaRequired as e:
+                run.update({"error": str(e), "ok_ops": 0, "ops": [], "captcha": True})
+                (P / "runs" / f"{dsid}.json").write_text(json.dumps(run, ensure_ascii=False, indent=1), encoding="utf-8")
+                out.append(run)
+                break
+            except Exception as e:  # noqa: BLE001
+                run.update({"error": repr(e)[:300], "ok_ops": 0, "ops": []})
+            (P / "runs").mkdir(parents=True, exist_ok=True)
+            (P / "runs" / f"{dsid}.json").write_text(json.dumps(run, ensure_ascii=False, indent=1), encoding="utf-8")
+            out.append(run)
     return out
