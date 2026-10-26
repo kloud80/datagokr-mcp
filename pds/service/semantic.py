@@ -79,6 +79,28 @@ def _vectors(stamp: float) -> tuple[list[str], np.ndarray]:
     return ids, vecs
 
 
+_SNAP: list = []
+
+
+def _cached() -> tuple[list[str], np.ndarray] | None:
+    """캐시 파일에 이미 있는 벡터 — 새 데이터 벡터를 계산하는 동안(수만 건이면 몇 시간) 검색이 기다리지 않게 이것으로 답한다."""
+    if _SNAP:
+        return _SNAP[0]
+    from pds.service import index as sindex
+    p = _cache_path()
+    if not p.exists():
+        return None
+    ix = sindex.get()
+    try:
+        z = np.load(p, allow_pickle=False)
+        ids = [str(i) for i in z["ids"].tolist()]
+        keep = [n for n, i in enumerate(ids) if i in ix.datasets]
+        _SNAP.append(([ids[n] for n in keep], z["vecs"][keep]))
+    except Exception:  # noqa: BLE001 — 계산 스레드가 파일을 쓰는 중이면 다음 요청에서 다시
+        return None
+    return _SNAP[0]
+
+
 def warm() -> None:
     from pds.service import index as sindex
     if available():
@@ -98,9 +120,17 @@ def search_floor(q: str, k: int = 60, tiers: tuple[str, ...] = ("verified",)) ->
         return [], 0.0
     from pds.service import index as sindex
     ix = sindex.get()
-    with _LOCK:
-        ids, vecs = _vectors(ix.stamp)
-        qv = _embed(["query: " + q])[0]
+    if _LOCK.acquire(blocking=False):
+        try:
+            ids, vecs = _vectors(ix.stamp)
+        finally:
+            _LOCK.release()
+    else:  # 벡터 계산 중 — 이미 있는 것만으로
+        snap = _cached()
+        if snap is None:
+            return [], 0.0
+        ids, vecs = snap
+    qv = _embed(["query: " + q])[0]
     sims = vecs @ qv
     floor = float(np.median(sims))
     out = []
