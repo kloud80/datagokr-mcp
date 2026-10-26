@@ -1,0 +1,238 @@
+# Dataset 15052433 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15052433'
+tier: verified
+title: 서울특별시_관광특구 데이터 정보
+sector: 문화관광/관광/tour-contents
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15052433/fileData.do
+synonyms:
+  - 외국인관광
+  - 관광명소
+  - 관광특구
+description_portal: 서울특별시 관광특구 데이터 정보로 특구명칭, 관할시군구, 주소, 행정시, 행정구, 행정동, 지정고시일, 면적, 관련홈페이지, 시설현황 등을 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SebcTourZoneKor
+    name: SebcTourZoneKor
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcTourZoneKor/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MAIN_KEY
+      type: code
+      null_rate: 0.1429
+      sample_values:
+        - BE_IW02-0001
+        - BE_IW02-0002
+        - BE_IW02-0003
+      stats:
+        unique: 6
+    - name: NAME_KOR
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이태원관광특구
+        - 명동남대문북창동다동무교동 관광특구
+        - 동대문패션타운 관광특구
+      stats:
+        unique: 7
+    - name: JURIS_SISGG
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 중구
+        - 서울특별시 용산구
+        - 서울특별시 종로구
+      stats:
+        unique: 6
+    - name: ADD_KOR
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 용산구 이태원로 인근
+        - 명동, 회현동, 소공동, 무교동, 다동, 청계천 각 일부 지역
+        - 중구 을지로 3.4.5, 광희동, 신당 1동 각 일부 지역
+      stats:
+        unique: 7
+    - name: H_KOR_CITY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      stats:
+        unique: 1
+    - name: H_KOR_GU
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중구
+        - 용산구
+        - 종로구
+      stats:
+        unique: 6
+    - name: H_KOR_DONG
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 이태원1동, 한남동
+        - 소공동, 회현동, 명동
+        - 광희동, 신당동
+      stats:
+        unique: 7
+    - name: NOTI_DATE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '35702'
+        - 2000-03-30 (2012-12-27)
+        - '37399'
+      stats:
+        unique: 7
+    - name: AREA
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.38'
+        - '0.87'
+        - '0.58'
+      stats:
+        min: 0.19
+        p50: 0.58
+        max: 2.31
+        unique: 7
+    - name: TEL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 02-3396-4622
+        - 02-2199-7254
+        - 02-2148-1863
+      stats:
+        unique: 6
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4616
+  brm: 문화관광 - 관광
+claims:
+  - id: c-15052433-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15052433.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15052433-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052433-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15052433.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052433-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15052433.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052433-06
+    kind: admin_note
+    value: "세부 부문 '관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)'의 가치: 국내 여행 앱 대부분이 쓰는 원장, contentId·TourAPI 지역코드. 지자체 관광지 파일은 instance로 접고 TourAPI 대표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#tour-contents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15052433-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15052433-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15052433.json
+  stats: probe/stats/15052433.json
+  data: probe/data/15052433/
+status: active

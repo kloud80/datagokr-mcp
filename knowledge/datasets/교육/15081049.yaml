@@ -1,0 +1,263 @@
+# Dataset 15081049 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15081049'
+tier: verified
+title: 서울특별시_유치원 건물현황
+sector: 교육/유아및초·중등교육/kindergarten
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15081049/fileData.do
+synonyms:
+  - 유치원
+  - 유아
+  - 건물
+  - 공립
+  - 사립
+description_portal: 서울시 유치원 건물현황 데이터는 서울시 관내 유치원을 대상으로 교육청 및 교육지원청별 유치원 건물 특성을 파악할 수 있도록 구성된 자료입니다. 이 데이터는 유치원별 설립유형과 건축년도, 건물층수, 건물전용면적, 대지총면적 등의 정보를 포함하고 있어 유치원 건물의 규모와 노후도, 물리적 환경 특성을 종합적으로 분석하는 데 활용할 수 있습니다. 또한 주소 정보와 공시차수 정보가 함께 제공되어 지역별 건물 분포를 비교하거나 특정 시점 기준으로 시설 현황을 추적하는 데 유용합니다. 이를 통해 유치원 시설 개선, 안전 점검 우선순위 설정, 교육 환경 격차 분석 등 정책 수립과 연구에 기초 자료로 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: childSchoolBuilding
+    name: childSchoolBuilding
+    endpoint: http://openapi.seoul.go.kr:8088/json/childSchoolBuilding/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: EDUO_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시교육청
+      stats:
+        unique: 1
+    - name: EDU_SPRT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 북부교육지원청
+        - 서부교육지원청
+        - 강남서초교육지원청
+      stats:
+        unique: 11
+    - name: KDGT_CD
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 006b5238-ce41-4471-9ee3-4df8d24b5141
+        - 009c017d-43bd-4d9f-ac64-d217abdd570e
+        - 04a021da-cdd7-4e7e-a434-2b388c2f6b63
+      stats:
+        unique: 100
+    - name: KDGT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울정심초등학교병설유치원
+        - 서울솔방울유치원
+        - 란키즈유치원
+      stats:
+        unique: 100
+    - name: FNDN_TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 사립(사인)
+        - 공립(병설)
+        - 사립(법인)
+      stats:
+        unique: 4
+    - name: ARCH_YR
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1997년
+        - 1987년
+        - 1988년
+      stats:
+        unique: 47
+    - name: BLDG_FLR_CNT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지상1층/ 지하0층
+        - 지상2층/ 지하0층
+        - 지상2층/ 지하1층
+      stats:
+        unique: 10
+    - name: BLDG_XUAR
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 1283㎡
+        - 504㎡
+        - 594㎡
+      stats:
+        unique: 97
+    - name: BLDST_GFA
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 17909㎡
+        - 1357㎡
+        - 241㎡
+      stats:
+        unique: 100
+    - name: PBLNT_CYCL
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20261'
+        - '20181'
+        - '20201'
+      stats:
+        min: 20181
+        p50: 20261
+        max: 20261
+        unique: 9
+    - name: ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 금천구 독산로78다길 89
+        - 서울특별시 송파구 오금로24길 25
+        - 서울특별시 송파구 새말로8길 22-5
+      stats:
+        unique: 100
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 유치원 (알리미·처음학교로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4073
+  rank_in_sector: 316
+  brm: 교육 - 유아및초·중등교육
+  why: 종로구 유치원 건물현황, 한 시군구 소규모 목록
+claims:
+  - id: c-15081049-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15081049.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15081049-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15081049-03
+    kind: key
+    value: '실측 조인 키: address(ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15081049.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 11개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15081049-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15081049.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15081049-06
+    kind: admin_note
+    value: "세부 부문 '유치원 (알리미·처음학교로)'의 가치: 유치원 위치·원아 수 = 젊은 가구의 공간 분포 — 주거 수요 선행 지표. 어린이집(사회복지)과 짝"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#kindergarten
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15081049-07
+    kind: admin_note
+    value: '[교육 · 유아·초중등] 기관·학생·학교 단위는 대부분 유지, 지역별 통계 배제 (`k12-regional-stats`). 세부: 나이스 일상 정보(daily) · 유치원 · 학교 공시 · 돌봄 · 고입 · 특수.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L458
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15081049-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave4 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15081049.json
+  stats: probe/stats/15081049.json
+  data: probe/data/15081049/
+status: active

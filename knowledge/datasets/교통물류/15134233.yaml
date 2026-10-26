@@ -1,0 +1,220 @@
+# Dataset 15134233 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15134233'
+tier: verified
+title: 서울특별시_서울시 방음벽정보
+sector: 교통물류/도로/road-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15134233/fileData.do
+synonyms:
+  - 방음벽
+  - 방음
+  - 도로
+  - 전용도로
+  - 설치구간
+description_portal: 서울시 방음벽정보는 도로 주변 소음 저감을 위해 설치된 방음벽의 현황을 제공하는 시설 정보 데이터입니다. 방음벽최대높이와 방음벽길이를 통해 구간별 소음 차단 규모를 파악할 수 있으며, 도로노선정보와 설치구간, 설치세부위치는 어느 도로의 어느 지점에 방음벽이 설치되어 있는지 공간적 위치를 확인하는 데 활용됩니다. 도로방향은 방음벽이 어느 방향 차량 흐름을 기준으로 설치되었는지 나타내며, 수집일은 해당 정보의 최신성을 판단하는 기준이 됩니다. 이 데이터는 교통소음 관리, 도시계획, 도로 인근 주거환경 개선 및 추가 방음 대책 수립 등에 활용되는 중요한 공공 인프라 정보입니다.
+accrual_periodicity: 월간
+team:
+  dept: 데이터전략과
+services:
+  - op: TbNoiseBarrier
+    name: TbNoiseBarrier
+    endpoint: http://openapi.seoul.go.kr:8088/json/TbNoiseBarrier/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SOUAR_MAX_HGT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+        - '6'
+        - '4'
+      stats:
+        min: 3
+        p50: 5
+        max: 10
+        unique: 7
+    - name: SOUAR_LEN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '154'
+        - '56'
+        - '220'
+      stats:
+        min: 56
+        p50: 374
+        max: 1504
+        unique: 28
+    - name: RTE_INFO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 올림픽대로
+      stats:
+        unique: 1
+    - name: INSTL_SEC
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가양대교
+        - 천호대교
+        - 방화대교
+      stats:
+        unique: 15
+    - name: INSTL_DTL_PSTN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 950M 지난 우측
+        - 방화대교 1.7KM 지난 우측
+        - 궁산램교 지난 우측
+      stats:
+        unique: 29
+    - name: ROAD_DRCT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강일
+      stats:
+        unique: 1
+    - name: CLCT_DAY
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2022-12-02 09:19:37.0'
+      stats:
+        min: '2022-12-02'
+        max: '2022-12-02'
+        unique: 1
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - CLCT_DAY
+cycle: default
+classification:
+  subsector_name: 도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.2593
+  rank_in_sector: 4776
+  brm: 교통물류 - 도로
+  why: 서울 방음벽 30건 소규모 목록
+claims:
+  - id: c-15134233-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15134233.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15134233-02
+    kind: cadence
+    value: 명세상 월간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 월간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15134233-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15134233.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15134233-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15134233.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15134233-06
+    kind: admin_note
+    value: "세부 부문 '도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)'의 가치: 터널·교량·지하차도는 제공표준 — 지자체 파일 수백 건이 표준 하나로 접힌다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15134233-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15134233-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15134233.json
+  stats: probe/stats/15134233.json
+  data: probe/data/15134233/
+status: active

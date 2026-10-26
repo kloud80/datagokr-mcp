@@ -1,0 +1,207 @@
+# Dataset 15140619 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15140619'
+tier: verified
+title: 서울특별시 강북구_자동차 번호판 영치 현황
+sector: 교통물류/도로/vehicles
+agency:
+  id: '3080000'
+  name: 서울특별시 강북구
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15140619/fileData.do
+synonyms:
+  - 차량
+  - 번호
+  - 영치
+  - 번호판
+  - 자동차손해배상
+  - 도로교통법 위반
+  - 자동차관리법 위반
+  - 세금체납
+description_portal: 자동차 번호판 영치는 자동차손해배상 보장법, 도로교통법, 자동차관리법 위반(체납된 세금, 과태료, 보험 미가입)등으로 인해 차량 번호판을 공무원이 압수하는 행정처분입니다. 이는 납세 의무 이행을 강제하고 자동차 관련 법규를 준수하도록 유도하며, 불법 운행을 방지하기 위한 제도입니다.서울특별시 강북구 자동차 번호판 영치 현황에 대한 데이터로 2014년 1월부터 현재까지 월별 영치건수 통계 자료를 제공합니다. 데이터의 정보는 영치년도, 영치월, 영치기관, 영치기관코드, 영치건수로 이루어져있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 디지털정보과
+services:
+  - op: TnCsdyPublicViewGb
+    name: TnCsdyPublicViewGb
+    endpoint: http://openapi.seoul.go.kr:8088/json/TnCsdyPublicViewGb/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CSDY_YR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+        - '2019'
+        - '2022'
+      stats:
+        min: 2014
+        p50: 2020.5
+        max: 2026
+        unique: 13
+    - name: CSDY_MM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '08'
+        - '07'
+        - '03'
+      stats:
+        min: 1
+        p50: 6.5
+        max: 12
+        unique: 12
+    - name: CSDY_INST
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강북구
+      stats:
+        unique: 1
+    - name: CSDY_INST_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11305'
+      stats:
+        min: 11305
+        p50: 11305
+        max: 11305
+        unique: 1
+    - name: CSDY_NOCS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.0'
+        - '34.0'
+        - '151.0'
+      stats:
+        min: 16
+        p50: 65.5
+        max: 231
+        unique: 72
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.2942
+  rank_in_sector: 4668
+  brm: 교통물류 - 도로
+  why: 서초구 월별 영치 건수 집계
+claims:
+  - id: c-15140619-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15140619.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15140619-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140619-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140619.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140619-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15140619.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140619-06
+    kind: admin_note
+    value: "세부 부문 '자동차 등록·검사·정비·렌터카·운전면허'의 가치: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vehicles
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15140619-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140619-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15140619.json
+  stats: probe/stats/15140619.json
+  data: probe/data/15140619/
+status: active

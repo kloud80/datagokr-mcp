@@ -1,0 +1,188 @@
+# Dataset 15047392 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15047392'
+tier: verified
+title: 서울특별시_제설함 위치정보
+sector: 재난안전/안전관리/excluded-rest
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15047392/fileData.do
+synonyms:
+  - 제설위치
+  - 제설장비
+  - 염화칼슘
+  - 제설함
+  - 위치정보
+description_portal: 서울시 제설함 위치정보 데이터는 겨울철 강설 시 신속한 제설 대응을 위해 서울시 전역에 설치된 제설함의 위치와 관리 정보를 제공하는 자료입니다. 제설함은 제설제나 모래 등을 보관하는 시설로, 주로 시도 간선도로 등 차도 위주 구간에 설치되어 폭설이나 결빙 등 긴급 상황 발생 시 운전자와 관리기관이 즉시 활용할 수 있도록 운영됩니다. 본 데이터에는 제설함의 좌표값(G2_XMIN, G2_YMIN)을 통해 정확한 위치를 확인할 수 있으며, 제설함번호(SBOX_NUM), 관리기관명(MGC_NM), 위치상세정보(DETL_CN)를 함께 제공하여 시설 관리와 현장 대응의 효율성을 높입니다. 이를 통해 겨울철 도로 안전 관리, 제설 자원 배치 계획 수립, 시민 안전 확보를 위한 기초 자료로 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 도로관리과
+services:
+  - op: viAdvBase
+    name: viAdvBase
+    endpoint: http://openapi.seoul.go.kr:8088/json/viAdvBase/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: G2_XMIN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '201806827.0'
+        - '201684198.0'
+        - '202331573.0'
+      stats:
+        min: 199681588
+        p50: 203633492.5
+        max: 208344996
+        unique: 100
+    - name: G2_YMIN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '544216642.0'
+        - '544149784.0'
+        - '556718457.0'
+      stats:
+        min: 542292151
+        p50: 555132310
+        max: 557118030
+        unique: 100
+    - name: SBOX_NUM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 월곡1동-001
+        - 서초4-006
+        - 서초4-008
+      stats:
+        unique: 99
+    - name: MGC_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 성북구
+        - 강남구
+        - 서초구
+      stats:
+        unique: 4
+    - name: DETL_CN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서초대로65길 13-10
+        - 서초중앙로24길 43
+        - 숭인로8길52
+      stats:
+        unique: 100
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 제외 대상
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.5008
+  brm: 재난안전 - 안전관리
+claims:
+  - id: c-15047392-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15047392.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15047392-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047392-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15047392.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047392-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15047392.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047392-06
+    kind: admin_note
+    value: '[재난안전 - 안전관리 · 경찰 · 해경 · 안전관리] 재난 특보·위험지역(`disaster-hazards`), 대피·구호시설(`evacuation-shelters`), 소방(`fire-rescue`), 시설 안전 원장(`facility-safety`, 승강기 등),'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L656
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15047392-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15047392.json
+  stats: probe/stats/15047392.json
+  data: probe/data/15047392/
+status: active

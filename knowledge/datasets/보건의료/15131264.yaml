@@ -1,0 +1,204 @@
+# Dataset 15131264 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15131264'
+tier: verified
+title: 국민건강보험공단_특정 상병 및 수가코드 그룹별 진료인원A
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15131264/fileData.do
+synonyms:
+  - 상병코드
+  - 수가코드 그룹
+  - 진료인원
+  - N18
+  - Z49
+  - O7020
+description_portal: '1. 주상병코드: N18(만성 신장병), Z49(투석을 포함한 치료)2. 수가코드: O7020(혈액투석[1회당])3. 진료년도: 2023년4. 요양기관 주소지 기준(시도, 시군구)5. 진료인원: 해당 연도에 진료받은 인원(중복제외)  - 진료일 기준(한의분류 제외)  - 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외  - 2024년 6월 심사분까지 반영※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터이며 본 데이터와 무관한 건강보험제도, 개인의 자격,징수,급여, 장기요양 관련 문의는 공단 대표번호(1577-1000)로 하시기 바랍니다.'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_특정 상병 및 수가코드 그룹별 진료인원A_20231231.csv
+    url: https://www.data.go.kr/data/15131264/fileData.do
+    format: csv
+    size: 9554
+schema:
+  fields:
+    - name: 주상병코드
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N18 Z49
+      stats:
+        unique: 1
+    - name: 수가코드
+      type: code
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - O7020
+      stats:
+        unique: 1
+    - name: 진료년도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2023년
+      stats:
+        unique: 1
+    - name: 요양기관 시도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 서울특별시
+        - 전라남도
+      stats:
+        unique: 17
+    - name: 요양기관 시군구
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 중구
+        - 동구
+        - 서구
+      stats:
+        unique: 200
+    - name: 진료인원(명)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18'
+        - '1200'
+        - '324'
+      stats:
+        min: 15
+        p50: 407
+        max: 2771
+        unique: 194
+  foreign_keys:
+    - fields:
+        - 수가코드
+      reference:
+        key: drug_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 시군구
+grain:
+  space: sgg
+  space_fields:
+    - 요양기관 시군구
+  space_via: name
+  time: year
+  time_fields:
+    - 진료년도
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3729
+  rank_in_sector: 293
+  brm: 보건의료 - 건강보험
+  why: 혈액투석 시군구 단년도 맞춤 집계
+claims:
+  - id: c-15131264-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 9554 bytes) — 활용신청 없이 받음. 2026-10-26 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15131264.json
+        observed_at: '2026-10-26'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-27'
+  - id: c-15131264-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15131264-03
+    kind: key
+    value: '실측 조인 키: drug_cd(수가코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15131264.json
+        observed_at: '2026-10-26'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15131264-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 시군구
+    evidence:
+      - type: measured
+        source: probe/runs/15131264.json
+        observed_at: '2026-10-26'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15131264-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15131264-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15131264-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-26'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-26'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15131264.json
+  stats: probe/stats/15131264.json
+  data: probe/data/15131264/
+status: active

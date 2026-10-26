@@ -1,0 +1,197 @@
+# Dataset 15146515 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15146515'
+tier: verified
+title: 서울특별시_서울지역 하수 중 코로나19 바이러스 농도
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15146515/fileData.do
+synonyms:
+  - 코로나19
+  - covid19
+  - 감염병
+  - 바이러스
+  - 전염병
+description_portal: 이 데이터는 서울지역 하수 중 코로나19 바이러스 농도 측정 자료로, 다음과 같은 메타데이터 요소를 포함합니다.샘플 채취 날짜데이터 수집 시점을 기록한 필드입니다.‘2025년 6월’처럼 연·월 단위와 조사 주차 단위로 제공되어 시계열 분석에 활용할 수 있습니다.샘플 채취 주차‘23주차, 24주차, … 26주차’와 같이 주 단위로 구분된 정보입니다.연속적인 변화를 모니터링하거나 특정 주차별 변동을 비교하는 데 유용합니다.하수처리장 샘플 채취 지점서울 내 주요 하수처리장별 구분(서남, 난지, 탄천, 중랑A, 중랑B)을 나타냅니다.공간적 메타데이터로서, 지역별 감염 확산 정도를 구분하는 지표가 됩니다.코로나19 바이러스 농도 (copies/mL)하수 내 검출된 바이러스 농도를 수치화한 값으로, 단위는 copies/mL입니다.데이터셋의 핵심 측정값으로, 시공간별 비교 및 확산 추세 파악에 활용됩니다.
+accrual_periodicity: 수시
+team:
+  dept: 질병연구부
+services:
+  - op: corona19Sewage
+    name: corona19Sewage
+    endpoint: http://openapi.seoul.go.kr:8088/json/corona19Sewage/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SAMPLE_PCKNG_YMD
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-09-29'
+        - '2026-09-22'
+        - '2026-09-15'
+      stats:
+        min: '2026-03-31'
+        max: '2026-09-29'
+        unique: 18
+    - name: SAMPLE_PCKNG_WKCNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '40'
+        - '39'
+        - '38'
+      stats:
+        min: 14
+        p50: 22.5
+        max: 40
+        unique: 18
+    - name: SAMPLE_PCKNG_BRNCH
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서남 물 재생센터
+        - 중랑A 물 재생센터
+        - 탄천 물 재생센터
+      stats:
+        unique: 4
+    - name: VRS_DNST
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '85.2887370601442'
+        - '1722.84609220209'
+        - '52234.0618815019'
+      stats:
+        min: 85.2887370601442
+        p50: 1968.865800859475
+        max: 52234.0618815019
+        unique: 70
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - SAMPLE_PCKNG_YMD
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.2578
+  brm: 보건의료 - 보건의료
+claims:
+  - id: c-15146515-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15146515.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15146515-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146515-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15146515.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146515-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15146515.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146515-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15146515-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15146515-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15146515.json
+  stats: probe/stats/15146515.json
+  data: probe/data/15146515/
+status: active

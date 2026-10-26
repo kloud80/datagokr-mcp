@@ -1,0 +1,223 @@
+# Dataset 15130706 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15130706'
+tier: verified
+title: 국민건강보험공단_요양기관종별 특정 행위코드별 정보
+sector: 보건의료/건강보험/medical-institutions
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15130706/fileData.do
+synonyms:
+  - 요양기관종별
+  - 행위코드별
+  - 정보
+  - 수가금액
+  - 건강보험 급여실적
+description_portal: '국민건강보험공단_요양기관종별 특정 행위코드별 정보1. 진료일자: 2018~2023년2. 행위코드: F6211, F6231, F6232, FY751010~FY751080, FY752010~FY752360, FY753010~FY7532803. 진료인원: 해당 연도에 진료받은 인원(중복제외)4. 명세서 건수 및 진료건수: 해당 행위코드가 청구된 명세서 수 및 총 청구 코드 수5. 수가금액: 해당 행위에 대한 수가금액으로 진료비와는 다름  - 진료일 기준(한의분류 제외, 약국 제외)  - 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외  - 2024년 6월 심사분까지 반영※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_요양기관종별 특정 행위코드별 정보_20231231.csv
+    url: https://www.data.go.kr/data/15130706/fileData.do
+    format: csv
+    size: 82160
+schema:
+  fields:
+    - name: 진료년도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2023년
+        - 2022년
+        - 2021년
+      stats:
+        unique: 6
+    - name: 요양기관종별
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종합병원
+        - 의원
+        - 상급종합병원
+      stats:
+        unique: 10
+    - name: 행위코드
+      type: code
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - F6211
+        - F6231
+        - FY753120
+      stats:
+        unique: 80
+    - name: 진료인원(명)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 724
+        max: 615618
+        unique: 1302
+    - name: 명세서건수(건)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '6'
+      stats:
+        min: 1
+        p50: 856
+        max: 2750432
+        unique: 1325
+    - name: 진료건수(건)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '6'
+      stats:
+        min: 1
+        p50: 867.5
+        max: 2750514
+        unique: 1316
+    - name: 수가금액(천원)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12'
+        - '11'
+        - '5'
+      stats:
+        min: 4
+        p50: 10407
+        max: 47553412
+        unique: 1692
+  foreign_keys:
+    - fields:
+        - 행위코드
+      reference:
+        key: drug_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
+cycle: default
+classification:
+  subsector_name: 요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4568
+  rank_in_sector: 193
+  brm: 보건의료 - 건강보험
+  why: 특정 행위코드 종별 연도 집계, 기관 원장 아님
+claims:
+  - id: c-15130706-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 82160 bytes) — 활용신청 없이 받음. 2026-10-25 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15130706.json
+        observed_at: '2026-10-25'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15130706-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15130706-03
+    kind: key
+    value: '실측 조인 키: drug_cd(행위코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15130706.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15130706-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15130706.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15130706-06
+    kind: admin_note
+    value: "세부 부문 '요양기관 원장 (병원·의원·약국 기본정보·진료과·병상·장비·인력·진료시간·개폐업)'의 가치: 보건의료 최다 트래픽, 전국 의료기관 전수. 심평원 API 6~8개가 ykiho 하나로 묶이는 체인"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-institutions
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15130706-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15130706-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-25'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15130706.json
+  stats: probe/stats/15130706.json
+  data: probe/data/15130706/
+status: active

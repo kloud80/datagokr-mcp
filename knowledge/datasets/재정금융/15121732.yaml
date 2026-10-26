@@ -1,0 +1,228 @@
+# Dataset 15121732 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15121732'
+tier: verified
+title: 신용보증기금_보증잔액 원장 요약
+sector: 재정금융/산업금융/guaranteed-firms
+agency:
+  id: B190016
+  name: 신용보증기금
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15121732/fileData.do
+synonyms:
+  - 보증잔액
+  - 원장 요약
+  - 중소기업
+  - 원장
+  - 코드
+  - 잔액
+  - 업종
+  - 부부
+description_portal: 해당 파일은 신용보증기금의 보증잔액을 원장별로 요약한 데이터로, 원장번호별 영업본부부점명, 업종코드, 보증잔액 등의 항목을 제공합니다.업종코드(세세분류)는 별개의 코드북 없이 통계청의 한국표준산업분류코드를 따르고 있는 바, 아래의 링크를  참고하여 주시기 바랍니다. https://kssc.kostat.go.kr:8443/ksscNew_web/kssc/main/main.do?gubun=1 해당 자료는 내부 업무 개선, 정책 수립을 위한 참고자료, 대국민 안내 및 홍보용으로도 유용하게 활용될 수 있는 콘텐츠입니다. 또한, 다양한 사용자층의 이해 수준을 고려하여 시각적 요소와 함께 정보 접근성을 강화하였으며, 교육용 및 정책 홍보 자료로서도 활용도가 높습니다.
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터부
+distributions:
+  - title: 신용보증기금_보증잔액 원장 요약_20230830.csv
+    url: https://www.data.go.kr/data/15121732/fileData.do
+    format: csv
+    size: 35044
+schema:
+  fields:
+    - name: 원장번호
+      type: string
+      semantic_type: kodit_guarantee_ledger_no
+      null_rate: 0.0
+      sample_values:
+        - QAC*********
+        - TAZ*********
+        - TPA*********
+      stats:
+        unique: 109
+    - name: 영업본부부점명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울동부영업본부
+        - 서울서부영업본부
+        - 대구경북영업본부
+      stats:
+        unique: 8
+    - name: 보증잔액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '90000000'
+        - '180000000'
+        - '100000000'
+      stats:
+        min: 3315000
+        p50: 100000000
+        max: 2040000000
+        unique: 273
+    - name: 창업기업여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: 수출중소기업여부
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - N
+        - Y
+      stats:
+        unique: 2
+    - name: 업종코드
+      type: string
+      semantic_type: classification_code
+      null_rate: 0.0
+      sample_values:
+        - G52811
+        - P85121
+        - G51451
+      stats:
+        unique: 239
+    - name: 자금용도명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 운전자금
+        - 시설자금
+      stats:
+        unique: 2
+    - name: 거래방법명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 개별거래
+        - 한도(분할방식)내 건별거래
+        - 주채무미실행관련 재신청개별(조건변경수반)
+      stats:
+        unique: 3
+  foreign_keys:
+    - fields:
+        - 원장번호
+      reference:
+        key: kodit_guarantee_ledger_no
+      evidence: measured
+    - fields:
+        - 업종코드
+      reference:
+        key: classification_code
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  category:
+    - ksic
+  category_fields:
+    - 업종코드
+cycle: default
+classification:
+  subsector_name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.372
+  brm: 재정금융 - 산업금융
+claims:
+  - id: c-15121732-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 35044 bytes) — 활용신청 없이 받음. 2026-10-26 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15121732.json
+        observed_at: '2026-10-26'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-27'
+  - id: c-15121732-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15121732-03
+    kind: key
+    value: '실측 조인 키: kodit_guarantee_ledger_no(원장번호), classification_code(업종코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15121732.json
+        observed_at: '2026-10-26'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15121732-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15121732.json
+        observed_at: '2026-10-26'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15121732-06
+    kind: admin_note
+    value: "세부 부문 '보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)'의 가치: 보증·투자 받은 기업 목록 — 기업 축(사업자번호)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#guaranteed-firms
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15121732-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 산업금융] 신보 685건은 대부분 보증 통계·요율표 — 보증 이용 기업 명세(기업 원장)만 남김. 대부업 등록 원장을 일반행정에서 모음. 산후조리원 → 보건의료, 도로안전시설물 → 도로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L625
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15121732-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-26'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-26'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15121732.json
+  stats: probe/stats/15121732.json
+  data: probe/data/15121732/
+status: active

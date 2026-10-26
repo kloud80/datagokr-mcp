@@ -1,0 +1,245 @@
+# Dataset 15048520 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15048520'
+tier: verified
+title: 서울특별시_액화석유가스업 현황
+sector: 산업고용/에너지및자원개발/fuel-charging
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15048520/fileData.do
+synonyms:
+  - LPG
+  - 도시가스
+  - 천연가스
+  - 액화석육가스
+  - 인허가
+description_portal: 서울시 액화석유가스업 현황 데이터는 서울시 내에서 액화석유가스(LPG) 관련 사업을 영위하는 업소들의 인허가 및 기본 정보를 정리한 자료입니다. 시군구코드는 각 업소가 속한 자치구를 식별하기 위한 행정코드이며, 인허가번호와 업소번호는 해당 사업장의 법적 인허가 및 관리 대상을 구분하는 고유 식별 정보입니다. 사업종류 항목을 통해 저장소, 판매소, 충전소 등 어떤 유형의 액화석유가스 관련 사업을 수행하는지 알 수 있으며, 상호와 전화번호는 업소의 이름과 연락 수단을 나타냅니다. 허가일자는 해당 업소가 법적으로 영업을 시작할 수 있는 인허가를 받은 날짜로, 업소의 운영 경과 기간을 파악하는 데 활용됩니다. 주소 정보는 각 LPG 사업장의 실제 위치를 보여주어 지역별 업체 분포와 접근성을 분석할 수 있게 합니다. 이 데이터는 시민의 안전한 가스 이용을 위한 관리, 자치구별 가스 관련 시설 밀집도 분석, 안전 점검 및 지도·단속 계획 수립 등 액화석유가스 안전관리 정책과 연계된 기초 자료로 활용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SeoulListLPGSales
+    name: SeoulListLPGSales
+    endpoint: http://openapi.seoul.go.kr:8088/json/SeoulListLPGSales/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: REL_TRANS_CGG_CODE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3150000'
+        - '3110000'
+        - '3160000'
+      stats:
+        min: 3000000
+        p50: 3150000
+        max: 3240000
+        unique: 21
+    - name: PERM_NT_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2601322000004100001'
+        - '2022315020404100001'
+        - '2022315000004100001'
+      stats:
+        min: 18317000004100004
+        p50: 2006315010004100096
+        max: 9707320000004100096
+        unique: 100
+    - name: WORK_SITE_SNO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00001'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: LPG_BSIN_SORT_CODE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 충전사업
+        - 판매사업
+        - 가스용품제조사업
+      stats:
+        unique: 4
+    - name: TRNM_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - (주)파커스인터내셔널
+        - 한경에너지
+        - 대영가스충전소
+      stats:
+        unique: 88
+    - name: OFF_TELNO
+      type: code
+      null_rate: 0.5
+      sample_values:
+        - 02 3021001
+        - 02 449 9123
+        - '000226021632'
+      stats:
+        unique: 49
+    - name: PERM_NT_YMD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20060714'
+        - '20070326'
+        - '20061228'
+      stats:
+        min: 20050304
+        p50: 20070263.5
+        max: 20260406
+        unique: 75
+    - name: SITE_ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.06
+      sample_values:
+        - 서울특별시 강서구 등촌동  684번지 2호  우리벤처타운
+        - '서울특별시 서초구 내곡동  234번지 1호  '
+        - '서울특별시 은평구 신사동  35번지 1호  '
+      stats:
+        unique: 88
+  foreign_keys:
+    - fields:
+        - SITE_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - SITE_ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.4498
+  rank_in_sector: 1194
+  brm: 산업고용 - 에너지및자원개발
+  why: 서울 한정 LPG업 인허가, 외부 링크
+claims:
+  - id: c-15048520-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15048520.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15048520-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15048520-03
+    kind: key
+    value: '실측 조인 키: address(SITE_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15048520.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15048520-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15048520.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15048520-06
+    kind: admin_note
+    value: "세부 부문 '주유소·유가·충전소 (전국주유소표준·오피넷 유가·전기차/수소 충전소 실시간)'의 가치: 주유소 ID·충전소 ID·좌표, 유가·충전기 상태는 실시간"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#fuel-charging
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15048520-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15048520-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15048520.json
+  stats: probe/stats/15048520.json
+  data: probe/data/15048520/
+status: active

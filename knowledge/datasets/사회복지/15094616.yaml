@@ -1,0 +1,257 @@
+# Dataset 15094616 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15094616'
+tier: verified
+title: 서울특별시 동작구_사회복지시설 목록
+sector: 사회복지/사회복지일반/social-economy
+agency:
+  id: '3190000'
+  name: 서울특별시 동작구
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15094616/openapi.do
+synonyms:
+  - 복지
+  - 복지관
+  - 시설
+description_portal: 이 데이터는 동작구 사회복지시설 정보를 포함하고 있습니다. 시설명, 시설유형, 시설종류, 시설장명이 함께 제공됩니다.
+team:
+  dept: 스마트행정과
+services:
+  - op: fcltOpenInfo_DJ
+    name: fcltOpenInfo_DJ
+    endpoint: http://openapi.seoul.go.kr:8088/json/fcltOpenInfo_DJ/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FCLT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 좋은친구들지역아동센터
+        - 뉴라클주간보호센터
+        - 마니방문요양센터
+      stats:
+        unique: 90
+    - name: FCLT_CD
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - A0347
+        - A0607
+        - A0681
+      stats:
+        unique: 100
+    - name: FCLT_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (재가노인복지시설) 재가노인복지시설
+        - (아동복지시설) 지역아동센터
+        - (기타기관) 영유아보육시설(기타)
+      stats:
+        unique: 18
+    - name: FCLT_KIND_DTL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 재가노인복지시설
+        - 아동복지시설
+        - 노인의료복지시설
+      stats:
+        unique: 12
+    - name: JRSD_SGG_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자치구
+      stats:
+        unique: 1
+    - name: RPRSNTV
+      type: string
+      null_rate: 0.01
+      sample_values:
+        - 조수진
+        - 유병욱
+        - 김만희
+      stats:
+        unique: 87
+    - name: JRSD_SGG_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1159000000'
+      stats:
+        min: 1159000000
+        p50: 1159000000
+        max: 1159000000
+        unique: 1
+    - name: JRSD_SGG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 동작구
+      stats:
+        unique: 1
+    - name: FCLT_ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 동작구 국사봉1길 145 (상도동)
+        - 서울특별시 동작구 동작대로29길 63-5, 1.2.3.4층 (사당동)
+        - 서울특별시 동작구 상도로15카길 11, 101호 (상도동, 래미안빌)
+      stats:
+        unique: 82
+    - name: INMT_GRDN_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: LVLH_NMPR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: FCLT_TEL_NO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: FCLT_ZIPCD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - FCLT_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시군구
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - JRSD_SGG_CD
+    - JRSD_SGG_NM
+    - FCLT_ADDR
+  space_via: code
+cycle: default
+classification:
+  subsector_name: 사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.6558
+  brm: 사회복지 - 사회복지일반
+claims:
+  - id: c-15094616-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15094616.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15094616-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15094616-03
+    kind: key
+    value: '실측 조인 키: address(FCLT_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15094616.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 13개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15094616-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15094616.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15094616-06
+    kind: admin_note
+    value: "세부 부문 '사회적경제 (사회적기업 인증·협동조합 설립·마을기업·자활기업)'의 가치: 인증번호·사업자번호 — 기업 축과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#social-economy
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15094616-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15094616.json
+  stats: probe/stats/15094616.json
+  data: probe/data/15094616/
+status: active

@@ -1,0 +1,208 @@
+# Dataset 15052440 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15052440'
+tier: verified
+title: 서울특별시_MICE시설 정보 (영어)
+sector: 문화관광/관광/tour-contents
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15052440/fileData.do
+synonyms:
+  - 컨벤션
+  - 호텔
+  - MICE
+description_portal: 서울특별시가 관리하는 MICE 시설의 기본정보 데이터로 명칭, 자치구, 행정동, 대표전화, 홈페이지주소 등을 영어로 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 관광정책과
+services:
+  - op: SebcMiceInfoEng
+    name: SebcMiceInfoEng
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcMiceInfoEng/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MAIN_KEY
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - BE_IW06-0001
+        - BE_IW06-0040
+        - BE_IW06-0041
+      stats:
+        unique: 81
+    - name: NAME_ENG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 63 Convention Center
+        - SETEC(Seoul Trade Exhibition & Convention)
+        - COEX(Convention & Exhibition)
+      stats:
+        unique: 81
+    - name: H_ENG_CITY
+      type: code
+      null_rate: 0.6173
+      sample_values:
+        - Seoul
+      stats:
+        unique: 1
+    - name: H_ENG_GU
+      type: code
+      null_rate: 0.6173
+      sample_values:
+        - Gangnam-gu
+        - Jung-gu
+        - Seocho-gu
+      stats:
+        unique: 9
+    - name: H_ENG_DONG
+      type: code
+      null_rate: 0.6173
+      sample_values:
+        - Yeoksam1-dong
+        - Cheongdam-dong
+        - Sogong-dong
+      stats:
+        unique: 22
+    - name: TEL
+      type: string
+      null_rate: 0.0617
+      sample_values:
+        - 02-3210-2100
+        - 02-789-5704
+        - 02-2222-3811
+      stats:
+        unique: 75
+    - name: HP
+      type: string
+      null_rate: 0.0123
+      sample_values:
+        - http://www.63convention.co.kr
+        - setec.or.kr
+        - www.coex.co.kr
+      stats:
+        unique: 80
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4113
+  brm: 문화관광 - 관광
+claims:
+  - id: c-15052440-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15052440.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15052440-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052440-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15052440.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052440-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15052440.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15052440-06
+    kind: admin_note
+    value: "세부 부문 '관광 콘텐츠 (TourAPI 관광지·문화시설·음식·쇼핑·레포츠·코스, 지자체 관광지 목록)'의 가치: 국내 여행 앱 대부분이 쓰는 원장, contentId·TourAPI 지역코드. 지자체 관광지 파일은 instance로 접고 TourAPI 대표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#tour-contents
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15052440-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15052440-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15052440.json
+  stats: probe/stats/15052440.json
+  data: probe/data/15052440/
+status: active

@@ -1,0 +1,244 @@
+# Dataset 15128648 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15128648'
+tier: verified
+title: 국민권익위원회_민원빅데이터_분석정보_API_2024
+sector: 공공행정/국민권익·인권/civil-complaints
+agency:
+  id: '1140100'
+  name: 국민권익위원회
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15128648/openapi.do
+synonyms:
+  - 민원정보
+  - 민원분석
+  - 민원빅데이터
+  - 포트홀
+  - 빅데이터
+  - 위치기반
+  - 텍스트분석
+  - 지역별민원현황
+description_portal: 2024년판 민원 빅데이터 분석 API로 민원 발생지별 정보와 포트홀 민원 위경도 정보 등을 조회할 수 있어, 민원 발생 지역의 특성을 파악하고, 도로 유지보수 등 실질적인 행정 서비스 개선에 활용할 수 있습니다. 또한, 민원 데이터를 기반으로 한 연구나 분석에 필요한 정보를 제공하여 공공 및 민간의 다양한 분야에서 활용될 수 있습니다. 또한, 지역별 민원 현황을 파악하여 기초지방자치단체별 민원 추세를 파악하는데 통계 자료를 제공합니다. 민원에 대한 빅데이터를 바탕으로 그 속에 담긴 의미있는 정보를 추출하여 정책 수립에 도움을 줄 수 있습니다. 주로 기초지방자치단체의 홈페이지 등에서 API를 호출하여 각종 민원 관련 통계를 제공하는데 활용됩니다.
+team:
+  dept: 민원정보분석과
+services:
+  - op: /minPttnStstAddrInfo
+    name: 키워드 기반 민원 발생지별 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView7/minPttnStstAddrInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: target
+        required: true
+        desc: 'pttn : 일반민원 dfpt : 고충민원 saeol : 수집민원(새올시스템, 시도시스템, 응답소 등) prpl : 제안'
+      - name: searchword
+        required: true
+        desc: '검색 질의어 '
+      - name: dateFrom
+        required: true
+        desc: 검색기간(시작일)-yyyyMMdd
+      - name: dateTo
+        required: true
+        desc: 검색기간(종료일)-yyyyMMdd
+      - name: mainSubCode
+        required: true
+        desc: 기관코드
+      - name: searchOption
+        required: false
+        desc: 검색영역 (기본값 제목 내용 전체 B006005)
+      - name: omitDuplicate
+        required: false
+        desc: 중복 민원 제거 여부 (기본값 false  중복 제거안함    true 중복 제거 하여 동일한 민원 건수를 한 개로 카운트)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: false
+  - op: /minPotholeLatLonInfo
+    name: 포트홀 민원 위경도 정보
+    endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView7/minPotholeLatLonInfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dateFrom
+        required: true
+        example: '20240107'
+        desc: 검색기간(시작일)-yyyyMMdd (최대 15일까지 가능)
+      - name: dateTo
+        required: true
+        example: '20240107'
+        desc: 검색기간(종료일)-yyyyMMdd (최대 15일까지 가능)
+    approval: auto
+    traffic:
+      dev: 100
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: item
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - "{'create_dt': '20240107', 'event_lat': '35.0622869', 'event_lon': '126.3419945'}"
+        - "{'create_dt': '20240107', 'event_lat': '35.1227607', 'event_lon': '128.9627562'}"
+        - "{'create_dt': '20240107', 'event_lat': '35.1274709', 'event_lon': '128.9641433'}"
+      stats:
+        min: '2024-01-07'
+        max: '2024-01-07'
+        unique: 29
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+grain:
+  time: day
+  time_fields:
+    - item
+cycle: default
+classification:
+  subsector_name: 민원 분석 (민원빅데이터)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.83
+  rank_in_sector: 2
+  brm: 공공행정 - 국민권익·인권
+  sector_rule: complaints-oplist-to-rights
+  why: 민원 발생지·포트홀 좌표, 검증된 2023판 형제
+claims:
+  - id: c-15128648-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-25 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15128648.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15128648.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '100'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15128648-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15128648-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15128648.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 1개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15128648-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15128648.json
+        observed_at: '2026-10-25'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15128648-06
+    kind: admin_note
+    value: "세부 부문 '민원 분석 (민원빅데이터)'의 가치: 지역(행정구역) × 기관 × 키워드 × 월 민원 신호 — 지역 이슈의 가장 빠른 신호, 모델이 모름. 행정구역코드로 인구·실거래·상가와 결합"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#civil-complaints
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128648-07
+    kind: admin_note
+    value: '[국민권익·인권 · 결정] 민원 분석(국민권익위원회 민원빅데이터 분석정보) 하나만 살리고 나머지는 우선 제외 (`rights-non-complaints`). 재검토 여지 있음.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L425
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128648-08
+    kind: admin_note
+    value: wave2 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128648-10
+    kind: pitfall
+    value: 필수 파라미터 mainSubCode, searchword, target는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15128648.json
+        observed_at: '2026-10-25'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15128648-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /minPttnStstAddrInfo'
+    evidence:
+      - type: measured
+        source: probe/runs/15128648.json
+        observed_at: '2026-10-25'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+verification:
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-25'
+  channel: portal
+  rows: 0
+  ops_ok: 1/2
+  latency_ms: 30026
+  run: probe/runs/15128648.json
+  stats: probe/stats/15128648.json
+  data: probe/data/15128648/
+status: active

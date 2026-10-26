@@ -1,0 +1,233 @@
+# Dataset 15076890 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076890'
+tier: verified
+title: 서울특별시_사회복지시설(장애인의료재활시설) 목록
+sector: 사회복지/취약계층지원/welfare-facilities-master
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15076890/fileData.do
+synonyms:
+  - 복지
+  - 장애
+  - 의료
+  - 재활
+  - 시설
+description_portal: '서울특별시 장애인의료재활시설의 정보입니다.- 주요내용 : 시설명, 시설유형, 시설종류, 시설주소 등 정보제공*용어설명- 장애인의료재활시설은 「장애인복지법」과 「장애인 건강권 및 의료 접근성 관련 법령」에 근거하여 설치된 시설로, 장애인의 건강 회복, 재활, 일상생활 능력 향상을 지원하는 의료·복지 복합 시설- 단순한 병원이나 요양시설과 달리 의료·재활·복지 서비스가 통합 제공※ 제공부서 : 서울특별시 복지실 복지기획관 복지정책과(02-2133-7352)입니다.※ 바로가기 클릭 시 서울특별시 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: fcltOpenInfo_OMSI
+    name: fcltOpenInfo_OMSI
+    endpoint: http://openapi.seoul.go.kr:8088/json/fcltOpenInfo_OMSI/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FCLT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주몽재활의원
+        - 에스알씨(SRC)부설의원
+        - 에스알씨(SRC)재활병원
+      stats:
+        unique: 6
+    - name: FCLT_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C1798
+        - C7535
+        - C7536
+      stats:
+        unique: 6
+    - name: FCLT_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (장애인의료재활시설) 장애인의료재활시설
+      stats:
+        unique: 1
+    - name: FCLT_KIND_DTL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 장애인의료재활시설
+      stats:
+        unique: 1
+    - name: JRSD_SGG_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자치구
+      stats:
+        unique: 1
+    - name: JRSD_SGG_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1162000000'
+        - '1174000000'
+        - '1138000000'
+      stats:
+        min: 1120000000
+        p50: 1153000000
+        max: 1174000000
+        unique: 5
+    - name: JRSD_SGG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 관악구
+        - 강동구
+        - 은평구
+      stats:
+        unique: 5
+    - name: FCLT_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강동구 상암로 369 (상일동)
+        - 서울특별시 관악구 보라매로 44 (봉천동)
+        - 경기도 광주시 초월읍 경수길 25
+      stats:
+        unique: 6
+    - name: FCLT_TEL_NO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: FCLT_ZIPCD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - FCLT_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - JRSD_SGG_CD
+    - JRSD_SGG_NM
+    - FCLT_ADDR
+  space_via: code
+cycle: default
+classification:
+  subsector_name: 사회복지시설 (통합 현황·사회복지관·사회복지법인·노숙인 시설·지역자활센터·시설 평가)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4318
+  rank_in_sector: 254
+  brm: 사회복지 - 취약계층지원
+  why: 서울 의료재활시설 6건, 소규모
+claims:
+  - id: c-15076890-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076890.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15076890-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076890-03
+    kind: key
+    value: '실측 조인 키: address(FCLT_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15076890.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076890-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076890.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076890-06
+    kind: admin_note
+    value: "세부 부문 '사회복지시설 (통합 현황·사회복지관·사회복지법인·노숙인 시설·지역자활센터·시설 평가)'의 가치: 사회복지시설코드 — 노인·아동·장애인·노숙인 시설 전체의 공통 마스터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#welfare-facilities-master
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15076890-07
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076890.json
+  stats: probe/stats/15076890.json
+  data: probe/data/15076890/
+status: active

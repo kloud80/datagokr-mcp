@@ -1,0 +1,230 @@
+# Dataset 15098174 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15098174'
+tier: verified
+title: 국회 국회도서관_자료검색 서비스
+sector: 공공행정/법제/legislative-research
+agency:
+  id: '9720000'
+  name: 국회 국회도서관
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15098174/openapi.do
+synonyms:
+  - 국회도서관
+  - 전자도서관
+  - 국회
+description_portal: 국회도서관에서 제공하는 도서자료, 학위논문, 국내외 기사 등의 목록DB를 키워드와 검색대상, 검색조건 등을 사용하여 검색하는 서비스
+team:
+  dept: 전자정보정책과
+services:
+  - op: /basic
+    name: 통합검색 목록조회
+    endpoint: https://apis.data.go.kr/9720000/searchservice/basic
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageno
+        required: true
+        example: '1'
+        desc: 페이지 번호
+      - name: displaylines
+        required: true
+        example: '10'
+        desc: 한 페이지 결과(record)수
+      - name: search
+        required: true
+        example: 자료명,미국
+        desc: 검색항목,검색키워드
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+  - op: /detail
+    name: 상세검색 목록조회
+    endpoint: https://apis.data.go.kr/9720000/searchservice/detail
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageno
+        required: true
+        desc: 페이지 번호
+      - name: displaylines
+        required: true
+        desc: 한 페이지 결과(record)수
+      - name: dbname
+        required: true
+        desc: 고정
+      - name: search
+        required: true
+        desc: 검색항목,검색키워드
+      - name: option
+        required: true
+        desc: 발행년도가 하나일 경우 시작년도로 현재까지 검색하고 두 개일 경우 앞은 시작년도, 뒤는 종료년도로 between 검색, 원문유무(유:1, 무:0)
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: false
+schema:
+  fields:
+    - name: name
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 제어번호
+        - 기사명
+        - 저자명
+      stats:
+        unique: 13
+    - name: value
+      type: string
+      null_rate: 0.0635
+      sample_values:
+        - Y
+        - N
+        - kor
+      stats:
+        unique: 462
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 입법·정책 연구 간행물
+  depth: back
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.6074
+  rank_in_sector: 205
+  brm: 교육 - 고등교육
+  sector_rule: assembly-to-law
+  why: 도서·논문 검색 서비스, 시설·상권과 무관
+claims:
+  - id: c-15098174-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-25 실호출 성공 오퍼레이션 1/2
+    evidence:
+      - type: measured
+        source: probe/runs/15098174.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/2
+      - type: measured
+        source: probe/apply/15098174.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15098174-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15098174-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15098174.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 2개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15098174-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15098174.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15098174-06
+    kind: admin_note
+    value: '[법제 · 결정] 국회·법제처 데이터를 법제로 모으고(법제처 284·국회 286), 국회 행정·통계·홍보와 법제처 이용 통계 109건은 제외 (`law-assembly-admin`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L409
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15098174-07
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave4r 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15098174-10
+    kind: pitfall
+    value: 필수 파라미터 dbname, displaylines, option, search는 다른 데이터의 코드 — 먼저 받아서 넘겨야 한다 (lookup Edge 후보)
+    evidence:
+      - type: measured
+        source: probe/runs/15098174.json
+        observed_at: '2026-10-25'
+        detail: needs_params
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15098174-11
+    kind: pitfall
+    value: '오퍼레이션 1개는 최소 파라미터로 응답이 없었다: /detail'
+    evidence:
+      - type: measured
+        source: probe/runs/15098174.json
+        observed_at: '2026-10-25'
+        detail: ok=false
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: portal
+  ops_ok: 1/2
+  run: probe/runs/15098174.json
+  stats: probe/stats/15098174.json
+  data: probe/data/15098174/
+status: active

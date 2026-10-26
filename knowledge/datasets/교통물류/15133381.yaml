@@ -1,0 +1,213 @@
+# Dataset 15133381 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15133381'
+tier: verified
+title: 서울특별시_버스 정류소 노선도 다국어 목록 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15133381/fileData.do
+synonyms:
+  - 교통
+  - 버스
+  - 버스노선
+  - 정류소
+  - 정류장
+description_portal: '서울시 가로변 시내버스 정류소 (정류장) 검수완료된 6,652개(다국어 한,영,중,일) 정류소 명칭을 제공합니다.- 주요내용 : 자치구별 정류장ID, 정류소명(한글, 영어, 중국어, 일본어)* 2023년, 2025년(2월)- 제공형태 : 엑셀(XLSX)- 갱신주기 : 비정기(자료변경시)(추가설명)서울시는 지선버스(녹색), 간선버스(파랑), 광역버스(빨강), 순환버스(노랑) 등 다양한 노선이 운행되며, 이를 위해 약 15,000여 개의 버스정류장이 설치·운영되고 있음※ 제공부서 : 서울특별시 교통실 교통기획관 버스정책과(02-2133-2259)입니다.※ 바로가기 클릭 시 서울특별시 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: ListBusStationMultilangInfo
+    name: ListBusStationMultilangInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/ListBusStationMultilangInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SEQ
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '2.0'
+        - '3.0'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 100
+        unique: 100
+    - name: STATION_ID
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 01-001
+        - 01-002
+        - 01-003
+      stats:
+        unique: 100
+    - name: STATION_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 서울역사박물관.경희궁앞
+        - 광화문역
+        - 종로1가.종각역(중)
+      stats:
+        unique: 74
+    - name: STATION_NM_EN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Seoul Museum of History, Gyeonghuigung Palace
+        - Gwanghwamun Station
+        - Jongno 1(il)-ga & Jonggak Station (Median Bus Lane)
+      stats:
+        unique: 77
+    - name: STATION_NM_ZH
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 首尔历史博物馆、庆熙宫
+        - 光化门站
+        - 钟路1街、钟阁站（中央）
+      stats:
+        unique: 75
+    - name: STATION_NM_JA
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - ソウル歴史博物館、キョンヒグン前
+        - クァンファムン駅
+        - チョンノ1ガ、チョンガク駅(中)
+      stats:
+        unique: 75
+    - name: MEMO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.4548
+  rank_in_sector: 3047
+  brm: 교통물류 - 도로
+  why: 서울 정류소 정보의 다국어판
+claims:
+  - id: c-15133381-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15133381.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15133381-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133381-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15133381.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133381-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15133381.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133381-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15133381-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15133381-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15133381.json
+  stats: probe/stats/15133381.json
+  data: probe/data/15133381/
+status: active

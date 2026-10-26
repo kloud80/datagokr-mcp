@@ -1,0 +1,202 @@
+# Dataset 15133331 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15133331'
+tier: verified
+title: 서울특별시_강북구 의료기기판매업소현황
+sector: 보건의료/보건의료/drugs-devices
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15133331/fileData.do
+synonyms:
+  - 보건
+  - 의료기기
+  - 의료
+  - 판매업소
+  - 의료기기판매업소
+description_portal: 서울시 강북구 의료기기 판매업소 현황 데이터는 강북구 내에서 의료기기를 판매하는 업소들의 기본 정보를 정리한 데이터입니다. 연번을 통해 각 업소를 구분할 수 있고, 영업소명으로 업체 명칭을 확인할 수 있습니다. 영업소소재지(도로명) 항목은 도로명주소 기준의 정확한 위치 정보를 제공하여 시민들이 주변 의료기기 판매점을 찾고 이동 경로를 계획하는 데 유용합니다. 영업소전화번호는 제품 문의, 가격 확인, 재고 여부 상담 등 사전 연락에 활용할 수 있으므로 의료기기 이용 편의를 높일 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: GB_MDLP_SLE_BSSH_STTUS
+    name: GB_MDLP_SLE_BSSH_STTUS
+    endpoint: http://openapi.seoul.go.kr:8088/json/GB_MDLP_SLE_BSSH_STTUS/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '2.0'
+        - '3.0'
+      stats:
+        min: 1
+        p50: 50.5
+        max: 120
+        unique: 100
+    - name: TRD_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 질러들의 쇼핑몰
+        - 코콤 북부광역센터
+        - 한국화장품 우이대리점
+      stats:
+        unique: 100
+    - name: TRD_ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강북구 솔샘로 254, 삼양아케이트 206호 (미아동)
+        - 서울특별시 강북구 도봉로 62, 롯데백화점 미아점 지하2층 (미아동)
+        - 서울특별시 강북구 삼양로41길 85 (미아동)
+      stats:
+        unique: 98
+    - name: TRD_TELNO
+      type: code
+      null_rate: 0.8
+      sample_values:
+        - 02-989-0013
+        - 02-922-4525
+        - 02-6970-8319
+      stats:
+        unique: 20
+  foreign_keys:
+    - fields:
+        - TRD_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - TRD_ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.3138
+  rank_in_sector: 1640
+  brm: 보건의료 - 보건의료
+  why: 강북구 의료기기판매업, 전국 인허가의 지역판
+claims:
+  - id: c-15133331-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15133331.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15133331-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133331-03
+    kind: key
+    value: '실측 조인 키: address(TRD_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15133331.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133331-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15133331.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133331-06
+    kind: admin_note
+    value: "세부 부문 '의약품·의료기기 (식약처 허가정보·e약은요·낱알식별·DUR·의료기기 품목허가·마약류)'의 가치: 식약처 품목기준코드·의약품 표준코드로 심평원 약가·급여 목록(건강보험)과 연결. DUR 병용·연령금기는 처방 안전"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#drugs-devices
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15133331-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15133331-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15133331.json
+  stats: probe/stats/15133331.json
+  data: probe/data/15133331/
+status: active

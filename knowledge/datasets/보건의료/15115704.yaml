@@ -1,0 +1,221 @@
+# Dataset 15115704 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15115704'
+tier: verified
+title: 서울시정신건강복지센터_서울시 보건예산 대비 정신건강증진예산
+sector: 보건의료/보건의료/public-health-centers
+agency:
+  id: B553791
+  name: 서울시정신건강복지센터
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15115704/fileData.do
+synonyms:
+  - 정신건강
+  - 서울시정신건강
+  - 정신건강예산
+description_portal: 서울특별시 해당연도의 세입,세출 예산서 기준 보건예산과 정신건강증진예산 정보를 확인 할 수 있는 데이터입니다.정신건강증진 예산은 (광역/지역) 정신건강복지센터, 정신재활시설, 정신질환자지역사회전환시설, 중독관리통합지원센터, 정신장애인자립생활주택, 지역사회기반 자살예방사업 등의 서울시 정신보건시설 운영비를 의미합니다.
+accrual_periodicity: 연간
+team:
+  dept: 데이터정보운영팀
+services:
+  - op: F60OpenTbl
+    name: F60OpenTbl
+    endpoint: http://openapi.seoul.go.kr:8088/json/F60OpenTbl/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: DATA_YEAR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2026'
+        - '2025'
+        - '2024'
+      stats:
+        min: 2005
+        p50: 2015.5
+        max: 2026
+        unique: 22
+    - name: AREA_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - C01
+      stats:
+        unique: 1
+    - name: AREA_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울시
+      stats:
+        unique: 1
+    - name: M1
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '51477818'
+        - '48114456'
+        - '45740518'
+      stats:
+        min: 15985406
+        p50: 26511101
+        max: 51477818
+        unique: 22
+    - name: M2
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '790195'
+        - '696022'
+        - '621322'
+      stats:
+        min: 185209
+        p50: 372557.5
+        max: 790195
+        unique: 22
+    - name: M3
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '99519'
+        - '100266'
+        - '92215'
+      stats:
+        min: 11917
+        p50: 47334
+        max: 100266
+        unique: 22
+    - name: M4
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12.3'
+        - '12'
+        - '8.4'
+      stats:
+        min: 5.3
+        p50: 12.2
+        max: 14.8
+        unique: 18
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.3796
+  brm: 보건의료 - 보건의료
+claims:
+  - id: c-15115704-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15115704.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15115704-02
+    kind: cadence
+    value: 명세상 연간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15115704-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15115704.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15115704-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15115704.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15115704-06
+    kind: admin_note
+    value: "세부 부문 '공공보건 (보건소·지소·진료소·지역사회 건강조사·보건소 프로그램)'의 가치: 지역사회 건강조사 = 시군구 건강지표 표준, 보건소코드·시군구코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#public-health-centers
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15115704-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15115704-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15115704.json
+  stats: probe/stats/15115704.json
+  data: probe/data/15115704/
+status: active

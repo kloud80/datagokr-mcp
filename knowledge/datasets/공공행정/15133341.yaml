@@ -1,0 +1,197 @@
+# Dataset 15133341 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15133341'
+tier: verified
+title: 서울특별시_강북구 자치회관정보
+sector: 공공행정/일반행정/civic-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15133341/fileData.do
+synonyms:
+  - 강북구
+  - 자치회관
+  - 자치
+  - 주민센터
+  - 행정정보
+description_portal: 서울시에서 공개한 공공데이터로, 특정 지역 내 동(洞) 주민센터 및 관할 사무소의 명칭, 도로명 주소, 전화번호, 팩스번호 등의 정보를 체계적으로 정리한 목록입니다. 이를 통해 시민은 자신이 속한 동의 주민센터 연락처나 위치를 쉽게 확인할 수 있고, 지자체-행정 정보를 투명하게 열람할 수 있습니다. 또한 이처럼 구조화된 정보는 다른 행정 데이터와 연계하여 자동화된 서비스 혹은 앱 개발에 활용될 수 있고, 행정 서비스 접근성 향상이나 시민 편의를 위한 기초 데이터로 활용됩니다.이 데이터셋은 서울열린데이터광장의 “자치회관/주민센터 현황” 같은 일반행정 범주의 공공데이터 카테고리에 속하며, 무료로 공개되어 누구나 다운로드하거나 조회 가능한 공공저작물입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: GbAtnmCenter
+    name: GbAtnmCenter
+    endpoint: http://openapi.seoul.go.kr:8088/json/GbAtnmCenter/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SGG_HALL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 삼양동(삼양관)
+        - 삼양동(솔샘관)
+        - 미아동
+      stats:
+        unique: 17
+    - name: RDN_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 솔매로 69 (미아동)
+        - 솔샘로 177 (미아동)
+        - 솔매로49길 14 (미아동)
+      stats:
+        unique: 17
+    - name: TELNO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3778-4105
+        - 3778-4159
+        - 3778-4956
+      stats:
+        unique: 14
+    - name: FXNO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3778-4049
+        - 3778-4149
+        - 3778-4199
+      stats:
+        unique: 13
+  foreign_keys:
+    - fields:
+        - RDN_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - RDN_ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2762
+  brm: 공공행정 - 일반행정
+claims:
+  - id: c-15133341-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15133341.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15133341-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133341-03
+    kind: key
+    value: '실측 조인 키: address(RDN_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15133341.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133341-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15133341.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133341-06
+    kind: admin_note
+    value: "세부 부문 '생활 행정시설 (관공서·주민센터·무인민원발급기·공공시설 개방/예약·공중화장실·와이파이·수거함·금연구역·행정사·공유재산·공공기관)'의 가치: 좌표 있는 생활 시설 원장 — 공공시설 개방·무인민원은 표준데이터"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#civic-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15133341-07
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 일반행정 (10,088건)] 대부분 기관 운영 자료라 먼저 배제(`general-admin-deferred`). 개체 단위 데이터는 원래 부문으로 옮김 — 의회·의안 → 국정운영, 도서관 → 문화예술, 승강기·시설물 안전·대피·방범·치안·소방 → 재난안전, AED → 응급의료, 도로굴착·따릉이·교통사고 → 도로, 공원 → 공원녹지, 도로명주소 → 우정, 지명 → 공간정보, 지적기준점 → 토지·지적, 토지수용 재결 → 도시개발·정비, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L717
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15133341-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15133341.json
+  stats: probe/stats/15133341.json
+  data: probe/data/15133341/
+status: active

@@ -32,7 +32,8 @@ EXT = re.compile(r"\.(csv|xlsx|xls|zip|txt|json)(\?|$|&)", re.I)
 BAD_EXT = re.compile(r"\.(pdf|hwp|hwpx|docx?|pptx?|jpg|png|gif)(\?|$)", re.I)
 BTN = re.compile(r"다운로드|내려받기|첨부|csv|엑셀|xlsx?|파일받기", re.I)
 MAX_TRY = 4
-BOARD = re.compile(r"제목|작성자|조회|첨부|등록일|글쓴이|게시")
+BOARD = re.compile(r"제목|작성자|조회|첨부|등록일|글쓴이|게시|미리보기|다운로드|지시기호|샘플데이터|항목크기")
+WEEK = re.compile(r"^(일|월|화|수|목|금|토)$")  # 화면 구석의 달력
 TIMEOUT = 45000
 BIG = 150 * 2**20  # 이보다 큰 파일은 앞 10만 행만 읽는다 (CSV) — 통째로 읽으면 메모리를 수 GB 쓴다
 
@@ -128,7 +129,7 @@ async def _html_table(page) -> pd.DataFrame | None:
         return None
     best.columns = [" ".join(map(str, c)) if isinstance(c, tuple) else str(c) for c in best.columns]
     heads = " ".join(best.columns)
-    if all(re.fullmatch(r"\d+", c) for c in best.columns) or BOARD.search(heads):
+    if all(re.fullmatch(r"\d+", c) for c in best.columns) or BOARD.search(heads) or sum(bool(WEEK.match(c)) for c in best.columns) >= 5:
         return None
     num = max((pd.to_numeric(best[c].astype(str).str.replace(",", ""), errors="coerce").notna().mean() for c in best.columns), default=0)
     return best if num >= 0.6 else None

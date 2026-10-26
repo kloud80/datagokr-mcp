@@ -1,0 +1,184 @@
+# Dataset 15116434 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15116434'
+tier: verified
+title: 강원도 평창군_자동차정비업 현황
+sector: 교통물류/도로/vehicles
+agency:
+  id: '4281000'
+  name: 강원특별자치도 평창군
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15116434/fileData.do
+synonyms:
+  - 자동차정비업
+  - 자동차관리사업
+  - 자동차관리법
+description_portal: 강원도 평창군 자동차정비업 현황으로 자동차관리업체의 업종, 상호명, 소재지, 전화번호에 대한 데이터를 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 안전교통과
+distributions:
+  - title: 강원도 평창군_자동차정비업 현황_20230710.csv
+    url: https://www.data.go.kr/data/15116434/fileData.do
+    format: csv
+    size: 4303
+schema:
+  fields:
+    - name: 업종
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자동차전문정비업
+        - 자동차종합정비업
+        - 소형자동차종합정비업
+      stats:
+        unique: 3
+    - name: 상호명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 애니카랜드 대관령점
+        - 진부1급자동차정비공장
+        - (주)평창현림1급자동차정비공장
+      stats:
+        unique: 46
+    - name: 소재지
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 강원특별자치도 평창군 대화면 대화중앙로 163
+        - 강원특별자치도 평창군 대관령면 경강로 5166
+        - 강원특별자치도 평창군 진부면 까치골길 15
+      stats:
+        unique: 45
+    - name: 전화번호
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 033-336-7282
+        - 033-336-0281
+        - 033-333-6464
+      stats:
+        unique: 46
+  foreign_keys:
+    - fields:
+        - 소재지
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - 소재지
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 자동차 등록·검사·정비·렌터카·운전면허
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4476
+  rank_in_sector: 3160
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 정비업체 표준데이터의 평창군 지역판
+claims:
+  - id: c-15116434-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 4303 bytes) — 활용신청 없이 받음. 2026-10-26 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15116434.json
+        observed_at: '2026-10-26'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-27'
+  - id: c-15116434-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15116434-03
+    kind: key
+    value: '실측 조인 키: address(소재지)'
+    evidence:
+      - type: measured
+        source: probe/stats/15116434.json
+        observed_at: '2026-10-26'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15116434-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15116434.json
+        observed_at: '2026-10-26'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15116434-06
+    kind: admin_note
+    value: "세부 부문 '자동차 등록·검사·정비·렌터카·운전면허'의 가치: 자동차 등록·검사(교통안전공단 자동차검사관리시스템)·정비업·렌터카 원장, 차량등록번호·사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#vehicles
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15116434-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15116434-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-26'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-26'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15116434.json
+  stats: probe/stats/15116434.json
+  data: probe/data/15116434/
+status: active

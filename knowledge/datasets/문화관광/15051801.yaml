@@ -1,0 +1,194 @@
+# Dataset 15051801 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15051801'
+tier: verified
+title: 서울특별시_문화시설 현황(중국어 간체)
+sector: 문화관광/문화예술/cultural-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15051801/fileData.do
+synonyms:
+  - 방송국
+  - 문화공간
+  - 서울문화포털
+  - 문화시설
+  - 문화센터
+description_portal: 서울시 문화시설 현황(중국어 간체) 데이터는 서울시 내 주요 문화시설 정보를 중국어 간체로 제공하는 공공데이터입니다. 각 시설을 구분하는 메인 키와 함께 시설의 명칭, 행정 시, 행정 구, 행정 동 정보가 중국어 간체로 수록되어 있어 중국어권 이용자도 서울의 문화 인프라를 직관적으로 파악할 수 있습니다. 이 데이터는 문화시설의 지역별 분포 분석, 중국어 관광·문화 안내 서비스 구축, 온라인 지도 연계, 중국어 브로셔 제작 등 다양한 활용이 가능합니다. 특히 자치구 및 동 단위까지 세분화된 위치 정보는 서울 문화시설의 접근성과 지역별 특성을 분석하는 데 유용한 기초 자료로 활용될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SebcArtGalleryCng
+    name: SebcArtGalleryCng
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcArtGalleryCng/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MAIN_KEY
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - BE_LiST36-0040
+        - BE_LiST36-0041
+        - BE_LiST36-0042
+      stats:
+        unique: 100
+    - name: NAME_CNG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 蒂阿画廊
+        - 罗丹画廊
+        - 卢米埃画廊
+      stats:
+        unique: 100
+    - name: H_CNG_CITY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 首尔特别市
+      stats:
+        unique: 1
+    - name: H_CNG_GU
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 钟路区
+        - 江南区
+        - 龙山区
+      stats:
+        unique: 16
+    - name: H_CNG_DONG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 钟路1.2.3.4街洞
+        - 嘉会洞
+        - 平仓洞
+      stats:
+        unique: 51
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 문화시설 (문화기반시설총람·박물관·미술관·문예회관·문화원·공연장 등록)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.4385
+  rank_in_sector: 1111
+  brm: 문화관광 - 문화예술
+  why: 서울 문화시설 중국어판, 다국어 보조 자료
+claims:
+  - id: c-15051801-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15051801.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15051801-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051801-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15051801.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051801-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15051801.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051801-06
+    kind: admin_note
+    value: "세부 부문 '문화시설 (문화기반시설총람·박물관·미술관·문예회관·문화원·공연장 등록)'의 가치: 시설코드(총람)·좌표 — 상권·지역 문화 분포"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#cultural-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051801-07
+    kind: admin_note
+    value: '[문화관광 - 문화예술 · 문화재 · 문화체육관광일반 · 문화예술] 공연·문화시설·전시/행사·도서관·저작권/콘텐츠. 가사집·문예연감 텍스트, 공공미술, 종교시설, 실태조사·기금, 문화누리카드, 국어사전(우리말샘) 등 배제 (`arts-deferred`, `arts-non-core`). 키 `kopis_id`, `cultural_facility_cd`, 발급처 `kopis.or.kr`·`data4library.kr`.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L587
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051801-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15051801.json
+  stats: probe/stats/15051801.json
+  data: probe/data/15051801/
+status: active

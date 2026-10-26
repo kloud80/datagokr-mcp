@@ -1,0 +1,241 @@
+# Dataset 15051865 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15051865'
+tier: verified
+title: 서울특별시_전통시장 현황(중국어 간체)
+sector: 산업고용/산업·중소기업일반/commercial-stores
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15051865/fileData.do
+synonyms:
+  - 전통시장
+  - 풍물시장
+  - 재래시장
+  - 시장
+  - 중국어
+description_portal: 서울시 전통시장 현황(중국어_간체) 데이터는 서울시에 위치한 전통시장의 기본 정보를 중국어 간체로 제공하는 자료입니다. 시장명, 행정시, 행정구, 행정동을 중국어 간체 표기로 수록하여 중국어권 관광객 안내, 다국어 지도 제작, 외국인 대상 홍보물 제작 등에 활용하기 적합합니다. 각 전통시장별 웹주소가 포함되어 있어 시장 소개, 점포 정보, 행사 안내 등 상세 내용을 연계해 확인할 수 있습니다. 또한 중심좌표 X, 중심좌표 Y 항목을 통해 WGS84 좌표계 기반의 위치 정보를 제공하므로, 온라인 지도, 내비게이션, 관광 앱 등 위치기반 서비스와 연동하여 전통시장의 공간 분포 분석과 방문 동선 설계 등에 활용 가능한 데이터입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SebcTraditionalMarketCng
+    name: SebcTraditionalMarketCng
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcTraditionalMarketCng/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - BE_IW15-0553
+        - BE_IW15-0233
+        - BE_IW15-0186
+      stats:
+        unique: 100
+    - name: MRKT_NM
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 卢纶山市场
+        - 东进市场
+        - 广场市场
+      stats:
+        unique: 82
+    - name: CTY_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 首尔特别市
+      stats:
+        unique: 1
+    - name: GU
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 钟路区
+        - 东大门区
+        - 广津区
+      stats:
+        unique: 18
+    - name: DONG
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 昌信1洞
+        - 钟路1.2.3.4街洞
+        - 钟路5.6街洞
+      stats:
+        unique: 46
+    - name: DMN_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.95
+      sample_values:
+        - www.광장시장.kr
+        - www.pangnapm.co.kr
+        - mjmm.co.kr
+      stats:
+        unique: 5
+    - name: XCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '126.9989133239'
+        - '127.040518243'
+        - '127.0652934376'
+      stats:
+        min: 126.8911293781
+        p50: 127.01368543555
+        max: 127.1366684492
+        unique: 88
+    - name: YCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '37.5700354743'
+        - '37.5594760591'
+        - '37.5363705601'
+      stats:
+        min: 37.4587660766
+        p50: 37.5700354743
+        max: 37.6483700989
+        unique: 88
+  foreign_keys:
+    - fields:
+        - DMN_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - XCRD
+    - YCRD
+  space_via: coord
+cycle: default
+classification:
+  subsector_name: 상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)
+  depth: front
+  novelty: high
+  cross_cutting: true
+  prelim_score: 0.4632
+  rank_in_sector: 912
+  brm: 산업고용 - 산업진흥·고도화
+  sector_rule: industry-to-sme
+  why: 서울 전통시장 중국어판, 다국어 파생
+claims:
+  - id: c-15051865-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15051865.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15051865-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051865-03
+    kind: key
+    value: '실측 조인 키: address(DMN_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15051865.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051865-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15051865.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15051865-06
+    kind: admin_note
+    value: "세부 부문 '상가·상권 (소상공인 상가업소·전국 주요상권·전통시장·대규모점포)'의 가치: 상가업소 단위(상호·업종·좌표) 전수 원장 = 상권 분석의 기준. 전국대규모및준대규모점포표준데이터 포함(물류등기타에서 재검토 후보였던 것)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#commercial-stores
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15051865-07
+    kind: admin_note
+    value: '[산업고용 · 산업·중소기업일반] 상가·상권(소상공인 상가업소 API — 상권 분석 기준 원장, 전통시장·대규모점포 포함)·지원사업 공고(K-Startup·중소벤처24)·기업 확인/인증(벤처·이노비즈·창업기업·공공구매 인증서)·지역 기업 현황·업종 인허가(LOCALDATA)만 (`sme-deferred`, `sme-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L636
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15051865-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15051865.json
+  stats: probe/stats/15051865.json
+  data: probe/data/15051865/
+status: active

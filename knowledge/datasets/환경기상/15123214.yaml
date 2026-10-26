@@ -1,0 +1,209 @@
+# Dataset 15123214 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15123214'
+tier: verified
+title: 서울특별시_강북구 건설폐기물 수집 운반업 현황
+sector: 환경기상/폐기물/waste-business
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15123214/fileData.do
+synonyms:
+  - 운반업
+  - 건설폐기물
+  - 수집운반
+  - 건설
+  - 폐기물
+description_portal: 해당 데이터는 서울시 강북구에서 건설 폐기물 수집 및 운반업을 영위하는 업체들의 기본 현황 정보를 정리한 자료입니다. 각 업체에 부여된 연번을 통해 목록을 식별할 수 있으며, 업체명과 새주소가 포함되어 있어 사업장의 위치와 운영 주체를 명확히 파악할 수 있습니다. 또한 취급품목 항목을 통해 각 업체가 어떤 종류의 건설 폐기물을 수집·운반하는지 확인할 수 있어 업종별 특성을 파악하는 데 도움이 됩니다. 전화번호 정보도 함께 제공되어 있어 행정 업무, 민원 처리, 업체 문의 등 실무적인 활용이 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: GbBuildWaste
+    name: GbBuildWaste
+    endpoint: http://openapi.seoul.go.kr:8088/json/GbBuildWaste/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SN
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 3
+        max: 5
+        unique: 5
+    - name: BZENTY_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 주식회사동성
+        - 대림덤프
+        - ㈜씨와이환경
+      stats:
+        unique: 5
+    - name: ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강북구 삼각산로 94
+        - 서울특별시 강북구 월계로 191-18
+        - 서울특별시 강북구 화계사길 23
+      stats:
+        unique: 4
+    - name: HNDL_ITEM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 건설폐기물
+      stats:
+        unique: 1
+    - name: TELNO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 980-2496
+        - 985-1122
+        - 903-6661
+      stats:
+        unique: 5
+  foreign_keys:
+    - fields:
+        - ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3191
+  rank_in_sector: 1110
+  brm: 환경기상 - 폐기물
+  why: 전국 폐기물처리업소 표준데이터의 구 지역판
+claims:
+  - id: c-15123214-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15123214.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15123214-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15123214-03
+    kind: key
+    value: '실측 조인 키: address(ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15123214.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15123214-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15123214.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15123214-06
+    kind: admin_note
+    value: "세부 부문 '폐기물 처리업·배출자 (처리업/수집운반 허가·사업장폐기물 배출자·처리시설·소각/매립·올바로)'의 가치: 폐기물 처리 사업자·배출 사업장 원장, 사업자번호"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#waste-business
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15123214-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 폐기물] 생활폐기물 배출·수거 지점(대형폐기물·수거함·종량제 판매소) · 폐기물 처리업·배출자. 발생량·처리현황 통계 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L683
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15123214-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15123214.json
+  stats: probe/stats/15123214.json
+  data: probe/data/15123214/
+status: active

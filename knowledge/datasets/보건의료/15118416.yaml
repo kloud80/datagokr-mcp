@@ -1,0 +1,205 @@
+# Dataset 15118416 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15118416'
+tier: verified
+title: 국민건강보험공단_상병코드 F90과 그 외 F코드의 주 부상병 동시 진료인원
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15118416/fileData.do
+synonyms:
+  - F90
+  - F코드
+  - 진료인원
+  - 주상병
+  - 부상병
+description_portal: '1. 진료개시년도: 2019~2022년  - 진료일기준(한의분류 제외, 약국 제외)2. 건강보험 급여실적(의료급여 제외)이며, 비급여는 제외  - 2023년 6월 지급분까지 반영3. 질병코드 기준: “주상병 F90 + 부상병 F코드” 또는 “주상병 F코드 + 부상병 F90”  - 해당 질병통계 자료는 요양기관에서 환자진료 중 진단명이 확정되지 않은 상태에서의 호소, 증세 등에 따라 일차진단명을 부여하고 청구한 내역을 발췌한 것이므로, 최종 확정된 질병과는 다를 수 있음※ 민원인 요청에 따른 제공 건으로 2023-08-10 발췌※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터이며 본 데이터와 무관한 건강보험제도, 개인의 자격,징수,급여, 장기요양 관련 문의는 공단 대표번호(1577-1000)로 하시기 바랍니다.'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_상병코드 F90과 그 외 F코드의 주 부상병 동시 진료인원_20230810.csv
+    url: https://www.data.go.kr/data/15118416/fileData.do
+    format: csv
+    size: 316012
+schema:
+  fields:
+    - name: 진료개시년도
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2022년
+        - 2021년
+        - 2020년
+      stats:
+        unique: 4
+    - name: 주상병코드
+      type: string
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - F900
+        - F909
+        - F90
+      stats:
+        unique: 250
+    - name: 주상병명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 활동성및주의력장애
+        - 상세불명의운동과다장애
+        - 운동과다성행동장애
+      stats:
+        unique: 322
+    - name: 부상병코드
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - F900
+        - F909
+        - F90
+      stats:
+        unique: 259
+    - name: 부상병명
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 활동성및주의력장애
+        - 상세불명의운동과다장애
+        - 운동과다성행동장애
+      stats:
+        unique: 336
+    - name: 진료인원(명)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 5
+        max: 17436
+        unique: 507
+  foreign_keys:
+    - fields:
+        - 주상병코드
+      reference:
+        key: drug_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료개시년도
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.4413
+  rank_in_sector: 212
+  brm: 보건의료 - 건강보험
+  why: F90 동반 상병 진료인원 일회성 집계
+claims:
+  - id: c-15118416-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 316012 bytes) — 활용신청 없이 받음. 2026-10-26 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15118416.json
+        observed_at: '2026-10-26'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-27'
+  - id: c-15118416-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15118416-03
+    kind: key
+    value: '실측 조인 키: drug_cd(주상병코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15118416.json
+        observed_at: '2026-10-26'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15118416-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15118416.json
+        observed_at: '2026-10-26'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15118416-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15118416-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15118416-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-26'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-26'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15118416.json
+  stats: probe/stats/15118416.json
+  data: probe/data/15118416/
+status: active

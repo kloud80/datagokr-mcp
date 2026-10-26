@@ -1,0 +1,194 @@
+# Dataset 15054230 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15054230'
+tier: verified
+title: 서울특별시_호텔리스트 현황 (중국어 간체)
+sector: 문화관광/관광/lodging
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15054230/fileData.do
+synonyms:
+  - 중국
+  - 호텔
+  - 숙박
+  - 숙박시설
+  - 호텔정보
+description_portal: 서울시 호텔리스트 현황(중국어·간체) 데이터는 중국어 사용자에게 서울 시내 호텔 정보를 쉽게 제공하기 위해 구성된 자료입니다. 메인 키는 각 호텔 정보를 구분하는 고유 식별값입니다. 명칭 항목은 호텔의 공식 중국어 명칭을 담고 있어 외국인 관광객이 장소를 정확히 인지하는 데 도움을 줍니다. 행정 시, 행정 구, 행정 동 정보는 호텔이 위치한 행정구역을 간체자로 표기한 것으로, 지도 검색이나 위치 기반 관광 계획에 활용될 수 있습니다. 이 데이터는 외국인 관광객 편의 증진, 관광 플랫폼 정보 제공, 도시 관광 서비스 품질 향상에 활용되는 기초 자료입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: SebcHotelListCng
+    name: SebcHotelListCng
+    endpoint: http://openapi.seoul.go.kr:8088/json/SebcHotelListCng/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MAIN_KEY
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - BE_LiST37-0097
+        - BE_LiST37-0098
+        - BE_LiST37-0099
+      stats:
+        unique: 100
+    - name: NAME_CNG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 旅游酒店
+        - 百丽酒店
+        - 电影院酒店
+      stats:
+        unique: 95
+    - name: H_CNG_CITY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 首尔特别市
+      stats:
+        unique: 1
+    - name: H_CNG_GU
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 江南区
+        - 中区
+        - 松坡区
+      stats:
+        unique: 22
+    - name: H_CNG_DONG
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 驿三1洞
+        - 方荑2洞
+        - 小公洞
+      stats:
+        unique: 59
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.429
+  rank_in_sector: 1170
+  brm: 문화관광 - 관광
+  why: 서울 호텔 중국어판 목록, 다국어 부가판
+claims:
+  - id: c-15054230-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15054230.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15054230-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15054230-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15054230.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15054230-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15054230.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15054230-06
+    kind: admin_note
+    value: "세부 부문 '숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)'의 가치: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lodging
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15054230-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15054230-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15054230.json
+  stats: probe/stats/15054230.json
+  data: probe/data/15054230/
+status: active

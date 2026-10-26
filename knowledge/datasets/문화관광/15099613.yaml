@@ -1,0 +1,231 @@
+# Dataset 15099613 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15099613'
+tier: verified
+title: 서울특별시_기타조형물 현황
+sector: 문화관광/문화예술/cultural-events
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099613/fileData.do
+synonyms:
+  - 조형물
+  - 디자인
+  - 예술
+  - 기타조형물
+  - 공공미술
+description_portal: 서울시 기타조형물 현황 데이터는 서울시 전역에 설치된 각종 공공조형물의 위치와 특성을 체계적으로 파악하고 관리하기 위해 구축된 공공데이터입니다. 이 데이터에는 조형물의 이름을 나타내는 작품명, 조형물이 설치된 시점을 알 수 있는 설치연도, 그리고 조형물이 위치한 장소를 확인할 수 있는 작품주소와 상세주소 정보가 포함되어 있습니다. 이를 통해 시민은 특정 조형물이 어디에 있는지 쉽게 찾을 수 있으며, 행정기관은 조형물이 어느 지역에 얼마나 분포하는지 공간적으로 분석할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: gongGongArtEtc
+    name: gongGongArtEtc
+    endpoint: http://openapi.seoul.go.kr:8088/json/gongGongArtEtc/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: GA_KNAME
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 대나무
+        - 소통
+        - 급행열차―시대의 변
+      stats:
+        unique: 98
+    - name: GA_INS_DATE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2025'
+        - '2018'
+        - '2011'
+      stats:
+        min: 2011
+        p50: 2018
+        max: 2025
+        unique: 14
+    - name: CODE_N1_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울시
+        - 자치구
+        - 투자출연기관
+      stats:
+        unique: 3
+    - name: CODE_N2_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 문화본부
+        - 미래한강본부
+        - 서울시설공단
+      stats:
+        unique: 24
+    - name: CODE_N3_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 박물관과
+        - 한강문화관광과
+        - 추모시설운영처
+      stats:
+        unique: 29
+    - name: GA_ADDR1
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 강원 횡성군 우천면 두곡리 550
+        - 서울특별시 서초구 양재대로12길 74
+        - 이촌한강공원 한강철교 북단 하류방향
+      stats:
+        unique: 57
+    - name: GA_ADDR2
+      type: code
+      null_rate: 0.29
+      sample_values:
+        - 서울문화유산센터 야외
+        - 2층 유족대기홀
+        - 홍제천 인공폭포 인근
+      stats:
+        unique: 39
+    - name: GA_DETAIL
+      type: string
+      null_rate: 0.08
+      sample_values:
+        - 조형
+        - 회화
+        - .
+      stats:
+        unique: 78
+    - name: CODE_A1
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 기념비
+      stats:
+        unique: 2
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - GA_ADDR1
+    - GA_ADDR2
+  space_via: address
+cycle: event
+classification:
+  subsector_name: 전시·행사 (문화포털 전국 행사·국립박물관 전시·소장품·강좌)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.426
+  brm: 문화관광 - 문화예술
+claims:
+  - id: c-15099613-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099613.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15099613-02
+    kind: cadence
+    value: 명세상 수시 · 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099613-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15099613.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099613-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099613.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099613-06
+    kind: admin_note
+    value: '[문화관광 - 문화예술 · 문화재 · 문화체육관광일반 · 문화예술] 공연·문화시설·전시/행사·도서관·저작권/콘텐츠. 가사집·문예연감 텍스트, 공공미술, 종교시설, 실태조사·기금, 문화누리카드, 국어사전(우리말샘) 등 배제 (`arts-deferred`, `arts-non-core`). 키 `kopis_id`, `cultural_facility_cd`, 발급처 `kopis.or.kr`·`data4library.kr`.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L587
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099613-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099613.json
+  stats: probe/stats/15099613.json
+  data: probe/data/15099613/
+status: active

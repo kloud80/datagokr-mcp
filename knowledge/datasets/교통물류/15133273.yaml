@@ -1,0 +1,250 @@
+# Dataset 15133273 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15133273'
+tier: verified
+title: 서울특별시_강북구 마을버스 현황 정보
+sector: 교통물류/도로/bus-transit
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15133273/fileData.do
+synonyms:
+  - 교통
+  - 버스
+  - 마을버스
+  - 강북구
+  - 정류장
+description_portal: '서울특별시 강북구에서 제공하는 강북구 관내 마을버스 현황입니다.-주요정보 : 노선버스, 기점, 종점, 주요운행경로, 운행대수, 노선거리, 배차간격, 첫차, 정류장수, 운수업체  등 정보 제공(총 12개 노선)- 갱신주기 :비정기(수시, 자료변경시)- 데이터 갱신일 :2024.04.01.*용어설명- 마을버스는 도시 내 주거지역과 주요 교통시설을 연결하는 소형 버스- 일반 시내버스와 달리 짧은 구간을 운행하며, 세부 골목과 주택가까지 운행하는 것이 특징- 법적 근거: 「여객자동차 운수사업법」 및 지방자치단체 조례에 따라 운행'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: gbTownBus
+    name: gbTownBus
+    endpoint: http://openapi.seoul.go.kr:8088/json/gbTownBus/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: RTE_BUS
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강북01
+        - 강북02
+        - 강북03
+      stats:
+        unique: 11
+    - name: BSPNT_LSP
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 미아사거리역~수유역
+        - 아카데미하우스~수유역
+        - 새마을연수원~수유역
+      stats:
+        unique: 10
+    - name: MAIN_OPR_PATH
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 아카데미하우스 국립419묘지 강북문화예술회관 수유중앙시장 수유역
+        - 새마을연수원 화계사입구 화계사거리 신일병원 수유역
+        - 빨래골 한빛맹아학교 수유1동주민센터 신일병원 수유역
+      stats:
+        unique: 11
+    - name: OPR_CNTOM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8.0'
+        - '7.0'
+        - '5.0'
+      stats:
+        min: 3
+        p50: 7
+        max: 13
+        unique: 8
+    - name: RTE_DIST
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5.2'
+        - '7.1'
+        - '5.7'
+      stats:
+        min: 4.6
+        p50: 5.7
+        max: 17.5
+        unique: 8
+    - name: CARDPCH_INTVL_MNT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 07~08
+        - 04~08
+        - 05~09
+      stats:
+        unique: 11
+    - name: FSTT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 5:20
+        - 5:30
+        - 5:00
+      stats:
+        unique: 6
+    - name: LSTTM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 23:45:00
+        - 23:50:00
+        - 24:10:00
+      stats:
+        unique: 6
+    - name: STOPS_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '35.0'
+        - '24.0'
+        - '25.0'
+      stats:
+        min: 16
+        p50: 25
+        max: 35
+        unique: 7
+    - name: TRSPT_BZENTY
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 미봉운수987-6065
+        - 하이상운942-9224
+        - 인수운수997-0900
+      stats:
+        unique: 8
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.3744
+  rank_in_sector: 4006
+  brm: 교통물류 - 도로
+  why: 강북구 마을버스 12노선, 서울 노선정보와 중복
+claims:
+  - id: c-15133273-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15133273.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15133273-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133273-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15133273.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133273-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15133273.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133273-06
+    kind: admin_note
+    value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#bus-transit
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15133273-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15133273-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15133273.json
+  stats: probe/stats/15133273.json
+  data: probe/data/15133273/
+status: active

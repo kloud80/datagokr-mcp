@@ -1,0 +1,226 @@
+# Dataset 15049111 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15049111'
+tier: verified
+title: 서울특별시_시민참여예산 제안사업 시민참여단 세부 코드
+sector: 재정금융/재정·금융/national-budget
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15049111/fileData.do
+synonyms:
+  - 시민참여
+  - 예산
+  - 시민참여단
+  - 세부코드
+  - 교육시간
+description_portal: 서울시 시민참여예산 제안사업 시민참여단 세부 코드 데이터는 시민참여단 구성과 운영에 관한 세부 정보를 담고 있는 자료입니다. 회계년도는 해당 정보가 속한 연도를 나타내며, 시민참여단 코드는 시민참여단 기본코드와 연계되어 어떤 참여단에 대한 정보인지 구분하기 위한 식별값입니다. 교육시간코드는 참여예산 관련 교육이 언제, 어떤 회차로 진행되었는지를 코드 형태로 관리하여 교육 이수 여부나 시간대별 참여 특성을 파악하는 데 활용되는 항목입니다. 시민참여단주소와 시민참여단구는 참여단의 거주 지역과 자치구 정보를 나타내어 지역별 시민참여 분포, 특정 구 중심의 참여 편중 여부 등을 분석할 수 있는 기초 자료가 됩니다. 등록일시와 수정일시는 해당 세부 정보가 언제 최초 입력되고 이후 언제 변경되었는지를 관리하는 이력 정보로, 시민참여단 구성 관리의 투명성과 데이터 품질을 확보하기 위해 사용되는 항목입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: CivilmemberEdu2014
+    name: CivilmemberEdu2014
+    endpoint: http://openapi.seoul.go.kr:8088/json/CivilmemberEdu2014/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FIS_YEAR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2014'
+      stats:
+        min: 2014
+        p50: 2014
+        max: 2014
+        unique: 1
+    - name: CIVIL_MEMBER_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1759'
+        - '1046'
+        - '1357'
+      stats:
+        min: 5
+        p50: 991
+        max: 2490
+        unique: 100
+    - name: EDU_TIME_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4.0'
+        - '6.0'
+        - '5.0'
+      stats:
+        min: 1
+        p50: 4
+        max: 6
+        unique: 6
+    - name: MEMBER_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울시
+      stats:
+        unique: 1
+    - name: MEMBER_GU
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+        - 도봉구
+        - 강동구
+      stats:
+        unique: 24
+    - name: REG_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2014-07-16 08:04:02.0'
+        - '2014-07-15 13:36:00.0'
+        - '2014-07-15 11:42:12.0'
+      stats:
+        min: '2014-07-08'
+        max: '2014-07-16'
+        unique: 100
+    - name: UP_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2014-07-16 08:04:02.0'
+        - '2014-07-15 13:36:00.0'
+        - '2014-07-15 11:42:12.0'
+      stats:
+        min: '2014-07-08'
+        max: '2014-07-16'
+        unique: 100
+  foreign_keys:
+    - fields:
+        - MEMBER_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - MEMBER_ADDR
+  space_via: address
+  time: day
+  time_fields:
+    - REG_DT
+    - UP_DT
+cycle: default
+classification:
+  subsector_name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.3605
+  brm: 재정금융 - 재정·금융
+claims:
+  - id: c-15049111-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15049111.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15049111-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15049111-03
+    kind: key
+    value: '실측 조인 키: address(MEMBER_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15049111.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15049111-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15049111.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15049111-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15049111-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15049111.json
+  stats: probe/stats/15049111.json
+  data: probe/data/15049111/
+status: active

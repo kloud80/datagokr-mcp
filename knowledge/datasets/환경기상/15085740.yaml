@@ -1,0 +1,211 @@
+# Dataset 15085740 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15085740'
+tier: verified
+title: 서울특별시_대기오염물질 측정소 높이 정보
+sector: 환경기상/환경일반/pollution-sources
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15085740/fileData.do
+synonyms:
+  - 위치
+  - 대기측정
+  - 미세먼지
+description_portal: 서울시의 대기오염물질을 측정하는 측정소의 높이에 대한 테이터 자료입니다. 도시대기 측정망과 도로변 측정망의 위치정보와 높이를 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 대기정책과
+services:
+  - op: airHgt
+    name: airHgt
+    endpoint: http://openapi.seoul.go.kr:8088/json/airHgt/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: SEQ
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1.0'
+        - '2.0'
+        - '3.0'
+      stats:
+        min: 1
+        p50: 20.5
+        max: 40
+        unique: 40
+    - name: MSRSTN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 종로구
+        - 중 구
+        - 용산구
+      stats:
+        unique: 40
+    - name: ROAD_NM_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 종로구 종로35가길 19 (종로5.6가동 주민센터)
+        - 중구 덕수궁길 15 (시청서소문별관 3동)
+        - 용산구 이태원로 224-19 (한남동복합문화센터)
+      stats:
+        unique: 40
+    - name: MSRSTN_HGT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3'
+        - '16'
+        - '15.8'
+      stats:
+        min: 2.8
+        p50: 13.7
+        max: 19.6
+        unique: 26
+    - name: SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 도시대기 측정망
+        - 도로변 측정망
+      stats:
+        unique: 2
+  foreign_keys:
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ROAD_NM_ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 오염원·화학물질 사업장 (배출시설·가축분뇨·소음진동·석면·유해화학물질 취급·PRTR)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3764
+  rank_in_sector: 482
+  brm: 환경기상 - 환경일반
+  why: 서울 측정소 높이 보조정보, 측정소정보와 일부 중복
+claims:
+  - id: c-15085740-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15085740.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15085740-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15085740-03
+    kind: key
+    value: '실측 조인 키: address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15085740.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15085740-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15085740.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15085740-06
+    kind: admin_note
+    value: "세부 부문 '오염원·화학물질 사업장 (배출시설·가축분뇨·소음진동·석면·유해화학물질 취급·PRTR)'의 가치: 인허가 사업장 원장 — 사업자번호·좌표"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#pollution-sources
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15085740-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15085740-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15085740.json
+  stats: probe/stats/15085740.json
+  data: probe/data/15085740/
+status: active

@@ -1,0 +1,222 @@
+# Dataset 15061231 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15061231'
+tier: verified
+title: 서울특별시_스마트서울 도시데이터 센서(S-DoT) 방문자수 측정 정보
+sector: 과학기술/방송통신/other-address
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15061231/fileData.do
+synonyms:
+  - 사물인터넷
+  - IoT
+  - 센서
+  - 스마트서울
+  - 도시데이터
+description_portal: '센서수량 및 설치장소 : 서울 전역 100대(전통시장, 주요거리, 공원, 공공시설)측정정보 : S-DoT에서 측정된 유동인구(10분단위 데이터)유의사항- S-DoT 유동인구 데이터는 “열린데이터광장”을 통해서만 제공하며 관리부서에서는 별도로 제공하지 않습니다.- 대학 및 연구소, 개인 등 누구나 유동인구정보(csv파일)를 다운로드 하여 사적 목적(논문 작성 등)으로 활용할 수 있으나 이는 개인 등의 연구 결과이므로 서울시의 공식 입장이 아님을 밝히시기 바랍니다.- 유동인구 센서는 WiFi AP셀 반경내 휴대폰의 MAC주소를 카운팅(50대)하거나 CCTV를 활용한 피플카운팅(50대) 방식으로 정확한 유동인구를 측정한 것이 아닙니다.※ 데이터의 양이 많아 2023년 10월 16일부터 Sheet와 OpenAPI는 최근 한달만 출력됩니다.'
+accrual_periodicity: 수시
+team:
+  dept: 디지털도시국 정보통신과
+services:
+  - op: IotVdata018
+    name: IotVdata018
+    endpoint: http://openapi.seoul.go.kr:8088/json/IotVdata018/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MODEL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - SDOT001
+      stats:
+        unique: 1
+    - name: SERIAL_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '00000004047'
+        - '00000004028'
+        - '00000004022'
+      stats:
+        min: 2992
+        p50: 4021.5
+        max: 4094
+        unique: 91
+    - name: SENSING_TIME
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - 2026-10-24_23:48:00
+        - 2026-10-24_23:40:00
+        - 2026-10-24_23:45:00
+      stats:
+        min: '2026-10-24'
+        max: '2026-10-24'
+        unique: 15
+    - name: REGION
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - traditional_markets
+        - main_street
+        - roads_and_parks
+      stats:
+        unique: 8
+    - name: AUTONOMOUS_DISTRICT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Jongno-gu
+        - Jung-gu
+        - Dobong-gu
+      stats:
+        unique: 23
+    - name: ADMINISTRATIVE_DISTRICT
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - Hongje3(sam)-dong
+        - Hwayang-dong
+        - Mangwon1(il)-dong
+      stats:
+        unique: 63
+    - name: VISITOR_COUNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2'
+        - '3'
+      stats:
+        min: 0
+        p50: 20.5
+        max: 230
+        unique: 63
+    - name: REG_DTTM
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-24 23:58:03'
+        - '2026-10-24 23:58:02'
+        - '2026-10-24 23:58:01'
+      stats:
+        min: '2026-10-24'
+        max: '2026-10-24'
+        unique: 7
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - SENSING_TIME
+    - REG_DTTM
+cycle: default
+classification:
+  subsector_name: 기타 주소 원장
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.4944
+  brm: 과학기술 - 방송통신
+claims:
+  - id: c-15061231-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15061231.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15061231-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15061231-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15061231.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15061231-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15061231.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15061231-06
+    kind: admin_note
+    value: '[방송통신 · 결정] 주소나 사업자번호가 있는 원장만 남기고 통계는 배제 (`broadcast-no-address-biz`). URL·메일·홈페이지 "주소"는 연계 키가 아니므로 판정에서 제외(전 부문 공통 개선).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L450
+        by: 구름
+        at: '2026-09-28'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15061231-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15061231.json
+  stats: probe/stats/15061231.json
+  data: probe/data/15061231/
+status: active

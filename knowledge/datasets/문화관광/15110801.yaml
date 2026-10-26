@@ -1,0 +1,267 @@
+# Dataset 15110801 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15110801'
+tier: verified
+title: 경상남도 남해군_숙박정보_영문 조회 서비스
+sector: 문화관광/관광/lodging
+agency:
+  id: '5430000'
+  name: 경상남도 남해군
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15110801/openapi.do
+synonyms:
+  - 숙박
+  - 펜션
+  - 리조트
+  - 위경도
+  - 전화번호
+description_portal: 2022년 12월 16일 기준, 경상남도 남해군 내 다양한 숙박시설 정보를 영어로 제공하여 영어권 관광객의 편의를 지원합니다. 각 숙소의 '업소명'(Business Name), '주소'(Address), '위도' 및 '경도'(Latitude/Longitude), '전화번호'(Phone Number) 등 주요 정보가 이해하기 쉬운 영어(또는 로마자 표기)로 안내됩니다.이를 통해 해외 방문객들은 호텔, 펜션, 민박 등 남해의 여러 숙박 옵션을 영어로 손쉽게 검색 및 비교하고, 필요한 정보를 얻어 숙소를 선택할 수 있습니다. 본 영문 숙박 정보 서비스가 외국인 관광객의 남해 여행 준비를 돕고, 보다 만족스러운 체류 경험을 제공하는 데 기여할 것으로 기대합니다.
+team:
+  dept: 행정과
+services:
+  - op: /get_accommodation_item_en
+    name: 숙박업소항목조회_영문
+    endpoint: https://apis.data.go.kr/5430000/ACCOMO_DATA_EN/get_accommodation_item_en
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: dataTy
+        required: false
+        desc: '응답 받을 자료형식(xml, json) '
+      - name: pageIndex
+        required: false
+        example: '1'
+        desc: 페이지번호
+      - name: pageUnit
+        required: false
+        example: '20'
+        desc: 한 페이지 결과 수
+      - name: searchCondition
+        required: false
+        example: STAYNG_NM
+        desc: 값이 없는 경우 모든 조건
+      - name: searchKeyword
+        required: false
+        example: Jaedujang Inn
+        desc: 값이 없는 경우 검색 안함
+    approval: auto
+    traffic:
+      dev: 5000
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: MNG_NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: STAYNG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Jaedujang Inn
+      stats:
+        unique: 1
+    - name: ROAD_NM_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 918-6 Namhae-daero, Sangju-myeon, Namhae-gun, Gyeongsangnam-do
+      stats:
+        unique: 1
+    - name: LAT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '34.7395173'
+      stats:
+        min: 34.7395173
+        p50: 34.7395173
+        max: 34.7395173
+        unique: 1
+    - name: LOT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '127.9847442'
+      stats:
+        min: 127.9847442
+        p50: 127.9847442
+        max: 127.9847442
+        unique: 1
+    - name: LDGS_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - General Accommodation
+      stats:
+        unique: 1
+    - name: TELNO
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 055-862-6022
+      stats:
+        unique: 1
+    - name: PARKNG_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: TPKCT_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '30'
+      stats:
+        min: 30
+        p50: 30
+        max: 30
+        unique: 1
+    - name: ANIMAL_YN
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - ROAD_NM_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시군구
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: point
+  space_fields:
+    - LAT
+  space_via: coord
+cycle: default
+classification:
+  subsector_name: 숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.584
+  rank_in_sector: 486
+  brm: 문화관광 - 관광
+  why: 남해군 숙박 영문판, 지역 한정·다국어판
+claims:
+  - id: c-15110801-01
+    kind: access
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 5,000회. 2026-10-25 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15110801.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15110801.json
+        observed_at: '2026-10-04'
+        detail: 심의여부 자동승인
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '5000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15110801-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15110801-03
+    kind: key
+    value: '실측 조인 키: address(ROAD_NM_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15110801.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15110801-04
+    kind: coverage
+    value: 범위 시군구 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15110801.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15110801-06
+    kind: admin_note
+    value: "세부 부문 '숙박업 (일반·생활숙박 신고, 호텔·펜션·민박·한옥체험)'의 가치: 객실 수·상태 = 숙박 시장 분석 기초, 공중위생법 신고(LOCALDATA) — 인허가 공통 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#lodging
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15110801-07
+    kind: admin_note
+    value: '[문화관광 - 관광 · 결정] 관광 콘텐츠(TourAPI)·관광 산업(관광사업 등록·야영장)·숙박업·관광 통계·축제/행사까지만. VR·영상·이미지, 안내·편의, 교통·패스·상품, 관광특구·관광단지, 카지노 배제 (`tourism-deferred`, `tourism-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L581
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15110801-08
+    kind: admin_note
+    value: wave6 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15110801.json
+  stats: probe/stats/15110801.json
+  data: probe/data/15110801/
+status: active

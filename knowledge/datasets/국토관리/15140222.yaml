@@ -1,0 +1,254 @@
+# Dataset 15140222 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15140222'
+tier: verified
+title: 한국수자원공사_수문 방류정보 조회 서비스
+sector: 국토관리/수자원/hydro-observation
+domain: 국토관리/기반시설
+agency:
+  id: B500001
+  name: 한국수자원공사
+kind: API
+channel: portal
+portal_url: https://www.data.go.kr/data/15140222/openapi.do
+synonyms:
+  - 수문
+  - 방류
+  - 알림
+  - 수문방류정보
+  - 내비게이션표출
+  - 재난방지
+  - 침수피해방지
+  - 수해피해방지
+description_portal: '□ 개     요 : 댐 수문방류정보 및 영향지역 데이터 제공 서비스 (상용 내비게이션 표출 등으로 재난예방에 활용 가능한 정보 제공)□ 제공항목 : 메시지 생성일(CREATEDDATE), 댐코드(DAMCD), 댐이름(DAMNM), 댐 좌표(DAMCOORD), 방류시작 시간(STARTDATE), 방류종료 시간(ENDDATE), 업데이트 시간(UPDATEDDATE), 영향범위(AFFECTAREA)□ 제공형식 : OPEN API(XML)□ 제공주기 : 15분□ 참고사항(댐코드_DAMCD)1012110 소양강1003110 충주1006110 횡성2001110 안동2002110 임하2002111 성덕2004101 영주2008101 군위2010101 김천부항2012101 보현산2015110 합천2018110 남강2021110 밀양3001110 용담3008110 대청4001110 섬진강4007110 주암(본)4104610 주암(조)3303110 부안3203110 보령5101110 장흥1009710 평화의댐1021701 군남1022701 한탄강1001210 광동1302210 달방2012210 영천2101210 안계2403201 감포2021210 운문2201231 대곡2201220 사연2201230 대암2301210 선암2503210 연초2503220 구천4105210 수어5002201 평림'
+team:
+  dept: 디지털전환추진단
+services:
+  - op: /flugdschginfo
+    name: 수문(댐) 방류정보 조회
+    endpoint: https://apis.data.go.kr/B500001/DamDisChargeInfo/flugdschginfo
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: serviceKey
+      issuer: data.go.kr
+    params:
+      - name: pageNo
+        required: true
+        example: '1'
+        desc: 페이지번호
+      - name: numOfRows
+        required: true
+        example: '10'
+        desc: 한 페이지 결과 수
+      - name: stDt
+        required: false
+        example: '20220101'
+        desc: 시작일자
+      - name: edDt
+        required: false
+        example: '20240130'
+        desc: 종료일자
+      - name: damCd
+        required: false
+        example: '1001210'
+        desc: 댐 코드
+    paging:
+      page: pageNo
+      size: numOfRows
+      max_size: 1000
+    approval: review
+    traffic:
+      dev: 10000
+    format:
+      - xml
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: items
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: numOfRows
+      title: 한 페이지 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '100'
+      stats:
+        min: 100
+        p50: 100
+        max: 100
+        unique: 1
+    - name: pageNo
+      title: 페이지번호
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+      stats:
+        min: 1
+        p50: 1
+        max: 1
+        unique: 1
+    - name: totalCount
+      title: 전체 결과 수
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+coverage:
+  spatial: 전국
+  admin_unit: 개별(주소·좌표)
+grain:
+  space: sgg
+  space_fields:
+    - pageNo
+  space_via: address
+cycle: default
+classification:
+  subsector_name: dam-reservoir
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7298
+  rank_in_sector: 20
+  brm: 환경기상 - 환경일반
+  sector_rule: env-flood-to-water
+  why: 댐 수문 방류 실시간 정보와 좌표
+claims:
+  - id: c-15140222-01
+    kind: access
+    value: 포털 활용신청 심의 후 승인, serviceKey(query), 개발계정 일 10,000회. 2026-10-25 실호출 성공 오퍼레이션 1/1
+    evidence:
+      - type: measured
+        source: probe/runs/15140222.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: measured
+        source: probe/apply/15140222.json
+        observed_at: '2026-10-02'
+        detail: 심의여부 심의
+      - type: portal_meta
+        source: catalog:daily_traffic_dev
+        detail: '10000'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15140222-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140222-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15140222.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140222-04
+    kind: coverage
+    value: 검증 수신 0행 · 범위 전국 · 행정단위 개별(주소·좌표)
+    evidence:
+      - type: measured
+        source: probe/runs/15140222.json
+        observed_at: '2026-10-25'
+        detail: total None, rows 0
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15140222-20
+    kind: legal_basis
+    value: "법 체계 층 '국토 기반시설·자원 (물)': 하천법·댐건설관리법·수도법·하수도법·수자원법"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/sector_tree.yaml#국토관리/기반시설
+        by: 구름
+        at: '2026-09-29'
+      - type: law
+        source: law:001836#1
+        detail: 하천법 제1조(목적)
+      - type: law
+        source: law:001981#1
+        detail: 댐건설ㆍ관리 및 주변지역지원 등에 관한 법률 제1조(목적)
+      - type: law
+        source: law:001818#1
+        detail: 수도법 제1조(목적)
+      - type: law
+        source: law:001815#1
+        detail: 하수도법 제1조(목적)
+      - type: law
+        source: law:012789#1
+        detail: 수자원의 조사ㆍ계획 및 관리에 관한 법률 제1조(목적)
+    qualifiers:
+      generated_by: pds.dossier.claims
+      scope: sector
+    rank: normal
+  - id: c-15140222-06
+    kind: admin_note
+    value: "세부 부문 '댐·저수지 (댐 제원·운영·수위·방류, 농업용 저수지 저수율)'의 가치: 댐 운영(K-water)·농업용 저수지 저수율(농어촌공사) = 가뭄·홍수철 필수, 댐코드·저수지코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#dam-reservoir
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15140222-07
+    kind: admin_note
+    value: '[국토관리 - 수자원 · 결정] 수문 관측·홍수 예보/경보·댐/저수지·하천 시설/공간·상수도·하수까지만, 나머지는 나중에 (`water-deferred`, `water-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L516
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15140222-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(승인대기)
+  probed_at: '2026-10-25'
+  channel: portal
+  rows: 0
+  ops_ok: 1/1
+  latency_ms: 63
+  run: probe/runs/15140222.json
+  stats: probe/stats/15140222.json
+  data: probe/data/15140222/
+status: active

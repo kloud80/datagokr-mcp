@@ -1,0 +1,201 @@
+# Dataset 15088959 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15088959'
+tier: verified
+title: 서울특별시_한강공원 주차장 월별 이용 현황
+sector: 교통물류/물류등기타/parking
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15088959/fileData.do
+synonyms:
+  - 주차장
+  - 한강 공원
+  - 주차대수수
+  - 한강
+  - 한강사업본부
+description_portal: 한강공원 주차장 월별 이용 현황 데이터는 한강공원 내 각 주차장의 이용 패턴을 월 단위로 파악하기 위한 공공정보입니다. 지구별 항목을 통해 한강공원 내 어느 권역에 위치한 주차장인지 구분할 수 있으며, 주차장명은 개별 주차장을 식별하는 기본 정보로 활용됩니다. 주차대수는 주차장이 수용 가능한 차량 규모를 나타내어 시설 규모와 수용 능력을 판단하는 데 도움을 줍니다. 이용시간 정보는 실제 주차장이 사용된 시간량을 보여주어 시간대별·월별 혼잡도 분석과 주차 수요 예측에 유용하게 쓰입니다. 날짜 항목은 특정 일자를 기준으로 데이터를 집계·비교할 수 있게 해, 계절별·행사기간별 이용 추세 분석, 주차 정책 개선, 주차요금·시설 확충 계획 수립 등에 활용 가능한 실무적 가치가 높은 데이터입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: TbUseMonthstatusView
+    name: TbUseMonthstatusView
+    endpoint: http://openapi.seoul.go.kr:8088/json/TbUseMonthstatusView/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: DSTRCT_TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - PLT-008
+        - PLT-005
+        - PLT-006
+      stats:
+        unique: 11
+    - name: PKLT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 반포2,3주차장
+        - 망원2주차장
+        - 광나루1,2주차장
+      stats:
+        unique: 28
+    - name: PRK_CNTOM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '94359.0'
+        - '16577.0'
+        - '28150.0'
+      stats:
+        min: 1830
+        p50: 23023
+        max: 108814
+        unique: 100
+    - name: UTZTN_HR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '8185761.0'
+        - '1813248.0'
+        - '3091233.0'
+      stats:
+        min: 148520
+        p50: 2351116
+        max: 13949284
+        unique: 100
+    - name: DT
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2026/10
+        - 2026/09
+        - 2026/08
+      stats:
+        unique: 4
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.3726
+  brm: 교통물류 - 도로
+  sector_rule: logistics-core-scattered
+claims:
+  - id: c-15088959-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15088959.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15088959-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15088959-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15088959.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15088959-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15088959.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15088959-06
+    kind: admin_note
+    value: "세부 부문 '주차장 (공영·민영·거주자우선·부설 개방, 실시간 주차 가능)'의 가치: 전국주차장정보표준데이터(주차장관리번호·좌표·요금·면수)가 원장이고, 실시간 주차 가능 대수는 지자체·공단별 비표준 API. 두 층(표준 원장 / 지자체 실시간)을 도시에에서 따로 적어야 한다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#parking
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15088959-07
+    kind: admin_note
+    value: '[교통물류 - 물류등기타 · 결정] 물류시설·화물운송·생활물류·주차장만 남김. 통계는 우선 배제 (`logistics-stats`), 나머지 배제 (`logistics-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L478
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15088959-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15088959.json
+  stats: probe/stats/15088959.json
+  data: probe/data/15088959/
+status: active

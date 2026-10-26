@@ -1,0 +1,235 @@
+# Dataset 15076858 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15076858'
+tier: verified
+title: 서울특별시_사회복지시설(노인주거복지시설) 목록
+sector: 사회복지/노인·청소년/age-friendly-housing
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15076858/fileData.do
+synonyms:
+  - 독립
+  - 노인
+  - 주거
+  - 시설
+  - 공동생활
+description_portal: '서울특별시 노인주거복지시설 정보입니다.- 주요내용 : 시설명, 시설유형, 시설종류, 시설주소 등 정보제공*용어설명- 노인주거복지시설은 「노인복지법」에 근거하여 설치된 시설로, 노인이 독립적이거나 공동생활을 하면서 안전하고 안정된 주거 환경 속에서 생활할 수 있도록 지원하는 복지시설- 노인이 거주하면서 생활지원 서비스를 받을 수 있는 주거 중심 시설(운영 주체)- 공립: 시·도립, 구립 운영 (예: 구립 양로원)- 민간: 사회복지법인, 의료법인, 개인 운영 (민간 양로원, 공동생활가정 등)- 지자체 보조금이나 장기요양보험 급여와 연계 가능'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: fcltOpenInfo_OLWI
+    name: fcltOpenInfo_OLWI
+    endpoint: http://openapi.seoul.go.kr:8088/json/fcltOpenInfo_OLWI/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FCLT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 홍파양로원
+        - 혜명양로원
+        - 시립고덕양로원
+      stats:
+        unique: 34
+    - name: FCLT_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A0004
+        - A0019
+        - A0098
+      stats:
+        unique: 34
+    - name: FCLT_KIND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - (노인주거복지시설) 노인복지주택
+        - (노인주거복지시설) 양로시설
+        - (노인주거복지시설) 노인공동생활가정
+      stats:
+        unique: 3
+    - name: FCLT_KIND_DTL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 노인주거복지시설
+      stats:
+        unique: 1
+    - name: JRSD_SGG_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 자치구
+      stats:
+        unique: 1
+    - name: JRSD_SGG_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1150000000'
+        - '1156000000'
+        - '1168000000'
+      stats:
+        min: 1100000000
+        p50: 1145500000
+        max: 1174000000
+        unique: 19
+    - name: JRSD_SGG_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강서구
+        - 영등포구
+        - 강남구
+      stats:
+        unique: 19
+    - name: FCLT_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강서구 공항대로 315 (등촌동)
+        - 서울특별시 노원구 동일로248길 1266 번지
+        - '서울특별시 금천구 금하로29길 '
+      stats:
+        unique: 33
+    - name: FCLT_TEL_NO
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: FCLT_ZIPCD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+  foreign_keys:
+    - fields:
+        - FCLT_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - JRSD_SGG_CD
+    - JRSD_SGG_NM
+    - FCLT_ADDR
+  space_via: code
+cycle: default
+classification:
+  subsector_name: 고령친화·노인 주거 (양로·공동생활가정·고령자복지주택·고령친화 제품/기업)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4596
+  rank_in_sector: 603
+  brm: 사회복지 - 노인·청소년
+  why: 서울 26건 노인주거시설, 전국 시설정보와 겹침
+claims:
+  - id: c-15076858-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15076858.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15076858-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076858-03
+    kind: key
+    value: '실측 조인 키: address(FCLT_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15076858.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076858-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15076858.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15076858-06
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15076858-07
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15076858.json
+  stats: probe/stats/15076858.json
+  data: probe/data/15076858/
+status: active

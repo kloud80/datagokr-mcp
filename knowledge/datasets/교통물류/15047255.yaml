@@ -1,0 +1,254 @@
+# Dataset 15047255 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15047255'
+tier: verified
+title: 서울특별시_도로표지 설치정보
+sector: 교통물류/도로/road-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15047255/fileData.do
+synonyms:
+  - 도로표지
+  - 교통표지판
+  - 교통표지
+description_portal: 서울특별시에서 제공하는 도로표지 설치현황 정보입니다. 표지일련번호, 표지종별, 설치위치 X좌표, 설치위치 Y좌표 등을 제공합니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: signalInstlInfo
+    name: signalInstlInfo
+    endpoint: http://openapi.seoul.go.kr:8088/json/signalInstlInfo/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: RPRS_SN
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - WR(서울특별시 양천구)-[목동로3길]-상-10
+        - WR(서울특별시 도봉구)-[도봉로]-상-52
+        - WR(서울특별시 양천구)-[목동동로8길]-상-7
+      stats:
+        unique: 100
+    - name: RPRS_KND_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 3방향표지
+        - 3방향도로명표지
+        - 2방향표지
+      stats:
+        unique: 11
+    - name: XCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '186067.98'
+        - '206013.3'
+        - '185999.53'
+      stats:
+        min: 185999.53
+        p50: 203737.49
+        max: 211803.47
+        unique: 86
+    - name: YCRD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '445271.55'
+        - '458382.44'
+        - '445187.88'
+      stats:
+        min: 439491.89
+        p50: 452179.29500000004
+        max: 463233.02
+        unique: 86
+    - name: CLSRNG_IMG_1
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - /2024-12-02/WRC01150목동로3길U/1.jpg
+        - /2019-06-18/WRC0110도봉로U/26-wr-[도봉로]-상-7-후(근).jpg
+        - /2006-08-23/WRC0115꿈나무길D/21.꿈나무길-01-2.jpg
+      stats:
+        min: '2006-06-22'
+        max: '2024-12-02'
+        unique: 100
+    - name: CLSRNG_IMG_2
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CLSRNG_IMG_3
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CLSRNG_IMG_4
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: CLSRNG_IMG_5
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: LDST_IMG_1
+      type: date
+      null_rate: 0.01
+      sample_values:
+        - /2024-12-02/WRC01150목동로3길U/2.jpg
+        - /2019-06-18/WRC0110도봉로U/26-wr-[도봉로]-상-7-후(원).jpg
+        - /2006-08-23/WRC0115꿈나무길D/21.꿈나무길-01-1.jpg
+      stats:
+        min: '2006-06-22'
+        max: '2024-12-02'
+        unique: 99
+    - name: LDST_IMG_2
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: DATA_CRTR_YMD
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: point
+  space_fields:
+    - XCRD
+    - YCRD
+  space_via: coord
+  time: day
+  time_fields:
+    - CLSRNG_IMG_1
+    - LDST_IMG_1
+cycle: default
+classification:
+  subsector_name: 도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.3837
+  rank_in_sector: 3934
+  brm: 교통물류 - 물류등기타
+  sector_rule: logistics-road-to-road
+  why: 전국 도로안내표지 표준데이터와 겹치는 서울판
+claims:
+  - id: c-15047255-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15047255.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15047255-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047255-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15047255.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 12개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047255-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15047255.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15047255-06
+    kind: admin_note
+    value: "세부 부문 '도로 시설물 (터널·교량·지하차도·IC·JC·표지·가로등·방호·육교)'의 가치: 터널·교량·지하차도는 제공표준 — 지자체 파일 수백 건이 표준 하나로 접힌다"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#road-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15047255-07
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15047255-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15047255.json
+  stats: probe/stats/15047255.json
+  data: probe/data/15047255/
+status: active

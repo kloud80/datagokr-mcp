@@ -1,0 +1,210 @@
+# Dataset 15064336 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15064336'
+tier: verified
+title: 한국무역보험공사_보장환율
+sector: 재정금융/산업금융/guaranteed-firms
+agency:
+  id: B552696
+  name: 한국무역보험공사
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15064336/fileData.do
+synonyms:
+  - 통화코드
+  - 스왑포인트
+  - 환율
+  - 시장평균환율
+  - 결제신청일
+  - 일반선물환
+  - 보험금
+  - 이익금
+description_portal: '공사 환변동보험(보험가입시 환율보다 환율 상승시에는 이익금 납부, 환율 하락시에는 보험금을 지급하는 선물환 상품) 이용 시 적용되는 보장환율을 나타낸 데이터입니다. 산정일자, 통화코드, 기간별 평균 스왑포인트, 보장환율 등의 컬럼으로 이루어진 파일 데이터 자료입니다. 수출거래 기준으로 환율이 보장환율보다 하락 시 공사가 보험금을 지급하고, 보장환율보다 상승 시 이익금을 공사로 납부하시게 됩니다. (참고)- 보장환율 산정 방식 : 청약일 시장평균환율 + 기간별 Swap Point- 보장환율 산정일자는 청약일 및 결제신청일 익영업일입니다. (예) "22.11.10 청약 또는 결제신청 → 보장/조기결제 환율은 다음날("22.11.11) 조회 가능합니다.)'
+accrual_periodicity: 연간
+team:
+  dept: AI디지털총괄실
+distributions:
+  - title: 한국무역보험공사_보장환율_20251231.csv
+    url: https://www.data.go.kr/data/15064336/fileData.do
+    format: csv
+    size: 4881304
+schema:
+  fields:
+    - name: 계산일자
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-01-02'
+        - '2025-01-03'
+        - '2025-01-06'
+      stats:
+        min: '2025-01-02'
+        max: '2025-11-06'
+        unique: 205
+    - name: 통화코드
+      type: code
+      semantic_type: currency_cd
+      null_rate: 0.0
+      sample_values:
+        - CNY
+        - EUR
+        - JPY
+      stats:
+        unique: 4
+    - name: 결제년월
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 2025-11
+        - 2025-12
+        - 2026-01
+      stats:
+        unique: 71
+    - name: 수출입구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 수입
+        - 수출
+      stats:
+        unique: 2
+    - name: 평균스왑포인트
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '0.24'
+        - '0.3'
+      stats:
+        min: -143.45
+        p50: 1.3
+        max: 110.79
+        unique: 18904
+    - name: 보장환율
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '197.2'
+        - '197.8'
+        - '198.3'
+      stats:
+        min: 188.8
+        p50: 1106.15
+        max: 1703.4
+        unique: 6243
+  foreign_keys:
+    - fields:
+        - 통화코드
+      reference:
+        key: currency_cd
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - 계산일자
+cycle: default
+classification:
+  subsector_name: 보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.576
+  brm: 재정금융 - 산업금융
+claims:
+  - id: c-15064336-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 4881304 bytes) — 활용신청 없이 받음. 2026-10-25 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15064336.json
+        observed_at: '2026-10-25'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15064336-02
+    kind: cadence
+    value: 명세상 연간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15064336-03
+    kind: key
+    value: '실측 조인 키: currency_cd(통화코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15064336.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15064336-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15064336.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15064336-06
+    kind: admin_note
+    value: "세부 부문 '보증 이용 기업 명세 (신보 Easy-One·Trust on·Start-up NEST·문화산업보증, 투자기업)'의 가치: 보증·투자 받은 기업 목록 — 기업 축(사업자번호)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#guaranteed-firms
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15064336-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 산업금융] 신보 685건은 대부분 보증 통계·요율표 — 보증 이용 기업 명세(기업 원장)만 남김. 대부업 등록 원장을 일반행정에서 모음. 산후조리원 → 보건의료, 도로안전시설물 → 도로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L625
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15064336-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-25'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15064336.json
+  stats: probe/stats/15064336.json
+  data: probe/data/15064336/
+status: active

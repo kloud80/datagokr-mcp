@@ -1,0 +1,198 @@
+# Dataset 15128196 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15128196'
+tier: verified
+title: 국민건강보험공단_특정 의약품 그룹별 진료환자수A
+sector: 보건의료/건강보험/insurance-codes
+agency:
+  id: B550928
+  name: 국민건강보험공단
+kind: FILE
+channel: portal
+portal_url: https://www.data.go.kr/data/15128196/fileData.do
+synonyms:
+  - 의약품
+  - 약제그룹
+  - 진료환자수
+  - 의료급여
+  - 건강보험급여실적
+description_portal: '1. 보험자구분: 건강보험, 의료급여2. 약제주성분코드 - 그룹1(632201ATB, 652301ATB, 652302ATB, 652303ATB, 564701ATB, 564702ATB, 512430BIJ,                  512431BIJ, 512432BIJ, 471430CSI, 553301ATB, 485201ATB, 485202ATB) - 그룹2(632201ATB) - 그룹3(652301ATB, 652302ATB, 652303ATB, 652304ATB)※ 약제 주성분코드에 관한 사항은 건강보험심사평가원의 "약제급여목록표" 참고(https://www.hira.or.kr/bbsDummy.do?pgmid=HIRAA030014050000)3. 진료연월: 2018~2022년, 전체 및 각 월4. 진료인원: 해당 구분별 진료인원(중복제외)  - 진료일 기준(입원, 외래, 약국 포함)  - 건강보험 및 의료급여 실적이며, 비급여는 제외  - 2023년 심사분까지 반영※ 민원인의 공공데이터 제공 신청에 따라 발췌 및 구성된 데이터'
+accrual_periodicity: 수시
+team:
+  dept: 빅데이터운영실
+distributions:
+  - title: 국민건강보험공단_특정 의약품 그룹별 진료환자수A_20221231.csv
+    url: https://www.data.go.kr/data/15128196/fileData.do
+    format: csv
+    size: 10824
+schema:
+  fields:
+    - name: 보험자구분
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 건강보험
+        - 의료급여
+      stats:
+        unique: 2
+    - name: 약제주성분코드
+      type: code
+      semantic_type: drug_cd
+      null_rate: 0.0
+      sample_values:
+        - 그룹1
+        - 그룹2
+        - 그룹3
+      stats:
+        unique: 3
+    - name: 진료년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+        - '2020'
+        - '2021'
+      stats:
+        min: 2018
+        p50: 2020
+        max: 2022
+        unique: 5
+    - name: 진료월
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 전체
+        - '02'
+        - '05'
+      stats:
+        unique: 13
+    - name: 진료인원(명)
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '26'
+        - '29'
+        - '77'
+      stats:
+        min: 1
+        p50: 158
+        max: 3564
+        unique: 253
+  foreign_keys:
+    - fields:
+        - 약제주성분코드
+      reference:
+        key: drug_cd
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - 진료년도
+cycle: default
+classification:
+  subsector_name: 급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3129
+  rank_in_sector: 360
+  brm: 보건의료 - 건강보험
+  why: 특정 약제 그룹 월별 환자수, 지역 키 없음
+claims:
+  - id: c-15128196-01
+    kind: access
+    value: 포털 파일 다운로드 (csv, 10824 bytes) — 활용신청 없이 받음. 2026-10-26 다운로드·파싱 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15128196.json
+        observed_at: '2026-10-26'
+        detail: rows None
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-27'
+  - id: c-15128196-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15128196-03
+    kind: key
+    value: '실측 조인 키: drug_cd(약제주성분코드)'
+    evidence:
+      - type: measured
+        source: probe/stats/15128196.json
+        observed_at: '2026-10-26'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15128196-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15128196.json
+        observed_at: '2026-10-26'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-27'
+  - id: c-15128196-06
+    kind: admin_note
+    value: "세부 부문 '급여 기준·코드 마스터 (약가·급여 목록·EDI 행위·치료재료·KCD)'의 가치: 약품코드·EDI·KCD — 제약 시장 분석 표준, 식품건강 의약품 허가와 maps_to"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#insurance-codes
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15128196-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 건강보험] 요양기관·비급여 진료비·급여 기준/코드·진료/처방 통계·보험 자격·장기요양기관만. 적정성 평가·검진·DUR(→ 식약처 DUR은 보건의료 의약품으로)·재정 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L600
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15128196-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-26'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(파일 다운로드)
+  probed_at: '2026-10-26'
+  channel: portal
+  ops_ok: 1/1
+  run: probe/runs/15128196.json
+  stats: probe/stats/15128196.json
+  data: probe/data/15128196/
+status: active

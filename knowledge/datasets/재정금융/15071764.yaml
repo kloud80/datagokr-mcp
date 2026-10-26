@@ -1,0 +1,206 @@
+# Dataset 15071764 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15071764'
+tier: verified
+title: 서울특별시_자동차 번호판 영치 현황
+sector: 재정금융/세제/regional-tax
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15071764/fileData.do
+synonyms:
+  - 자동차
+  - 번호판
+  - 영치
+  - 도로교통법
+  - 위반 차량
+description_portal: 서울시 자동차 번호판 영치 현황은 자동차 번호판이 영치된 실적을 연도·월·기관별로 집계한 데이터입니다. 영치년도와 영치월은 번호판이 영치된 시점을 나타내며, 영치기관과 영치기관코드는 해당 조치를 수행한 기관과 그 식별 코드입니다. 영치건수는 기간별·기관별 번호판 영치 발생 건수를 의미합니다. 이 데이터는 자동차 관련 체납, 불법 운행 등에 대한 행정 집행 현황을 파악하고, 기간별·기관별 단속 추세 분석, 정책 효과 평가, 교통·세수 관련 행정 계획 수립 등에서 기초 자료로 활용됩니다. 또한 자치구별 단속 강도나 시기별 영치 변화를 비교·분석하여 교통질서 및 시민 편의 증진을 위한 정책 수립에 참고 자료로 활용됩니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: CscyPublicView
+    name: CscyPublicView
+    endpoint: http://openapi.seoul.go.kr:8088/json/CscyPublicView/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CSDY_YR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2020'
+        - '2016'
+        - '2015'
+      stats:
+        min: 2014
+        p50: 2020
+        max: 2026
+        unique: 13
+    - name: CSDY_MM
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03'
+        - '05'
+        - '07'
+      stats:
+        min: 1
+        p50: 6
+        max: 12
+        unique: 12
+    - name: CSDY_INST
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+        - 중구
+        - 용산구
+      stats:
+        unique: 7
+    - name: CSDY_INST_CD
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11000'
+        - '11140'
+        - '11170'
+      stats:
+        min: 11000
+        p50: 11140
+        max: 11560
+        unique: 7
+    - name: CSDY_NOCS
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0.0'
+        - '24.0'
+        - '53.0'
+      stats:
+        min: 0
+        p50: 24.5
+        max: 200
+        unique: 59
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역별 지방세 (행안부 통계연보 시도·시군구)
+  depth: front
+  novelty: low
+  cross_cutting: true
+  prelim_score: 0.3819
+  brm: 재정금융 - 세제
+claims:
+  - id: c-15071764-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15071764.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15071764-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15071764-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15071764.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15071764-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15071764.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15071764-06
+    kind: admin_note
+    value: "세부 부문 '지역별 지방세 (행안부 통계연보 시도·시군구)'의 가치: 시도·시군구 격자 — 지역 지표로 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#regional-tax
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15071764-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 세제] 국세청 사업자등록 상태(휴폐업) 조회를 재정·금융·일반행정에서 모아 사업자번호 축의 상태 원장으로. 지자체 지방세 파일 900여 건(형식·시점 불규칙)·국세 세수 통계·숏폼 영상 배제, 행안부 통계연보 지역별 지방세만 지역 지표로.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L624
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15071764-08
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15071764.json
+  stats: probe/stats/15071764.json
+  data: probe/data/15071764/
+status: active

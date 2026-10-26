@@ -1,0 +1,203 @@
+# Dataset 15097095 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15097095'
+tier: verified
+title: 서울특별시_금천구 불법주차(IoT) 측정정보
+sector: 교통물류/도로/road-other
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15097095/fileData.do
+synonyms:
+  - 주차
+  - 금천구
+  - IoT
+  - 도시데이터
+  - 주정차
+description_portal: '불법주정차 IoT 측정정보는 불법 주정차로 꽉 막힌 긴급차량 통행로를 지키는 인공지능 서비스로 소방도로 내 불법주정차 감지 데이터입니다. 참고 : 동작중 : 0Y, 정지:0N 용어설명 : IoT는 Internet of Things의 약자로, 한국어로는 사물인터넷※ 센서 위치 정보 신청 접수 및 문의 : 서울시 금천구 스마트도시인프라팀 운영팀(02-2133-2932) ​ ※ 패킷속성정보[송신서버 86, 데이터 1] http://iothub.eseoul.go.kr/publicData/insertForm.do 에서 신청'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: GcOutlawParking
+    name: GcOutlawParking
+    endpoint: http://openapi.seoul.go.kr:8088/json/GcOutlawParking/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: INST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 금천구
+      stats:
+        unique: 1
+    - name: MDL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GCHIAS
+      stats:
+        unique: 1
+    - name: SN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - GCHIAS002
+        - GCHIAS001
+      stats:
+        unique: 2
+    - name: ULFL_PKST_DTCT_CNT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: MNT5_OVER_PKST_VHCL_DTCT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: OPER_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Y
+      stats:
+        unique: 1
+    - name: INPT_DT
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2026-10-24 23:59:14.0'
+        - '2026-10-24 23:39:14.0'
+        - '2026-10-24 23:19:14.0'
+      stats:
+        min: '2026-10-24'
+        max: '2026-10-24'
+        unique: 52
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - INPT_DT
+cycle: default
+classification:
+  subsector_name: 도로 기타
+  depth: back
+  cross_cutting: false
+  prelim_score: 0.3772
+  rank_in_sector: 3984
+  brm: 교통물류 - 도로
+  why: 금천구 소방도로 IoT 감지, 국소 시범 데이터
+claims:
+  - id: c-15097095-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15097095.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15097095-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15097095-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15097095.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15097095-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15097095.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15097095-06
+    kind: admin_note
+    value: '[교통물류 - 도로 · 결정] 도로 유지관리(제설·포트홀·파손·점검·보수) (`road-maintenance`)와 유료도로·통행료(요금·하이패스·민자도로) (`road-toll`)만 배제, 대부분 살림.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L489
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15097095-07
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15097095.json
+  stats: probe/stats/15097095.json
+  data: probe/data/15097095/
+status: active

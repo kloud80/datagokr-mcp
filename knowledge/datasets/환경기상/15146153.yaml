@@ -1,0 +1,184 @@
+# Dataset 15146153 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15146153'
+tier: verified
+title: 서울특별시_토양오염우려지역 대책기준 초과 정보
+sector: 환경기상/환경일반/env-spatial
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15146153/fileData.do
+synonyms:
+  - 수질조사
+  - 환경
+  - 수질
+  - 오염
+  - 예외지점
+description_portal: ‘서울시 수질조사 예외지점 통계’ 자료로, 특정 연도별 총 조사지점 수를 집계한 것입니다. 각 행은 연도(YR), 지점 구분(ACTN_YN), 해당 연도의 총 조사 지점 수(CRTR)로 구성됩니다. ‘총조사지점수’는 해당 연도에 수질 조사가 진행된 전체 지점의 수를 의미하며, 이를 통해 연도별 조사 범위의 변동을 확인할 수 있습니다. 예를 들어, 2010년은 608개 지점으로 가장 많았으며, 이후 일부 연도에는 감소하는 추세가 나타납니다. 이러한 변화는 조사 예산, 행정구역 조정, 환경정책 변화, 수질 관리 중점지역 변경 등의 요인과 관련 있을 수 있습니다. 이 데이터는 시계열 분석을 통해 조사 규모 변화 추세를 파악하고, 특정 연도별 조사 확대나 축소 배경을 정책 자료와 연계하여 해석하는 데 활용할 수 있습니다. 또한, 다른 수질 데이터와 결합하면 조사 지점 수 증감이 수질 관리 성과나 환경 문제 대응과 어떤 상관성을 가지는지도 분석할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: tbSacxmnExcspStat
+    name: tbSacxmnExcspStat
+    endpoint: http://openapi.seoul.go.kr:8088/json/tbSacxmnExcspStat/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CTPN_YN
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기준초과지점수
+        - 대책기준초과지점수
+        - 총조사지점수
+      stats:
+        unique: 3
+    - name: YR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2017'
+        - '2016'
+        - '2009'
+      stats:
+        min: 2003
+        p50: 2013
+        max: 2025
+        unique: 23
+    - name: CRTR
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '3.0'
+        - '5.0'
+        - '2.0'
+      stats:
+        min: 1
+        p50: 10
+        max: 608
+        unique: 29
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 환경 공간 규제·주제도 (상수원보호구역·생태자연도·토지피복·특정토양오염·환경주제도)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.2291
+  rank_in_sector: 608
+  brm: 환경기상 - 환경일반
+  why: 연도별 조사지점 수 집계, 설명 불일치
+claims:
+  - id: c-15146153-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15146153.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15146153-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146153-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15146153.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146153-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15146153.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15146153-06
+    kind: admin_note
+    value: "세부 부문 '환경 공간 규제·주제도 (상수원보호구역·생태자연도·토지피복·특정토양오염·환경주제도)'의 가치: 필지·공간에 걸리는 환경 규제 레이어 — what-can-i-build"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#env-spatial
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15146153-07
+    kind: admin_note
+    value: '[환경기상 6개 영역 · 환경일반] 환경영향평가(흩어진 항목별 평가를 모음) · 환경 공간 규제(상수원보호구역·생태자연도·토지피복) · 환경 측정 실시간(방사선·소음·악취·S-DoT) · 오염원·화학물질 사업장 · 환경 업체·인증 · 공중화장실.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L682
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15146153-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15146153.json
+  stats: probe/stats/15146153.json
+  data: probe/data/15146153/
+status: active

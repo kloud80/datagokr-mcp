@@ -1,0 +1,238 @@
+# Dataset 15133255 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15133255'
+tier: verified
+title: 서울특별시_강북구 노인의료복지시설 정보
+sector: 사회복지/노인·청소년/elderly-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15133255/fileData.do
+synonyms:
+  - 노인
+  - 의료
+  - 복지
+  - 요양병원원
+  - 요양원
+description_portal: '서울특별시 강북구에서 제공하는 강북구 관내 노인의료복지서설 정보입니다.- 주요내용 : 기관명, 기관(급여)종류, 기관전화번호, FAX번호, 설립구분(법인/개인), 기관주소 등 제공*용어설명- 노인의료복지시설은 노인의 건강 관리, 치료, 재활, 생활 지원을 통합적으로 제공하는 시설- 단순 요양이나 병원 기능뿐 아니라 복지·생활 지원까지 결합된 시설로, 노인들의 신체적·정신적 건강과 생활 안정을 목표- 관련 법령: 「노인복지법」, 「의료법」, 「노인장기요양보험법」 등※ 제공부서 : 서울특별시 강북구 복지국 어르신·장애인과(02-901-6114)입니다.※ 바로가기 클릭 시 서울특별시 열린데이터광장 개방 데이터로 이동합니다.'
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: GbSeniorWelfare
+    name: GbSeniorWelfare
+    endpoint: http://openapi.seoul.go.kr:8088/json/GbSeniorWelfare/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: NO
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 16
+        max: 31
+        unique: 31
+    - name: ORGAN_CODE
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ORGAN_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 행복한노인요양원1
+        - 강북하루정요양원
+        - 거목실버홈
+      stats:
+        unique: 31
+    - name: ORGAN_TYPE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 노인요양공동생활가정
+        - 노인요양시설(개정법)
+        - 노인요양시설(개정법),치매전담실 가형 1실
+      stats:
+        unique: 3
+    - name: ORGAN_TEL
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 02-904-7782
+        - 02-999-2234
+        - 02-987-8879
+      stats:
+        unique: 25
+    - name: ORGAN_FAX
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 02-902-6406
+        - 02-903-8782
+        - 02-972-1966
+      stats:
+        unique: 23
+    - name: ORGAN_GB
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 개인
+        - 법인
+      stats:
+        unique: 2
+    - name: REG_DT
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: ORGAN_ADDR
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시 강북구 한천로 1160, 3층 (수유동)
+        - 서울특별시 강북구 덕릉로 46, 2층 2호 (수유동)
+        - 서울특별시 강북구 삼양로 433, 5층 (수유동)
+      stats:
+        unique: 30
+  foreign_keys:
+    - fields:
+        - ORGAN_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - ORGAN_ADDR
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.2933
+  rank_in_sector: 815
+  brm: 사회복지 - 노인·청소년
+  why: 강북구 한정 노인의료복지시설 31건 소규모 목록
+claims:
+  - id: c-15133255-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15133255.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15133255-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133255-03
+    kind: key
+    value: '실측 조인 키: address(ORGAN_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15133255.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 9개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133255-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15133255.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15133255-06
+    kind: admin_note
+    value: "세부 부문 '노인복지시설 (경로당·노인복지관·재가·주간보호·노인일자리 수행기관·치매안심센터)'의 가치: 고령화로 가장 빠르게 커지는 생활 수요, 건강보험 장기요양기관과 related. 사회복지시설 시설코드"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#elderly-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15133255-07
+    kind: admin_note
+    value: '[사회복지 - 노인·청소년 · 결정] 노인복지시설·고령친화/주거·청소년 시설/활동·청소년 보호/복지만. 통계·실태는 지역(시군구·시도)에 연계 가능한 것만 `regional-statistics`로 잇고 전국 실태조사는 배제 (구름: 지역에 연계 가능하면 이어 주고).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L613
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15133255-08
+    kind: admin_note
+    value: wave7 · 등급:보조 · wave5 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15133255.json
+  stats: probe/stats/15133255.json
+  data: probe/data/15133255/
+status: active

@@ -1,0 +1,202 @@
+# Dataset 15099212 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15099212'
+tier: verified
+title: 서울특별시_관리 공공미술 목록
+sector: 문화관광/문화예술/cultural-events
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15099212/fileData.do
+synonyms:
+  - 미술
+  - 조형물
+  - 작품
+  - 공공미술
+  - 작품명
+description_portal: 서울시 관리 공공 미술 목록 데이터는 서울시가 관리하는 공공 미술 작품의 현황을 파악하기 위한 정보입니다. 관리명은 공공미술 사업이나 관리 유형을 구분하는 항목이며, 작품명은 실제 설치된 미술 작품의 이름을 나타냅니다. 작품주소는 작품이 설치된 정확한 위치 정보를 제공하여 시민들이 현장을 방문하거나 지도 서비스에 연계해 활용할 수 있도록 합니다. 설치년도는 작품이 언제 조성·설치되었는지를 보여주어 시기별 공공미술 정책·추세를 분석하는 데 유용합니다. 관리기관 항목은 각 작품을 담당하는 부서를 나타내어 유지보수, 문의, 정책 담당 주체를 명확히 파악할 수 있게 해주는 행정·문화 데이터입니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: tvGonggongAllArt
+    name: tvGonggongAllArt
+    endpoint: http://openapi.seoul.go.kr:8088/json/tvGonggongAllArt/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: CODE_A1_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 기타
+        - 도시갤러리
+        - 동상
+      stats:
+        unique: 4
+    - name: GA_KNAME
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 쉘터오브메모리즈
+        - 한글역사인물(주시경,헐버트선생)상징 조형물
+        - 남산의 생태
+      stats:
+        unique: 99
+    - name: GA_ADDR
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 서울시 동작구 여의대방로 20길 33 보라매공원(보라매공원 호수 근처)
+        - 서울시 중구 서소문동 37-4일대 덕수궁 돌담길
+        - '이촌한강공원 한강철교 북단 하류방향 '
+      stats:
+        unique: 87
+    - name: GA_INS_DATE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2007'
+        - '2018'
+        - '2010'
+      stats:
+        min: 1964
+        p50: 2007.5
+        max: 2025
+        unique: 35
+    - name: CODE_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울시>디자인정책관>디자인산업담당관
+        - 서울시>미래한강본부>한강문화관광과
+        - 서울시>중부공원여가센터>공원운영과
+      stats:
+        unique: 16
+  foreign_keys:
+    - fields:
+        - GA_ADDR
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - GA_ADDR
+  space_via: address
+cycle: event
+classification:
+  subsector_name: 전시·행사 (문화포털 전국 행사·국립박물관 전시·소장품·강좌)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.531
+  brm: 문화관광 - 문화예술
+claims:
+  - id: c-15099212-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15099212.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15099212-02
+    kind: cadence
+    value: 명세상 수시 · 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099212-03
+    kind: key
+    value: '실측 조인 키: address(GA_ADDR)'
+    evidence:
+      - type: measured
+        source: probe/stats/15099212.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099212-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15099212.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15099212-06
+    kind: admin_note
+    value: '[문화관광 - 문화예술 · 문화재 · 문화체육관광일반 · 문화예술] 공연·문화시설·전시/행사·도서관·저작권/콘텐츠. 가사집·문예연감 텍스트, 공공미술, 종교시설, 실태조사·기금, 문화누리카드, 국어사전(우리말샘) 등 배제 (`arts-deferred`, `arts-non-core`). 키 `kopis_id`, `cultural_facility_cd`, 발급처 `kopis.or.kr`·`data4library.kr`.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L587
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15099212-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15099212.json
+  stats: probe/stats/15099212.json
+  data: probe/data/15099212/
+status: active

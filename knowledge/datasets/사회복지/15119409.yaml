@@ -1,0 +1,185 @@
+# Dataset 15119409 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15119409'
+tier: verified
+title: 서울특별시_여성인력개발기관 구직 정보
+sector: 사회복지/보육·가족및여성/child-family-facilities
+agency:
+  id: '6110000'
+  name: 서울특별시
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15119409/fileData.do
+synonyms:
+  - 여성인력
+  - 여성능력개발
+  - 구직
+  - 여성
+  - 일자리
+description_portal: 해당 데이터는 서울시 여성인력개발기관을 통해 제공되는 구직 정보 현황을 정리한 자료로, 여성 구직자의 취업 지원과 일자리 매칭을 위해 활용되는 중요한 기초 데이터입니다. 구직번호 항목은 각각의 구직 정보를 식별하는 고유 번호이며, 담당센터 항목은 해당 구직 정보를 관리하는 여성인력개발센터명을 나타냅니다. 구인자정보 항목에는 구직자와 관련된 기본 정보가 포함되어 있어 개인의 취업 준비 상황을 파악할 수 있습니다. 희망직종 항목은 구직자가 원하는 일자리 유형을 보여주며, 이를 통해 직종별 구직 수요를 분석할 수 있습니다. 경력 항목은 구직자의 경력 여부나 수준을 확인하는 데 유용하며, 진행상태 항목은 현재 구직 활동이 어떤 단계에 있는지를 나타내어 상담 및 취업 연계에 활용할 수 있습니다. 이 자료는 여성의 취업 활성화를 위한 정책 수립과 맞춤형 일자리 지원에 중요한 기반이 됩니다.
+accrual_periodicity: 수시
+team:
+  dept: 데이터전략과
+services:
+  - op: JobHunt
+    name: JobHunt
+    endpoint: http://openapi.seoul.go.kr:8088/json/JobHunt/1/100/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: data.seoul.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: INFOID
+      type: code
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: MANAGE_ORGAN_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 남부여성발전센터
+        - 북부여성발전센터
+        - 서부여성발전센터
+      stats:
+        unique: 6
+    - name: PERSONINFO
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 최**(여/76년06월)
+        - 임**(여/79년02월)
+        - 이**(여/73년10월)
+      stats:
+        unique: 100
+    - name: JOBNAME
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 요양보호사
+        - 경리 및 회계관련
+        - 간호조무사
+      stats:
+        unique: 63
+    - name: T_RESULT_NM
+      type: code
+      null_rate: 0.16
+      sample_values:
+        - 인테리어 시공 관련 경력 있음
+        - 미용실근무 3년차
+      stats:
+        unique: 2
+    - name: CONDITION_NAME
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - '구직신청      '
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 시도
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.298
+  brm: 사회복지 - 보육·가족및여성
+claims:
+  - id: c-15119409-01
+    kind: access
+    value: 외부 사이트 data.seoul.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15119409.json
+        observed_at: '2026-10-25'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 data.seoul.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-26'
+  - id: c-15119409-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15119409-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15119409.json
+        observed_at: '2026-10-25'
+        detail: 컬럼 6개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15119409-04
+    kind: coverage
+    value: 범위 시도 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15119409.json
+        observed_at: '2026-10-25'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-26'
+  - id: c-15119409-06
+    kind: admin_note
+    value: "세부 부문 '아동·가족·여성 복지시설 (아동복지시설·지역아동센터·다함께돌봄·가족센터·한부모·여성 보호/상담시설·새일센터)'의 가치: 사회복지시설 공통 마스터 참조. 여성 폭력 피해 보호시설은 법적으로 위치 비공개(access: partial-location)"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#child-family-facilities
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15119409-07
+    kind: admin_note
+    value: wave7 · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-25'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-25'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15119409.json
+  stats: probe/stats/15119409.json
+  data: probe/data/15119409/
+status: active

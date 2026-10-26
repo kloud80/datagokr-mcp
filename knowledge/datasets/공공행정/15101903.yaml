@@ -1,7 +1,7 @@
 # Dataset 15101903 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
 # 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
 id: '15101903'
-tier: candidate
+tier: verified
 title: 국민권익위원회_민원빅데이터_분석정보_API_2022
 sector: 공공행정/국민권익·인권/civil-complaints
 agency:
@@ -99,7 +99,7 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
+    verified_ok: true
   - op: /minClfcInfo5
     name: 민원분석 분류체계 정보
     endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minClfcInfo5
@@ -122,7 +122,7 @@ services:
     format:
       - json
     error_style: http200_body_code
-    verified_ok: false
+    verified_ok: true
   - op: /minStaticsInfo5
     name: 맞춤형통계 정보
     endpoint: https://apis.data.go.kr/1140100/minAnalsInfoView5/minStaticsInfo5
@@ -694,7 +694,37 @@ services:
     format:
       - json
     error_style: http200_body_code
-schema: {}
+schema:
+  fields:
+    - name: label
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 러시아
+      op: /minTopNKeyword5
+      stats:
+        unique: 1
+    - name: value
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1896.0'
+      op: /minTopNKeyword5
+      stats:
+        min: 1896
+        p50: 1896
+        max: 1896
+        unique: 1
+    - name: fullPath
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경찰·검찰·법원
+        - 경찰·검찰·법원>경찰·검찰 행정
+        - 경찰·검찰·법원>대법원
+      op: /minClfcInfo5
+      stats:
+        unique: 329
 coverage:
   spatial: 전국
   admin_unit: 시군구
@@ -712,12 +742,12 @@ classification:
 claims:
   - id: c-15101903-01
     kind: access
-    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-09-30 실호출 성공 오퍼레이션 0/6
+    value: 포털 활용신청 자동승인, serviceKey(query), 개발계정 일 100회. 2026-10-25 실호출 성공 오퍼레이션 2/6
     evidence:
       - type: measured
         source: probe/runs/15101903.json
-        observed_at: '2026-09-30'
-        detail: ops_ok 0/6
+        observed_at: '2026-10-25'
+        detail: ops_ok 2/6
       - type: measured
         source: probe/apply/15101903.json
         observed_at: '2026-09-30'
@@ -728,7 +758,7 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
   - id: c-15101903-02
     kind: cadence
     value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
@@ -739,33 +769,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
   - id: c-15101903-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15101903.json
-        observed_at: '2026-09-30'
-        detail: 컬럼 0개 값 패턴 판정
+        observed_at: '2026-10-25'
+        detail: 컬럼 3개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
   - id: c-15101903-04
     kind: coverage
     value: 검증 수신 0행 · 범위 전국 · 행정단위 시군구
     evidence:
       - type: measured
         source: probe/runs/15101903.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-25'
         detail: total None, rows 0
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
   - id: c-15101903-06
     kind: admin_note
     value: "세부 부문 '민원 분석 (민원빅데이터)'의 가치: 지역(행정구역) × 기관 × 키워드 × 월 민원 신호 — 지역 이슈의 가장 빠른 신호, 모델이 모름. 행정구역코드로 인구·실거래·상가와 결합"
@@ -794,30 +824,30 @@ claims:
     evidence:
       - type: measured
         source: probe/runs/15101903.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-25'
         detail: needs_params
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
   - id: c-15101903-11
     kind: pitfall
-    value: '오퍼레이션 6개는 최소 파라미터로 응답이 없었다: /minRisingKeyword5, /minTopNKeyword5, /minClfcInfo5, /minStaticsInfo5'
+    value: '오퍼레이션 4개는 최소 파라미터로 응답이 없었다: /minRisingKeyword5, /minStaticsInfo5, /minSimilarInfo5, /minTimeSeriseView5'
     evidence:
       - type: measured
         source: probe/runs/15101903.json
-        observed_at: '2026-09-30'
+        observed_at: '2026-10-25'
         detail: ok=false
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-01'
+    valid_until: '2027-04-26'
 verification:
-  verdict: 파라미터부족
-  probed_at: '2026-09-30'
+  verdict: 성공(파라미터부족)
+  probed_at: '2026-10-25'
   channel: portal
   rows: 0
-  ops_ok: 0/6
+  ops_ok: 2/6
   latency_ms: 30018
   run: probe/runs/15101903.json
   stats: probe/stats/15101903.json
