@@ -9,7 +9,7 @@
   GET  /api/codes            코드표 목록 · /api/codes/{id}?q= 코드 조회
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
-  GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지·데이터별 표)
+  GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지) · /api/docs/datasets 데이터별 표 한 쪽
   GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys · keys/{key} · codes · codes/{id} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
@@ -347,6 +347,14 @@ def api_docs():
     """Docs 화면 — 지식 체계 규모·관계·커버리지 집계와 데이터별 표 (pds/service/docs.py)."""
     from pds.service import docs
     return docs.build()
+
+
+@app.get("/api/docs/datasets", include_in_schema=False)
+def api_docs_datasets(q: str = "", tier: str = "verified", sector: str = "", key: str = "", lv: str = "", sort: str = "rows",
+                      page: int = 1, size: int = 25):
+    """Docs 데이터 표 한 쪽 (거르기·정렬·쪽 나누기는 서버에서)."""
+    from pds.service import docs
+    return docs.table(q, tier, sector, key, lv, sort, page, size)
 
 
 # ── 위키 (pds/service/wiki.py) — 데이터셋 yaml 탐색·관계 따라가기·수정 제안과 승인

@@ -150,7 +150,9 @@ def _build(stamp: float) -> dict:
             "fresh": dict(Counter(_bucket(r["lag"], [(1, "하루 이내"), (7, "1주 이내"), (31, "한 달 이내"), (365, "1년 이내"), (10**6, "1년 넘음")], "관찰 전") for r in ver)),
             "rows": dict(Counter(_bucket(r["rows"], [(999, "1천 미만"), (9999, "1만 미만"), (99999, "10만 미만"), (999999, "100만 미만"), (10**12, "100만 이상")], "미상") for r in ver)),
         },
-        "datasets": rows,
+        "levels": dict(Counter(level(r) for r in ver)),
+        "table": {"sectors": sorted({r["sector"] for r in rows}), "keys": sorted({k for r in rows for k in r["keys"]})},
+        "_rows": rows,  # 표는 /api/docs/datasets가 한 쪽씩 (7만 행을 통째로 보내면 24MB)
         "sites": json.loads((config.KNOWLEDGE / "expansion" / "site_coverage.json").read_text(encoding="utf-8"))
         if (config.KNOWLEDGE / "expansion" / "site_coverage.json").exists() else None,
         "examples": {"dataset": _yaml_example("datasets/식품건강/15154916.yaml", 70), "edge": _edge_example(edges),
@@ -193,4 +195,35 @@ def _grain_stats(ds: dict, with_edge: set) -> dict:
 
 def build() -> dict:
     from pds.strategy.plan import jsonable
-    return jsonable(_build(sindex.get().stamp))
+    return jsonable({k: v for k, v in _build(sindex.get().stamp).items() if k != "_rows"})
+
+
+def level(r: dict) -> str:
+    """커버리지 수준 — 범위(전국/지역) × 단위(개별 원장/집계) × 규모 (화면 DataTable과 같은 규칙)."""
+    nation = r["spatial"] == "전국"
+    record = (r["unit"] or "").split("(")[0] in ("개별", "필지·건물")
+    if nation and record and (r["rows"] or 0) >= 1000:
+        return "상"
+    if nation or (record and r["spatial"] in ("시도", "시군구")):
+        return "중"
+    return "하"
+
+
+SORTS = {"rows": lambda r: -(r["rows"] if r["rows"] is not None else -1), "edges": lambda r: -r["edges"],
+         "lag": lambda r: r["lag"] if r["lag"] is not None else 1e9, "claims": lambda r: -r["claims"], "title": lambda r: r["title"]}
+
+
+def table(q: str = "", tier: str = "verified", sector: str = "", key: str = "", lv: str = "", sort: str = "rows",
+          page: int = 1, size: int = 25) -> dict:
+    """Docs 데이터 표 한 쪽 — 거르기·정렬은 서버에서."""
+    from pds.strategy.plan import jsonable
+    s = q.strip().lower()
+    rows = [r for r in _build(sindex.get().stamp)["_rows"]
+            if (not tier or r["tier"] == tier) and (not sector or r["sector"] == sector) and (not key or key in r["keys"])
+            and (not lv or level(r) == lv) and (not s or s in r["title"].lower() or s in (r["agency"] or "").lower() or s in r["id"])]
+    rows.sort(key=SORTS.get(sort, SORTS["rows"]))
+    size = max(1, min(size, 100))
+    pages = max(1, -(-len(rows) // size))
+    page = max(1, min(page, pages))
+    return jsonable({"total": len(rows), "page": page, "pages": pages,
+                     "rows": [r | {"level": level(r)} for r in rows[(page - 1) * size:page * size]]})

@@ -14,7 +14,7 @@ import {
 import { docsApi, type DocsData } from './api'
 import { DatasetDrawer } from './DatasetDrawer'
 import { Diagram, type DLink, type DNode } from './docs/Diagram'
-import { DataTable, level } from './docs/DataTable'
+import { DataTable } from './docs/DataTable'
 import { SiteTable } from './docs/SiteTable'
 import { AgencyTable } from './docs/AgencyTable'
 import { fmtCount } from './JoinMap'
@@ -140,11 +140,7 @@ export function Docs() {
   const pickKey = (k: string) => { setKeyFilter(k); if (k) setTimeout(() => document.querySelector('.doc-table')?.scrollIntoView({ block: 'start' }), 250) }
 
   const T = d?.totals ?? {}
-  const levels = useMemo(() => {
-    const c: Record<string, number> = { 상: 0, 중: 0, 하: 0 }
-    d?.datasets.filter((r) => r.tier === 'verified').forEach((r) => { c[level(r)] += 1 })
-    return c
-  }, [d])
+  const levels: Record<string, number> = { 상: 0, 중: 0, 하: 0, ...(d?.levels ?? {}) }
 
   if (err) return <div className="doc-page"><p>Docs를 불러오지 못했습니다: {err}</p></div>
 
@@ -451,7 +447,7 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
               <h3 className="doc-h3">규모 — 전체 건수</h3>
               <Bars data={entries(d.coverage.rows, ['100만 이상', '100만 미만', '10만 미만', '1만 미만', '1천 미만', '미상'])} />
               <h3 className="doc-h3">전체 목록</h3>
-              <DataTable rows={d.datasets} keyFilter={keyFilter} onKeyFilter={setKeyFilter} open={setDsId} />
+              <DataTable sectors={d.table?.sectors ?? []} keys={d.table?.keys ?? []} keyFilter={keyFilter} onKeyFilter={setKeyFilter} open={setDsId} />
               <p className="doc-small">건수 표기 예: {fmtCount(2300238)} = 2,300,238건.</p>
             </Section>
 

@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AgentChip, AgentPagination, AgentSelect, AgentTable, AgentTextField } from '@bv-ds/ui'
-import type { DocsRow } from '../api'
+import { docsTable, type DocsRow, type DocsTablePage } from '../api'
 import { fmtCount } from '../JoinMap'
 
-// 데이터별 내용 범위와 커버리지 수준 — 검색·필터·정렬, 행을 누르면 설명서.
+// 데이터별 내용 범위와 커버리지 수준 — 검색·필터·정렬은 서버(/api/docs/datasets)가 하고 한 쪽(25행)만 받는다. 행을 누르면 설명서.
 
 export type Level = '상' | '중' | '하'
 
@@ -17,17 +17,10 @@ export function level(r: DocsRow): Level {
   return '하'
 }
 
-const PAGE = 25
-const SORTS: Record<string, (a: DocsRow, b: DocsRow) => number> = {
-  rows: (a, b) => (b.rows ?? -1) - (a.rows ?? -1),
-  edges: (a, b) => b.edges - a.edges,
-  lag: (a, b) => (a.lag ?? 1e9) - (b.lag ?? 1e9),
-  claims: (a, b) => b.claims - a.claims,
-  title: (a, b) => a.title.localeCompare(b.title, 'ko'),
-}
 
-export function DataTable({ rows, keyFilter, onKeyFilter, open }: {
-  rows: DocsRow[]
+export function DataTable({ sectors, keys, keyFilter, onKeyFilter, open }: {
+  sectors: string[]
+  keys: string[]
   keyFilter: string
   onKeyFilter: (k: string) => void
   open: (id: string) => void
@@ -38,19 +31,21 @@ export function DataTable({ rows, keyFilter, onKeyFilter, open }: {
   const [lv, setLv] = useState('')
   const [sort, setSort] = useState('rows')
   const [page, setPage] = useState(1)
+  const [data, setData] = useState<DocsTablePage | null>(null)
+  const [err, setErr] = useState('')
 
-  const sectors = useMemo(() => [...new Set(rows.map((r) => r.sector))].sort(), [rows])
-  const keys = useMemo(() => [...new Set(rows.flatMap((r) => r.keys))].sort(), [rows])
-  const shown = useMemo(() => {
-    const s = q.trim().toLowerCase()
-    return rows
-      .filter((r) => (!tier || r.tier === tier) && (!sector || r.sector === sector) && (!keyFilter || r.keys.includes(keyFilter))
-        && (!lv || level(r) === lv) && (!s || r.title.toLowerCase().includes(s) || (r.agency ?? '').toLowerCase().includes(s) || r.id.includes(s)))
-      .sort(SORTS[sort])
-  }, [rows, q, sector, tier, lv, keyFilter, sort])
-  const pages = Math.max(1, Math.ceil(shown.length / PAGE))
-  const cur = shown.slice((Math.min(page, pages) - 1) * PAGE, Math.min(page, pages) * PAGE)
+  useEffect(() => {  // 검색어는 잠깐 멈췄을 때만 요청
+    let live = true
+    const t = setTimeout(() => {
+      docsTable({ q, tier, sector, key: keyFilter, lv, sort, page })
+        .then((r) => { if (live) { setData(r); setErr('') } })
+        .catch((e: Error) => { if (live) setErr(e.message) })
+    }, q ? 250 : 0)
+    return () => { live = false; clearTimeout(t) }
+  }, [q, tier, sector, keyFilter, lv, sort, page])
   const reset = <T,>(f: (v: T) => void) => (v: T) => { f(v); setPage(1) }
+  const cur = data?.rows ?? []
+  const pages = data?.pages ?? 1
 
   return (
     <div className="doc-table">
@@ -64,11 +59,11 @@ export function DataTable({ rows, keyFilter, onKeyFilter, open }: {
           options={[{ value: '', label: '모든 키' }, ...keys.map((k) => ({ value: k, label: `키 ${k}` }))]} />
         <AgentSelect size="sm" value={lv} onChange={(e) => reset(setLv)(e.target.value)}
           options={[{ value: '', label: '모든 수준' }, { value: '상', label: '커버리지 상' }, { value: '중', label: '커버리지 중' }, { value: '하', label: '커버리지 하' }]} />
-        <AgentSelect size="sm" value={sort} onChange={(e) => setSort(e.target.value)}
+        <AgentSelect size="sm" value={sort} onChange={(e) => reset(setSort)(e.target.value)}
           options={[{ value: 'rows', label: '건수 많은 순' }, { value: 'edges', label: '조인 많은 순' }, { value: 'lag', label: '최신 순' },
             { value: 'claims', label: '근거 많은 순' }, { value: 'title', label: '이름순' }]} />
       </div>
-      <p className="doc-small">{shown.length.toLocaleString()}건{keyFilter ? ` · 키 ${keyFilter}` : ''} — 이름을 누르면 설명서가 열립니다.</p>
+      <p className="doc-small">{err ? `표를 불러오지 못했습니다: ${err}` : data ? `${data.total.toLocaleString()}건${keyFilter ? ` · 키 ${keyFilter}` : ''} — 이름을 누르면 설명서가 열립니다.` : '불러오는 중…'}</p>
       <AgentTable
         caption="데이터별 범위와 커버리지"
         columns={[
@@ -78,7 +73,7 @@ export function DataTable({ rows, keyFilter, onKeyFilter, open }: {
           { key: 'claims', label: '근거', numeric: true }, { key: 'level', label: '수준' },
         ]}
         rows={cur.map((r) => {
-          const l = level(r)
+          const l = r.level
           return {
             key: r.id,
             title: <button type="button" className="doc-link-btn" onClick={() => open(r.id)} title={r.agency ?? ''}>{r.title}</button>,

@@ -260,12 +260,19 @@ export interface DocsData {
   mappings: { id: string; rate?: number | null }[]
   gaps: { name: string; status?: string; reason?: string }[]
   coverage: Record<'spatial' | 'unit' | 'fresh' | 'rows', Record<string, number>>
-  datasets: DocsRow[]
+  levels?: Record<string, number>  // 검증 데이터의 커버리지 수준 (상·중·하)
+  table?: { sectors: string[]; keys: string[] }  // 표 거르기 선택지 — 행은 docsTable로 한 쪽씩
   examples: Record<'dataset' | 'edge' | 'rule' | 'context', string>
   sites?: SiteCoverage | null
 }
 
 export const docsApi = () => fetch('/api/docs').then((r) => json<DocsData>(r))
+
+export interface DocsTablePage { total: number; page: number; pages: number; rows: (DocsRow & { level: '상' | '중' | '하' })[] }
+export interface DocsTableQuery { q: string; tier: string; sector: string; key: string; lv: string; sort: string; page: number }
+// 데이터 표 한 쪽 (GET /api/docs/datasets) — 7만 행을 통째로 받지 않고 서버가 거르고 정렬해 25행씩
+export const docsTable = (p: DocsTableQuery) =>
+  fetch('/api/docs/datasets?' + new URLSearchParams(Object.entries(p).map(([k, v]) => [k, String(v)]))).then((r) => json<DocsTablePage>(r))
 
 export interface SiteRow {
   host: string
