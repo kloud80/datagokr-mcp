@@ -79,6 +79,19 @@ SITES.update({
     "eis.work24.go.kr": {"name": "고용24 고용행정통계", "env": "", "mode": "per_api", "how": "통계 화면 — 오픈API 대응 없음"},
 })
 
+# 2026-10-27 가입·검증 (pds/probe/kosis_sites.py · reb_sites.py)
+SITES.update({
+    "kosis.kr": {"name": "KOSIS 국가통계포털 (국가데이터처)", "env": "KOSIS_API_KEY", "mode": "key",
+                 "how": "회원가입 → 공유서비스 활용신청 → 인증키(즉시). 통계표는 Param/statisticsParameterData.do(orgId·tblId), 목록은 statisticsList.do. 분당 200건·4만 셀"},
+    "stat.kosis.kr": {"name": "KOSIS 기관 통계 (stat.kosis.kr)", "env": "KOSIS_API_KEY", "mode": "key", "how": "kosis.kr 키와 같음 — 같은 OpenAPI로 orgId·tblId 호출"},
+    "www.reb.or.kr": {"name": "한국부동산원 부동산통계정보 R-ONE", "env": "REB_API_KEY", "mode": "key",
+                      "how": "회원가입 → 오픈API 인증키(즉시). SttsApiTbl·SttsApiTblItm·SttsApiTblData (STATBL_ID·DTACYCLE_CD)"},
+    "reb.or.kr": {"name": "한국부동산원 부동산통계정보 R-ONE", "env": "REB_API_KEY", "mode": "key", "how": "R-ONE 오픈API 인증키"},
+    "plus.kipris.or.kr": {"name": "KIPRIS Plus (특허정보)", "env": "KIPRIS_API_KEY", "mode": "pending",
+                          "how": "키 발급 완료 — 서비스마다 장바구니 → 이용 신청(무료·유료)이 필요. 신청 전에는 resultCode 101/30 Not Registered. "
+                                 "REST 서비스 90건 신청 대기, BULK 전용 81건은 신청 후 파일 (pds/probe/kipris_sites.py)"},
+})
+
 
 
 def _have(env: str) -> bool:

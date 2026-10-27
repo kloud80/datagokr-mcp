@@ -327,7 +327,8 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
         site = run["site"]
         sec = {"www.vworld.kr": {"scheme": "apiKey", "in": "query", "name": "key"},
                "open.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"}, "www.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"},
-               "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
+               "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"},
+               "kosis.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}, "www.reb.or.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
         issuer = {"www.vworld.kr": "vworld.kr", "www.law.go.kr": "open.law.go.kr", "openapi.seoul.go.kr:8088": "data.seoul.go.kr"}.get(site, site)
         for o in run.get("ops") or []:
             if str(o.get("op") or "").startswith("vworld 다운로드"):  # pds/probe/vworld_files — 로그인 후 시도별 파일 (키 아님)

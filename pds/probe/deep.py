@@ -264,6 +264,19 @@ def call_op(client: httpx.Client, base: str, op: dict, key: str, max_rows: int, 
     return rec
 
 
+def save_run(run: dict) -> bool:
+    """실측 기록 저장 — 새 시도가 실패면 기존 성공 기록을 덮지 않는다 (다른 경로로 이미 검증된 것을 잃지 않게). 썼으면 True."""
+    path = ROOT / "runs" / f"{run['id']}.json"
+    if not run.get("ok_ops") and path.exists():
+        try:
+            if json.loads(path.read_text(encoding="utf-8")).get("ok_ops"):
+                return False
+        except ValueError:
+            pass
+    path.write_text(json.dumps(run, ensure_ascii=False, indent=1), encoding="utf-8")
+    return True
+
+
 def col_stats(df: pd.DataFrame) -> dict:
     out = {}
     for c in df.columns:
