@@ -20,54 +20,59 @@ description_portal: 이 데이터는 전북특별자치도 내 천연가스(CNG)
 accrual_periodicity: 수시
 team:
   dept: 디지털산업과
+services:
+  - op: statisticsParameterData
+    name: statisticsParameterData
+    endpoint: https://kosis.kr/openapi/Param/statisticsParameterData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: kosis.kr
+    params:
+      - name: method
+        required: true
+        example: getList
+      - name: format
+        required: true
+        example: json
+      - name: jsonVD
+        required: true
+        example: Y
+      - name: orgId
+        required: true
+        example: '214'
+      - name: tblId
+        required: true
+        example: DT_21402_J000003
+      - name: itmId
+        required: true
+        example: ALL
+      - name: prdSe
+        required: true
+        example: Y
+      - name: newEstPrdCnt
+        required: true
+        example: '1'
+      - name: objL1
+        required: true
+        example: ALL
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
 schema:
   fields:
-    - name: 항목
+    - name: C1_OBJ_NM
       type: code
       null_rate: 0.0
       sample_values:
-        - 총 버스대수(A) (대)
-        - 천연가스(CNG) 버스대수(B) (대)
-        - 천연가스 버스보급률(B/A) (%)
+        - 가상분류
       stats:
-        unique: 4
-    - name: '2016'
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '41.3'
-        - '1446'
-        - '597'
-      stats:
-        min: 41.3
-        p50: 319.15
-        max: 1446
-        unique: 3
-    - name: '2017'
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '1448'
-        - '592'
-        - '40.9'
-      stats:
-        min: 40.9
-        p50: 327.5
-        max: 1448
-        unique: 4
-    - name: '2018'
-      type: number
-      null_rate: 0.0
-      sample_values:
-        - '1434'
-        - '612'
-        - '42.7'
-      stats:
-        min: 42.7
-        p50: 334.5
-        max: 1434
-        unique: 4
-    - name: '2019'
+        unique: 1
+    - name: DT
       type: number
       null_rate: 0.0
       sample_values:
@@ -79,12 +84,114 @@ schema:
         p50: 326
         max: 1429
         unique: 4
+    - name: C1
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - DATA
+      stats:
+        unique: 1
+    - name: PRD_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A
+      stats:
+        unique: 1
+    - name: UNIT_NM_ENG
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - Each
+        - '%'
+      stats:
+        unique: 2
+    - name: ITM_ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - T001
+        - T002
+        - T003
+      stats:
+        unique: 4
+    - name: TBL_ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - DT_21402_J000003
+      stats:
+        unique: 1
+    - name: ITM_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 총 버스대수(A)
+        - 천연가스(CNG) 버스대수(B)
+        - 천연가스 버스보급률(B/A)
+      stats:
+        unique: 4
+    - name: TBL_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 천연가스버스 현황
+      stats:
+        unique: 1
+    - name: PRD_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+      stats:
+        min: 2019
+        p50: 2019
+        max: 2019
+        unique: 1
+    - name: LST_CHN_DE
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2021-05-17'
+      stats:
+        min: '2021-05-17'
+        max: '2021-05-17'
+        unique: 1
+    - name: C1_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 데이터
+      stats:
+        unique: 1
+    - name: UNIT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대
+        - '%'
+      stats:
+        unique: 2
+    - name: ORG_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '214'
+      stats:
+        min: 214
+        p50: 214
+        max: 214
+        unique: 1
 facets:
   grade:
     - 보조
 coverage:
   spatial: 시도
   admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - LST_CHN_DE
 cycle: default
 classification:
   subsector_name: 버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)
@@ -98,20 +205,20 @@ classification:
 claims:
   - id: c-15051347-01
     kind: access
-    value: 외부 사이트 외부 사이트 인증키 필요 (? 파라미터 ?) — 포털 활용신청과 별개. 2026-10-25 실호출 1/1 성공
+    value: 외부 사이트 kosis.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-27 실호출 1/1 성공
     evidence:
       - type: measured
         source: probe/runs/15051347.json
-        observed_at: '2026-10-25'
+        observed_at: '2026-10-27'
         detail: ops_ok 1/1
       - type: admin_review
         source: knowledge/key_issuers.yaml
         by: 구름
-        detail: 발급처 외부 사이트
+        detail: 발급처 kosis.kr
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-26'
+    valid_until: '2027-04-28'
   - id: c-15051347-02
     kind: cadence
     value: 명세상 수시
@@ -122,33 +229,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-26'
+    valid_until: '2027-04-28'
   - id: c-15051347-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15051347.json
-        observed_at: '2026-10-25'
-        detail: 컬럼 5개 값 패턴 판정
+        observed_at: '2026-10-27'
+        detail: 컬럼 14개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-26'
+    valid_until: '2027-04-28'
   - id: c-15051347-04
     kind: coverage
     value: 범위 시도 · 행정단위 전국·비공간
     evidence:
       - type: measured
         source: probe/runs/15051347.json
-        observed_at: '2026-10-25'
+        observed_at: '2026-10-27'
         detail: total None, rows None
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-26'
+    valid_until: '2027-04-28'
   - id: c-15051347-06
     kind: admin_note
     value: "세부 부문 '버스·대중교통·택시 (노선·정류장·도착·승하차·교통카드)'의 가치: 정류장·노선 원장 + 실시간 도착(TAGO·지자체 BIS) — 대중 수요 최대. 대중교통 검토 때 더 나눈다"
@@ -177,14 +284,14 @@ claims:
     evidence:
       - type: measured
         source: knowledge/targets.json
-        observed_at: '2026-10-25'
+        observed_at: '2026-10-27'
         detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
 verification:
   verdict: 성공(실측)
-  probed_at: '2026-10-25'
+  probed_at: '2026-10-27'
   channel: external
   ops_ok: 1/1
   run: probe/runs/15051347.json

@@ -23,53 +23,173 @@ description_portal: 전북특별자치도의 월별 수출입 통관 실적을 �
 accrual_periodicity: 수시
 team:
   dept: 디지털산업과
+services:
+  - op: statisticsParameterData
+    name: statisticsParameterData
+    endpoint: https://kosis.kr/openapi/Param/statisticsParameterData.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: kosis.kr
+    params:
+      - name: method
+        required: true
+        example: getList
+      - name: format
+        required: true
+        example: json
+      - name: jsonVD
+        required: true
+        example: Y
+      - name: orgId
+        required: true
+        example: '214'
+      - name: tblId
+        required: true
+        example: DT_21402_H008
+      - name: itmId
+        required: true
+        example: ALL
+      - name: prdSe
+        required: true
+        example: Y
+      - name: newEstPrdCnt
+        required: true
+        example: '1'
+      - name: objL1
+        required: true
+        example: ALL
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
 schema:
   fields:
-    - name: 월별(1)
+    - name: C1_OBJ_NM
       type: code
       null_rate: 0.0
       sample_values:
-        - 월별(1)
-        - 합계
-        - 1월
+        - 월별
       stats:
-        unique: 14
-    - name: '2024'
+        unique: 1
+    - name: DT
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '12545716'
+        - '7050891'
+        - '5494825'
+      stats:
+        min: 49139
+        p50: 526540
+        max: 12545716
+        unique: 52
+    - name: C1
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '001'
+        - '002'
+        - '003'
+      stats:
+        min: 1
+        p50: 7
+        max: 13
+        unique: 13
+    - name: PRD_SE
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - A
+      stats:
+        unique: 1
+    - name: UNIT_NM_ENG
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 1000$
+      stats:
+        unique: 1
+    - name: ITM_ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - T001
+        - T002
+        - T003
+      stats:
+        unique: 4
+    - name: TBL_ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - DT_21402_H008
+      stats:
+        unique: 1
+    - name: ITM_NM
       type: code
       null_rate: 0.0
       sample_values:
         - 총액(A+B)
-        - '11814990'
-        - '973696'
-      stats:
-        unique: 14
-    - name: '2024.1'
-      type: code
-      null_rate: 0.0
-      sample_values:
         - 수출(A)
-        - '6359021'
-        - '519134'
-      stats:
-        unique: 14
-    - name: '2024.2'
-      type: code
-      null_rate: 0.0
-      sample_values:
         - 수입(B)
-        - '5455969'
-        - '454562'
       stats:
-        unique: 14
-    - name: '2024.3'
+        unique: 4
+    - name: TBL_NM
       type: code
       null_rate: 0.0
       sample_values:
-        - 수출입초과(A-B)
-        - '903052'
-        - '64572'
+        - 수출입 통관 실적
       stats:
-        unique: 14
+        unique: 1
+    - name: PRD_DE
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2023'
+      stats:
+        min: 2023
+        p50: 2023
+        max: 2023
+        unique: 1
+    - name: LST_CHN_DE
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2025-07-28'
+      stats:
+        min: '2025-07-28'
+        max: '2025-07-28'
+        unique: 1
+    - name: C1_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 합계
+        - 1월
+        - 2월
+      stats:
+        unique: 13
+    - name: UNIT_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 천달러
+      stats:
+        unique: 1
+    - name: ORG_ID
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '214'
+      stats:
+        min: 214
+        p50: 214
+        max: 214
+        unique: 1
 facets:
   grade:
     - 전수
@@ -77,9 +197,9 @@ coverage:
   spatial: 시도
   admin_unit: 전국·비공간
 grain:
-  time: month
+  time: day
   time_fields:
-    - 월별(1)
+    - LST_CHN_DE
 cycle: default
 classification:
   subsector_name: 거래 상대 원장 (무역보험 바이어·전략물자 거래업체/물품·수출예정·고비즈코리아 상품·기업)
@@ -91,20 +211,20 @@ classification:
 claims:
   - id: c-15051345-01
     kind: access
-    value: 외부 사이트 외부 사이트 인증키 필요 (? 파라미터 ?) — 포털 활용신청과 별개. 2026-10-26 실호출 1/1 성공
+    value: 외부 사이트 kosis.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-27 실호출 1/1 성공
     evidence:
       - type: measured
         source: probe/runs/15051345.json
-        observed_at: '2026-10-26'
+        observed_at: '2026-10-27'
         detail: ops_ok 1/1
       - type: admin_review
         source: knowledge/key_issuers.yaml
         by: 구름
-        detail: 발급처 외부 사이트
+        detail: 발급처 kosis.kr
     qualifiers:
       generated_by: pds.dossier.claims
     rank: preferred
-    valid_until: '2027-04-27'
+    valid_until: '2027-04-28'
   - id: c-15051345-02
     kind: cadence
     value: 명세상 수시
@@ -115,33 +235,33 @@ claims:
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-27'
+    valid_until: '2027-04-28'
   - id: c-15051345-03
     kind: key
     value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
     evidence:
       - type: measured
         source: probe/stats/15051345.json
-        observed_at: '2026-10-26'
-        detail: 컬럼 5개 값 패턴 판정
+        observed_at: '2026-10-27'
+        detail: 컬럼 14개 값 패턴 판정
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-27'
+    valid_until: '2027-04-28'
   - id: c-15051345-04
     kind: coverage
     value: 범위 시도 · 행정단위 전국·비공간
     evidence:
       - type: measured
         source: probe/runs/15051345.json
-        observed_at: '2026-10-26'
+        observed_at: '2026-10-27'
         detail: total None, rows None
       - type: portal_meta
         source: class:coverage,admin_unit
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
-    valid_until: '2027-04-27'
+    valid_until: '2027-04-28'
   - id: c-15051345-06
     kind: admin_note
     value: '[재정금융 (6개 영역) · 무역및투자유치] 관세청 수출입 실적(신고 원장 → 품목·국가·시도·시군구 × 월, 10일 속보)·무역 코드(부호·세관장확인·관세환율)·거래 상대(바이어·전략물자 거래업체·고비즈코리아). KOTRA 해외시장 동향·국가정보·사례(문서형), 글로벌ICT포털, Comtrade 재게시, 투자 동향 배제.'
@@ -159,14 +279,14 @@ claims:
     evidence:
       - type: measured
         source: knowledge/targets.json
-        observed_at: '2026-10-26'
+        observed_at: '2026-10-27'
         detail: 외부 라운드·검증 메모
     qualifiers:
       generated_by: pds.dossier.claims
     rank: normal
 verification:
   verdict: 성공(실측)
-  probed_at: '2026-10-26'
+  probed_at: '2026-10-27'
   channel: external
   ops_ok: 1/1
   run: probe/runs/15051345.json

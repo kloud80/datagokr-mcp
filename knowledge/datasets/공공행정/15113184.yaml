@@ -1,0 +1,189 @@
+# Dataset 15113184 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15113184'
+tier: verified
+title: 국가데이터처_가계동향조사
+sector: 공공행정/국가통계/regional-grid
+agency:
+  id: '1241000'
+  name: 국가데이터처
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15113184/fileData.do
+synonyms:
+  - 소득
+  - 소비지출
+  - 비소비지출
+  - 처분가능소득
+  - 흑자액
+  - 흑자율
+  - 평균소비성향
+  - 가계수지
+description_portal: '1. 가구에 대한 가계수지 실태를 파악하여 국민의 소득과 소비 수준변화의 측정 및 분석 등에 필요한 자료를 제공2. 제공 자료: 가구당 월평균 가계수지, 소득5분위별 가구당 가계수지, 가구원수별 가구당 월평균 가계수지 등3. 공표 주기: 분기(소득/지출), 연간(지출)4. 유의사항- 조사개편 등으로 인한 연도별 조사대상 포괄범위 및 집계기준이 다르므로 자료 이용시 유의해야 함.- 도시근로자가구란 도시지역에 거주하는 가구로서 가구주가 임금 근로자인 가구를 의미하며, 1963년부터 이에 대한 통계 시계열자료가 제공되고 있음.- 소득에 관한 모든 금액자료는 가구당 월평균 금액이며, 별도의 표시가 없는 한 물가상승분이 포함된 명목금액임.- 현재 가구를 구성하고 있는 가구원에 대한 소득과 지출을 조사하여 집계한 자료이므로 타지에 나가 있는 가족의 소득과 지출은 포함되지 않음- 가구특성은 가구주를 기준으로 한 것임.- 분기별 소득 자료는 계절성을 가지고 있으므로 전년동분기비를 중심으로 분석하여야 함.- 5(또는 10)분위별 소득이란 가구를 소득순으로 나열한 다음, 최하위 가구부터 최상위 가구까지 5(또는 10)구간으로 등분하여 각 구간별 소득을 평균한 금액임.- 2014년부터 통신사를 통해 통신장비, 통신서비스 비용 구분을 보완하였으므로 시계열 비교시 유의가 필요'
+accrual_periodicity: 수시
+team:
+  dept: 가계수지동향과
+services:
+  - op: statisticsList
+    name: statisticsList
+    endpoint: https://kosis.kr/openapi/statisticsList.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: kosis.kr
+    params:
+      - name: format
+        required: true
+        example: json
+      - name: jsonVD
+        required: true
+        example: Y
+      - name: method
+        required: true
+        example: getList
+      - name: vwCd
+        required: true
+        example: MT_ZTITLE
+      - name: parentListId
+        required: true
+        example: E
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: LIST_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가계금융복지조사
+        - 가계동향조사
+        - 농가경제조사
+      stats:
+        unique: 8
+    - name: LIST_ID
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - E_1
+        - E_2
+        - E_3
+      stats:
+        unique: 8
+    - name: VW_NM
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 국내통계 주제별
+      stats:
+        unique: 1
+    - name: VW_CD
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - MT_ZTITLE
+      stats:
+        unique: 1
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 지역 격자 (읍면동 유동인구·체류 외국인·시장 물가)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5546
+  brm: 공공행정 - 국가통계
+claims:
+  - id: c-15113184-01
+    kind: access
+    value: 외부 사이트 kosis.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-27 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15113184.json
+        observed_at: '2026-10-27'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 kosis.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-28'
+  - id: c-15113184-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-28'
+  - id: c-15113184-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15113184.json
+        observed_at: '2026-10-27'
+        detail: 컬럼 4개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-28'
+  - id: c-15113184-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15113184.json
+        observed_at: '2026-10-27'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-28'
+  - id: c-15113184-06
+    kind: admin_note
+    value: '[공공행정 - 일반행정 · 국가통계 · 국가통계 (1,168건)] 통계 모음이라 SGIS 통계지리(집계구·주제도)와 읍면동 유동인구·체류 외국인·시장 물가만 남김. 부동산원 거래·임대 동향 → 주택, 주민등록 인구 → 지방행정.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L719
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15113184-07
+    kind: admin_note
+    value: 키 확대(kosis.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-27'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-27'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15113184.json
+  stats: probe/stats/15113184.json
+  data: probe/data/15113184/
+status: active
