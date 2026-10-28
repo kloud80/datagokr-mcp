@@ -18,6 +18,7 @@ import pandas as pd
 
 from pds import config
 from pds.expand.external_keys import SITES, _have
+from pds.strategy.signup import env_name
 
 OUT = config.KNOWLEDGE / "expansion"
 UA = {"User-Agent": "Mozilla/5.0 (pds)"}
@@ -81,7 +82,7 @@ def aggregate(d: pd.DataFrame | None = None) -> dict:
         fil = int((g["api_kind_label"] == "FILE_LINK").sum())
         targ = [i for i in g["id"] if i in t]
         ver = [i for i in g["id"] if t.get(i, {}).get("status") == "verified"]  # 대상 상태 기준 (데이터셋 생성 전에도 센다)
-        env = site.get("env", "")
+        env = site["env"] if "env" in site else env_name(host)  # 살펴보지 않은 사이트도 signup과 같은 변수 이름
         mode = site.get("mode")
         if mode == "pending":
             key = "승인·신청 대기"

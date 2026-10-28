@@ -15,6 +15,7 @@ from collections import defaultdict
 from urllib.parse import urlparse
 
 from pds import config
+from pds.strategy.signup import env_name
 
 # 사이트별 안내 — 발급 절차는 2026-10 기준 각 사이트 공지를 요약한 것. '확인 필요'는 사이트에서 절차를 다시 볼 것
 SITES: dict[str, dict] = {
@@ -33,7 +34,7 @@ SITES: dict[str, dict] = {
     "plus.kipris.or.kr": {"name": "KIPRIS Plus (특허정보)", "env": "KIPRIS_API_KEY", "how": "회원가입 → 서비스별 신청(무료/유료 구분) → 승인"},
     "opendart.fss.or.kr": {"name": "OpenDART (금감원 전자공시)", "env": "OPENDART_API_KEY", "how": "인증키 신청(이메일 인증) → 즉시. 개인 일 2만 회"},
     "www.safetydata.go.kr": {"name": "재난안전데이터공유플랫폼 (행안부)", "env": "SAFETYDATA_API_KEY", "how": "회원가입 → 데이터별 활용신청 → 승인"},
-    "bigdata.kepco.co.kr": {"name": "한전 전력데이터 개방포털", "env": "KEPCO_API_KEY", "how": "회원가입 → 오픈API 인증키 신청"},
+    "bigdata.kepco.co.kr": {"name": "한전 전력데이터 개방포털", "env": "BIGDATA_KEPCO_API_KEY", "how": "회원가입 → 오픈API 인증키 신청"},
     "www.culture.go.kr": {"name": "문화공공데이터광장", "env": "CULTURE_API_KEY", "how": "회원가입 → 서비스키 신청 — 확인 필요"},
     "data.gg.go.kr": {"name": "경기데이터드림", "env": "DATA_GG_API_KEY", "how": "회원가입 → 인증키 발급(즉시)"},
     "www.lawmaking.go.kr": {"name": "국민참여입법센터 (법제처)", "env": "LAWMAKING_API_KEY", "how": "오픈API 인증키 신청 — 확인 필요"},
@@ -116,7 +117,7 @@ def build() -> str:
         by[host].append(r)
     groups = []
     for host, rows in by.items():
-        s = SITES.get(host, {"name": host, "env": "PDS_KEY_" + re.sub(r"\W", "_", host.split(":")[0].removeprefix("www.")).upper(),
+        s = SITES.get(host, {"name": host, "env": env_name(host),
                              "how": "사이트에서 회원가입 → 오픈API 인증키 신청 — 확인 필요"})
         pr = [_priority(r) for r in rows]
         groups.append((host, s, rows, pr.count(1), len(rows)))
@@ -159,8 +160,50 @@ def build() -> str:
     return "\n".join(L) + "\n"
 
 
+ENV_START, ENV_END = "# ── 외부 사이트 키", "# ── Postgres"
+PAIRED = {"VWORLD_API_KEY": [("VWORLD_DOMAIN", "브이월드 키에 등록한 서비스 URL (개발키면 필요)")],
+          "SGIS_CONSUMER_KEY": [("SGIS_CONSUMER_SECRET", "SGIS 보안 Key (서비스 ID와 한 쌍)")]}
+
+
+def env_block() -> str:
+    """.env.example의 외부 사이트 키 구간 — Docs의 사이트 커버리지(site_coverage.json)와 같은 상태로 변수마다 제공처·데이터 수·검증 수를 적는다.
+    내 .env와 견줘 빈 곳을 채워 나간다. 값은 읽지 않는다."""
+    sites = json.loads((config.KNOWLEDGE / "expansion" / "site_coverage.json").read_text(encoding="utf-8"))["sites"]
+    by: dict[str, dict] = {}
+    for s in sites:
+        env = s.get("env") or ""
+        if not env or env.startswith("("):
+            continue  # API가 없거나 키 없이(견본·세션·파일) 되는 곳
+        e = by.setdefault(env, {"names": [], "total": 0, "verified": 0, "keys": set()})
+        e["total"] += s["total"]
+        e["verified"] += s["verified"]
+        e["keys"].add(s["key"])
+        if s["name"] not in e["names"]:
+            e["names"].append(s["name"])
+    rank = lambda e: 0 if any(k.startswith("보유") for k in e["keys"]) else 1 if "승인·신청 대기" in e["keys"] else 2  # noqa: E731
+    rows = sorted(({"env": k, **v} for k, v in by.items()), key=lambda e: (rank(e), -e["total"]))
+    label = {0: "확보", 1: "대기", 2: "필요"}
+    L = [f"{ENV_START} — 생성: python -m pds.expand.external_keys (Docs 사이트 커버리지와 같은 상태)",
+         "# 상태: 확보=키로 검증 중 · 대기=신청·승인 기다림 · 필요=아직 키 없음. 숫자는 그 사이트에 링크된 포털 데이터 수(검증 수)",
+         "# 비어 있는 변수를 채우면 그 사이트 검증을 돌릴 수 있다. 사이트별 발급 방법은 추가외부키.md, 발급 방법이 '확인 필요'인 곳은 아직 사이트를 살펴보지 않은 곳"]
+    w = max(len(e["env"]) for e in rows) + 2
+    for e in rows:
+        L.append(f"{(e['env'] + '='):<{w}}# [{label[rank(e)]}] {' · '.join(e['names'])[:50]} — {e['total']:,}건 (검증 {e['verified']:,})")
+        for x, note in PAIRED.get(e["env"], []):
+            L.append(f"{(x + '='):<{w}}#   {note}")
+    return "\n".join(L) + "\n"
+
+
+def write_env_example() -> None:
+    p = config.ROOT / ".env.example"
+    t = p.read_text(encoding="utf-8")
+    a, b = t.index(ENV_START), t.index(ENV_END)
+    p.write_text(t[:a] + env_block() + "\n" + t[b:], encoding="utf-8")
+
+
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
     out = config.ROOT / "추가외부키.md"
     out.write_text(build(), encoding="utf-8")
-    print(out)
+    write_env_example()
+    print(out, config.ROOT / ".env.example")

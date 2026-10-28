@@ -362,13 +362,13 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
                 <div>
                   <h3 className="doc-h3">접근 경로</h3>
                   <PieChart type="donut" responsive height={260} data={entries(d.channels).map(([k, v]) => ({ label: k, value: v }))} />
-                  <p className="doc-small">외부 사이트는 기관 사이트에서 키를 받아야 하는 데이터입니다(브이월드·서울·법제처·나이스). 나머지 외부 사이트 359건은 키가 없어 대기 중입니다(추가외부키.md).</p>
+                  <p className="doc-small">외부 사이트: 기관 사이트의 키·계정으로 받는 데이터. 사이트별 상태는 6절.</p>
                 </div>
               </div>
             </Section>
 
-            <Section id="sites" n={6} title="가입이 필요한 사이트와 사이트별 커버리지"
-              lead={<>data.go.kr 목록에 있어도 데이터가 기관 사이트에 있는 경우(링크형)가 많다. 포털 데이터는 포털 계정 하나와 데이터별 활용신청(대부분 자동승인)이면 되지만, 링크형은 <b>그 사이트에 따로 가입하고 키를 받아야</b> 한다. 아래는 포털 목록 전체의 링크형 데이터를 제공처 주소로 묶은 결과다.</>}>
+            <Section id="sites" n={6} title="data.go.kr 외 추가 가입이 필요한 사이트"
+              lead={<>링크형 데이터(포털 목록에 있으나 데이터는 기관 사이트에 있음)의 제공처별 가입·키 상태와 검증 수. 키 상태는 <code className="pds-code">.env.example</code>의 변수와 같다.</>}>
               {d.sites ? (<>
                 <ProportionBar unit="건" data={[
                   { label: '포털에서 바로 (계정 1개 + 활용신청)', value: d.sites.summary.portal_direct },
@@ -376,19 +376,14 @@ by_pnu = pd.concat([...])                                  # 필지별로 쌓아
                   { label: '외부 사이트 파일', value: d.sites.sites.reduce((a, r) => a + r.file, 0) },
                 ]} />
                 <div className="doc-cards4">
-                  {(['보유·검증', '가입 불필요(견본)', '승인·신청 대기', '미보유', '키 불필요'] as const).map((k) => (
+                  {(['보유·검증', '보유', '가입 불필요(견본)', '승인·신청 대기', '미보유', '키 불필요'] as const).map((k) => (
                     <div key={k} className={`doc-card doc-card--${k === '보유·검증' || k === '가입 불필요(견본)' ? 'ok' : k === '미보유' || k === '승인·신청 대기' ? 'need' : 'plain'}`}>
                       <AgentChip variant={k === '보유·검증' || k === '가입 불필요(견본)' ? 'live' : k === '미보유' || k === '승인·신청 대기' ? 'hot' : 'neutral'}>{k}</AgentChip>
                       <b>{n(d.sites?.summary.by_key[k]?.sites ?? 0)}곳</b>
-                      <p>{n(d.sites?.summary.by_key[k]?.datasets ?? 0)}건 · {({ '보유·검증': '가입·키·로그인 세션으로 실제로 불러 확인한 사이트', '가입 불필요(견본)': '가입 없이 견본 키(sample·test)로 확인한 사이트', '승인·신청 대기': '가입·신청은 했고 승인이나 API별 활용신청을 기다리는 사이트', '미보유': 'API 키가 필요하지만 아직 받지 않은 사이트 (추가외부키.md)', '키 불필요': '파일 내려받기만 하는 사이트(대부분 기관 홈페이지) — 가입 없이 또는 계정만' } as Record<string, string>)[k]}</p>
+                      <p>{n(d.sites?.summary.by_key[k]?.datasets ?? 0)}건 · {({ '보유·검증': '키·로그인 세션으로 불러 확인한 사이트', '보유': '키는 있고 검증 전인 사이트', '가입 불필요(견본)': '가입 없이 견본 키(sample·test)로 확인한 사이트', '승인·신청 대기': '가입·신청 후 승인 대기', '미보유': 'API 키가 필요하고 아직 없음', '키 불필요': '파일만 제공 — 가입 없이 또는 계정만' } as Record<string, string>)[k]}</p>
                     </div>
                   ))}
                 </div>
-                <p className="doc-p">처음에는 포털과 <b>브이월드 · 서울 열린데이터광장 · 법제처 · 나이스</b>만 키가 있었다. 2026-10-06 사이트를 차례로 가입·확인했다 —
-                  <b>경기데이터드림</b>(로그인 세션 · 시트) · <b>제주데이터허브</b>(미리보기 표) · <b>재난안전데이터공유플랫폼</b>(샘플 다운로드) · <b>농식품 공공데이터 포털</b> ·
-                  <b>열린국회정보</b> · <b>지방재정365</b>(포털 링크가 공시 화면이라 제목 유사도로 짝지음) · <b>문화공공데이터광장</b>(API마다 신청, API별 서비스키가 메일로 — 115건) ·
-                  <b>OpenDART</b> · <b>고용24</b>(서비스별 키 11개). <b>식품안전나라 · 한국도로공사 · 택지정보</b>는 가입 없이 견본 키로 확인됐다.
-                  생활안전지도·농사로는 승인 대기, 기상청 API허브는 API마다 활용신청이 남았다. 사이트마다 검증기가 따로 있다(<code className="pds-code">pds/probe/*_sites.py · *_files.py</code>).</p>
                 <SiteTable sites={d.sites.sites} />
               </>) : <p className="doc-p">사이트별 집계를 아직 만들지 않았습니다 (python -m pds.expand.site_coverage).</p>}
             </Section>
