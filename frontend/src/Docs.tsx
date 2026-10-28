@@ -30,7 +30,7 @@ const TOC = [
   { id: 'standard', n: 3, t: '표준과 데이터별 구성' },
   { id: 'relations', n: 4, t: '관계의 정의' },
   { id: 'scope', n: 5, t: '데이터 대상과 커버리지' },
-  { id: 'sites', n: 6, t: '가입이 필요한 사이트' },
+  { id: 'sites', n: 6, t: '추가 가입이 필요한 사이트' },
   { id: 'progress', n: 7, t: '지금까지 진행된 사항' },
   { id: 'verified', n: 8, t: '확인된 관계와 데이터' },
   { id: 'coverage', n: 9, t: '데이터별 범위와 커버리지 수준' },
