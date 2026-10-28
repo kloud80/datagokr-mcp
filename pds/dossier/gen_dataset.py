@@ -328,7 +328,8 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
         sec = {"www.vworld.kr": {"scheme": "apiKey", "in": "query", "name": "key"},
                "open.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"}, "www.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"},
                "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"},
-               "kosis.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}, "www.reb.or.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
+               "kosis.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}, "www.reb.or.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"},
+               "bigdata.kepco.co.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
         issuer = {"www.vworld.kr": "vworld.kr", "www.law.go.kr": "open.law.go.kr", "openapi.seoul.go.kr:8088": "data.seoul.go.kr"}.get(site, site)
         for o in run.get("ops") or []:
             if str(o.get("op") or "").startswith("vworld 다운로드"):  # pds/probe/vworld_files — 로그인 후 시도별 파일 (키 아님)
@@ -338,6 +339,11 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
                             "approval": "external", "format": [fmt], "verified_ok": bool(o.get("ok"))})
                 continue
             if not o.get("url"):
+                continue
+            if o.get("op") == "sheetexec":  # pds/probe/mnd_sites — 국방부 시트 조회는 키 없이 POST
+                out.append({"op": "sheetexec", "name": "시트 조회", "endpoint": o["url"], "method": "POST", "security": {"scheme": "none", "issuer": issuer},
+                            "params": [{"name": k, "required": True, "example": str(v)[:80]} for k, v in (o.get("params") or {}).items()],
+                            "approval": "external", "format": ["json"], "verified_ok": bool(o.get("ok"))})
                 continue
             out.append({"op": o.get("op"), "name": o.get("op"), "endpoint": o["url"], "method": "GET", "security": sec | {"issuer": issuer},
                         "params": [{"name": k, "required": True, "example": str(v)[:80]} for k, v in (o.get("params") or {}).items()],

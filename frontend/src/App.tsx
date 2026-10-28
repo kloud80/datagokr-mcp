@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import {
   AgentAIMessage,
   AgentAccordion,
@@ -15,18 +15,32 @@ import { PlanPanel, type PlanTab } from './PlanPanel'
 import { DatasetDrawer } from './DatasetDrawer'
 import { Credit } from './Credit'
 import type { Trust } from './Trust'
+import EXAMPLES from './examples.json'
 
 // 2열 — 왼쪽 대화(입력창은 열 바닥에 고정, 대화만 스크롤) · 오른쪽 전략(헤더·탭 고정, 본문만 스크롤).
 // 답마다 '전략 vN' 카드가 붙고, 오른쪽은 고른 버전을 보여준다. 좁은 화면은 대화/전략 전환.
 
-const EXAMPLES = [  // 포털 AI 비교 1천 문항에서 고른 질문 (evals/portal_1k/notes.json showcase의 ★)
-  '초등학교 위치랑 어린이보호구역 교통사고 데이터 겹쳐서 보고 싶어요',
-  '위생등급 지정 업소와 행정처분 이력 겹치는 곳 찾기',
-  '낚시어선 사고 기록이랑 당시 기상특보 발효 여부 연결 가능해?',
-  '지역별 도시가스 공급량을 기온 데이터랑 합쳐서 수요 예측하고 싶어요',
-  '울릉도 배 타려는데 결항 얼마나 자주 돼요?',
-  '인천 미추홀구 동별 전세 거래량이랑 청년 인구 비율',
-]
+// 예시 질문 — 포털 AI 비교 1천 문항 중 우리 추천이 크게 앞선 것 (python -m evals.portal_1k.examples). 6개씩 10초마다 바꾼다
+const SHOWN = 6
+
+function Examples({ onPick }: { onPick: (q: string) => void }) {
+  const pool = useMemo(() => [...EXAMPLES].sort(() => Math.random() - 0.5), [])
+  const [at, setAt] = useState(0)
+  const [hold, setHold] = useState(false)
+  useEffect(() => {
+    if (hold || pool.length <= SHOWN) return
+    const t = window.setInterval(() => setAt((a) => (a + SHOWN) % pool.length), 10000)
+    return () => window.clearInterval(t)
+  }, [hold, pool.length])
+  const cur = Array.from({ length: Math.min(SHOWN, pool.length) }, (_, i) => pool[(at + i) % pool.length])
+  return (
+    <div className="pds-row pds-examples" key={at} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
+      {cur.map((e) => (
+        <AgentButton key={e.q} variant="secondary" size="sm" title={`포털 AI 핵심 데이터 ${e.portal}개 → 여기 ${e.ours}개`} onClick={() => onPick(e.q)}>{e.q}</AgentButton>
+      ))}
+    </div>
+  )
+}
 
 interface Turn {
   role: 'user' | 'assistant'
@@ -156,9 +170,7 @@ export function App() {
             <AgentAIMessage role="assistant" name="PDS">
               <div className="pds-intro">
                 <p>하고 싶은 일을 말해 주세요. 검증된 공공데이터와 실측된 조인 경로만으로 데이터 조합·단계·실행 코드를 만들어 오른쪽에 펼칩니다.</p>
-                <div className="pds-row">
-                  {EXAMPLES.map((e) => <AgentButton key={e} variant="secondary" size="sm" onClick={() => void send(e)}>{e}</AgentButton>)}
-                </div>
+                <Examples onPick={(q) => void send(q)} />
               </div>
             </AgentAIMessage>
           ) : null}

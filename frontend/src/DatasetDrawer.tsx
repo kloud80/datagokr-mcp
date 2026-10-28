@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AgentAlert, AgentDrawer, AgentSkeleton } from '@bv-ds/ui'
+import { AgentAlert, AgentButton, AgentDrawer, AgentSkeleton } from '@bv-ds/ui'
 import { api, type DatasetOut } from './api'
 import { Markdown, type OpenDataset } from './md'
 
@@ -17,7 +17,8 @@ export function DatasetDrawer({ id, onClose, open }: { id: string | null; onClos
 
   const title = data?.dataset.title ?? id ?? ''
   return (
-    <AgentDrawer open={!!id} onClose={onClose} title={title} description={id ? `포털 ID ${id}` : undefined}>
+    <AgentDrawer open={!!id} onClose={onClose} title={title} description={id ? `포털 ID ${id}` : undefined}
+      actions={<AgentButton variant="secondary" size="sm" onClick={onClose}>닫기</AgentButton>}>
       {err ? (
         <AgentAlert tone="info" title="지식 체계에 없는 데이터">
           포털 목록에만 있는 데이터입니다.{' '}
