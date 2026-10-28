@@ -1,0 +1,220 @@
+# Dataset 15050550 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15050550'
+tier: verified
+title: 국방부_예비군 훈련장 정보
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15050550/fileData.do
+synonyms:
+  - 훈련장
+  - 예비군 훈련장
+  - 훈련장 위치
+  - 예비군부대
+  - 예비군
+description_portal: 전국 예비군 훈련장에 대한 데이터입니다. 세부 항목으로 훈련장, 군구, 시도, 주소, 약도, 훈련장 유형명(과학화훈련장, 동원훈련장, 지역훈련장 등), 훈련장 형태명(D형, 대대형, 중소도시형, 주둔지 등), 훈련장 종류명(예비군 훈련장, 현역 훈련장 등), 훈련장 전화번호 등 훈련장 정보를 상세히 담고 있어 필요한 정보를 쉽게 찾아볼 수 있습니다. 해당 데이터는 예비군 훈련 참여 전 훈련장의 위치를 쉽게 파악할 수 있고, 예비군 훈련장 관리에 용이하며, 국방 자원을 효율적으로 운용하는 데에 기초 자료로써 활용 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: 자원동원과
+services:
+  - op: DS_AMRSV_TRNGCMP_RGHMAP
+    name: DS_AMRSV_TRNGCMP_RGHMAP
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_AMRSV_TRNGCMP_RGHMAP/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: knd
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 예비군 훈련장
+        - 현역 훈련장
+        - 직장 위임훈련장
+      stats:
+        unique: 3
+    - name: gungu
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 북구
+        - 옹진군
+        - 동구
+      stats:
+        unique: 175
+    - name: attmpt
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 전남광주통합특별시
+        - 경상북도
+      stats:
+        unique: 16
+    - name: addr
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 해운대구 송정동 43
+        - 충청남도 서산시 인지면 (인지면) 290-33
+        - 경상북도 안동시 태화동 572-3(제일타일 옆 골목 안쪽)
+      stats:
+        unique: 146
+    - name: shape
+      type: code
+      null_rate: 0.0481
+      sample_values:
+        - C형
+        - 지방형
+        - D형
+      stats:
+        unique: 9
+    - name: type
+      type: code
+      null_rate: 0.0034
+      sample_values:
+        - 과학화훈련장
+        - 지역훈련장
+        - 동원훈련장
+      stats:
+        unique: 3
+    - name: rghmap
+      type: string
+      null_rate: 0.3986
+      sample_values:
+        - https://www.yebigun1.mil.kr/cmm/fms/getTCImage.do?atchFileId=c5cde500-ac8c-11f1-
+        - https://www.yebigun1.mil.kr/cmm/fms/getTCImage.do?atchFileId=649728f0-8c6c-11f0-
+        - https://www.yebigun1.mil.kr/cmm/fms/getTCImage.do?atchFileId=d056c4f0-5a35-11f1-
+      stats:
+        unique: 76
+    - name: trngcmp
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 안동 예비군훈련대 훈련장
+        - 강진 과학화예비군훈련장
+        - 남원 과학화 예비군훈련장
+      stats:
+        unique: 157
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5607
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15050550-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15050550.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15050550-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050550-03
+    kind: key
+    value: '실측 조인 키: address(addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15050550.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050550-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15050550.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050550-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15050550-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15050550.json
+  stats: probe/stats/15050550.json
+  data: probe/data/15050550/
+status: active

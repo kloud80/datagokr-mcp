@@ -1,0 +1,200 @@
+# Dataset 15090317 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15090317'
+tier: verified
+title: 국방부_군 선별진료소 내원 현황
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15090317/fileData.do
+synonyms:
+  - 선별진료소
+  - 군병원
+  - PCR
+  - PCR 검사
+  - 2021 선별진료소
+  - 군내 코로나 진료소
+  - 코로나19
+  - 코로나 선별진료소 현황
+description_portal: 2021년 1월부터 5월까지 각 군병원 내 선별진료소를 방문한 환자의 월별 내원 현황을 기록한 자료입니다. 데이터는 군 장병 및 시설 내 코로나19 감염병 확산 방지를 목적으로 수집되었으며, 군병원별 PCR 검사를 포함한 선별진료소 방문 환자 수(명)를 집계했습니다.CSV 형식으로 제공되는 이 데이터는 월별 환자 수 추이 분석을 통해 군 내 방역 정책 수립 및 감염병 대응 전략 개선에 활용할 수 있습니다.특히, 군 의료기관별 검사 수요 변동을 파악하여 자원 배분 효율성을 높일 수 있습니다.현재는 엔데믹 단계 진입으로 PCR 검사 체계가 축소되었으나, 해당 데이터는 향후 유사 감염병 발생 시 신속한 대응 체계 구축을 위한 참고자료로 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 국군의무사령부
+services:
+  - op: sheetexec
+    name: 시트 조회
+    endpoint: https://opendata.mnd.go.kr/openinf/sheetexec.jsp
+    method: POST
+    security:
+      scheme: none
+      issuer: opendata.mnd.go.kr
+    params:
+      - name: infId
+        required: true
+        example: OA-9573
+      - name: dsId
+        required: true
+        example: TB_MND_SELMEDI_SVS_INFO
+      - name: ibpage
+        required: true
+        example: '1'
+      - name: onepagerow
+        required: true
+        example: '1000'
+    approval: external
+    format:
+      - json
+    verified_ok: true
+schema:
+  fields:
+    - name: hosp_month
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 3
+        max: 5
+        unique: 5
+    - name: hosp_total
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5136'
+        - '6021'
+        - '11951'
+      stats:
+        min: 5136
+        p50: 11344
+        max: 15162
+        unique: 5
+    - name: hosp_year
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - hosp_month
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.4054
+  brm: 보건의료 - 보건의료
+claims:
+  - id: c-15090317-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (? 파라미터 ?) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15090317.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15090317-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15090317-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15090317.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15090317-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15090317.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15090317-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15090317-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15090317-08
+    kind: admin_note
+    value: 키 확대(opendata.mnd.go.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15090317.json
+  stats: probe/stats/15090317.json
+  data: probe/data/15090317/
+status: active

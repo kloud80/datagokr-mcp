@@ -1,0 +1,199 @@
+# Dataset 3044441 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '3044441'
+tier: verified
+title: 국방부_공군 블랙이글스 행사일정
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/3044441/fileData.do
+synonyms:
+  - 블랙이글스
+  - 행사일정
+  - 에어쇼
+  - 특수비행팀
+  - 공군
+description_portal: 대한민국 공군 특수 비행팀 블랙이글스의 에어쇼 행사 일정입니다. 행사명과 행사 일자, 장소, 정보 및 사진 정보(링크) 등 행사 일정을 상세하게 나타내고 있습니다. 블랙이글스 에어쇼는 국방 관련 행사뿐만 아니라 일반인이 주 대상인 행사에서도 진행하여 국방 PR이 원활하게 이루어지도록 합니다. 또한, 해당 데이터는 블랙이글스의 일정을 한눈에 파악하여 관리하고, 효율적인 예산 편성을 하는 데에 도움을 줍니다.* 사전 신청된 내용을 바탕으로 작성되었으나, 작전 운영과 안전 등의 사유로 계획된 일정이 변경 혹은 취소될 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 공군본부
+services:
+  - op: sheetexec
+    name: 시트 조회
+    endpoint: https://opendata.mnd.go.kr/openinf/sheetexec.jsp
+    method: POST
+    security:
+      scheme: none
+      issuer: opendata.mnd.go.kr
+    params:
+      - name: infId
+        required: true
+        example: OA-9515
+      - name: dsId
+        required: true
+        example: TB_MND_AF_BLEG_ENATV_SCHDL
+      - name: ibpage
+        required: true
+        example: '1'
+      - name: onepagerow
+        required: true
+        example: '1000'
+    approval: external
+    format:
+      - json
+    verified_ok: true
+schema:
+  fields:
+    - name: dates
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 25-05-02(금)
+        - 25-02-28(금)
+        - 25-03-01(토)
+      stats:
+        unique: 49
+    - name: enatvnm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 공군사관학교 제77기 입학식
+        - 제106주년 삼일절 경축행사
+        - 공군사관학교 제73기 졸업 및 임관식
+      stats:
+        unique: 50
+    - name: glry_link_addr
+      type: code
+      semantic_type: address
+      null_rate: 1.0
+      stats:
+        unique: 0
+    - name: plc
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 진주
+        - 청주
+        - 천안
+      stats:
+        unique: 37
+    - name: rowno
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 25.5
+        max: 50
+        unique: 50
+  foreign_keys:
+    - fields:
+        - glry_link_addr
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5484
+  brm: 통일외교안보 - 병무행정
+claims:
+  - id: c-3044441-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (? 파라미터 ?) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/3044441.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-3044441-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3044441-03
+    kind: key
+    value: '실측 조인 키: address(glry_link_addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/3044441.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3044441-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/3044441.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3044441-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3044441-07
+    kind: admin_note
+    value: 키 확대(opendata.mnd.go.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/3044441.json
+  stats: probe/stats/3044441.json
+  data: probe/data/3044441/
+status: active

@@ -1,0 +1,240 @@
+# Dataset 15127676 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15127676'
+tier: verified
+title: 국방부_군 제휴 안경점
+sector: 보건의료/보건의료/medical-facility-licensing
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15127676/fileData.do
+synonyms:
+  - 안경업소
+  - 안경
+  - 렌즈
+  - 군제휴
+  - 렌즈제작
+description_portal: 군 제휴 안경점에 대한 데이터입니다. 군 저시력자 안경 조달체계 렌즈 제작을 위한 군 제휴 안경 업소 목록으로, 세부 사항을 근무처(안경점 명), 지부, 분회, 근무처 전화번호, 근무처 우편번호, 근무처 주소, 근무처 상세 주소 등으로 나누어 상세하게 나타내고 있습니다. 해당 데이터를 통해, 고도수, 고난시 등 무관하게 1조당 2만 원에 제작 가능한 대한안경사협회 소속 군 제휴 안경 업소를 확인하는 것이 가능합니다. 또한, 저시력자(고도수, 고난시 등)들이 안경을 맞출 때, 보다 저렴한 가격으로 편한 안경을 제작하는 데에 도움을 줍니다.
+accrual_periodicity: 수시
+team:
+  dept: 육군 군수사령부 보급처 의무과
+services:
+  - op: DS_TB_MND_GLAS_LIST
+    name: DS_TB_MND_GLAS_LIST
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_TB_MND_GLAS_LIST/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: postno
+      type: string
+      null_rate: 0.012
+      sample_values:
+        - 051-335-2535
+        - 031-679-0370
+        - 031-417-9844
+      stats:
+        unique: 986
+    - name: shop
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 다비치안경원
+        - 일공공일안경콘택트
+        - 1001 안경원
+      stats:
+        unique: 788
+    - name: address
+      type: number
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - '15360'
+        - '17369'
+        - '15382'
+      stats:
+        min: 1220
+        p50: 42247.5
+        max: 63572
+        unique: 861
+    - name: telno
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 010-4222-7009
+        - 010-5216-8711
+        - 010-4040-5137
+      stats:
+        unique: 998
+    - name: rowno
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1284'
+        - '1285'
+        - '1286'
+      stats:
+        min: 1
+        p50: 500.5
+        max: 1310
+        unique: 1000
+    - name: addressdetail
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 경기 안산시 단원구 고잔동
+        - 충북 음성군 음성읍
+        - 전북 부안군 부안읍
+      stats:
+        unique: 960
+    - name: district
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 안산
+        - 남구
+        - 전주
+      stats:
+        unique: 119
+    - name: city
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기
+        - 경남
+        - 울산
+      stats:
+        unique: 15
+  foreign_keys:
+    - fields:
+        - address
+      reference:
+        key: address
+      evidence: measured
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - address
+    - addressdetail
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.5137
+  brm: 보건의료 - 보건의료
+claims:
+  - id: c-15127676-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15127676.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15127676-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15127676-03
+    kind: key
+    value: '실측 조인 키: address(address)'
+    evidence:
+      - type: measured
+        source: probe/stats/15127676.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15127676-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15127676.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15127676-06
+    kind: admin_note
+    value: "세부 부문 '의료기관 개설·인허가 (병원·의원·치과·한의원·산후조리원 LOCALDATA, 의료기관 인증)'의 가치: 병의원 개폐업 = 상권 신호, LOCALDATA 공통 인허가 원천"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#medical-facility-licensing
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15127676-07
+    kind: admin_note
+    value: '[보건의료 - 건강보험 · 보건의료 · 보건의료] 응급의료·의료기관 인허가·공공보건만. 혈액은 포털에 실시간 데이터가 없어(헌혈의집 연 1회 파일·통계, 일별 보유량은 적십자 자체 사이트) 배제. 감염병·암·정신·국가시험 배제.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L603
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15127676-08
+    kind: admin_note
+    value: 키 확대(opendata.mnd.go.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15127676.json
+  stats: probe/stats/15127676.json
+  data: probe/data/15127676/
+status: active

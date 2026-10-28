@@ -1,0 +1,169 @@
+# Dataset 15046068 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15046068'
+tier: verified
+title: 국방부_군관련코드 군인계급코드
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15046068/fileData.do
+synonyms:
+  - 국방
+  - 전군
+  - 군인계급코드
+  - 계급명
+  - 병무
+description_portal: 현역 군장병 계급에 대한 코드데이터로 행번호, 코드값, 계급명 정보를 제공합니다.실제로 육.해.공.해병대 등 전군에서 사용하는 계급명을 코드로 변환하여 관리하고 있으며전체 행수는 31건입니다. (군관련코드_군인계급코드)일부군에서 사용하는 추가 식별 계급이 있지만 전군 공통코드가 아니라 생략합니다.최초로 군인계급코드 등록시부터 데이터값 변경이 없는 데이터로 군에서 사용하는 계급명 변경은 없습니다.국방부에서 제공되는 군관련코드는 군인계급코드 및 군급분류코드로 2가지를 제공하고 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 합동상호운용성기술센터 국방정보화표준팀
+services:
+  - op: DS_TB_MND_MILPRSN_RNKCD
+    name: DS_TB_MND_MILPRSN_RNKCD
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_TB_MND_MILPRSN_RNKCD/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: ranknm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 대장
+        - 대장(진)
+        - 중장
+      stats:
+        unique: 31
+    - name: rowno
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 16
+        max: 31
+        unique: 31
+    - name: cdval
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '521'
+        - '520'
+        - '519'
+      stats:
+        min: 101
+        p50: 505
+        max: 521
+        unique: 31
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5476
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15046068-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15046068.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15046068-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15046068-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15046068.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15046068-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15046068.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15046068-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15046068-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15046068.json
+  stats: probe/stats/15046068.json
+  data: probe/data/15046068/
+status: active

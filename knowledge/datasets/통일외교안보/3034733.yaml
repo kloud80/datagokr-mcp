@@ -1,0 +1,198 @@
+# Dataset 3034733 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '3034733'
+tier: verified
+title: 국방부_해군 모집 정보
+sector: 통일외교안보/병무행정/military-recruitment
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/3034733/openapi.do
+synonyms:
+  - 해군모집
+  - 장교모집
+  - 부사관모집
+description_portal: 해군 장교/부사관 분야별 모집 안내 정보
+team:
+  dept: 해군 해본 정보화기획참모부 인공지능과
+services:
+  - op: DS_NAVY_SRLNOBY_ENTSVCDA
+    name: DS_NAVY_SRLNOBY_ENTSVCDA
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_NAVY_SRLNOBY_ENTSVCDA/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: entsvcyear
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2019'
+        - '2015.0'
+        - '2016.0'
+      stats:
+        min: 2014
+        p50: 2016
+        max: 2019
+        unique: 9
+    - name: entsvcsrlno
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 14-7차
+        - 14-8차
+        - 14-9차
+      stats:
+        unique: 44
+    - name: seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 16
+        max: 44
+        unique: 44
+    - name: entsvcday
+      type: date
+      null_rate: 0.0
+      sample_values:
+        - '2014-10-20'
+        - '2014-11-17'
+        - '2014-12-15'
+      stats:
+        min: '2014-10-20'
+        max: '2019-11-25'
+        unique: 63
+    - name: entsvcmonth
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '10'
+        - '11'
+        - '1'
+      stats:
+        min: 1
+        p50: 7
+        max: 12
+        unique: 22
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: day
+  time_fields:
+    - entsvcday
+cycle: event
+classification:
+  subsector_name: 모집병 (특기·배점·지원가능·접수현황·입영원 계획)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.7275
+  rank_in_sector: 7
+  brm: 통일외교안보 - 병무행정
+  why: 해군 모집 안내 단일 군, 보조
+claims:
+  - id: c-3034733-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/3034733.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-3034733-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3034733-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/3034733.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3034733-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/3034733.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-3034733-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-3034733-07
+    kind: admin_note
+    value: 키 확대(opendata.mnd.go.kr) · 등급:보조 · wave3 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/3034733.json
+  stats: probe/stats/3034733.json
+  data: probe/data/3034733/
+status: active

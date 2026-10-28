@@ -1,0 +1,247 @@
+# Dataset 15147130 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15147130'
+tier: verified
+title: 한국전력공사_용도업종별 전력사용량
+sector: 산업고용/에너지및자원개발/energy-usage
+agency:
+  id: B410002
+  name: 한국전력공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15147130/openapi.do
+synonyms:
+  - 업종별
+  - 전력사용량
+  - 계약전력
+  - 조회
+  - 지역조회
+  - 연도조회
+description_portal: 한국전력공사에서 제공하고 있는 전력데이터개방포털내 API로 제공되고 있는 업종별 전력사용량 및 고객호수, 계약전력 데이터 입니다.해당API는 전력데이터개방포털 API로 회원가입 및 인증키 발급 완료 후 사용 가능합니다. (원활한 활용을 위해서 개방포털의 Open-API 사용 메뉴얼을 확인 부탁 드립니다.)본 페이지에서 필수 입력 파라미터와 예시데이터를 확인할 수 있습니다.해당 데이터를 활용하여 산업 활동 수준과 지역 경제 동향을 분석할 수 있어 관련 연구에 도움을 줄 수 있습니다.
+team:
+  dept: AI혁신단
+services:
+  - op: businessType
+    name: businessType
+    endpoint: https://bigdata.kepco.co.kr/openapi/v1/powerUsage/businessType.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: bigdata.kepco.co.kr
+    params:
+      - name: year
+        required: true
+        example: '2021'
+      - name: month
+        required: true
+        example: '03'
+      - name: returnType
+        required: true
+        example: json
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: year
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+      stats:
+        min: 2021
+        p50: 2021
+        max: 2021
+        unique: 1
+    - name: month
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '03'
+      stats:
+        min: 3
+        p50: 3
+        max: 3
+        unique: 1
+    - name: metro
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 서울특별시
+        - 경상북도
+      stats:
+        unique: 17
+    - name: city
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 중구
+        - 동구
+        - 서구
+      stats:
+        unique: 217
+    - name: bizType
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 순수써비스
+        - 농업. 임업
+        - 가정용부문
+      stats:
+        unique: 38
+    - name: custCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 20
+        max: 228388
+        unique: 1296
+    - name: powerUsage
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1'
+        - '410'
+      stats:
+        min: -16707
+        p50: 255535
+        max: 903350270
+        unique: 7123
+    - name: cntrPwr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '5'
+        - '15'
+        - '10'
+      stats:
+        min: 2
+        p50: 2839
+        max: 3188788
+        unique: 4949
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - month
+cycle: default
+classification:
+  subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.545
+  rank_in_sector: 715
+  brm: 산업고용 - 에너지및자원개발
+claims:
+  - id: c-15147130-01
+    kind: access
+    value: 외부 사이트 bigdata.kepco.co.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15147130.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 bigdata.kepco.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15147130-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15147130-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15147130.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 8개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15147130-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15147130.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15147130-06
+    kind: admin_note
+    value: "세부 부문 '에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)'의 가치: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-usage
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15147130-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15147130-08
+    kind: admin_note
+    value: 키 확대(bigdata.kepco.co.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15147130.json
+  stats: probe/stats/15147130.json
+  data: probe/data/15147130/
+status: active

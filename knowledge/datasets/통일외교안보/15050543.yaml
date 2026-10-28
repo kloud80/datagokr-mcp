@@ -1,0 +1,252 @@
+# Dataset 15050543 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15050543'
+tier: verified
+title: 국방부_군 복지 휴양시설 정보
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15050543/fileData.do
+synonyms:
+  - 군복지
+  - 복지
+  - 휴양시설
+  - 복지휴양시설
+  - 콘도
+  - 호텔
+  - 컨벤션
+description_portal: 국군 복지 휴양 시설(호텔, 콘도, 컨벤션 등)에 대한 데이터입니다. 시설 명, 위치 주소, 객실 수량, 규모(층수), 연락처, 휴양 시설에서 이용 가능한 부대 시설을 비롯하여 해당 데이터에 포함되지 않은 정보를 확인할 수 있는 홈페이지 주소를 상세하게 나타내고 있습니다. 해당 데이터를 통해 각 지역에 위치하여 있는 복지 휴양 시설을 보다 유용하게 이용할 수 있으며, 부대시설(연회, 스카이라운지, 식당, 카페, 바베큐장, 마트, 세미나실 등)을 포함하고 있어 각 시설별 이용의 효율성을 높이는 데에 기초 자료로써 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: 복지정책과
+services:
+  - op: DS_WHLAM_WLFR_VCTNINSTLT
+    name: DS_WHLAM_WLFR_VCTNINSTLT
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_WHLAM_WLFR_VCTNINSTLT/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: scale
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 지상 3층
+        - 지상 8층
+        - 지상 5층
+      stats:
+        unique: 12
+    - name: cntadr
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 064-738-0123
+        - 033-652-7571
+        - 041-932-6305
+      stats:
+        unique: 13
+    - name: seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '3'
+      stats:
+        min: 1
+        p50: 7
+        max: 13
+        unique: 13
+    - name: lngt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: sbsfcl
+      type: code
+      null_rate: 0.0769
+      sample_values:
+        - 편의점, 한식당, 키즈존
+        - 바베큐장, 포토존
+        - 바베큐장, 마트, 세미나실, 노래연습장, 트램플린
+      stats:
+        unique: 12
+    - name: room_qty
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 25실
+        - 65실
+        - 46실
+      stats:
+        unique: 12
+    - name: ltd
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+      stats:
+        min: 0
+        p50: 0
+        max: 0
+        unique: 1
+    - name: instltn_nm
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서귀포호텔
+        - 스테이 송정
+        - 대천콘도1관
+      stats:
+        unique: 13
+    - name: hmpg_addr
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - welfare.mil.kr
+        - welfare.navy.mil.kr
+        - welfare.army.mil.kr
+      stats:
+        unique: 6
+    - name: pstn_addr
+      type: code
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 제주도 서귀포시 상예로 319
+        - 강원도 강릉시 창해로 141
+        - 충남 보령시 갓바위 1길 10-30
+      stats:
+        unique: 13
+  foreign_keys:
+    - fields:
+        - hmpg_addr
+      reference:
+        key: address
+      evidence: measured
+    - fields:
+        - pstn_addr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - hmpg_addr
+    - pstn_addr
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5636
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15050543-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15050543.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15050543-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050543-03
+    kind: key
+    value: '실측 조인 키: address(hmpg_addr), address(pstn_addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15050543.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050543-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15050543.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050543-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15050543-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15050543.json
+  stats: probe/stats/15050543.json
+  data: probe/data/15050543/
+status: active

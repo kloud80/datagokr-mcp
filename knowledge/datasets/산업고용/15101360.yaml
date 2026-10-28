@@ -1,0 +1,267 @@
+# Dataset 15101360 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15101360'
+tier: verified
+title: 한국전력공사_계약종별 전력사용량
+sector: 산업고용/에너지및자원개발/energy-usage
+agency:
+  id: B410002
+  name: 한국전력공사
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15101360/openapi.do
+synonyms:
+  - 전력사용량
+  - 계약종별
+  - 고객호수
+description_portal: 한국전력에서 공급한 계약종별 전력사용량과 고객호수, 전기요금, 평균판매단가 데이터를 제공합니다. 해당API는 전력데이터개방포털 API로 회원가입후 사용 가능합니다.
+team:
+  dept: AI혁신단
+services:
+  - op: contractType
+    name: contractType
+    endpoint: https://bigdata.kepco.co.kr/openapi/v1/powerUsage/contractType.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: bigdata.kepco.co.kr
+    params:
+      - name: year
+        required: true
+        example: '2020'
+      - name: month
+        required: true
+        example: '11'
+      - name: metroCd
+        required: true
+        example: '11'
+      - name: returnType
+        required: true
+        example: json
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: year
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2020'
+      stats:
+        min: 2020
+        p50: 2020
+        max: 2020
+        unique: 1
+    - name: month
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '11'
+      stats:
+        min: 11
+        p50: 11
+        max: 11
+        unique: 1
+    - name: metro
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 서울특별시
+      stats:
+        unique: 1
+    - name: city
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 강남구
+        - 강동구
+        - 강북구
+      stats:
+        unique: 25
+    - name: cntr
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 가로등
+        - 교육용
+        - 산업용
+      stats:
+        unique: 7
+    - name: custCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '73'
+        - '11'
+        - '561'
+      stats:
+        min: 2
+        p50: 1321
+        max: 236313
+        unique: 164
+    - name: powerUsage
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2003584'
+        - '3365946'
+        - '67117'
+      stats:
+        min: 870
+        p50: 3460489
+        max: 231275713
+        unique: 173
+    - name: bill
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '215512067'
+        - '366039284'
+        - '3752229'
+      stats:
+        min: 71023
+        p50: 389816792
+        max: 31623398872
+        unique: 173
+    - name: unitCost
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '107.6'
+        - '103.8'
+        - '106.6'
+      stats:
+        min: 44.5
+        p50: 107.6
+        max: 142.6
+        unique: 149
+    - name: cntrPwr
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18781'
+        - '71644'
+        - '1172'
+      stats:
+        min: 12
+        p50: 61413
+        max: 2939544
+        unique: 173
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: month
+  time_fields:
+    - month
+cycle: default
+classification:
+  subsector_name: 에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)
+  depth: front
+  novelty: medium
+  cross_cutting: false
+  prelim_score: 0.8052
+  rank_in_sector: 2
+  brm: 산업고용 - 에너지및자원개발
+  why: 시도·시군구별 계약종별 전력사용량 집계
+claims:
+  - id: c-15101360-01
+    kind: access
+    value: 외부 사이트 bigdata.kepco.co.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15101360.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 bigdata.kepco.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15101360-02
+    kind: cadence
+    value: 주기 정보 없음 — 갱신 관찰(7일 재호출) 필요
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 비어 있음
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15101360-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15101360.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 10개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15101360-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15101360.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15101360-06
+    kind: admin_note
+    value: "세부 부문 '에너지 사용량 (한전 가구·산업분류·계약종별 전력사용량, 열·가스 공급·판매량, 에너지사용 마이크로데이터)'의 가치: 한전 청구 원장에서 나온 지역 × 월 격자 — 지역 정보에 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#energy-usage
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15101360-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15101360-08
+    kind: admin_note
+    value: wave3 p2
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15101360.json
+  stats: probe/stats/15101360.json
+  data: probe/data/15101360/
+status: active

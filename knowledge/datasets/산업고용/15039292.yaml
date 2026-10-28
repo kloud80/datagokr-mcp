@@ -1,0 +1,235 @@
+# Dataset 15039292 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15039292'
+tier: verified
+title: 한국전력공사_신재생 에너지 현황
+sector: 산업고용/에너지및자원개발/power-plants
+agency:
+  id: B410002
+  name: 한국전력공사
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15039292/fileData.do
+synonyms:
+  - 발전원
+  - 지역구분
+  - 시도구분
+  - 신재생에너지
+  - 설비용량
+  - 태양광
+  - 소수력
+  - 풍력
+description_portal: 한국전력공사에서 제공하는 전국 시군구별 신재생에너지 현황 데이터입니다.조회는 가능하나 다운로드시에는 회원가입 및 로그인이 필요합니다.기간(2005년부터), 지역, 추출정보(태양광, 소수력, 풍력, 연료전지 등)를 설정하여 지역별 설비용량과 추이그래프를 제공받을 수 있습니다.해당 데이터를 활용하여 특정 지역이 어떤 종류의 신재생 에너지를 주로 도입하고 있는지 파악할 수 있어 해당 지역의 잠재력을 평가하는 등 관련 연구에 도움을 줄 수 있습니다.또한 에너지 정책이 신재생에너지 보급에 미친 영향을 분석하는 등 다양한 활동에 기초자료로 활용할 수 있습니다.
+accrual_periodicity: 수시
+team:
+  dept: AI혁신단
+services:
+  - op: renewEnergy
+    name: renewEnergy
+    endpoint: https://bigdata.kepco.co.kr/openapi/v1/renewEnergy.do
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: apiKey
+      issuer: bigdata.kepco.co.kr
+    params:
+      - name: year
+        required: true
+        example: '2019'
+      - name: returnType
+        required: true
+        example: json
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: genSrc
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 태양광
+        - 연료전지
+        - 풍력
+      stats:
+        unique: 5
+    - name: metro
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 경기도
+        - 경상남도
+        - 경상북도
+      stats:
+        unique: 17
+    - name: city
+      type: string
+      null_rate: 0.004
+      sample_values:
+        - 동구
+        - 중구
+        - 남구
+      stats:
+        unique: 219
+    - name: cnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1'
+        - '2'
+        - '4'
+      stats:
+        min: 1
+        p50: 49
+        max: 1183
+        unique: 131
+    - name: capacity
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '18.0'
+        - '15.0'
+        - '21.0'
+      stats:
+        min: 9
+        p50: 4581.28
+        max: 142297.92
+        unique: 242
+    - name: areaCnt
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2021'
+        - '1509'
+        - '2464'
+      stats:
+        min: 1
+        p50: 1976
+        max: 4546
+        unique: 18
+    - name: areaCapacity
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '200561.8'
+        - '167516.48'
+        - '307956.56'
+      stats:
+        min: 21
+        p50: 175922.24
+        max: 552885.69
+        unique: 23
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  subsector_name: 발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5533
+  rank_in_sector: 679
+  brm: 산업고용 - 에너지및자원개발
+claims:
+  - id: c-15039292-01
+    kind: access
+    value: 외부 사이트 bigdata.kepco.co.kr 인증키 필요 (query 파라미터 apiKey) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15039292.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 bigdata.kepco.co.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15039292-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15039292-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15039292.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 7개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15039292-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15039292.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15039292-06
+    kind: admin_note
+    value: "세부 부문 '발전소·신재생 설비 원장 (태양광 발전사업 허가 표준·발전설비·분산전원 연계·신재생 인허가)'의 가치: 전국태양광발전소전기사업허가정보표준데이터(활용 37,617) — 발전소 단위, 주소·용량"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#power-plants
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15039292-07
+    kind: admin_note
+    value: '[산업고용 · 에너지및자원개발] 전력 수급·시장(실시간·일별)·발전소/신재생 원장(태양광 발전사업 허가 표준, 활용 37,617)·주유소/유가/충전소(오피넷 실시간)·에너지 사용량(한전 청구 원장 기반 지역×월)·효율등급 제품·광업/토석채취 허가·에너지 업종 인허가·발전소 배출 측정 (`energy-deferred`, `energy-non-core`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L639
+        by: Claude(구름의 기준을 Claude가 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15039292-08
+    kind: admin_note
+    value: 키 확대(bigdata.kepco.co.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15039292.json
+  stats: probe/stats/15039292.json
+  data: probe/data/15039292/
+status: active

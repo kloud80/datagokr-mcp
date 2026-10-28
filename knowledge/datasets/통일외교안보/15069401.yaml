@@ -1,0 +1,184 @@
+# Dataset 15069401 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15069401'
+tier: verified
+title: 국방부_병영표준 식단
+sector: 통일외교안보/병력운영/misc
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15069401/fileData.do
+synonyms:
+  - 군대
+  - 끼니
+  - 급양대
+  - 표준
+  - 병영표준
+description_portal: 군의 병영 표준 식단 관련 데이터입니다. 급양대별 표준 식단 정보 목록으로 날짜를 비롯하여 조식, 중식, 석식, 식단별 알레르기 표시, 갱신 예정 일자 등으로 상세하게 설명하고 있습니다. 해당 데이터를 통해 날짜별로 병영 식당에서 장병들에게 배식된 식단에 대해 알아볼 수 있으며, 기록된 식단 목록 분석을 통해 추후 식단별 영양소를 구분하거나 식단 계획을 세우고, 병영 식단에 대한 만족도 평가를 하는 등 다양하게 활용하여 병영 급식 환경과 문화를 개선하는 데에 기초 자료로써 도움을 주는 것이 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: 육군본부
+services:
+  - op: DS_TB_MNDT_DATEBYMLSVC
+    name: DS_TB_MNDT_DATEBYMLSVC
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_TB_MNDT_DATEBYMLSVC/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: lunc
+      type: string
+      null_rate: 0.057
+      sample_values:
+        - 배추김치(3~4월)
+        - 밥
+        - 김장김치(12~2월)
+      stats:
+        unique: 195
+    - name: dates
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '20180611'
+        - '20180301'
+        - '20180220'
+      stats:
+        min: 20171227
+        p50: 20180417.5
+        max: 20180726
+        unique: 201
+    - name: seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '4335'
+        - '4336'
+        - '4337'
+      stats:
+        min: 3351
+        p50: 3907.5
+        max: 4407
+        unique: 1000
+    - name: brst
+      type: string
+      null_rate: 0.213
+      sample_values:
+        - 밥1
+        - 맛김
+        - 김장김치(12~2월)
+      stats:
+        unique: 89
+    - name: dinr
+      type: string
+      null_rate: 0.056
+      sample_values:
+        - 잡곡밥
+        - 밥
+        - 김장김치(12~2월)
+      stats:
+        unique: 159
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+cycle: default
+classification:
+  cross_cutting: false
+  prelim_score: 0.5263
+  brm: 통일외교안보 - 병력운영
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15069401-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15069401.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15069401-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15069401-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15069401.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15069401-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15069401.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15069401-06
+    kind: admin_note
+    value: '[통일외교안보 · 병력운영·전력유지] 조달성 원장(식재료 입찰·사전의향서·국외조달 가격정보)을 방위력개선으로 옮긴 뒤 전부 배제 (부대 식단·표준도면·훈령 목록).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L701
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15069401-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15069401.json
+  stats: probe/stats/15069401.json
+  data: probe/data/15069401/
+status: active

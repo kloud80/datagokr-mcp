@@ -1,0 +1,175 @@
+# Dataset 15050549 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15050549'
+tier: verified
+title: 국방부_예비군 부대 연락처
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15050549/fileData.do
+synonyms:
+  - 예비군
+  - 예비군 부대
+  - 연락처
+  - 부대연락처
+  - 부대
+description_portal: 전국 예비군 부대의 연락처를 설명하는 데이터입니다. 지역 예비군 부대뿐만 아니라 직장 예비군 부대까지 모두 포함한 전국 예비군 부대의 명칭(용담2동대, 제주시기동대, 대정읍대, 제주국제대학교 예비군중대, 면목본동대 등), 전화번호, 주소(도로명 주소) 등을 상세하게 나타내고 있습니다. 해당 데이터는 예비군 제도를 보다 효율적으로 운영하기 위해서 체계적으로 제도 개선을 진행하고 관리하는 데에 도움을 줄 수 있으며, 일정을 공유하거나 민원 응대 및 비상 연락망의 개념으로써 활용하는 것이 가능합니다.
+accrual_periodicity: 수시
+team:
+  dept: 자원동원과
+services:
+  - op: DS_AMRSV_CNTADR_PRSTS
+    name: DS_AMRSV_CNTADR_PRSTS
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_AMRSV_CNTADR_PRSTS/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: amrsvbn
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 중동대
+        - 월곡2동대
+        - 동구기동대
+      stats:
+        unique: 995
+    - name: tel
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 055-383-2113
+        - 052-215-2243
+        - 02-3010-4296
+      stats:
+        unique: 998
+    - name: addr
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 부산광역시 동래구 충렬대로237번길 117 3층(명륜동)
+        - 대전광역시 서구 청사로 189(둔산2동)
+        - 경기도 안산시 단원구 동산로 35(초지동)
+      stats:
+        unique: 921
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5571
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15050549-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15050549.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15050549-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050549-03
+    kind: key
+    value: '실측 조인 키: address(addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15050549.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 3개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050549-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15050549.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050549-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15050549-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15050549.json
+  stats: probe/stats/15050549.json
+  data: probe/data/15050549/
+status: active

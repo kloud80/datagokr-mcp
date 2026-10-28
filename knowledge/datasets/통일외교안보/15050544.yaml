@@ -1,0 +1,199 @@
+# Dataset 15050544 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15050544'
+tier: verified
+title: 국방부_국군복지단 복지시설
+sector: 통일외교안보/병무행정/military-service-facilities
+agency:
+  id: '1290000'
+  name: 국방부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15050544/fileData.do
+synonyms:
+  - 기숙사
+  - 호텔콘도
+  - 체력단련장
+  - 국군복지단 시설현황
+  - 군 전용 호텔 현황
+  - 군 전용 콘도 현황
+  - 군 가족 복지
+description_portal: 국군복지단이 운영하는 복지시설 현황을 담은 데이터로, 호텔, 콘도 등 군인과 가족의 복지를 위한 시설의 기본 정보를 제공합니다. 본 데이터는 XLS, CSV, JSON 형식으로 제공되어 다양한 플랫폼에서 쉽게 활용 가능합니다. 데이터는 순번, 구분(호텔/콘도), 시설명, 주소, 연락처로 구성되어 있으며, 서울, 강원도, 제주도, 부산 등 전국 다양한 지역에 분포해 있습니다. 시설별 세부 정보로는 시설의 고유 식별 번호인 순번, 호텔 또는 콘도로 분류된 유형, 시설 이름, 소재지 주소, 연락 가능한 전화번호 등이 포함되어 있습니다.특히 시설별 주소와 연락처 정보는 휴가나 출장 시 가까운 시설을 빠르게 찾는 데 도움을 주며, 지역별 시설 분포를 분석해 특정 지역의 복지 수요를 파악하거나, 시설 현대화 사업 우선순위 설정에도 활용될 수 있습니다.
+accrual_periodicity: 연간
+team:
+  dept: 국군복지단 정보통신과
+services:
+  - op: DS_MNDT_WHLAM_WLFR_VCTNINSTL
+    name: DS_MNDT_WHLAM_WLFR_VCTNINSTL
+    endpoint: https://openapi.mnd.go.kr/{KEY}/json/DS_MNDT_WHLAM_WLFR_VCTNINSTL/1/1000/
+    method: GET
+    security:
+      scheme: apiKey
+      in: path
+      name: KEY
+      issuer: opendata.mnd.go.kr
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: cntadr
+      type: string
+      null_rate: 0.0299
+      sample_values:
+        - 1588-4888
+        - 043-649-6000
+        - 041-671-7000
+      stats:
+        unique: 53
+    - name: dvs
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 호텔/콘도
+        - 기숙사
+        - 체력단련장
+      stats:
+        unique: 3
+    - name: seq
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '60'
+        - '61'
+        - '62'
+      stats:
+        min: 1
+        p50: 34
+        max: 67
+        unique: 67
+    - name: addr
+      type: string
+      semantic_type: address
+      null_rate: 0.0
+      sample_values:
+        - 강원도 평창군 봉평면 면온리946-7
+        - 경기 하남시 위례대로2길20
+        - 서울시 영등포구여의대방로 49길 3
+      stats:
+        unique: 65
+    - name: instltn_nm
+      type: string
+      null_rate: 0.0
+      sample_values:
+        - 한화 휘닉스
+        - 밀리토피아 골프연습장
+        - 대방학사1관
+      stats:
+        unique: 66
+  foreign_keys:
+    - fields:
+        - addr
+      reference:
+        key: address
+      evidence: measured
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  space: sgg
+  space_fields:
+    - addr
+  space_via: address
+cycle: default
+classification:
+  subsector_name: 병무·군 시설 (병역판정검사장·나라사랑가게·예우시설·체력단련장·군 복지시설·TMO)
+  depth: front
+  novelty: medium
+  cross_cutting: true
+  prelim_score: 0.5921
+  rank_in_sector: 24
+  brm: 통일외교안보 - 병무행정
+  why: 기관 분석 핵심 원장 — 국방부
+claims:
+  - id: c-15050544-01
+    kind: access
+    value: 외부 사이트 opendata.mnd.go.kr 인증키 필요 (path 파라미터 KEY) — 포털 활용신청과 별개. 2026-10-28 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15050544.json
+        observed_at: '2026-10-28'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 opendata.mnd.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-04-29'
+  - id: c-15050544-02
+    kind: cadence
+    value: 명세상 연간
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 연간
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050544-03
+    kind: key
+    value: '실측 조인 키: address(addr)'
+    evidence:
+      - type: measured
+        source: probe/stats/15050544.json
+        observed_at: '2026-10-28'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050544-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15050544.json
+        observed_at: '2026-10-28'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-04-29'
+  - id: c-15050544-06
+    kind: admin_note
+    value: '[통일외교안보 · 병무행정] 모집병, 사회복무요원·병역지정업체(전문연구·산업기능요원), 검사장·예우시설·군 복지시설만. 육군 장병 개인 조회 API(확인·가족·휴가·급여명세)는 개인 서비스, 병역판정검사 신체 분포(Kdata)는 연구용 → 배제 (`military-service-*`).'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L698
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15050544-07
+    kind: admin_note
+    value: wave7 · 기관 분석
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-10-28'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-10-28'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15050544.json
+  stats: probe/stats/15050544.json
+  data: probe/data/15050544/
+status: active
