@@ -3,6 +3,7 @@
 도구 (모두 읽기 전용 — 지식 체계만 읽고 사용자 키를 다루지 않는다)
   plan_public_data_strategy(goal, detail, include_code)  목표 → 전략. 기본은 요약판, detail=full이면 데이터 카드·후보 전체
   search_datasets(query, tier, limit, sector, agency, scope)  verified · candidate · catalog 검색 (필드 요약·실측 행 수 포함)
+  list_datasets(agency, sector, data_type, purpose, tier, channel, scope, offset, limit)  거른 목록 전체 — 총수·쪽·facets
   get_dataset(id)                    상세 — 호출 방법·실측 필드(빈 값 비율·유니크·표본값)·검증 행 수·집계 단위·근거 claim·Edge
   list_code_lists(keyword) · lookup_code(code_list, q)   코드표
 잘못 부르면(없는 id·코드표, 빈 목표) 오류(isError)로 돌려준다 — '결과 없음'(빈 배열)과 구분된다.
@@ -26,9 +27,16 @@ from pds.schema import GROUNDED  # 실측·법령·검토결정만 근거 — �
 from pds.service import index as sindex
 
 server = MCPServer(name="bigvalue-opendata", title="BigValue 공공데이터 (data.go.kr)", version="0.2.0",
-                   instructions="data.go.kr 공공데이터를 목표에 맞게 고르고 연결하는 전략 도구. 조인은 선언·실측된 것만 돌려준다. "
+                   instructions="data.go.kr(외부 연계 사이트 포함) 공공데이터 7만여 건을 실제로 호출해 실측한 지식 체계. "
+                                "목표에 맞는 데이터 조합·조인 경로를 짜는 전략뿐 아니라, 데이터 하나하나에 대한 사실 질문에도 이 도구로 답한다 — "
+                                "데이터 유형(API·파일·외부 사이트), 호출 주소·인자, 필드 이름·타입·빈 값 비율·표본값, 실측 행 수·검증일·갱신 주기, "
+                                "조인 키, 코드값(법정동·지목 등), 필요한 API 키. 이런 질문은 추측하지 말고 도구를 부른다. "
+                                "도구: plan_public_data_strategy(목표 → 데이터 조합·조인·파이프라인), search_datasets(키워드 상위 몇 건), "
+                                "list_datasets(부처·분야·데이터 유형·목적으로 거른 목록 전체를 쪽 단위로, 부처별·유형별 건수 facets 포함), "
+                                "get_dataset(한 건 상세 — 호출 방법·전체 필드), list_code_lists·lookup_code(코드표). "
                                 "verified=검증(실제 호출로 행·필드를 실측), candidate=선정·미검증, catalog=포털 목록 단서(직접 확인). "
-                                "먼저 plan_public_data_strategy로 조합을 받고, 데이터 한 건의 실측 필드는 get_dataset으로 본다. "
+                                "목표가 있으면 plan_public_data_strategy부터, 특정 부처·유형의 데이터를 모두 보려면 list_datasets, "
+                                "데이터 한 건의 필드·유형·호출 방법은 get_dataset으로 본다. "
                                 "키 규약: 응답의 credentials.required가 true면(데이터를 받는 데 API 키·계정이 필요) 데이터를 받기 전에 "
                                 "사용자에게 키가 필요하다고 알리고, credentials.env_sample로 프로젝트에 .env 파일을 만들어(값은 비움) "
                                 "사용자에게 직접 채워 달라고 요청한다. 키를 지어내거나 대화·코드에 키 값을 적지 않는다.")
@@ -138,6 +146,33 @@ def search_datasets(
     return _dump(res[:limit])
 
 
+# ─────────────────────────── 목록
+@server.tool(title="데이터셋 목록", annotations=READ_ONLY, structured_output=False,
+             description="조건에 맞는 데이터셋을 빠짐없이 쪽 단위로 받는다 (search_datasets는 상위 몇 건만). "
+                         "agency(부처·기관, 부분 일치)·sector(분야)·data_type(any·api·file·std, 또는 API·FILE·EXTERNAL_API·EXTERNAL_FILE·STD)·"
+                         "purpose(목적·키워드 — 주면 관련도순)·tier·channel(portal·external)·scope(national·regional)로 거른다. "
+                         "응답: total(조건에 맞는 전체 수)·items(id·제목·부처·분야·유형·지역·필드 수·실측 행 수)·next_offset(다음 쪽, 없으면 null)·"
+                         "facets(거른 결과의 부처·분야·유형별 건수). 부처 이름을 정확히 모르면 limit을 작게 해 facets로 먼저 고른다. "
+                         "한 건의 필드 전체·호출 방법은 get_dataset(id).")
+def list_datasets(
+    agency: Annotated[str | None, Field(description="제공 부처·기관 (부분 일치, 띄어쓰기 무시, 예: 국토교통부, 국방부, 서울특별시)")] = None,
+    sector: Annotated[str | None, Field(description="분야 (부분 일치, 예: 교통, 부동산, 보건)")] = None,
+    data_type: Annotated[str, Field(description="any=전체, api=오픈API(외부 포함), file=파일(외부 포함), std=표준데이터, "
+                                                "또는 API·FILE·EXTERNAL_API·EXTERNAL_FILE·STD 하나")] = "any",
+    purpose: Annotated[str | None, Field(description="목적·키워드 (예: 상권 분석, 미세먼지) — 주면 관련도순, 없으면 부처·제목순")] = None,
+    tier: Annotated[Literal["verified", "candidate", "any", "catalog"], Field(description="verified=검증(기본), candidate=선정·미검증, any=둘 다, catalog=지식 체계 밖 포털 목록")] = "verified",
+    channel: Annotated[Literal["any", "portal", "external"], Field(description="portal=data.go.kr에서 받음, external=외부 사이트에서 받음")] = "any",
+    scope: Annotated[Literal["any", "national", "regional"], Field(description="national=전국 데이터만, regional=지자체·지역판만")] = "any",
+    offset: Annotated[int, Field(ge=0, description="건너뛸 수 — 앞 응답의 next_offset")] = 0,
+    limit: Annotated[int, Field(ge=1, le=200, description="한 쪽 크기 (1~200)")] = 50,
+) -> str:
+    from pds.service.listing import list_datasets as _list
+    try:
+        return _dump(_list(agency, sector, data_type, tier, purpose, channel, scope, offset, limit))
+    except ValueError as e:
+        raise ToolError(str(e)) from e
+
+
 # ─────────────────────────── 상세
 def _field_view(f: dict) -> dict:
     st = f.get("stats") or {}
@@ -154,11 +189,11 @@ def _field_view(f: dict) -> dict:
 
 
 @server.tool(title="데이터셋 상세", annotations=READ_ONLY, structured_output=False,
-             description="데이터셋 한 건 상세 — 호출 방법·실측 필드(빈 값 비율 null_rate·유니크 수·값 범위·표본값)·검증 결과(받은 행 수·검증일·최신 데이터일)·"
+             description="데이터셋 한 건 상세 — 데이터 유형(kind: API·FILE·EXTERNAL_API·EXTERNAL_FILE·STD)·받는 곳(channel)·호출 방법·실측 필드(빈 값 비율 null_rate·유니크 수·값 범위·표본값)·검증 결과(받은 행 수·검증일·최신 데이터일)·"
                          "집계 단위(grain)·커버리지·조인 키(foreign_keys)·근거 claim·연결 Edge. catalog id는 포털 메타만 준다.")
 def get_dataset(
     id: Annotated[str, Field(description="데이터셋 id (포털 목록키, 예: 15154916) — search_datasets·전략 응답의 id")],  # noqa: A002 — MCP 인자 이름
-    max_fields: Annotated[int, Field(ge=1, le=200, description="필드를 몇 개까지 보일지")] = 60,
+    max_fields: Annotated[int, Field(ge=1, le=1000, description="필드를 몇 개까지 보일지 (전체가 필요하면 fields_total만큼)")] = 60,
 ) -> str:
     from pds.strategy.plan import jsonable
     ix = sindex.get()
@@ -226,7 +261,7 @@ def dataset_resource(dsid: str) -> str:
                description="목표를 받아 전략 → 상세 확인 → 정직한 답 순서로 도구를 쓰게 하는 지침")
 def plan_with_public_data(goal: str) -> str:
     return (f"목표: {goal}\n\n"
-            "1. plan_public_data_strategy로 조합을 받는다.\n"
+            "1. plan_public_data_strategy로 조합을 받는다. 특정 부처·유형의 데이터를 모두 봐야 하면 list_datasets로 쪽을 넘기며 받는다.\n"
             "2. 핵심 데이터는 get_dataset으로 실측 필드(빈 값 비율·표본값)와 검증 행 수·검증일을 확인한다.\n"
             "3. 답에는 gaps(채우지 못한 부분·단위 불일치)와 join_counts(데이터끼리 직접 조인 수와 코드표 정규화 수)를 그대로 밝힌다.\n"
             "4. candidate·catalog는 미검증 단서라고 말하고, external_signup이 있으면 가입 절차를 알린다.\n"

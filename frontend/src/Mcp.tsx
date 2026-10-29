@@ -9,6 +9,7 @@ const MCP_URL = `${ORIGIN}/mcp`
 const API_ENDPOINTS: [string, string, string][] = [
   ['POST', '/api/plan', '목표 → 전략 (body: {"goal": "…"})'],
   ['GET', '/api/search?q=', '데이터 검색'],
+  ['GET', '/api/datasets?agency=&data_type=', '거른 목록 전체 (부처·유형·목적, 쪽 단위)'],
   ['GET', '/api/datasets/{id}', '데이터 상세'],
   ['GET', '/api/codes', '코드표 목록'],
 ]
@@ -99,12 +100,16 @@ pip install -e . && python -m pds setup --no-db
             rows={[
               { key: 1, n: <code className="pds-code">plan_public_data_strategy</code>, a: 'goal, detail=summary|full, include_code=false', d: '목표 → 검증 데이터·역할·근거, 선언된 조인(실측률), 파이프라인, 주제별 후보, 공백, 미검증 단서. 기본은 요약판(약 2만 자), 실행 코드는 include_code, 전체는 detail=full. join_counts는 데이터끼리 직접 조인과 코드표·지적도 정규화를 나눠 셉니다' },
               { key: 2, n: <code className="pds-code">search_datasets</code>, a: 'query, tier, limit=10, sector, agency, scope=any|national|regional', d: '세 층 검색(verified·candidate·catalog). 기관·필드 요약·실측 행 수·검증일 포함. 검색어에 지역이 없으면 전국 데이터를 앞에 두고, scope=national이면 지자체·지역판을 뺍니다' },
-              { key: 3, n: <code className="pds-code">get_dataset</code>, a: 'id, max_fields=60', d: '호출 방법, 실측 필드(빈 값 비율·유니크 수·값 범위·표본값), 검증 결과(행 수·검증일·최신 데이터일), 집계 단위(grain), 조인 키, 근거 claim, 연결된 Edge' },
+              { key: 6, n: <code className="pds-code">list_datasets</code>, a: 'agency, sector, data_type=any|api|file|std, purpose, tier, channel, scope, offset, limit≤200', d: '조건에 맞는 데이터를 빠짐없이 쪽 단위로 — 부처·분야·데이터 유형·목적으로 거르고 total(전체 수)·next_offset(다음 쪽)·facets(부처·분야·유형별 건수)를 줍니다. 예: 국방부 데이터 전부, 국토교통부 오픈API만' },
+              { key: 3, n: <code className="pds-code">get_dataset</code>, a: 'id, max_fields=60(≤1000)', d: '데이터 유형(API·파일·외부)·받는 곳, 호출 방법, 실측 필드(빈 값 비율·유니크 수·값 범위·표본값), 검증 결과(행 수·검증일·최신 데이터일), 집계 단위(grain), 조인 키, 근거 claim, 연결된 Edge' },
               { key: 4, n: <code className="pds-code">list_code_lists</code>, a: 'keyword', d: '코드표 찾기 (지목·용도지역·법정동·기관코드·HS…)' },
               { key: 5, n: <code className="pds-code">lookup_code</code>, a: 'code_list, q', d: '코드값 ↔ 이름 (예: bjd_cd, 성수동)' },
             ]} />
           <p className="doc-p">리소스 <code className="pds-code">dataset://{'{id}'}</code> 는 데이터 설명서(Markdown), 프롬프트 <code className="pds-code">plan_with_public_data</code>는 전략 → 상세 확인 → 공백까지 밝히는 답의 순서를 안내합니다.
             도구는 모두 읽기 전용(readOnlyHint)으로 표시되고, 없는 id·코드표나 빈 목표처럼 잘못 부르면 빈 결과가 아니라 <b>오류(isError)</b>로 돌려줍니다.</p>
+          <h3 className="doc-h3">전략만이 아니라 사실 질문도</h3>
+          <p className="doc-p">서버 안내문(instructions)은 이 도구가 전략뿐 아니라 <b>데이터 하나하나의 사실 질문</b> — 데이터 유형(API·파일·외부 사이트), 호출 주소·인자, 필드 이름·타입·빈 값 비율·표본값, 실측 행 수·검증일, 조인 키, 코드값, 필요한 키 — 에도 답한다고 밝혀,
+            커넥터로 연결한 AI가 이런 질문을 추측하지 않고 처음부터 도구를 부르게 합니다. 특정 부처·유형의 데이터 전체는 <code className="pds-code">list_datasets</code>로 쪽을 넘기며 받습니다.</p>
           <h3 className="doc-h3">API 키 규약</h3>
           <p className="doc-p">이 서버는 사용자 키를 받지 않습니다. 대신 전략 응답의 <code className="pds-code">credentials</code>에 고른 데이터를 받는 데 필요한 키(.env 변수 이름·발급 사이트·절차·대상 데이터)와 <code className="pds-code">.env</code> 견본(<code className="pds-code">env_sample</code>)을 담고,
             서버 안내문(instructions)으로 에이전트에게 다음 절차를 지시합니다: <b>키가 필요하면 데이터를 받기 전에 사용자에게 알린다 → 프로젝트에 .env를 견본대로 만든다(값은 비움) → 사용자가 직접 채우게 요청한다.</b> 에이전트는 키를 지어내거나 대화·코드에 키 값을 적지 않습니다.</p>
@@ -113,6 +118,8 @@ pip install -e . && python -m pds setup --no-db
             <li>"BigValue 공공데이터로 성수동 상권 변화를 월 단위로 추적하는 방법 찾아줘"</li>
             <li>"아파트 실거래가와 공시지가를 필지 단위로 비교하는 파이썬 코드 만들어줘"</li>
             <li>"응급실 병상 실시간 데이터 호출 방법과 필수 파라미터 알려줘"</li>
+            <li>"국방부가 제공하는 공공데이터 전부 보여주고, 그중 오픈API는 뭐야?"</li>
+            <li>"국토교통부_(TAGO)_고속버스도착정보는 API야 파일이야? 필드 목록도"</li>
           </ul>
         </section>
 

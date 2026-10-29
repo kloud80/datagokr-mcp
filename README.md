@@ -342,12 +342,13 @@ python -m pds data-pack                    # 스냅샷 zip (Release에 올리는
 | `POST /api/chat` | 대화 (도구: 전략 수립·검색·상세·코드표) — **화면 전용** |
 | `POST /api/plan` | `{goal}` → 전략 응답 ([KNOWLEDGE-SPEC §4](KNOWLEDGE-SPEC.md)) — 근거·조인 규칙을 서버가 검사 |
 | `GET /api/search?q=&tier=` | 세 층 검색 |
+| `GET /api/datasets?agency=&sector=&data_type=&purpose=&offset=&limit=` | 거른 목록 전체 (total·next_offset·facets) |
 | `GET /api/datasets/{id}` · `/api/codes/{id}?q=` | 상세·설명서 · 코드 조회 |
 | `/#/wiki` | 데이터 위키 — 데이터셋 · 키 · 코드표 세 갈래. 데이터셋 검색·필터(분야·기관·등급·키)와 문서(개요·필드·관계·사실과 근거·설명서), 키 목록·문서(형식·발급·원장·관련 키·매핑·쓰는 데이터), 코드표 목록·문서(범위·근거·쓰는 데이터·코드값 찾기). 필드 → 키·코드표, 키 → 원장·코드표, 코드표 → 쓰는 데이터로 서로 이어진다 |
 | `GET /api/wiki/*` | **화면 전용** 위키 API — `search` · `facets` · `datasets/{id}` · `keys` · `keys/{key}` · `codes` · `codes/{id}?q=` · `proposals` |
 | `POST /api/wiki/proposals` · `…/{id}/review` | **화면 전용** — 수정 제안(누구나) · 승인/반려(승인권자 — 헤더 `x-wiki-token`) |
 
-**공개 API와 화면 전용 API** — 외부에 공개하는 것은 `/api/plan` · `/api/search` · `/api/datasets/{id}`(`/dossier`) · `/api/codes`(`/{id}`)와 `/mcp`뿐이고, 명세(`/api/reference`)에도 이것만 싣는다.
+**공개 API와 화면 전용 API** — 외부에 공개하는 것은 `/api/plan` · `/api/search` · `/api/datasets`(`/{id}`, `/dossier`) · `/api/codes`(`/{id}`)와 `/mcp`뿐이고, 명세(`/api/reference`)에도 이것만 싣는다.
 채팅(`/api/chat*`)·피드백·위키(`/api/wiki/*`)·Docs 집계(`/api/docs`)·통계(`/api/stats`)는 이 사이트 화면 전용이다 — 화면(`/`)을 열 때
 서명된 쿠키(`pds_ui`, HttpOnly·SameSite=Strict, 7일)를 주고, 화면 전용 API는 그 쿠키와 같은 출처 요청만 받는다(아니면 403).
 서명 키는 `PDS_UI_SECRET` 또는 `data/cache/ui_secret`(자동 생성). 다른 사이트에서 끌어 쓰거나 명세를 보고 바로 부르는 것을 막는 장치이고,
@@ -365,12 +366,15 @@ BigValue 디자인 시스템 `@bv-ds/ui` Agent 컴포넌트) — 디자인 시�
 패키지라 `frontend/.npmrc`(git 밖)에 레지스트리 설정이 필요하다. API(`/api/*`)는 빌드 없이도 동작한다.
 개발 중에는 `npm run dev`(5173, `/api`는 9050으로 프록시).
 
-**MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `get_dataset` ·
+**MCP** (Claude Desktop 등): `python -m pds mcp` — 도구 `plan_public_data_strategy` · `search_datasets` · `list_datasets` · `get_dataset` ·
 `list_code_lists` · `lookup_code`(모두 읽기 전용), 리소스 `dataset://{id}`, 프롬프트 `plan_with_public_data`.
 
 - 전략은 기본 요약판(약 2만 자)을 준다. 실행 코드는 `include_code=true`, 데이터 카드·후보 전체는 `detail="full"`.
   `join_counts`는 데이터끼리 직접 조인과 코드표·지적도(허브) 정규화를 나눠 세고, `gaps`에 시간 단위 불일치(월 요청 → 분기 데이터)도 적는다.
 - `get_dataset`은 실측 필드(빈 값 비율·유니크 수·값 범위·표본값)와 검증 결과(행 수·검증일·최신 데이터일)·집계 단위(grain)를 준다.
+- 서버 안내문(instructions)은 전략뿐 아니라 데이터 유형·호출 방법·필드·행 수·코드값 같은 사실 질문도 이 도구로 답하라고 밝힌다 — 커넥터로 연결한 AI가 처음부터 도구를 부르게.
+- `list_datasets`는 `agency`·`sector`·`data_type`(api·file·std 또는 API·FILE·EXTERNAL_API·EXTERNAL_FILE·STD)·`purpose`·`tier`·`channel`·`scope`로 거른 전체를 `offset`·`limit`(≤200) 쪽으로 준다 —
+  `total`·`next_offset`·`facets`(부처·분야·유형별 건수). REST는 `GET /api/datasets?agency=국방부&data_type=api`.
 - `search_datasets`는 `limit`(1~30)·`sector`·`agency`·`scope`(national이면 지자체·지역판 제외)로 거른다. 검색어에 지역 이름이 없으면 전국 데이터를 앞에 둔다.
 - 근거(`grounded`)는 실측·법령·검토결정만이다 — 포털 등록값(`portal_meta`)만 있는 진술은 grounded가 아니다.
 - 주제 분해·재순위(LLM)는 목표 문장·지식 버전을 키로 `data/cache/heads/`에 저장한다 — 같은 질문에 같은 답, 비용도 한 번(`PDS_HEADS_CACHE=0`이면 끔).

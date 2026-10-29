@@ -5,6 +5,7 @@
   POST /api/chat/stream      같은 입력 → SSE: step(단계 진행) · plan(전략 먼저) · done(답) · error
   POST /api/plan             {goal, use_llm?} → 전략 응답 (KNOWLEDGE-SPEC §4)
   GET  /api/search?q=&tier=  검색 (verified · candidate · catalog)
+  GET  /api/datasets         목록 — agency·sector·data_type·purpose·tier·channel·scope로 거른 전체를 offset·limit 쪽으로 (total·facets)
   GET  /api/datasets/{id}    Dataset 상세 + 설명서(markdown)
   GET  /api/codes            코드표 목록 · /api/codes/{id}?q= 코드 조회
   GET  /api/stats            지식 체계 규모
@@ -59,7 +60,7 @@ app.add_middleware(GZipMiddleware, minimum_size=2000)
 
 # ── 화면 전용 API — 채팅·피드백·위키·Docs 집계·통계는 이 사이트 화면에서만 부른다 (외부 공개 API가 아니다)
 #   화면(/)을 열 때 서명된 쿠키를 주고, 화면 전용 API는 그 쿠키 + 같은 출처 요청만 받는다. 명세(/api/reference)에도 싣지 않는다.
-#   공개 API는 /api/plan · /api/search · /api/datasets/{id}(/dossier) · /api/codes(/{id}) 와 /mcp.
+#   공개 API는 /api/plan · /api/search · /api/datasets(/{id}(/dossier)) · /api/codes(/{id}) 와 /mcp.
 UI_ONLY = ("/api/chat", "/api/feedback", "/api/docs", "/api/stats", "/api/wiki/")
 UI_COOKIE = "pds_ui"
 UI_TTL = 7 * 24 * 3600
@@ -303,6 +304,19 @@ def api_search(q: str, tier: str = "verified", k: int = 10):
                       "portal_url": r.get("url")} for r, s in ix.search_catalog(q, k)])
     return [{"id": d["id"], "title": d["title"], "tier": d["tier"], "sector": d["sector"], "summary": d.get("summary_user"), "score": round(s, 2)}
             for d, s in ix.search_datasets(q, k, tiers=(tier,))]
+
+
+@app.get("/api/datasets")
+def api_datasets(agency: str | None = None, sector: str | None = None, data_type: str = "any", purpose: str | None = None,
+                 tier: str = "verified", channel: str = "any", scope: str = "any", offset: int = 0, limit: int = 50, facets: bool = True):
+    """조건에 맞는 데이터셋 목록 전체를 쪽 단위로 — total(전체 수)·items·next_offset·facets(부처·분야·유형별 건수)."""
+    from pds.service.listing import list_datasets
+    if tier not in ("verified", "candidate", "any", "catalog") or channel not in ("any", "portal", "external") or scope not in ("any", "national", "regional"):
+        raise HTTPException(400, "tier는 verified·candidate·any·catalog, channel은 any·portal·external, scope는 any·national·regional")
+    try:
+        return jsonable(list_datasets(agency, sector, data_type, tier, purpose, channel, scope, max(offset, 0), min(max(limit, 1), 200), facets))
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
 
 
 @app.get("/api/datasets/{dsid}")
