@@ -13,6 +13,7 @@ import { JoinMap, fmtCount, shortTitle } from './JoinMap'
 import { TrustIcon, TrustLegend } from './Trust'
 import type { OpenDataset } from './md'
 import { copyText } from './copy'
+import { planMarkdown, saveFile } from './planExport'
 
 export type PlanTab = 'heads' | 'map' | 'data' | 'pipe' | 'code' | 'leads'
 
@@ -276,14 +277,10 @@ export function PlanPanel(props: {
     ) : <AgentEmptyState compact title="단서 없음" description="포털 목록에서도 비슷한 데이터를 찾지 못했습니다." />
   }
 
-  const download = () => {
-    const url = URL.createObjectURL(new Blob([p.code], { type: 'text/x-python' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `pds_strategy_v${version ?? 1}.py`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const base = `pds_strategy_v${version ?? 1}`
+  const download = () => saveFile(`${base}.py`, p.code, 'text/x-python')
+  const downloadJson = () => saveFile(`${base}.json`, JSON.stringify(p, null, 2), 'application/json')
+  const downloadMd = () => saveFile(`${base}.md`, planMarkdown(p, version), 'text/markdown')
 
   return (
     <aside className="pds-panel">
@@ -321,6 +318,8 @@ export function PlanPanel(props: {
           {copied === 'done' ? '복사됨' : copied === 'fail' ? '복사 실패 — .py로 받으세요' : '코드 복사'}
         </AgentButton>
         <AgentButton size="sm" variant="secondary" onClick={download}>.py 내려받기</AgentButton>
+        <AgentButton size="sm" variant="secondary" onClick={downloadJson} title="전략 응답 전체 — 데이터·조인·단계·공백·단서·코드 (에이전트·코드가 읽는 용)">전략 JSON</AgentButton>
+        <AgentButton size="sm" variant="secondary" onClick={downloadMd} title="사람이 읽는 보고서 — 데이터·이유·근거·조인·단계·공백·코드">보고서 .md</AgentButton>
       </footer>
     </aside>
   )
