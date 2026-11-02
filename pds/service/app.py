@@ -11,6 +11,7 @@
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지) · /api/docs/datasets 데이터별 표 한 쪽
+  GET  /admin/usage          사용 현황(사용자 수·호출량·날짜별·도구별·최근 질문) — 이 컴퓨터에서 직접 연 요청만 (프록시·외부 IP는 404)
   GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys · keys/{key} · codes · codes/{id} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
 """
@@ -28,7 +29,7 @@ import uuid
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -478,6 +479,33 @@ def api_wiki_me(req: Request):
 def api_wiki_review(pid: int, body: ReviewIn, req: Request):
     from pds.service import wiki
     return _db_call(wiki.review, sindex.get(), pid, body.decision, _reviewer(req), body.note)
+
+
+def _local_only(req: Request) -> None:
+    """이 컴퓨터에서 직접 연 요청만 — 연결이 루프백이고 프록시를 거친 흔적(X-Forwarded-For 등)이 없어야 한다. 아니면 없는 주소처럼 404."""
+    import ipaddress
+    peer = req.client.host if req.client else ""
+    try:
+        loop = ipaddress.ip_address(peer).is_loopback
+    except ValueError:
+        loop = False
+    if not loop or any(h in req.headers for h in ("x-forwarded-for", "x-real-ip", "forwarded", "cf-connecting-ip")):
+        raise HTTPException(404, "Not Found")
+
+
+@app.get("/admin/usage", include_in_schema=False, response_class=HTMLResponse)
+def admin_usage(req: Request, local: bool = False):
+    """사용 현황 화면 (pds/service/usage_report.py) — 로컬 전용."""
+    from pds.service import usage_report
+    _local_only(req)
+    return HTMLResponse(usage_report.page(local), headers={"cache-control": "no-store", "x-robots-tag": "noindex"})
+
+
+@app.get("/admin/usage.json", include_in_schema=False)
+def admin_usage_json(req: Request, local: bool = False):
+    from pds.service import usage_report
+    _local_only(req)
+    return jsonable(usage_report.stats(local))
 
 
 @app.get("/api/stats", include_in_schema=False)

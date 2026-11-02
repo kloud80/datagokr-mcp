@@ -6,6 +6,7 @@
   · mcp      MCP 도구 호출 — 도구 이름·인자·시간 (결과 본문은 남기지 않는다)
   · plan     REST /api/plan 호출
 IP는 소금 친 해시로만 (USAGE_SALT, 없으면 기본값). 키·계정 값은 남기지 않는다.
+내 컴퓨터·내부망(루프백·사설 IP)에서 온 해시는 LOCAL_FILE에 모아 사용 현황(/admin/usage)에서 뺄 수 있게 한다.
 
 GA4 Measurement Protocol: .env의 GA4_MEASUREMENT_ID·GA4_API_SECRET가 있으면 같은 사건을 GA4 이벤트로도 보낸다
 (mcp_tool_call · api_plan · chat_answer · chat_feedback). 없으면 조용히 건너뛴다.
@@ -22,6 +23,8 @@ import threading
 from pds import config
 
 LOG_DIR = config.ROOT / "logs" / "usage"
+LOCAL_FILE = LOG_DIR / "local_clients.txt"
+_LOCAL: set[str] | None = None
 _Q: queue.Queue = queue.Queue(maxsize=10000)
 _STARTED = False
 _LOCK = threading.Lock()
@@ -29,7 +32,36 @@ _LOCK = threading.Lock()
 
 def client_hash(ip: str | None, ua: str | None) -> str:
     salt = os.environ.get("USAGE_SALT", "datagokr-mcp")
-    return hashlib.sha256(f"{salt}|{ip or ''}|{ua or ''}".encode()).hexdigest()[:16]
+    h = hashlib.sha256(f"{salt}|{ip or ''}|{ua or ''}".encode()).hexdigest()[:16]
+    if is_local_ip(ip):
+        _mark_local(h)
+    return h
+
+
+def is_local_ip(ip: str | None) -> bool:
+    import ipaddress
+    try:
+        a = ipaddress.ip_address((ip or "").strip())
+    except ValueError:
+        return False
+    return a.is_loopback or a.is_private
+
+
+def local_hashes() -> set[str]:
+    global _LOCAL
+    if _LOCAL is None:
+        _LOCAL = set(LOCAL_FILE.read_text(encoding="utf-8").split()) if LOCAL_FILE.exists() else set()
+    return _LOCAL
+
+
+def _mark_local(h: str) -> None:
+    with _LOCK:
+        if h in local_hashes():
+            return
+        _LOCAL.add(h)
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        with LOCAL_FILE.open("a", encoding="utf-8") as f:
+            f.write(h + "\n")
 
 
 def _db_insert(recs: list[dict]) -> None:
