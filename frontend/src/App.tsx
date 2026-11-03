@@ -66,6 +66,9 @@ function trustOf(p: Plan | undefined, id: string): Trust | null {
   return null
 }
 
+// 서버 확장 모듈이 첫 화면에 넣어 주는 아래쪽 링크 (pds/service/app.py EXT['links'])
+const extLinks: { href: string; label: string }[] = (window as unknown as { __PDS_LINKS__?: { href: string; label: string }[] }).__PDS_LINKS__ ?? []
+
 export function App() {
   const [turns, setTurns] = useState<Turn[]>([])
   const [plans, setPlans] = useState<Plan[]>([])
@@ -127,7 +130,7 @@ export function App() {
     }
   }, [turns, busy])
 
-  // 공개 전략 페이지(/data)의 '지금 물어보기' — /?q=질문&ref=seo 로 들어오면 그 질문을 바로 보낸다 (주소에서는 지운다)
+  // 질문 링크 — /?q=질문&ref=출처 로 들어오면 그 질문을 바로 보낸다 (주소에서는 지운다)
   const asked = useRef(false)
   useEffect(() => {
     if (asked.current) return
@@ -260,7 +263,7 @@ export function App() {
           <span className="pds-ev">Enter로 보내기 · Shift+Enter로 줄바꿈 — 답변에는 직접 불러 보거나 법령·검토로 확인된 내용만 씁니다</span>
           <span className="pds-ev">대화 내용은 서비스 개선을 위해 서버에 저장됩니다 (개인 식별 정보는 남기지 않습니다).</span>
           <Credit compact />
-          <a className="pds-seo-link" href="/data/">공공데이터 전략 사례 모음</a>
+          {extLinks.map((l) => <a key={l.href} className="pds-ext-link" href={l.href}>{l.label}</a>)}
         </div>
       </section>
 

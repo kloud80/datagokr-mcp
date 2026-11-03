@@ -11,7 +11,6 @@
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지) · /api/docs/datasets 데이터별 표 한 쪽
-  GET  /data/…               공개 전략 사례·데이터 사전·분야 허브 (서버 렌더링 HTML, 검색엔진·AI용) · /sitemap.xml — pds/seo/site.py
   GET  /admin/usage          사용 현황(사용자 수·호출량·날짜별·도구별·최근 질문) — 이 컴퓨터에서 직접 연 요청만 (프록시·외부 IP는 404)
   GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys · keys/{key} · codes · codes/{id} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
@@ -123,7 +122,7 @@ if (DIST / "assets").is_dir():
 class ChatIn(BaseModel):
     messages: list[dict]
     session: str | None = None  # 브라우저가 만든 무작위 id (사용 기록용)
-    ref: str | None = None  # 들어온 길 (예: seo — 공개 전략 페이지의 '지금 물어보기')
+    ref: str | None = None  # 들어온 길 — 링크 /?q=질문&ref=출처 로 열린 질문 (사용 기록용)
 
 
 class FeedbackIn(BaseModel):
@@ -135,7 +134,10 @@ class FeedbackIn(BaseModel):
 
 TRUST_PROXY = os.environ.get("PDS_TRUST_PROXY", "0") == "1"  # 리버스 프록시 뒤에서만 X-Forwarded-For를 믿는다 (아니면 호출마다 바꿔 제한을 피할 수 있다)
 TRUSTED_PROXIES = {x.strip() for x in os.environ.get("PDS_TRUSTED_PROXIES", "").split(",") if x.strip()}  # 이 IP에서 온 연결만 XFF를 믿는다 (포트가 직접도 열려 있을 때)
-PUBLIC_URL = os.environ.get("PDS_PUBLIC_URL", "").rstrip("/")  # 프록시 뒤 공개 주소 (예: https://labs.ai.bigvalue.co.kr) — 안내문의 주소
+PUBLIC_URL = os.environ.get("PDS_PUBLIC_URL", "").rstrip("/")
+# 확장 모듈 — .env의 PDS_EXTENSIONS=모듈,모듈. 각 모듈의 install(app, EXT)가 경로를 더하고 아래 자리에 내용을 보탠다
+#   head: 첫 화면 <head>에 넣을 HTML · links: 첫 화면 아래쪽 링크 {href, label} · robots·llms: 안내문에 덧붙일 줄 ({base}는 공개 주소)
+EXT: dict[str, list] = {"head": [], "links": [], "robots": [], "llms": []}  # 프록시 뒤 공개 주소 (예: https://labs.ai.bigvalue.co.kr) — 안내문의 주소
 
 
 def _client_ip(xff: str | None, peer: str | None) -> str:
@@ -185,9 +187,10 @@ def home(req: Request):
     built = DIST / "index.html"
     if not built.exists():
         return PlainTextResponse("웹 화면이 빌드되지 않았습니다 — cd frontend && npm install && npm run build", status_code=503)
-    from pds.seo.site import _verify_meta
-    meta = _verify_meta()  # 검색엔진 소유 확인 태그 — 서치 콘솔·서치어드바이저는 첫 화면에서 찾는다
-    res = HTMLResponse(built.read_text(encoding="utf-8").replace("</head>", meta + "</head>", 1)) if meta else FileResponse(built)
+    extra = "".join(EXT["head"])
+    if EXT["links"]:  # 화면이 아래쪽에 그린다 (App.tsx)
+        extra += "<script>window.__PDS_LINKS__=" + json.dumps(EXT["links"], ensure_ascii=False).replace("</", "<\\/") + "</script>"
+    res = HTMLResponse(built.read_text(encoding="utf-8").replace("</head>", extra + "</head>", 1)) if extra else FileResponse(built)
     _issue_ui_cookie(req, res)
     return res
 
@@ -196,8 +199,9 @@ def home(req: Request):
 def robots(req: Request):
     """AI 에이전트의 웹 가져오기(robots.txt 확인)가 막히지 않게 — 화면·API·문서 모두 허용 (채팅·전략은 호출 제한이 따로 있다)."""
     base = PUBLIC_URL or str(req.base_url).rstrip("/")
+    more = "".join(line.format(base=base) + "\n" for line in EXT["robots"])
     return (f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /*?q=\n\n"
-            f"Sitemap: {base}/sitemap.xml\n\n# 에이전트용 안내: {base}/llms.txt · 전략 사례 목록: {base}/data/llms.txt\n")
+            f"{more + chr(10) if more else ''}# 에이전트용 안내: {base}/llms.txt\n")
 
 
 @app.get("/llms.txt", include_in_schema=False, response_class=PlainTextResponse)
@@ -211,7 +215,7 @@ def llms(req: Request):
             f"- 데이터 상세: GET {b}/api/datasets/{{id}} · 설명서: GET {b}/api/datasets/{{id}}/dossier\n"
             f"- 코드표: GET {b}/api/codes · {b}/api/codes/{{id}}\n"
             f"- API 레퍼런스: {b}/api/reference · MCP 가이드: {b}/#/mcp\n"
-            f"- 전략 사례(질문별 답·데이터 사전, HTML): {b}/data/ · 목록: {b}/data/llms.txt\n\n"
+            + "".join(line.format(base=b) + "\n" for line in EXT["llms"]) + "\n"
             "전략 응답의 credentials.required가 true면 데이터를 받기 전에 사용자에게 키가 필요하다고 알리고, "
             "credentials.env_sample로 .env를 만들어(값은 비움) 사용자가 채우게 한다. 키를 지어내지 않는다.\n")
 
@@ -630,7 +634,12 @@ def _mount_mcp() -> None:
     app.mount("/", _McpUsage(mcp_app))
 
 
-from pds.seo.site import router as seo_router  # noqa: E402 — 공개 전략 페이지 (/data …) — 위 경로들 뒤, MCP 마운트 앞
+def _load_extensions() -> None:
+    """PDS_EXTENSIONS의 모듈을 불러 install(app, EXT) — 위 경로들 뒤, MCP 마운트 앞 (MCP가 / 에 마운트되므로)."""
+    import importlib
+    for name in filter(None, (x.strip() for x in os.environ.get("PDS_EXTENSIONS", "").split(","))):
+        importlib.import_module(name).install(app, EXT)
 
-app.include_router(seo_router)
+
+_load_extensions()
 _mount_mcp()

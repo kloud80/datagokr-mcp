@@ -84,7 +84,7 @@ def stats(include_local: bool = False) -> dict:
         "kinds": Counter(r["kind"] for r in rs), "active": {"1일": active(1), "7일": active(7), "30일": active(30)},
         "returning": sum(1 for u in users.values() if len(u["days"]) > 1),
         "sessions": len({r.get("session") for r in chats if r.get("session")}),
-        "seo": sum(1 for r in chats if (_obj(r.get("args")) or {}).get("ref") == "seo"),
+        "ref": sum(1 for r in chats if (_obj(r.get("args")) or {}).get("ref")),  # 링크(/?q=…&ref=…)로 열린 질문
         "days": [{"day": d, "users": len(v["users"]), "new": v["new"], **{k: v[k] for k in ("chat", "mcp", "plan", "feedback")}}
                  for d, v in sorted(days.items(), reverse=True)],
         "tools": tools.most_common(), "tokens": dict(tokens),
@@ -127,7 +127,7 @@ code{font-size:12px;color:var(--mut)}a{color:var(--acc)}.up{color:var(--acc2)}.t
     cards = [("사용자(누적)", s["users"]), ("최근 7일 사용자", s["active"]["7일"]), ("최근 1일 사용자", s["active"]["1일"]),
              ("다시 온 사용자", s["returning"]), ("전체 호출", s["total"]), ("채팅 답", k.get("chat", 0)),
              ("MCP 도구 호출", k.get("mcp", 0)), ("REST 전략", k.get("plan", 0)), ("채팅 세션", s["sessions"]),
-             ("피드백", k.get("feedback", 0)), ("전략 사례 → 채팅", s["seo"]), ("채팅 토큰(입력)", f"{s['tokens'].get('input', 0):,}"), ("채팅 토큰(출력)", f"{s['tokens'].get('output', 0):,}")]
+             ("피드백", k.get("feedback", 0)), ("링크로 열린 채팅", s["ref"]), ("채팅 토큰(입력)", f"{s['tokens'].get('input', 0):,}"), ("채팅 토큰(출력)", f"{s['tokens'].get('output', 0):,}")]
     mx = max(d["users"] for d in s["days"]) or 1
     days = "".join(f"<tr><td>{d['day']}</td><td class=n><span class=bar style='width:{d['users'] / mx * 80:.0f}px'></span>{d['users']}</td>"
                    f"<td class=n>{d['new']}</td><td class=n>{d['chat']}</td><td class=n>{d['mcp']}</td><td class=n>{d['plan']}</td><td class=n>{d['feedback']}</td></tr>"

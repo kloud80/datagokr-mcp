@@ -35,7 +35,6 @@
 | 무엇 | 주소 |
 |---|---|
 | 웹 채팅 (목표를 말하면 데이터·조인·실행 코드) | https://labs.ai.bigvalue.co.kr |
-| **공공데이터 전략 사례** (질문별 답·데이터 사전, 검색엔진·AI용 HTML) | https://labs.ai.bigvalue.co.kr/data/ |
 | Docs (사상·구성·관계·커버리지, 실시간 집계) | https://labs.ai.bigvalue.co.kr/#/docs |
 | MCP 가이드 | https://labs.ai.bigvalue.co.kr/#/mcp |
 | 원격 MCP (Streamable HTTP) | `https://labs.ai.bigvalue.co.kr/mcp` |
