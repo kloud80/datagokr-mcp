@@ -190,11 +190,11 @@ export function sendFeedback(turn_id: string, rating: 'up' | 'down', comment?: s
   })
 }
 
-async function chatStream(messages: { role: string; content: string }[], on: (e: StreamEvent) => void): Promise<void> {
+async function chatStream(messages: { role: string; content: string }[], on: (e: StreamEvent) => void, ref?: string): Promise<void> {
   const r = await fetch('/api/chat/stream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, session: sessionId() }),
+    body: JSON.stringify({ messages, session: sessionId(), ref }),
   })
   if (!r.ok || !r.body) {
     const j = await r.json().catch(() => ({}))

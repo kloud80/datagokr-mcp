@@ -88,7 +88,7 @@ export function App() {
     setView('plan')
   }, [])
 
-  const send = useCallback(async (text: string) => {
+  const send = useCallback(async (text: string, ref?: string) => {
     const q = text.trim()
     if (!q || busy) return
     const history = [...turns.filter((t) => t.status !== 'failed').map(({ role, content }) => ({ role, content })), { role: 'user', content: q }]
@@ -121,11 +121,26 @@ export function App() {
         } else if (e.type === 'error') {
           patch((t) => ({ ...t, status: 'failed', error: e.detail }))
         }
-      })
+      }, ref)
     } catch (err) {
       patch((t) => ({ ...t, status: 'failed', error: (err as Error).message }))
     }
   }, [turns, busy])
+
+  // 공개 전략 페이지(/data)의 '지금 물어보기' — /?q=질문&ref=seo 로 들어오면 그 질문을 바로 보낸다 (주소에서는 지운다)
+  const asked = useRef(false)
+  useEffect(() => {
+    if (asked.current) return
+    asked.current = true
+    const u = new URL(window.location.href)
+    const q = u.searchParams.get('q')?.trim()
+    if (!q) return
+    const ref = u.searchParams.get('ref') ?? 'link'
+    u.searchParams.delete('q')
+    u.searchParams.delete('ref')
+    window.history.replaceState(null, '', u.pathname + u.search + u.hash)
+    void send(q.slice(0, 500), ref.slice(0, 20))
+  }, [send])
 
   const retry = () => {
     const k = turns.length - 2
@@ -245,6 +260,7 @@ export function App() {
           <span className="pds-ev">Enter로 보내기 · Shift+Enter로 줄바꿈 — 답변에는 직접 불러 보거나 법령·검토로 확인된 내용만 씁니다</span>
           <span className="pds-ev">대화 내용은 서비스 개선을 위해 서버에 저장됩니다 (개인 식별 정보는 남기지 않습니다).</span>
           <Credit compact />
+          <a className="pds-seo-link" href="/data/">공공데이터 전략 사례 모음</a>
         </div>
       </section>
 

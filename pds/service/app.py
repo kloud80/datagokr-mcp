@@ -11,6 +11,7 @@
   GET  /api/stats            지식 체계 규모
   GET  /api/reference        API 레퍼런스 (Swagger) · /mcp 원격 MCP (streamable HTTP)
   GET  /api/docs             Docs 화면용 집계 (사상·구성·관계·커버리지) · /api/docs/datasets 데이터별 표 한 쪽
+  GET  /data/…               공개 전략 사례·데이터 사전·분야 허브 (서버 렌더링 HTML, 검색엔진·AI용) · /sitemap.xml — pds/seo/site.py
   GET  /admin/usage          사용 현황(사용자 수·호출량·날짜별·도구별·최근 질문) — 이 컴퓨터에서 직접 연 요청만 (프록시·외부 IP는 404)
   GET  /api/wiki/...         위키 — search · facets · datasets/{id} · keys · keys/{key} · codes · codes/{id} · proposals (제안 POST, 승인 POST …/{id}/review)
 키는 서버의 .env에만 있다 — 응답·로그에 키를 싣지 않는다.
@@ -122,6 +123,7 @@ if (DIST / "assets").is_dir():
 class ChatIn(BaseModel):
     messages: list[dict]
     session: str | None = None  # 브라우저가 만든 무작위 id (사용 기록용)
+    ref: str | None = None  # 들어온 길 (예: seo — 공개 전략 페이지의 '지금 물어보기')
 
 
 class FeedbackIn(BaseModel):
@@ -159,7 +161,8 @@ def _limit(req: Request) -> None:
         raise HTTPException(429, why)
 
 
-def _log_chat(out: dict, msgs: list[dict], turn_id: str, session: str | None, who: str, status: str = "ok", error: str | None = None) -> None:
+def _log_chat(out: dict, msgs: list[dict], turn_id: str, session: str | None, who: str, status: str = "ok", error: str | None = None,
+              ref: str | None = None) -> None:
     from pds.service.usage import record
     plans = out.get("plans") or []
     p = plans[-1] if plans else {}
@@ -169,7 +172,7 @@ def _log_chat(out: dict, msgs: list[dict], turn_id: str, session: str | None, wh
            reply=out.get("reply"), plan_ids={"datasets": ids, "excluded": [x["id"] for x in p.get("not_recommended") or []],
                                              "joins": [j["edge"] for j in p.get("joins") or []], "context": p.get("context")},
            trace=out.get("trace"), usage=out.get("usage"), elapsed_s=out.get("elapsed_s"), status=status, error=error,
-           args={"turns": len(msgs)})
+           args={"turns": len(msgs), **({"ref": ref[:20]} if ref else {})})
 
 
 class PlanIn(BaseModel):
@@ -182,7 +185,9 @@ def home(req: Request):
     built = DIST / "index.html"
     if not built.exists():
         return PlainTextResponse("웹 화면이 빌드되지 않았습니다 — cd frontend && npm install && npm run build", status_code=503)
-    res = FileResponse(built)
+    from pds.seo.site import _verify_meta
+    meta = _verify_meta()  # 검색엔진 소유 확인 태그 — 서치 콘솔·서치어드바이저는 첫 화면에서 찾는다
+    res = HTMLResponse(built.read_text(encoding="utf-8").replace("</head>", meta + "</head>", 1)) if meta else FileResponse(built)
     _issue_ui_cookie(req, res)
     return res
 
@@ -191,7 +196,8 @@ def home(req: Request):
 def robots(req: Request):
     """AI 에이전트의 웹 가져오기(robots.txt 확인)가 막히지 않게 — 화면·API·문서 모두 허용 (채팅·전략은 호출 제한이 따로 있다)."""
     base = PUBLIC_URL or str(req.base_url).rstrip("/")
-    return f"User-agent: *\nAllow: /\n\n# 에이전트용 안내: {base}/llms.txt\n"
+    return (f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /*?q=\n\n"
+            f"Sitemap: {base}/sitemap.xml\n\n# 에이전트용 안내: {base}/llms.txt · 전략 사례 목록: {base}/data/llms.txt\n")
 
 
 @app.get("/llms.txt", include_in_schema=False, response_class=PlainTextResponse)
@@ -204,7 +210,8 @@ def llms(req: Request):
             f"- 검색: GET {b}/api/search?q=검색어\n"
             f"- 데이터 상세: GET {b}/api/datasets/{{id}} · 설명서: GET {b}/api/datasets/{{id}}/dossier\n"
             f"- 코드표: GET {b}/api/codes · {b}/api/codes/{{id}}\n"
-            f"- API 레퍼런스: {b}/api/reference · MCP 가이드: {b}/#/mcp\n\n"
+            f"- API 레퍼런스: {b}/api/reference · MCP 가이드: {b}/#/mcp\n"
+            f"- 전략 사례(질문별 답·데이터 사전, HTML): {b}/data/ · 목록: {b}/data/llms.txt\n\n"
             "전략 응답의 credentials.required가 true면 데이터를 받기 전에 사용자에게 키가 필요하다고 알리고, "
             "credentials.env_sample로 .env를 만들어(값은 비움) 사용자가 채우게 한다. 키를 지어내지 않는다.\n")
 
@@ -250,11 +257,11 @@ def api_chat_stream(body: ChatIn, req: Request):
             out["elapsed_s"] = round(time.time() - t0, 1)
             out["turn_id"] = turn_id
             q.put({"type": "done", **out})
-            _log_chat(out, msgs, turn_id, body.session, who, status=out.get("stop") == "refusal" and "refusal" or "ok")
+            _log_chat(out, msgs, turn_id, body.session, who, status=out.get("stop") == "refusal" and "refusal" or "ok", ref=body.ref)
         except Exception as e:  # noqa: BLE001 — 오류도 이벤트로 알린다
             q.put({"type": "error", "detail": f"{type(e).__name__}: {str(e)[:300]}"})
             _log_chat({"elapsed_s": round(time.time() - t0, 1)}, msgs, turn_id, body.session, who, status="error",
-                      error=f"{type(e).__name__}: {str(e)[:300]}")
+                      error=f"{type(e).__name__}: {str(e)[:300]}", ref=body.ref)
 
     threading.Thread(target=work, daemon=True).start()
 
@@ -623,4 +630,7 @@ def _mount_mcp() -> None:
     app.mount("/", _McpUsage(mcp_app))
 
 
+from pds.seo.site import router as seo_router  # noqa: E402 — 공개 전략 페이지 (/data …) — 위 경로들 뒤, MCP 마운트 앞
+
+app.include_router(seo_router)
 _mount_mcp()
