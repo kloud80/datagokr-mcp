@@ -17,9 +17,11 @@
 """
 from __future__ import annotations
 
+import html
 import json
 import os
 import queue
+import re
 import threading
 import time
 from contextlib import asynccontextmanager
@@ -137,7 +139,8 @@ TRUSTED_PROXIES = {x.strip() for x in os.environ.get("PDS_TRUSTED_PROXIES", "").
 PUBLIC_URL = os.environ.get("PDS_PUBLIC_URL", "").rstrip("/")
 # 확장 모듈 — .env의 PDS_EXTENSIONS=모듈,모듈. 각 모듈의 install(app, EXT)가 경로를 더하고 아래 자리에 내용을 보탠다
 #   head: 첫 화면 <head>에 넣을 HTML · links: 첫 화면 아래쪽 링크 {href, label} · robots·llms: 안내문에 덧붙일 줄 ({base}는 공개 주소)
-EXT: dict[str, list] = {"head": [], "links": [], "robots": [], "llms": []}  # 프록시 뒤 공개 주소 (예: https://labs.ai.bigvalue.co.kr) — 안내문의 주소
+#   title: 첫 화면 <title>을 바꿀 문구(마지막 값) · root: <div id="root"> 안에 미리 둘 HTML (화면 스크립트가 뜨면 바뀐다)
+EXT: dict[str, list] = {"head": [], "links": [], "robots": [], "llms": [], "title": [], "root": []}  # 프록시 뒤 공개 주소 (예: https://labs.ai.bigvalue.co.kr) — 안내문의 주소
 
 
 def _client_ip(xff: str | None, peer: str | None) -> str:
@@ -190,7 +193,15 @@ def home(req: Request):
     extra = "".join(EXT["head"])
     if EXT["links"]:  # 화면이 아래쪽에 그린다 (App.tsx)
         extra += "<script>window.__PDS_LINKS__=" + json.dumps(EXT["links"], ensure_ascii=False).replace("</", "<\\/") + "</script>"
-    res = HTMLResponse(built.read_text(encoding="utf-8").replace("</head>", extra + "</head>", 1)) if extra else FileResponse(built)
+    if not (extra or EXT["title"] or EXT["root"]):
+        res = FileResponse(built)
+    else:
+        page = built.read_text(encoding="utf-8").replace("</head>", extra + "</head>", 1)
+        if EXT["title"]:
+            page = re.sub(r"<title>.*?</title>", lambda _: "<title>" + html.escape(EXT["title"][-1]) + "</title>", page, count=1, flags=re.S)
+        if EXT["root"]:
+            page = page.replace('<div id="root"></div>', '<div id="root">' + "".join(EXT["root"]) + "</div>", 1)
+        res = HTMLResponse(page)
     _issue_ui_cookie(req, res)
     return res
 
