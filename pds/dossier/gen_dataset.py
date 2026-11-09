@@ -221,6 +221,10 @@ def _fields(dsid: str, spec: dict | None, synth: dict) -> list[dict]:
     for o in (spec or {}).get("operations") or []:
         for f in o.get("response_fields") or []:
             desc.setdefault(str(f.get("name")).split(".")[-1].lower(), f.get("desc"))
+    for o in (_j("runs", dsid) or {}).get("ops") or []:  # 외부 사이트가 알려 준 출력 항목 이름 (pds/probe/openfiscal_sites — labels)
+        for k, v in (o.get("labels") or {}).items():
+            if v:
+                desc.setdefault(str(k).lower(), v)
     st = _j("stats", dsid) or {}
     kc = synth.get("key_columns") or {}
     multi = len([o for o in st.values() if isinstance(o, dict) and o]) > 1
@@ -329,7 +333,8 @@ def _services(dsid: str, spec: dict | None, run: dict, apply: dict | None, m) ->
                "open.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"}, "www.law.go.kr": {"scheme": "apiKey", "in": "query", "name": "OC"},
                "open.neis.go.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"},
                "kosis.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}, "www.reb.or.kr": {"scheme": "apiKey", "in": "query", "name": "KEY"},
-               "bigdata.kepco.co.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
+               "bigdata.kepco.co.kr": {"scheme": "apiKey", "in": "query", "name": "apiKey"},
+               "www.openfiscaldata.go.kr": {"scheme": "apiKey", "in": "query", "name": "Key"}}.get(site, {"scheme": "apiKey", "in": "path", "name": "KEY"})
         issuer = {"www.vworld.kr": "vworld.kr", "www.law.go.kr": "open.law.go.kr", "openapi.seoul.go.kr:8088": "data.seoul.go.kr"}.get(site, site)
         for o in run.get("ops") or []:
             if str(o.get("op") or "").startswith("vworld 다운로드"):  # pds/probe/vworld_files — 로그인 후 시도별 파일 (키 아님)

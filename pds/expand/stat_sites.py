@@ -3,7 +3,7 @@
 7차(wave7)는 키가 없어 이 두 사이트를 뺐다. 키가 생겨(KOSIS_API_KEY · REB_API_KEY) 링크형 전부를 대상으로 삼는다.
 검증은 pds.probe.kosis_sites · reb_sites, 등록·상태는 PDS_TARGETS_LOG=stat_sites_targets.json python -m pds.expand.sync4 register|status.
 등급은 7차와 같은 규칙 (부문 판정이 없으면 '전수').
-출력: logs/stat_sites_targets.json (인자 kepco_mnd: 한전·국방부 키 확대 → logs/kepco_mnd_targets.json)
+출력: logs/stat_sites_targets.json (인자 kepco_mnd: 한전·국방부 키 확대 → logs/kepco_mnd_targets.json · openfiscal: 열린재정 → logs/openfiscal_targets.json)
 """
 from __future__ import annotations
 
@@ -16,7 +16,8 @@ from pds import config
 from pds.expand.wave6 import _decisions
 
 HOSTS = ("kosis.kr", "reb.or.kr")
-SETS = {"stat": (HOSTS, "stat_sites_targets.json"), "kepco_mnd": (("bigdata.kepco.co.kr", "mnd.go.kr"), "kepco_mnd_targets.json")}
+SETS = {"stat": (HOSTS, "stat_sites_targets.json"), "kepco_mnd": (("bigdata.kepco.co.kr", "mnd.go.kr"), "kepco_mnd_targets.json"),
+        "openfiscal": (("openfiscaldata.go.kr",), "openfiscal_targets.json")}
 
 
 def build(hosts: tuple[str, ...] = HOSTS) -> list[dict]:

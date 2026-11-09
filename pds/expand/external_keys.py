@@ -53,6 +53,8 @@ SITES: dict[str, dict] = {
     "www.ntis.go.kr": {"name": "국가과학기술지식정보서비스 NTIS", "env": "NTIS_API_KEY", "how": "회원가입 → 오픈API 신청 → 승인"},
     "eum.go.kr": {"name": "토지이음 (토지이용계획)", "env": "(파일 다운로드)", "how": "사이트 파일 다운로드 — 키 없음"},
     "file.localdata.go.kr": {"name": "지방행정 인허가(LOCALDATA) 파일", "env": "(없음)", "how": "키 없이 파일 다운로드 — 바로 처리 가능"},
+    "www.openfiscaldata.go.kr": {"name": "열린재정 (재정경제부·기획예산처)", "env": "OPEN_FISCAL_DATA_API_KEY",
+                                 "how": "보유·검증 (2026-11-09) — 회원가입 → 오픈API 인증키 신청. 견본 키 sample은 막혀 있다"},
 }
 
 # 2026-10-06 가입·검증 결과 (mode: key 인증키 · session 로그인 세션 · sample 견본 키(가입 불필요) · per_api 서비스마다 키 · pending 승인·신청 대기)

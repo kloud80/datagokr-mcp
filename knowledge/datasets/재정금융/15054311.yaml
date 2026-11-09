@@ -1,0 +1,382 @@
+# Dataset 15054311 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15054311'
+tier: verified
+title: 재정경제부_회계별 세출 결산현황 정보
+sector: 재정금융/재정·금융/national-budget
+agency:
+  id: '1053000'
+  name: 재정경제부
+kind: EXTERNAL_FILE
+channel: external
+portal_url: https://www.data.go.kr/data/15054311/fileData.do
+synonyms:
+  - 예산현황
+  - 회계구분
+  - 지출내역
+  - 공공재정
+  - 행정통계
+description_portal: 중앙행정기관의 회계연도별 세출 결산 현황을 정리한 정보입니다. 회계연도, 소관명, 회계명, 계정명 등 항목을 포함하며, 회계 기준에 따라 구분되어 세출 구조와 집행 내역을 파악할 수 있도록 구성되어 있습니다. 본 데이터는 예산 집행의 투명성 확보와 재정운영 평가에 활용되며, 정책 수립과 회계 분석에도 기초 자료로 제공됩니다. 열린재정을 통해 국민에게 공개되며, 연도별 세출 결산 내역을 쉽게 열람할 수 있습니다. 이 자료는 재정통계, 열린재정, 세출 결산 외에도 예산현황, 회계구분, 지출내역, 공공재정, 행정통계 등 다양한 분석 키워드와 연계됩니다. 공공저작물로 제공되므로 활용 시 메타정보에 명시된 저작권 사항을 반드시 확인하시기 바랍니다.
+applicable_legislation:
+  - law: 국가재정법
+    source: portal_meta:보유근거
+legal_basis_portal: 국가재정법
+accrual_periodicity: 수시
+team:
+  dept: 기획재정부 국고국 국고과
+services:
+  - op: FiscalExpenSettle
+    name: FiscalExpenSettle
+    endpoint: https://openapi.openfiscaldata.go.kr/FiscalExpenSettle
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: Key
+      issuer: www.openfiscaldata.go.kr
+    params:
+      - name: FSCL_YY
+        required: true
+        example: '2024'
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: FSCL_YY
+      title: 회계연도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2024'
+      stats:
+        min: 2024
+        p50: 2024
+        max: 2024
+        unique: 1
+    - name: OFFC_NM
+      title: 소관명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 보건복지부
+        - 산림청
+        - 환경부
+      stats:
+        unique: 39
+    - name: FSCL_NM
+      title: 회계명
+      type: code
+      null_rate: 0.0
+      sample_values:
+        - 일반회계
+        - 지역균형발전특별회계
+        - 에너지및자원사업특별회계
+      stats:
+        unique: 23
+    - name: ACCT_NM
+      title: 계정명
+      type: code
+      null_rate: 0.46
+      sample_values:
+        - 자본계정
+        - 손익계정
+        - 제주특별자치도계정
+      stats:
+        unique: 10
+    - name: ANEXP_BDGAMT
+      title: 세출예산액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '892100000000'
+        - '146167000000'
+        - '767653000000'
+      stats:
+        min: 500000000
+        p50: 136174000000
+        max: 90968627000000
+        unique: 100
+    - name: PREY_BFWAMT
+      title: 전년도이월액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '1168254010'
+        - '9322351360'
+      stats:
+        min: 0
+        p50: 36736185
+        max: 967166167310
+        unique: 53
+    - name: RSVF_EP_DCS_IAMT
+      title: 예비비지출결정증액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '900000000'
+        - '280000000'
+      stats:
+        min: 0
+        p50: 0
+        max: 710510784000
+        unique: 11
+    - name: RSVF_EP_DCS_MAMT
+      title: 예비비지출결정감액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '-900000000'
+        - '-280000000'
+      stats:
+        min: -1726172173000
+        p50: 0
+        max: 0
+        unique: 4
+    - name: BDTR_IAMT
+      title: 전용증액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '50000000'
+        - '959260000'
+      stats:
+        min: 0
+        p50: 35210000
+        max: 392883421070
+        unique: 56
+    - name: BDTR_MAMT
+      title: 전용감액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '-50000000'
+        - '-959260000'
+      stats:
+        min: -392883421070
+        p50: -35210000
+        max: 0
+        unique: 56
+    - name: AVDV_FNT_IAMT
+      title: 이용및이체증액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '2010018000'
+        - '6425098000'
+      stats:
+        min: 0
+        p50: 0
+        max: 1043512431390
+        unique: 26
+    - name: AVDV_FNT_MAMT
+      title: 이용및이체감액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '-2010018000'
+        - '-6425098000'
+      stats:
+        min: -1274253596390
+        p50: 0
+        max: 0
+        unique: 27
+    - name: RV_RPL_OVR_EP_PERM_AMT
+      title: 초과지출승인액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '415927000'
+        - '786000000'
+      stats:
+        min: 0
+        p50: 0
+        max: 8081851000
+        unique: 11
+    - name: ANEXP_BDG_CAMT
+      title: 세출예산현액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '892100000000'
+        - '147335254010'
+        - '776975351360'
+      stats:
+        min: 500000000
+        p50: 136789000000
+        max: 92247112886140
+        unique: 100
+    - name: EP_AMT
+      title: 지출금액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '824491163640'
+        - '140717231770'
+        - '712836835150'
+      stats:
+        min: 500000000
+        p50: 129592251680
+        max: 87809640831360
+        unique: 100
+    - name: NEXT_YY_BFWAMT
+      title: 다음년도이월액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '5244122000'
+        - '2658615250'
+      stats:
+        min: 0
+        p50: 33245000
+        max: 670865804250
+        unique: 54
+    - name: DUSEAMT
+      title: 불용액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '0'
+        - '300000000'
+        - '62364714360'
+      stats:
+        min: 0
+        p50: 3640663340
+        max: 4425459103190
+        unique: 85
+facets:
+  grade:
+    - 전수
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - FSCL_YY
+    - PREY_BFWAMT
+    - NEXT_YY_BFWAMT
+cycle: default
+classification:
+  subsector_name: 국가 예산 (세입·세출 예산/결산, 회계·기금별, 부담금, 국가채권)
+  depth: front
+  novelty: low
+  cross_cutting: false
+  prelim_score: 0.5022
+  rank_in_sector: 53
+  brm: 재정금융 - 재정·금융
+claims:
+  - id: c-15054311-01
+    kind: access
+    value: 외부 사이트 www.openfiscaldata.go.kr 인증키 필요 (query 파라미터 Key) — 포털 활용신청과 별개. 2026-11-09 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15054311.json
+        observed_at: '2026-11-09'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.openfiscaldata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-05-11'
+  - id: c-15054311-02
+    kind: cadence
+    value: 명세상 수시
+    evidence:
+      - type: portal_meta
+        source: catalog:update_cycle
+        detail: 수시
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15054311-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15054311.json
+        observed_at: '2026-11-09'
+        detail: 컬럼 17개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15054311-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15054311.json
+        observed_at: '2026-11-09'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15054311-05
+    kind: legal_basis
+    value: '포털 보유근거: 국가재정법'
+    evidence:
+      - type: portal_meta
+        source: catalog:legal_basis
+        detail: 국가재정법
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15054311-06
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15054311-07
+    kind: admin_note
+    value: 키 확대(openfiscaldata.go.kr) · 등급:전수
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-11-09'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-11-09'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15054311.json
+  stats: probe/stats/15054311.json
+  data: probe/data/15054311/
+status: active

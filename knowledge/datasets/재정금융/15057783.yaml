@@ -1,0 +1,230 @@
+# Dataset 15057783 — KNOWLEDGE-SPEC §3.1. 기계 필드는 `python -m pds gen-dataset`가 다시 쓴다.
+# 사람이 쓰는 필드(summary_user, limits, synonyms, sla, facets, edges_hint, family, status, cycle, review)와 generated_by 없는 claim은 보존된다.
+id: '15057783'
+tier: verified
+title: 기획예산처_국가채권현황
+sector: 재정금융/재정·금융/public-assets
+agency:
+  id: '1052000'
+  name: 기획예산처
+kind: EXTERNAL_API
+channel: external
+portal_url: https://www.data.go.kr/data/15057783/openapi.do
+synonyms:
+  - 국가채권
+  - 회계
+  - 기금
+  - 결산정보
+  - 재정통계
+description_portal: 회계별 및 기금별로 집계된 국가채권의 현황을 제공합니다. 국가채권은 국가가 채권자에 대하여 가지는 금전적 권리를 의미하며, 본 자료는 회계단위 및 기금 단위로 구분된 채권 규모와 세부 항목을 종합적으로 파악할 수 있도록 구성되어 있습니다. 특히 각 회계 또는 기금별로 채권의 현재 잔액, 변동 내역, 채권종류 등 구체적인 정보를 포함하고 있어, 국가의 재정 운영 및 결산 정보를 종합적으로 분석하는 데 유용한 통계자료입니다. 열린재정에서 제공되는 이 데이터는 재정 건전성 분석, 공공부문 자산 평가, 채권 회수 계획 수립 등 다양한 정책 수립과 학술 연구에 활용될 수 있습니다.
+team:
+  dept: 열린재정정보과
+services:
+  - op: NRAccountingFund
+    name: NRAccountingFund
+    endpoint: https://openapi.openfiscaldata.go.kr/NRAccountingFund
+    method: GET
+    security:
+      scheme: apiKey
+      in: query
+      name: Key
+      issuer: www.openfiscaldata.go.kr
+    params:
+      - name: Type
+        required: true
+        example: json
+      - name: pIndex
+        required: true
+        example: '1'
+      - name: pSize
+        required: true
+        example: '100'
+    approval: external
+    format:
+      - json
+    error_style: http200_body_code
+    verified_ok: true
+schema:
+  fields:
+    - name: OJ_YY
+      title: 기준년도
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '2002'
+        - '2003'
+        - '2004'
+      stats:
+        min: 2002
+        p50: 2013.5
+        max: 2025
+        unique: 24
+    - name: NAT_CT_SUM_AMT
+      title: 국가채권 총액
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '1592360'
+        - '1306745'
+        - '1284358'
+      stats:
+        min: 1284358
+        p50: 2306887
+        max: 6132658
+        unique: 24
+    - name: GEN_FSCL_AMT
+      title: 일반회계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '74266'
+        - '77921'
+        - '91093'
+      stats:
+        min: 74266
+        p50: 300494.5
+        max: 1037413
+        unique: 24
+    - name: SPC_FSCL_AMT
+      title: 특별회계
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '770533'
+        - '468659'
+        - '405109'
+      stats:
+        min: 79182
+        p50: 120716.5
+        max: 770533
+        unique: 24
+    - name: FND_AMT
+      title: 기금
+      type: number
+      null_rate: 0.0
+      sample_values:
+        - '747561'
+        - '760165'
+        - '788157'
+      stats:
+        min: 747561
+        p50: 1885676
+        max: 5011556
+        unique: 24
+facets:
+  grade:
+    - 보조
+coverage:
+  spatial: 전국
+  admin_unit: 전국·비공간
+grain:
+  time: year
+  time_fields:
+    - OJ_YY
+cycle: event
+classification:
+  subsector_name: 국유·공유재산·공매 (공매자산·온비드·국유재산·체납국세 공매·관급자산·국가채권)
+  depth: front
+  novelty: high
+  cross_cutting: false
+  prelim_score: 0.8208
+  rank_in_sector: 8
+  brm: 재정금융 - 재정·금융
+  why: nan
+claims:
+  - id: c-15057783-01
+    kind: access
+    value: 외부 사이트 www.openfiscaldata.go.kr 인증키 필요 (query 파라미터 Key) — 포털 활용신청과 별개. 2026-11-09 실호출 1/1 성공
+    evidence:
+      - type: measured
+        source: probe/runs/15057783.json
+        observed_at: '2026-11-09'
+        detail: ops_ok 1/1
+      - type: admin_review
+        source: knowledge/key_issuers.yaml
+        by: 구름
+        detail: 발급처 www.openfiscaldata.go.kr
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+    valid_until: '2027-05-11'
+  - id: c-15057783-02
+    kind: cadence
+    value: 이벤트 주기 (선거 등 이벤트 때 생성 후 불변)
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml
+        by: 구름
+        detail: 'cycle: event'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15057783-03
+    kind: key
+    value: 실측 컬럼에서 전역 조인 키를 찾지 못함 — 이름·코드 매핑 또는 같은 기관 코드로만 연결 가능
+    evidence:
+      - type: measured
+        source: probe/stats/15057783.json
+        observed_at: '2026-11-09'
+        detail: 컬럼 5개 값 패턴 판정
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15057783-04
+    kind: coverage
+    value: 범위 전국 · 행정단위 전국·비공간
+    evidence:
+      - type: measured
+        source: probe/runs/15057783.json
+        observed_at: '2026-11-09'
+        detail: total None, rows None
+      - type: portal_meta
+        source: class:coverage,admin_unit
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+    valid_until: '2027-05-11'
+  - id: c-15057783-06
+    kind: admin_note
+    value: "세부 부문 '국유·공유재산·공매 (공매자산·온비드·국유재산·체납국세 공매·관급자산·국가채권)'의 가치: 공매 물건 단위 시의성 원장, 소재지로 토지·건물 원장과 연결"
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/subsectors.yaml#public-assets
+        by: 구름
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: preferred
+  - id: c-15057783-07
+    kind: admin_note
+    value: '[재정금융 (6개 영역) · 재정·금융] 재정정보원 재정통계·BRIEF 시리즈(집계) 배제. 지역사랑상품권 가맹점을 산업금융(온통대전)·일반행정에서 모음, 공매를 일반행정에서 모음. 지방재정365 → 지방행정·재정지원 local-finance.'
+    evidence:
+      - type: admin_review
+        source: knowledge/sectors/_review_log.md#L623
+        by: Claude(Claude — 구름 기준 적용)
+        at: '2026-09-29'
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+  - id: c-15057783-08
+    kind: admin_note
+    value: 키 확대(openfiscaldata.go.kr) · 등급:보조 · wave3 판정 defer
+    evidence:
+      - type: measured
+        source: knowledge/targets.json
+        observed_at: '2026-11-09'
+        detail: 외부 라운드·검증 메모
+    qualifiers:
+      generated_by: pds.dossier.claims
+    rank: normal
+verification:
+  verdict: 성공(실측)
+  probed_at: '2026-11-09'
+  channel: external
+  ops_ok: 1/1
+  run: probe/runs/15057783.json
+  stats: probe/stats/15057783.json
+  data: probe/data/15057783/
+status: active
